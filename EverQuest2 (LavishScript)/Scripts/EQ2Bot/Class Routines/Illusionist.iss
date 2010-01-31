@@ -2452,7 +2452,6 @@ function DoTheTimeWarp()
 	
 	ActorID:Set[0]
 	Counter:Set[1]
-	;iterate through the to be buffed Selected Items and buff them
 	if ${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 	{
 		do
