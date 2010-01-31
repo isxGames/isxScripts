@@ -85,6 +85,8 @@ function Class_Declaration()
 	declare ManaFlowThreshold int script 60
 	declare CureMode bool script FALSE
 	declare StunMode bool script FALSE
+	declare HaveAbility_TimeWarp bool script FALSE
+	declare TimeWarpTarget int script 
 
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -117,6 +119,10 @@ function Class_Declaration()
 
 	if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]})
 		HaveMythical:Set[TRUE]
+		
+	;;; Optimizations to avoid having to check if an ability exists all of the time
+	if (${Me.Ability[Time Warp](exists)})
+		HaveAbility_TimeWarp:Set[TRUE]
 }
 
 function Pulse()
@@ -954,6 +960,14 @@ function Combat_Routine(int xAction)
 			DoShortTermBuffs:Set[TRUE]
 		else
 			DoShortTermBuffs:Set[FALSE]
+			
+		if (${HaveAbility_TimeWarp})
+		{
+			if ${Me.Ability[time warp].IsReady}
+			{
+				call DoTheTimeWarp
+			}
+		}
 	}
 	elseif ${FightingHeroicMob}
 	{
@@ -961,6 +975,14 @@ function Combat_Routine(int xAction)
 			DoShortTermBuffs:Set[TRUE]
 		else
 			DoShortTermBuffs:Set[FALSE]
+			
+		if (${HaveAbility_TimeWarp})
+		{
+			if ${Me.Ability[time warp].IsReady}
+			{
+				call DoTheTimeWarp
+			}
+		}			
 	}
 	else
 	{
@@ -2412,6 +2434,38 @@ function PostDeathRoutine()
 
 	InPostDeathRoutine:Set[FALSE]
 	return
+}
+
+function DoTheTimeWarp()
+{
+	Counter:Set[1]
+	;iterate through the to be buffed Selected Items and buff them
+	if ${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+	{
+		do
+		{
+			BuffTarget:Set[${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+			if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+			{
+				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+				if ${Actor[${ActorID}].Type.Equal[PC]}
+				{
+					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					{
+						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].Range} || !${NoAutoMovement})
+						{
+							if (${TimeWarpTarget} != ${ActorID})
+							{
+								call CastSpellRange "Time Warp" 0 0 0 ${ActorID} 0 0 1 0 0
+								TimeWarpTarget:Set[${ActorID}]
+							}
+						}
+					}
+				}
+			}
+		}
+		while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+	}		
 }
 
 objectdef custom_overrides

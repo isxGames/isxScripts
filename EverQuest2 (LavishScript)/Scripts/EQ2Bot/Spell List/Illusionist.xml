@@ -37,6 +37,7 @@
 		<Setting name="10,384">Bewilderment</Setting>
 		<Setting name="10,502">Mental Focus</Setting>
 		<Setting name="10,503">Destructive Rampage</Setting>
+		<Setting name="10,504">Time Warp</Setting>
 		<Setting name="11,61">Aneurysm</Setting>
 		<Setting name="12,60">Ultraviolet Beam III</Setting>
 		<Setting name="12,20">Rune of Thought</Setting>
@@ -177,5 +178,32 @@
 		<Setting name="80,72">Prismatic Chaos V</Setting>
 		<Setting name="80,388">Chromatic Shower III</Setting>
 		<Setting name="80,377">Doppleganger</Setting>
+		<Setting name="81,191">Bewilderment VI</Setting>
+		<Setting name="81,354">Mana Cloak IV</Setting>
+		<Setting name="81,60">Ultraviolet Beam IX</Setting>
+		<Setting name="82,70">Brainburst VIII</Setting>
+		<Setting name="82,260">Speechless VI</Setting>
+		<Setting name="83,22">Epiphany VI</Setting>
+		<Setting name="83,51">Construct of Order V</Setting>
+		<Setting name="83,230">Lockdown VII</Setting>
+		<Setting name="84,192">Illusory Allies III</Setting>
+		<Setting name="84,355">Personae Reflection VIII</Setting>
+		<Setting name="84,90">Manatap V</Setting>
+		<Setting name="85,21">Aspect of Genius VII</Setting>
+		<Setting name="85,40">Synergism V</Setting>
+		<Setting name="86,91">Chromatic Storm VII</Setting>
+		<Setting name="86,50">Dismay VI</Setting>
+		<Setting name="87,352">Entrance VIII</Setting>
+		<Setting name="87,353">Phantasmal Awe VI</Setting>
+		<Setting name="88,92">Regalia V</Setting>
+		<Setting name="88,23">Flash of Brilliance VI</Setting>
+		<Setting name="88,61">Aneurysm VII</Setting>
+		<Setting name="89,20">Rune of Thought VII</Setting>
+		<Setting name="89,309">Extract Mana VII</Setting>
+		<Setting name="89,190">Paranoia VIII</Setting>
+		<Setting name="90,80">Nightmare VII</Setting>
+		<Setting name="90,72">Prismatic Chaos VI</Setting>
+		<Setting name="90,388">Chromatic Shower IV</Setting>
+		<Setting name="90,377">Doppleganger II</Setting>
 	</Set>
 </InnerSpaceSettings>
