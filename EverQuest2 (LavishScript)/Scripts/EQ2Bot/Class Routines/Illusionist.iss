@@ -94,8 +94,9 @@ function Class_Declaration()
 	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
 	Makepet:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Makepet,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
-	BuffTime_Compression:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression,]}]
-	BuffIllusory_Arm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm,]}]
+	;BuffTime_Compression:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression,]}]
+	;BuffIllusory_Arm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm,]}]
+	;BuffArms_of_Imagination:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination,]}]
 	DPSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DPSMode,TRUE]}]
 	UltraDPSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UltraDPSMode,FALSE]}]
 	SummonImpOfRo:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Summon Imp of Ro,FALSE]}]
@@ -223,22 +224,22 @@ function Buff_Init()
 	PreAction[2]:Set[Aspect]
 	PreSpellRange[2,1]:Set[21]
 
-	PreAction[3]:Set[MakePet]
-	PreSpellRange[3,1]:Set[355]
-
 	;haste
-	PreAction[4]:Set[Melee_Buff]
-	PreSpellRange[4,1]:Set[35]
+	PreAction[3]:Set[Melee_Buff]
+	PreSpellRange[3,1]:Set[35]
 
 	; ie, dynamism
-	PreAction[5]:Set[Caster_Buff]
-	PreSpellRange[5,1]:Set[40]
+	PreAction[4]:Set[Caster_Buff]
+	PreSpellRange[4,1]:Set[40]
 
-	PreAction[6]:Set[Rune]
-	PreSpellRange[6,1]:Set[20]
+	PreAction[5]:Set[Rune]
+	PreSpellRange[5,1]:Set[20]
 
-	PreAction[7]:Set[Clarity]
-	PreSpellRange[7,1]:Set[22]
+	PreAction[6]:Set[Clarity]
+	PreSpellRange[6,1]:Set[22]
+	
+	PreAction[7]:Set[MakePet]
+	PreSpellRange[7,1]:Set[355]
 
 	PreAction[8]:Set[AA_Empathic_Aura]
 	PreSpellRange[8,1]:Set[391]
@@ -251,8 +252,11 @@ function Buff_Init()
 
 	PreAction[11]:Set[AA_Illusory_Arm]
 	PreSpellRange[11,1]:Set[394]
+	
+	PreAction[12]:Set[AA_Arms_of_Imagination]
+	PreSpellRange[12,1]:Set[505]	
 
-	PreAction[12]:Set[SummonImpOfRoBuff]
+	PreAction[13]:Set[SummonImpOfRoBuff]
 }
 
 function Combat_Init()
@@ -626,17 +630,24 @@ function Buff_Routine(int xAction)
 
 		case AA_Time_Compression
 			BuffTarget:Set[${UIElement[cbBuffTime_Compression@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${BuffTarget.Equal["No one"]}
+			if (${BuffTarget.Equal["No one"]} || ${BuffTarget.Equal["N/A"]})
 			{
 				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
 			}
-			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+
+			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} == ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				break
+			else
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-				wait 2
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+					wait 2
+				}
 			}
+
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
@@ -658,17 +669,24 @@ function Buff_Routine(int xAction)
 
 		case AA_Illusory_Arm
 			BuffTarget:Set[${UIElement[cbBuffIllusory_Arm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if ${BuffTarget.Equal["No one"]}
+			if (${BuffTarget.Equal["No one"]} || ${BuffTarget.Equal["N/A"]})
 			{
 				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				break
 			}
-			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+			
+			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} == ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				break
+			else
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-				wait 2
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+					wait 2
+				}
 			}
+			
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
@@ -687,6 +705,45 @@ function Buff_Routine(int xAction)
 				}
 			}
 			break
+			
+		case AA_Arms_of_Imagination
+			BuffTarget:Set[${UIElement[cbBuffArms_of_Imagination@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if (${BuffTarget.Equal["No one"]} || ${BuffTarget.Equal["N/A"]})
+			{
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				break
+			}
+			
+			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} == ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				break
+			else
+			{
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+					wait 2
+				}
+			}
+			
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
+			{
+				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+				if ${Actor[${ActorID}].Type.Equal[PC]}
+				{
+					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					{
+						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
+					}
+				}
+				else
+				{
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
+				}
+			}
+			break			
 
 		case AA_Empathic_Aura
 			if ${BuffEmpathicAura}
