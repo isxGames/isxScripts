@@ -357,7 +357,7 @@ function Buff_Routine(int xAction)
 		call CheckHOTs
 
   call CheckSKFD
-
+  
 	switch ${PreAction[${xAction}]}
 	{
 		case DoCheckRezzes
@@ -367,54 +367,54 @@ function Buff_Routine(int xAction)
 		case BuffThorns
 			if ${MainTank} || (${BuffThorns} && ${Actor[${MainTankID}](exists)})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${MainTankID}].ID}
 			}
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 			break
 		case AA_Infusion
 		    if ${InfusionMode}
 		    {
-    			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+    			if (${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)})
     			{
-    				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+    				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
     					call CastSpellRange ${PreSpellRange[${xAction},1]}
     			}
     		}
     		else
 			{
-			    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			    if (${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)})
 			    {
-			        if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-				        Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			        if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
+				        Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 				}
 			}
 			break
 		case Self_Buff
 		case AA_Rebirth
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			if (${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
 		case AA_Shapeshift
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			if (${Me.Ability["${SpellType[${PreSpellRange[${xAction},${ShiftForm}]}]}"](exists)})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},${ShiftForm}]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
 			}
 			break
 		case BuffEel
 			if ${BuffEel}
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
 			{
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 			}
 			break
 		case BuffVim
@@ -427,7 +427,7 @@ function Buff_Routine(int xAction)
 			{
 				BuffMember:Set[]
 				;check if the maintained buff is of the spell type we are buffing
-				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+				if ${Me.Maintained[${Counter}].Name.Equal["${SpellType[${PreSpellRange[${xAction},1]}]}"]}
 				{
 					;iterate through the members to buff
 					if ${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
@@ -476,7 +476,7 @@ function Buff_Routine(int xAction)
 						{
 							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
-								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+								if (${Actor[${ActorID}].Distance} <= ${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"].Range} || !${NoAutoMovement})
 								{
 									if (!${VimBuffsOn.Element[${ActorID}](exists)})
 									{
@@ -489,7 +489,7 @@ function Buff_Routine(int xAction)
 						}
 						else
 						{
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"].Range} || !${NoAutoMovement})
 							{
 								if (!${VimBuffsOn.Element[${ActorID}](exists)})
 								{
@@ -507,29 +507,29 @@ function Buff_Routine(int xAction)
 		case BuffHunt
 			if ${BuffHunt}
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 			break
 		case BuffSpirit
 			if ${BuffSpirit}
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 			break
 		case BuffMask
 			if ${BuffMask}
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 				break
 
 		case BuffMythical
@@ -577,10 +577,10 @@ function Buff_Routine(int xAction)
 		case BuffBat
 			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				break
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 
 			if ${BuffTarget.Token[2,:].Equal[Me]}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
@@ -591,13 +591,15 @@ function Buff_Routine(int xAction)
 		case BuffSavagery
 			BuffTarget:Set[${UIElement[cbBuffSavageryGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				break
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} 
+			{
+				if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Type.Equal[Me]} || ${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			}
 			break
 			
 		case BuffPactOfNature
@@ -606,20 +608,20 @@ function Buff_Routine(int xAction)
 
 			BuffTarget:Set[${UIElement[PactOfNature@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
-			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
+			if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				break
 			else
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"]:Cancel
 
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Group[${BuffTarget.Token[1,:]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 			break
 			
 		case BuffCastingExpertise
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+			if (${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)})
 			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					call CastSpellRange ${PreSpellRange[${xAction},${ShiftForm}]}
+				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
 			
