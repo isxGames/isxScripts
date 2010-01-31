@@ -127,18 +127,18 @@
 		<AutoTooltip>The Raid Friend to cast the 3-proc "Prismatic" buff upon.</AutoTooltip>
 		<Items></items>
 		<Sort>Text</Sort>
-        <OnLoad>
-		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism](exists)})
-		    {
-    			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]
-    			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]:Select
-    		}
-    		else
-    		{
-    		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
-    		}
-        </OnLoad>        		
+    <OnLoad>
+	    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism](exists)})
+	    {
+				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]
+				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]:Select
+			}
+			else
+			{
+			    This:AddItem["No one"]
+			    This.ItemByValue["No one"]:Select
+			}
+    </OnLoad>        		
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffPrism,${This.SelectedItem.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
@@ -163,23 +163,23 @@
 		<AutoTooltip>The Group Member to Buff Time Compression on</AutoTooltip>
 		<Items></items>
 		<Sort>Text</Sort>
-        <OnLoad>
-			  if (!${Me.Ability[Time Compression](exists)})
-			  {
-					This:AddItem["N/A"]			
-					This.ItemByValue["N/A"]:Select
-				}	
-		    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression](exists)})
-		    {
-    			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]
-    			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]:Select
-    		}
-    		else
-    		{
-    		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
-    		}
-        </OnLoad>        		
+    <OnLoad>
+		  if (!${Me.Ability[Time Compression](exists)})
+		  {
+				This:AddItem["N/A"]			
+				This.ItemByValue["N/A"]:Select
+			}	
+	    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression](exists)})
+	    {
+				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]
+				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]:Select
+			}
+			else
+			{
+			    This:AddItem["No one"]
+			    This.ItemByValue["No one"]:Select
+			}
+    </OnLoad>        		
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffTime_Compression,${This.SelectedItem.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
@@ -211,21 +211,21 @@
 		<AutoTooltip>The Group Member to buff Double Attack</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			  if (!${Me.Ability[Illusory Arm](exists)})
-			  {
-					This:AddItem["N/A"]			
-					This.ItemByValue["N/A"]:Select
-				}
-		    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm](exists)})
-		    {
-    			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]
-    			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]:Select
-    		}
-    		else
-    		{
-    		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
-    		}
+		  if (!${Me.Ability[Illusory Arm](exists)})
+		  {
+				This:AddItem["N/A"]			
+				This.ItemByValue["N/A"]:Select
+			}
+	    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm](exists)})
+	    {
+  			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]
+  			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]:Select
+  		}
+  		else
+  		{
+  		    This:AddItem["No one"]
+  		    This.ItemByValue["No one"]:Select
+  		}
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffIllusory_Arm,${This.SelectedItem.Text}]
@@ -258,21 +258,21 @@
 		<AutoTooltip>The Group Member to buff 'Arms of Imagination'</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-			  if (!${Me.Ability[Arms of Imagination](exists)})
-			  {
-					This:AddItem["N/A"]			
-					This.ItemByValue["N/A"]:Select
-				}
-		    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination](exists)})
-		    {
-    			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]
-    			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]:Select
-    		}
-    		else
-    		{
-    		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
-    		}
+		  if (!${Me.Ability[Arms of Imagination](exists)})
+		  {
+				This:AddItem["N/A"]			
+				This.ItemByValue["N/A"]:Select
+			}
+	    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination](exists)})
+	    {
+  			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]
+  			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]:Select
+  		}
+  		else
+  		{
+  		    This:AddItem["No one"]
+  		    This.ItemByValue["No one"]:Select
+  		}
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffArms_of_Imagination,${This.SelectedItem.Text}]
