@@ -150,6 +150,9 @@ function Buff_Init()
    
    PreAction[14]:Set[Trample]
    PreSpellRange[14,1]:Set[342]
+   
+   PreAction[15]:Set[CCry]
+   PreSpellRange[15,1]:Set[345]   
 }
 
 function Combat_Init()
@@ -446,20 +449,20 @@ function Buff_Routine(int xAction)
 		case Reaver
 		    if ${UseReaver}
 		    {
-				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
-			        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+					if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+			     	call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 		    }
 		    else
 		    {
-		        if ${Me.Maintained[Reaver](exists)}
-		            Me.Maintained[Reaver]:Cancel
+		        if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		            Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 		    }
 			break
 
 	    case BattleLeadershipAABuff
 		    if ${UseBattleLeadershipAABuff}
 		    {
-    			if !${Me.Maintained[Battle Leadership](exists)}
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
     		    {
 				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
@@ -467,15 +470,15 @@ function Buff_Routine(int xAction)
 		    }
 		    else
 		    {
-		        if ${Me.Maintained[Battle Leadership](exists)}
-		            Me.Maintained[Battle Leadership]:Cancel
+		        if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		            Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 		    }
 			break
 
 	    case FearlessMoraleAABuff
 		    if ${UseFearlessMoraleAABuff}
 		    {
-    			if !${Me.Maintained[Fearless Morale](exists)}
+    			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
     		    {
 				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
@@ -483,15 +486,15 @@ function Buff_Routine(int xAction)
 		    }
 		    else
 		    {
-		        if ${Me.Maintained[Fearless Morale](exists)}
-		            Me.Maintained[Fearless Morale]:Cancel
+		        if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+		            Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 		    }
 			break
 
 		case AuraOfLeadershipAABuff
 			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
-				if !${Me.Maintained[Fearless Morale](exists)}
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			    {
 				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
@@ -502,7 +505,7 @@ function Buff_Routine(int xAction)
 		case Trample
 			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
-				if !${Me.Maintained[Trample](exists)}
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			    {
 				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
@@ -510,9 +513,23 @@ function Buff_Routine(int xAction)
 			}
 		  break
 
+		case CCry
+			if (${MainTank})
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
+				{
+					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				    {
+					    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+				    }
+				}
+			}
+		  break		  
+
 		case Bloodletter
-		    if ${Me.Level} < 80
-		        break
+		  if ${Me.Level} < 80
+		  	break
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 			    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})

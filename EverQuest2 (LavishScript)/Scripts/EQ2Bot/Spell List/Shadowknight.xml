@@ -37,6 +37,8 @@
 		<Setting name="10,509">Sprint</Setting>
 		<Setting name="10,332">Legionnaire\'s Smite</Setting>
 		<Setting name="10,342">Trample</Setting>
+		<Setting name="10,344">Joust</Setting>
+		<Setting name="10,345">Cavalier\'s Cry</Setting>
 		<Setting name="11,61">Siphon Strike</Setting>
 		<Setting name="12,7">Unholy Blessing</Setting>
 		<Setting name="12,25">Innoruuk\'s Caress II</Setting>
@@ -184,9 +186,41 @@
 		<Setting name="79,7">Unholy Blessing VI</Setting>
 		<Setting name="79,62">Malice VII</Setting>
 		<Setting name="79,240">Hateful Slam VI</Setting>
+		<Setting name="80,346">Crusader\'s Faith</Setting>
+		<Setting name="80,343">Shadowknight\'s Furor</Setting>
 		<Setting name="80,331">Bloodletter</Setting>
 		<Setting name="80,153">Devour Vitae V</Setting>
 		<Setting name="80,96">Unending Agony VI</Setting>
 		<Setting name="80,55">Devouring Mist III</Setting>
+		<Setting name="81,152">Cleave Flesh VI</Setting>
+		<Setting name="81,97">Doom Judgement IV</Setting>
+		<Setting name="81,150">Painbringer VII</Setting>
+		<Setting name="82,80">Siphon Strength V</Setting>
+		<Setting name="82,160">Insidious Whisper VIII</Setting>
+		<Setting name="82,81">Mana Sieve III</Setting>
+		<Setting name="82,295">Lucan\'s Pact VII</Setting>
+		<Setting name="83,30">Pledge of Armament VI</Setting>
+		<Setting name="83,290">Dark Blade VII</Setting>
+		<Setting name="84,21">Unholy Strength VI</Setting>
+		<Setting name="84,98">Tap Veins III</Setting>
+		<Setting name="84,63">Harm Touch VI</Setting>
+		<Setting name="85,95">Death Cloud VII</Setting>		
+		<Setting name="86,170">Blasphemy VII</Setting>
+		<Setting name="86,20">Unholy Hunger VII</Setting>
+		<Setting name="86,60">Shadow Coil VI</Setting>
+		<Setting name="87,151">Soulrend VII</Setting>
+		<Setting name="87,25">Innoruuk\'s Caress VIII</Setting>
+		<Setting name="87,26">Grim Harbinger VII</Setting>
+		<Setting name="87,61">Siphon Strike VII</Setting>
+		<Setting name="88,45">Grave Sacrament VI</Setting>
+		<Setting name="88,99">Pestilence III</Setting>
+		<Setting name="88,154">Dreadful Wrath V</Setting>
+		<Setting name="89,7">Unholy Blessing VII</Setting>
+		<Setting name="89,62">Malice VIII</Setting>
+		<Setting name="89,240">Hateful Slam VII</Setting>
+		<Setting name="90,153">Devour Vitae VI</Setting>
+		<Setting name="90,96">Unending Agony VII</Setting>
+		<Setting name="90,55">Devouring Mist IV</Setting>
+		
 	</Set>
 </InnerSpaceSettings>
