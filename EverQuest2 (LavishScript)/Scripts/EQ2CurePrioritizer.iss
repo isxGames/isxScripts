@@ -51,26 +51,29 @@ function main()
 
 function CureCurse(int ActorID)
 {
-	echo Function CureCure Started
+	echo Function CureCusre Started
 
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-	Script[Eq2bot]:Pause
-
-	if ${Me.InRaid}
+	if ${Me.InRaid} && ${Me.ID}!=${ActorID}
 	{
 		if ${Me.Raid[id,${ActorID}](exists)}
 		{
 			if !${Me.Raid[id,${ActorID}].Cursed}
+			{
+				echo Function CureCurse Finished - ${ActorID} not cursed
 				return
+			}
 		}
 	}
 
-	if ${Me.GroupCount}
+	if ${Me.GroupCount} && ${Me.ID}!=${ActorID}
 	{
 		if ${Me.Group[${Actor[id,${ActorID}].Name}](exists)}
 		{
 			if !${Me.Group[${Actor[id,${ActorID}].Name}].Cursed}
+			{
+				echo Function CureCurse Finished - ${ActorID} not cursed
 				return
+			}
 		}
 	}
 
@@ -79,26 +82,32 @@ function CureCurse(int ActorID)
 		if !${Me.Cursed}
 		{
 			meCursed:Set[0]
+			echo Function CureCurse Finished - Me not cursed
 			return
 		}
 	}
 
 	if !${Actor[id,${ActorID}](exists)}
+	{
+		echo Function CureCurse Finished - ${ActorID} not found
 		return
+	}
+	
+	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
+	Script[Eq2bot]:Pause
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[Cure Curse]}
 	{
 		echo Canceling Spell Cast to Curse Cure
-		do
+		while ${Me.CastingSpell}
 		{
 			eq2execute /cancel_spellcast
 			wait 3
 		}
-		while ${Me.CastingSpell}
 	}
 
 	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure Curse"
-	wait 4
+	wait 3
 
 	do
 	{
@@ -192,35 +201,47 @@ function stCure(int ActorID)
 {
 	echo Function stCure Started
 
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-	Script[Eq2bot]:Pause
-
-	if ${Me.InRaid}
+	if ${Me.InRaid} && ${Me.ID}!=${ActorID}
 	{
 		if ${Me.Raid[id,${ActorID}](exists)}
 		{
 			if !${Me.Raid[id,${ActorID}].IsAfflicted}
+			{
+				echo stCure - ${ActorID} In Raid and not afflicted
 				return
+			}
 		}
 	}
 
-	if ${Me.GroupCount}
+	if ${Me.GroupCount} && ${Me.ID}!=${ActorID}
 	{
 		if ${Me.Group[${Actor[id,${ActorID}].Name}](exists)}
 		{
 			if !${Me.Group[${Actor[id,${ActorID}].Name}].IsAfflicted}
+			{
+				echo stCure - ${ActorID} In Raid and not afflicted
 				return
+			}
 		}
 	}
 
 	if ${Me.ID}==${ActorID}
 	{
 		if !${Me.IsAfflicted}
+		{
+			echo stCure - Me not afflicted
 			return
+		}
 	}
 
 	if !${Actor[id,${ActorID}](exists)}
+	{
+		echo stCure - ${ActorID} does not exist
 		return
+	}
+
+	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
+	Script[Eq2bot]:Pause
 
 	if ${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[Cure]}
 	{
@@ -233,8 +254,8 @@ function stCure(int ActorID)
 		while ${Me.CastingSpell}
 	}
 
-	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure Curse"
-	wait 4
+	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure"
+	wait 3
 
 	do
 	{
