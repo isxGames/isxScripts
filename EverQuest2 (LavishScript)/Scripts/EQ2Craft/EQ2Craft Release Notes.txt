@@ -15,6 +15,8 @@ v8.96 - Adjusted commandline arguments relating to verbosity. Default
         halls. Craft will favor Elaborate tables in guild halls, but will 
         attempt to use normal (no prefix) tables if unable to target an 
         Elaborate table.
+      - Ignore while crafting (invites, etc) will no longer be in effect while
+        in CraftLite mode.
 
 v8.94 - Added TTS announcements between writs, and after writ sessions are complete.
       - Added congratulatory TTS announcements when gaining levels and auto-scribing new recipes.
