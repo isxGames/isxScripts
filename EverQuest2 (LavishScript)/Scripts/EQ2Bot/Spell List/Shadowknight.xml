@@ -37,8 +37,10 @@
 		<Setting name="10,509">Sprint</Setting>
 		<Setting name="10,332">Legionnaire\'s Smite</Setting>
 		<Setting name="10,342">Trample</Setting>
+		<Setting name="10,343">Shadowknight\'s Furor</Setting>
 		<Setting name="10,344">Joust</Setting>
 		<Setting name="10,345">Cavalier\'s Cry</Setting>
+		<Setting name="10,346">Crusader\'s Faith</Setting>
 		<Setting name="11,61">Siphon Strike</Setting>
 		<Setting name="12,7">Unholy Blessing</Setting>
 		<Setting name="12,25">Innoruuk\'s Caress II</Setting>
@@ -186,8 +188,6 @@
 		<Setting name="79,7">Unholy Blessing VI</Setting>
 		<Setting name="79,62">Malice VII</Setting>
 		<Setting name="79,240">Hateful Slam VI</Setting>
-		<Setting name="80,346">Crusader\'s Faith</Setting>
-		<Setting name="80,343">Shadowknight\'s Furor</Setting>
 		<Setting name="80,331">Bloodletter</Setting>
 		<Setting name="80,153">Devour Vitae V</Setting>
 		<Setting name="80,96">Unending Agony VI</Setting>
