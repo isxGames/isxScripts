@@ -93,8 +93,11 @@ function CureCurse(int ActorID)
 		return
 	}
 	
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-	Script[Eq2bot]:Pause
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
+		Script[Eq2bot]:Pause
+	}
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[Cure Curse]}
 	{
@@ -109,9 +112,11 @@ function CureCurse(int ActorID)
 	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure Curse"
 	wait 3
 
-	do
-	{
+	if ${Script[Eq2bot](exists)}
 		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting 'Cure Curse' to complete"]
+	
+	do
+	{	
 		waitframe
 	}
 	while ${Me.CastingSpell}
@@ -119,17 +124,24 @@ function CureCurse(int ActorID)
 	if ${ActorID}==${Me.ID}
 		meCursed:Set[0]
 
-	Script[Eq2bot]:Resume
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
-
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot]:Resume
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+	}
+	
 	echo Function CureCure Finished
 }
 
 function gCure()
 {
 	echo Function gCure Started
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-	Script[Eq2bot]:Pause
+	
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
+		Script[Eq2bot]:Pause
+	}
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[${gCureName}]}
 	{
@@ -145,18 +157,23 @@ function gCure()
 	Me.Ability[${gCureName}]:Use
 	wait 4
 
+	if ${Script[Eq2bot](exists)}
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting '${gCureName}' to complete"]
+	
 	do
 	{
-		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting '${gCureName}' to complete"]
 		waitframe
 	}
 	while ${Me.CastingSpell}
 
 	gCureRequest:Set[0]
-
-	Script[Eq2bot]:Resume
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
-
+	
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot]:Resume
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+	}
+	
 	echo Function gCure Finished
 }
 
@@ -164,8 +181,11 @@ function inqCure()
 {
 	echo Function inqCure Started
 
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-	Script[Eq2bot]:Pause
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
+		Script[Eq2bot]:Pause
+	}
 
 	if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.NotEqual[Cleansing of the Soul]}
 	{
@@ -181,17 +201,22 @@ function inqCure()
 	Me.Equipment[Penitent's Absolution]:Use
 	wait 4
 
+	if ${Script[Eq2bot](exists)}
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting 'Penitent's Absolution' to complete"]
+
 	do
 	{
-		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting 'Penitent's Absolution' to complete"]
 		waitframe
 	}
 	while ${Me.CastingSpell}
 
 	gCureRequest:Set[0]
 
-	Script[Eq2bot]:Resume
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot]:Resume
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+	}
 
 	echo Function inqCure finished
 }
@@ -240,9 +265,12 @@ function stCure(int ActorID)
 		return
 	}
 
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-	Script[Eq2bot]:Pause
-
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
+		Script[Eq2bot]:Pause
+	}
+	
 	if ${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[Cure]}
 	{
 		echo Canceling Spell Cast to single Cure
@@ -257,16 +285,20 @@ function stCure(int ActorID)
 	eq2execute /useabilityonplayer ${Actor[id,${ActorID}].Name} "Cure"
 	wait 3
 
+	if ${Script[Eq2bot](exists)}
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting 'Cure Curse' to complete"]
+
 	do
 	{
-		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot and awaiting 'Cure Curse' to complete"]
 		waitframe
 	}
 	while ${Me.CastingSpell}
 
-	Script[Eq2bot]:Resume
-	Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
-
+	if ${Script[Eq2bot](exists)}
+	{
+		Script[Eq2bot]:Resume
+		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
+	}
 	echo Function stCure Finished
 }
 
@@ -512,6 +544,8 @@ function InitCures()
 
 function atexit()
 {
-	Script[EQ2Bot]:Resume
+	if ${Script[Eq2bot](exists)}
+		Script[EQ2Bot]:Resume
+	
 	echo CurePrioritizer Script Ending...
 }
