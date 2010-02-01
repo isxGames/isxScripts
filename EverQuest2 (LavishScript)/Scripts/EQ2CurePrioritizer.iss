@@ -368,7 +368,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 				break
 		}
 
-		if !${curequeued}
+		if !${gCureRequest}
 		{
 			switch ${gCureType2}
 			{
@@ -410,7 +410,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 			}
 		}
 
-		if ${Me.SubClass.Equal[Inquisitor]} && (${Me.Equipment[1].Tier.Equal[MYTHICAL]} && ${Me.Equipment[Penitent's Absolution].IsReady})
+		if !${gCureRequest} && ${Me.SubClass.Equal[Inquisitor]} && (${Me.Equipment[1].Tier.Equal[MYTHICAL]} && ${Me.Equipment[Penitent's Absolution].IsReady})
 		{
 			if ${tcount}>2 || ${acount}>2 || ${ncount}>2 || ${ecount}>2
 			{
