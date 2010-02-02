@@ -1,19 +1,21 @@
 Revision History ||
 ===================
-v8.96 - Adjusted commandline arguments relating to verbosity. Default 
-        verbosity is now for error messages only, displayed in the console 
+v8.97 - Minor changes to config file structure. Movement keys now save to
+        global config file.
+v8.96 - Adjusted commandline arguments relating to verbosity. Default
+        verbosity is now for error messages only, displayed in the console
         window.
         * Changed -verbose option to -chat option (see below)
         * Added -v, -vv, -q, -chat options:
-          -v     Verbose mode. Will echo to console/chat window. This used to 
+          -v     Verbose mode. Will echo to console/chat window. This used to
                  be the default.
-          -vv    Extra verbose mode. Implies -debug. Echos everything possible.
+          -vv    Extra verbose mode. Implies -debug. Echos everything possible
           -q     Quiet mode. Not even error messages will display.
-          -chat  Sends all non-debug output to the EQ2 chat window. This 
+          -chat  Sends all non-debug output to the EQ2 chat window. This
                  replaces the old option for -verbose.
-      - Added support for the new Achievement Award craft tables in guild 
-        halls. Craft will favor Elaborate tables in guild halls, but will 
-        attempt to use normal (no prefix) tables if unable to target an 
+      - Added support for the new Achievement Award craft tables in guild
+        halls. Craft will favor Elaborate tables in guild halls, but will
+        attempt to use normal (no prefix) tables if unable to target an
         Elaborate table.
       - Ignore while crafting (invites, etc) will no longer be in effect while
         in CraftLite mode.
