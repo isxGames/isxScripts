@@ -1051,10 +1051,18 @@
                             <Color>FFDDBB00</Color>
                             <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]}]</OnLoad>
                             <OnChange>
-                              LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]:Set[${This.Text}]
-                              LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              if ${ICraft.Version} >= 8.97
+                              {
+                                ICraft:SetKeys
+                              }
+                              else
+                              {
+
+                                LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[AutoRunKey]:Set[${This.Text}]
+                                LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              }
                             </OnChange>
                           </Textentry>
                           <Text Name='BackupKeyLabel'>
@@ -1076,10 +1084,17 @@
                             <Color>FFDDBB00</Color>
                             <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]}]</OnLoad>
                             <OnChange>
-                              LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]:Set[${This.Text}]
-                              LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              if ${ICraft.Version} >= 8.97
+                              {
+                                ICraft:SetKeys
+                              }
+                              else
+                              {
+                                LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[BackwardKey]:Set[${This.Text}]
+                                LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              }
                             </OnChange>
                           </Textentry>
                           <Text Name='StrafeRightKeyLabel'>
@@ -1101,10 +1116,17 @@
                             <Color>FFDDBB00</Color>
                             <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]}]</OnLoad>
                             <OnChange>
-                              LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]:Set[${This.Text}]
-                              LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              if ${ICraft.Version} >= 8.97
+                              {
+                                ICraft:SetKeys
+                              }
+                              else
+                              {
+                                LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeRightKey]:Set[${This.Text}]
+                                LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              }
                             </OnChange>
                           </Textentry>
                           <Text Name='StrafeLeftKeyLabel'>
@@ -1126,10 +1148,17 @@
                             <Color>FFDDBB00</Color>
                             <OnLoad>This:SetText[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]}]</OnLoad>
                             <OnChange>
-                              LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]:Set[${This.Text}]
-                              LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
-                              Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              if ${ICraft.Version} >= 8.97
+                              {
+                                ICraft:SetKeys
+                              }
+                              else
+                              {
+                                LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StrafeLeftKey]:Set[${This.Text}]
+                                LavishSettings[Craft Config File]:Export[${Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[configfile]}]
+                                Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}]:QueueCommand[Craft:UpdateNavKeys]
+                              }
                             </OnChange>
                           </Textentry>
                           <Commandcheckbox Name='Current Table'>
@@ -1487,15 +1516,7 @@
                   <Height>20</Height>
                   <Text>Create Work Orders</Text>
                   <OnLeftClick>
-                    if ${ICraft.Version} >= 8.95
-                    {
-                      ICraft:StartWO
-                    }
-                    else
-                    {
-                      Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StartWO]:Set[TRUE]
-                      UIElement[CraftLite@Titlebar@Craft Selection]:Hide
-                    }
+                    ICraft:StartWO
                   </OnLeftClick>
                 </Commandbutton>
                 <Commandbutton Name='Create Rush Order'>
@@ -1505,15 +1526,7 @@
                   <Height>20</Height>
                   <Text>Create Rush Orders</Text>
                   <OnLeftClick>
-                    if ${ICraft.Version} >= 8.95
-                    {
-                      ICraft:StartRO
-                    }
-                    else
-                    {
-                      Script[${If[${Script[Buffer:Craft](exists)},Buffer:Craft,Craft]}].Variable[StartRO]:Set[TRUE]
-                      UIElement[CraftLite@Titlebar@Craft Selection]:Hide
-                    }
+                    ICraft:StartRO
                   </OnLeftClick>
                 </Commandbutton>
               </Tab>
