@@ -1342,6 +1342,7 @@ function Have_Aggro()
 function Lost_Aggro(int mobid)
 {
     ;; This is now handled in CheckGroupOrRaidAggro()
+    EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
     call CheckGroupOrRaidAggro
     return
 }
