@@ -1844,11 +1844,11 @@ function Combat(bool PVP=0)
 							break
 						}
 
-						if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+						if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}](exists)}
 						{
-							call Have_Aggro
+							call Have_Aggro ${aggroid}
 							if ${UseCustomRoutines}
-								call Custom__Have_Aggro
+								call Custom__Have_Aggro ${aggroid}
 						}
 					}
 
