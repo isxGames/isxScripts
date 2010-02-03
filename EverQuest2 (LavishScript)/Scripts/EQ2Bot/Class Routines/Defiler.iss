@@ -664,9 +664,15 @@ function Post_Combat_Routine(int xAction)
 	call CheckHeals
 }
 
-function Have_Aggro()
+function Have_Aggro(int aggroid)
 {
-
+	if ${Me.ToActor.Health}<50 || ${Actor[${aggroid}].IsEpic}
+	{
+		if  ${Me.Ability[${SpellType[180]}].IsReady}
+			call CastSpellRange 180 0 0 0 ${aggroid}
+		elseif ${Me.Ability[${SpellType[181]}].IsReady}
+			call CastSpellRange 181 0 0 0 ${aggroid}	
+	}
 }
 
 function RefreshPower()
@@ -1096,10 +1102,7 @@ function HealMT(int MTID, int MTInMyGroup)
 
 	;DeathWard Check
 	if ${Actor[${MTID}].Health}<50 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[8]}].Range}
-	{
-		call CastSpellRange 387
 		call CastSpellRange 8 0 0 0 ${MTID} 0 0 0 0 1 0
-	}
 
 	;MAINTANK EMERGENCY HEAL
 	if ${Actor[${MTID}].Health}<30 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)}
@@ -1111,7 +1114,6 @@ function HealMT(int MTID, int MTInMyGroup)
 	{
 		if ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[15]}].Range}
 		{
-			call CastSpellRange 387
 			call CastSpellRange 15 0 0 0 ${KillTarget} 0 0 0 0 2 0
 		}
 		else
