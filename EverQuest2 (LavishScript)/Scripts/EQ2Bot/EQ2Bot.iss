@@ -3725,7 +3725,7 @@ function MovetoWP(lnavregionref destination)
 			PositionHeading:Set[${Me.Heading}]
 		}
 
-		while ${PathIndex:Inc}<=${CurrentPath.Hops}
+		while ${PathIndex:Inc}<=${CurrentPath.Hops} && !${Mob.Detect}
 		{
 			; Move to next Waypoint
 			WPX:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.X}]
@@ -3855,7 +3855,7 @@ function MovetoMaster()
 
 		press -hold ${forward}
 
-		while ${PathIndex:Inc}<=${CurrentPath.Hops}
+		while ${PathIndex:Inc}<=${CurrentPath.Hops} && !${Mob.Detect}
 		{
 			WPX:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.X}]
 			WPY:Set[${CurrentPath.Region[${PathIndex}].CenterPoint.Y}]
