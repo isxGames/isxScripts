@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; EQ2Bot.iss Version 2.7.2d Updated: 7/13/09 by CaPilot
+; EQ2Bot.iss Version 2.7.23 Updated: 02/03/2010 by Pygar
 ;
 ; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
@@ -3006,6 +3006,8 @@ function Pull(string npcclass)
 	variable int ThisActorID
 	variable int ThisActorTargetID
 	variable bool bContinue=FALSE
+	variable point3f interceptpoint
+	variable float timedelay
 
 	;; This variable must be set before anything is done in this function
 	engagetarget:Set[FALSE]
@@ -3014,9 +3016,19 @@ function Pull(string npcclass)
 		return 0
 
 	;; If we are already in combat...why are we pulling? Cause sometimes we pull nearest mob when group member enters combat?
-	if (${Me.ToActor.InCombatMode})
-		return 0
+	if ${Mob.Detect}
+	{	
+		Mob:CheckMYAggro
 
+		if ${haveaggro} && ${Actor[${aggroid}](exists)}
+		{
+			KillTarget:Set[${aggroid}]
+			call Combat 
+			return ${aggroid}
+		}	
+	}
+	
+	
 	if !${Actor[NPC,range,${ScanRange}](exists)} && !(${Actor[NamedNPC,range,${ScanRange}](exists)} && !${IgnoreNamed})
 		return 0
 
@@ -3379,9 +3391,19 @@ function Pull(string npcclass)
 
 			if ${Target.Distance} > 5 && !${pulling} && ${PathType}!=2
 			{
-				if ${AutoMelee}
+				if ${Target.Speed}
+					timedelay:Set[${Math.Calc[${Target.Distance}/(${Target.Speed}+${Me.Speed}]}]
+				else
+					timedelay:Set[1]
+					
+				interceptpoint:Set[${Postion.PredictPointAtAngle[${Target.ID},180,${timedelay},3]}]
+				if ${Target.Velocity} && ${AutoMelee}
+					call FastMove ${interceptpoint.X} ${interceptpoint.Z} 5
+				elseif ${Target.Velocity} && ${Target.Distance} > ${MARange}
+					call FastMove ${interceptpoint.X} ${interceptpoint.Z} ${MARange}
+				elseif ${AutoMelee}
 					call FastMove ${Target.X} ${Target.Z} 5
-				elseif ${Target.Distance} > ${MARange}
+				elseif  ${Target.Distance} > ${MARange}
 					call FastMove ${Target.X} ${Target.Z} ${MARange}
 			}
 
