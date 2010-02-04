@@ -71,6 +71,40 @@ objectdef EQ2Position
 		return
 	}
 
+	; This one will predict an intercept point based on your speed and the actor's speed.
+	; and direction.
+	; Defaults to the actor's location (with prediction) if:
+	;   1) Either you, or the actor, is stationary.
+	;   2) You are both moving, but the actor is not facing you.
+	member:point3f PredictInterceptPoint(uint ActorID)
+	{
+		variable point3f MyVelocity
+		variable point3f ActorVelocity
+		variable float TimeToImpact
+		variable float TotalSpeed
+		MyVelocity:Set[${Me.ToActor.Velocity}]
+		ActorVelocity:Set[${Actor[${ActorID}].Velocity}]
+		
+		if ${MyVelocity.Distance[0,0,0]}==0 || ${ActorVelocity.Distance[0,0,0]}==0
+		{   /* If neither of us are moving, move directly for the actor. */
+			Returning:Set[${Actor[${ActorID}].Loc}]
+		}
+		elseif ${This.Angle[${ActorID}]}>155 /* Within 50 degrees of front of actor */
+		{                                    /* and we're both moving */
+			TotalSpeed:Set[${MyVelocity.Distance[0,0,0]} + ${ActorVelocity.Distance[0,0,0]}
+			TimeToImpact:Set[${Actor[${ActorID}].Distance} / ${TotalSpeed}]
+			Returning:Set[${This.PredictPointAtAngle[${ActorID},180,${TimeToImpact},1]}]
+		}
+		else /* We are both moving, BUT the actor isn't approaching. */
+		{    /* Predict point from my speed to actor's predicted location. */
+			TotalSpeed:Set[${MyVelocity.Distance[0,0,0]}]
+			TimeToImpact:Set[${Actor[${ActorID}].Distance} / ${TotalSpeed}]
+			Returning:Set[${This.PredictPointAtAngle[${ActorID},180,${TimeToImpact},3]}]
+		}
+		return
+ 
+	}
+		
 	member:float GetBaseMaxRange(uint ActorID)
 	{
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale}]}
