@@ -56,8 +56,6 @@ function Harvest()
 		VGExecute /autoattack
 		wait 10
 		}	
-	while ${GV[bool,bHarvesting]}
-		wait 5
 	if !${GV[bool,bHarvesting]} && ${Me.Ability[Auto Attack].Toggled}
 		{
 		VGExecute /autoattack
