@@ -367,15 +367,24 @@ function combatfunction()
 			call targettank
 		if ${DoClassCombat}
 			call Class_Combat
-		call KillingBlowAbility
-    		call DotSpells
-		call DotMelee
-		call DebuffSpells
-		call DebuffMelee
-		call CombatSpellSequence
-		call CombatMeleeSequence
-		call AOESpell
-		call AOEMelee
+		if ${doKillingBlow}
+			call KillingBlowAbility
+		if ${doAOESpell}
+			call AOESpell
+		if ${doAOEMelee}
+			call AOEMelee
+		if ${doDotSpell}
+    			call DotSpells
+		if ${doDotMelee}
+			call DotMelee
+		if ${doDebuffSpell}
+			call DebuffSpells
+		if ${doDebuffMelee}
+			call DebuffMelee
+		if ${doCombatSeqSpell}
+			call CombatSpellSequence
+		if ${doCombatSeqMelee}
+			call CombatMeleeSequence
 	}
 
 	;-------------------------------------------
