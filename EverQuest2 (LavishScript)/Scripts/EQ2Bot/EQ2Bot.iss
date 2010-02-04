@@ -3397,7 +3397,7 @@ function Pull(string npcclass)
 					timedelay:Set[1]
 					
 				interceptpoint:Set[${Postion.PredictPointAtAngle[${Target.ID},180,${timedelay},3]}]
-				if ${Target.Velocity} && ${AutoMelee}
+				if (${Target.Velocity.X} || ${Target.Velocity.Z}) && ${AutoMelee}
 					call FastMove ${interceptpoint.X} ${interceptpoint.Z} 5
 				elseif ${Target.Velocity} && ${Target.Distance} > ${MARange}
 					call FastMove ${interceptpoint.X} ${interceptpoint.Z} ${MARange}
