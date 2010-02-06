@@ -37,6 +37,7 @@ function:bool CheckFurious()
 		wait 10
 		if ${ClassRole.healer}
 			call Healcheck	
+		call StancePushfunct
 		}
 	if !${mobisfurious}
 		return TRUE	
@@ -71,6 +72,7 @@ function TurnOffAttackfunct()
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck
+					call StancePushfunct
 					}
 			}
 			Iterator:Next
@@ -108,6 +110,7 @@ function TurnOffDuringBuff()
 					wait 5
 					if ${ClassRole.healer}
 						call Healcheck
+					call StancePushfunct
 				}
 			}
 			Iterator:Next
