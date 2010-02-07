@@ -47,7 +47,8 @@ function Monk_Opener()
 ;********************************************
 function Monk_Combat()
 {
-
+	call Monk_Boost
+		
 }
 ;********************************************
 function Monk_Emergency()
@@ -95,5 +96,56 @@ function Monk_PostCombat()
 ;********************************************
 function Monk_PostCasting()
 {
+	call Monk_Boost
+}
+function Monk_Boost()
+{
+	if ${Me.Ability[Three Finger Strike].IsReady}
+		{
+		call checkabilitytocast "Jin Surge V"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Jin Surge V" "Buff" "Neither"
+			}
+		call checkabilitytocast "Secret of Transcendence II"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Secret of Transcendence II" "Buff" "Neither"
+			}
+		call checkabilitytocast "Fists of Celerity"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Fists of Celerity" "Buff" "Neither"
+			}
+		call checkabilitytocast "Quickening Jolt"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Quickening Jolt" "Buff" "Neither"
+			}
 
+		}
+	if ${Me.Ability[Thousand Fists IV].IsReady}
+		{
+		call checkabilitytocast "Jin Surge V"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Jin Surge V" "Buff" "Neither"
+			}
+		}
+	if ${Me.Ability[Impossible Drunken Palm II].IsReady}
+		{
+		call checkabilitytocast "Jin Surge V"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Jin Surge V" "Buff" "Neither"
+			}
+		}
+	if ${Me.Ability[Flying Kick V].IsReady}
+		{
+		call checkabilitytocast "Jin Surge V"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Jin Surge V" "Buff" "Neither"
+			}
+		}
 }
