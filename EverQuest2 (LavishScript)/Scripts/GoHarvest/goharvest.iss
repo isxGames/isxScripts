@@ -12,7 +12,7 @@ variable filepath ConfigPath="${LavishScript.HomeDirectory}/Scripts/GoHarvest/"
 variable filepath HarvestFile="${ConfigPath}Harvest.xml"
 
 
-variable bool HarvestNode[9]=TRUE
+variable bool HarvestNode[10]=TRUE
 variable bool HBlocked[2]=FALSE
 variable bool pauseharvest=TRUE
 variable bool StrictLos=TRUE
@@ -30,6 +30,7 @@ variable float SZ
 variable settingsetref harvest
 variable settingsetref harvesttype
 
+variable string MiscNode
 variable string World=${Zone.ShortName}
 variable filepath NavFile=${ConfigPath}${World}.xml
 variable string Region
@@ -53,7 +54,7 @@ function main()
 				call AutoBox 2
 
 		}
-		while ${pauseharvest}
+		while ${pauseharvest}|| ${Me.ToActor.Health}<90
 		scan:Set[${UIElement[GoHarvest].FindChild[GUITabs].FindChild[Harvest].FindChild[ScanArea].Text}]
 
 		if ${scan} <0 || ${scan} > 300
@@ -81,7 +82,7 @@ function startharvest(int scan)
 		{
 			break
 		}
-		if !${Me.InCombat}
+		if !${Me.InCombat} && ${Me.ToActor.Health}>90
 		{
 			if ${MaxDistance}
 			{
@@ -109,6 +110,11 @@ function startharvest(int scan)
 								if ${Math.Distance[${CustomActor[${harvestloop}].X},${SX}]} > ${scan} || ${Math.Distance[${CustomActor[${harvestloop}].Z},${SZ}]} > ${scan}
 								{
 									break
+								}
+								else
+								{
+									UIElement[XDistance@Harvest@GUITabs@GoHarvest]:SetText[${Math.Distance[${CustomActor[${harvestloop}].X},${SX}]}]
+									UIElement[ZDistance@Harvest@GUITabs@GoHarvest]:SetText[${Math.Distance[${CustomActor[${harvestloop}].Z},${SZ}]}]
 								}
 							}
 							if ${HarvestNode[${tempvar}]}
@@ -143,10 +149,10 @@ function startharvest(int scan)
 								}
 							}
 						}
-						while ${tempvar:Inc} <=9
+						while ${tempvar:Inc} <=10
 					}
 				}
-				if ${pauseharvest} || ${Me.InCombat}
+				if ${pauseharvest} || ${Me.InCombat} || ${Me.ToActor.Health}<90
 				break
 			}
 			while ${harvestloop:Inc} <= ${harvestcount}
@@ -157,11 +163,20 @@ function startharvest(int scan)
 function checknodename(int tempvar, string actorname)
 {
 	variable string match
-	harvesttype:Set[${LavishSettings[goharvest].FindSet[${tempvar}]}]
-	match:Set[${harvesttype.FindSetting[${actorname}]}]
+	variable string miscnode=${UIElement[MiscNode@Harvest@GUITabs@GoHarvest].Text}
+	
+	if ${tempvar} == 10 && ${actorname.Equal[${miscnode}]}
+	{
+		Return TRUE
+	}
+	else
+	{
+		harvesttype:Set[${LavishSettings[goharvest].FindSet[${tempvar}]}]
+		match:Set[${harvesttype.FindSetting[${actorname}]}]
 
-	if !${match.Equal[NULL]}
-		 Return TRUE
+		if !${match.Equal[NULL]}
+			Return TRUE
+	}
 
 	Return FALSE
 }
@@ -199,9 +214,11 @@ function harvestnode()
 					
 					if ${Return.Equal["STUCK"]}
 					{
+						Return STUCK
 						;  check area around the character
 						call LOScircle FALSE ${Actor[${HID}].X} ${Math.Calc[${Actor[${HID}].Y}+2]} ${Actor[${HID}].Z} 30
 					}
+
 				}
 				else
 				{
@@ -241,13 +258,15 @@ function hitnode(float HID)
 	variable int hitcount
 	hitcount:Set[0]
 	; while the target exists
-	while ${Target(exists)} && ${hitcount:Inc} <50
+	do
 	{
+		; Make sure not in combat
 		do
 		{
 			waitframe
 		}
 		while ${Me.InCombat}
+		
 		waitframe
 		Target:DoubleClick
 		wait 20
@@ -256,14 +275,15 @@ function hitnode(float HID)
 			return STUCK
 		
 		while ${Me.CastingSpell}
-		waitframe
+			waitframe
 	}
-
+	while ${Target(exists)} && ${hitcount:Inc} <50
 }
 
 function checkPC()
 {
 	variable int PCloop=1
+	EQ2:CreateCustomActorArray[byDist,9}]
 	do
 	{
 		if ${CustomActor[${PCloop}].Type.Equal[PC]} && !${CustomActor[${PCloop}].Name.Equal[${Me.Name}]}
@@ -376,33 +396,36 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 					if ${Return.Equal[Universe]}
 					{
 						; check to see if mid-point is available
-						if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]}
+						if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]} || !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${Math.Calc[${CY}+1]},${pz}]}
 						{	
-							; check to see if there is LOS from that mid-loc to the node
-							if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} && ${Actor[${HID}](exists)}
+							if ${Actor[${HID}](exists)}
 							{
+								; check to see if there is LOS from that mid-loc to the node
+								if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} || !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${Math.Calc[${CY}+1]},${CZ}]}
+								{
+		
+									; check nobody at that node
+									call checkPC ${HID}
+									if ${Return}
+										return STUCK
+		
+									Echo Moving to ${CX},${CZ} via ${px},${pz}
+									call moveto ${px} ${pz} 2 0 3 1
+									waitframe
+									
+									; check still nobody at that node
+									call checkPC ${HID}
 	
-								; check nobody at that node
-								call checkPC ${HID}
-								if ${Return}
-									return STUCK
+									if ${Return}
+										return STUCK
+										
+										if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
+										    	call moveto ${CX} ${CZ} 3 0 3 1
+										else
+											call moveto ${CX} ${CZ} 4 0 3 1
 	
-								Echo Moving to ${CX},${CZ} via ${px},${pz}
-								call moveto ${px} ${pz} 2 0 3 1
-								waitframe
-								
-								; check still nobody at that node
-								call checkPC ${HID}
-
-								if ${Return}
-									return STUCK
-
-								if (${Actor[${HID}].Name.Equal[?]} || ${Actor[${HID}].Name.Equal[!]})
-								    	call moveto ${CX} ${CZ} 3 0 3 1
-								else
-									call moveto ${CX} ${CZ} 4 0 3 1
-
-								Return THERE
+										Return THERE
+								}
 							}
 						}
 						else
@@ -576,51 +599,54 @@ atom atexit()
 
 atom(script) EQ2_onIncomingText(string Text)
 {
-	if ${Text.Find["too far away"]} > 0  && !${BadNode}
+	if !${Me.InCombat}
 	{
-		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		if ${Text.Find["too far away"]} > 0  && !${BadNode}
 		{
-			echo "Node is 'too far away'..."
-			GoHarvest:SetBadNode[${HID}]  
-			BadNode:Set[TRUE]
-		}
-	}
-	elseif (${Text.Find["Can't see target"]} > 0)  && !${BadNode}
-	{
-		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
-		{
-			echo "Received 'Cant see target' message..."
-			GoHarvest:SetBadNode[${HID}]  
-			BadNode:Set[TRUE]
-		}
-	}
-	elseif ${Text.Find["You cannot "]} > 0 && !${BadNode}
-	{
-	    if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+			if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 			{
-			echo " Received 'You cannot ...' message..."
-			GoHarvest:SetBadNode[${HID}]  
-			BadNode:Set[TRUE]
+				echo "Node is 'too far away'..."
+				GoHarvest:SetBadNode[${HID}]  
+				BadNode:Set[TRUE]
+			}
 		}
-	}	
-	elseif (${Text.Find["Your target is already in use"]} > 0)  && !${BadNode}
-	{
-		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		elseif (${Text.Find["Can't see target"]} > 0)  && !${BadNode}
 		{
-			echo "Received 'Your target is already in use by someone else' message..."
-			GoHarvest:SetBadNode[${HID}]  
-			BadNode:Set[TRUE]
+			if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+			{
+				echo "Received 'Cant see target' message..."
+				GoHarvest:SetBadNode[${HID}]  
+				BadNode:Set[TRUE]
+			}
 		}
-	}
-	elseif (${Text.Find["not enough skill"]} > 0)  && !${BadNode}
-	{
-		if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+		elseif ${Text.Find["You cannot "]} > 0 && !${BadNode}
 		{
-			echo "Received 'You do not have enough skill' message..."
-			GoHarvest:SetBadNode[${HID}]  
-			BadNode:Set[TRUE]
+		    if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+				{
+				echo " Received 'You cannot ...' message..."
+				GoHarvest:SetBadNode[${HID}]  
+				BadNode:Set[TRUE]
+			}
+		}	
+		elseif (${Text.Find["Your target is already in use"]} > 0)  && !${BadNode}
+		{
+			if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+			{
+				echo "Received 'Your target is already in use by someone else' message..."
+				GoHarvest:SetBadNode[${HID}]  
+				BadNode:Set[TRUE]
+			}
 		}
-	}
+		elseif (${Text.Find["not enough skill"]} > 0)  && !${BadNode}
+		{
+			if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
+			{
+				echo "Received 'You do not have enough skill' message..."
+				GoHarvest:SetBadNode[${HID}]  
+				BadNode:Set[TRUE]
+			}
+		}
+}
 }
 
 function CheckAggro()
@@ -634,7 +660,7 @@ function CheckAggro()
 		Echo Waiting till aggro gone, and over 90 health...
 		do
 		{
-			wait 3
+			waitframe
 		}
 		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
 
