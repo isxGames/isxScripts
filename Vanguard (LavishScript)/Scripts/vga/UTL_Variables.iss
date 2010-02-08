@@ -207,6 +207,7 @@ variable bool DoAcceptRes
 variable bool DoAutoResCombat
 variable bool DoAutoResNoCombat
 variable bool IsFollowing
+variable bool DoRemoveLowDiplo
 ;===================================================
 ;===             Main Combat Variables          ====
 ;===================================================
