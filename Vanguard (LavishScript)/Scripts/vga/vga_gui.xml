@@ -1799,11 +1799,29 @@
                     Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
+		<checkbox Name='DoRemoveLowDiplo' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>13</X>
+                            <Y>33</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Delete All Low Level Diplo Papers</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoRemoveLowDiplo}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoRemoveLowDiplo:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                 <Listbox Name="DiploNPCsList" Template="VG.ListBox">
                   <X>13</X>
-                  <Y>36</Y>
+                  <Y>56</Y>
                   <Width>95%</Width>
-                  <Height>200</Height>
+                  <Height>180</Height>
                   <AutoSort>TRUE</AutoSort>
                   <Sort>Text</Sort>
                   <OnLoad>

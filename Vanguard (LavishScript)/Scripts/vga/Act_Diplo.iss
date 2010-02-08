@@ -47,6 +47,52 @@ function AssistDiplo()
 		}
 	}
 }
+function RemoveLowLevelDiplo()
+{
+	variable int i
+	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+		{
+		if ${Me.Inventory[${i}].Type.Equal[Miscellaneous]}
+		{
+		if ${Me.Inventory[${i}].Name.Find[Plots]} > 0 || ${Me.Inventory[${i}].Name.Find[Blackmail]} > 0 || ${Me.Inventory[${i}].Name.Find[Arcana]} > 0 || ${Me.Inventory[${i}].Name.Find[Trends]} > 0
+		{
+		if ${Me.Inventory[${i}].Description.Find[Crude]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]	
+			}
+		if ${Me.Inventory[${i}].Description.Find[Significant]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		if ${Me.Inventory[${i}].Description.Find[This significant]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		if ${Me.Inventory[${i}].Description.Find[Some significant]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		if ${Me.Inventory[${i}].Description.Find[Essential]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		if ${Me.Inventory[${i}].Description.Find[This essential]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		if ${Me.Inventory[${i}].Description.Find[Vital]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		if ${Me.Inventory[${i}].Description.Find[This Vital]} == 1
+			{
+			Me.Inventory[${i}]:Delete[${Me.Inventory[${i}].Quantity}]
+			}
+		}
+		}
+		}
+}
+
 function DoParleyCard()
 {
     if (!${Parlay.DialogPoints})

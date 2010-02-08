@@ -335,6 +335,8 @@ function downtimefunction()
 		call Trash
     	if ${doHarvest}
 		call Harvest
+	if ${DoRemoveLowDiplo}
+		call RemoveLowLevelDiplo
 	return
 }
 
