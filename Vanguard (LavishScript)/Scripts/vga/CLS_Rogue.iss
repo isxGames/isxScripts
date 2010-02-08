@@ -328,8 +328,9 @@ function Rogue_PostCasting()
  	if (${AttackPosition.TargetAngle} > 45 || ${Me.Target.Distance} > 4) && ${Me.Inventory[Flash Powder](exists)} && ${Me.InCombat}
      {
       call trickem
-	   }
 	   return
+	   }
+
 	if ${dolethalstrikes} && ${LSTimer.TimeRemaining} < 1 && !${Me.Effect[Bloodlust](exists)} && !${Me.Effect[${lethalstrikes}](exists)} && ${Me.EnergyPct} > 30
 		{
 		Me.Ability[${lethalstrikes}]:Use
