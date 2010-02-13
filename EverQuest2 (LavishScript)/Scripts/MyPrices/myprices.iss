@@ -37,6 +37,9 @@ variable bool BadContainer=FALSE
 variable bool HighLatency
 variable bool NewItemsOnly
 variable bool Shinies
+variable bool PlaceRaws
+variable bool PlaceRares
+variable bool PlaceUncommon
 
 ; Bool variables used to integrate with eq2inventory script
 variable bool CraftListMade=FALSE
@@ -96,6 +99,9 @@ variable settingsetref ItemList
 variable settingsetref Item
 variable settingsetref General
 variable settingsetref Rejected
+variable settingsetref Raws
+variable settingsetref Rares
+variable settingsetref Uncommon
 
 
 ; Global Variables used to save information in all functions/datafiles
@@ -1979,6 +1985,7 @@ function SaveSetting(string Settingname, string Value)
 	call echolog "-> SaveSetting ${Settingname} ${Value}"
 	General:Set[${LavishSettings[myprices].FindSet[General]}]
 	General:AddSetting[${Settingname},${Value}]
+	LavishSettings[myprices]:Export[${XMLPath}${EQ2.ServerName}_${CurrentChar}_MyPrices.XML]
 	call echolog "<end> : SaveSetting"
 }
 
@@ -2600,6 +2607,11 @@ objectdef BrokerBot
 		; Set for collection items that are already collected
 		LavishSettings:AddSet[Rejected]
 
+		; Sets for Raws/Rares and Uncommon Harvests
+		LavishSettings:AddSet[Raws]
+		LavishSettings:AddSet[Rares]
+		LavishSettings:AddSet[Uncommon]
+
 		; Set for Items that are for sale
 		ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 
@@ -2611,12 +2623,21 @@ objectdef BrokerBot
 		myprices[BuyList]:Clear
 		LavishSettings[craft]:Clear
 		LavishSettings[Rejected]:Clear
+		LavishSettings[Raws]:Clear
+		LavishSettings[Rares]:Clear
+		LavishSettings[Uncommon]:Clear
 		
 		;Load settings from that characters file
 		
 		LavishSettings[myprices]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_MyPrices.XML]
 		LavishSettings[Rejected]:Import[${XMLPath}${EQ2.ServerName}_${Me.Name}_Collections.XML]
 
+		; Load Harvests Datafiles
+		
+		LavishSettings[Raws]:Import[${XMLPath}raws.XML]
+		LavishSettings[Rares]:Import[${XMLPath}rares.XML]
+		LavishSettings[Uncommon]:Import[${XMLPath}uncommon.XML]
+		
 		General:Set[${LavishSettings[myprices].FindSet[General]}]
 		Logging:Set[${General.FindSetting[Logging]}]
 		MatchLowPrice:Set[${General.FindSetting[MatchLowPrice]}]
@@ -2632,6 +2653,9 @@ objectdef BrokerBot
 		MatchActual:Set[${General.FindSetting[ActualPrice]}]
 		TakeCoin:Set[${General.FindSetting[TakeCoin]}]
 		Shinies:Set[${General.FindSetting[Shinies]}]
+		PlaceRaws:Set[${General.FindSetting[PlaceRaws]}]
+		PlaceRares:Set[${General.FindSetting[PlaceRares]}]
+		PlaceUncommon:Set[${General.FindSetting[PlaceUncommon]}]
 		
 		i:Set[1]
 		do
@@ -3213,6 +3237,10 @@ function placeshinies()
 
 	call refreshbags
 
+	Raws:Set[${LavishSettings.FindSet[Raws]}]
+	Rares:Set[${LavishSettings.FindSet[Rares]}]
+	Uncommon:Set[${LavishSettings.FindSet[Uncommon]}]
+	
 	if ${Return}
 	{
 		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
@@ -3251,6 +3279,27 @@ function placeshinies()
 							Me:CreateCustomInventoryArray[nonbankonly]
 							waitframe
 						}
+					}
+					elseif ${PlaceRaws} && ${Raws.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
+					{
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						PSxvar:Set[1]
+						Me:CreateCustomInventoryArray[nonbankonly]
+						waitframe
+					}
+					elseif ${PlaceRares} && ${Rares.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
+					{
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						PSxvar:Set[1]
+						Me:CreateCustomInventoryArray[nonbankonly]
+						waitframe
+					}
+					elseif ${PlaceUncommon} && ${Uncommon.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
+					{
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						PSxvar:Set[1]
+						Me:CreateCustomInventoryArray[nonbankonly]
+						waitframe
 					}
 					elseif ${ItemList.FindSet["${Me.CustomInventory[${PSxvar}].Name}"].FindSetting[CraftItem]}
 					{
@@ -3422,6 +3471,9 @@ atom atexit()
 	LavishSettings[myprices]:Clear
 	LavishSettings[craft]:Clear
 	LavishSettings[Rejected]:Clear
+	LavishSettings[Raws]:Clear
+	LavishSettings[Rares]:Clear
+	LavishSettings[Uncommon]:Clear
 }
 
 atom EQ2_onChoiceWindowAppeared()
