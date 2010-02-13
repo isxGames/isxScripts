@@ -165,7 +165,7 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
-	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
+	; Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 	
 	call AddLog "${Version}" FF11FFCC
 	call echolog "${Version}"
@@ -227,7 +227,7 @@ function main(string goscan, string goscan2)
 		; if paramater PLACE used then run place crafted items routine
 		if ${runplace} 
 		{
-			call buy item place
+			call placeshinies
 			
 			; if the scan paramater hasn't been set then don't do anything else
 			if !${runautoscan}
@@ -323,10 +323,11 @@ function main(string goscan, string goscan2)
 
 						; scan to make sure the item is listed and get lowest price , TRUE means exact name match only
 						Call BrokerSearch "${ItemName}" TRUE
-
+						
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
+
 							; record the minimum broker price
 							MinPrice:Set[${Return}]
 
@@ -350,6 +351,7 @@ function main(string goscan, string goscan2)
 								}
 								else
 								{
+									
 									if ${MatchActual}
 										MinBasePrice:Set[${MinPrice}]
 									else
@@ -362,6 +364,7 @@ function main(string goscan, string goscan2)
 										IntMinBasePrice:Set[${MinBasePrice}]
 										MinBasePrice:Set[${IntMinBasePrice}]
 									}
+
 								}
 
 								; do conversion from silver value to pp gp sp cp format
@@ -480,10 +483,11 @@ function main(string goscan, string goscan2)
 											else
 											{
 												; otherwise use the lowest price on the vendor or your highest price allowed
-												if ${MinBasePrice}>${MaxSalePrice} && ${MaxPriceSet}
+												if ${MinBasePrice}>${MaxSalePrice} && ${MaxPriceSet} && ${MaxSalePrice} > 0
 												{
 													MinBasePrice:Set[${MaxSalePrice}]
 												}
+												
 												call StringFromPrice ${MinBasePrice}
 												call AddLog "${ItemName} : Unlisted : Setting to ${Return}" FF00FF00
 												Call echolog "<Main> (Unlisted Item - Lowest Broker Price)"
@@ -500,7 +504,7 @@ function main(string goscan, string goscan2)
 										}
 									}
 								}
-								Else
+								else
 								{
 									call SetColour Sell ${currentpos} FF00FF00
 								}
@@ -1623,6 +1627,7 @@ function:float BrokerSearch(string ItemName, bool NameOnly)
 function checkitem(string checktype, string ItemName)
 {
 	call echolog "-> checkitem : ${checktype} ${name}"
+	
 	; keep a reference directly to the Item set.
 	ItemList:Set[${LavishSettings[myprices].FindSet[Item]}]
 	Item:Set[${ItemList.FindSet["${ItemName}"]}]
@@ -1886,7 +1891,6 @@ function Saveitem(string Saveset)
 		{
 			Item:AddSetting[LowerNumber,FALSE]
 		}
-
 	}
 	elseif ${Saveset.Equal["Craft"]} || ${Saveset.Equal["Inventory"]}
 	{
@@ -3205,6 +3209,7 @@ function placeshinies()
 	call echolog "<start> placeshinies"
 	
 	Declare PSxvar int local 1
+	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 
 	call refreshbags
 
@@ -3263,6 +3268,8 @@ function placeshinies()
 	{
 		Echo Error Reading inventory Contents - Skipping Placing items
 	}
+	CraftItemsPlaced:Set[TRUE]
+	Event[EQ2_ExamineItemWindowAppeared]:DetachAtom[EQ2_ExamineItemWindowAppeared]
 	call echolog "<end> placeshinies"
 }
 
