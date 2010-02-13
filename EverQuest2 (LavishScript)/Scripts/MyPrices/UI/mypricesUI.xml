@@ -399,6 +399,102 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<checkbox Name='Raws'>
+						<X>5%</X>
+						<Y>270</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Place Raws</Text>
+						<AutoTooltip>
+							Place Raws.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.PlaceRaws}
+						{
+							UIElement[Raws@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[Raws@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[Raws@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting PlaceRaws TRUE]
+								Script[myprices].VariableScope.PlaceRares:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting PlaceRaws FALSE]
+								Script[myprices].VariableScope.PlaceRaws:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='Rares'>
+						<X>5%</X>
+						<Y>290</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Place Rares</Text>
+						<AutoTooltip>
+							Place Rares.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.PlaceRares}
+						{
+							UIElement[Rares@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[Rares@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[Rares@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting PlaceRares TRUE]
+								Script[myprices].VariableScope.PlaceRares:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting PlaceRares FALSE]
+								Script[myprices].VariableScope.PlaceRares:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
+					<checkbox Name='Uncommon'>
+						<X>5%</X>
+						<Y>310</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Place Uncommon</Text>
+						<AutoTooltip>
+							Place Uncommon Materials.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.PlaceUncommon}
+						{
+							UIElement[Uncommon@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[Uncommon@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[Uncommon@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting PlaceUncommon TRUE]
+								Script[myprices].VariableScope.PlaceUncommon:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting PlaceUncommon FALSE]
+								Script[myprices].VariableScope.PlaceUncommon:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
 					<Text Name='PauseTimerText'>
 						<X>25</X>
 						<Y>350</Y>
