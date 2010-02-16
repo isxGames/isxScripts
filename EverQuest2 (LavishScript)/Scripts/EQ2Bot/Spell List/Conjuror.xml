@@ -27,7 +27,7 @@
 		<Setting name="10,506">Cure Elemental</Setting>
 		<Setting name="10,394">Shadowstep</Setting>
 		<Setting name="10,380">Animated Dagger</Setting>
-		<Setting name="10,500">Bewilderment</Setting>
+		<Setting name="10,501">Bewilderment</Setting>
 		<Setting name="10,509">Shrink Servant</Setting>
 		<Setting name="10,377">Bubble</Setting>
 		<Setting name="10,379">Hydromancer</Setting>
@@ -62,6 +62,7 @@
 		<Setting name="14,1">Heal Servant II</Setting>
 		<Setting name="15,353">Call Servant</Setting>
 		<Setting name="15,400">Invisibility</Setting>
+		<setting name="15,222">Call Servant</Setting>
 		<Setting name="16,190">Petrify</Setting>
 		<Setting name="16,95">Earthquake</Setting>
 		<Setting name="17,73">Fiery Annihilation III</Setting>
