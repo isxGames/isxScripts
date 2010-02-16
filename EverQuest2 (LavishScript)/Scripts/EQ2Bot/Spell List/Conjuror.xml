@@ -140,7 +140,7 @@
 		<Setting name="56,1">Heal Servant V</Setting>
 		<Setting name="57,61">Crystal Blast VII</Setting>
 		<Setting name="58,95">Earthquake IV</Setting>
-		<Setting name="58,397">Elemental Unity</Setting>
+		<Setting name="58,363">Elemental Unity</Setting>
 		<Setting name="58,190">Petrify IV</Setting>
 		<Setting name="59,73">Fiery Annihilation VI</Setting>
 		<Setting name="60,355">Aery Hunter III</Setting>
@@ -181,7 +181,7 @@
 		<Setting name="75,356">Fiery Magician V</Setting>
 		<Setting name="76,40">Flameshield V</Setting>
 		<Setting name="76,91">Ice Storm VII</Setting>
-		<Setting name="76,397">Elemental Unity II</Setting>
+		<Setting name="76,363">Elemental Unity II</Setting>
 		<Setting name="77,357">Earthen Avatar VII</Setting>
 		<Setting name="77,35">Fire Seed V</Setting>
 		<Setting name="77,329">Aqueous Swarm V</Setting>
