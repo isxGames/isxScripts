@@ -109,6 +109,10 @@ function Pulse()
 		call RefreshPower
 		call AnswerShardRequest
 
+		;keep blazing Avatar up at all times
+		if ${Me.ToActor.Pet(exists)} && ${AoEMode}
+			call CastSpellRange 71
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
@@ -156,73 +160,64 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Combat_Buff]
-	MobHealth[1,1]:Set[1]
-	MobHealth[1,2]:Set[100]
-	SpellRange[1,1]:Set[397]
+	Action[1]:Set[Dot1]
+	SpellRange[1,1]:Set[73]
 
-	Action[2]:Set[Dot1]
-	SpellRange[2,1]:Set[73]
+	Action[2]:Set[Converge]
+	MobHealth[2,1]:Set[30]
+	MobHealth[2,2]:Set[100]
+	SpellRange[2,1]:Set[375]
 
-	Action[3]:Set[Converge]
-	MobHealth[3,1]:Set[30]
-	MobHealth[3,2]:Set[100]
-	SpellRange[3,1]:Set[375]
+	Action[3]:Set[Plane_Shift]
+	SpellRange[3,1]:Set[399]
 
-	Action[4]:Set[Plane_Shift]
-	SpellRange[4,1]:Set[399]
+	Action[4]:Set[Master_Strike]
 
-	Action[5]:Set[Special_Pet1]
-	MobHealth[5,1]:Set[30]
+	Action[5]:Set[Bewilderment]
+	MobHealth[5,1]:Set[1]
 	MobHealth[5,2]:Set[100]
-	SpellRange[5,1]:Set[329]
+	SpellRange[5,1]:Set[501]
 
-	Action[6]:Set[AoE1]
-	SpellRange[6,1]:Set[90]
+	Action[6]:Set[Dot2]
+	MobHealth[6,1]:Set[20]
+	MobHealth[6,2]:Set[100]
+	SpellRange[6,1]:Set[72]
 
-	Action[7]:Set[Special_Pet2]
-	MobHealth[7,1]:Set[30]
-	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[330]
+	Action[7]:Set[AoE_PB]
+	SpellRange[7,1]:Set[95]
 
-	Action[8]:Set[Nuke]
-	MobHealth[8,1]:Set[0]
-	MobHealth[8,2]:Set[100]
-	SpellRange[8,1]:Set[61]
+	Action[8]:Set[AoE2]
+	SpellRange[8,1]:Set[91]
 
-	Action[9]:Set[AoE_PB]
-	SpellRange[9,1]:Set[95]
+	Action[9]:Set[Special_Pet1]
+	MobHealth[9,1]:Set[30]
+	MobHealth[9,2]:Set[100]
+	SpellRange[9,1]:Set[329]
 
-	Action[10]:Set[AoE2]
-	SpellRange[10,1]:Set[91]
+	Action[10]:Set[AoE1]
+	SpellRange[10,1]:Set[90]
 
-	Action[11]:Set[Sunbolt]
-	SpellRange[11,1]:Set[62]
+	Action[11]:Set[Special_Pet2]
+	MobHealth[11,1]:Set[30]
+	MobHealth[11,2]:Set[100]
+	SpellRange[11,1]:Set[330]
 
-	Action[12]:Set[Master_Strike]
+	Action[12]:Set[AA_Animated_Dagger]
+	MobHealth[12,1]:Set[30]
+	MobHealth[12,2]:Set[100]
+	SpellRange[12,1]:Set[380]
 
-	Action[13]:Set[Stun]
-	SpellRange[13,1]:Set[190]
+	Action[13]:Set[Special_Pet3]
+	MobHealth[13,1]:Set[20]
+	MobHealth[13,2]:Set[100]
+	SpellRange[13,1]:Set[331]
 
-	Action[14]:Set[AA_Animated_Dagger]
-	MobHealth[14,1]:Set[30]
-	MobHealth[14,2]:Set[100]
-	SpellRange[14,1]:Set[380]
+	;Action[16]:Set[Stun]
+	;SpellRange[16,1]:Set[190]
+	
+	;Action[10]:Set[Sunbolt]
+	;SpellRange[10,1]:Set[62]
 
-	Action[15]:Set[Dot2]
-	MobHealth[15,1]:Set[20]
-	MobHealth[15,2]:Set[100]
-	SpellRange[15,1]:Set[72]
-
-	Action[16]:Set[Special_Pet3]
-	MobHealth[16,1]:Set[20]
-	MobHealth[16,2]:Set[100]
-	SpellRange[16,1]:Set[331]
-
-	Action[17]:Set[Bewilderment]
-	MobHealth[17,1]:Set[1]
-	MobHealth[17,2]:Set[90]
-	SpellRange[17,1]:Set[501]
 }
 
 function PostCombat_Init()
@@ -390,8 +385,10 @@ function Buff_Routine(int xAction)
 
 		case Buff_Shards
 			if !${Me.Inventory[${ShardType}](exists)}
+			{
+				buff shard
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
-
+			}
 			if ${Me.Inventory["Shard of Essence"](exists)}
 				ShardType:Set[Shard of Essence]
 			break
@@ -403,7 +400,8 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-
+	CurrentAction:Set[Current Action - ${xAction} - ${Action[${xAction}]}]
+	
 	variable int Counter
 
 	AutoFollowingMA:Set[FALSE]
@@ -415,23 +413,35 @@ function Combat_Routine(int xAction)
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
 		call SummonPet
 
+	if ${Me.Pet.Distance}>35
+		call CastSpellRange 222
+
 	if ${Me.ToActor.Pet(exists)} && ${PetMode}
 		call PetAttack
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-
+	if ${Actor[${KillTarget}].Target.ID}==${Me.ID}
+		call CastSpellRange 390 0 0 0 ${KillTarget}
+		
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 		call CastSpellRange 303
 
 	call CheckHeals
 	call RefreshPower
-	;call AnswerShardRequest
+	call AnswerShardRequest
+
+	;keep blazing Avatar up at all times
+	if ${Me.ToActor.Pet(exists)} && ${AoEMode}
+		call CastSpellRange 71
 
 	;keep blazing Avatar up at all times
 	if ${Me.ToActor.Pet(exists)}
-		call CastSpellRange 71
+		call CastSpellRange 363
+
+	if ${Me.Ability[${SpellType[61]}].IsReady}
+		call CastSpellRange 61 0 0 0 ${KillTarget}
 
 	;keep distracting strike up if we have a scout pet
 	if ${Me.Maintained[${SpellType[355]}](exists)}
@@ -440,9 +450,6 @@ function Combat_Routine(int xAction)
 	;keep  Magic Leash up if we have a mage pet
 	if ${Me.Maintained[${SpellType[356]}](exists)}
 		call CastSpellRange 397
-
-	if ${Me.Ability[${SpellType[60]}].IsReady}
-		call CastSpellRange 60 0 0 0 ${KillTarget}
 
 	switch ${Action[${xAction}]}
 	{
@@ -470,24 +477,19 @@ function Combat_Routine(int xAction)
 			break
 
 		case AoE_PB
-			if ${PBAoEMode} && ${Mob.Count}>1
+			if ${PBAoEMode}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			break
 
 		case Combat_Buff
-		case AoE1
 			if ${AoEMode} && (${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
-
+		case AoE1
 		case AoE2
 			if ${AoEMode}
-			{
-				if ${Mob.Count}>1
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
-
 		case Dot2
 		case Nuke
 			call CheckCondition MobHealth ${MobHealth[${xAction},1]} ${MobHealth[${xAction},2]}
@@ -498,10 +500,16 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${PostSpellRange[${xAction},1]}
 			break
 		case Master_Strike
-			if ${Me.Ability[Master Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
-				Target ${KillTarget}
-				Me.Ability[Master Strike]:Use
+				;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+				;;;;;;;;;;
+				if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+				{
+					Target ${KillTarget}
+					Me.Ability[Master's Strike]:Use
+					spellsused:Inc
+				}
 			}
 			break
 		case Sunbolt
@@ -521,6 +529,10 @@ function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
 
+	;Blazing Vigor Line in Combat
+	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<80
+			call CastSpellRange 309
+
 	switch ${PostAction[${xAction}]}
 	{
 
@@ -537,22 +549,49 @@ function Post_Combat_Routine(int xAction)
 
 }
 
-function Have_Aggro()
+function Have_Aggro(int aggroid)
 {
-
+	echo Aggro from ${aggroid}
+	KillTaget:Set[${aggroid}]
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
 
+	if ${MainTank}
+	{
+		call CastSpellRange 390 0 0 0 ${aggroid}
+		if ${AoEMode}
+			call CastSpellRange 395
+	}
+		
 	;Buff Stoneskin
 	call CastSpellRange 180
 }
 
-function Lost_Aggro()
+function Lost_Aggro(int aggroid)
 {
 
+	if ${Actor[${aggroid}].Target.ID}==${Me.ID}
+	{
+	KillTaget:Set[${aggroid}]
+	if !${TellTank} && ${WarnTankWhenAggro}
+	{
+		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
+		TellTank:Set[TRUE]
+	}
+
+	if ${MainTank}
+	{
+		call CastSpellRange 390 0 0 0 ${aggroid}
+		if ${AoEMode}
+			call CastSpellRange 395
+	}
+		
+	;Buff Stoneskin
+	call CastSpellRange 180
+	}
 }
 
 function MA_Lost_Aggro()
@@ -574,7 +613,7 @@ function RefreshPower()
 {
 
 	;Blazing Vigor line out of Combat
-	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.Pet.IsAggro}
+	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.InCombatMode}
 		call CastSpellRange 309
 
 	;Conjuror Shard
@@ -647,6 +686,7 @@ function AnswerShardRequest()
 		{
 			if ${Time.Timestamp}-${ShardRequestTimer}>2
 			{
+				echo shard queue
 				call CastSpellRange 360 0 0 0 ${Actor[pc,exactname,${ShardQueue.Peek}].ID}
 				ShardRequestTimer:Set[${Time.Timestamp}]
 			}
