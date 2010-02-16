@@ -1,7 +1,10 @@
 Revision History ||
 ===================
+v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
+
 v8.97 - Minor changes to config file structure. Movement keys now save to
         global config file.
+
 v8.96 - Adjusted commandline arguments relating to verbosity. Default
         verbosity is now for error messages only, displayed in the console
         window.
