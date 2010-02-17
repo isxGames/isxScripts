@@ -749,6 +749,7 @@
                               Script[VGA]:QueueCommand[call StoneButton]
                             </OnLeftClick>
                           </Button>
+
                     	<Text Name='combattxt--' Template='VG.BoldText'>
                       	<X>13</X>
                       	<Y>380</Y>
@@ -891,6 +892,24 @@
                               }
                             </OnChange>
                           </Textentry>
+                     <checkbox Name='DoByPassVGAHeals' Template='VG.BlueCheckbox'>
+                      <visible>4</visible>
+                      <X>15</X>
+                      <Y>460</Y>
+                      <Width>15</Width>
+                      <Height>20</Height>
+                      <Text>Do VGA Healing</Text>
+                      <OnLoad>
+                        if ${Script[vga].VariableScope.DoByPassVGAHeals}
+                        {
+                        This:SetChecked
+                        }
+                      </OnLoad>
+                      <OnLeftClick>
+                        Script[vga].VariableScope.DoByPassVGAHeals:Set[${This.Checked}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </checkbox>
 			   <checkbox Name='DoClassOpener' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
@@ -1388,7 +1407,7 @@
                   <Width>45%</Width>
                   <Height>20</Height>
                   <Alignment>Left</Alignment>
-                  <Text>Temporary Buffs Missing</Text>
+                  <Text>Diplo Buffs Missing</Text>
                 </Text>
                 <Listbox Name="RDBWList" Template="VG.ListBox">
                   <X>195</X>
@@ -2740,24 +2759,7 @@
                         Script[VGA]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
-                     <checkbox Name='DoByPassVGAHeals' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>15</X>
-                      <Y>547</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Bypass VGA Heal Script (use my Custom)</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.DoByPassVGAHeals}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.DoByPassVGAHeals:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
-                      </OnLeftClick>
-                    </checkbox>
+
                   </Children>
                 </Frame>
               </Tab>
@@ -4733,689 +4735,6 @@
         </Children>
       </Frame>
     </Tab>
-    <!--Top Level Triggers Tab-->
-    <Tab name='Triggers'>
-      <Frame name='TriggersFrm'>
-        <Height>100%</Height>
-        <Width>100%</Width>
-        <BackgroundColor>FF000000</BackgroundColor>
-        <Texture></Texture>
-        <Children>
-          <!--SubTriggers tab control-->
-          <TabControl name='TriggersSubTab' Template='VG.Tabcontrol'>
-            <X>0</X>
-            <Y>3</Y>
-            <Font>
-              <Name>Times New Roman</Name>
-              <Size>14</Size>
-            </Font>
-            <TabHeight>18</TabHeight>
-            <TabBorder>2</TabBorder>
-            <Height>99%</Height>
-            <Width>99%</Width>
-            <Tabs>
-              <!--2nd Level Main1 Tab-->
-              <Tab name='1'>
-                <Frame name='1frm'>
-                  <Height>100%</Height>
-                  <Width>100%</Width>
-                  <Texture></Texture>
-                  <Children>
-                    <checkbox Name='doTrigger1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>10</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Do Trigger</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doTrigger1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doTrigger1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <Text Name='txt--' Template='VG.BoldText'>
-                      <X>13</X>
-                      <Y>23</Y>
-                      <Width>95%</Width>
-                      <Height>20</Height>
-                      <Alignment>Left</Alignment>
-                      <Text>-----------------When the Conditions below are TRUE-----------------------------</Text>
-                    </Text>
-                    <checkbox Name='doWeaknessT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>30</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Weakness</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doWeaknessT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doWeaknessT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="cmbWeaknessT1" Template="VG.ComboBox">
-                      <X>150</X>
-                      <Y>30</Y>
-                      <Width>230</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.WeaknessT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <checkbox Name='doCritT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>50</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>When Crit is Available</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doCritT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doCritT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="cmbCritT1" Template="VG.ComboBox">
-                      <X>150</X>
-                      <Y>50</Y>
-                      <Width>230</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.CritT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <checkbox Name='doHealthT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>70</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>When Mob Health is Between</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doHealthT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doHealthT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <Textentry Name='MinHealthT1' Template='VG.TextEntry'>
-                      <X>200</X>
-                      <Y>70</Y>
-                      <Width>25</Width>
-                      <Height>20</Height>
-                      <Color>FFDDBB00</Color>
-                      <SelectionColor>FF000000</SelectionColor>
-                      <Border>0</Border>
-                      <OnLoad>
-                        This:SetText[${Script[vga].VariableScope.MinHealthT1}]
-                      </OnLoad>
-                      <OnChange>
-                        if ${This.Text.Length} > 0
-                        {
-                        Script[vga].VariableScope.MinHealthT1:Set[${Math.Calc[${This.Text}].Int}]
-                        }
-                      </OnChange>
-                    </Textentry>
-                    <Text Name='txtArcaneinrt' Template='VG.BoldText'>
-                      <X>228</X>
-                      <Y>70</Y>
-                      <Width>150</Width>
-                      <Height>20</Height>
-                      <Alignment>Left</Alignment>
-                      <Text>and</Text>
-                    </Text>
-                    <Textentry Name='MaxHealthT1' Template='VG.TextEntry'>
-                      <X>252</X>
-                      <Y>70</Y>
-                      <Width>25</Width>
-                      <Height>20</Height>
-                      <Color>FFDDBB00</Color>
-                      <SelectionColor>FF000000</SelectionColor>
-                      <Border>0</Border>
-                      <OnLoad>
-                        This:SetText[${Script[vga].VariableScope.MaxHealthT1}]
-                      </OnLoad>
-                      <OnChange>
-                        if ${This.Text.Length} > 0
-                        {
-                        Script[vga].VariableScope.MinHealthT2:Set[${Math.Calc[${This.Text}].Int}]
-                        }
-                      </OnChange>
-                    </Textentry>
-                    <checkbox Name='doAbilReadyT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>90</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>When Abilities are Ready</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doAbilReadyT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doAbilReadyT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="AbilReadyT1cmb" Template="VG.ComboBox">
-                      <X>200</X>
-                      <Y>90</Y>
-                      <Width>180</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        if ${This.SelectedItem.Text(exists)}
-                        {
-                        ;AddAbilReadyT1 "${This.SelectedItem.Text}"
-                        ;BuildAbilReadyT1
-                        }
-                      </OnSelect>
-                    </ComboBox>
-                    <Listbox Name="AbilReadyT1List" Template="VG.ListBox">
-                      <X>33</X>
-                      <Y>112</Y>
-                      <Width>89%</Width>
-                      <Height>66</Height>
-                      <AutoSort>TRUE</AutoSort>
-                      <Sort>User</Sort>
-                      <OnLoad>
-                        ;BuildAbilReadyT1
-                      </OnLoad>
-                      <OnRightClick>
-                        ;RemoveAbilReadyT1 "${This.SelectedItem}"
-                        This.SelectedItem:Remove
-                        ;BuildAbilReadyT1
-                      </OnRightClick>
-                    </Listbox>
-                    <checkbox Name='doIncTextT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>180</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>On Incoming Text</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doIncTextT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doIncTextT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <Textentry Name='IncTextT1' Template='VG.TextEntry'>
-                      <X>150</X>
-                      <Y>180</Y>
-                      <Width>230</Width>
-                      <Height>20</Height>
-                      <Color>FFDDBB00</Color>
-                      <SelectionColor>FF000000</SelectionColor>
-                      <Border>0</Border>
-                      <OnLoad>
-                        This:SetText[${Script[vga].VariableScope.IncTextT1}]
-                      </OnLoad>
-                      <OnChange>
-                        if ${This.Text.Length} > 0
-                        {
-                        Script[vga].VariableScope.IncTextT1:Set[${This.Text}]
-                        }
-                      </OnChange>
-                    </Textentry>
-                    <checkbox Name='doBuffT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>200</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>When I have Buffs</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doBuffT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doBuffT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="BuffT1cmb" Template="VG.ComboBox">
-                      <X>33</X>
-                      <Y>220</Y>
-                      <Width>160</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        if ${This.SelectedItem.Text(exists)}
-                        {
-                        ;AddBuffT1 "${This.SelectedItem.Text}"
-                        ;BuildBuffT1
-                        }
-                      </OnSelect>
-                    </ComboBox>
-                    <Listbox Name="BuffT1List" Template="VG.ListBox">
-                      <X>33</X>
-                      <Y>242</Y>
-                      <Width>160</Width>
-                      <Height>46</Height>
-                      <AutoSort>TRUE</AutoSort>
-                      <Sort>User</Sort>
-                      <OnLoad>
-                        ;BuildBuffT1
-                      </OnLoad>
-                      <OnRightClick>
-                        ;RemoveBuffT1 "${This.SelectedItem}"
-                        This.SelectedItem:Remove
-                        ;BuildBuffT1
-                      </OnRightClick>
-                    </Listbox>
-                    <checkbox Name='doMobDeBuffT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>200</X>
-                      <Y>200</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>When Mob Has Debuffs</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doMobDeBuffT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doMobDeBuffT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="MobDeBuffT1cmb" Template="VG.ComboBox">
-                      <X>200</X>
-                      <Y>220</Y>
-                      <Width>180</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        if ${This.SelectedItem.Text(exists)}
-                        {
-                        ;AddMobDeBuffT1 "${This.SelectedItem.Text}"
-                        ;BuildMobDeBuffT1
-                        }
-                      </OnSelect>
-                    </ComboBox>
-                    <Listbox Name="MobDeBuffT1List" Template="VG.ListBox">
-                      <X>200</X>
-                      <Y>240</Y>
-                      <Width>180</Width>
-                      <Height>46</Height>
-                      <AutoSort>TRUE</AutoSort>
-                      <Sort>User</Sort>
-                      <OnLoad>
-                        ;BuildMobDeBuffT1
-                      </OnLoad>
-                      <OnRightClick>
-                        ;RemoveMobDeBuffT1 "${This.SelectedItem}"
-                        This.SelectedItem:Remove
-                        ;BuildMobDeBuffT1
-                      </OnRightClick>
-                    </Listbox>
-                    <checkbox Name='doMobBuffT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>290</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>MobBuff</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doMobBuffT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doMobBuffT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="cmbMobBuffT1" Template="VG.ComboBox">
-                      <X>150</X>
-                      <Y>290</Y>
-                      <Width>230</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.MobBuffT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <checkbox Name='doSpecialT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>310</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>You have Special Points ></Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doSpecialT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doSpecialT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <Textentry Name='SpecialT1' Template='VG.TextEntry'>
-                      <X>200</X>
-                      <Y>310</Y>
-                      <Width>25</Width>
-                      <Height>20</Height>
-                      <Color>FFDDBB00</Color>
-                      <SelectionColor>FF000000</SelectionColor>
-                      <Border>0</Border>
-                      <OnLoad>
-                        This:SetText[${Script[vga].VariableScope.SpecialT1}]
-                      </OnLoad>
-                      <OnChange>
-                        if ${This.Text.Length} > 0
-                        {
-                        Script[vga].VariableScope.SpecialT1:Set[${Math.Calc[${This.Text}].Int}]
-                        }
-                      </OnChange>
-                    </Textentry>
-                    <Text Name='txt---' Template='VG.BoldText'>
-                      <X>13</X>
-                      <Y>365</Y>
-                      <Width>95%</Width>
-                      <Height>20</Height>
-                      <Alignment>Left</Alignment>
-                      <Text>----------------------THEN Do the Actions Below-----------------------------------</Text>
-                    </Text>
-                    <checkbox Name='doSwapStanceT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>380</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Swap Stance</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doSwapStanceT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doSwapStanceT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="cmbSwapStanceT1" Template="VG.ComboBox">
-                      <X>150</X>
-                      <Y>380</Y>
-                      <Width>230</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.SwapStanceT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <checkbox Name='doSwitchSongsT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>400</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Swap Songs</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doSwitchSongsT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doSwitchSongsT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="cmbSwitchSongsT1" Template="VG.ComboBox">
-                      <X>150</X>
-                      <Y>400</Y>
-                      <Width>230</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.SwitchSongsT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <checkbox Name='doSwapWeaponsT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>420</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Swap Weapons</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doSwapWeaponsT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doSwapWeaponsT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <Text Name='txtprim' Template='VG.BoldText'>
-                      <X>120</X>
-                      <Y>422</Y>
-                      <Width>80</Width>
-                      <Height>20</Height>
-                      <Alignment>Left</Alignment>
-                      <Text>Primary</Text>
-                    </Text>
-                    <ComboBox Name="cmbSWPrimaryT1" Template="VG.ComboBox">
-                      <X>190</X>
-                      <Y>420</Y>
-                      <Width>190</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.SWPrimaryT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <Text Name='txtSec' Template='VG.BoldText'>
-                      <X>120</X>
-                      <Y>442</Y>
-                      <Width>80</Width>
-                      <Height>20</Height>
-                      <Alignment>Left</Alignment>
-                      <Text>Secondary</Text>
-                    </Text>
-                    <ComboBox Name="cmbSWSecondaryT1" Template="VG.ComboBox">
-                      <X>190</X>
-                      <Y>440</Y>
-                      <Width>190</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        Script[vga].VariableScope.SWSecondaryT1:Set[${This.SelectedItem.Text}]
-                      </OnSelect>
-                    </ComboBox>
-                    <checkbox Name='doUseItemsT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>10</X>
-                      <Y>460</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Use Items</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doUseItemsT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doUseItemsT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="UseItemsT1cmb" Template="VG.ComboBox">
-                      <X>33</X>
-                      <Y>480</Y>
-                      <Width>160</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        if ${This.SelectedItem.Text(exists)}
-                        {
-                        ;AddUseItemsT1 "${This.SelectedItem.Text}"
-                        ;BuildUseItemsT1
-                        }
-                      </OnSelect>
-                    </ComboBox>
-                    <Listbox Name="UseItemsT1List" Template="VG.ListBox">
-                      <X>33</X>
-                      <Y>500</Y>
-                      <Width>160</Width>
-                      <Height>46</Height>
-                      <AutoSort>TRUE</AutoSort>
-                      <Sort>User</Sort>
-                      <OnLoad>
-                        ;BuildUseItemsT1
-                      </OnLoad>
-                      <OnRightClick>
-                        ;RemoveUseItemsT1 "${This.SelectedItem}"
-                        This.SelectedItem:Remove
-                        ;BuildUseItemsT1
-                      </OnRightClick>
-                    </Listbox>
-                    <checkbox Name='doUseAbilT1' Template='VG.BlueCheckbox'>
-                      <visible>4</visible>
-                      <X>200</X>
-                      <Y>460</Y>
-                      <Width>15</Width>
-                      <Height>20</Height>
-                      <Text>Use Abilities</Text>
-                      <OnLoad>
-                        if ${Script[vga].VariableScope.doUseAbilT1}
-                        {
-                        This:SetChecked
-                        }
-                      </OnLoad>
-                      <OnLeftClick>
-                        Script[vga].VariableScope.doUseAbilT1:Set[${This.Checked}]
-                      </OnLeftClick>
-                    </checkbox>
-                    <ComboBox Name="MobUseAbilT1cmb" Template="VG.ComboBox">
-                      <X>200</X>
-                      <Y>480</Y>
-                      <Width>180</Width>
-                      <Height>20</Height>
-                      <OnLoad>
-                        This:AddItem[NONE]
-                      </OnLoad>
-                      <OnSelect>
-                        if ${This.SelectedItem.Text(exists)}
-                        {
-                        ;AddUseAbilT1 "${This.SelectedItem.Text}"
-                        ;BuildUseAbilT1
-                        }
-                      </OnSelect>
-                    </ComboBox>
-                    <Listbox Name="UseAbilT1List" Template="VG.ListBox">
-                      <X>200</X>
-                      <Y>500</Y>
-                      <Width>180</Width>
-                      <Height>46</Height>
-                      <AutoSort>TRUE</AutoSort>
-                      <Sort>User</Sort>
-                      <OnLoad>
-                        ;BuildUseAbilT1
-                      </OnLoad>
-                      <OnRightClick>
-                        ;RemoveUseAbilT1 "${This.SelectedItem}"
-                        This.SelectedItem:Remove
-                        ;BuildUseAbilT1
-                      </OnRightClick>
-                    </Listbox>
-                  </Children>
-                </Frame>
-              </Tab>
-              <!--2nd Level Main2 Tab-->
-              <Tab name='2'>
-                <Frame name='2frm'>
-                  <Height>100%</Height>
-                  <Width>100%</Width>
-                  <Texture></Texture>
-                  <Children></Children>
-                </Frame>
-              </Tab>
-              <!--2nd Level Main3 Tab-->
-              <Tab name='3'>
-                <Frame name='3frm'>
-                  <Height>100%</Height>
-                  <Width>100%</Width>
-                  <Texture></Texture>
-                  <Children></Children>
-                </Frame>
-              </Tab>
-              <!--2nd Level Main4 Tab-->
-              <Tab name='4'>
-                <Frame name='4frm'>
-                  <Height>100%</Height>
-                  <Width>100%</Width>
-                  <Texture></Texture>
-                  <Children></Children>
-                </Frame>
-              </Tab>
-              <!--2nd Level Main5 Tab-->
-              <Tab name='5'>
-                <Frame name='5frm'>
-                  <Height>100%</Height>
-                  <Width>100%</Width>
-                  <Texture></Texture>
-                  <Children></Children>
-                </Frame>
-              </Tab>
-            </Tabs>
-          </TabControl>
-        </Children>
-      </Frame>
-    </Tab>
     <!--Top Level Class Tab-->
     <Tab name='Class'>
       <Frame name='ClassFrm'>
@@ -6214,9 +5533,9 @@
                       <Text>Missing Buff</Text>
                     </Text>
                     <Textentry Name='RequestBuff1' Template='VG.TextEntry'>
-                      <X>68</X>
+                      <X>200</X>
                       <Y>10</Y>
-                      <Width>102</Width>
+                      <Width>180</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
                       <SelectionColor>FF000000</SelectionColor>
@@ -6313,9 +5632,9 @@
                       <Text>Missing Buff</Text>
                     </Text>
                     <Textentry Name='RequestBuff2' Template='VG.TextEntry'>
-                      <X>68</X>
+                      <X>200</X>
                       <Y>60</Y>
-                      <Width>102</Width>
+                      <Width>180</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
                       <SelectionColor>FF000000</SelectionColor>
@@ -6412,9 +5731,9 @@
                       <Text>Missing Buff</Text>
                     </Text>
                     <Textentry Name='RequestBuff3' Template='VG.TextEntry'>
-                      <X>68</X>
+                      <X>200</X>
                       <Y>110</Y>
-                      <Width>102</Width>
+                      <Width>180</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
                       <SelectionColor>FF000000</SelectionColor>
@@ -6511,9 +5830,9 @@
                       <Text>Missing Buff</Text>
                     </Text>
                     <Textentry Name='RequestBuff4' Template='VG.TextEntry'>
-                      <X>68</X>
+                      <X>200</X>
                       <Y>160</Y>
-                      <Width>102</Width>
+                      <Width>180</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
                       <SelectionColor>FF000000</SelectionColor>
@@ -6610,9 +5929,9 @@
                       <Text>Missing Item</Text>
                     </Text>
                     <Textentry Name='RequestItems1' Template='VG.TextEntry'>
-                      <X>68</X>
+                      <X>200</X>
                       <Y>210</Y>
-                      <Width>102</Width>
+                      <Width>180</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
                       <SelectionColor>FF000000</SelectionColor>
@@ -6709,9 +6028,9 @@
                       <Text>Missing Item</Text>
                     </Text>
                     <Textentry Name='RequestItems2' Template='VG.TextEntry'>
-                      <X>68</X>
+                      <X>200</X>
                       <Y>260</Y>
-                      <Width>102</Width>
+                      <Width>180</Width>
                       <Height>19</Height>
                       <Color>FFDDBB00</Color>
                       <SelectionColor>FF000000</SelectionColor>

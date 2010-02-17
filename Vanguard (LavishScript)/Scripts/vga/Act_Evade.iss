@@ -2,8 +2,7 @@
 ;********************************************
 function checkFD()
 {
-	if ${doFD}
-	{
+
 		if ${Me.HealthPct} < ${FDPct} && !${Me.Effect[${FD}](exists)}
 		{
 			if !${Me.Ability[${FD}].IsReady}
@@ -13,14 +12,12 @@ function checkFD()
 			while ${Me.HealthPct} < ${FDPct}
 				wait 20
 		}	
-	}
 	return
 }  
 ;********************************************
 function checkinvoln1()
 {
-	if ${doInvoln1}
-	{
+
 		if ${Me.HealthPct} < ${Involn1Pct} && !${Me.Effect[${Involn1}](exists)} && !${Me.Effect[${Involn2}](exists)} && !${Me.Effect[${FD}](exists)}
 		{
 			if ${Me.IsCasting}
@@ -29,14 +26,11 @@ function checkinvoln1()
 			if ${Return}
 				call executeability "${Involn1}" "evade" "Post"
 		}
-	}
 	return
 } 
 ;********************************************
 function checkinvoln2()
 {
-	if ${doInvoln2}
-	{
 		if ${Me.HealthPct} < ${Involn2Pct} && !${Me.Effect[${Involn1}](exists)} && !${Me.Effect[${Involn2}](exists)} && !${Me.Effect[${FD}](exists)}
 		{
 			if ${Me.IsCasting}
@@ -45,13 +39,12 @@ function checkinvoln2()
 			if ${Return}
 			call executeability "${Involn2}" "evade" "Post"
 		}	
-	}
 	return
 } 
 ;********************************************
 function pushagrototank()
 {
-	if ${doPushAgro} && !${tankpawn.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}  && ${Group.Count} > 1
+	if !${tankpawn.Equal[${Me.TargetOfTarget}]} && ${fight.ShouldIAttack}  && ${Group.Count} > 1
 	{
 		VGExecute /targetauto ${tankpawn}
 		waitframe
@@ -159,7 +152,7 @@ function rescue()
 ;********************************************
 function checkevade1()
 {
-	if ${doEvade1} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
+	if ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
 	{
 		variable iterator Iterator
 		Evade1:GetSettingIterator[Iterator]
@@ -180,7 +173,7 @@ function checkevade1()
 ;********************************************
 function checkevade2()
 {
-	if ${doEvade2} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
+	if ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
 	{
 		variable iterator Iterator
 		Evade2:GetSettingIterator[Iterator]

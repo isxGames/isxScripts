@@ -34,7 +34,7 @@ function:bool CheckFurious()
 			wait 10
 			return TRUE
 			}	
-		wait 10
+		wait 12
 		if ${ClassRole.healer}
 			call Healcheck	
 		call StancePushfunct
@@ -45,8 +45,6 @@ function:bool CheckFurious()
 ;********************************************
 function TurnOffAttackfunct()
 {
-	If ${doTurnOffAttack} 
-	{
 		variable iterator Iterator
 		TurnOffAttack:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
@@ -77,14 +75,11 @@ function TurnOffAttackfunct()
 			}
 			Iterator:Next
 		}
-	}
-	call CheckFurious
 } 
 ;********************************************
 function TurnOffDuringBuff()
 {
-	If ${doTurnOffDuringBuff} 
-	{
+
 		variable iterator Iterator
 		TurnOffDuringBuff:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
@@ -115,13 +110,11 @@ function TurnOffDuringBuff()
 			}
 			Iterator:Next
 		}
-	}
-	call CheckFurious
 } 
 ;********************************************
 function counteringfunct()
 {
-	If !${Me.TargetCasting.Equal[None]} && ${doCounter}
+	If !${Me.TargetCasting.Equal[None]} 
 	{
 		actionlog "Mob is Casting ${Me.TargetCasting}"		
 		variable iterator Iterator
@@ -154,8 +147,6 @@ function counteringfunct()
 ;********************************************
 function clickiesfunct()
 {
-	if ${doClickies}
-	{
 		variable iterator Iterator
 		Clickies:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
@@ -169,13 +160,12 @@ function clickiesfunct()
 				}
 		Iterator:Next
 		}
-	}
 }
 ;********************************************
 function dispellfunct()
 {
 	
-	if ${doDispell} && ${Me.TargetBuff} > 0
+	if ${Me.TargetBuff} > 0
 	{
 		variable iterator Iterator
 		Dispell:GetSettingIterator[Iterator]
@@ -199,10 +189,9 @@ function dispellfunct()
 } 
 ;********************************************
 function StancePushfunct()
-{
-	
-	if ${doStancePush} && ${ClassRole.stancepusher}
-		{
+{	
+	if ${doStancePush}
+	{
 		variable iterator Iterator
 		StancePush:GetSettingIterator[Iterator]
 		while ( ${Iterator.Key(exists)} )
@@ -218,6 +207,5 @@ function StancePushfunct()
 				}
 			Iterator:Next
 			}
-		}
-	
+	}
 }

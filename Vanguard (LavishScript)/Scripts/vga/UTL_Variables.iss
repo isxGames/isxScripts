@@ -294,44 +294,6 @@ variable float64 ChainReactionTimer
 variable int64 ChainReactionPawnID
 
 ;===================================================
-;===                 Triggers Variables        ====
-;===================================================
-
-variable string doTrigger1
-variable string doWeaknessT1
-variable string WeaknessT1
-variable string doCritsT1
-variable string CritsT1
-variable string doHealthT1
-variable string MinHealthT1
-variable string MaxHealthT1
-variable string doAbilReadyT1
-variable string doIncTextT1
-variable string IncTextT1
-variable string doBuffT1
-variable string doMobDeBuffT1
-variable string doMobBuffT1
-variable string MobBuffT1
-variable string doSpecialT1
-variable string SpecialT1
-variable string doLoseAgroT1
-variable string doGainAgroT1
-variable string doOtherAgroT1
-variable string doSwapStanceT1
-variable string SwapStanceT1
-variable string doSwitchSongsT1
-variable string SwitchSongsT1
-variable string doSwapWeaponsT1
-variable string SWPrimaryT1
-variable string SWSecondaryT1
-variable string doUseItemsT1
-variable string doUseAbilT1
-variable string LastSongT1
-variable string LastPrimaryT1
-variable string LastSecondaryT1
-variable string LastStanceT1
-
-;===================================================
 ;===                 Bard Variables             ====
 ;===================================================
 variable string PrimaryWeapon
