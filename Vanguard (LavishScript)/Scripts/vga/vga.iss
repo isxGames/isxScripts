@@ -185,11 +185,6 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/GUI_Psionicist.iss"
 #include "${Script.CurrentDirectory}/GUI_Sorcerer.iss"
 
-;-------------------------------------------
-;************Triggers Scripts***************
-;-------------------------------------------
-#include "${Script.CurrentDirectory}/GUI_Triggers.iss"
-
 ;===================================================
 ;===               Main Routine               ====
 ;===================================================
@@ -229,7 +224,6 @@ function main()
 	call PopulateAbilitiesLists
 	call PopulateBuffLists
 	call PopulateSellLists
-	call PopulateTriggersLists
 	call DreadKnight_GUI
 	call Warrior_GUI
 	call Paladin_GUI
@@ -351,7 +345,8 @@ function combatfunction()
 	call PreCombatLoopFunction
 	if ${DoClassPreCombat}
 		call Class_PreCombat
-	call SendInPets
+	if ${Me.Pet(exists)}
+		call SendInPets
 
 	;-------------------------------------------
 	;************Main Combat Loop***************
@@ -405,7 +400,6 @@ function PreCombatLoopFunction()
 {
 	if ${DoLooseTarget} 
 		call LooseTarget
- 	call CheckPosition
 	call EmergencyActions
 	if !${DoByPassVGAHeals}
 		call Healcheck
@@ -435,30 +429,43 @@ function EmergencyActions()
 	;-------------------------------------------
 	;***Check If I Need to Turn off Attack******
 	;-------------------------------------------
-	call TurnOffAttackfunct
-	call TurnOffDuringBuff
+	If ${doTurnOffAttack} 
+		call TurnOffAttackfunct
+	If ${doFurious}
+		call CheckFurious
+	If ${doTurnOffDuringBuff} 
+		call TurnOffDuringBuff
 	;-------------------------------------------
 	;*******Check If I Need to Evade************
 	;-------------------------------------------
 
-	call checkFD
-	call checkinvoln1
-	call checkinvoln2
-	call checkevade1
-	call checkevade2
+	if ${doFD}
+		call checkFD
+	if ${doInvoln1}
+		call checkinvoln1
+	if ${doInvoln2}
+		call checkinvoln2
+	if ${doEvade1}
+		call checkevade1
+	if ${doEvade2}
+		call checkevade2
 	;-------------------------------------------
 	;***Check If I Need to Counter a Spell******
 	;-------------------------------------------	
-	call counteringfunct
+	if ${doCounter}
+		call counteringfunct
 	;-------------------------------------------
 	;***Check If I Need to Dispell a Spell******
 	;-------------------------------------------
-	call dispellfunct
+	if ${doDispell}
+		call dispellfunct
 	;-------------------------------------------
 	;****Check If I Need to Push a Stance******
 	;-------------------------------------------
-	call StancePushfunct
-	call clickiesfunct
+	if ${doStancePush}
+		call StancePushfunct
+	if ${doClickies}
+		call clickiesfunct
 	if ${DoClassEmergency}
 		call Class_Emergency
 	return
@@ -469,14 +476,15 @@ function EmergencyActions()
 ;===================================================
 function PostCastingActions()
 {
-	UpdateTempBuffWatch
-
 	call EmergencyActions
 	if !${DoByPassVGAHeals}
 		call Healcheck
-	call LooseTarget
-	call pushagrototank
-	call rescue
+	if ${DoLooseTarget}
+		call LooseTarget
+	if ${doPushAgro}
+		call pushagrototank
+	if ${doRescue}
+		call rescue
 	;-------------------------------------------
 	;****Check for Class Specific Post**********
 	;-------------------------------------------
@@ -485,18 +493,21 @@ function PostCastingActions()
 	;-------------------------------------------
 	;********Check If I Can Critical************
 	;-------------------------------------------
-	call functAOECrits
-	call functBuffCrits
-	call functDotCrits
-	call functCombatCrits
+	if ${doAOECrits}
+		call functAOECrits
+	if ${doBuffCrits}
+		call functBuffCrits
+	if ${doDotCrits}
+		call functDotCrits
+	if ${doCombatCrits}
+		call functCombatCrits
 	;-------------------------------------------
 	;****Check If I Need to use my Counter******
 	;-------------------------------------------
-	call functCounterAttacks
+	if ${doCounterAttack}
+		call functCounterAttacks
 	if ${DoResInCombat}
 		call ResUp
-
-	
 	return
 }
 

@@ -2,11 +2,7 @@
 function functAOECrits()
 {
 	variable iterator anIter
-	
 	debuglog "Running AOE Crits"
-	if ${doAOECrits} && ${fight.ShouldIAttack}
-	{
-		
 		AOECrits:GetSettingIterator[anIter]
 		anIter:First
 	
@@ -28,7 +24,6 @@ function functAOECrits()
 			}
 			anIter:Next
 		}
-	}
 	return
 }
 
@@ -36,11 +31,7 @@ function functAOECrits()
 function functBuffCrits()
 {
 	variable iterator anIter
-	
 	debuglog "Running Buff Crits"
-	if ${doBuffCrits} && ${fight.ShouldIAttack}
-	{
-		
 		BuffCrits:GetSettingIterator[anIter]
 		anIter:First
 
@@ -62,7 +53,6 @@ function functBuffCrits()
 			}
 			anIter:Next
 		}
-	}
 	return
 }
 ;*************************************************************
@@ -71,9 +61,6 @@ function functDotCrits()
 	variable iterator anIter
 	
 	debuglog "Running Dot Crits"
-	if ${doDotCrits} && ${fight.ShouldIAttack}
-	{
-		
 		DotCrits:GetSettingIterator[anIter]
 		anIter:First
 	
@@ -95,7 +82,6 @@ function functDotCrits()
 			}
 			anIter:Next
 		}
-	}
 	return
 }
 ;*************************************************************
@@ -106,9 +92,6 @@ function functCounterAttacks()
 	variable iterator anIter
 	
 	debuglog "Running Counter Attacks"
-	if ${doCounterAttack} && ${fight.ShouldIAttack}
-	{
-		
 		CounterAttack:GetSettingIterator[anIter]
 		anIter:First
 
@@ -134,8 +117,6 @@ function functCounterAttacks()
 			if !${fight.ShouldIAttack} 
 			return
 		}
-	}
-	
 	return
 }
 ;*************************************************************
