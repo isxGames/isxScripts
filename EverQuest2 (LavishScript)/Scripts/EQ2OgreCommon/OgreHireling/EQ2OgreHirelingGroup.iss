@@ -1,26 +1,26 @@
 ;Version 1.01
 ;This script cycles through the character names in the list below and runs the hireling script on them once.
-;***NOTE*** This requires files included with Ogrecommon.
+;***NOTE*** This requires files included with OgreBot (adventure bot).
 ;Created by Kannkor (HotShot)
-;Usage: edit the below with your toonnames
-; *  run ogre hireg <tier>
-; To end * run ogre end hireg
+;Version 1.01 - Kannkor
+;	Changed default to T9
 
 
 variable string HirelingCharInfo[10]
-variable int OptionNum=8
+variable int OptionNum=9
 variable int DefaultTimeToWait=72000
 ;72000 should be 2 hours
 variable int TimeToWait=72000
 ;This one may change in the script
-function main(int TempNum=8)
+function main(int TempNum=9)
 {
 	variable int X=0
 	variable int TotalX=0
 	HirelingCharInfo[${X:Inc}]:Set[Toonname1]
 	HirelingCharInfo[${X:Inc}]:Set[Toonname2]
-	HirelingCharInfo[${X:Inc}]:Set[Toonname3etc]
-
+	HirelingCharInfo[${X:Inc}]:Set[Toonname3]
+	HirelingCharInfo[${X:Inc}]:Set[Toonname4]
+	HirelingCharInfo[${X:Inc}]:Set[Toonname5]
 	
 	TotalX:Set[${X}]
 	OptionNum:Set[${TempNum}]
