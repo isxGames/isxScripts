@@ -3,6 +3,20 @@
 <InnerSpaceSettings>
 	<Set Name="Harvest List">
 		<Setting Name="void-touched lumber">void-touched lumber</Setting>
+		<Setting Name="Mottled Leather">mottled leather</Setting>
+		<Setting Name="titanium ore">titanium ore</Setting>
+		<Setting Name="sumac lumber">sumac lumber</Setting>
+		<Setting Name="seahrose roe">seahrose roe</Setting>
+		<Setting Name="quicksilver cluster">quicksilver cluster</Setting>
+		<Setting Name="mottled leather">mottled pelt</Setting>
+		<Setting Name="marr cherry">marr cherry</Setting>
+		<Setting Name="lapsang tea leaf">lapsang tea leaf</Setting>
+		<Setting Name="kejekan plamfruit">kejekan plamfruit</Setting>
+		<Setting Name="giant octopus meat">giant octopus meat</Setting>
+		<Setting Name="ethereal material">ethereal material</Setting>
+		<Setting Name="caynar nut">caynar nut</Setting>
+		<Setting Name="bamboo shoot">bamboo shoot</Setting>
+		<Setting Name="amber">amber</Setting>
 		<Setting Name="scavenged leather armor pieces">scavenged leather armor pieces</Setting>
 		<Setting Name="strips of previously worn cloth">strips of previously worn cloth</Setting>
 		<Setting Name="metal armor scraps">metal armor scraps</Setting>
