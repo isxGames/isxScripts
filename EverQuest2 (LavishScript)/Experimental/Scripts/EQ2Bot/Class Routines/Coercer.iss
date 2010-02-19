@@ -284,6 +284,17 @@ function Buff_Routine(int xAction)
 			Counter:Set[1]
 			tempvar:Set[1]
 
+			;if we have the improved velocity buff we need only buff ourselves
+			if ${Me.Ability[Increased Velocity](exists)} && ${UIElement[lbBuffDPS@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} 
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
+				break
+			}
+			elseif ${Me.Ability[Increased Velocity](exists)}
+			{
+				break
+			}
+			
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
 			{

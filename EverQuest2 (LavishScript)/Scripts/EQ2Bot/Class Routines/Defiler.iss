@@ -266,6 +266,14 @@ function Buff_Routine(int xAction)
 
 	declare temp int local
 
+	; Pass out feathers on initial script startup
+	if !${InitialBuffsDone}
+	{
+		if (${Me.GroupCount} > 1)
+			call CastSpellRange 313
+		InitialBuffsDone:Set[TRUE]
+	}
+
 	if ${ShardMode}
 		call Shard
 
