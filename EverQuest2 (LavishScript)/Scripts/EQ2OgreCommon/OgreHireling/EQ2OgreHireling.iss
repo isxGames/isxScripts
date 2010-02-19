@@ -1,4 +1,9 @@
-variable int OptionNum=8
+;Version 1.01
+;Created by Kannkor (HotShot)
+;Version 1.01 - Kannkor
+;	Changed default to T9
+
+variable int OptionNum=9
 variable string Communication=Waiting
 variable bool HunterDone=FALSE
 variable bool MinerDone=FALSE
@@ -7,7 +12,7 @@ variable int DefaultTimeToWait=72000
 ;72000 should be 2 hours
 variable int TimeToWait=72000
 ;This one may change in the script
-function main(int TempNum=8, bool LoopScript=TRUE)
+function main(int TempNum=9, bool LoopScript=TRUE)
 {
 
 	OptionNum:Set[${TempNum}]

@@ -194,6 +194,7 @@
 		<Setting Name="deklium cluster" Tier="8" Type="Raw"></Setting>
 		<Setting Name="rough kunzite" Tier="8" Type="Raw"></Setting>
 		<Setting Name="redwood lumber" Tier="8" Type="Raw"></Setting>
+		<Setting Name="smoldering material" Tier="8" Type="Raw"></Setting>
 	<!-- "Tier8Rare" -->
 		<Setting Name="hidebound leather pelt" Tier="8" Type="Rare"></Setting>
 		<Setting Name="silicate loam" Tier="8" Type="Rare"></Setting>
@@ -202,7 +203,20 @@
 		<Setting Name="tynnonium cluster" Tier="8" Type="Rare"></Setting>
 		<Setting Name="rough fire emerald" Tier="8" Type="Rare"></Setting>
 		<Setting Name="mahogany lumber" Tier="8" Type="Rare"></Setting>
-		<Setting Name="smoldering material" Tier="8" Type="Rare"></Setting>
+	<!-- "Tier9Raw" -->
+		<Setting Name="giant octopus meat" Tier="9" Type="Raw"></Setting>
+		<Setting Name="mottled pelt" Tier="9" Type="Raw"></Setting>
+		<Setting Name="seahorse roe" Tier="9" Type="Raw"></Setting>
+		<Setting Name="ethereal material" Tier="9" Type="Raw"></Setting>
+		<Setting Name="amber" Tier="9" Type="Raw"></Setting>
+		<Setting Name="quicksilver cluster" Tier="9" Type="Raw"></Setting>
+		<Setting Name="titanium ore" Tier="9" Type="Raw"></Setting>
+		<Setting Name="bamboo shoot" Tier="9" Type="Raw"></Setting>
+		<Setting Name="caynar nut" Tier="9" Type="Raw"></Setting>
+		<Setting Name="kejekan palmfruit" Tier="9" Type="Raw"></Setting>
+		<Setting Name="lapsang tea leaf" Tier="9" Type="Raw"></Setting>
+		<Setting Name="marr cherry" Tier="9" Type="Raw"></Setting>
+		<Setting Name="sumac lumber" Tier="9" Type="Raw"></Setting>
 	</Set>
 
 </InnerSpaceSettings>
