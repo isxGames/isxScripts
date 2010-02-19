@@ -3719,6 +3719,140 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 	return "SUCCESS"
 }
 
+function InterceptActor(int iactor, int range, bool IgnoreNoAutoMovement, bool IgnoreNoAutoMovementInCombat)
+{
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;; NOTE -- If you are calling this you will need to ensure that the character is not using AutoFollowMode (and/or turn it off appropriately)
+	;;;         otherwise this function will move you and then you will just richocet back
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;; to Turn off autofollow:
+	;;  if (${AutoFollowMode})
+	;;  {
+	;;      Debug:Echo["Stopping Autofollow..."]
+	;;	    EQ2Execute /stopfollow
+	;;	    wait 2
+	;;  }
+	;;; To turn AutoFollow back on
+	;;  if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	;;  {
+	;;	    ExecuteAtom AutoFollowTank
+	;;	    wait 2
+	;;  }
+
+	variable float xDist
+	variable float SavDist=${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}
+	variable int xTimer
+	variable int MoveToRange
+	variable bool IgnoreInCombatChecks
+
+	if (${NoAutoMovement} && !${IgnoreNoAutoMovement})
+	{
+		Debug:Echo["FastMove() :: NoAutoMovement ON"]
+		return "NOAUTOMOVEMENT"
+	}
+
+	if ${ScanRange} > 75
+		MoveToRange:Set[${ScanRange}]
+	else
+		MoveToRange:Set[75]
+
+	IsMoving:Set[TRUE]
+
+	if (${islooting} || ${movingtowp} || ${movinghome})
+		IgnoreInCombatChecks:Set[TRUE]
+	else
+		IgnoreInCombatChecks:Set[FALSE]
+
+
+	if (!${Actor[${iactor}](exists)} || ${Actor[${iactor}].IsDead})
+	{
+		IsMoving:Set[FALSE]
+		return "TARGETDEAD"
+	}
+
+
+	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
+	{
+		;Debug:Echo["In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"]
+		IsMoving:Set[FALSE]
+		return "INVALIDLOC2"
+	}
+	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
+	{
+		IsMoving:Set[FALSE]
+		return "INVALIDLOC3"
+	}
+
+	face ${X} ${Z}
+
+	if !${pulling}
+	{
+		press -release ${forward}
+		wait 1
+		press -hold ${forward}
+
+		;Debug:Echo["Moving....  (WhoFollowing: ${Me.ToActor.WhoFollowing})"]
+	}
+
+	xTimer:Set[${Script.RunningTime}]
+	;Debug:Echo["xTimer set to ${xTimer}"]
+
+	do
+	{
+		xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+
+		if ${Math.Calc[${SavDist}-${xDist}]} < 0.8
+		{
+			if (${Script.RunningTime}-${xTimer}) > 500
+			{
+				press -hold ${strafeleft}
+				wait 8
+				press -release ${strafeleft}
+
+				if ${Math.Calc[${SavDist}-${xDist}]} < 0.8
+				{
+					press -hold ${straferight}
+					wait 8
+					press -release ${straferight}
+				}
+
+				xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+				if ${Math.Calc[${SavDist}-${xDist}]} > 0.8
+					continue
+
+				;Debug:Echo["Script.RunningTime (${Script.RunningTime}) - xTimer (${xTimer}) is greater than 500 -- returning STUCK  (WhoFollowing: ${Me.ToActor.WhoFollowing})"]
+				;Debug:Echo["Using Math.Calc64 value is ${Math.Calc64[${Script.RunningTime}-${xTimer}]}"]
+
+				isstuck:Set[TRUE]
+				if !${pulling}
+				{
+					press -release ${forward}
+					wait 20 !${Me.IsMoving}
+				}
+				IsMoving:Set[FALSE]
+				return "STUCK"
+			}
+		}
+		else
+		{
+			xTimer:Set[${Script.RunningTime}]
+			SavDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
+		}
+
+		face ${X} ${Z}
+	}
+	while ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${range}
+
+	if !${pulling}
+	{
+		press -release ${forward}
+		wait 20 !${Me.IsMoving}
+	}
+
+	IsMoving:Set[FALSE]
+	return "SUCCESS"
+}
+
 function MovetoWP(lnavregionref destination)
 {
 	variable index:lnavregionref CheckRegion
