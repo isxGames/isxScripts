@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Window name='EQ2Bot Commander'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>220</Width>
+		<Height>280</Height>
+		<StorePosition>1</StorePosition>
+		<Title>EQ2Bot Commander</Title>
+	<TitleBar template='window.Titlebar'>
+		<Children>
+			<Text Name='Title' Template='window.Titlebar.Title' />
+			<Button Name='Minimize' Template='window.Titlebar.Minimize' />
+			<Button Name='Maximize' Template='window.Titlebar.Maximize' />
+			<commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[EQ2BotCommander]:End</Command>
+			</commandbutton>
+		</Children>
+	</TitleBar>
+		<OnLoad>
+		</OnLoad>
+		<OnUnload>
+		</OnUnload>
+		<OnLeftClick>
+			This:SetFocus
+		</OnLeftClick>
+		<Children>
+			<Tabcontrol Name='GUITabs'>
+				<X>1%</X>
+				<Y>1%</Y>
+				<Height>98%</Height>
+				<Width>98%</Width>
+					<Tabs>
+						<Tab Name='Main'>
+							<Button Name='RunEQ2Bot'>
+								<X>5%</X>
+								<Y>20</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Run EQ2Bot</Text>
+								<AutoTooltip>Run EQ2Bot.iss on all computers</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call ToggleRunEQ2Bot]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='StartEQ2Bot'>
+								<X>55%</X>
+								<Y>20</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Pause EQ2Bot</Text>
+								<AutoTooltip>Start/Pause EQ2Bot on all computers</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call StartPauseEQ2Bot]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='Follow'>
+								<X>5%</X>
+								<Y>80</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Follow</Text>
+								<AutoTooltip>Tell all bots to follow</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call FollowToggle]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='EQ2Quest'>
+								<X>55%</X>
+								<Y>80</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>EQ2Quest</Text>
+								<AutoTooltip>Run EQ2Quest.iss on all computers</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call ToggleQuestor]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='Invite'>
+								<X>5%</X>
+								<Y>110</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Invite</Text>
+								<AutoTooltip>Invites and Accepts invite of target</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call InviteTarget]</OnLeftClick>
+							</Button>
+							<Button Name='EQ2AFKAlarm'>
+								<X>55%</X>
+								<Y>110</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>EQ2AFKAlarm</Text>
+								<AutoTooltip>Run EQ2AFKAlarm.iss on all computers</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call afktoggle]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='HailTarget'>
+								<X>5%</X>
+								<Y>140</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>HailTarget</Text>
+								<AutoTooltip>Hails Masters Target</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call HailT]</OnLeftClick>
+							</Button>
+							<Button Name='AutoDisarm'>
+								<X>55%</X>
+								<Y>140</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>AutoDisarm</Text>
+								<AutoTooltip>Run AutoDisarm.iss on all Scouts</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call AutoDis]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='Revive'>
+								<X>5%</X>
+								<Y>170</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Revive</Text>
+								<AutoTooltip>Revives Player</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call Revive]</OnLeftClick>
+							</Button>
+							<Button Name='Mezmode'>
+								<X>55%</X>
+								<Y>170</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Mezmode</Text>
+								<AutoTooltip>Enables Mezmode on Enchanters</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call MezM]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='Pre-Heal'>
+								<X>5%</X>
+								<Y>200</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Pre-Heal</Text>
+								<AutoTooltip>Enables Pre-Heal on Healers</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call PreH]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='Jump'>
+								<X>55%</X>
+								<Y>200</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Jump</Text>
+								<AutoTooltip>umm jump?</AutoTooltip>
+								<OnLeftClick>Relay all "Press Space"</OnLeftClick>
+							</Button>
+						</Tab>
+						<Tab Name ='Misc'>
+							<Button Name='Gate'>
+								<X>5%</X>
+								<Y>20</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Gate</Text>
+								<AutoTooltip>All Players Gate Home</AutoTooltip>
+								<OnLeftClick>Relay all eq2execute useability Call of the Overlord</OnLeftClick>
+							</Button>
+							<Button Name='Call_GH'>
+								<X>55%</X>
+								<Y>20</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Call GH</Text>
+								<AutoTooltip>All Players Gate to Guild Hall</AutoTooltip>
+								<OnLeftClick>Relay all eq2execute useability Call to Guild Hall</OnLeftClick>
+							</Button>
+							<Button Name='Automentor'>
+								<X>5%</X>
+								<Y>50</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Mentor</Text>
+								<AutoTooltip>Automentors the Selected Target</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call Mentor]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Button Name='Shadow'>
+								<X>55%</X>
+								<Y>50</Y>
+								<Width>90</Width>
+								<Height>20</Height>
+								<Text>Shadow</Text>
+								<AutoTooltip>All Chars but This Shadows Selected Target by 2</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call ShadowToggle]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+							<Text Name='UplinkText'>
+								<X>0</X> 
+								<Y>80</Y> 
+								<Width>220</Width> 
+								<Height>20</Height> 
+								<Alignment>Center</Alignment>
+								<Text>_____________Uplink______________</Text>
+							</Text>
+							<Text Name='UplinkPCName'>
+								<X>30</X> 
+								<Y>110</Y> 
+								<Width>80</Width> 
+								<Height>20</Height> 
+								<Alignment>Center</Alignment>
+								<Text>PC Name:</Text>
+							</Text>
+							<Text Name='UplinkPort'>
+								<X>120</X> 
+								<Y>110</Y> 
+								<Width>80</Width> 
+								<Height>20</Height> 
+								<Alignment>Center</Alignment>
+								<Text>Port Number:</Text>
+							</Text>
+							<Checkbox Name='UplinkCheck1'>
+									<X>10</X> 
+									<Y>130</Y> 
+									<Width>20</Width> 
+									<Height>20</Height>
+									<OnLeftClick>
+										Script[EQ2BotCommander]:QueueCommand[call CheckBoxPush]
+									</OnLeftClick>
+							</Checkbox>
+							<Textentry Name='UplinkPC1'>
+								<X>30</X> 
+								<Y>130</Y> 
+								<Width>80</Width> 
+								<Height>20</Height>
+								<MaxLength>20</MaxLength>
+							</Textentry>
+							<Textentry Name='UplinkPort1'>
+								<X>120</X> 
+								<Y>130</Y> 
+								<Width>80</Width> 
+								<Height>20</Height>
+								<MaxLength>6</MaxLength>
+							</Textentry>
+							<Checkbox Name='UplinkCheck2'>
+								<X>10</X> 
+								<Y>155</Y> 
+								<Width>20</Width> 
+								<Height>20</Height> 
+								<OnLeftClick>
+									Script[EQ2BotCommander]:QueueCommand[call CheckBoxPush]
+								</OnLeftClick>
+							</Checkbox>
+							<Textentry Name='UplinkPC2'>
+								<X>30</X> 
+								<Y>155</Y> 
+								<Width>80</Width> 
+								<Height>20</Height>
+								<MaxLength>20</MaxLength>
+							</Textentry>
+							<Textentry Name='UplinkPort2'>
+								<X>120</X> 
+								<Y>155</Y> 
+								<Width>80</Width> 
+								<Height>20</Height>
+								<MaxLength>6</MaxLength>
+							</Textentry>
+							<Checkbox Name='UplinkCheck3'>
+								<X>10</X> 
+								<Y>180</Y> 
+								<Width>20</Width> 
+								<Height>20</Height> 
+								<OnLeftClick>
+									Script[EQ2BotCommander]:QueueCommand[call CheckBoxPush]
+								</OnLeftClick>
+							</Checkbox>
+							<Textentry Name='UplinkPC3'>
+								<X>30</X> 
+								<Y>180</Y> 
+								<Width>80</Width> 
+								<Height>20</Height>
+								<MaxLength>20</MaxLength>
+							</Textentry>
+							<Textentry Name='UplinkPort3'>
+								<X>120</X> 
+								<Y>180</Y> 
+								<Width>80</Width> 
+								<Height>20</Height>
+								<MaxLength>6</MaxLength>
+							</Textentry>
+							<Button Name='StartUplinkButton'>
+								<X>70</X>
+								<Y>210</Y>
+								<Width>80</Width>
+								<Height>20</Height>
+								<Text>Start Uplinks</Text>
+								<AutoTooltip>Starts Uplinks</AutoTooltip>
+								<OnLeftClick>Script[EQ2BotCommander]:QueueCommand[call StartUplink]</OnLeftClick>
+								<Font><Color>FFFF0000</Color></Font>
+							</Button>
+						</Tab>
+					</Tabs>
+			</Tabcontrol>
+		</Children>
+	</Window>
+</ISUI>
