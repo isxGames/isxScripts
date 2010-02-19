@@ -272,6 +272,14 @@ function Buff_Routine(int xAction)
 	call CheckHeals
 	call CheckCures
 
+	; Pass out feathers on initial script startup
+	if !${InitialBuffsDone}
+	{
+		if (${Me.GroupCount} > 1)
+			call CastSpellRange 313
+		InitialBuffsDone:Set[TRUE]
+	}
+
 	if ${Me.ToActor.Power}>85 && ${KeepWardUp}
 		call CheckWards
 
