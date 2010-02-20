@@ -124,6 +124,10 @@
       <Project>{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}</Project>
       <Name>EQ2SuiteLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PInvoke\PInvoke.csproj">
+      <Project>{5D343453-8DDE-47F7-A940-24456E2B2510}</Project>
+      <Name>PInvoke</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
