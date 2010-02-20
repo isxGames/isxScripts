@@ -112,6 +112,10 @@
       <Project>{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}</Project>
       <Name>EQ2ParseEngine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PInvoke\PInvoke.csproj">
+      <Project>{5D343453-8DDE-47F7-A940-24456E2B2510}</Project>
+      <Name>PInvoke</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
