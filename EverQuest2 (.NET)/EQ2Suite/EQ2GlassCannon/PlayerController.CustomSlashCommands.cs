@@ -6,9 +6,10 @@ using System.Threading;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using EQ2.ISXEQ2;
 using EQ2SuiteLib;
-using System.Runtime.InteropServices;
+using PInvoke;
 
 namespace EQ2GlassCannon
 {
@@ -278,9 +279,9 @@ namespace EQ2GlassCannon
 							return true;
 						case "fullaffinities":
 							Program.Log("Attempting to remove all affinity constraints on the process and its threads...");
-							uint uiCurrentProcessID = PInvoke.GetCurrentProcessId();
-							IntPtr hProcess = PInvoke.OpenProcess(PInvoke.ProcessAccess.SetInformation | PInvoke.ProcessAccess.QueryInformation, false, uiCurrentProcessID);
-							if (hProcess == PInvoke.INVALID_HANDLE_VALUE)
+							uint uiCurrentProcessID = Kernel32.GetCurrentProcessId();
+							IntPtr hProcess = Kernel32.OpenProcess(Kernel32.ProcessAccess.SetInformation | Kernel32.ProcessAccess.QueryInformation, false, uiCurrentProcessID);
+							if (hProcess == Kernel32.INVALID_HANDLE_VALUE)
 							{
 								Program.Log("Unable to open process {0}.", uiCurrentProcessID);
 								return true;
@@ -288,21 +289,21 @@ namespace EQ2GlassCannon
 
 							UIntPtr uiProcessAffinityMask;
 							UIntPtr uiSystemProcessorMask;
-							PInvoke.GetProcessAffinityMask(hProcess, out uiProcessAffinityMask, out uiSystemProcessorMask);
+							Kernel32.GetProcessAffinityMask(hProcess, out uiProcessAffinityMask, out uiSystemProcessorMask);
 							Program.Log("Process {0} previous affinity mask: 0x{1:X8}", uiCurrentProcessID, uiProcessAffinityMask);
 
-							PInvoke.SetProcessAffinityMask(hProcess, uiSystemProcessorMask);
-							PInvoke.CloseHandle(hProcess);
+							Kernel32.SetProcessAffinityMask(hProcess, uiSystemProcessorMask);
+							Kernel32.CloseHandle(hProcess);
 
 							Program.Log("Attempting to remove all affinity constraints on the process threads...");
-							foreach (PInvoke.THREADENTRY32 ThisThread in PInvoke.EnumProcessThreads(uiCurrentProcessID))
+							foreach (Kernel32.THREADENTRY32 ThisThread in Kernel32.EnumProcessThreads(uiCurrentProcessID))
 							{
-								IntPtr hThread = PInvoke.OpenThread(PInvoke.ThreadAccess.SetInformation | PInvoke.ThreadAccess.QueryInformation, false, ThisThread.th32ThreadID);
+								IntPtr hThread = Kernel32.OpenThread(Kernel32.ThreadAccess.SetInformation | Kernel32.ThreadAccess.QueryInformation, false, ThisThread.th32ThreadID);
 								if (hThread != IntPtr.Zero)
 								{
-									UIntPtr uiOldThreadAffinityMask = PInvoke.SetThreadAffinityMask(hThread, uiSystemProcessorMask);
+									UIntPtr uiOldThreadAffinityMask = Kernel32.SetThreadAffinityMask(hThread, uiSystemProcessorMask);
 									Program.Log("Thread {0} previous affinity mask: 0x{1:X8}", ThisThread.th32ThreadID, uiOldThreadAffinityMask);
-									PInvoke.CloseHandle(hThread);
+									Kernel32.CloseHandle(hThread);
 								}
 								else
 									Program.Log("Can't open thread {0}.", ThisThread.th32ThreadID);
