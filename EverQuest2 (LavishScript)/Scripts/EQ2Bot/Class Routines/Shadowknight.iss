@@ -151,7 +151,7 @@ function Buff_Init()
    PreAction[14]:Set[Trample]
    PreSpellRange[14,1]:Set[342]
    
-   PreAction[15]:Set[CCry]
+   PreAction[15]:Set[CShout]
    PreSpellRange[15,1]:Set[345]   
 }
 
@@ -513,7 +513,7 @@ function Buff_Routine(int xAction)
 			}
 		  break
 
-		case CCry
+		case CShout
 			if (${MainTank})
 			{
 				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
@@ -602,7 +602,7 @@ function Combat_Routine(int xAction)
 	if ${Me.ToActor.Health}<25 && ${Me.Ability[${SpellType[502]}].IsReady}
 		call CastSpellRange 502
 
-	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[507]}].IsReady}
+	if ${Me.ToActor.Health}<=20 && ${Me.Ability[${SpellType[507]}].IsReady}
 		call CastSpellRange 507
 
     EQ2:CreateCustomActorArray[ByDist,10,npc]
