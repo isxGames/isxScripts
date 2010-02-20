@@ -1,5 +1,15 @@
 Revision History ||
 ===================
+v8.99 - Infestation by CyberTechs!
+        * Added support for navigating to retrieve writ invoices
+          NavPoints: Invoices and Invoices 1 thru Invoices 5
+          Bot will select the closest NavPoint to your writ npc
+        ** If the clipboard is not within clicking range of your writ npc, you MUST define the Invoices region(s)
+        * -debug mode will now display at startup, a list of all possible NavPoint names
+          used by the script, whether they were found, and whether there is a path to the NavPoint.
+        * Improved reporting of missing required NavPoints
+        * Log message to console when an error causes craft to go into resume mode, in addition to UI
+
 v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
 
 v8.97 - Minor changes to config file structure. Movement keys now save to
@@ -29,7 +39,7 @@ v8.94 - Added TTS announcements between writs, and after writ sessions are compl
       - Maximum number of writs allowed in guild halls increased to 10. Non-guildhall writs still
         limited to 5.
 
-v8.93 - Fixed Writ Reward Window bug. No more "Automatically accepted OMGHAX Quest Rewards." when 
+v8.93 - Fixed Writ Reward Window bug. No more "Automatically accepted OMGHAX Quest Rewards." when
         logging in or zoning! (Thanks HotShot)
       - Really really fixed the Reset Thresholds button to actually set thresholds to the current
         defaults.
@@ -64,7 +74,7 @@ v8.7  - Tweaked commandline switches slightly. <Recipe Queue> in the second synt
 v8.65 - Added -load and -start commandline switches. Craft now has the following usage:
         Craft [-debug] [-verbose] [-load <Recipe Queue>] [-start]
         Craft [<Recipe Queue>]
-        
+
         -debug                 Enables debug output to console and file
         -verbose               Shows some text in EQ2 chat window instead of console
         -load <Recipe Queue>   Loads and processes the specified saved favorite list, but does
@@ -72,7 +82,7 @@ v8.65 - Added -load and -start commandline switches. Craft now has the following
                                queue.
         -start                 If a recipe queue has been loaded with -load, this will begin
                                crafting after processing the recipe queue.
-                               
+
         <Recipe Queue>         Must be the only argument in this syntax. Loads queue, processes,
                                and begins crafting.
 
@@ -122,18 +132,18 @@ v8.54 - Fixed T8 scholar writ processing.
 v8.53 - Changed writ recipe detection code. This should allow for a much smaller CustomWrits
         file.
       - Fixed guild privacy not getting re-set after completing one writ and starting the next.
-      - Made the harvest frame stay on top where it's supposed to be. This was actually an 
+      - Made the harvest frame stay on top where it's supposed to be. This was actually an
         unexpected side-effect of putting a texture on the tabs.
       - Slightly increased font size, and removed blank line from listboxes in the harvest frame.
       - Added more inventory checks and UI updates -- This should fix the issue of resources showing
         quantities from one step behind.
 
-v8.52 - Fixed progressively long delays when processing recipes. Craft will now process the 
+v8.52 - Fixed progressively long delays when processing recipes. Craft will now process the
         inventory only after processing the queue and failed recipes.
 
 v8.51 - Craft will now move you to within 3m of tradeskill desks in a guildhall
       - New option added: "disable guild notifications entirely (while crafting)"
-      
+
 v8.5  - Buying from the broker should be even faster now
       - Lots of little bugs fixed
       - Added UI option to "disable guild events while doing writs" (it will properly restore
@@ -161,7 +171,7 @@ v8.40 - Craft Lite!
           manually. Craft will start mashing buttons after the first "tick". This should work
           for ANY recipe, though I'm not sure I'd trust it with the level 100 artisan epic quest
           recipes.
-        - Craft Lite will use the "Rare" thresholds from the Options page to determine when to 
+        - Craft Lite will use the "Rare" thresholds from the Options page to determine when to
           use power and durability buffs.
 
 v8.33 - Fixed auto-transmute functionality (I think)
@@ -192,12 +202,12 @@ BETA 8.0 - Fixed a ton of stuff.  A lot of things that were broken are now fixed
            them all to paste them here; however, I suggest you try everything again that you had
            problems with previously.
          - Added an uption under the "Special" tab called 'Stop crafting when secondary tradeskill achieves maximum level'.
-           If checked, you will stop crafting when your tinkering or transmuting skill reaches the 
-           maximum for your current skill level.   This value, intentionally, does not save to your configuration file.   
-         - Most of the textentry boxes in the UI will now update the script and save to the xml file immediately.     
-         - The "Custom Writs" xml file will now sort alphabetically automatically.  Simply add recipes to the bottom of 
+           If checked, you will stop crafting when your tinkering or transmuting skill reaches the
+           maximum for your current skill level.   This value, intentionally, does not save to your configuration file.
+         - Most of the textentry boxes in the UI will now update the script and save to the xml file immediately.
+         - The "Custom Writs" xml file will now sort alphabetically automatically.  Simply add recipes to the bottom of
            the file as you always did, and then the next time you end craft it will sort properly upon exit.
-           
+
 ================================================
 
 v7.10 - EQ2Craft should be less likely to be stuck "Processing Recipes".
@@ -210,34 +220,34 @@ v7.10 - EQ2Craft should be less likely to be stuck "Processing Recipes".
 
 v7.09 - Added option to GUI for fine-tuning the path precision on a per-character basis. This
         option can be found on the Options tab. If you are bouncing back and forth while running
-        the path, you will want to increase this number. If you are not bouncing, but are not 
+        the path, you will want to increase this number. If you are not bouncing, but are not
         getting close enough to your work tables, you will want to decrease this number.
 
 v7.08 - Tweaks to pathing code -- should now open doors in qeynos properly again and not get
         stuck as often.
       - New path files for Qeynos and Freeport instances is on the SVN! Also updated Kelethin.
-      
+
 v7.07 - Minor change to inventory search -- allows for resources etc with space to underscore
         conversion; e.g. flying fish -> flying_fish_
         Note: This is an all-or-nothing conversion, either all spaces are underscores, or none.
-        
+
 v7.06 - Moved all writ quantities to a new file, WritCounts.xml.
       - Removed another section of code that could cause a writ to finish early.
-      - Committed a Custom Writ file to the SVN. -- You may wish to back up your own 
+      - Committed a Custom Writ file to the SVN. -- You may wish to back up your own
         customwrits.xml file before updating! This file has a broader assortment of recipes.
-      
+
 v7.05 - Changed output to default ALL output to the console. You may use /craft -verbose
         for the old behavior of output in the EQ2 chat window.
       - Fixed imbue material counting.
       - Removed code that checks for a completed writ step. It was buggy and broken anyway.
         This should fix those writs that were completing early.
       - Fixed writ quantities for level 24 armorer.
-        
+
 v7.04 - Fixed lvl 50 Alchemist writ quantities.
       - Fixed reset issue after finishing the requested number of writs. Craft should now
         create the correct number of writs again after running through a writ cycle.
       - Crash when turning in a writ has been fixed by Amadeus (no credit for me on this.)
-      
+
 v7.03 - Valerian takes over as primary maintainer of craft.
       - Fixed double hailing of writ giver.
       - Bot should now automatically create exactly enough items to complete the writ,
@@ -248,7 +258,7 @@ v7.03 - Valerian takes over as primary maintainer of craft.
         * Added path for Kelethin's crafting area! You should be within the building before
           starting anything requiring pathing.
         * Fixed bug where any recipe containing the word "fir" was mistakenly marked as rare.
-        
+
 v7.02 - Craft should no longer double click the table when going through doors in Qeynos.
       - Fixed random typos.
       - Added more resources.
@@ -340,7 +350,7 @@ v5.0  - Added buying of harvests, fuels and common components Automatically.
       - Path restructure. All files are now located under ./Scripts/EQ2Craft/...
       - Optimized code to work even faster since subcombines have been removed.
       - Bot will detect if door is open or not, and no longer stop at door to open it, but instead open it while its moving towards it (qeynos).
- 
+
 v4.4  - Fixed issue with not being able to craft Rare combines.
       - Rares or any other unique component used for crafting can be included in the CraftCommon.xml file.
       - Example: <Setting Name="cobalt cluster">cobalt</Setting>
