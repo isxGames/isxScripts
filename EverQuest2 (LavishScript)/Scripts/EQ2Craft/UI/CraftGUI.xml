@@ -509,7 +509,7 @@
                   </OnLeftClick>
                 </Commandbutton>
                 <Commandbutton Name='Resume Crafting'>
-                  <Visible>0</Visible>
+                  <Visible>0</Visible>`
                   <X>38</X>
                   <Y>145</Y>
                   <Width>120</Width>
@@ -541,14 +541,14 @@
                     <Color>FF22FF22</Color>
                   </Font>
                   <X>25</X>
-                  <Y>170</Y>
+                  <Y>165</Y>
                   <Width>95%</Width>
                   <Height>20</Height>
                   <Text>Not all HARVESTS have been bought. Click Resume Crafting.</Text>
                 </Text>
                 <Button Name='Crafted Title'>
                   <X>10</X>
-                  <Y>175</Y>
+                  <Y>182</Y>
                   <Width>r20</Width>
                   <Height>15</Height>
                   <TextColor>FFEECC00</TextColor>
@@ -556,7 +556,7 @@
                 </Button>
                 <Listbox Name='Crafted List'>
                   <X>10</X>
-                  <Y>190</Y>
+                  <Y>197</Y>
                   <Width>r20</Width>
                   <Height>140</Height>
                   <Font Template='Tahoma'>
@@ -1416,7 +1416,7 @@
 		    }
 		    This:SetText[${Script[Buffer:Craft].Variable[WritCount]}]
 		  </OnLoad>
-		  
+
 		</Text>
 		<Text Name='NumWritsOOG'>
 		  <X>130</X>
@@ -1424,7 +1424,7 @@
                   <Width>35</Width>
                   <Height>20</Height>
                   <Color>FFDDBB00</Color>
-		  
+
 		</Text>
 		<Slider Name='WritSlider'>
 		  <X>30</X>
@@ -1455,7 +1455,7 @@
 		  </OnChange>
 		</Slider>
 
-		
+
 
                 <!-- <Text Name='Writ Qty Label'>
                   <Font Template='Tahoma'>
