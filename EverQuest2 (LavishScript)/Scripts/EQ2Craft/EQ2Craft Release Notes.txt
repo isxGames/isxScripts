@@ -9,6 +9,7 @@ v8.99 - Infestation by CyberTechs!
           used by the script, whether they were found, and whether there is a path to the NavPoint.
         * Improved reporting of missing required NavPoints
         * Log message to console when an error causes craft to go into resume mode, in addition to UI
+      - Updated writ parser to allow for "I must create" recipes.
 
 v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
 
