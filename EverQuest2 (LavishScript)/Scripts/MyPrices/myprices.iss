@@ -255,6 +255,7 @@ function main(string goscan, string goscan2)
 			{
 				Call CheckFocus
 				ItemName:Set["${UIElement[MyPrices].FindChild[GUITabs].FindChild[Sell].FindChild[ItemList].Item[${currentpos}]}"]
+
 				; container number
 				i:Set[${itemprice.Element[${currentpos}]}]
 				
@@ -278,7 +279,7 @@ function main(string goscan, string goscan2)
 				call FindItem ${i} "${ItemName}"
 
 				j:Set[${Return}]
-
+				
 				; If item was found in the container still
 				if ${j} != -1
 				{
@@ -333,6 +334,7 @@ function main(string goscan, string goscan2)
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
+						
 
 							; record the minimum broker price
 							MinPrice:Set[${Return}]
@@ -1596,6 +1598,8 @@ function:float BrokerSearch(string ItemName, bool NameOnly)
 			do
 			{
 				waitframe
+				if ${Vendor.CurrentSearchPage} == -1
+					break
 			}
 			while ${Vendor.CurrentSearchPage} != ${CurrentPage}
 			
