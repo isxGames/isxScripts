@@ -225,7 +225,7 @@ objectdef EQ2Nav
 		return ${Mapper.BestorNearestContainer[${X},${Y},${Z}]}
 	}
 
-	member AvailablePath(float X,float Y,float Z)
+	member:bool AvailablePath(float X,float Y,float Z)
 	{
 		variable dijkstrapathfinder PathFinder
 		variable lnavpath Path
@@ -241,13 +241,13 @@ objectdef EQ2Nav
 			return FALSE
 		}
 
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 40
+		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 40 && \
+			!${Me.CheckCollision[${X},${Y},${Z}]} && \
+			!${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]}
 		{
-			if !${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]}
-			{
-				return TRUE
-			}
+			return TRUE
 		}
+
 		Path:Clear
 		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
 		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
@@ -263,6 +263,15 @@ objectdef EQ2Nav
 			return FALSE
 		}
 	}
+
+	member:bool AvailablePathToRegion(string Region)
+	{
+		variable lnavregionref DestinationRegion
+
+		DestinationRegion:SetRegion[${Region}]
+		return ${This.AvailablePath[${DestinationRegion.CenterPoint}]}
+	}
+
 
 	member PointsConnect(float toX, float toY, float toZ, float fromX, float fromY, float fromZ)
 	{
@@ -565,6 +574,64 @@ objectdef EQ2Nav
 		This:Debug["PopulateNavigationPath(): ${NavigationPath.Used} hops used."]
 	}
 
+	; Check for existence of a region by name
+	member:bool RegionExists(string RegionName)
+	{
+		variable lnavregionref DestinationRegion
+		DestinationRegion:SetRegion[${RegionName}]
+		return ${DestinationRegion.Region(exists)}
+	}
+
+	; Return the distance between a region and an arbitrary point (such as an NPC)
+	member:float64 DistanceFromPointToRegion(float PointX, float PointY, float PointZ, string RegionName)
+	{
+		variable lnavregionref DestinationRegion
+		DestinationRegion:SetRegion[${RegionName}]
+		if ${DestinationRegion.Region(exists)}
+		{
+			return ${Math.Distance[${PointX},${PointY},${PointZ},${DestinationRegion.CenterPoint.X},${DestinationRegion.CenterPoint.Y},${DestinationRegion.CenterPoint.Z}]}
+		}
+		This:Debug["DistanceFromPointToRegion:: Warning: Region ${RegionName} not found"]
+		return -1
+	}
+
+	; Return the region with the smallest distance to an arbitrary point (such as an NPC)
+	member:string ClosestRegionToPoint(float PointX, float PointY, float PointZ, ... RegionNames)
+	{
+		variable string ClosestRegion
+		variable float64 ClosestRegionDistance = 0
+		variable float64 CurrentRegionDistance = 0
+		variable int Pos
+
+		if ${RegionNames.Size} > 0
+		{
+			if ${RegionNames.Size} == 1
+			{
+				return ${RegionNames[1]}
+			}
+
+			Pos:Set[1]
+			CurrentRegionDistance:Set[${This.DistanceFromPointToRegion[${PointX},${PointY},${PointZ}, ${RegionNames[${Pos}]}]}]
+			This:Debug["ClosestRegionToPoint:: Region #${Pos}:${RegionNames[${Pos}]} Distance: ${CurrentRegionDistance}"]
+			ClosestRegionDistance:Set[${CurrentRegionDistance}]
+			ClosestRegion:Set[${RegionNames[${Pos}]}]
+			while ${Pos:Inc} <= ${RegionNames.Size}
+			{
+				CurrentRegionDistance:Set[${This.DistanceFromPointToRegion[${PointX},${PointY},${PointZ}, ${RegionNames[${Pos}]}]}]
+				This:Debug["ClosestRegionToPoint:: Region #${Pos}:${RegionNames[${Pos}]} Distance: ${CurrentRegionDistance}"]
+				if ${CurrentRegionDistance} != -1 && \
+					${CurrentRegionDistance} < ${ClosestRegionDistance}
+				{
+					ClosestRegionDistance:Set[${CurrentRegionDistance}]
+					ClosestRegion:Set[${RegionNames[${Pos}]}]
+				}
+			}
+			This:Debug["ClosestRegionToPoint:: Returning ${ClosestRegion}"]
+			return ${ClosestRegion}
+		}
+		This:Debug["ClosestRegionToPoint:: Error: no regions specified"]
+		return ""
+	}
 
 	method MoveToRegion(string RegionName)
 	{
@@ -577,6 +644,10 @@ objectdef EQ2Nav
 		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
 		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
 		DestinationRegion:SetRegion[${RegionName}]
+		if !${DestinationRegion.Region(exists)}
+		{
+			This:Debug["MoveToRegion:: Error: Region ${RegionName} not found"]
+		}
 		This:Debug["MoveToRegion:: Moving to ${DestinationRegion.FQN}"]
 		This:MoveToLoc[${DestinationRegion.CenterPoint}]
 	}
