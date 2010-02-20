@@ -21,6 +21,15 @@ namespace EQ2ParseBrowser
 		public AboutWindow()
 		{
 			InitializeComponent();
+			App.RemoveSystemMenu(this);
+			return;
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+			App.RemoveSystemMenu(this);
+			return;
 		}
 	}
 }

@@ -19,16 +19,33 @@ namespace EQ2ParseBrowser
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		public AboutWindow m_wndAboutWindow = null;
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			return;
 		}
 
 		private void HelpAboutMenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			AboutWindow NewWindow = new AboutWindow();
-			NewWindow.ShowDialog();
+			if (m_wndAboutWindow != null)
+				m_wndAboutWindow.Activate();
+			else
+			{
+				m_wndAboutWindow = new AboutWindow();
+				m_wndAboutWindow.Closed +=
+					delegate(object sender2, EventArgs e2)
+					{
+						m_wndAboutWindow = null;
+						return;
+					};
+				m_wndAboutWindow.Owner = this;
+				m_wndAboutWindow.Show();
+			}
+
 			return;
 		}
+
 	}
 }
