@@ -278,4 +278,13 @@
 		<Setting Name="Splintered">3</Setting>
 		<Setting Name="Major Splintered">3</Setting>
 	</Set>
+	<Set Name="Adorning">
+		<Setting Name="Major Reality Breach">3</Setting>
+		<Setting Name="Reality Breach">3</Setting>
+		<Setting Name="Major Insubstantiation">2</Setting>
+		<Setting Name="Insubstantiation">2</Setting>
+		<Setting Name="Major Dissipation">1</Setting>
+		<Setting Name="Dissipation">1</Setting>
+		<Setting Name="Adorner's Insight">1</Setting>
+	</Set>
 </InnerSpaceSettings>

@@ -82,14 +82,14 @@
 		<Setting Name="2 3">Whittling</Setting>
 	</Set>
 	<Set Name="Tinkering">
-    <Setting name="1 1">Wing It</Setting>
-    <Setting name="1 2">Data Management</Setting>
-    <Setting name="1 3">Overhaul</Setting>
-    <Setting name="2 1">Monkey With</Setting>
-    <Setting name="2 2">Contrapt</Setting>
-    <Setting name="2 3">Test Run</Setting>
-  </Set>
-	<Set Name="Transmuting">
+		<Setting name="1 1">Wing It</Setting>
+		<Setting name="1 2">Data Management</Setting>
+		<Setting name="1 3">Overhaul</Setting>
+		<Setting name="2 1">Monkey With</Setting>
+		<Setting name="2 2">Contrapt</Setting>
+		<Setting name="2 3">Test Run</Setting>
+	</Set>
+	<Set Name="Adorning">
 		<Setting Name="1 3">Subastral Binding</Setting>
 		<Setting name="2 1">Corporeal Binding</Setting>
 		<Setting name="2 3">Subastral Weave</Setting>
