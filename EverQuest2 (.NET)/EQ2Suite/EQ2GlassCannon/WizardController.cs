@@ -23,6 +23,9 @@ namespace EQ2GlassCannon
 		protected uint m_uiIceshapeAbilityID = 0;
 		protected uint m_uiSurgeAbilityID = 0;
 		protected uint m_uiFireshapeAbilityID = 0;
+		protected uint m_uiFieryBlastAbilityID = 0;
+
+		protected uint m_uiWarmBloodedPassiveAbilityID = 0;
 
 		protected uint m_uiColdDamageShieldAbilityID = 0;
 		protected uint m_uiFurnaceOfRoAbilityID = 0;
@@ -65,12 +68,15 @@ namespace EQ2GlassCannon
 			m_uiMailOfFrostAbilityID = SelectHighestAbilityID("Mail of Frost");
 			m_uiHateTransferAbilityID = SelectHighestTieredAbilityID("Converge");
 			m_uiFlametongueAbilityID = SelectHighestTieredAbilityID("Ro's Blade");
-
 			m_uiSinglePowerFeedAbilityID = SelectHighestTieredAbilityID("Mana Intromission");
 			m_uiGiftAbilityID = SelectHighestTieredAbilityID("Frigid Gift");
 			m_uiIceshapeAbilityID = SelectHighestAbilityID("Iceshape");
 			m_uiSurgeAbilityID = SelectHighestTieredAbilityID("Surge of Ro");
 			m_uiFireshapeAbilityID = SelectHighestAbilityID("Fireshape");
+			m_uiFieryBlastAbilityID = SelectHighestAbilityID("Fiery Blast");
+
+			m_uiWarmBloodedPassiveAbilityID = SelectHighestAbilityID("Warm Blooded");
+
 			m_uiColdDamageShieldAbilityID = SelectHighestTieredAbilityID("Iceshield");
 			m_uiFurnaceOfRoAbilityID = SelectHighestTieredAbilityID("Furnace of Ro");
 			m_uiFirestormAbilityID = SelectHighestTieredAbilityID("Firestorm");
@@ -207,6 +213,9 @@ namespace EQ2GlassCannon
 									return true;*/
 							}
 						}
+
+						if (CastAbility(m_uiFieryBlastAbilityID))
+							return true;
 					}
 
 					/// Deaggros.
@@ -242,10 +251,12 @@ namespace EQ2GlassCannon
 					if (CastGreenOffensiveAbility(m_uiStormOfLightningAbilityID, 8))
 						return true;
 
-					/// We attempt this in two places:
-					/// - Here at the beginning for the debuff, and
+					/// We attempt these in two places:
+					/// - Here at the beginning for the debuffs, and
 					/// - Down the list for the DPS.
 					if (!IsAbilityMaintained(m_uiElementalDebuffAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiElementalDebuffAbilityID))
+						return true;
+					if (m_uiWarmBloodedPassiveAbilityID != 0 && !IsAbilityMaintained(m_uiImmolationAbilityID, m_iOffensiveTargetID) && CastAbility(m_uiImmolationAbilityID))
 						return true;
 
 					/// Cast Iceshield.
