@@ -3,7 +3,6 @@
 <InnerSpaceSettings>
 	<Set Name="Harvest List">
 		<Setting Name="void-touched lumber">void-touched lumber</Setting>
-		<Setting Name="Mottled Leather">mottled leather</Setting>
 		<Setting Name="kobold meat">kobold meat</Setting>
 		<Setting Name="fearstalker meat">fearstalker meat</Setting>
 		<Setting Name="seahorse roe">seahorse roe</Setting>
