@@ -189,12 +189,12 @@
 		<Setting Name="Brittle hardening">1</Setting>
 		<Setting Name="Severe brittle hardening">1</Setting>
 		<Setting Name="Red Hot Material">2</Setting>
-    <Setting Name="Red Hot Metal">2</Setting>
-    <Setting Name="Orange Hot Material">2</Setting>
-    <Setting Name="Orange Hot Metal">2</Setting>
-    <Setting Name="White Hot Material">2</Setting>
-    <Setting Name="White Hot Metal">2</Setting>
-    <Setting Name="Hasty tempering">2</Setting>
+		<Setting Name="Red Hot Metal">2</Setting>
+		<Setting Name="Orange Hot Material">2</Setting>
+		<Setting Name="Orange Hot Metal">2</Setting>
+		<Setting Name="White Hot Material">2</Setting>
+		<Setting Name="White Hot Metal">2</Setting>
+		<Setting Name="Hasty tempering">2</Setting>
 		<Setting Name="Severe hasty tempering">2</Setting>
 		<Setting Name="Minor Hardened Metal">3</Setting>
 		<Setting Name="Hardened Metal">3</Setting>
@@ -253,8 +253,11 @@
 		<Setting Name="Major Dull Luster">3</Setting>
 	</Set>
 	<Set Name="Weaving">
-		<Setting Name="Minor Rip">1</Setting>
+		<Setting Name="Major Ripped Material">1</Setting>
+		<Setting Name="Ripped Material">1</Setting>
+		<Setting Name="Minor Ripped Material">1</Setting>
 		<Setting Name="Ripped">1</Setting>
+		<Setting Name="Minor Rip">1</Setting>
 		<Setting Name="Rip">1</Setting>
 		<Setting Name="Major Rip">1</Setting>
 		<Setting Name="Minor Loose Weave">2</Setting>
