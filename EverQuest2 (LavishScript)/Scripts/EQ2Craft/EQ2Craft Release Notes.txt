@@ -4,12 +4,17 @@ v8.99 - Infestation by CyberTechs!
         * Added support for navigating to retrieve writ invoices
           NavPoints: Invoices and Invoices 1 thru Invoices 5
           Bot will select the closest NavPoint to your writ npc
-        ** If the clipboard is not within clicking range of your writ npc, you MUST define the Invoices region(s)
-        * -debug mode will now display at startup, a list of all possible NavPoint names
-          used by the script, whether they were found, and whether there is a path to the NavPoint.
+        ** If the clipboard is not within clicking range of your writ npc, you
+           MUST define the Invoices region(s)
+        * -debug mode will now display at startup, a list of all possible
+          NavPoint names used by the script, whether they were found, and
+          whether there is a path to the NavPoint.
         * Improved reporting of missing required NavPoints
-        * Log message to console when an error causes craft to go into resume mode, in addition to UI
+        * Log message to console when an error causes craft to go into resume
+          mode, in addition to UI
       - Updated writ parser to allow for "I must create" recipes.
+      - Now with MOAR STFU! - Craft will now only complain about missing
+        resources.xml entries ONCE per item per session.
 
 v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
 
