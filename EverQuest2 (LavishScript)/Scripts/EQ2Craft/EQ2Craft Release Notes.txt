@@ -15,6 +15,7 @@ v8.99 - Infestation by CyberTechs!
       - Updated writ parser to allow for "I must create" recipes.
       - Now with MOAR STFU! - Craft will now only complain about missing
         resources.xml entries ONCE per item per session.
+      - Fixed drooling issues when running without nav path.
 
 v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
 
