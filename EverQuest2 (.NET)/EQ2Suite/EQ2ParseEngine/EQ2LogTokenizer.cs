@@ -313,7 +313,7 @@ namespace EQ2ParseEngine
 		public bool FeedLine(DateTime Timestamp, string strParseLine)
 		{
 			Match ThisMatch = null;
-			Match ThisSubMatch = null;
+			//Match ThisSubMatch = null;
 			MatchCollection ThisMatchSet = null;
 
 			/// Handle all custom triggers with top priority.
@@ -477,14 +477,17 @@ namespace EQ2ParseEngine
 				/// an undying warrior's Rupture hits Testplayer but fails to inflict any damage.
 				/// a deathless gazer's Eye of Fire hits Testplayer but fails to inflict any damage.
 				/// a deathless gazer hits Testplayer but fails to inflict any damage.
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)(?<attacktype>hit|double attack)s (?<victim>.+) but fails to inflict any damage.$");
+				/// YOU critically double attack Sandstorm but fail to inflict any damage.
+				/// YOU critically hit a dormant guardian but fail to inflict any damage.
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"(?<actorability>.+?) (?<critically>critically |)(?<attacktype>hit|double attack|aoe attack)s? (?<victim>.+) but fails? to inflict any damage.$");
 				if (ThisMatch.Success)
 				{
 					ActionEventArgs NewEvent = new ActionEventArgs(Timestamp, strParseLine);
 
 					SplitActorAbilityPair(ThisMatch.Groups["actorability"].Value, ref NewEvent.m_strSource, ref NewEvent.m_strAbilityName);
 					AssignActorName(ThisMatch.Groups["victim"].Value, ref NewEvent.m_strDestination);
-					AssignAttributeType(ThisMatch.Groups["attacktype"].Value, ref NewEvent.m_eAttributes);
+					string strAttackType = ThisMatch.Groups["attacktype"].Value;
+					AssignAttributeType(strAttackType, ref NewEvent.m_eAttributes);
 					AssignAttributeType(ThisMatch.Groups["critically"].Value, ref NewEvent.m_eAttributes);
 
 					DispatchActionEvent(NewEvent);
@@ -726,7 +729,7 @@ namespace EQ2ParseEngine
 			/// Chat events are not even worth calling if no event callback is registered.
 			if (ChatSent != null)
 			{
-				/// Someone else says something in a general predefined chat channel.
+				/// Someone else says something in a general predefined chat channel. Sometimes the last quotation mark is missing (sloppy devs).
 				/// \aNPC 30134 a roekillik watcher:a roekillik watcher\/a says, "Intruders!  Intruders!"
 				/// \aNPC 6943344 Port to Raid Area:Port to Raid Area\/a says to you, "I am ready to serve the guild.  How may I be of assistance?"
 				/// \aPC -1 Testplayer:Testplayer\/a says to the raid party, "how the hell did that happen"
@@ -735,7 +738,7 @@ namespace EQ2ParseEngine
 				/// \aPC 46147 Testplayer:Testplayer\/a says out of character, "assist me on << roekillik excavation chief >>"
 				/// \aPC -1 Testplayer:Testplayer\/a tells you, "This had better work!!"
 				/// \aPC 813717 Testplayer:Testplayer\/a shouts, "testing"
-				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says? to you|thinks to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)(?: in (?<language>.*?)|), ""(?<message>.*)""$");
+				ThisMatch = m_CompiledRegexCache.Match(strParseLine, @"\\a(?<actortype>NPC|PC) (?<actorid>-?\d+) (?<actor>.*):\3\\/a (?<channel>says to the guild|says? to you|thinks to you|tells you|says to the raid party|says to the group|says to the officers|says out of character|says|shouts)(?: in (?<language>.*?)|), ""(?<message>.*?)""?$");
 				if (ThisMatch.Success)
 				{
 					ChatEventArgs NewEvent = new ChatEventArgs(Timestamp, strParseLine);
