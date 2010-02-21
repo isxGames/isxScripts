@@ -403,9 +403,9 @@ function CheckPosition()
 		call assistpawn
 	if ${DoFollowInCombat}
 		call DoFollowInCombat
-	if ${doFaceTarget}
+	if ${doFaceTarget} && !${Me.Target.IsDead}
 		call facemob
-	if ${doMoveToTarget}
+	if ${doMoveToTarget} && !${Me.Target.IsDead}
 		call MoveToTarget
 	return
 }
