@@ -86,8 +86,8 @@ function Class_Declaration()
 	declare CureMode bool script FALSE
 	declare StunMode bool script FALSE
 	declare HaveAbility_TimeWarp bool script FALSE
-	declare TimeWarpTarget int script 
-
+	declare TimeWarpers collection:uint script
+	
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
 	BuffPowerRegen:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffPowerRegen,TRUE]}]
@@ -146,10 +146,11 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
+
+
 	;; check this at least every 0.5 seconds
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
-
 		; Check mezzmode
 		if ${MezzMode}
 			call Mezmerise_Targets
@@ -1009,7 +1010,6 @@ function Combat_Routine(int xAction)
 		FightingEpicMob:Set[TRUE]
 	elseif ${Actor[${KillTarget}].IsHeroic}
 		FightingHeroicMob:Set[TRUE]
-
 
 	if ${FightingEpicMob}
 	{
@@ -2503,13 +2503,13 @@ function PostDeathRoutine()
 
 function DoTheTimeWarp()
 {
-	; Note:  This needs to be updated to have a timeout for resetting "TimeWarpTarget" after a certain length of time.
-	;        As of right now I'm not 100% sure how long one must wait before casting it on the same person again.  (3 minutes?)
-	
 	declare BuffTarget string local
 	declare ActorID uint local
 	declare Counter uint local
+	declare DoBreak bool local
+	declare LastTimeWarp uint local
 	
+	DoBreak:Set[FALSE]
 	ActorID:Set[0]
 	Counter:Set[1]
 	if ${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
@@ -2528,11 +2528,16 @@ function DoTheTimeWarp()
 				case Me
 					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].Range} || !${NoAutoMovement})
 					{
-						if (${TimeWarpTarget} != ${ActorID})
+						LastTimeWarp:Set[${TimeWarpers.Element[${Actor[${ActorID}].Name}]}]
+						;echo "DEBUG::DoTheTimeWarp() - Checking if ${Actor[${ActorID}].Name} is ready for Time Warp... (${LastTimeWarp} vs. ${Time.Timestamp})"
+						
+						if (${Time.Timestamp} > ${Math.Calc64[${LastTimeWarp}+135]})
 						{
+							;echo "DEBUG::DoTheTimeWarp() - Casting 'Time Warp' on ${Actor[${ActorID}].Name}"
 							call CastSpellRange 504 0 0 0 ${ActorID} 0 0 1 0 0
-							TimeWarpTarget:Set[${ActorID}]
+							TimeWarpers:Set[${Actor[${ActorID}].Name},${Time.Timestamp}]
 							ActorID:Set[0]
+							DoBreak:Set[TRUE]	
 						}
 					}
 					break
@@ -2540,6 +2545,8 @@ function DoTheTimeWarp()
 				default
 					break
 			}
+			if ${DoBreak}
+				break
 		}
 		while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 	}		
