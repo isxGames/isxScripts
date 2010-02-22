@@ -286,5 +286,7 @@
 		<Setting Name="Major Dissipation">1</Setting>
 		<Setting Name="Dissipation">1</Setting>
 		<Setting Name="Adorner's Insight">1</Setting>
+		<Setting Name="Favor of Innovation">2</Setting>
+		<Setting Name="Flawless Adorning">3</Setting>
 	</Set>
 </InnerSpaceSettings>
