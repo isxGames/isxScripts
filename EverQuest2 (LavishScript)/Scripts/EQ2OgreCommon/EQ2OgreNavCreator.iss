@@ -1,7 +1,9 @@
 ;-----------------------------------------------------------------------------------------------
 ; New NavCreator by Kannkor (Hotshot). Written from scratch, based off of EQ2NavCreator written by Amadeus
-; Version 1.01
-;
+; Version 1.02
+;	- Removed wait 1 to see if it can speed up the mapping
+;	- Added Exit without saving
+;	- Added option to save as XML also. Note: Loading will ALWAYS load from the LSO first. So rename/delete the LSO if you want to load an XML file.
 ;-----------------------------------------------------------------------------------------------
 
 /**
@@ -37,9 +39,11 @@ variable(global) lnavconnection EQ2OgreNavConnection
 variable collection:string RegionConnectionsToBeRemoved
 
 variable(global) bool EQ2OgreMapperAddCustomPointBool=FALSE
+variable(global) bool EQ2OgreMapperExitWithoutSaveBool=FALSE
 variable(global) bool EQ2OgreMapperExitAndSaveBool=FALSE
 variable(global) bool EQ2OgreMapperMarkAsAvoidBool=FALSE
 variable(global) bool EQ2OgreMapperDeletePointBool=FALSE
+variable(global) bool EQ2OgreMapperSaveXMLCopyBool=FALSE
 
 variable string CustomPointName=NULL
 variable(global) string EQ2OgreNavCreatorLastNamedPoint=None
@@ -59,15 +63,20 @@ function main()
 	bind EQ2OgreNavCreatorAddCustomPointBind F2 EQ2OgreMapperAddCustomPointBool:Set[TRUE]
 	bind EQ2OgreNavCreatorMarkAsAvoidBind F3 EQ2OgreMapperMarkAsAvoidBool:Set[TRUE]
 	bind EQ2OgreNavCreatorDeletePointBind F4 EQ2OgreMapperDeletePointBool:Set[TRUE]
+	bind EQ2OgreNavCreatorSaveXMLCopyBind F8 EQ2OgreMapperSaveXMLCopyBool:Toggle
 	bind EQ2OgreNavCreatorSaveAndExitBind F11 EQ2OgreMapperExitAndSaveBool:Set[TRUE]
+	bind EQ2OgreNavCreatorExitWithoutSaveBind F12 EQ2OgreMapperExitWithoutSaveBool:Set[TRUE]
+
+
 
 	HUD -add EQ2OgreNavCreatorCustomAddPointHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F2 - Re-name and make unique point."
 	HUD -add EQ2OgreNavCreatorLastNamedPointAddedHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Last unique point added: \${EQ2OgreNavCreatorLastNamedPoint}"
 	HUD -add EQ2OgreNavCreatorMarkAsAvoidHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F3 - Make current point as AVOID."
 	HUD -add EQ2OgreNavCreatorDeletePointHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F4 - Delete current point (method of removing unique)."
 
-
+	HUD -add EQ2OgreNavCreatorSaveXMLCopyHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F8 - Save as XML also [${EQ2OgreMapperSaveXMLCopyBool}]"
 	HUD -add EQ2OgreNavCreatorSaveAndExitHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F11 - Save and Exit."
+	HUD -add EQ2OgreNavCreatorExitWithoutSaveHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F12 - Exit - NO SAVE."
 	HUD -add EQ2OgreNavCreatorTotalPointsHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Total points: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.ChildCount}"
 
 	;**Below is information about the current point you are on**
@@ -82,7 +91,7 @@ function main()
 	{
 		AllowConnections:Set[TRUE]
 
-		if ${EQ2OgreMapperExitAndSaveBool} || ${ZoneVar.NotEqual[${Zone}]}
+		if ${EQ2OgreMapperExitAndSaveBool} || ${ZoneVar.NotEqual[${Zone}]} || ${EQ2OgreMapperExitWithoutSaveBool}
 			Script:End
 		if ${EQ2OgreMapperMarkAsAvoidBool}
 		{
@@ -295,10 +304,11 @@ function ExportIt()
 
 	echo Function: Saving to: [${ZoneFilePath}${ZoneVar}.lso]
 	EQ2OgreNavRegion:Export[-lso,${ZoneFilePath}${ZoneVar}.lso]
-	;EQ2OgreNavRegion:Export[${ZoneFilePath}${ZoneVar}.xml]
-	;If someXMLvar is true
-	;echo Saving an XML copy also.
-	;EQ2OgreNavRegion:Export[${ZoneFilePath}${ZoneVar}.xml]
+	if ${EQ2OgreMapperSaveXMLCopyBool}
+	{
+		echo Saving an XML copy also.
+		EQ2OgreNavRegion:Export[${ZoneFilePath}${ZoneVar}.xml]
+	}
 }
 function CleanUpConnections()
 {
@@ -346,13 +356,17 @@ atom atexit()
 	Script:Squelch
 
 	bind -delete EQ2OgreNavCreatorAddCustomPointBind
+	bind -delete EQ2OgreNavCreatorSaveXMLCopyBind
+	bind -delete EQ2OgreNavCreatorExitWithoutSaveBind
 	bind -delete EQ2OgreNavCreatorSaveAndExitBind
 	bind -delete EQ2OgreNavCreatorMarkAsAvoidBind
 	bind -delete EQ2OgreNavCreatorDeletePointBind
 
+	HUD -remove EQ2OgreNavCreatorSaveXMLCopyHUD
 	HUD -remove EQ2OgreNavCreatorLastNamedPointAddedHUD
 	HUD -remove EQ2OgreNavCreatorCustomAddPointHUD
 	HUD -remove EQ2OgreNavCreatorSaveAndExitHUD
+	HUD -remove EQ2OgreNavCreatorExitWithoutSaveHUD
 	HUD -remove EQ2OgreNavCreatorTotalPointsHUD
 	HUD -remove EQ2OgreNavCreatorDeletePointHUD 
 	HUD -remove EQ2OgreNavCreatorMarkAsAvoidHUD 
@@ -363,13 +377,14 @@ atom atexit()
 
 	Script:Unsquelch
 
-	call CleanUpConnections
-	call ExportIt
+	if ${EQ2OgreMapperExitAndSaveBool}
+	{
+		call CleanUpConnections
+		call ExportIt
+	}
+	elseif ${EQ2OgreMapperExitWithoutSaveBool}
+		echo Exiting without saving.
 	OgreMapControllerOb:UnLoadMap[${ZoneVar}]
 
-	;LNavRegion[${ZoneVar}]:Remove
-	;EQ2OgreNavRegion:Remove
-	;LNavRegion[EQ2OgreNavCreator]:Remove
-	;LavishNav[EQ2OgreNavRegion]:Clear
 	echo Exiting EQ2OgreNavCreator
 }
