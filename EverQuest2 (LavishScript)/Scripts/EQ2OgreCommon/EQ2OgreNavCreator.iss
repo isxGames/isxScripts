@@ -125,7 +125,7 @@ function main()
 			OgreNavMapperOb:WorkTheMagic
 		}
 
-		;wait 1
+		waitframe
 	}
 
 	;***How many Children do we have?
