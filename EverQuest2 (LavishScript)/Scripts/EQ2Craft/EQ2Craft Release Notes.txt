@@ -16,6 +16,8 @@ v8.99 - Infestation by CyberTechs!
       - Now with MOAR STFU! - Craft will now only complain about missing
         resources.xml entries ONCE per item per session.
       - Fixed drooling issues when running without nav path.
+      - Craft will no longer set or reset Guild Event Privacy settings if
+        neither option is enabled.
 
 v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
 
