@@ -12,7 +12,17 @@ function LavishEventLoad()
 	Event[VG_onGroupMemberBooted]:AttachAtom[VG_onGroupMemberBooted]
 	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
 	Event[VG_onPawnSpawned]:AttachAtom[VG_onPawnSpawned]
-        Event[VG_OnParlayOppTurnEnd]:AttachAtom[OnParlayOppTurnEnd]
+	Event[VG_OnParlayOppTurnEnd]:AttachAtom[OnParlayOppTurnEnd]
+
+	;; Added these atoms to handle any changes with Group Members "you can have multiples of the same events"
+	Event[VG_onGroupMemberCountChange]:AttachAtom[OnGroupMemberCountChange]
+	Event[VG_onGroupMemberBooted]:AttachAtom[OnGroupMemberCountChange]
+	Event[VG_onGroupMemberAdded]:AttachAtom[OnGroupMemberCountChange]
+	Event[VG_onGroupJoined]:AttachAtom[OnGroupMemberCountChange]
+	Event[VG_onGroupFormed]:AttachAtom[OnGroupMemberCountChange]
+	Event[VG_onGroupDisbanded]:AttachAtom[OnGroupMemberCountChange]
+	Event[VG_onGroupBooted]:AttachAtom[OnGroupMemberCountChange]
+
 
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }

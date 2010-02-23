@@ -37,8 +37,19 @@ function Healcheck()
 
 ;******************************Find My Group in Raid***********************
 
+
+
 function SetGroupMembers()
-{	
+{
+	;; This variable is controlled by atoms or by clicking your button in your gui
+	;; All I am doing here is forcing it to scan for group members right now!
+	doCheckForMembers:Set[TRUE]
+	call FindGroupMembers
+}
+
+
+
+/* BELOW IS ORIGINAL ROUTINES - IN CASE I MESSED UP TRYING TO FIGURE THIS OUT	
 	UIElement[GroupMemberList@HealPctCFrm@HealPct@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:ClearItems
 	if ${Group.Count} < 7
 		{
@@ -148,6 +159,7 @@ function SetGroupMembers()
 	}
 	Grplog "***${RaidGroupCount} People In Your Group***"
 }
+*/
 		
 
 ;******************************Change forms/Stances***********************
