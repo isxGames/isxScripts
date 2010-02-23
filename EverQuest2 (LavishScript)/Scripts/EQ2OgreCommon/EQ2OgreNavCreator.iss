@@ -1,6 +1,6 @@
 ;-----------------------------------------------------------------------------------------------
 ; New NavCreator by Kannkor (Hotshot). Written from scratch, based off of EQ2NavCreator written by Amadeus
-; Version 1.02
+; Version 1.02a
 ;	- Removed wait 1 to see if it can speed up the mapping
 ;	- Added Exit without saving
 ;	- Added option to save as XML also. Note: Loading will ALWAYS load from the LSO first. So rename/delete the LSO if you want to load an XML file.
@@ -125,7 +125,7 @@ function main()
 			OgreNavMapperOb:WorkTheMagic
 		}
 
-		wait 1
+		;wait 1
 	}
 
 	;***How many Children do we have?
