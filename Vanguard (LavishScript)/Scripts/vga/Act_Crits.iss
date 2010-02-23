@@ -8,6 +8,10 @@ function functAOECrits()
 	
 		while ( ${anIter.Key(exists)} )
 		{
+			;; Check next AOE Crit if not ready
+			if ${Me.Ability[${anIter.Value}].TimeRemaining}>0 || ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+				continue
+
 			if (!${Me.Ability[${anIter.Value}].IsReady})
 			{
 				anIter:Next
@@ -37,6 +41,13 @@ function functBuffCrits()
 
 		while ( ${anIter.Key(exists)} )
 		{
+			;; Check next Buff Crit if not ready
+			if ${Me.Ability[${anIter.Value}].TimeRemaining}>0 || ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			{
+				anIter:Next
+				continue
+			}
+
 			if (!${Me.Ability[${anIter.Value}].IsReady})
 			{
 				anIter:Next
@@ -66,6 +77,13 @@ function functDotCrits()
 	
 		while ( ${anIter.Key(exists)} )
 		{
+			;; Check next DOT Crit if not ready
+			if ${Me.Ability[${anIter.Value}].TimeRemaining}>0 || ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			{
+				anIter:Next
+				continue
+			}
+
 			if (!${Me.Ability[${anIter.Value}].IsReady})
 			{
 				anIter:Next
@@ -97,7 +115,14 @@ function functCounterAttacks()
 
 		while ( ${anIter.Key(exists)} )
 		{
-			
+
+			;; Check next Counters if not ready
+			if ${Me.Ability[${anIter.Value}].TimeRemaining}>0 || ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			{
+				anIter:Next
+				continue
+			}
+		
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} 
 			{
@@ -133,6 +158,13 @@ function functCombatCrits()
 
 		while ( ${anIter.Key(exists)} )
 		{
+			;; Check next Combat Crit if not ready
+			if ${Me.Ability[${anIter.Value}].TimeRemaining}>0 || ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			{
+				anIter:Next
+				continue
+			}
+
 			if (!${Me.Ability[${anIter.Value}].IsReady})
 			{
 				anIter:Next

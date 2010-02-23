@@ -298,7 +298,7 @@ function main()
 	;; Calculate our seconds
 	SEC:Set[${Math.Calc[${TIME}%60].Int}]
 	;; Show our results!
-	echo "[${Time}][VG:VGA] --> TOTAL TIME: [${MIN.LeadingZeroes[2]}m:${SEC.LeadingZeroes[2]}s:${MS.LeadingZeroes[3]}ms]"
+	echo "[${Time}][VG:VGA] --> TOTAL STARTUP TIME: [${MIN.LeadingZeroes[2]}m:${SEC.LeadingZeroes[2]}s:${MS.LeadingZeroes[3]}ms]"
 		
 	;===================================================
 	;===               Main Loop                    ====
@@ -443,9 +443,11 @@ function combatfunction()
 	;-------------------------------------------
 	;**********Fighting PostLoopCall************
 	;-------------------------------------------
+	;; Lets make sure we do our crits and counters
+	call PostCastingActions
 	call PostCombatLoopFunction
 	if ${DoClassPostCombat}
-		call Class_PostCombat	
+		call Class_PostCombat
 
 	return
 }
