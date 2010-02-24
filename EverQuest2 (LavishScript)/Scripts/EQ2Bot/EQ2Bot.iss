@@ -3469,10 +3469,12 @@ function CheckLoot()
 		return
 
 	islooting:Set[TRUE]
-	if ${NoAutoMovement} /* We will still move to loot distance of chests within 9m. This should be OK with everyone. */
+	if ${NoAutoMovement} 
 		EQ2:CreateCustomActorArray[byDist,9}]
-	else /* Allow auto movement */
+	elseif ${ScanRange}<30
 		EQ2:CreateCustomActorArray[byDist,${ScanRange}]
+	else
+		EQ2:CreateCustomActorArray[byDist,20]
 
 	do
 	{
@@ -3506,21 +3508,7 @@ function CheckLoot()
 				while (${IsMoving} || ${Me.IsMoving})
 				;Debug:Echo["Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"]
 			}
-			switch ${Me.SubClass}
-			{
-				case dirge
-				case troubador
-				case swashbuckler
-				case brigand
-				case ranger
-				case assassin
-					;Echo "DEBUG: disarming trap on ${CustomActor[${tcount}].ID}"
-					EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} disarm"
-					wait 2
-					break
-				case default
-					break
-			}
+
 			Actor[Chest]:DoubleClick
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 3
@@ -3562,7 +3550,10 @@ function CheckLoot()
 		}
 
 		if !${CurrentTask}
+		{
+			islooting:Set[FALSE]
 			Script:End
+		}
 	}
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
