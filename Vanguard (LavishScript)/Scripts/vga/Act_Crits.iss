@@ -8,7 +8,6 @@ function functAOECrits()
 	
 		while ( ${anIter.Key(exists)} )
 		{
-
 			if (!${Me.Ability[${anIter.Value}].IsReady})
 			{
 				anIter:Next
@@ -18,8 +17,8 @@ function functAOECrits()
 				return
 			
 			
-			call checkabilitytocast "${anIter.Value}" 
-			if ${Return} && ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			call checkabilitytocast "${anIter.Value}"
+			if ${Return}
 			{
 				call executeability "${anIter.Value}" "attack" "Both"
 			}
@@ -48,7 +47,7 @@ function functBuffCrits()
 			
 			
 			call checkabilitytocast "${anIter.Value}"
-			if ${Return} && !${Me.Effect[${anIter.Value}](exists)} && ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			if ${Return} && !${Me.Effect[${anIter.Value}](exists)}
 			{
 				call executeability "${anIter.Value}" "attack" "Both"
 			}
@@ -77,7 +76,7 @@ function functDotCrits()
 			
 			
 			call checkabilitytocast "${anIter.Value}"
-			if ${Return} && !${Me.TargetDebuff[${anIter.Value}](exists)} && ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			if ${Return} && !${Me.TargetDebuff[${anIter.Value}](exists)}
 			{
 				call executeability "${anIter.Value}" "attack" "Both"
 			}
@@ -98,8 +97,9 @@ function functCounterAttacks()
 
 		while ( ${anIter.Key(exists)} )
 		{
+			
 			call checkabilitytocast "${anIter.Value}"
-			if ${Return} && ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			if ${Return} && ${Me.Ability[${anIter.Value}].IsReady} 
 			{
 				if ${Me.Effect[${anIter.Value}](exists)}
 				{
@@ -110,7 +110,7 @@ function functCounterAttacks()
 					anIter:Next
 				}
 				call checkabilitytocast "${anIter.Value}"
-				if ${Return} && ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0 
+				if ${Return} 
 					call executeability "${anIter.Value}" "counter" "Both"
 			}
 			anIter:Next
@@ -133,7 +133,6 @@ function functCombatCrits()
 
 		while ( ${anIter.Key(exists)} )
 		{
-
 			if (!${Me.Ability[${anIter.Value}].IsReady})
 			{
 				anIter:Next
@@ -144,7 +143,7 @@ function functCombatCrits()
 			
 			
 			call checkabilitytocast "${anIter.Value}"
-			if ${Return} && ${Me.Ability[${anIter.Value}].TriggeredCountdown}==0
+			if ${Return}
 			{
 				call executeability "${anIter.Value}" "attack" "Both"
 			}

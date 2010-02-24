@@ -103,7 +103,6 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Act_MoveToAttack.iss"
 #include "${Script.CurrentDirectory}/GUI_Friends.iss"
 #include "${Script.CurrentDirectory}/Act_Interactions.iss"
-#include "${Script.CurrentDirectory}/FindGroupMembers.iss"
 ;-------------------------------------------
 ;************Main-Tab Scripts***************
 ;-------------------------------------------
@@ -202,70 +201,52 @@ function main()
 		echo "[${Time}] --> Unable to load ISXVG, exiting script"
 		endscript vga
 	}
-	
-
-	
-	;===================================================
-	;===          Start our timer                   ====
-	;===================================================	
-	;; Set our vairables
-	variable int START
-	variable int END
-	variable int MS
-	variable int TIME
-	variable int MIN = 0
-	variable int SEC = 0
-	
-	;; Time our called command "function"
-	START:Set[${LavishScript.RunningTime}]
-
-	
 	;===================================================
 	;===               Function Loads               ====
 	;===================================================	
-	call FunctionTimer "loadxmls"
+	call loadxmls
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
    	ui -reload "${Script.CurrentDirectory}/vga_gui.xml"
 	;===================================================
 	;===               Atoms and Events             ====
 	;===================================================	
-	call FunctionTimer "LavishEventLoad"
+	call LavishEventLoad
 	;===================================================
 	;===               Populate GUI Lists           ====
 	;===================================================
-	call FunctionTimer "PopulateHealLists"
-	call FunctionTimer "PopulateSpellLists"
-	call FunctionTimer "PopulateMeleeLists"
-	call FunctionTimer "PopulateCritsLists"
-	call FunctionTimer "PopulateCombatMainLists"
-	call FunctionTimer "PopulateEvadeLists"
-	call FunctionTimer "PopulateMobLists"
-	call FunctionTimer "PopulateAbilitiesLists"
-	call FunctionTimer "PopulateBuffLists"
-	call FunctionTimer "PopulateSellLists"
-	call FunctionTimer "DreadKnight_GUI"
-	call FunctionTimer "Warrior_GUI"
-	call FunctionTimer "Paladin_GUI"
-	call FunctionTimer "Bard_GUI"
-	call FunctionTimer "Monk_GUI"
-	call FunctionTimer "Ranger_GUI"
-	call FunctionTimer "Rogue_GUI"
-	call FunctionTimer "BloodMage_GUI"
-	call FunctionTimer "Cleric_GUI"
-	call FunctionTimer "Disciple_GUI"
-	call FunctionTimer "Shaman_GUI"
-	call FunctionTimer "Druid_GUI"
-	call FunctionTimer "Necromancer_GUI"
-	call FunctionTimer "Psionicist_GUI"
-	call FunctionTimer "Sorcerer_GUI"
-	call FunctionTimer "PopulateGroupMemberClassType"
+	call PopulateHealLists
+	call PopulateSpellLists
+	call PopulateMeleeLists
+	call PopulateCritsLists
+	call PopulateCombatMainLists
+	call PopulateEvadeLists
+	call PopulateMobLists
+	call PopulateAbilitiesLists
+	call PopulateBuffLists
+	call PopulateSellLists
+	call DreadKnight_GUI
+	call Warrior_GUI
+	call Paladin_GUI
+	call Bard_GUI
+	call Monk_GUI
+	call Ranger_GUI
+	call Rogue_GUI
+	call BloodMage_GUI
+	call Cleric_GUI
+	call Disciple_GUI
+	call Shaman_GUI
+	call Druid_GUI
+	call Necromancer_GUI
+	call Psionicist_GUI
+	call Sorcerer_GUI
+	call PopulateGroupMemberClassType
 	;***************edited by maras**************	
-	call FunctionTimer "SetupHOTTimer"
+	call SetupHOTTimer
 	;***************end edited by maras**************
 	;===================================================
 	;===               Bug WorkArounds              ====
 	;===================================================
-	call FunctionTimer "MeClassCrashWorkAround"
+	call MeClassCrashWorkAround
 	
 	;===================================================
 	;===               Misc.                        ====
@@ -276,29 +257,7 @@ function main()
 		; TODO:  Possibly pause the script (if we are grouped) until the player sets a tank/assist?
 		tankpawn:Set[${Me.FName}]
 		assistpawn:Set[${Me.FName}]
-	}
-
-	;; We can't leave this out either
-	call FunctionTimer "FindGroupMembers"
-	
-	;===================================================
-	;===           End our Timer                    ====
-	;===================================================
-	END:Set[${LavishScript.RunningTime}]
-	;; Calculate total milliseconds
-	MS:Set[${Math.Calc[${END}-${START}]}]
-	while ${MS}>=1000
-	{
-		MS:Dec[1000]
-	}
-	;; Calculate total seconds
-	TIME:Set[${Math.Calc[(${END}-${START})/1000]}]
-	;; Calculate total minutes
-	MIN:Set[${Math.Calc[${TIME}/60]}]
-	;; Calculate our seconds
-	SEC:Set[${Math.Calc[${TIME}%60].Int}]
-	;; Show our results!
-	echo "[${Time}][VG:VGA] --> TOTAL STARTUP TIME: [${MIN.LeadingZeroes[2]}m:${SEC.LeadingZeroes[2]}s:${MS.LeadingZeroes[3]}ms]"
+	}	
 		
 	;===================================================
 	;===               Main Loop                    ====
@@ -313,10 +272,8 @@ function main()
 		;************Run Queued Stuff***************
 		;-------------------------------------------
 		while ${QueuedCommands}
-		{
 			ExecuteQueued
-			FlushQueued
-		}
+		FlushQueued
 		;-------------------------------------------
 		;********Run Fight/Downtime Stuff***********
 		;-------------------------------------------
@@ -342,14 +299,6 @@ function main()
 ;===================================================
 function downtimefunction()
 {
-	;-------------------------------------------
-	;********** Find Group Members *************
-	;-------------------------------------------
-	call FindGroupMembers
-
-	;-------------------------------------------
-	;********** Downtime Functions *************
-	;-------------------------------------------
 	if !${DoByPassVGAHeals}
 		call Healcheck
 	if ${DoClassDownTime}
@@ -376,9 +325,9 @@ function downtimefunction()
 		call ShiftingImage
 	if ${DoAutoAcceptGroupInvite}
 		call groupup
-   	if ${doTrash} 
+    	if ${doTrash} 
 		call Trash
-   	if ${doHarvest}
+    	if ${doHarvest}
 		call Harvest
 	if ${DoRemoveLowDiplo}
 		call RemoveLowLevelDiplo
@@ -390,11 +339,6 @@ function downtimefunction()
 ;===================================================
 function combatfunction()
 {
-	;-------------------------------------------
-	;********** Find Group Members *************
-	;-------------------------------------------
-	call FindGroupMembers
-
 	;-------------------------------------------
 	;**********Fighting PreLoopCall*************
 	;-------------------------------------------
@@ -443,11 +387,9 @@ function combatfunction()
 	;-------------------------------------------
 	;**********Fighting PostLoopCall************
 	;-------------------------------------------
-	;; Lets make sure we do our crits and counters
-	call PostCastingActions
 	call PostCombatLoopFunction
 	if ${DoClassPostCombat}
-		call Class_PostCombat
+		call Class_PostCombat	
 
 	return
 }
@@ -593,43 +535,3 @@ atom atexit()
 	ui -unload "${Script.CurrentDirectory}/vga_gui.xml"
 	endscript vga
 }
-
-;===================================================
-;===             TIME A ROUTINE                 ====
-;===================================================
-
-function:bool FunctionTimer(string FUNCTION)
-{
-	;; Set our vairables
-	variable int START
-	variable int END
-	variable int MS
-	variable int TIME
-	variable int MIN = 0
-	variable int SEC = 0
-	
-	;; Time our called command "function"
-	START:Set[${LavishScript.RunningTime}]
-	call "${FUNCTION}"
-	END:Set[${LavishScript.RunningTime}]
-
-	;; Calculate total milliseconds
-	MS:Set[${Math.Calc[${END}-${START}]}]
-	while ${MS}>=1000
-	{
-		MS:Dec[1000]
-	}
-
-	;; Calculate total seconds
-	TIME:Set[${Math.Calc[(${END}-${START})/1000]}]
-
-	;; Calculate total minutes
-	MIN:Set[${Math.Calc[${TIME}/60]}]
-
-	;; Calculate our seconds
-	SEC:Set[${Math.Calc[${TIME}%60].Int}]
-
-	echo "[${Time}][VG:VGA] --> FunctionTimer: [${MIN.LeadingZeroes[2]}m:${SEC.LeadingZeroes[2]}s:${MS.LeadingZeroes[3]}ms] [${FUNCTION}]"
-	return ${Return}
-}
-

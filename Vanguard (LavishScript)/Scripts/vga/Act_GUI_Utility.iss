@@ -15,7 +15,7 @@ function PauseScript()
 		wait 10
 		}
 }
-;********************************************
+;*********************************************
 function groupup()
 {
 	if ${Me.GroupInvitePending}
