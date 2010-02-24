@@ -56,26 +56,7 @@ function Disciple_PostCasting()
 			call executeability "Ra'Jin Flare III" "Attack" "Both"
 			}
  }
- if ${Me.Ability[Endowment of Mastery](exists)} && !${Me.Effect[Endowment of Mastery](exists)} && ${Me.Stat[Adventuring,Jin]} > 4 && ${fight.ShouldIAttack}
- {
- actionlog "Need Endowment of Mastery"
-		call checkabilitytocast "Soul Cutter VI"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Soul Cutter VI" "Attack" "Both"
-			}
-		call checkabilitytocast "Void Hand VII"
-			if ${Return} && ${fight.ShouldIAttack}
-			{
-			call executeability "Void Hand VII" "Attack" "Both"
-			}
-		call checkabilitytocast "Knife Hand IV"
-			if ${Return} && ${fight.ShouldIAttack}
-			{
-			call executeability "Knife Hand IV" "Attack" "Both"
-			}
-		
-  }
+
  if ${Me.Ability[Endowment of Life](exists)} && ${LifeTimer.TimeLeft} == 0 && ${fight.ShouldIAttack}
  {
  actionlog "Need Endowment of Life on Tank"
