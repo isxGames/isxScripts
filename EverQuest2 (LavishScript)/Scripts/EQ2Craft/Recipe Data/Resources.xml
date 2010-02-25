@@ -9,6 +9,7 @@
 		<Setting Name="eucalyptus lumber">eucalyptus lumber</Setting>
 		<Setting Name="spotted pelt">spotted pelt</Setting>
 		<Setting Name="ethereal material">ethereal material</Setting>
+		<Setting Name="ethereal dust">ethereal dust</Setting>
 		<Setting Name="void-touched lumber">void-touched lumber</Setting>
 		<Setting Name="kobold meat">kobold meat</Setting>
 		<Setting Name="gazer meat">gazer meat</Setting>
@@ -24,7 +25,6 @@
 		<Setting Name="lapsang tea leaf">lapsang tea leaf</Setting>
 		<Setting Name="kejekan palmfruit">kejekan palmfruit</Setting>
 		<Setting Name="giant octopus meat">giant octopus meat</Setting>
-		<Setting Name="ethereal material">ethereal material</Setting>
 		<Setting Name="caynar nut">caynar nut</Setting>
 		<Setting Name="bamboo shoot">bamboo shoot</Setting>
 		<Setting Name="amber">amber</Setting>
