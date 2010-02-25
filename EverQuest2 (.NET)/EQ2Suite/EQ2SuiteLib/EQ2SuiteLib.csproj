@@ -54,11 +54,17 @@
     <Compile Include="FlexStringBuilder.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="MessageThread.cs" />
-    <Compile Include="PollingTextFileUpdateMonitor.cs" />
+    <Compile Include="PollingLogFileMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetCollection.cs" />
     <Compile Include="SharedStringCache.cs" />
     <Compile Include="ThreadSafeQueue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PInvoke\PInvoke.csproj">
+      <Project>{5D343453-8DDE-47F7-A940-24456E2B2510}</Project>
+      <Name>PInvoke</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
