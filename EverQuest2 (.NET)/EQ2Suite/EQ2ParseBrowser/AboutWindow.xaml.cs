@@ -21,7 +21,6 @@ namespace EQ2ParseBrowser
 		public AboutWindow()
 		{
 			InitializeComponent();
-			App.RemoveSystemMenu(this);
 			return;
 		}
 
@@ -29,6 +28,12 @@ namespace EQ2ParseBrowser
 		{
 			base.OnSourceInitialized(e);
 			App.RemoveSystemMenu(this);
+			return;
+		}
+
+		private void m_wndOkButton_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
 			return;
 		}
 	}
