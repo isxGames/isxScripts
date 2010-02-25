@@ -1,30 +1,44 @@
-﻿<Window x:Class="EQ2ParseBrowser.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="EQ2 Parse Browser" Height="401" Width="828">
+﻿<Window
+	x:Class="EQ2ParseBrowser.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:EQ2ParseBrowser"
+	Icon="{StaticResource MainIcon}"
+	Title="EQ2 Parse Browser" Height="401" Width="828">
+
+	<Window.Resources>
+	</Window.Resources>
+
 	<DockPanel LastChildFill="True">
 		<Menu DockPanel.Dock="Top">
-			<MenuItem Name="FileMenuItem" Header="File">
+			<MenuItem Name="FileMenuItem" Header="_File">
 				<MenuItem Name="FileExitMenuItem" Header="Exit"></MenuItem>
 			</MenuItem>
-			<MenuItem Name="ToolsMenuItem" Header="Tools"></MenuItem>
-			<MenuItem Name="WindowMenuItem" Header="Window">
+			<MenuItem Name="ToolsMenuItem" Header="_Tools"></MenuItem>
+			<MenuItem Name="WindowMenuItem" Header="_Window">
 				<MenuItem Name="m_WindowScaleContentsMenuItem" Header="_Scale Contents..."></MenuItem>
 				<MenuItem Name="m_WindowCloseAllMenuItem" Header="_Close All"></MenuItem>
 				<Separator/>
 			</MenuItem>
 			<MenuItem Name="m_HelpMenuItem" Header="_Help">
-				<MenuItem Name="HelpAboutMenuItem" Header="About" Click="HelpAboutMenuItem_Click"></MenuItem>
+				<MenuItem Name="HelpAboutMenuItem" Header="_About EQ2 Parse Browser" Click="HelpAboutMenuItem_Click"></MenuItem>
 			</MenuItem>
 		</Menu>
 		<ToolBar DockPanel.Dock="Top">
-			<Button Content="Dummy Toolbar Button"></Button>
+			<Button Content="Back"></Button>
+			<Button Content="Forward"></Button>
+			<Separator/>
 		</ToolBar>
 		<StatusBar DockPanel.Dock="Bottom">
 			<StatusBarItem Name="StatusBarStatisticsPane" Content="(insert stats here)"></StatusBarItem>
 		</StatusBar>
 		<TabControl>
-			<TabItem Header="Dummy Tab Item 1"></TabItem>
+			<local:CloseableTabItem Header="Blackburrow.Icedaze">
+				<local:ParseStatisticsControl />
+			</local:CloseableTabItem>
+			<local:CloseableTabItem Header="Blackburrow.Aleraku">
+				<local:ParseStatisticsControl />
+			</local:CloseableTabItem>
 			<TabItem Header="Dummy Tab Item 2"></TabItem>
 		</TabControl>
 		

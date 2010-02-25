@@ -4,11 +4,12 @@
 	Title="About EQ2 Parse Browser" Height="230" Width="364" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
 	WindowStyle="ThreeDBorderWindow">
 	<Canvas>
-		<Button Name="m_wndOkButton" Height="22" Width="89" Canvas.Bottom="12" Canvas.Left="127">OK</Button>
-		<TextBlock Width="330" Height="84" Canvas.Top="12" Canvas.Left="12" TextWrapping="Wrap">
-			EQ2 Parse Browser v1.0
-			<LineBreak/>
-			Written 2009-2010 by Joshua A. Schaeffer
+		<Button Name="m_wndOkButton" Height="22" Width="89" Canvas.Bottom="12" Canvas.Left="127" IsDefault="True" IsCancel="True" Click="m_wndOkButton_Click">OK</Button>
+		<TextBlock Name="m_wndProgramName" Width="330" Height="84" Canvas.Top="12" Canvas.Left="12" TextWrapping="Wrap">
+			EQ2 Parse Browser 1.0
+		</TextBlock>
+		<TextBlock Width="330" Height="84" Canvas.Top="100" Canvas.Left="12" TextWrapping="Wrap">
+			Written 2009-2010 by Eccentric
 			<LineBreak/>
 			<LineBreak/>
 			EverQuest 2™ is a trademark of Sony Online Entertainment
