@@ -165,6 +165,18 @@ namespace PInvoke
 		[Flags()]
 		public enum FileAccess : uint
 		{
+			Delete = 0x00010000,
+			ReadControl = 0x00020000,
+			WriteDAC = 0x00040000,
+			WriteOwner = 0x00080000,
+			Synchronize = 0x00100000,
+			StandardRightsRequired = 0x000F0000,
+			StandardRightsRead = ReadControl,
+			StandardRightsWrite = ReadControl,
+			StandardRightsExecute = ReadControl,
+			StandardRightsAll = 0x001F0000,
+			SpecificRightsAll = 0x0000FFFF,
+
 			ReadData = 0x1,
 			ListDirectory = 0x1,
 			WriteData = 0x2,
@@ -179,36 +191,10 @@ namespace PInvoke
 			DeleteChild = 0x40,
 			ReadAttributes = 0x80,
 			WriteAttributes = 0x100,
-			//AllAccess = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x1FF,
-/*
-#define FILE_GENERIC_READ         (STANDARD_RIGHTS_READ     |\
-                                   FILE_READ_DATA           |\
-                                   FILE_READ_ATTRIBUTES     |\
-                                   FILE_READ_EA             |\
-                                   SYNCHRONIZE)
-
-
-#define FILE_GENERIC_WRITE        (STANDARD_RIGHTS_WRITE    |\
-                                   FILE_WRITE_DATA          |\
-                                   FILE_WRITE_ATTRIBUTES    |\
-                                   FILE_WRITE_EA            |\
-                                   FILE_APPEND_DATA         |\
-                                   SYNCHRONIZE)
-
-
-#define FILE_GENERIC_EXECUTE      (STANDARD_RIGHTS_EXECUTE  |\
-                                   FILE_READ_ATTRIBUTES     |\
-                                   FILE_EXECUTE             |\
-                                   SYNCHRONIZE)
-*/
-			GenericRead = 0x8,
-			GenericWrite = 0x4,
-			GenericExecute = 0x2,
-			GenericAll = 0x1,
-			StandardRead,
-			StandardWrite,
-			Synchronize,
-
+			AllAccess = StandardRightsRequired | Synchronize | 0x1FF,
+			GenericRead = StandardRightsRead | ReadData | ReadAttributes | ReadExtendedAttributes | Synchronize,
+			GenericWrite = StandardRightsWrite | WriteData | WriteAttributes | WriteExtendedAttributes | AppendData | Synchronize,
+			GenericExecute = StandardRightsExecute | ReadAttributes | Execute | Synchronize,
 		}
 
 		[Flags()]
