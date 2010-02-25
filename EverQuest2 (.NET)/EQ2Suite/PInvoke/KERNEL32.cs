@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Microsoft.Win32.SafeHandles;
 
 namespace PInvoke
 {
-	public static class KERNEL32
+	public static partial class KERNEL32
 	{
 		public const int MAX_PATH = 260;
 		public static readonly IntPtr INVALID_HANDLE_VALUE = (IntPtr)(-1);
@@ -160,5 +161,119 @@ namespace PInvoke
 					CloseHandle(hSnapshot);
 			}
 		}
+
+		[Flags()]
+		public enum FileAccess : uint
+		{
+			ReadData = 0x1,
+			ListDirectory = 0x1,
+			WriteData = 0x2,
+			AddFile = 0x2,
+			AppendData = 0x4,
+			AddSubDirectory = 0x4,
+			CreatePipeInstance = 0x4,
+			ReadExtendedAttributes = 0x8,
+			WriteExtendedAttributes = 0x10,
+			Execute = 0x20,
+			Traverse = 0x20,
+			DeleteChild = 0x40,
+			ReadAttributes = 0x80,
+			WriteAttributes = 0x100,
+			//AllAccess = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x1FF,
+/*
+#define FILE_GENERIC_READ         (STANDARD_RIGHTS_READ     |\
+                                   FILE_READ_DATA           |\
+                                   FILE_READ_ATTRIBUTES     |\
+                                   FILE_READ_EA             |\
+                                   SYNCHRONIZE)
+
+
+#define FILE_GENERIC_WRITE        (STANDARD_RIGHTS_WRITE    |\
+                                   FILE_WRITE_DATA          |\
+                                   FILE_WRITE_ATTRIBUTES    |\
+                                   FILE_WRITE_EA            |\
+                                   FILE_APPEND_DATA         |\
+                                   SYNCHRONIZE)
+
+
+#define FILE_GENERIC_EXECUTE      (STANDARD_RIGHTS_EXECUTE  |\
+                                   FILE_READ_ATTRIBUTES     |\
+                                   FILE_EXECUTE             |\
+                                   SYNCHRONIZE)
+*/
+			GenericRead = 0x8,
+			GenericWrite = 0x4,
+			GenericExecute = 0x2,
+			GenericAll = 0x1,
+			StandardRead,
+			StandardWrite,
+			Synchronize,
+
+		}
+
+		[Flags()]
+		public enum FileShareMode : uint
+		{
+			Read = 0x00000001,
+			Write = 0x00000002,
+			Delete = 0x00000004,
+		}
+
+		/// <summary>
+		/// Winbase.h
+		/// </summary>
+		public enum FileCreationDisposition : uint
+		{
+			CreateNew = 1,
+			CreateAlways = 2,
+			OpenExisting = 3,
+			OpenAlways = 4,
+			TruncateExisting = 5,
+			OpenForLoader = 6,
+		}
+
+		[Flags()]
+		public enum FileFlagsAndAttributes : uint
+		{
+			ReadOnly = 0x1,
+			Hidden = 0x2,
+			System = 0x4,
+			Directory = 0x8,
+			Archive = 0x20,
+			Device = 0x40,
+			Normal = 0x80,
+			Temporary = 0x100,
+			SparseFile = 0x200,
+			ReparsePoint = 0x400,
+			Compressed = 0x800,
+			Offline = 0x1000,
+			NotContentIndexed = 0x2000,
+			Encrypted = 0x4000,
+			Virtual = 0x10000,
+			FlagFirstPipeInstance = 0x00080000,
+			FlagOpenNoRecall = 0x00100000,
+			FlagOpenReparsePoint = 0x00200000,
+			FlagPosixSemantics = 0x01000000,
+			FlagBackupSemantics = 0x02000000,
+			FlagDeleteOnClose = 0x04000000,
+			FlagSequentialScan = 0x08000000,
+			FlagRandomAccess = 0x10000000,
+			FlagNoBuffering = 0x20000000,
+			FlagOverlapped = 0x40000000,
+			FlagWriteThrough = 0x80000000,
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		public static extern /*SafeFileHandle*/ IntPtr CreateFile(
+			string lpFileName,
+			FileAccess dwDesiredAccess,
+			FileShareMode dwShareMode,
+			IntPtr lpSecurityAttributes,
+			FileCreationDisposition dwCreationDisposition,
+			FileFlagsAndAttributes dwFlagsAndAttributes,
+			IntPtr hTemplateFile);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool GetFileSizeEx(IntPtr hFile, out long lpFileSize);
 	}
 }
