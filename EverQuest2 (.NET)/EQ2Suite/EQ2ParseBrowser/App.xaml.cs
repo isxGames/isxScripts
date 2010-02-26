@@ -4,8 +4,10 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
-using PInvoke;
 using System.Windows.Interop;
+using PInvoke;
+using EQ2SuiteLib;
+using Microsoft.Win32;
 
 namespace EQ2ParseBrowser
 {
@@ -14,16 +16,72 @@ namespace EQ2ParseBrowser
 	/// </summary>
 	public partial class App : Application
 	{
-		public static void RemoveSystemMenu(Window wndWindow)
+		public static double s_fInterfaceScaleFactor = 1.0;
+		public static SavedWindowLocation s_MainWindowLocation = new SavedWindowLocation();
+		public static SavedWindowLocation s_AboutWindowLocation = new SavedWindowLocation();
+		public static SavedWindowLocation s_ScaleInterfaceWindowLocation = new SavedWindowLocation();
+
+		/***************************************************************************/
+		protected override void OnStartup(StartupEventArgs e)
 		{
-			// Get this window's handle
-			IntPtr hwnd = new WindowInteropHelper(wndWindow).Handle;
+			base.OnStartup(e);
+			ReadRegistrySettings();
+			return;
+		}
 
-			int iExtendedStyle = USER32.GetWindowLong(hwnd, USER32.GWL_EXSTYLE);
-			USER32.SetWindowLong(hwnd, USER32.GWL_EXSTYLE, iExtendedStyle | USER32.WS_EX_DLGMODALFRAME);
+		/***************************************************************************/
+		protected override void OnExit(ExitEventArgs e)
+		{
+			base.OnExit(e);
+			WriteRegistrySettings();
+			return;
+		}
 
-			// Update the window's non-client area to reflect the changes
-			USER32.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, USER32.SWP_NOMOVE | USER32.SWP_NOSIZE | USER32.SWP_NOZORDER | USER32.SWP_FRAMECHANGED);
+		/***************************************************************************/
+		public static void SetCommonWindowScale(double fNewScale)
+		{
+			App ThisApp = (Application.Current as App);
+
+			s_fInterfaceScaleFactor = fNewScale;
+
+			foreach (Window ThisWindow in ThisApp.Windows)
+			{
+				if (ThisWindow is CustomBaseWindow)
+					(ThisWindow as CustomBaseWindow).Scale = fNewScale;
+			}
+
+			return;
+		}
+
+		/***************************************************************************/
+		protected static void TransferRegistrySettings(RegistryTransferKey.TransferMode eTransferMode)
+		{
+			try
+			{
+				RegistryTransferKey RootKey = new RegistryTransferKey(Registry.CurrentUser, @"Software\EQ2Suite\EQ2ParseBrowser", eTransferMode);
+				RootKey.TransferDouble("InterfaceScaleFactor", ref s_fInterfaceScaleFactor);
+				RootKey.TransferFormLocation("AboutWindow", s_AboutWindowLocation);
+				RootKey.TransferFormLocation("MainWindow", s_MainWindowLocation);
+				RootKey.TransferFormLocation("ScaleInterfaceWindow", s_ScaleInterfaceWindowLocation);
+			}
+			catch
+			{
+				/// Oh well. Sing the blues. But one monkey don't stop the show.
+			}
+			return;
+		}
+
+		/***************************************************************************/
+		public static void ReadRegistrySettings()
+		{
+			TransferRegistrySettings(RegistryTransferKey.TransferMode.Read);
+			return;
+		}
+
+		/***************************************************************************/
+		public static void WriteRegistrySettings()
+		{
+			TransferRegistrySettings(RegistryTransferKey.TransferMode.Write);
 			return;
 		}
 	}

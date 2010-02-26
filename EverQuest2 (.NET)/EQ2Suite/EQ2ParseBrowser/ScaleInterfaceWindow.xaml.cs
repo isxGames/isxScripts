@@ -15,21 +15,23 @@ using EQ2SuiteLib;
 namespace EQ2ParseBrowser
 {
 	/// <summary>
-	/// Interaction logic for AboutWindow.xaml
+	/// Interaction logic for Window1.xaml
 	/// </summary>
-	public partial class AboutWindow : CustomBaseWindow
+	public partial class ScaleInterfaceWindow : CustomBaseWindow
 	{
-		public AboutWindow() : base(App.s_AboutWindowLocation)
+		public ScaleInterfaceWindow() : base(App.s_ScaleInterfaceWindowLocation)
 		{
 			InitializeComponent();
 
-			ShowSystemMenu = false;
+			m_wndScaleSlider.Value = App.s_fInterfaceScaleFactor;
+
 			return;
 		}
 
-		private void m_wndOkButton_Click(object sender, RoutedEventArgs e)
+		private void m_wndScaleSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			Close();
+			if (IsInitialized)
+				App.SetCommonWindowScale(e.NewValue);
 			return;
 		}
 	}

@@ -79,6 +79,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ScaleInterfaceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -92,7 +96,6 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CloseableTabItem.cs" />
     <Compile Include="ParseStatisticsControl.xaml.cs">
       <DependentUpon>ParseStatisticsControl.xaml</DependentUpon>
     </Compile>
@@ -104,6 +107,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ScaleInterfaceWindow.xaml.cs">
+      <DependentUpon>ScaleInterfaceWindow.xaml</DependentUpon>
+    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -114,6 +120,10 @@
     <ProjectReference Include="..\EQ2ParseEngine\EQ2ParseEngine.csproj">
       <Project>{CE7D033D-335A-40D8-BBEF-5ACD8E7BCD40}</Project>
       <Name>EQ2ParseEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EQ2SuiteLib\EQ2SuiteLib.csproj">
+      <Project>{EE4CDE34-79E2-477B-8D58-E56ADEC5516A}</Project>
+      <Name>EQ2SuiteLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">
       <Project>{5D343453-8DDE-47F7-A940-24456E2B2510}</Project>

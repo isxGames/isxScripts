@@ -143,7 +143,7 @@ namespace EQ2SuiteLib
 
 				m_lLastFileEnd = lNewLength;
 			}
-			catch (Exception e)
+			catch //(Exception e)
 			{
 				return false;
 			}
@@ -235,7 +235,7 @@ namespace EQ2SuiteLib
 
 				ClearLogFile();
 			}
-			catch (Exception ex)
+			catch //(Exception ex)
 			{
 				/// Not sure yet what to do here, if anything.
 			}

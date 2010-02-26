@@ -15,6 +15,7 @@ namespace EQ2SuiteLib
 		}
 
 		private RegistryKey m_Key = null;
+		private TransferMode m_eTransferMode = TransferMode.Read;
 
 		/***************************************************************************/
 		public static implicit operator RegistryKey(RegistryTransferKey m_Key)
@@ -43,13 +44,40 @@ namespace EQ2SuiteLib
 		public void Open(RegistryKey RootKey, string strKey, TransferMode eTransferMode)
 		{
 			m_Key = RootKey.CreateSubKey(strKey);
+			m_eTransferMode = eTransferMode;
 			return;
 		}
 
 		/***************************************************************************/
-		public void TransferInt(string strName, ref int iValue, TransferMode eTransferMode)
+		/// <summary>
+		/// Transfer the double as a string for user editability.
+		/// </summary>
+		/// <param name="strName"></param>
+		/// <param name="fValue"></param>
+		public void TransferDouble(string strName, ref double fValue)
 		{
-			if (TransferMode.Read == eTransferMode)
+			string strValue = string.Empty;
+			
+			if (m_eTransferMode == TransferMode.Write)
+				strValue = fValue.ToString();
+
+			TransferString(strName, ref strValue);
+
+			if (m_eTransferMode == TransferMode.Read)
+			{
+				double fTemp = 0.0;
+
+				if (double.TryParse(strValue, out fTemp))
+					fValue = fTemp;
+			}
+
+			return;
+		}
+
+		/***************************************************************************/
+		public void TransferInt(string strName, ref int iValue)
+		{
+			if (TransferMode.Read == m_eTransferMode)
 			{
 				object objPriorValue = m_Key.GetValue(strName);
 				if (objPriorValue == null)
@@ -63,9 +91,9 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void TransferEnum32<T>(string strName, ref T eValue, TransferMode eTransferMode)
+		public void TransferEnum32<T>(string strName, ref T eValue)
 		{
-			if (TransferMode.Read == eTransferMode)
+			if (TransferMode.Read == m_eTransferMode)
 			{
 				int iValue = (int)m_Key.GetValue(strName);
 				eValue = (T)Enum.ToObject(typeof(T), iValue);
@@ -76,9 +104,9 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void TransferDateTime(string strName, ref DateTime DateTimeValue, TransferMode eTransferMode)
+		public void TransferDateTime(string strName, ref DateTime DateTimeValue)
 		{
-			if (TransferMode.Read == eTransferMode)
+			if (TransferMode.Read == m_eTransferMode)
 			{
 				byte[] abyValue = (byte[])m_Key.GetValue(strName);
 				long iRawValue = BitConverter.ToInt64(abyValue, 0);
@@ -93,9 +121,9 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void TransferString(string strName, ref string strValue, TransferMode eTransferMode)
+		public void TransferString(string strName, ref string strValue)
 		{
-			if (TransferMode.Read == eTransferMode)
+			if (TransferMode.Read == m_eTransferMode)
 			{
 				object objPriorValue = m_Key.GetValue(strName);
 				if (objPriorValue == null)
@@ -109,12 +137,12 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void TransferStringList(string strNamePrefix, ref List<string> astrValues, TransferMode eTransferMode)
+		public void TransferStringList(string strNamePrefix, ref List<string> astrValues)
 		{
 			int iCount = astrValues.Count;
-			TransferInt(strNamePrefix + "Count", ref iCount, eTransferMode);
+			TransferInt(strNamePrefix + "Count", ref iCount);
 
-			if (TransferMode.Read == eTransferMode)
+			if (TransferMode.Read == m_eTransferMode)
 			{
 				astrValues.Clear();
 
@@ -136,9 +164,9 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void TransferBool(string strName, ref bool bValue, TransferMode eTransferMode)
+		public void TransferBool(string strName, ref bool bValue)
 		{
-			if (TransferMode.Read == eTransferMode)
+			if (TransferMode.Read == m_eTransferMode)
 				bValue = (0 != (int)m_Key.GetValue(strName));
 			else
 				m_Key.SetValue(strName, (bValue ? (int)1 : (int)0));
@@ -146,47 +174,34 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		/// <summary>
-		/// </summary>
-		/// <remarks>
-		/// This function turned out way more complicated than it needed to be.
-		/// There's no reason the members of Rectangle had to be properties instead of straight variables.
-		/// </remarks>
-		public void TransferRectangle(
-			string strNamePrefix,
-			ref Rectangle rcValue,
-			TransferMode eTransferMode)
+		public void TransferFormLocation(string strNamePrefix, SavedWindowLocation ThisLocation)
 		{
 			string strTemp = string.Empty;
 
-			if (eTransferMode == TransferMode.Write)
+			if (m_eTransferMode == TransferMode.Write)
 			{
-				strTemp = string.Format("{0} {1} {2} {3}", rcValue.X, rcValue.Y, rcValue.Width, rcValue.Height);
+				strTemp = string.Format("{0} {1} {2} {3} {4}",
+					ThisLocation.m_rcBounds.X,
+					ThisLocation.m_rcBounds.Y,
+					ThisLocation.m_rcBounds.Width,
+					ThisLocation.m_rcBounds.Height,
+					ThisLocation.m_fScale);
 			}
 
-			TransferString(strNamePrefix + "Dimensions", ref strTemp, eTransferMode);
+			TransferString(strNamePrefix + "Dimensions", ref strTemp);
 
-			if (eTransferMode == TransferMode.Read)
+			if (m_eTransferMode == TransferMode.Read)
 			{
 				string[] astrComponents = strTemp.Split(' ');
-				rcValue.X = int.Parse(astrComponents[0]);
-				rcValue.Y = int.Parse(astrComponents[1]);
-				rcValue.Width = int.Parse(astrComponents[2]);
-				rcValue.Height = int.Parse(astrComponents[3]);
+				ThisLocation.m_rcBounds.X = float.Parse(astrComponents[0]);
+				ThisLocation.m_rcBounds.Y = float.Parse(astrComponents[1]);
+				ThisLocation.m_rcBounds.Width = float.Parse(astrComponents[2]);
+				ThisLocation.m_rcBounds.Height = float.Parse(astrComponents[3]);
+				ThisLocation.m_fScale = double.Parse(astrComponents[4]);
 			}
 
-			return;
-		}
-
-		/***************************************************************************/
-		public void TransferFormLocation(
-			RegistryKey m_Key,
-			string strNamePrefix,
-			SavedWindowLocation ThisLocation,
-			TransferMode eTransferMode)
-		{
-			TransferRectangle(strNamePrefix, ref ThisLocation.m_rcBounds, eTransferMode);
-			TransferBool(strNamePrefix + "Maximized", ref ThisLocation.m_bMaximized, eTransferMode);
+			/// Separate values.
+			TransferBool(strNamePrefix + "Maximized", ref ThisLocation.m_bMaximized);
 			return;
 		}
 	}
