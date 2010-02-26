@@ -6,9 +6,26 @@ using System.Drawing;
 
 namespace EQ2SuiteLib
 {
-	public class SavedWindowLocation
+	public class SavedWindowLocation : ICloneable
 	{
-		public Rectangle m_rcBounds;
+		public RectangleF m_rcBounds;
 		public bool m_bMaximized = false;
+		public double m_fScale = 1.0;
+
+		/************************************************************************************/
+		public object Clone()
+		{
+			return Copy();
+		}
+
+		/************************************************************************************/
+		public SavedWindowLocation Copy()
+		{
+			SavedWindowLocation NewCopy = new SavedWindowLocation();
+			NewCopy.m_rcBounds = m_rcBounds;
+			NewCopy.m_bMaximized = m_bMaximized;
+			NewCopy.m_fScale = m_fScale;
+			return NewCopy;
+		}
 	}
 }

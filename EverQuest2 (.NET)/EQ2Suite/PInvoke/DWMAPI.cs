@@ -32,6 +32,10 @@ namespace PInvoke
 		[DllImport("dwmapi.dll", PreserveSig = false)]
 		public static extern void DwmExtendFrameIntoClientArea(IntPtr hWindow, ref MARGINS pMarInset);
 
+		/// <summary>
+		/// Actually returns HRESULT and accepts pointer to bool in parameter.
+		/// </summary>
+		/// <returns></returns>
 		[DllImport("dwmapi.dll", PreserveSig = false)]
 		public static extern bool DwmIsCompositionEnabled();
 

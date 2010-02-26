@@ -68,7 +68,7 @@ namespace PInvoke
 			DirectImpersonation = (0x0200)
 		}
 
-		[Flags()]
+		[Flags]
 		public enum ProcessAccess : int
 		{
 			/// <summary>Specifies all possible access flags for the process object.</summary>
@@ -93,43 +93,44 @@ namespace PInvoke
 			Synchronize = 0x100000
 		}
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern IntPtr OpenProcess(ProcessAccess dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern IntPtr CreateToolhelp32Snapshot([In]SnapshotFlags dwFlags, [In]UInt32 th32ProcessID);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool Process32First([In]IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool Process32Next([In]IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool Thread32First([In]IntPtr hSnapshot, ref THREADENTRY32 lpte);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool Thread32Next([In]IntPtr hSnapshot, ref THREADENTRY32 lpte);
 
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool CloseHandle([In] IntPtr hObject);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool SetProcessAffinityMask(IntPtr hProcess, UIntPtr dwProcessAffinityMask);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		public static extern bool GetProcessAffinityMask(IntPtr hProcess, out UIntPtr lpProcessAffinityMask, out UIntPtr lpSystemAffinityMask);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern UIntPtr SetThreadAffinityMask(IntPtr hThread, UIntPtr dwThreadAffinityMask);
 
-		[DllImport("kernel32", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern uint GetCurrentProcessId();
 
+		/************************************************************************************/
 		public static IEnumerable<THREADENTRY32> EnumProcessThreads(UInt32 uiProcessID)
 		{
 			IntPtr hSnapshot = IntPtr.Zero;
@@ -162,7 +163,7 @@ namespace PInvoke
 			}
 		}
 
-		[Flags()]
+		[Flags]
 		public enum FileAccess : uint
 		{
 			Delete = 0x00010000,
@@ -197,7 +198,7 @@ namespace PInvoke
 			GenericExecute = StandardRightsExecute | ReadAttributes | Execute | Synchronize,
 		}
 
-		[Flags()]
+		[Flags]
 		public enum FileShareMode : uint
 		{
 			Read = 0x00000001,
@@ -218,7 +219,7 @@ namespace PInvoke
 			OpenForLoader = 6,
 		}
 
-		[Flags()]
+		[Flags]
 		public enum FileFlagsAndAttributes : uint
 		{
 			ReadOnly = 0x1,
@@ -249,7 +250,7 @@ namespace PInvoke
 			FlagWriteThrough = 0x80000000,
 		}
 
-		[DllImport("kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern /*SafeFileHandle*/ IntPtr CreateFile(
 			string lpFileName,
 			FileAccess dwDesiredAccess,
@@ -260,6 +261,69 @@ namespace PInvoke
 			IntPtr hTemplateFile);
 
 		[DllImport("kernel32.dll", SetLastError = true)]
-		public static extern bool GetFileSizeEx(IntPtr hFile, out long lpFileSize);
+		public static extern bool GetFileSizeEx(IntPtr hFile, ref long lpFileSize);
+
+		public enum FilePointerMoveMethod : uint
+		{
+			Beginning = 0,
+			Current = 1,
+			End = 2,
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool SetFilePointerEx(IntPtr hFile, long liDistanceToMove, ref long lpNewFilePointer, FilePointerMoveMethod dwMoveMethod);
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		public static extern bool SetEndOfFile(IntPtr hFile);
+
+		public delegate CopyProgressResult CopyProgressRoutine(
+			long TotalFileSize,
+			long TotalBytesTransferred,
+			long StreamSize,
+			long StreamBytesTransferred,
+			uint dwStreamNumber,
+			CopyProgressCallbackReason dwCallbackReason,
+			IntPtr hSourceFile,
+			IntPtr hDestinationFile,
+			IntPtr lpData);
+
+		public enum CopyProgressResult : uint
+		{
+			Continue = 0,
+			Cancel = 1,
+			Stop = 2,
+			Quiet = 3
+		}
+
+		public enum CopyProgressCallbackReason : uint
+		{
+			ChunkFinished = 0x00000000,
+			StreamFinished = 0x00000001
+		}
+
+		[Flags]
+		public enum CopyFileFlags : uint
+		{
+			FailIfExists = 0x00000001,
+			Restartable = 0x00000002,
+			OpenSourceForWrite = 0x00000004,
+			AllowDecryptedDestination = 0x00000008,
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern bool CopyFile(
+			string lpExistingFileName,
+			string lpNewFileName,
+			bool bFailIfExists);
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool CopyFileEx(
+			string lpExistingFileName,
+			string lpNewFileName,
+			CopyProgressRoutine lpProgressRoutine,
+			IntPtr lpData,
+			ref Int32 pbCancel,
+			CopyFileFlags dwCopyFlags);
 	}
 }
