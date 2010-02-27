@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v9.00 - Integration of Recipe Search function, thanks to Noob536.
+
 v8.99 - Infestation by CyberTechs!
         * Added support for navigating to retrieve writ invoices
           NavPoints: Invoices and Invoices 1 thru Invoices 5
