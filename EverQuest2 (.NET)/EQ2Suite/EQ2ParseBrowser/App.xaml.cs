@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
-using PInvoke;
 using EQ2SuiteLib;
 using Microsoft.Win32;
 
@@ -26,6 +25,7 @@ namespace EQ2ParseBrowser
 		{
 			base.OnStartup(e);
 			ReadRegistrySettings();
+
 			return;
 		}
 
