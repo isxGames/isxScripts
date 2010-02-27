@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.InteropServices;
+using EQ2SuiteLib;
 
-namespace PInvoke
+namespace EQ2ParseBrowser
 {
-	public static partial class COMCTL32
+	public class LogFilePollingThread : MessageThread
 	{
 	}
 }

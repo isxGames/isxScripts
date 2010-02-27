@@ -14,6 +14,9 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <ApplicationManifest>Resources\app.manifest</ApplicationManifest>
+    <TargetZone>LocalIntranet</TargetZone>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -75,7 +78,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ParseStatisticsControl.xaml">
+    <Page Include="MdiParseStatisticsChild.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -96,8 +99,10 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ParseStatisticsControl.xaml.cs">
-      <DependentUpon>ParseStatisticsControl.xaml</DependentUpon>
+    <Compile Include="LogFilePollingThread.cs" />
+    <Compile Include="MdiBaseChild.cs" />
+    <Compile Include="MdiParseStatisticsChild.xaml.cs">
+      <DependentUpon>MdiParseStatisticsChild.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -110,6 +115,7 @@
     <Compile Include="ScaleInterfaceWindow.xaml.cs">
       <DependentUpon>ScaleInterfaceWindow.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Resources\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

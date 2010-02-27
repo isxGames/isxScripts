@@ -37,4 +37,5 @@ using System.Windows;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 /// This makes sure that "themes\generic.xaml" gets used for controls in the assembly.
+/// http://msdn.microsoft.com/en-us/library/system.windows.themeinfoattribute.aspx
 [assembly: ThemeInfoAttribute(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]

@@ -42,6 +42,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -55,8 +56,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="COMCTL32.cs" />
+    <Compile Include="COMCTL32.cs">
+    </Compile>
+    <Compile Include="COMCTL32.TaskDialog.cs">
+      <DependentUpon>COMCTL32.cs</DependentUpon>
+    </Compile>
     <Compile Include="DWMAPI.cs" />
+    <Compile Include="HRESULT.cs" />
     <Compile Include="KERNEL32.cs" />
     <Compile Include="KERNEL32.GetLastError.cs">
       <DependentUpon>KERNEL32.cs</DependentUpon>
@@ -65,7 +71,7 @@
     <Compile Include="USER32.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.manifest" />
+    <Resource Include="app.manifest" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

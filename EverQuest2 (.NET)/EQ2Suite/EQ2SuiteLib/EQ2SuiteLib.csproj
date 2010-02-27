@@ -62,6 +62,7 @@
     <Compile Include="CsvStreams.cs" />
     <Compile Include="CustomFormatter.cs" />
     <Compile Include="FlexStringBuilder.cs" />
+    <Compile Include="IMdiChild.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="MdiTabControl.cs" />
     <Compile Include="MessageThread.cs" />
@@ -85,6 +86,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.manifest" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

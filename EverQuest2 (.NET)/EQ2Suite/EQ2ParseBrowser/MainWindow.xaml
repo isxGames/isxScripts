@@ -4,8 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:EQ2ParseBrowser"
 	xmlns:eq2suitelib="clr-namespace:EQ2SuiteLib;assembly=EQ2SuiteLib"
-	Icon="{StaticResource MainIcon}"
-	Title="EQ2 Parse Browser" Height="401" Width="828">
+	Icon="{StaticResource MainIcon}" Title="EQ2 Parse Browser" Height="401" Width="828">
 
 	<Window.Resources>
 	</Window.Resources>
@@ -36,14 +35,6 @@
 		<StatusBar DockPanel.Dock="Bottom">
 			<StatusBarItem Name="StatusBarStatisticsPane" Content="(insert stats here)"></StatusBarItem>
 		</StatusBar>
-		<eq2suitelib:MdiTabControl>
-			<eq2suitelib:CloseableTabItem Header="Blackburrow.Icedaze">
-				<local:ParseStatisticsControl />
-			</eq2suitelib:CloseableTabItem>
-			<eq2suitelib:CloseableTabItem Header="Blackburrow.Aleraku">
-				<local:ParseStatisticsControl />
-			</eq2suitelib:CloseableTabItem>
-			<TabItem Header="Dummy Tab Item 2"></TabItem>
-		</eq2suitelib:MdiTabControl>
+		<local:SharedMdiTabControl x:Name="m_wndMdiControl"/>
 	</DockPanel>
 </eq2suitelib:CustomBaseWindow>

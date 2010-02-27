@@ -6,13 +6,24 @@
 	SizeToContent="WidthAndHeight"
 	WindowStyle="ThreeDBorderWindow">
 	<StackPanel HorizontalAlignment="Stretch" Margin="10">
-		<TextBlock Name="m_wndProgramName">EQ2 Parse Browser 1.0</TextBlock>
-		<TextBlock>
-			Written 2009-2010 by Eccentric
-		</TextBlock>
-		<TextBlock>
-			EverQuest 2™ is a trademark of Sony Online Entertainment
-		</TextBlock>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="10"/>
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Image Name="m_MainIconImage" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="{StaticResource MainIcon}" Width="32" Height="32"/>
+			<TextBlock Name="m_wndProgramNameText" Grid.Column="2" Grid.Row="0">EQ2 Parse Browser 1.0</TextBlock>
+			<TextBlock Grid.Column="2" Grid.Row="1">Written 2009-2010 by Eccentric</TextBlock>
+		</Grid>
+		
+		<Rectangle Height="10"/>
+		<TextBlock TextWrapping="Wrap" Width="320">EQ2 Parse Browser and the "EQ2Suite" are released under the GNU Public License.</TextBlock>
+		<TextBlock>EverQuest 2™ is a trademark of Sony Online Entertainment</TextBlock>
 		<Rectangle Height="10"/>
 		<Button Name="m_wndOkButton" HorizontalAlignment="Right" Height="22" Width="89" IsDefault="True" IsCancel="True" Click="m_wndOkButton_Click">OK</Button>
 	</StackPanel>

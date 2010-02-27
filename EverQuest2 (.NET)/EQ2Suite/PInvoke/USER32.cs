@@ -30,6 +30,7 @@ namespace PInvoke
 
 		public const int WM_SETICON = 0x0080;
 		public const int WM_DWMCOMPOSITIONCHANGED = 0x031E;
+		public const int WM_USER = 0x0400;
 
 	}
 }
