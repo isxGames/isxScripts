@@ -6,11 +6,13 @@ using System.Windows;
 using System.Windows.Media;
 using PInvoke;
 using System.Windows.Interop;
+using System.Windows.Input;
 
 namespace EQ2SuiteLib
 {
 	public class CustomBaseWindow : Window
 	{
+		protected bool m_bCloseOnEscape = true;
 		protected bool m_bShowSystemMenu = false;
 		protected SavedWindowLocation m_SavedWindowLocation = null;
 		protected SavedWindowLocation m_LastSavedWindowLocation = null;
@@ -27,6 +29,16 @@ namespace EQ2SuiteLib
 		{
 			SharedConstructor();
 			return;
+		}
+
+		/************************************************************************************/
+		public bool CloseOnEscape
+		{
+			set
+			{
+				m_bCloseOnEscape = value;
+				return;
+			}
 		}
 
 		/************************************************************************************/
@@ -216,5 +228,19 @@ namespace EQ2SuiteLib
 			}
 			return;
 		}
+
+		/************************************************************************************/
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if (m_bCloseOnEscape && (e.Key == Key.Escape))
+			{
+				e.Handled = true;
+				Close();
+			}
+
+			base.OnKeyDown(e);
+			return;
+		}
+
 	}
 }
