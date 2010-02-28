@@ -204,6 +204,9 @@
 		<Setting Name="rough fire emerald" Tier="8" Type="Rare"></Setting>
 		<Setting Name="mahogany lumber" Tier="8" Type="Rare"></Setting>
 	<!-- "Tier9Raw" -->
+		<Setting Name="gazer meat" Tier="9" Type="Raw"></Setting>
+		<Setting Name="Kobold meat" Tier="9" Type="Raw"></Setting>
+		<Setting Name="fearstalker meat" Tier="9" Type="Raw"></Setting>
 		<Setting Name="giant octopus meat" Tier="9" Type="Raw"></Setting>
 		<Setting Name="mottled pelt" Tier="9" Type="Raw"></Setting>
 		<Setting Name="seahorse roe" Tier="9" Type="Raw"></Setting>
