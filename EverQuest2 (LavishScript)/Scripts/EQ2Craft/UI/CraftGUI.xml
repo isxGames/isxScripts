@@ -885,12 +885,25 @@
 												<CommandChecked>noop ${Script[Buffer:Craft].Variable[GuildPrivacy]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
 												<Data>${Script[Buffer:Craft].Variable[GuildPrivacy]}</Data>
 											</Commandcheckbox>
-											<Commandcheckbox Name='DeclineInvites'>
+											<Commandcheckbox Name='GuildPrivacyAlways'>
 												<Font Template='Tahoma'>
 													<Color>FFEBDEAA</Color>
 												</Font>
 												<X>10</X>
 												<Y>140</Y>
+												<Width>100</Width>
+												<Height>20</Height>
+												<Text>Disable guild notifications while craft is running (ALWAYS)</Text>
+												<Command>noop ${Script[Buffer:Craft].Variable[GuildPrivacyAlways]:Set[TRUE]} ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[Buffer:Craft].Variable[GuildPrivacyAlways]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[Buffer:Craft].Variable[GuildPrivacyAlways]}</Data>
+											</Commandcheckbox>
+											<Commandcheckbox Name='DeclineInvites'>
+												<Font Template='Tahoma'>
+													<Color>FFEBDEAA</Color>
+												</Font>
+												<X>10</X>
+												<Y>160</Y>
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Ignore Duels, Trades, and Groups when craft script is running</Text>
@@ -903,7 +916,7 @@
 											</Commandcheckbox>
 											<Text Name='Craft Delay Text'>
 												<X>30</X>
-												<Y>162</Y>
+												<Y>182</Y>
 												<Width>100%</Width>
 												<Height>20</Height>
 												<Font Template='Tahoma'>
@@ -913,7 +926,7 @@
 											</Text>
 											<Textentry Name='Craft Delay'>
 												<X>190</X>
-												<Y>162</Y>
+												<Y>182</Y>
 												<Width>35</Width>
 												<Height>20</Height>
 												<MaxLength>4</MaxLength>
@@ -927,7 +940,7 @@
 											</Textentry>
 											<Commandcheckbox Name='Craft TTS'>
 												<X>10</X>
-												<Y>180</Y>
+												<Y>200</Y>
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Enable TTS</Text>
