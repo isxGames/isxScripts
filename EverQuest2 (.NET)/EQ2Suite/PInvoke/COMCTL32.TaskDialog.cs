@@ -138,7 +138,7 @@ namespace PInvoke
 		/// ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/shellcc/platform/commctls/taskdialogs/taskdialogreference/taskdialogstructures/taskdialogconfig.htm
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
-		public class TASKDIALOGCONFIG : IDisposable
+		public class TASKDIALOGCONFIG
 		{
 			protected uint cbSize; /// No need to expose this constant.
 			public IntPtr hwndParent = IntPtr.Zero;
@@ -177,10 +177,6 @@ namespace PInvoke
 			{
 				cbSize = (uint)Marshal.SizeOf(typeof(COMCTL32.TASKDIALOGCONFIG));
 				return;
-			}
-
-			void IDisposable.Dispose()
-			{
 			}
 		}
 

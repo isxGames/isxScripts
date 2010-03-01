@@ -23,8 +23,9 @@ namespace EQ2ParseBrowser
 	/// </summary>
 	public partial class MainWindow : CustomBaseWindow
 	{
-		public AboutWindow m_wndAboutWindow = null;
-		public ScaleInterfaceWindow m_wndScaleInterfaceWindow = null;
+		public readonly BoxedScalar<AboutWindow> m_wndAboutWindow = new BoxedScalar<AboutWindow>();
+		public readonly BoxedScalar<LogSourceManagerWindow> m_wndLogSourceManagerWindow = new BoxedScalar<LogSourceManagerWindow>();
+		public readonly BoxedScalar<ScaleInterfaceWindow> m_wndScaleInterfaceWindow = new BoxedScalar<ScaleInterfaceWindow>();
 
 		/***************************************************************************/
 		public MainWindow()
@@ -32,6 +33,7 @@ namespace EQ2ParseBrowser
 		{
 			InitializeComponent();
 			ShowSystemMenu = true;
+			CloseOnEscape = false;
 
 			return;
 		}
@@ -42,7 +44,7 @@ namespace EQ2ParseBrowser
 			base.OnSourceInitialized(e);
 
 			//COMCTL32.TaskDialog(this, "asdf", "fdas", "11223344", COMCTL32.TaskDialogButtons.Cancel, COMCTL32.TaskDialogIcon.Error);
-			//*
+			/*
 			COMCTL32.TASKDIALOGCONFIG ThisConfig = new COMCTL32.TASKDIALOGCONFIG();
 			ThisConfig.hwndParent = new WindowInteropHelper(this).Handle;
 			ThisConfig.pszWindowTitle = "Demonstration";
@@ -67,60 +69,105 @@ namespace EQ2ParseBrowser
 			bool bVerificationFlagChecked = false;
 
 			HRESULT hResult = COMCTL32.TaskDialogIndirect(ThisConfig, out iButton, out iRadioButton, out bVerificationFlagChecked);
-			//*/
+			*/
 			return;
 		}
 
 		/***************************************************************************/
-		private void FileExitMenuItem_Click(object sender, RoutedEventArgs e)
+		private void OnFileManageLogSourcesMenuItemClick(object sender, RoutedEventArgs e)
+		{
+			if (CreateSingletonModelessWindow<LogSourceManagerWindow>(m_wndLogSourceManagerWindow))
+			{
+				m_wndLogSourceManagerWindow.Value.Show();
+			}
+			return;
+		}
+
+		/***************************************************************************/
+		private void OnFileCloseMenuItemClick(object sender, RoutedEventArgs e)
+		{
+			return;
+		}
+
+		/***************************************************************************/
+		private void OnFileCloseAllMenuItemClick(object sender, RoutedEventArgs e)
+		{
+			return;
+		}
+
+		/***************************************************************************/
+		private void OnFileExitMenuItemClick(object sender, RoutedEventArgs e)
 		{
 			Close();
 			return;
 		}
 
 		/***************************************************************************/
-		private void ToolsScaleContentsMenuItem_Click(object sender, RoutedEventArgs e)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="ThisWindowVariable"></param>
+		/// <returns>true if the window was newly created and will need to be explicly shown.</returns>
+		protected bool CreateSingletonModelessWindow<T>(BoxedScalar<T> ThisWindowVariable) where T : CustomBaseWindow, new()
 		{
-			if (m_wndScaleInterfaceWindow != null)
-				m_wndScaleInterfaceWindow.Activate();
+			if (ThisWindowVariable.Value != null)
+			{
+				ThisWindowVariable.Value.Activate();
+
+				/// Restore a minimized window.
+				if (ThisWindowVariable.Value.WindowState == WindowState.Minimized)
+					ThisWindowVariable.Value.WindowState = WindowState.Normal;
+
+				return false;
+			}
 			else
 			{
-				m_wndScaleInterfaceWindow = new ScaleInterfaceWindow();
-				m_wndScaleInterfaceWindow.Closed +=
-					delegate(object sender2, EventArgs e2)
-					{
-						m_wndScaleInterfaceWindow = null;
-						return;
-					};
-				m_wndScaleInterfaceWindow.Owner = this;
-				m_wndScaleInterfaceWindow.Scale = App.s_fInterfaceScaleFactor;
-				m_wndScaleInterfaceWindow.Show();
-			}
+				ThisWindowVariable.Value = new T();
 
+				/// This event does nothing more than set the variable to null when the window is closed.
+				ThisWindowVariable.Value.Closed += (new CloseSingletonModelessWindowEventDesc<T>(ThisWindowVariable)).OnClose;
+				
+				ThisWindowVariable.Value.Owner = this;
+				ThisWindowVariable.Value.Scale = App.s_fInterfaceScaleFactor;
+				return true;
+			}
+		}
+
+		/***************************************************************************/
+		private class CloseSingletonModelessWindowEventDesc<T> where T : CustomBaseWindow
+		{
+			protected BoxedScalar<T> m_wndWindow = null;
+			public CloseSingletonModelessWindowEventDesc(BoxedScalar<T> ThisWindow)
+			{
+				m_wndWindow = ThisWindow;
+				return;
+			}
+			public void OnClose(object sender, EventArgs e)
+			{
+				m_wndWindow.Value = null;
+				return;
+			}
+		}
+
+		/***************************************************************************/
+		private void OnToolsScaleInterfaceMenuItemClick(object sender, RoutedEventArgs e)
+		{
+			if (CreateSingletonModelessWindow<ScaleInterfaceWindow>(m_wndScaleInterfaceWindow))
+			{
+				m_wndScaleInterfaceWindow.Value.Show();
+			}
 			return;
 		}
 
 		/***************************************************************************/
-		private void HelpAboutMenuItem_Click(object sender, RoutedEventArgs e)
+		private void OnHelpAboutMenuItemClick(object sender, RoutedEventArgs e)
 		{
-			if (m_wndAboutWindow != null)
-				m_wndAboutWindow.Activate();
-			else
+			if (CreateSingletonModelessWindow<AboutWindow>(m_wndAboutWindow))
 			{
-				m_wndAboutWindow = new AboutWindow();
-				m_wndAboutWindow.Closed +=
-					delegate(object sender2, EventArgs e2)
-					{
-						m_wndAboutWindow = null;
-						return;
-					};
-				m_wndAboutWindow.Owner = this;
-				m_wndAboutWindow.Scale = App.s_fInterfaceScaleFactor;
-				m_wndAboutWindow.Show();
+				m_wndAboutWindow.Value.Show();
 			}
-
 			return;
 		}
-
 	}
 }

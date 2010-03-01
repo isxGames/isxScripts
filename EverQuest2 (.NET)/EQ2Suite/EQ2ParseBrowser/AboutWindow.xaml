@@ -2,29 +2,23 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:eq2suitelib="clr-namespace:EQ2SuiteLib;assembly=EQ2SuiteLib"
-	Title="About EQ2 Parse Browser" Height="230" Width="364" ResizeMode="NoResize" ShowInTaskbar="False"
+	Title="About EQ2 Parse Browser" Height="269.973" Width="511.767" ResizeMode="NoResize" ShowInTaskbar="False"
 	SizeToContent="WidthAndHeight"
 	WindowStyle="ThreeDBorderWindow">
-	<StackPanel HorizontalAlignment="Stretch" Margin="10">
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="10"/>
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition/>
-				<RowDefinition/>
-			</Grid.RowDefinitions>
-			<Image Name="m_MainIconImage" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="{StaticResource MainIcon}" Width="32" Height="32"/>
-			<TextBlock Name="m_wndProgramNameText" Grid.Column="2" Grid.Row="0">EQ2 Parse Browser 1.0</TextBlock>
-			<TextBlock Grid.Column="2" Grid.Row="1">Written 2009-2010 by Eccentric</TextBlock>
-		</Grid>
-		
-		<Rectangle Height="10"/>
-		<TextBlock TextWrapping="Wrap" Width="320">EQ2 Parse Browser and the "EQ2Suite" are released under the GNU Public License.</TextBlock>
-		<TextBlock>EverQuest 2™ is a trademark of Sony Online Entertainment</TextBlock>
-		<Rectangle Height="10"/>
-		<Button Name="m_wndOkButton" HorizontalAlignment="Right" Height="22" Width="89" IsDefault="True" IsCancel="True" Click="m_wndOkButton_Click">OK</Button>
-	</StackPanel>
+	<!--
+	If you want SizeToContent for a canvas, always put the canvas inside a container of fixed dimensions.
+	Then remove the attributes from the canvas tag.
+	Don't worry about the window dimensions; it's SizeToContent, remember?
+	-->
+	<Grid Width="362.691" Height="179.073">
+		<Canvas>
+			<Image Name="m_MainIconImage" Source="{StaticResource MainIcon}" Width="32" Height="32" Canvas.Left="6" Canvas.Top="6" />
+			<TextBlock Name="m_wndProgramNameText" Height="16.362" Canvas.Left="43.632" Canvas.Top="6" Width="117.261">EQ2 Parse Browser 1.0</TextBlock>
+			<TextBlock Height="16.362" Canvas.Left="43.632" Canvas.Top="21.638" Width="165.438">Written 2009-2010 by Eccentric</TextBlock>
+			<TextBlock TextWrapping="Wrap" Width="318.15" Height="65.448" Canvas.Top="43.632" Canvas.Left="43.632">EQ2 Parse Browser and the "EQ2Suite" are released under the GNU Public License.
+			You are free to use this code in derivative or other works with no obligations whatsoever.</TextBlock>
+			<TextBlock Height="16.362" Canvas.Left="43.632" Canvas.Top="114.534" Width="310.177">EverQuest 2™ is a trademark of Sony Online Entertainment</TextBlock>
+			<Button Name="m_wndOkButton" VerticalAlignment="Center" Height="21.816" Width="89.082" IsDefault="True" IsCancel="True" Click="m_wndOkButton_Click" Canvas.Left="138.168" Canvas.Bottom="10.908">OK</Button>
+		</Canvas>
+	</Grid>
 </eq2suitelib:CustomBaseWindow>
