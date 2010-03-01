@@ -281,5 +281,16 @@
 <Setting Name="Kylong Briar" Type="Shrub" MinSkill="340" MaxSkill="400" Tier="8">Kylong Briar</Setting>
 <Setting Name="Southshore School" Type="Fish" MinSkill="340" MaxSkill="400" Tier="8">Southshore School</Setting>
 
+<!-- All of Odus -->
+<Setting Name="an infused deposit" Type="Ore" MinSkill="390" MaxSkill="450" Tier="9">an infused deposit</Setting>
+<Setting Name="a molten formation" Type="Gem" MinSkill="390" MaxSkill="450" Tier="9">a molten formation</Setting>
+<Setting Name="Toxxulia timber" Type="Wood" MinSkill="390" MaxSkill="450" Tier="9">Toxxulia timber</Setting>
+<Setting Name="a Toxxulia root culm" Type="Root" MinSkill="390" MaxSkill="450" Tier="9">a Toxxulia root culm</Setting>
+<Setting Name="a craggy lair" Type="Den" MinSkill="390" MaxSkill="450" Tier="9">a craggy lair</Setting>
+<Setting Name="a perennial shrub" Type="Shrub" MinSkill="390" MaxSkill="450" Tier="9">a perennial shrub</Setting>
+<Setting Name="school of tiny fish" Type="Fish" MinSkill="390" MaxSkill="450" Tier="9">school of tiny fish</Setting>
+
+
+
 	</Set>
 </InnerSpaceSettings>
