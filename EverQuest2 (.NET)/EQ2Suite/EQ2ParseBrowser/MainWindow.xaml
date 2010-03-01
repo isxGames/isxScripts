@@ -12,10 +12,24 @@
 	<DockPanel LastChildFill="True">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Name="FileMenuItem" Header="_File">
-				<MenuItem Name="FileExitMenuItem" Header="E_xit" Click="FileExitMenuItem_Click"></MenuItem>
+				<MenuItem Name="m_FileConnectMenuItem" Header="Connect...">
+					<MenuItem Header="(none)" IsEnabled="False"/>
+				</MenuItem>
+				<MenuItem Name="m_FileManageLogSourcesMenuItem" Header="_Manage Log Sources" Click="OnFileManageLogSourcesMenuItemClick" />
+				<Separator/>
+				<MenuItem Name="m_FileCloseMenuItem" Header="_Close" InputGestureText="Ctrl+F4" Click="OnFileCloseMenuItemClick"></MenuItem>
+				<MenuItem Name="m_FileCloseAllMenuItem" Header="Close All" Click="OnFileCloseAllMenuItemClick"></MenuItem>
+				<Separator/>
+				<MenuItem Name="m_FileImportMenuItem" Header="Import..."/>
+				<MenuItem Name="m_FileExportMenuItem" Header="Export..."/>
+				<Separator Name="m_FileImportExportBottomMenuSeparator"/>
+				<MenuItem Name="FileExitMenuItem" Header="E_xit" Click="OnFileExitMenuItemClick"></MenuItem>
+			</MenuItem>
+			<MenuItem Name="m_ViewMenuItem" Header="_View">
+				<MenuItem Name="m_ViewMiniParseMenuItem" Header="_Mini-Parse Window"/>
 			</MenuItem>
 			<MenuItem Name="m_ToolsMenuItem" Header="_Tools">
-				<MenuItem Name="m_ToolsScaleContentsMenuItem" Header="_Scale Contents..." Click="ToolsScaleContentsMenuItem_Click"></MenuItem>
+				<MenuItem Name="m_ToolsScaleInterfaceMenuItem" Header="_Scale Interface..." Click="OnToolsScaleInterfaceMenuItemClick"></MenuItem>
 				<MenuItem Name="m_ToolsPreferencesMenuItem" Header="_Preferences..."></MenuItem>
 			</MenuItem>
 			<MenuItem Name="WindowMenuItem" Header="_Window">
@@ -24,15 +38,16 @@
 				<MenuItem Name="m_WindowPlaceholderMenuItem" Visibility="Collapsed" />
 			</MenuItem>
 			<MenuItem Name="m_HelpMenuItem" Header="_Help">
-				<MenuItem Name="HelpAboutMenuItem" Header="_About EQ2 Parse Browser" Click="HelpAboutMenuItem_Click"></MenuItem>
+				<MenuItem Name="HelpAboutMenuItem" Header="_About EQ2 Parse Browser" Click="OnHelpAboutMenuItemClick"></MenuItem>
 			</MenuItem>
 		</Menu>
 		<ToolBar DockPanel.Dock="Top">
 			<Button Content="Back"></Button>
 			<Button Content="Forward"></Button>
 			<Separator/>
+			<Button Content="Clear"></Button>
 		</ToolBar>
-		<StatusBar DockPanel.Dock="Bottom">
+		<StatusBar Name="m_wndStatusBar" DockPanel.Dock="Bottom">
 			<StatusBarItem Name="StatusBarStatisticsPane" Content="(insert stats here)"></StatusBarItem>
 		</StatusBar>
 		<local:SharedMdiTabControl x:Name="m_wndMdiControl"/>

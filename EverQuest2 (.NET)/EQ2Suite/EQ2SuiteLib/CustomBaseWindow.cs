@@ -12,7 +12,9 @@ namespace EQ2SuiteLib
 {
 	public class CustomBaseWindow : Window
 	{
+		protected IntPtr m_hWin32Window = IntPtr.Zero;
 		protected bool m_bCloseOnEscape = true;
+		protected bool m_bShowMinimizeButton = false;
 		protected bool m_bShowSystemMenu = false;
 		protected SavedWindowLocation m_SavedWindowLocation = null;
 		protected SavedWindowLocation m_LastSavedWindowLocation = null;
@@ -32,6 +34,22 @@ namespace EQ2SuiteLib
 		}
 
 		/************************************************************************************/
+		public CustomBaseWindow(SavedWindowLocation ThisSavedLocation)
+		{
+			m_SavedWindowLocation = ThisSavedLocation;
+			SharedConstructor();
+			return;
+		}
+
+		/************************************************************************************/
+		protected void SharedConstructor()
+		{
+			/// Oddly, there isn't a class override for this.
+			SizeChanged += new SizeChangedEventHandler(OnSizeChanged);
+			return;
+		}
+
+		/************************************************************************************/
 		public bool CloseOnEscape
 		{
 			set
@@ -42,12 +60,25 @@ namespace EQ2SuiteLib
 		}
 
 		/************************************************************************************/
+		/// <summary>
+		/// This property doesn't work.
+		/// </summary>
+		public bool ShowMinimizeButton
+		{
+			set
+			{
+				m_bShowMinimizeButton = value;
+				/// TODO: If window is live, apply the style immediately.
+				return;
+			}
+		}
+
+		/************************************************************************************/
 		public bool ShowSystemMenu
 		{
 			set
 			{
 				m_bShowSystemMenu = value;
-
 				/// TODO: If window is live, apply the style immediately.
 				return;
 			}
@@ -71,42 +102,23 @@ namespace EQ2SuiteLib
 
 				if (FirstChild != null)
 				{
-					/*if (ResizeMode == ResizeMode.NoResize)
-					{
-						double fRescale = value / m_SavedWindowLocation.m_fScale;
-						Height = FirstChild.ActualHeight * fRescale;
-						Width = FirstChild.ActualWidth * fRescale;
-					}*/
-
 					if (value == 1.0)
-						FirstChild.LayoutTransform = null;//Transform.Identity;
+						FirstChild.LayoutTransform = Transform.Identity;
 					else
 						FirstChild.LayoutTransform = new ScaleTransform(value, value);
 				}
 
-				m_SavedWindowLocation.m_fScale = value;
+				if (m_SavedWindowLocation != null)
+					m_SavedWindowLocation.m_fScale = value;
 				return;
 			}
 			get
 			{
-				return m_SavedWindowLocation.m_fScale;
+				if (m_SavedWindowLocation != null)
+					return m_SavedWindowLocation.m_fScale;
+				else
+					return 1.0;
 			}
-		}
-
-		/************************************************************************************/
-		public CustomBaseWindow(SavedWindowLocation ThisSavedLocation)
-		{
-			m_SavedWindowLocation = ThisSavedLocation;
-			SharedConstructor();
-			return;
-		}
-
-		/************************************************************************************/
-		protected void SharedConstructor()
-		{
-			/// Oddly, there isn't a class override for this.
-			SizeChanged += new SizeChangedEventHandler(OnSizeChanged);
-			return;
 		}
 
 		/************************************************************************************/
@@ -114,10 +126,8 @@ namespace EQ2SuiteLib
 		{
 			base.OnInitialized(e);
 
-			if (m_SavedWindowLocation != null)
+			if (m_SavedWindowLocation != null && !m_SavedWindowLocation.m_rcBounds.IsEmpty)
 			{
-				m_LastSavedWindowLocation = m_SavedWindowLocation.Copy();
-
 				Left = m_SavedWindowLocation.m_rcBounds.X;
 				Top = m_SavedWindowLocation.m_rcBounds.Y;
 
@@ -142,49 +152,33 @@ namespace EQ2SuiteLib
 			return;
 		}
 
-		/***************************************************************************/
-		public void ChangeExStyle(int iAddedStyles, int iRemovedStyles, uint? uiSetWindowPosFlags)
-		{
-			// Get this window's handle.
-			IntPtr hwnd = new WindowInteropHelper(this).Handle;
-
-			int iExtendedStyle = USER32.GetWindowLong(hwnd, USER32.GWL_EXSTYLE);
-
-			iExtendedStyle = iExtendedStyle | iAddedStyles;
-			iExtendedStyle = iExtendedStyle & ~(iRemovedStyles);
-
-			USER32.SetWindowLong(hwnd, USER32.GWL_EXSTYLE, iExtendedStyle);
-
-			if (uiSetWindowPosFlags != null)
-				USER32.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, uiSetWindowPosFlags.Value);
-
-			return;
-		}
-
-		/***************************************************************************/
-		public static void RemoveSystemMenu(Window wndWindow)
-		{
-			// Get this window's handle
-			IntPtr hwnd = new WindowInteropHelper(wndWindow).Handle;
-
-			int iExtendedStyle = USER32.GetWindowLong(hwnd, USER32.GWL_EXSTYLE);
-			USER32.SetWindowLong(hwnd, USER32.GWL_EXSTYLE, iExtendedStyle | USER32.WS_EX_DLGMODALFRAME);
-
-			// Update the window's non-client area to reflect the changes
-			USER32.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, USER32.SWP_NOMOVE | USER32.SWP_NOSIZE | USER32.SWP_NOZORDER | USER32.SWP_FRAMECHANGED);
-			return;
-		}
-
 		/************************************************************************************/
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
 
-			const uint uiSetWindowPosFlags = USER32.SWP_NOMOVE | USER32.SWP_NOSIZE | USER32.SWP_NOZORDER | USER32.SWP_FRAMECHANGED;
-			if (m_bShowSystemMenu)
-				ChangeExStyle(0, USER32.WS_EX_DLGMODALFRAME, uiSetWindowPosFlags);
+			/// This value is constant for the life of the window.
+			m_hWin32Window = new WindowInteropHelper(this).Handle;
+
+			/// This doesn't work. I don't know why.
+			/*
+			if (m_bShowMinimizeButton)
+				ChangeStyle(USER32.WindowStyles.MinimizeBox, 0);
 			else
-				ChangeExStyle(USER32.WS_EX_DLGMODALFRAME, 0, uiSetWindowPosFlags);
+				ChangeStyle(0, USER32.WindowStyles.MinimizeBox);
+			*/
+
+			if (m_bShowSystemMenu)
+				ChangeExStyle(0, USER32.WindowStylesEx.DialogModalFrame);
+			else
+				ChangeExStyle(USER32.WindowStylesEx.DialogModalFrame, 0);
+
+			const USER32.SetWindowPosFlags eSetWindowPosFlags =
+				USER32.SetWindowPosFlags.NoMove |
+				USER32.SetWindowPosFlags.NoSize |
+				USER32.SetWindowPosFlags.NoZOrder |
+				USER32.SetWindowPosFlags.FrameChanged;
+			USER32.SetWindowPos(m_hWin32Window, IntPtr.Zero, 0, 0, 0, 0, eSetWindowPosFlags);
 			return;
 		}
 
@@ -195,9 +189,12 @@ namespace EQ2SuiteLib
 
 			if (WindowState != WindowState.Maximized)  /// If the location changes because of maximize, this lies.
 			{
-				m_LastSavedWindowLocation = m_SavedWindowLocation.Copy();
-				m_SavedWindowLocation.m_rcBounds.X = (float)Left;
-				m_SavedWindowLocation.m_rcBounds.Y = (float)Top;
+				if (m_SavedWindowLocation != null)
+				{
+					m_LastSavedWindowLocation = m_SavedWindowLocation.Copy();
+					m_SavedWindowLocation.m_rcBounds.X = (float)Left;
+					m_SavedWindowLocation.m_rcBounds.Y = (float)Top;
+				}
 			}
 			return;
 		}
@@ -207,9 +204,11 @@ namespace EQ2SuiteLib
 		{
 			if (WindowState != WindowState.Maximized)
 			{
-				m_LastSavedWindowLocation = m_SavedWindowLocation.Copy();
-				m_SavedWindowLocation.m_rcBounds.Height = (float)e.NewSize.Height;
-				m_SavedWindowLocation.m_rcBounds.Width = (float)e.NewSize.Width;
+				if (m_SavedWindowLocation != null)
+				{
+					m_SavedWindowLocation.m_rcBounds.Height = (float)e.NewSize.Height;
+					m_SavedWindowLocation.m_rcBounds.Width = (float)e.NewSize.Width;
+				}
 			}
 			return;
 		}
@@ -219,13 +218,17 @@ namespace EQ2SuiteLib
 		{
 			base.OnStateChanged(e);
 
-			m_SavedWindowLocation.m_bMaximized = (WindowState == WindowState.Maximized);
-
-			/// OnLocationChanged was called first and fed a faulty WindowState value so we have to restore the old coordinates.
-			if (WindowState == WindowState.Maximized || WindowState == WindowState.Minimized)
+			if (m_SavedWindowLocation != null)
 			{
-				m_SavedWindowLocation.m_rcBounds = m_LastSavedWindowLocation.m_rcBounds;
+				m_SavedWindowLocation.m_bMaximized = (WindowState == WindowState.Maximized);
+
+				/// OnLocationChanged was called first and fed a faulty WindowState value so we have to restore the old coordinates.
+				if (WindowState == WindowState.Maximized || WindowState == WindowState.Minimized)
+				{
+					m_SavedWindowLocation.m_rcBounds = m_LastSavedWindowLocation.m_rcBounds;
+				}
 			}
+
 			return;
 		}
 
@@ -242,5 +245,28 @@ namespace EQ2SuiteLib
 			return;
 		}
 
+		/***************************************************************************/
+		public void ChangeStyle(USER32.WindowStyles eAddedStyles, USER32.WindowStyles eRemovedStyles)
+		{
+			USER32.WindowStyles eExtendedStyle = (USER32.WindowStyles)USER32.GetWindowLong(m_hWin32Window, USER32.GWL_EXSTYLE);
+
+			eExtendedStyle |= eAddedStyles;
+			eExtendedStyle &= ~(eRemovedStyles);
+
+			USER32.SetWindowLong(m_hWin32Window, USER32.GWL_EXSTYLE, (int)eExtendedStyle);
+			return;
+		}
+
+		/***************************************************************************/
+		public void ChangeExStyle(USER32.WindowStylesEx eAddedStyles, USER32.WindowStylesEx eRemovedStyles)
+		{
+			USER32.WindowStylesEx eExtendedStyle = (USER32.WindowStylesEx)USER32.GetWindowLong(m_hWin32Window, USER32.GWL_EXSTYLE);
+
+			eExtendedStyle |= eAddedStyles;
+			eExtendedStyle &= ~(eRemovedStyles);
+
+			USER32.SetWindowLong(m_hWin32Window, USER32.GWL_EXSTYLE, (int)eExtendedStyle);
+			return;
+		}
 	}
 }

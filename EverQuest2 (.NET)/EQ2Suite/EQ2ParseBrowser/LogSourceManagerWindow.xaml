@@ -1,0 +1,56 @@
+﻿<eq2suitelib:CustomBaseWindow x:Class="EQ2ParseBrowser.LogSourceManagerWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:eq2suitelib="clr-namespace:EQ2SuiteLib;assembly=EQ2SuiteLib"
+	xmlns:local="clr-namespace:EQ2ParseBrowser"
+	Title="Log Source Manager" Height="379" Width="544"
+	ShowInTaskbar="False" SizeToContent="Manual"
+	MinWidth="300" MinHeight="200" ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow">
+	<eq2suitelib:CustomBaseWindow.Resources>
+		<Style x:Key="LeftJustifiedHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		</Style>
+	</eq2suitelib:CustomBaseWindow.Resources>
+	
+	<Grid Margin="5">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="5"/><!-- Margin -->
+			<RowDefinition Height="*"/><!-- List -->
+			<RowDefinition Height="5"/><!-- Margin -->
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+		
+		<Label Grid.Row="0" Grid.Column="0">Select a log _source from the list below:</Label>
+		
+		<ListView Grid.Row="2" Grid.Column="0" IsTabStop="True">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Name" HeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}"></GridViewColumn>
+					<GridViewColumn Header="Type" HeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}"></GridViewColumn>
+					<GridViewColumn Header="Source" HeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}"></GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+		
+		<!-- Bottom row has three columns, buttons to the left, empty space, and buttons to the right. -->
+		<Grid Grid.Row="4" Grid.Column="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+			<StackPanel Grid.Column="0" Orientation="Horizontal">
+				<Button Width="70">_New...</Button>
+				<Rectangle Width="10"/>
+				<Button Width="70">_Edit...</Button>
+				<Rectangle Width="10"/>
+				<Button Width="70">_Delete</Button>
+			</StackPanel>
+			<StackPanel Grid.Column="2" Orientation="Horizontal">
+				<Button Width="70" Click="OnCloseButtonClick">_Close</Button>
+				<Rectangle Width="10"/> <!-- Gap to allow grip to be visible -->
+			</StackPanel>
+		</Grid>
+	</Grid>
+</eq2suitelib:CustomBaseWindow>

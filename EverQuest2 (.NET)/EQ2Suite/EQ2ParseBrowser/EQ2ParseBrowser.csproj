@@ -70,6 +70,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="LogSourceManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="themes\generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,6 +104,9 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="LogFilePollingThread.cs" />
+    <Compile Include="LogSourceManagerWindow.xaml.cs">
+      <DependentUpon>LogSourceManagerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MdiBaseChild.cs" />
     <Compile Include="MdiParseStatisticsChild.xaml.cs">
       <DependentUpon>MdiParseStatisticsChild.xaml</DependentUpon>

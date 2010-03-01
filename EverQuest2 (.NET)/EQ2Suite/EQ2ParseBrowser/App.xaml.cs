@@ -16,8 +16,9 @@ namespace EQ2ParseBrowser
 	public partial class App : Application
 	{
 		public static double s_fInterfaceScaleFactor = 1.0;
-		public static SavedWindowLocation s_MainWindowLocation = new SavedWindowLocation();
 		public static SavedWindowLocation s_AboutWindowLocation = new SavedWindowLocation();
+		public static SavedWindowLocation s_LogSourceManagerWindowLocation = new SavedWindowLocation();
+		public static SavedWindowLocation s_MainWindowLocation = new SavedWindowLocation();
 		public static SavedWindowLocation s_ScaleInterfaceWindowLocation = new SavedWindowLocation();
 
 		/***************************************************************************/
@@ -61,6 +62,7 @@ namespace EQ2ParseBrowser
 				RegistryTransferKey RootKey = new RegistryTransferKey(Registry.CurrentUser, @"Software\EQ2Suite\EQ2ParseBrowser", eTransferMode);
 				RootKey.TransferDouble("InterfaceScaleFactor", ref s_fInterfaceScaleFactor);
 				RootKey.TransferFormLocation("AboutWindow", s_AboutWindowLocation);
+				RootKey.TransferFormLocation("LogSourceManagerWindow", s_LogSourceManagerWindowLocation);
 				RootKey.TransferFormLocation("MainWindow", s_MainWindowLocation);
 				RootKey.TransferFormLocation("ScaleInterfaceWindow", s_ScaleInterfaceWindowLocation);
 			}
