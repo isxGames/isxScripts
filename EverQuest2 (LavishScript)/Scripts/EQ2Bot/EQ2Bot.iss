@@ -3470,7 +3470,7 @@ function CheckLoot()
 
 	islooting:Set[TRUE]
 	if ${NoAutoMovement} 
-		EQ2:CreateCustomActorArray[byDist,9}]
+		EQ2:CreateCustomActorArray[byDist,9]
 	elseif ${ScanRange}<30
 		EQ2:CreateCustomActorArray[byDist,${ScanRange}]
 	else
