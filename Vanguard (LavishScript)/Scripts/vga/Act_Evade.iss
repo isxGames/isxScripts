@@ -11,6 +11,8 @@ function checkFD()
 			IsFollowing:Set[FALSE]
 			while ${Me.HealthPct} < ${FDPct}
 				wait 20
+			if ${Me.HealthPct} > ${FDPct}
+				VGExecute /stand
 		}	
 	return
 }  
@@ -67,8 +69,7 @@ function rescue()
 			VGExecute "/assistoffensive"
 			if ${Me.DTarget.Distance} > 4
 				{
-				call movetoobject ${Me.DTarget.ID} 4 0
-				IsFollowing:Set[FALSE]
+				call CheckPosition
 				}
 			face ${Me.Target.X} ${Me.Target.Y}
 			waitframe

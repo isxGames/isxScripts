@@ -93,7 +93,7 @@ I should Attack							|
 ;************Utilities Scripts**************
 ;-------------------------------------------
 #include "${Script.CurrentDirectory}/UTL_MoveTo.iss"
-;#include "${Script.CurrentDirectory}/UTL_faceslow.iss"
+#include "${Script.CurrentDirectory}/UTL_faceslow.iss"
 #include "${Script.CurrentDirectory}/UTL_Objects.iss"
 #include "${Script.CurrentDirectory}/UTL_Variables.iss"
 #include "${Script.CurrentDirectory}/UTL_LavishLoad.iss"

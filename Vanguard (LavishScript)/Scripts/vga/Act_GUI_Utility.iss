@@ -89,7 +89,7 @@ function lootit()
 					if ${Pawn[${iCount}].Distance} > 5
 						{
 						call movetoobject ${Me.Target.ID} 4 0
-						;IsFollowing:Set[FALSE]
+						IsFollowing:Set[FALSE]
 						}
 					if ${DoLootOnly}
 						{
@@ -404,7 +404,7 @@ function CheckPosition()
 	if ${DoFollowInCombat}
 		call DoFollowInCombat
 	if ${doFaceTarget} && !${Me.Target.IsDead}
-		call facemob
+		call facemobb
 	if ${doMoveToTarget} && !${Me.Target.IsDead}
 		call MoveToTarget
 	return
@@ -454,26 +454,27 @@ function DoFollowInCombat()
 {
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
+		call facemob ${Me.Target.ID} 10
 		call movetoobject ${Me.Target.ID} 5 0
+		IsFollowing:Set[FALSE]
 		}
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-		face ${Me.Target.X} ${Me.Target.Y}
+		call facemob ${Me.Target.ID} 10
 		}
-	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 25
+	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 35 && !${IsFollowing}
 		{
-		face ${Pawn[exactname,${assistpawn}].X} ${Pawn[exactname,${assistpawn}].Y}
-		call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+		Pawn[${followpawn}]:Target
+		VGExecute /fol
 		}
 	return
 
 }
 ;********************************************
-function facemob()
+function facemobb()
 {
 	if ${Me.Target.ID(exists)}
-		face ${Me.Target.X} ${Me.Target.Y}
+		call facemob ${Me.Target.ID} 10
 	return
 
 }
@@ -481,21 +482,25 @@ function facemob()
 function TooClose()
 {
 	if ${doFaceTarget}
-		call facemob
+		call facemobb
 	if ${Me.Target(exists)} && ${Me.Target.Distance} < 1
 	{
 		VG:ExecBinding[movebackward]
 		wait 1
 		VG:ExecBinding[movebackward,release]
 		return
+		IsFollowing:Set[FALSE]
 	}
 	return
 }
 ;********************************************     
 function followpawn()
 {
-	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50)
-		call movetoobject ${Pawn[exactname,${followpawn}].ID} ${followpawndist} 0
+	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${IsFollowing}
+		{
+		Pawn[${followpawn}]:Target
+		VGExecute /fol
+		}
 	return
 }
 
