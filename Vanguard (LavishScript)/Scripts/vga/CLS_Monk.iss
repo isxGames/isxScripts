@@ -47,7 +47,8 @@ function Monk_Opener()
 ;********************************************
 function Monk_Combat()
 {
-	call Monk_Boost
+	if ${Me.TargetHealth} < 70
+		call Monk_Boost
 	if ${Me.Ability[Three Finger Strike].IsReady}
 		{
 		call checkabilitytocast "Three Finger Strike"
@@ -246,6 +247,7 @@ function Monk_PostCasting()
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
 			call executeability "Storm Stride" "Buff" "Neither"
+			IsFollowing:Set[FALSE]
 			return
 			}
 	   }
