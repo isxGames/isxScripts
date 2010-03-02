@@ -154,7 +154,10 @@ function GetQuests()
 						if ${LavishSettings[VGA_Quests].FindSet[Quests].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal["${Me.Target}"]}
 							{
 							if ${Pawn[${iCount}].Distance} > 5
+								{
 								call movetoobject ${Me.Target.ID} 4 0
+								IsFollowing:Set[FALSE]
+								}
 							if ${Dialog[General].ResponseCount}==0
 								{
 								VGExecute /hail

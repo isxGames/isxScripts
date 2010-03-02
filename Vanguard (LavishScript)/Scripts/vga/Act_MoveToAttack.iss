@@ -1,7 +1,7 @@
 ;********************************************
 function MoveToTarget()
 {
-	if ${doMoveToTarget}
+	if ${doMoveToTarget} && ${fight.ShouldIAttack}
 		{
 		if ${Me.Target.Distance} > 4 && ${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
