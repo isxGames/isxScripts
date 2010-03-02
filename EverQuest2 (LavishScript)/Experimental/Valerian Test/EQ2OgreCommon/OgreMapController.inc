@@ -43,27 +43,27 @@ objectdef OgreMapControllerObject
 	{
 		if ${LavishNav.FindRegion[${MapToLoad}].ID}>0
 		{
-			echo Adding ${ScriptName} to the collection since the map is already loaded..
+			Debug:Echo["Adding ${ScriptName} to the collection since the map is already loaded.."]
 		}
 		else
 		{
-			echo Loading map: ${MapToLoad}
+			Debug:Echo["Loading map: ${MapToLoad}"]
 			;LavishNav.Tree:AddChild[universe,${MapToLoad},-unique]
 			if ${ZoneFilePath.FileExists[${MapToLoad}.lso]}
 			{
-				echo Loading LSO file: ${ZoneFilePath}${MapToLoad}
+				Debug:Echo["Loading LSO file: ${ZoneFilePath}${MapToLoad}"]
 				;LavishNav.FindRegion[${MapToLoad}]:Import[-lso,${ZoneFilePath}${MapToLoad}.lso]
 				LavishNav.Tree:Import[-lso,${ZoneFilePath}${MapToLoad}.lso]
 			}
 			elseif ${ZoneFilePath.FileExists[${MapToLoad}.xml]}
 			{
-				echo Loading XML file: ${ZoneFilePath}${MapToLoad}
+				Debug:Echo["Loading XML file: ${ZoneFilePath}${MapToLoad}"]
 				;LavishNav.FindRegion[${MapToLoad}]:Import[${ZoneFilePath}${MapToLoad}.xml]
 				LavishNav.Tree:Import[${ZoneFilePath}${MapToLoad}.xml]
 			}
 			else
 			{
-				echo No LSO or XML file found. Creating a new file.
+				Debug:Echo["No LSO or XML file found. Creating a new file."]
 				LavishNav.Tree:AddChild[universe,${MapToLoad},-unique]
 			}
 		}
@@ -75,27 +75,27 @@ objectdef OgreMapControllerObject
 	{
 		if ${ScriptsUsingMap.Element[${ScriptName}](exists)}
 		{
-			;echo Removing ${ScriptName} from the collection
+			;Debug:Echo["Removing ${ScriptName} from the collection"]
 			ScriptsUsingMap:Erase[${ScriptName}]
 		}
 		else
-			echo ${ScriptName} is not showing as currently using the map.
+			Debug:Echo["${ScriptName} is not showing as currently using the map."]
 
 		if ${LavishNav.FindRegion[${MapToLoad}].ID}>0
 		{
 			if ${ScriptsUsingMap.Used}<=0
 			{
-				;echo There are no scripts using the map, so lets unload it.
+				;Debug:Echo["There are no scripts using the map, so lets unload it."]
 				LNavRegion[${MapToLoad}]:Remove
 			}
 			else
 			{
-				;echo There are other maps using the script so we won't unload it. # of scripts using it: ${ScriptsUsingMap.Used}
+				;Debug:Echo["There are other maps using the script so we won't unload it. # of scripts using it: ${ScriptsUsingMap.Used}"]
 			}
 		}
 		else
 		{
-			echo ${MapToLoad} isn't loaded. Either the load was never called, or something else cleared it already.
+			Debug:Echo["${MapToLoad} isn't loaded. Either the load was never called, or something else cleared it already."]
 		}
 	}
 }
