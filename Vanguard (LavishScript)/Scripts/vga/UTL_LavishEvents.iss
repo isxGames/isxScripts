@@ -25,6 +25,8 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		IsFollowing:Set[FALSE]
 	if ${ChannelNumber.Equal[42]} && ${Text.Find[You have lost your auto-follow target]}
 		IsFollowing:Set[FALSE]
+	if ${ChannelNumber.Equal[42]} && ${Text.Find[Following ${followpawn}]}
+		IsFollowing:Set[TRUE]
 	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${LootToggle}]}
 		{
 		If ${DoLoot}
@@ -87,12 +89,11 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 			dofollowpawn:Set[TRUE]
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-			;if !${IsFollowing}
-			;	{
-			;	Pawn[${followpawn}]:Target
-			;	VGExecute /follow ${followpawn}
-			;	IsFollowing:Set[TRUE]
-			;	}
+			if !${IsFollowing}
+				{
+				Pawn[${followpawn}]:Target
+				VGExecute /fol
+				}
 		}
 	}
 	if ${DoStopFollow}
@@ -101,11 +102,12 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 			dofollowpawn:Set[FALSE]
 			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-			;if ${IsFollowing}
-			;	{
-			;	VGExecute /follow ${followpawn}
-			;	IsFollowing:Set[FALSE]
-			;	}
+			if ${IsFollowing}
+				{
+				Pawn[${followpawn}]:Target
+				VGExecute /fol
+				IsFollowing:Set[FALSE]
+				}
 		}
 	}
 	if ${doAutoSell}
