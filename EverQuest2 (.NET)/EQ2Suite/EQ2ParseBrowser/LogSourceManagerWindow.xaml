@@ -21,17 +21,17 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 		
-		<Label Grid.Row="0" Grid.Column="0">Select a log _source from the list below:</Label>
+		<Label Grid.Row="0" Grid.Column="0" IsTabStop="True">Select a log _source from the list below:</Label>
 		
-		<ListView Grid.Row="2" Grid.Column="0" IsTabStop="True">
-			<ListView.View>
-				<GridView>
-					<GridViewColumn Header="Name" HeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}"></GridViewColumn>
-					<GridViewColumn Header="Type" HeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}"></GridViewColumn>
-					<GridViewColumn Header="Source" HeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}"></GridViewColumn>
+		<eq2suitelib:PersistentDetailedListView Name="m_wndSourceList" Grid.Row="2" Grid.Column="0" IsTabStop="True">
+			<eq2suitelib:PersistentDetailedListView.View>
+				<GridView ColumnHeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}">
+					<eq2suitelib:NamedGridViewColumn ID="Name" Header="Name" Width="100" />
+					<eq2suitelib:NamedGridViewColumn ID="Type" Header="Type" IncludeInDefaultView="False" Width="100" />
+					<eq2suitelib:NamedGridViewColumn ID="Source" Header="Source" Width="100" />
 				</GridView>
-			</ListView.View>
-		</ListView>
+			</eq2suitelib:PersistentDetailedListView.View>
+		</eq2suitelib:PersistentDetailedListView>
 		
 		<!-- Bottom row has three columns, buttons to the left, empty space, and buttons to the right. -->
 		<Grid Grid.Row="4" Grid.Column="0">
