@@ -501,6 +501,11 @@ function followpawn()
 		Pawn[${followpawn}]:Target
 		VGExecute /fol
 		}
+	if (${Pawn[exactname,${followpawn}].IsMoving} && ${Pawn[exactname,${followpawn}].Distance} > 15 && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${Pawn[exactname,${Me}].IsMoving}
+		{
+		Pawn[${followpawn}]:Target
+		VGExecute /fol
+		}
 	return
 }
 
