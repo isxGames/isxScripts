@@ -67,6 +67,8 @@
     <Compile Include="IniFile.cs" />
     <Compile Include="MdiTabControl.cs" />
     <Compile Include="MessageThread.cs" />
+    <Compile Include="NamedGridViewColumn.cs" />
+    <Compile Include="PersistentDetailedListView.cs" />
     <Compile Include="PollingLogFileMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryTransferKey.cs" />

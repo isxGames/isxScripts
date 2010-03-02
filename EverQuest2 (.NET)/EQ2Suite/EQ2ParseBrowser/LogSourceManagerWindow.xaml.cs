@@ -19,17 +19,39 @@ namespace EQ2ParseBrowser
 	/// </summary>
 	public partial class LogSourceManagerWindow : CustomBaseWindow
 	{
+		/***************************************************************************/
 		public LogSourceManagerWindow()
 			: base(App.s_LogSourceManagerWindowLocation)
 		{
 			InitializeComponent();
+			m_wndSourceList.SavedLayout = App.s_LogSourceManagerListLayout;
 			return;
 		}
 
+		/***************************************************************************/
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			return;
+		}
+
+		/***************************************************************************/
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			//App.s_LogSourceManagerListLayout.GetFromView(m_wndSourceList);
+
+			return;
+		}
+
+		/***************************************************************************/
 		private void OnCloseButtonClick(object sender, RoutedEventArgs e)
 		{
 			Close();
 			return;
 		}
+
 	}
 }

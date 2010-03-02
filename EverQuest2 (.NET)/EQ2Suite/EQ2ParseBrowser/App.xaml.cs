@@ -20,6 +20,7 @@ namespace EQ2ParseBrowser
 		public static SavedWindowLocation s_LogSourceManagerWindowLocation = new SavedWindowLocation();
 		public static SavedWindowLocation s_MainWindowLocation = new SavedWindowLocation();
 		public static SavedWindowLocation s_ScaleInterfaceWindowLocation = new SavedWindowLocation();
+		public static PersistentDetailedListView.ColumnLayout s_LogSourceManagerListLayout = new PersistentDetailedListView.ColumnLayout();
 
 		/***************************************************************************/
 		protected override void OnStartup(StartupEventArgs e)
@@ -59,12 +60,19 @@ namespace EQ2ParseBrowser
 		{
 			try
 			{
-				RegistryTransferKey RootKey = new RegistryTransferKey(Registry.CurrentUser, @"Software\EQ2Suite\EQ2ParseBrowser", eTransferMode);
-				RootKey.TransferDouble("InterfaceScaleFactor", ref s_fInterfaceScaleFactor);
-				RootKey.TransferFormLocation("AboutWindow", s_AboutWindowLocation);
-				RootKey.TransferFormLocation("LogSourceManagerWindow", s_LogSourceManagerWindowLocation);
-				RootKey.TransferFormLocation("MainWindow", s_MainWindowLocation);
-				RootKey.TransferFormLocation("ScaleInterfaceWindow", s_ScaleInterfaceWindowLocation);
+				using (RegistryTransferKey RootKey = new RegistryTransferKey(Registry.CurrentUser, @"Software\EQ2Suite\EQ2ParseBrowser", eTransferMode))
+				{
+					RootKey.TransferDouble("InterfaceScaleFactor", ref s_fInterfaceScaleFactor);
+					RootKey.TransferWindowLocation("AboutWindow", s_AboutWindowLocation);
+					RootKey.TransferWindowLocation("MainWindow", s_MainWindowLocation);
+					RootKey.TransferWindowLocation("ScaleInterfaceWindow", s_ScaleInterfaceWindowLocation);
+
+					using (RegistryTransferKey LogSourceManagerKey = new RegistryTransferKey(RootKey, "LogSourceManager", eTransferMode))
+					{
+						LogSourceManagerKey.TransferWindowLocation("Window", s_LogSourceManagerWindowLocation);
+						LogSourceManagerKey.TransferPersistentDetailedListViewColumnLayout("List", s_LogSourceManagerListLayout);
+					}
+				}
 			}
 			catch
 			{

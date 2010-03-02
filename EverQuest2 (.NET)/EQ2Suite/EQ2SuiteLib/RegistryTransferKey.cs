@@ -31,6 +31,7 @@ namespace EQ2SuiteLib
 				m_Key.Close();
 				m_Key = null;
 			}
+			return;
 		}
 
 		/***************************************************************************/
@@ -174,7 +175,7 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void TransferFormLocation(string strNamePrefix, SavedWindowLocation ThisLocation)
+		public void TransferWindowLocation(string strNamePrefix, SavedWindowLocation ThisLocation)
 		{
 			string strTemp = string.Empty;
 
@@ -202,6 +203,53 @@ namespace EQ2SuiteLib
 
 			/// Separate values.
 			TransferBool(strNamePrefix + "Maximized", ref ThisLocation.m_bMaximized);
+			return;
+		}
+
+		/***************************************************************************/
+		public void TransferPersistentDetailedListViewColumnLayout(string strNamePrefix, PersistentDetailedListView.ColumnLayout ThisLayout)
+		{
+			/// Transfer the descriptor dictionary.
+			List<string> astrColumnAttributeSets = new List<string>();
+			if (m_eTransferMode == TransferMode.Write)
+			{
+				foreach (KeyValuePair<string, PersistentDetailedListView.ColumnLayout.ColumnDesc> ThisPair in ThisLayout.m_ColumnDescDictionary)
+				{
+					string strSet = string.Format("{0} {1}", ThisPair.Key, ThisPair.Value.m_fWidth);
+					astrColumnAttributeSets.Add(strSet);
+				}
+			}
+			TransferStringList(strNamePrefix + "ColumnDescriptor", ref astrColumnAttributeSets);
+			if (m_eTransferMode == TransferMode.Read)
+			{
+				ThisLayout.m_ColumnDescDictionary.Clear();
+				foreach (string strThisSet in astrColumnAttributeSets)
+				{
+					string[] astrAttributes = strThisSet.Split(new string[] {" "}, StringSplitOptions.None);
+
+					PersistentDetailedListView.ColumnLayout.ColumnDesc NewDesc = new PersistentDetailedListView.ColumnLayout.ColumnDesc();
+					if (double.TryParse(astrAttributes[1], out NewDesc.m_fWidth))
+						ThisLayout.m_ColumnDescDictionary.Add(astrAttributes[0], NewDesc);
+				}
+			}
+
+			/// Transfer the column order list.
+			string strColumnOrder = string.Empty;
+			if (m_eTransferMode == TransferMode.Write)
+			{
+				strColumnOrder = string.Join(" ", ThisLayout.m_astrColumnOrderList.ToArray());
+			}
+			TransferString(strNamePrefix + "ColumnOrder", ref strColumnOrder);
+			if (m_eTransferMode == TransferMode.Read)
+			{
+				ThisLayout.m_astrColumnOrderList.Clear();
+				string[] astrColumns = strColumnOrder.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+				ThisLayout.m_astrColumnOrderList.AddRange(astrColumns);
+			}
+
+			TransferString(strNamePrefix + "SortColumn", ref ThisLayout.m_strSortedColumnID);
+			TransferBool(strNamePrefix + "SortAscending", ref ThisLayout.m_bSortAscending);
+
 			return;
 		}
 	}

@@ -325,5 +325,13 @@ namespace PInvoke
 			IntPtr lpData,
 			ref Int32 pbCancel,
 			CopyFileFlags dwCopyFlags);
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool DeleteFile(string lpFileName);
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool RemoveDirectory(string lpPathName);
 	}
 }
