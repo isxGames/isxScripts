@@ -117,30 +117,35 @@ function Rogue_Opener()
 			       {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${ravage}"
+				      IsFollowing:Set[FALSE]
 				      return
 				      }
 				  if ${Me.Ability[Eviscerate].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Eviscerate"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 				  if ${Me.Ability[Kidney Puncture].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Kidney Puncture"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 				  if ${Me.Ability[${backstab}].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${backstab}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			    if ${Me.Ability[${wickedstrike}].IsReady}
 				       {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${wickedstrike}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }             			
 			    }
@@ -151,24 +156,28 @@ If ${AttackPosition.TargetAngle} < 45 && ${Me.Target.Distance} < 5
 			       {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${ravage}"
+				      IsFollowing:Set[FALSE]
 				      return
 				      }
 				  if ${Me.Ability[Eviscerate].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Eviscerate"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 				  if ${Me.Ability[Kidney Puncture].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Kidney Puncture"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 				  if ${Me.Ability[${backstab}].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${backstab}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }               			
 			 }
@@ -353,6 +362,7 @@ function trickem()
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${shiv}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			   call checkabilitytocast "${shank}"	
@@ -360,6 +370,7 @@ function trickem()
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${shank}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			   call checkabilitytocast "Eviscerate"	
@@ -367,6 +378,7 @@ function trickem()
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Eviscerate"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			   call checkabilitytocast "Kidney Puncture"	
@@ -374,6 +386,7 @@ function trickem()
 				       {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Kidney Puncture"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			   call checkabilitytocast "${backstab}"	
@@ -381,6 +394,7 @@ function trickem()
 				       {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${backstab}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			   call checkabilitytocast "${wickedstrike}"	
@@ -388,6 +402,7 @@ function trickem()
 				       {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${wickedstrike}"
+				      IsFollowing:Set[FALSE]
 				      return
 			         }
 			      }
