@@ -10,7 +10,7 @@
 	</Window.Resources>
 
 	<DockPanel LastChildFill="True">
-		<Menu DockPanel.Dock="Top">
+		<Menu DockPanel.Dock="Top" IsMainMenu="True">
 			<MenuItem Name="FileMenuItem" Header="_File">
 				<MenuItem Name="m_FileConnectMenuItem" Header="Connect...">
 					<MenuItem Header="(none)" IsEnabled="False"/>
@@ -42,10 +42,11 @@
 			</MenuItem>
 		</Menu>
 		<ToolBar DockPanel.Dock="Top">
-			<Button Content="Back"></Button>
-			<Button Content="Forward"></Button>
+			<Button Content="&lt;-- Back"></Button>
+			<Button Content="--&gt; Forward"></Button>
+			<Button Content="^ Up"></Button>
 			<Separator/>
-			<Button Content="Clear"></Button>
+			<Button Content="X Delete"></Button>
 		</ToolBar>
 		<StatusBar Name="m_wndStatusBar" DockPanel.Dock="Bottom">
 			<StatusBarItem Name="StatusBarStatisticsPane" Content="(insert stats here)"></StatusBarItem>
