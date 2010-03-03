@@ -1,5 +1,12 @@
-;***Verison 2.00***
+;***Version 3.00***
 /**
+
+Version 3.00, 03/01/2010 by Valerian
+Added MovementKeys.iss support
+Removed atexit function. Include files should not include an atexit function.
+Moved code from atexit into waypointNavigator:Shutdown method.
+Added code to remember script name for Shutdown events after script destroyed.
+Implemented Debug object
 
 Version 2.00, 10/14/2009 by Kannkor (Hotshot)
 Minor re-write to work smoother with OgreNavCreator
@@ -8,6 +15,23 @@ Version 1.00, 09/30/2009 by Kannkor (Hotshot)
 Initial release. If any changes are made please update the version, and provide well documentation on what was changed.
 
 **/
+
+#define DEBUG_ENABLED TRUE
+#ifndef _DEBUG_
+#includeoptional "${LavishScript.HomeDirectory}/Scripts/EQ2Common/Debug.iss"
+#define DEBUG_OGRE_NAV TRUE
+#else
+#define DEBUG_OGRE_NAV FALSE
+#endif /* _DEBUG_ */
+
+
+#includeoptional "${LavishScript.HomeDirectory}/Scripts/EQ2Common/MovementKeys.iss"
+#ifndef _MOVE_KEYS_
+	#define AUTORUN "num lock"
+#else
+	#define AUTORUN _AUTORUN_
+#endif /* _MOVE_KEYS_ */
+
 
 variable dijkstrapathfinder PathFinder	    
 variable lnavregionref CurrentRegion
@@ -20,7 +44,6 @@ variable float DestPointY
 variable float DestPointZ
 variable bool MovementEnabled=FALSE
 variable bool AutoMovementEngaged=FALSE
-#define AUTORUN "num lock"
 variable lnavregionref NextRegion
 variable lnavregionref EndCenterRegion
 variable float NearestRegionDistance
@@ -34,14 +57,14 @@ variable bool LoopBool=TRUE
 function OgreNav(string Location, float X, float Y, float Z)
 {
 
-	;echo ${Time}: Entering OgreNav with Loc: ${Location}
+	;Debug:Echo["${Time}: Entering OgreNav with Loc: ${Location}"]
 	LoopBool:Set[TRUE]
 	while ${LoopBool} && !${ForcedStopped}
 	{
 		LoopBool:Set[FALSE]
 		if ${Nav.OgreNavStatus.Equal[Stuck]}
 		{
-			echo We are stuck and it is looping, or calling OgreNav_Lib from ${Script.Filename}.
+			Debug:Echo["We are stuck and it is looping, or calling OgreNav_Lib from ${Script.Filename}."]
 			return
 		}
 
@@ -55,7 +78,7 @@ function OgreNav(string Location, float X, float Y, float Z)
 
 		Nav.OgreNavStuck:Set[0]
 
-		;***Nothing below should be changed***		
+		;***Nothing below should be changed***
 
 		if ${Location.Equal[Loc]}
 		{
@@ -63,13 +86,13 @@ function OgreNav(string Location, float X, float Y, float Z)
 		}
 		else
 		{
-			echo Moving to ${Location}
+			Debug:Echo["Moving to ${Location}"]
 			Nav:MoveToRegion[${Location}]
 		}
 		if ${DestPointX}==0 && ${DestPointY}==0 && ${DestPointZ}==0
 		{
-			echo If this is spamming repeatedly, please bug report this with as much information as possible. Spam reason: Dest not found XYZ=000
-			echo Loc: ${Location} - x:${DestPointX} - y:${DestPointY} - z:${DestPointZ}
+			Debug:Echo["If this is spamming repeatedly, please bug report this with as much information as possible. Spam reason: Dest not found XYZ=000"]
+			Debug:Echo["Loc: ${Location} - x:${DestPointX} - y:${DestPointY} - z:${DestPointZ}"]
 			wait 50
 			InformationOb:DestNotFound
 			return
@@ -87,7 +110,7 @@ function OgreNav(string Location, float X, float Y, float Z)
 		}
 		elseif ${Path.Hops}
 		{
-			echo Start/End points are mapped
+			Debug:Echo["Start/End points are mapped"]
 			call OgreMove
 		}
 		else
@@ -100,7 +123,7 @@ function OgreNav(string Location, float X, float Y, float Z)
 				{
 					call OgreMoveToPointOffPath ${X} ${Y} ${Z}
 				}
-				echo We're on a mapped area with no hops and can't move directly there. We're screwed :)
+				Debug:Echo["We're on a mapped area with no hops and can't move directly there. We're screwed :)"]
 				Nav:Stop[Stuck]
 				InformationOb:DestNotFound
 				return
@@ -111,7 +134,7 @@ function OgreNav(string Location, float X, float Y, float Z)
 				;End point _IS_ mapped
 				call CheckMoveOffPath
 				LoopBool:Set[TRUE]
-				echo We should be back on the path, looping it..
+				Debug:Echo["We should be back on the path, looping it.."]
 				continue
 			}
 			else
@@ -162,15 +185,15 @@ function OgreNav(string Location, float X, float Y, float Z)
 							call OgreMoveToPointOffPath ${X} ${Y} ${Z}
 						}
 						else
-							echo Start/End points NOT mapped, tried to move onto the path and it's saying no hops..
+							Debug:Echo["Start/End points NOT mapped, tried to move onto the path and it's saying no hops.."]
 					}
 				}
 			}
 		}
-;echo End of OgreNav_Lib
+;Debug:Echo["End of OgreNav_Lib"]
 		;EQ2OgreHarvestNextLoc:Set[none]
 		Nav:StopMoving
-;echo ${Time}: ${Script.Filename}: Breaking out of OgreNav_lib
+;Debug:Echo["${Time}: ${Script.Filename}: Breaking out of OgreNav_lib"]
 		break
 	}
 }
@@ -178,11 +201,11 @@ objectdef InformationObject
 {
 	method AlreadyThere()
 	{
-		echo EQ2OgreNav: ${Time}: Already at current point
+		Debug:Echo["EQ2OgreNav: ${Time}: Already at current point"]
 	}
 	method DestNotFound()
 	{
-		echo EQ2OgreNav: ${Time}: Destination not supplied or found. Where do you want to go?
+		Debug:Echo["EQ2OgreNav: ${Time}: Destination not supplied or found. Where do you want to go?"]
 	}
 }
 objectdef ConditionsObject
@@ -205,23 +228,23 @@ function:bool CheckMoveOffPath()
 		}
 		else
 		{
-			echo Off the mapped area and collision detected to the nearest mapped point - Can't run there.
+			Debug:Echo["Off the mapped area and collision detected to the nearest mapped point - Can't run there."]
 			Nav:Stop[Stuck]
 			return FALSE
 		}
 	}
 	else
-		echo Nearest point on path is located: ${NearestRegionDistance} away. This is further than we can run ( ${Nav.DistanceToMoveBackToPath} )..
+		Debug:Echo["Nearest point on path is located: ${NearestRegionDistance} away. This is further than we can run ( ${Nav.DistanceToMoveBackToPath} ).."]
 }
 function OgreMoveOffPath(float X, float Y, float Z)
 {
 	Nav.OgreNavStuck:Set[0]	
 
 ;	while (${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} >= ${Nav.OffMapPrecision} && !${Nav.ForceStopped})
-;echo ${Time} OgreMoveOffPath: while (${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}==${ZoneRegion.ID} && !${Nav.ForceStopped})
+;Debug:Echo["${Time} OgreMoveOffPath: while (${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}==${ZoneRegion.ID} && !${Nav.ForceStopped})"]
 if ${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}!=${ZoneRegion.ID}
 {
-	echo ${Time}: ${Script.Filename}: Func: OgreMoveOffPath. Called and exited. (${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}==${ZoneRegion.ID} && !${Nav.ForceStopped})
+	Debug:Echo["${Time}: ${Script.Filename}: Func: OgreMoveOffPath. Called and exited. (${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}==${ZoneRegion.ID} && !${Nav.ForceStopped})"]
 	InformationOb:AlreadyThere
 	LoopBool:Set[FALSE]
 	Nav:Stop
@@ -233,7 +256,7 @@ if ${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}!=${ZoneRegion.ID}
 	{
 		if ${Nav.TargetRequired} && !${Target(exists)}
 		{
-			echo ${Time} OgreNav: No Valid Target, stopping movement and script
+			Debug:Echo["${Time} OgreNav: No Valid Target, stopping movement and script"]
 			Nav:Stop[Stuck]
 			return
 		}
@@ -253,7 +276,7 @@ if ${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}!=${ZoneRegion.ID}
 	}
 
 	if ${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}==${ZoneRegion.ID} && !${Nav.ForceStopped}
-		echo Exited Func: OgreMoveOffPath because we got within 2 of our dest, but not on the path.
+		Debug:Echo["Exited Func: OgreMoveOffPath because we got within 2 of our dest, but not on the path."]
 }
 function OgreMoveOffPathNoLavishNav(float X, float Y, float Z)
 {
@@ -261,7 +284,7 @@ function OgreMoveOffPathNoLavishNav(float X, float Y, float Z)
 
 if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < ${Nav.OffMapPrecision} 
 {
-echo WTF: ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} >= ${Nav.OffMapPrecision} ||| {Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} >= ${Nav.OffMapPrecision} 
+Debug:Echo["WTF: ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} >= ${Nav.OffMapPrecision} ||| {Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} >= ${Nav.OffMapPrecision} "]
 
 
 }
@@ -269,7 +292,7 @@ echo WTF: ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} >= ${Nav.OffMapPrec
 	{
 		if ${Nav.TargetRequired} && !${Target(exists)}
 		{
-			echo ${Time} OgreNav: No Valid Target, stopping movement and script
+			Debug:Echo["${Time} OgreNav: No Valid Target, stopping movement and script"]
 			Nav:Stop[Stuck]
 			return
 		}
@@ -296,7 +319,7 @@ function OgreMoveToPointOffPath(float X, float Y, float Z)
 	{
 		if ${Nav.TargetRequired} && !${Target(exists)}
 		{
-			echo ${Time} OgreNav: No Valid Target, stopping movement and script
+			Debug:Echo["${Time} OgreNav: No Valid Target, stopping movement and script"]
 			Nav:Stop[Stuck]
 			return
 		}
@@ -330,7 +353,7 @@ function OgreMove()
 		{
 			if ${Nav.TargetRequired} && !${Target(exists)}
 			{
-				echo ${Time} OgreNav: No Valid Target, stopping movement and script
+				Debug:Echo["${Time} OgreNav: No Valid Target, stopping movement and script"]
 				Nav:Stop[Stuck]
 				return
 			}
@@ -353,6 +376,7 @@ function OgreMove()
 }
 objectdef waypointNavigator
 {
+	variable string ScriptName
 	variable lnavregionref WaypointSet
 	variable lnavregionref LastPoint
 	variable lnavregionref StartPoint
@@ -370,12 +394,19 @@ objectdef waypointNavigator
 	; Constructor 
 	method Initialize(string Name)
 	{
+		if DEBUG_OGRE_NAV
+		{
+			if DEBUG_ENABLED
+				Debug:Enable
+			else
+				Debug:Disable
+		}
 		;WaypointSet:SetRegion[${LavishNav.Tree.AddChild[universe,"WaypointNavigator",-unique]}]
 		;WaypointSet:SetRegion[${LavishNav.Tree.AddChild[universe,WaypointNavigator,-unique,-coordinatesystem]}]
 		;EQ2OgreHarvestPathThread
 		;if ${Script.Filename.NotEqual[EQ2OgreHarvestPathThread]}
 		;	WaypointSet:Import[${NavFile}]
-		
+		ScriptName:Set[${Script.Filename}]
 		OgreMapControllerOb:LoadMap[${Zone}]
 
 		ZoneRegion:SetRegion[${LNavRegion[${Zone.ShortName}]}]
@@ -389,7 +420,7 @@ objectdef waypointNavigator
 				OgreNavStuck:Inc
 				if ${OgreNavStuck}>=2
 				{
-					echo ${Time} ${Script.Filename}: Stuck! Stopping movement.
+					Debug:Echo["${Time} ${Script.Filename}: Stuck! Stopping movement."]
 					Nav:Stop[Stuck]
 					return TRUE
 				}
@@ -459,10 +490,10 @@ objectdef waypointNavigator
 	method MoveToRegion(string RegionName)
 	{
 		DestinationRegion:SetRegion[${RegionName}]
-		;echo Dest Region: ${DestinationRegion.CenterPoint}
+		;Debug:Echo["Dest Region: ${DestinationRegion.CenterPoint}"]
 		This:MoveToLoc[${DestinationRegion.CenterPoint}]
 		if ${DestinationRegion.CenterPoint.X}==0
-			echo RegionName: ${RegionName} - CenterPoint: ${DestinationRegion.CenterPoint}
+			Debug:Echo["RegionName: ${RegionName} - CenterPoint: ${DestinationRegion.CenterPoint}"]
 	}
 	method MoveToLoc(float x, float y, float z)
 	{
@@ -474,6 +505,14 @@ objectdef waypointNavigator
 	{
 		; Removing our universe will "unload" all of our nav data, including the universe
 		;WaypointSet:Remove
+
+		if ${MovementEnabled}
+		{
+			press AUTORUN
+			MovementEnabled:Set[FALSE]
+		}
+		OgreMapControllerOb:UnLoadMap[${Zone}]
+		Debug:Echo["End of OgreNav (Powered by script: ${ScriptName})"]
 	}
 	method OgrePath(float x,float y, float z)
 	{
@@ -484,9 +523,9 @@ objectdef waypointNavigator
 		PathFinder:SelectPath[${CurrentRegion.ID},${DestinationRegion.ID},Path]
 		if !${Path.Hops} && ${ZoneRegion.BestContainer[${Me.ToActor.Loc}]}!=${ZoneRegion.ID} && ${ZoneRegion.BestContainer[${DestPointX},${DestPointY},${DestPointZ}]}!=${ZoneRegion.ID}
 		{
-			echo Destination: ${DestinationRegion.ID} ${DestinationRegion.Name}
-			echo Current: ${CurrentRegion.ID} ${CurrentRegion.Name}
-			echo Hops: ${Path.Hops}
+			Debug:Echo["Destination: ${DestinationRegion.ID} ${DestinationRegion.Name}"]
+			Debug:Echo["Current: ${CurrentRegion.ID} ${CurrentRegion.Name}"]
+			Debug:Echo["Hops: ${Path.Hops}"]
 		}
 	}
 }
@@ -505,19 +544,4 @@ objectdef OgreNavTimerObject
 			return 0
 		return ${Math.Calc[${EndTime}-${Script.RunningTime}]}
 	}
-}
-function atexit()
-{
-	if ${MovementEnabled}
-	{
-		press AUTORUN
-		MovementEnabled:Set[FALSE]
-	}
-	;WaypointSet:Remove
-	;LNavRegion[WaypointNavigator]:Remove
-	;LavishNav[WaypointNavigator]:Remove
-	;LavishNav[WaypointNavigator]:Clear
-
-	OgreMapControllerOb:UnLoadMap[${Zone}]
-	echo End of OgreNav (Powered by script: ${Script.Filename})
 }
