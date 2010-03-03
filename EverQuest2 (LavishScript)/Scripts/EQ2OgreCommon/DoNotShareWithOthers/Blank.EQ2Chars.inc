@@ -12,7 +12,11 @@
 ;CharInfo[1,3] Will be Login Name
 ;CharInfo[1,4] Will be Server Name
 
-
+function SetUpUplink()
+{
+	UplinkInfo[${UplinkCount:Inc}]:Set[Computername1]
+	UplinkInfo[${UplinkCount:Inc}]:Set[computername2]
+}
 
 function SetUpChars()
 {
