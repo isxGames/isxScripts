@@ -34,7 +34,6 @@ namespace EQ2ParseBrowser
 			InitializeComponent();
 			ShowSystemMenu = true;
 			CloseOnEscape = false;
-
 			return;
 		}
 
@@ -70,6 +69,26 @@ namespace EQ2ParseBrowser
 
 			HRESULT hResult = COMCTL32.TaskDialogIndirect(ThisConfig, out iButton, out iRadioButton, out bVerificationFlagChecked);
 			*/
+			return;
+		}
+
+		/***************************************************************************/
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			try
+			{
+				/// Give every child popup window a chance to refuse.
+				TryCloseSingletonModelessWindow<AboutWindow>(m_wndAboutWindow);
+				TryCloseSingletonModelessWindow<LogSourceManagerWindow>(m_wndLogSourceManagerWindow);
+				TryCloseSingletonModelessWindow<ScaleInterfaceWindow>(m_wndScaleInterfaceWindow);
+			}
+			catch
+			{
+				e.Cancel = true;
+			}
+
 			return;
 		}
 
@@ -148,6 +167,27 @@ namespace EQ2ParseBrowser
 				m_wndWindow.Value = null;
 				return;
 			}
+		}
+
+		/***************************************************************************/
+		/// <summary>
+		/// This function throws an exception if the window in question didn't close.
+		/// It assumes that the window was created with CreateSingletonModelessWindow<>().
+		/// </summary>
+		protected void TryCloseSingletonModelessWindow<T>(BoxedScalar<T> ThisWindowVariable) where T : CustomBaseWindow
+		{
+			if (ThisWindowVariable.Value != null)
+			{
+				ThisWindowVariable.Value.Activate();
+				ThisWindowVariable.Value.Close();
+
+				/// If the window object reference still exists, it means the OnClose event was never called, meaning it never closed.
+				/// And that means the window must have refused it.
+				if (ThisWindowVariable.Value != null)
+					throw new Exception("Window refused to close, either on its own or because of user input.");
+			}
+
+			return;
 		}
 
 		/***************************************************************************/
