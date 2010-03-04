@@ -67,7 +67,10 @@
     <Compile Include="IniFile.cs" />
     <Compile Include="MdiTabControl.cs" />
     <Compile Include="MessageThread.cs" />
-    <Compile Include="NamedGridViewColumn.cs" />
+    <Compile Include="PersistentDetailedListView_ColumnSelectionWindow.xaml.cs">
+      <DependentUpon>PersistentDetailedListView_ColumnSelectionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TaggedGridViewColumn.cs" />
     <Compile Include="PersistentDetailedListView.cs" />
     <Compile Include="PollingLogFileMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -85,6 +88,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="PersistentDetailedListView_ColumnSelectionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="themes\generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

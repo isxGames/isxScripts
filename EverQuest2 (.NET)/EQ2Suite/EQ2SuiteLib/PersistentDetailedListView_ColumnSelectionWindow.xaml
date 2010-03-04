@@ -1,0 +1,25 @@
+﻿<local:CustomBaseWindow x:Class="EQ2SuiteLib.PersistentDetailedListView_ColumnSelectionWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:EQ2SuiteLib"
+	Title="Column Selection" Height="300" Width="300" MinHeight="300" MinWidth="300"
+	SizeToContent="WidthAndHeight" ShowInTaskbar="False" ResizeMode="CanResizeWithGrip">
+	<Grid Margin="5">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition/>
+		</Grid.RowDefinitions>
+		<ListBox Grid.Row="1" Grid.Column="0">
+		</ListBox>
+		<StackPanel Grid.Row="1" Grid.Column="2" Width="80">
+			<Button Name="m_wndOkButton" IsDefault="true">_OK</Button>
+			<Rectangle Height="5"/>
+			<Button Name="m_wndCancelButton" Click="OnCancelButtonClick">_Cancel</Button>
+		</StackPanel>
+	</Grid>
+</local:CustomBaseWindow>

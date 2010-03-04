@@ -148,8 +148,9 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
+		protected PersistentDetailedListView_ColumnSelectionWindow m_wndColumnSelectionWindow = null;
 		protected GridView m_wndGridView = null;
-		protected Dictionary<string, NamedGridViewColumn> m_ColumnDictionary = new Dictionary<string, NamedGridViewColumn>();
+		protected Dictionary<string, TaggedGridViewColumn> m_ColumnDictionary = new Dictionary<string, TaggedGridViewColumn>();
 		protected ColumnLayout m_SavedLayout = null;
 
 		/***************************************************************************/
@@ -188,10 +189,10 @@ namespace EQ2SuiteLib
 					NewContextMenu.Items.Add(NewItem);
 
 					/// TODO: Assert that every child is a NamedGridViewColumn.
-					foreach (NamedGridViewColumn ThisColumn in m_wndGridView.Columns)
+					foreach (TaggedGridViewColumn ThisColumn in m_wndGridView.Columns)
 					{
 						/// Catalog the column.
-						m_ColumnDictionary.Add(ThisColumn.ID, ThisColumn);
+						m_ColumnDictionary.Add(ThisColumn.Tag, ThisColumn);
 
 						/// Prepare our desired header.
 						GridViewColumnHeader ThisHeader = null;
@@ -214,9 +215,9 @@ namespace EQ2SuiteLib
 						ThisHeader.ContextMenuOpening += new ContextMenuEventHandler(OnHeaderContextMenuOpening);
 
 						/// Apply existing descriptors to the columns.
-						if (m_SavedLayout.m_ColumnDescDictionary.ContainsKey(ThisColumn.ID))
+						if (m_SavedLayout.m_ColumnDescDictionary.ContainsKey(ThisColumn.Tag))
 						{
-							ThisColumn.Width = m_SavedLayout.m_ColumnDescDictionary[ThisColumn.ID].m_fWidth;
+							ThisColumn.Width = m_SavedLayout.m_ColumnDescDictionary[ThisColumn.Tag].m_fWidth;
 						}
 
 						/// Or add any descriptors that are missing.
@@ -224,7 +225,7 @@ namespace EQ2SuiteLib
 						{
 							ColumnLayout.ColumnDesc NewDesc = new ColumnLayout.ColumnDesc();
 							NewDesc.m_fWidth = ThisColumn.Width;
-							m_SavedLayout.m_ColumnDescDictionary.Add(ThisColumn.ID, NewDesc);
+							m_SavedLayout.m_ColumnDescDictionary.Add(ThisColumn.Tag, NewDesc);
 						}
 					}
 
@@ -234,7 +235,7 @@ namespace EQ2SuiteLib
 						/// TODO: Remove any columns with default invisibility/non-presence.
 						for (int iIndex = m_wndGridView.Columns.Count - 1; iIndex >= 0; iIndex--)
 						{
-							NamedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as NamedGridViewColumn);
+							TaggedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as TaggedGridViewColumn);
 							if (!ThisColumn.IncludeInDefaultView)
 								m_wndGridView.Columns.RemoveAt(iIndex);
 						}
@@ -257,9 +258,9 @@ namespace EQ2SuiteLib
 					/// Provide default sort parameters.
 					if (string.IsNullOrEmpty(m_SavedLayout.m_strSortedColumnID))
 					{
-						foreach (NamedGridViewColumn ThisColumn in m_ColumnDictionary.Values)
+						foreach (TaggedGridViewColumn ThisColumn in m_ColumnDictionary.Values)
 						{
-							m_SavedLayout.m_strSortedColumnID = ThisColumn.ID;
+							m_SavedLayout.m_strSortedColumnID = ThisColumn.Tag;
 							break;
 						}
 					}
@@ -297,12 +298,12 @@ namespace EQ2SuiteLib
 
 			for (int iIndex = 0; iIndex < m_wndGridView.Columns.Count; iIndex++)
 			{
-				NamedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as NamedGridViewColumn);
-				m_SavedLayout.m_astrColumnOrderList.Add(ThisColumn.ID);
+				TaggedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as TaggedGridViewColumn);
+				m_SavedLayout.m_astrColumnOrderList.Add(ThisColumn.Tag);
 
 				/// Save the details without erasing the dictionary (all of it will be saved to disk somehow).
 				ColumnLayout.ColumnDesc ThisDesc = null;
-				if (m_SavedLayout.m_ColumnDescDictionary.TryGetValue(ThisColumn.ID, out ThisDesc))
+				if (m_SavedLayout.m_ColumnDescDictionary.TryGetValue(ThisColumn.Tag, out ThisDesc))
 				{
 					ThisDesc.m_fWidth = ThisColumn.Width;
 				}
@@ -313,11 +314,11 @@ namespace EQ2SuiteLib
 		/***************************************************************************/
 		protected void OnHeaderClick(object sender, RoutedEventArgs e)
 		{
-			NamedGridViewColumn ThisColumn = ((sender as GridViewColumnHeader).Column as NamedGridViewColumn);
+			TaggedGridViewColumn ThisColumn = ((sender as GridViewColumnHeader).Column as TaggedGridViewColumn);
 
 			/// Define the sort parameters.
-			if (m_SavedLayout.m_strSortedColumnID != ThisColumn.ID)
-				m_SavedLayout.m_strSortedColumnID = ThisColumn.ID;
+			if (m_SavedLayout.m_strSortedColumnID != ThisColumn.Tag)
+				m_SavedLayout.m_strSortedColumnID = ThisColumn.Tag;
 			else
 				m_SavedLayout.m_bSortAscending = !m_SavedLayout.m_bSortAscending;
 
@@ -334,7 +335,7 @@ namespace EQ2SuiteLib
 			/// This is TACKY AS HELL.
 			/// I thought LayoutTransform was supposed to be a dependency object,
 			/// so that it would carry down from the parent if not otherwise interrupted.
-			/// But between the transforms there's all these Transform.Identity objects filling the gap.
+			/// But between the transforms there's all these mysterious Transform.Identity objects filling the gap, which I did not set.
 			for (DependencyObject objThis = this; objThis != null; objThis = VisualTreeHelper.GetParent(objThis))
 			{
 				if (objThis is FrameworkElement)
@@ -359,6 +360,36 @@ namespace EQ2SuiteLib
 		/***************************************************************************/
 		protected void OnHeaderContextMenuConfigureColumnsMenuItemClick(object sender, RoutedEventArgs e)
 		{
+			if (m_wndColumnSelectionWindow == null)
+			{
+				m_wndColumnSelectionWindow = new PersistentDetailedListView_ColumnSelectionWindow();
+
+				/// Find the parent window.
+				for (DependencyObject objThis = this; objThis != null; objThis = LogicalTreeHelper.GetParent(objThis))
+				{
+					if (objThis is Window)
+					{
+						m_wndColumnSelectionWindow.Owner = (objThis as Window);
+						break;
+					}
+				}
+
+				m_wndColumnSelectionWindow.Closed +=
+					delegate(object sender2, EventArgs e2)
+					{
+						m_wndColumnSelectionWindow = null;
+						return;
+					};
+
+				m_wndColumnSelectionWindow.Show();
+			}
+			else
+			{
+				if (m_wndColumnSelectionWindow.WindowState == WindowState.Minimized)
+					m_wndColumnSelectionWindow.WindowState = WindowState.Normal;
+				m_wndColumnSelectionWindow.Activate();
+			}
+
 			return;
 		}
 

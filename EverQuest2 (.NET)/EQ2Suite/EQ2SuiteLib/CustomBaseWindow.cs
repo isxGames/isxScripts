@@ -26,6 +26,29 @@ namespace EQ2SuiteLib
 			return;
 		}
 
+		/***************************************************************************/
+		/// <summary>
+		/// This will be a problem with multiple UI threads but we'll fix when we have to.
+		/// </summary>
+		private static List<CustomBaseWindow> s_aAllWindowList = new List<CustomBaseWindow>();
+		private static double? s_fUniversalScale = null;
+
+		/***************************************************************************/
+		public static double UniversalScale
+		{
+			set
+			{
+				foreach (CustomBaseWindow ThisWindow in s_aAllWindowList)
+				{
+					ThisWindow.Scale = value;
+				}
+
+				s_fUniversalScale = value;
+
+				return;
+			}
+		}
+
 		/************************************************************************************/
 		public CustomBaseWindow()
 		{
@@ -46,6 +69,8 @@ namespace EQ2SuiteLib
 		{
 			/// Oddly, there isn't a class override for this.
 			SizeChanged += new SizeChangedEventHandler(OnSizeChanged);
+
+			s_aAllWindowList.Add(this);
 			return;
 		}
 
@@ -179,6 +204,29 @@ namespace EQ2SuiteLib
 				USER32.SetWindowPosFlags.NoZOrder |
 				USER32.SetWindowPosFlags.FrameChanged;
 			USER32.SetWindowPos(m_hWin32Window, IntPtr.Zero, 0, 0, 0, 0, eSetWindowPosFlags);
+
+			if (s_fUniversalScale != null)
+				Scale = s_fUniversalScale.Value;
+
+			return;
+		}
+
+		/************************************************************************************/
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			/// Remove this window from the global list.
+			/// Maybe you can do dictionaries using object reference as the key, but I have no time to find out.
+			for (int iIndex = s_aAllWindowList.Count - 1; iIndex >= 0; iIndex--)
+			{
+				if (object.ReferenceEquals(this, s_aAllWindowList[iIndex]))
+				{
+					s_aAllWindowList.RemoveAt(iIndex);
+					break;
+				}
+			}
+
 			return;
 		}
 
