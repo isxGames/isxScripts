@@ -9,20 +9,20 @@ namespace EQ2SuiteLib
 {
 	public class NamedGridViewColumn : GridViewColumn
 	{
-		public static readonly DependencyProperty IDProperty;
-		public static readonly DependencyProperty IncludeInDefaultViewProperty;
+		public static readonly DependencyProperty s_IDProperty;
+		public static readonly DependencyProperty s_IncludeInDefaultViewProperty;
 
 		/***************************************************************************/
 		static NamedGridViewColumn()
 		{
-			IDProperty = DependencyProperty.Register(
+			s_IDProperty = DependencyProperty.Register(
 				"ID",
 				typeof(string),
 				typeof(NamedGridViewColumn),
 				new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.None, OnIDChanged),
 				OnValidateID);
 
-			IncludeInDefaultViewProperty = DependencyProperty.Register(
+			s_IncludeInDefaultViewProperty = DependencyProperty.Register(
 				"IncludeInDefaultView",
 				typeof(bool),
 				typeof(NamedGridViewColumn),
@@ -62,15 +62,15 @@ namespace EQ2SuiteLib
 		/***************************************************************************/
 		public string ID
 		{
-			get { return (string)GetValue(IDProperty); }
-			set { SetValue(IDProperty, value); }
+			get { return (string)GetValue(s_IDProperty); }
+			set { SetValue(s_IDProperty, value); }
 		}
 
 		/***************************************************************************/
 		public bool IncludeInDefaultView
 		{
-			get { return (bool)GetValue(IncludeInDefaultViewProperty); }
-			set { SetValue(IncludeInDefaultViewProperty, value); }
+			get { return (bool)GetValue(s_IncludeInDefaultViewProperty); }
+			set { SetValue(s_IncludeInDefaultViewProperty, value); }
 		}
 	}
 }
