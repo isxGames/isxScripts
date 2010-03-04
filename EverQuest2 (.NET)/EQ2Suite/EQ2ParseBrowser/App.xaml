@@ -4,5 +4,29 @@
 	StartupUri="MainWindow.xaml">
 	<Application.Resources>
 		<ImageSource x:Key="MainIcon">Resources/MainIcon.ico</ImageSource>
+
+		<Style x:Key="LeftJustifiedHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+		</Style>
+
+		<!--
+		Menu item separators are way too tall.
+		http://devlicio.us/blogs/christopher_bennage/archive/2008/06/19/styling-separators-in-wpf.aspx
+		-->
+		<!--<Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+			<Setter Property="Height" Value="5"/>
+			<Setter Property="Foreground" Value="Purple"/>
+			
+			<!- Yep, gotta do a fucking template from scratch,
+			because the default theme stops displaying the horizontal line at heights under 40!!
+			I can't win with these idiots!! ->
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Separator}">
+						<Rectangle Height="1" Fill="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" />
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>-->
 	</Application.Resources>
 </Application>

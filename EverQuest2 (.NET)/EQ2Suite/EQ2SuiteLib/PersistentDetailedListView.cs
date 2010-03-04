@@ -11,7 +11,7 @@ using System.Windows.Media;
 namespace EQ2SuiteLib
 {
 	/// <summary>
-	/// ListView that saves column state and offers sorting and item activation eventing.
+	/// ListView that saves column state, and offers sorting and item activation eventing.
 	/// Written with help from:
 	/// http://kentb.blogspot.com/2006/12/listviewitemactivated-event-in-wpf.html
 	/// </summary>
@@ -32,47 +32,38 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public class ItemActivatedEventArgs : RoutedEventArgs
-		{
-			public ItemActivatedEventArgs(RoutedEvent ThisEvent, object sender) : base(ThisEvent, sender)
-			{
-				return;
-			}
-		}
-
-		/***************************************************************************/
 		/// <summary>
 		/// Identifies the <see cref="Command"/> property.
 		/// </summary>
-		protected static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+		protected static readonly DependencyProperty s_CommandProperty = DependencyProperty.Register(
 			"Command",
 			typeof(ICommand),
-			typeof(ListView));
+			typeof(PersistentDetailedListView));
 
 		/// <summary>
 		/// Identifies the <see cref="CommandParameter"/> property.
 		/// </summary>
-		protected static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(
+		protected static readonly DependencyProperty s_CommandParameterProperty = DependencyProperty.Register(
 			"CommandParameter",
 			typeof(object),
-			typeof(ListView),
+			typeof(PersistentDetailedListView),
 			new FrameworkPropertyMetadata(null));
 
 		/// <summary>
 		/// Identifies the <see cref="CommandTarget"/> property.
 		/// </summary>
-		protected static readonly DependencyProperty CommandTargetProperty = DependencyProperty.Register("CommandTarget",
+		protected static readonly DependencyProperty s_CommandTargetProperty = DependencyProperty.Register("CommandTarget",
 				typeof(IInputElement),
-				typeof(ListView),
+				typeof(PersistentDetailedListView),
 				new FrameworkPropertyMetadata(null));
 
 		/// <summary>
 		/// Identifies the <see cref="ItemActivated"/> event.
 		/// </summary>
-		protected static readonly RoutedEvent ItemActivatedEvent = EventManager.RegisterRoutedEvent("ItemActivated",
+		protected static readonly RoutedEvent s_ItemActivatedEvent = EventManager.RegisterRoutedEvent("ItemActivated",
 				RoutingStrategy.Bubble,
-				typeof(EventHandler<ItemActivatedEventArgs>),
-				typeof(ListView));
+				typeof(RoutedEventHandler),
+				typeof(PersistentDetailedListView));
 
 		/***************************************************************************/
 		static PersistentDetailedListView()
@@ -83,63 +74,12 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		/// <summary>
-		/// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
-		/// </summary>
-		public ICommand Command
-		{
-			get { return GetValue(CommandProperty) as ICommand; }
-			set { SetValue(CommandProperty, value); }
-		}
-
-		/***************************************************************************/
-		/// <summary>
-		/// Gets or sets the parameter to be passed to the executed <see cref="Command"/>.
-		/// </summary>
-		public object CommandParameter
-		{
-			get { return GetValue(CommandParameterProperty); }
-			set { SetValue(CommandParameterProperty, value); }
-		}
-
-		/***************************************************************************/
-		/// <summary>
-		/// Gets or sets the element on which to raise the specified <see cref="Command"/>.
-		/// </summary>
-		public IInputElement CommandTarget
-		{
-			get { return GetValue(CommandTargetProperty) as IInputElement; }
-			set { SetValue(CommandTargetProperty, value); }
-		}
-
-		/***************************************************************************/
-		/// <summary>
-		/// Occurs whenever an item in this <c>ListView</c> is activated.
-		/// </summary>
-		public event EventHandler<ItemActivatedEventArgs> ItemActivated
-		{
-			add { AddHandler(ItemActivatedEvent, value); }
-			remove { RemoveHandler(ItemActivatedEvent, value); }
-		}
-
-		/***************************************************************************/
-		protected GridView m_wndGridView = null;
-		protected Dictionary<string, NamedGridViewColumn> m_ColumnDictionary = new Dictionary<string, NamedGridViewColumn>();
-		protected ColumnLayout m_SavedLayout = null;
-
-		/***************************************************************************/
-		public PersistentDetailedListView()
-		{
-			return;
-		}
-
-		/***************************************************************************/
 		private static void MouseDoubleClickHandler(object sender, MouseEventArgs e)
 		{
 			ListViewItem listViewItem = sender as ListViewItem;
 			Debug.Assert(listViewItem != null);
-			PersistentDetailedListView wndListView = FindListViewForItem(listViewItem);
 
+			PersistentDetailedListView wndListView = FindListViewForItem(listViewItem);
 			if (wndListView != null)
 				wndListView.OnItemActivated(listViewItem.Content);
 
@@ -152,7 +92,7 @@ namespace EQ2SuiteLib
 		/// </summary>
 		/// <param name="listViewItem"></param>
 		/// <returns></returns>
-		private static PersistentDetailedListView FindListViewForItem(ListViewItem listViewItem)
+		public static PersistentDetailedListView FindListViewForItem(ListViewItem listViewItem)
 		{
 			DependencyObject parent = VisualTreeHelper.GetParent(listViewItem);
 
@@ -165,6 +105,57 @@ namespace EQ2SuiteLib
 			}
 
 			return null;
+		}
+
+		/***************************************************************************/
+		/// <summary>
+		/// Gets or sets the <see cref="ICommand"/> to execute whenever an item is activated.
+		/// </summary>
+		public ICommand Command
+		{
+			get { return GetValue(s_CommandProperty) as ICommand; }
+			set { SetValue(s_CommandProperty, value); }
+		}
+
+		/***************************************************************************/
+		/// <summary>
+		/// Gets or sets the parameter to be passed to the executed <see cref="Command"/>.
+		/// </summary>
+		public object CommandParameter
+		{
+			get { return GetValue(s_CommandParameterProperty); }
+			set { SetValue(s_CommandParameterProperty, value); }
+		}
+
+		/***************************************************************************/
+		/// <summary>
+		/// Gets or sets the element on which to raise the specified <see cref="Command"/>.
+		/// </summary>
+		public IInputElement CommandTarget
+		{
+			get { return GetValue(s_CommandTargetProperty) as IInputElement; }
+			set { SetValue(s_CommandTargetProperty, value); }
+		}
+
+		/***************************************************************************/
+		/// <summary>
+		/// Occurs whenever an item in this <c>ListView</c> is activated. <>
+		/// </summary>
+		public event RoutedEventHandler ItemActivated
+		{
+			add { AddHandler(s_ItemActivatedEvent, value); }
+			remove { RemoveHandler(s_ItemActivatedEvent, value); }
+		}
+
+		/***************************************************************************/
+		protected GridView m_wndGridView = null;
+		protected Dictionary<string, NamedGridViewColumn> m_ColumnDictionary = new Dictionary<string, NamedGridViewColumn>();
+		protected ColumnLayout m_SavedLayout = null;
+
+		/***************************************************************************/
+		public PersistentDetailedListView()
+		{
+			return;
 		}
 
 		/***************************************************************************/
@@ -181,17 +172,47 @@ namespace EQ2SuiteLib
 
 				m_SavedLayout = value;
 
+				/// Get to work, wire the ListView/GridView control up for use!
 				try
 				{
-					/// First thing we do is catalog all columns.
-					/// TODO: Assert that every child is a NamedGridViewColumn.
 					m_ColumnDictionary.Clear();
+
+					m_wndGridView.ColumnHeaderToolTip = "Right-click for more options";
+
+					/// Build our custom context menu.
+					ContextMenu NewContextMenu = new ContextMenu();
+					NewContextMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.MousePoint;
+					MenuItem NewItem = new MenuItem();
+					NewItem.Header = "Configure Columns...";
+					NewItem.Click += new RoutedEventHandler(OnHeaderContextMenuConfigureColumnsMenuItemClick);
+					NewContextMenu.Items.Add(NewItem);
+
+					/// TODO: Assert that every child is a NamedGridViewColumn.
 					foreach (NamedGridViewColumn ThisColumn in m_wndGridView.Columns)
+					{
+						/// Catalog the column.
 						m_ColumnDictionary.Add(ThisColumn.ID, ThisColumn);
 
-					/// Synchronize the descriptor dictionary with the column dictionary.
-					foreach (NamedGridViewColumn ThisColumn in m_ColumnDictionary.Values)
-					{
+						/// Prepare our desired header.
+						GridViewColumnHeader ThisHeader = null;
+						if (ThisColumn.Header is GridViewColumnHeader)
+						{
+							/// If the XAML provided a header already, then just reuse that.
+							ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
+							ThisHeader.Click -= OnHeaderClick;
+							ThisHeader.Click += OnHeaderClick;
+						}
+						else
+						{
+							ThisHeader = new GridViewColumnHeader();
+							ThisHeader.Click += OnHeaderClick;
+
+							ThisHeader.Content = ThisColumn.Header;
+							ThisColumn.Header = ThisHeader;
+						}
+						ThisHeader.ContextMenu = NewContextMenu;
+						ThisHeader.ContextMenuOpening += new ContextMenuEventHandler(OnHeaderContextMenuOpening);
+
 						/// Apply existing descriptors to the columns.
 						if (m_SavedLayout.m_ColumnDescDictionary.ContainsKey(ThisColumn.ID))
 						{
@@ -232,6 +253,16 @@ namespace EQ2SuiteLib
 
 					/// We need this event to know when to save the column configuration.
 					Unloaded += new System.Windows.RoutedEventHandler(this.OnListViewUnloaded);
+
+					/// Provide default sort parameters.
+					if (string.IsNullOrEmpty(m_SavedLayout.m_strSortedColumnID))
+					{
+						foreach (NamedGridViewColumn ThisColumn in m_ColumnDictionary.Values)
+						{
+							m_SavedLayout.m_strSortedColumnID = ThisColumn.ID;
+							break;
+						}
+					}
 				}
 				catch //(Exception ex)
 				{
@@ -280,6 +311,58 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
+		protected void OnHeaderClick(object sender, RoutedEventArgs e)
+		{
+			NamedGridViewColumn ThisColumn = ((sender as GridViewColumnHeader).Column as NamedGridViewColumn);
+
+			/// Define the sort parameters.
+			if (m_SavedLayout.m_strSortedColumnID != ThisColumn.ID)
+				m_SavedLayout.m_strSortedColumnID = ThisColumn.ID;
+			else
+				m_SavedLayout.m_bSortAscending = !m_SavedLayout.m_bSortAscending;
+
+			/// TODO: Do sort here.
+
+			return;
+		}
+
+		/***************************************************************************/
+		protected void OnHeaderContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			GridViewColumnHeader ThisHeader = (sender as GridViewColumnHeader);
+
+			/// This is TACKY AS HELL.
+			/// I thought LayoutTransform was supposed to be a dependency object,
+			/// so that it would carry down from the parent if not otherwise interrupted.
+			/// But between the transforms there's all these Transform.Identity objects filling the gap.
+			for (DependencyObject objThis = this; objThis != null; objThis = VisualTreeHelper.GetParent(objThis))
+			{
+				if (objThis is FrameworkElement)
+				{
+					FrameworkElement ThisControl = (objThis as FrameworkElement);
+
+					if (ThisControl.LayoutTransform is ScaleTransform)
+					{
+						ThisHeader.ContextMenu.LayoutTransform = ThisControl.LayoutTransform;
+						break;
+					}
+
+					/// Game over, we lose.
+					else if (ThisControl.LayoutTransform != Transform.Identity)
+						break;
+				}
+			}
+
+			return;
+		}
+
+		/***************************************************************************/
+		protected void OnHeaderContextMenuConfigureColumnsMenuItemClick(object sender, RoutedEventArgs e)
+		{
+			return;
+		}
+
+		/***************************************************************************/
 		protected void OnListViewUnloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			try
@@ -316,7 +399,7 @@ namespace EQ2SuiteLib
 		/***************************************************************************/
 		protected virtual void OnItemActivated(object item)
 		{
-			RaiseEvent(new ItemActivatedEventArgs(ItemActivatedEvent, item));
+			RaiseEvent(new RoutedEventArgs(s_ItemActivatedEvent, item));
 
 			//execute the command if there is one
 			if (Command != null)

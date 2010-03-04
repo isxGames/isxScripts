@@ -7,9 +7,7 @@
 	ShowInTaskbar="False" SizeToContent="Manual"
 	MinWidth="300" MinHeight="200" ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow">
 	<eq2suitelib:CustomBaseWindow.Resources>
-		<Style x:Key="LeftJustifiedHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-		</Style>
+		<local:LogSourceConfiguration_SourceType_FormatConverter x:Key="SourceTypeFormatter" />
 	</eq2suitelib:CustomBaseWindow.Resources>
 	
 	<Grid Margin="5">
@@ -23,16 +21,21 @@
 		
 		<Label Grid.Row="0" Grid.Column="0" IsTabStop="True">Select a log _source from the list below:</Label>
 		
-		<eq2suitelib:PersistentDetailedListView Name="m_wndSourceList" Grid.Row="2" Grid.Column="0" IsTabStop="True">
+		<eq2suitelib:PersistentDetailedListView Name="m_wndSourceList" Grid.Row="2" Grid.Column="0"
+			IsTabStop="True" SelectionMode="Extended" ItemActivated="OnSourceListItemActivated">
 			<eq2suitelib:PersistentDetailedListView.View>
 				<GridView ColumnHeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}">
-					<eq2suitelib:NamedGridViewColumn ID="Name" Header="Name" Width="100" />
-					<eq2suitelib:NamedGridViewColumn ID="Type" Header="Type" IncludeInDefaultView="False" Width="100" />
-					<eq2suitelib:NamedGridViewColumn ID="Source" Header="Source" Width="100" />
+					<eq2suitelib:NamedGridViewColumn ID="Name" Width="100" DisplayMemberBinding="{Binding Name}">
+						<GridViewColumnHeader>
+							<Button>TEST!</Button>
+						</GridViewColumnHeader>
+					</eq2suitelib:NamedGridViewColumn>
+					<eq2suitelib:NamedGridViewColumn ID="Type" Header="Type" Width="100" DisplayMemberBinding="{Binding Path=Source, Converter={StaticResource SourceTypeFormatter}}" />
+					<eq2suitelib:NamedGridViewColumn ID="Source" Header="Source" Width="100" DisplayMemberBinding="{Binding SourceContextString}" />
 				</GridView>
 			</eq2suitelib:PersistentDetailedListView.View>
 		</eq2suitelib:PersistentDetailedListView>
-		
+
 		<!-- Bottom row has three columns, buttons to the left, empty space, and buttons to the right. -->
 		<Grid Grid.Row="4" Grid.Column="0">
 			<Grid.ColumnDefinitions>
