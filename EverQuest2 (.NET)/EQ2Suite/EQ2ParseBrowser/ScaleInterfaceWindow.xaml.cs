@@ -31,7 +31,10 @@ namespace EQ2ParseBrowser
 		private void m_wndScaleSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (IsInitialized)
-				App.SetCommonWindowScale(e.NewValue);
+			{
+				App.s_fInterfaceScaleFactor = e.NewValue;
+				CustomBaseWindow.UniversalScale = e.NewValue;
+			}
 			return;
 		}
 	}

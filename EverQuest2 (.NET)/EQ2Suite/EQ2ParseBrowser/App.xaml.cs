@@ -28,6 +28,11 @@ namespace EQ2ParseBrowser
 			base.OnStartup(e);
 			ReadRegistrySettings();
 
+			if (s_fInterfaceScaleFactor < 0.5)
+				s_fInterfaceScaleFactor = 0.5;
+
+			CustomBaseWindow.UniversalScale = s_fInterfaceScaleFactor;
+
 			return;
 		}
 
@@ -36,22 +41,6 @@ namespace EQ2ParseBrowser
 		{
 			base.OnExit(e);
 			WriteRegistrySettings();
-			return;
-		}
-
-		/***************************************************************************/
-		public static void SetCommonWindowScale(double fNewScale)
-		{
-			App ThisApp = (Application.Current as App);
-
-			s_fInterfaceScaleFactor = fNewScale;
-
-			foreach (Window ThisWindow in ThisApp.Windows)
-			{
-				if (ThisWindow is CustomBaseWindow)
-					(ThisWindow as CustomBaseWindow).Scale = fNewScale;
-			}
-
 			return;
 		}
 
