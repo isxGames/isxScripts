@@ -454,13 +454,13 @@ function DoFollowInCombat()
 {
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-		call facemob ${Me.Target.ID} 10
+		call facemob ${Me.Target.ID} 15
 		call movetoobject ${Me.Target.ID} 5 0
 		IsFollowing:Set[FALSE]
 		}
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-		call facemob ${Me.Target.ID} 10
+		call facemob ${Me.Target.ID} 15
 		}
 	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 35 && !${IsFollowing}
 		{
@@ -473,8 +473,8 @@ function DoFollowInCombat()
 ;********************************************
 function facemobb()
 {
-	if ${Me.Target.ID(exists)}
-		call facemob ${Me.Target.ID} 10
+	if ${Me.Target.ID(exists)} && ${fight.ShouldIAttack}
+		call facemob ${Me.Target.ID} 15
 	return
 
 }
@@ -486,7 +486,7 @@ function TooClose()
 	if ${Me.Target(exists)} && ${Me.Target.Distance} < 1
 	{
 		VG:ExecBinding[movebackward]
-		wait 1
+		wait 2
 		VG:ExecBinding[movebackward,release]
 		return
 		IsFollowing:Set[FALSE]
