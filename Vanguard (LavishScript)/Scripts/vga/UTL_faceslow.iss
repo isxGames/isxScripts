@@ -49,6 +49,8 @@ function faceloc(float locX, float locY, float precision)
 
 function faceslow(float facX, float facY, float Rt, float Lt)
 {
+	face ${facX} ${facY}
+/*
 	do
 	{
 		call Angle ${facX} ${facY}
@@ -71,6 +73,7 @@ function faceslow(float facX, float facY, float Rt, float Lt)
 	while "${AbsAngle} > ${Lt} || ${AbsAngle} < ${Rt}"
 	VG:ExecBinding[turnleft,release]
 	VG:ExecBinding[turnright,release]
+*/
 }
 
 function Angle(float angX,float angY)
