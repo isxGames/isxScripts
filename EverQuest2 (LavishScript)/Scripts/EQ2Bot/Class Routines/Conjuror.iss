@@ -386,7 +386,7 @@ function Buff_Routine(int xAction)
 		case Buff_Shards
 			if !${Me.Inventory[${ShardType}](exists)}
 			{
-				buff shard
+				;buff shard
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 			}
 			if ${Me.Inventory["Shard of Essence"](exists)}
