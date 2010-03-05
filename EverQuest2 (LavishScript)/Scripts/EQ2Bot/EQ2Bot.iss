@@ -1572,32 +1572,150 @@ function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemovin
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
+	elseif (${Me.Ability[id,${spellid}].CastingTime} <= 7)
+	{
+		; if we're not casting a spell and the current spell is not queued, then we have a problem
+		if !${Me.Ability[id,${spellid}].IsQueued} && !${Me.CastingSpell}
+		{
+			echo "DEBUG:: CastSpell() -- Nothing is queued and we're not currently casting a spell.  Restting cache and trying again."
+			ISXEQ2:ClearAbilitiesCache
+			if (${Me.Ability[${spell}].ID} == 601887089)
+			{
+				spellid:Set[1287322154]
+				Me.Ability[id,1287322154]:Use
+			}
+			else
+			{
+				if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
+					eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
+				else
+					Me.Ability[id,${spellid}]:Use
+			}
+			;; this is ghetto ..but required
+			wait 4
+			if (!${Me.Ability[id,${spellid}].IsQueued})
+				wait 4
+			if (${Me.Ability[id,${spellid}].CastingTime} < .6)
+			{
+				;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"]
+				LastQueuedAbility:Set[${spell}]
+				return
+			}
+			elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
+			{
+				wait 4
+				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
+				;; more than 7 seconds to cast.
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+				{
+					do
+					{
+						CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					wait 5
+				}
+		
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+				{
+					do
+					{
+						CurrentAction:Set[Casting '${spell}']
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					wait 2
+					return
+				}
+			}
+		}
+	}
 	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
 	{
 		wait 4
-		;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
-		;; more than 7 seconds to cast.
-		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+		; if we're not casting a spell and the current spell is not queued, then we have a problem
+		if !${Me.Ability[id,${spellid}].IsQueued} && !${Me.CastingSpell}
 		{
-			do
+			echo "DEBUG:: CastSpell() -- Nothing is queued and we're not currently casting a spell.  Restting cache and trying again."
+			ISXEQ2:ClearAbilitiesCache
+			if (${Me.Ability[${spell}].ID} == 601887089)
 			{
-				CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
-				waitframe
+				spellid:Set[1287322154]
+				Me.Ability[id,1287322154]:Use
 			}
-			while ${Me.CastingSpell}
-			wait 5
+			else
+			{
+				if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
+					eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
+				else
+					Me.Ability[id,${spellid}]:Use
+			}
+			;; this is ghetto ..but required
+			wait 4
+			if (!${Me.Ability[id,${spellid}].IsQueued})
+				wait 4
+			if (${Me.Ability[id,${spellid}].CastingTime} < .6)
+			{
+				;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"]
+				LastQueuedAbility:Set[${spell}]
+				return
+			}
+			elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
+			{
+				wait 4
+				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
+				;; more than 7 seconds to cast.
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+				{
+					do
+					{
+						CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					wait 5
+				}
+		
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+				{
+					do
+					{
+						CurrentAction:Set[Casting '${spell}']
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					wait 2
+					return
+				}
+			}
 		}
-
-		if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+		else
 		{
-			do
+			;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
+			;; more than 7 seconds to cast.
+			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
 			{
-				CurrentAction:Set[Casting '${spell}']
-				waitframe
+				do
+				{
+					CurrentAction:Set["Waiting for '${LastQueuedAbility}' to finish casting..."]
+					waitframe
+				}
+				while ${Me.CastingSpell}
+				wait 5
 			}
-			while ${Me.CastingSpell}
-			wait 2
-			return
+	
+			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+			{
+				do
+				{
+					CurrentAction:Set[Casting '${spell}']
+					waitframe
+				}
+				while ${Me.CastingSpell}
+				wait 2
+				return
+			}
 		}
 	}
 
