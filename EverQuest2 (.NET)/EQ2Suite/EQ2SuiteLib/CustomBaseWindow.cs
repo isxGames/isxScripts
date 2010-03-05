@@ -20,6 +20,16 @@ namespace EQ2SuiteLib
 		protected SavedWindowLocation m_LastSavedWindowLocation = null;
 
 		/************************************************************************************/
+		/// <summary>
+		/// This interface lets any child control of a CustomBaseWindow
+		/// know about certain important Window events without having to allocate and attach an event handler.
+		/// </summary>
+		public interface IWindowEventSpy
+		{
+			void OnContentRendered(EventArgs e);
+		}
+
+		/************************************************************************************/
 		static CustomBaseWindow()
 		{
 			//DefaultStyleKeyProperty.OverrideMetadata(typeof(StandardWindow), new FrameworkPropertyMetadata(typeof(StandardWindow)));
@@ -34,6 +44,9 @@ namespace EQ2SuiteLib
 		private static double? s_fUniversalScale = null;
 
 		/***************************************************************************/
+		/// <summary>
+		/// If this property is set, all CustomBaseWindows will conform to it.
+		/// </summary>
 		public static double UniversalScale
 		{
 			set
@@ -208,6 +221,37 @@ namespace EQ2SuiteLib
 			if (s_fUniversalScale != null)
 				Scale = s_fUniversalScale.Value;
 
+			return;
+		}
+
+		/************************************************************************************/
+		protected delegate void ChildControlScannedDelegate(DependencyObject objThis);
+		protected void ScanChildControl(DependencyObject objRoot, ChildControlScannedDelegate ThisCallback)
+		{
+			foreach (object objThis in LogicalTreeHelper.GetChildren(objRoot))
+			{
+				if (objThis is DependencyObject)
+				{
+					DependencyObject objThisDependencyObject = (objThis as DependencyObject);
+					ThisCallback(objThisDependencyObject);
+					ScanChildControl(objThisDependencyObject, ThisCallback);
+				}
+			}
+
+			return;
+		}
+
+		/************************************************************************************/
+		protected override void OnContentRendered(EventArgs e)
+		{
+			base.OnContentRendered(e);
+
+			ScanChildControl(this,
+				delegate(DependencyObject objThis)
+				{
+					if (objThis is IWindowEventSpy)
+						(objThis as IWindowEventSpy).OnContentRendered(e);
+				});
 			return;
 		}
 

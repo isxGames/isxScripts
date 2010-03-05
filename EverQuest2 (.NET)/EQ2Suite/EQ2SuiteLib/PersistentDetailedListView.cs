@@ -7,6 +7,9 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Documents;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace EQ2SuiteLib
 {
@@ -14,9 +17,39 @@ namespace EQ2SuiteLib
 	/// ListView that saves column state, and offers sorting and item activation eventing.
 	/// Written with help from:
 	/// http://kentb.blogspot.com/2006/12/listviewitemactivated-event-in-wpf.html
+	/// http://www.switchonthecode.com/tutorials/wpf-tutorial-using-the-listview-part-2-sorting
 	/// </summary>
-	public class PersistentDetailedListView : ListView
+	public class PersistentDetailedListView : ListView, CustomBaseWindow.IWindowEventSpy
 	{
+		/***************************************************************************/
+		/// <summary>
+		/// </summary>
+		protected class SortDirectionAdorner : Adorner
+		{
+			private readonly static Geometry s_AscGeometry = Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
+			private readonly static Geometry s_DescGeometry = Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
+			public bool m_bSortAscending = false;
+
+			public SortDirectionAdorner(UIElement ThisElement, bool bSortAscending) : base(ThisElement)
+			{
+				m_bSortAscending = bSortAscending;
+				return;
+			}
+
+			protected override void OnRender(DrawingContext ThisContext)
+			{
+				base.OnRender(ThisContext);
+
+				if (AdornedElement.RenderSize.Width < 20)
+					return;
+
+				ThisContext.PushTransform(new TranslateTransform(AdornedElement.RenderSize.Width - 15, (AdornedElement.RenderSize.Height - 5) / 2));
+				ThisContext.DrawGeometry(Brushes.Black, null, m_bSortAscending ? s_AscGeometry : s_DescGeometry);
+				ThisContext.Pop();
+				return;
+			}
+		}
+
 		/***************************************************************************/
 		public class ColumnLayout
 		{
@@ -87,6 +120,31 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
+		protected static ScaleTransform FindParentScaleTransform(DependencyObject objStart)
+		{
+			/// This is TACKY AS HELL.
+			/// I thought LayoutTransform was supposed to be a dependency object,
+			/// so that it would carry down from the parent if not otherwise interrupted.
+			/// But between the transforms there's all these mysterious Transform.Identity objects filling the gap, which I did not set.
+			for (DependencyObject objThis = objStart; objThis != null; objThis = VisualTreeHelper.GetParent(objThis))
+			{
+				if (objThis is FrameworkElement)
+				{
+					FrameworkElement ThisControl = (objThis as FrameworkElement);
+
+					if (ThisControl.LayoutTransform is ScaleTransform)
+						return (ThisControl.LayoutTransform as ScaleTransform);
+
+					/// Game over, we lose.
+					else if (ThisControl.LayoutTransform != Transform.Identity)
+						return null;
+				}
+			}
+
+			return null;
+		}
+
+		/***************************************************************************/
 		/// <summary>
 		/// Walks the visual tree up from the item until we find the ListView.
 		/// </summary>
@@ -106,6 +164,14 @@ namespace EQ2SuiteLib
 
 			return null;
 		}
+
+		/***************************************************************************/
+		protected PersistentDetailedListView_ColumnSelectionWindow m_wndColumnSelectionWindow = null;
+		protected GridView m_wndGridView = null;
+		protected Dictionary<string, TaggedGridViewColumn> m_ColumnDictionary = new Dictionary<string, TaggedGridViewColumn>();
+		protected ColumnLayout m_SavedLayout = null;
+		protected GridViewColumnHeader m_CurrentSortColumnHeader = null;
+		protected SortDirectionAdorner m_CurrentSortDirectionAdorner = null;
 
 		/***************************************************************************/
 		/// <summary>
@@ -148,12 +214,6 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		protected PersistentDetailedListView_ColumnSelectionWindow m_wndColumnSelectionWindow = null;
-		protected GridView m_wndGridView = null;
-		protected Dictionary<string, TaggedGridViewColumn> m_ColumnDictionary = new Dictionary<string, TaggedGridViewColumn>();
-		protected ColumnLayout m_SavedLayout = null;
-
-		/***************************************************************************/
 		public PersistentDetailedListView()
 		{
 			return;
@@ -178,7 +238,9 @@ namespace EQ2SuiteLib
 				{
 					m_ColumnDictionary.Clear();
 
-					m_wndGridView.ColumnHeaderToolTip = "Right-click for more options";
+					ToolTip HeaderToolTip = new ToolTip();
+					HeaderToolTip.Content = "Right-click for more options";
+					m_wndGridView.ColumnHeaderToolTip = HeaderToolTip;
 
 					/// Build our custom context menu.
 					ContextMenu NewContextMenu = new ContextMenu();
@@ -213,6 +275,7 @@ namespace EQ2SuiteLib
 						}
 						ThisHeader.ContextMenu = NewContextMenu;
 						ThisHeader.ContextMenuOpening += new ContextMenuEventHandler(OnHeaderContextMenuOpening);
+						ThisHeader.ToolTipOpening += new ToolTipEventHandler(OnHeaderToolTipOpening);
 
 						/// Apply existing descriptors to the columns.
 						if (m_SavedLayout.m_ColumnDescDictionary.ContainsKey(ThisColumn.Tag))
@@ -232,7 +295,7 @@ namespace EQ2SuiteLib
 					/// An empty list means this is the first time this saved layout is ever attached on this view.
 					if (m_SavedLayout.m_astrColumnOrderList.Count == 0)
 					{
-						/// TODO: Remove any columns with default invisibility/non-presence.
+						/// Remove any columns with default invisibility/non-presence.
 						for (int iIndex = m_wndGridView.Columns.Count - 1; iIndex >= 0; iIndex--)
 						{
 							TaggedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as TaggedGridViewColumn);
@@ -264,6 +327,8 @@ namespace EQ2SuiteLib
 							break;
 						}
 					}
+
+					//ActivateSorting();
 				}
 				catch //(Exception ex)
 				{
@@ -277,12 +342,36 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
+		protected void OnHeaderToolTipOpening(object sender, ToolTipEventArgs e)
+		{
+			ToolTip HeaderToolTip = ((sender as GridViewColumnHeader).ToolTip as ToolTip);
+			ScaleTransform ThisTransform = FindParentScaleTransform(this);
+			if (ThisTransform != null)
+				HeaderToolTip.LayoutTransform = ThisTransform;
+			return;
+		}
+
+		/***************************************************************************/
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
 
 			Debug.Assert(View is GridView, "PersistentDetailedListView.View must be of type GridView.");
 			m_wndGridView = (View as GridView);
+
+			return;
+		}
+
+		/***************************************************************************/
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+
+			//hitting enter activates an item too
+			if ((e.Key == Key.Enter) && (SelectedItem != null))
+			{
+				OnItemActivated(SelectedItem);
+			}
 
 			return;
 		}
@@ -314,16 +403,48 @@ namespace EQ2SuiteLib
 		/***************************************************************************/
 		protected void OnHeaderClick(object sender, RoutedEventArgs e)
 		{
-			TaggedGridViewColumn ThisColumn = ((sender as GridViewColumnHeader).Column as TaggedGridViewColumn);
+			GridViewColumnHeader ThisHeader = (sender as GridViewColumnHeader);
+			TaggedGridViewColumn ThisColumn = (ThisHeader.Column as TaggedGridViewColumn);
 
-			/// Define the sort parameters.
+			/// Toggle the sort parameters.
 			if (m_SavedLayout.m_strSortedColumnID != ThisColumn.Tag)
 				m_SavedLayout.m_strSortedColumnID = ThisColumn.Tag;
 			else
 				m_SavedLayout.m_bSortAscending = !m_SavedLayout.m_bSortAscending;
 
-			/// TODO: Do sort here.
+			SortOnce();
+			return;
+		}
 
+		/***************************************************************************/
+		void CustomBaseWindow.IWindowEventSpy.OnContentRendered(EventArgs e)
+		{
+			SortOnce();
+			return;
+		}
+
+		/***************************************************************************/
+		/// <summary>
+		/// This can't be called until Window.OnContentRendered() is called,
+		/// otherwise the adorner layer for the header items won't exist.
+		/// "Although the logical tree can be traversed within the Window's constructor,
+		/// the visual tree is empty until the Window undergoes layout at least once."
+		/// </summary>
+		public void SortOnce()
+		{
+			TaggedGridViewColumn ThisColumn = m_ColumnDictionary[m_SavedLayout.m_strSortedColumnID];
+			GridViewColumnHeader ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
+
+			if (m_CurrentSortColumnHeader != null)
+				AdornerLayer.GetAdornerLayer(m_CurrentSortColumnHeader).Remove(m_CurrentSortDirectionAdorner);
+
+			m_CurrentSortColumnHeader = ThisHeader;
+			m_CurrentSortDirectionAdorner = new SortDirectionAdorner(m_CurrentSortColumnHeader, m_SavedLayout.m_bSortAscending);
+			AdornerLayer.GetAdornerLayer(m_CurrentSortColumnHeader).Add(m_CurrentSortDirectionAdorner);
+
+			string strSortProperty = (ThisColumn.DisplayMemberBinding as Binding).Path.Path;
+			Items.SortDescriptions.Clear();
+			Items.SortDescriptions.Add(new SortDescription(strSortProperty, m_SavedLayout.m_bSortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending));
 			return;
 		}
 
@@ -331,29 +452,9 @@ namespace EQ2SuiteLib
 		protected void OnHeaderContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
 			GridViewColumnHeader ThisHeader = (sender as GridViewColumnHeader);
-
-			/// This is TACKY AS HELL.
-			/// I thought LayoutTransform was supposed to be a dependency object,
-			/// so that it would carry down from the parent if not otherwise interrupted.
-			/// But between the transforms there's all these mysterious Transform.Identity objects filling the gap, which I did not set.
-			for (DependencyObject objThis = this; objThis != null; objThis = VisualTreeHelper.GetParent(objThis))
-			{
-				if (objThis is FrameworkElement)
-				{
-					FrameworkElement ThisControl = (objThis as FrameworkElement);
-
-					if (ThisControl.LayoutTransform is ScaleTransform)
-					{
-						ThisHeader.ContextMenu.LayoutTransform = ThisControl.LayoutTransform;
-						break;
-					}
-
-					/// Game over, we lose.
-					else if (ThisControl.LayoutTransform != Transform.Identity)
-						break;
-				}
-			}
-
+			ScaleTransform ThisTransform = FindParentScaleTransform(this);
+			if (ThisTransform != null)
+				ThisHeader.ContextMenu.LayoutTransform = ThisTransform;
 			return;
 		}
 
@@ -364,7 +465,7 @@ namespace EQ2SuiteLib
 			{
 				m_wndColumnSelectionWindow = new PersistentDetailedListView_ColumnSelectionWindow();
 
-				/// Find the parent window.
+				/// The parent window of the list will be our parent window.
 				for (DependencyObject objThis = this; objThis != null; objThis = LogicalTreeHelper.GetParent(objThis))
 				{
 					if (objThis is Window)
@@ -414,20 +515,6 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			base.OnKeyDown(e);
-
-			//hitting enter activates an item too
-			if ((e.Key == Key.Enter) && (SelectedItem != null))
-			{
-				OnItemActivated(SelectedItem);
-			}
-
-			return;
-		}
-
-		/***************************************************************************/
 		protected virtual void OnItemActivated(object item)
 		{
 			RaiseEvent(new RoutedEventArgs(s_ItemActivatedEvent, item));
@@ -435,7 +522,7 @@ namespace EQ2SuiteLib
 			//execute the command if there is one
 			if (Command != null)
 			{
-				RoutedCommand routedCommand = Command as RoutedCommand;
+				RoutedCommand routedCommand = (Command as RoutedCommand);
 
 				if (routedCommand != null)
 					routedCommand.Execute(CommandParameter, CommandTarget);
