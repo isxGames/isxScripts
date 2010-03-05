@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using EQ2SuiteLib;
+using System.ComponentModel;
 
 namespace EQ2ParseBrowser
 {
@@ -33,9 +34,9 @@ namespace EQ2ParseBrowser
 	}
 
 	/***************************************************************************/
-	public class LogSourceConfiguration
+	public class LogSourceConfiguration : NotifyPropertyChangedBase
 	{
-		private string m_DUMMYNAME = Guid.NewGuid().ToString("N");
+		public string m_DUMMYNAME = Guid.NewGuid().ToString("N");
 		public string Name
 		{
 			get { return m_DUMMYNAME; }
@@ -48,6 +49,7 @@ namespace EQ2ParseBrowser
 			Socket = 2,
 		}
 
+		protected SourceType m_eSourceType = SourceType.Unknown;
 		public SourceType Source
 		{
 			get
@@ -56,6 +58,14 @@ namespace EQ2ParseBrowser
 					return SourceType.File;
 				else
 					return SourceType.Socket;
+			}
+			set
+			{
+				if (m_eSourceType != value)
+				{
+					m_eSourceType = value;
+					NotifyPropertyChanged("Source");
+				}
 			}
 		}
 
@@ -74,6 +84,8 @@ namespace EQ2ParseBrowser
 	/// </summary>
 	public partial class LogSourceManagerWindow : CustomBaseWindow
 	{
+		public List<LogSourceConfiguration> DUMMYLIST = new List<LogSourceConfiguration>();
+
 		/***************************************************************************/
 		public LogSourceManagerWindow()
 			: base(App.s_LogSourceManagerWindowLocation)
@@ -81,8 +93,10 @@ namespace EQ2ParseBrowser
 			InitializeComponent();
 			m_wndSourceList.SavedLayout = App.s_LogSourceManagerListLayout;
 
+			m_wndSourceList.ItemsSource = DUMMYLIST;
+
 			for (int iIndex = 0; iIndex < 100; iIndex++)
-				m_wndSourceList.Items.Add(new LogSourceConfiguration());
+				DUMMYLIST.Add(new LogSourceConfiguration());
 
 			//ItemsSource is ObservableCollection of EmployeeInfo objects
 			//m_wndSourceList.ItemsSource = new myEmployees();
@@ -115,6 +129,17 @@ namespace EQ2ParseBrowser
 		/***************************************************************************/
 		protected void OnSourceListItemActivated(object sender, RoutedEventArgs e)
 		{
+			/// DEBUG
+			List<LogSourceConfiguration> TEMPLIST = new List<LogSourceConfiguration>();
+			Random THISRANDOM = new Random();
+			for (int iIndex = 0; iIndex < 1000; iIndex++)
+			{
+				LogSourceConfiguration NEWITEM = new LogSourceConfiguration();
+				NEWITEM.m_DUMMYNAME = "!!!!" + THISRANDOM.NextDouble().ToString();
+				TEMPLIST.Add(NEWITEM);
+			}
+			DUMMYLIST.AddRange(TEMPLIST);
+			m_wndSourceList.SortOnce();
 			return;
 		}
 
