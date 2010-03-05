@@ -7,7 +7,7 @@ function MoveToTarget()
 			{
 			actionlog "Moving to Melee"
 			Me:Sprint[50]
-			call movetoobject ${Me.Target.ID} 4 1
+			obj_Move:MovePawn[${Me.DTarget.ID},FALSE]
 			IsFollowing:Set[FALSE]
 			Me:Sprint
 			}

@@ -185,6 +185,7 @@ variable string LootToggle
 variable string DiploToggle
 variable bool DoDiploToggle
 variable bool DoLootToggle
+variable bool DoNaturalFollow
 
 variable bool DoClassDownTime
 variable bool DoClassPreCombat

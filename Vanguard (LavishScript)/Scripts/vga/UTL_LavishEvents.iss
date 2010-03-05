@@ -21,11 +21,11 @@ function LavishEventLoad()
 ;===================================================
 atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
-	if ${ChannelNumber.Equal[42]} && ${Text.Find[Your auto-follow target has moved too far away]}
+	if ${ChannelNumber.Equal[42]} && ${Text.Find[Your auto-follow target has moved too far away]} && ${DoNaturalFollow}
 		IsFollowing:Set[FALSE]
-	if ${ChannelNumber.Equal[42]} && ${Text.Find[You have lost your auto-follow target]}
+	if ${ChannelNumber.Equal[42]} && ${Text.Find[You have lost your auto-follow target]} && ${DoNaturalFollow}
 		IsFollowing:Set[FALSE]
-	if ${ChannelNumber.Equal[42]} && ${Text.Find[Following ${followpawn}]}
+	if ${ChannelNumber.Equal[42]} && ${Text.Find[Following ${followpawn}]} && ${DoNaturalFollow}
 		IsFollowing:Set[TRUE]
 	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${LootToggle}]}
 		{
@@ -85,28 +85,34 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	}		
 	if ${DoStartFollow}
 	{
-		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]} 
 		{
-			dofollowpawn:Set[TRUE]
-			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-			if !${IsFollowing}
+			if ${DoNaturalFollow}
 				{
-				Pawn[${followpawn}]:Target
-				VGExecute /fol
+				dofollowpawn:Set[TRUE]
+				UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
+				if !${IsFollowing}
+					{
+					Pawn[${followpawn}]:Target
+					VGExecute /fol
+					}
 				}
 		}
 	}
 	if ${DoStopFollow}
 	{
-		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]}
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]} 
 		{
-			dofollowpawn:Set[FALSE]
-			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-			if ${IsFollowing}
+			if ${DoNaturalFollow}
 				{
-				Pawn[${followpawn}]:Target
-				VGExecute /fol
-				IsFollowing:Set[FALSE]
+				dofollowpawn:Set[FALSE]
+				UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
+				if ${IsFollowing}
+					{
+					Pawn[${followpawn}]:Target
+					VGExecute /fol
+					IsFollowing:Set[FALSE]
+					}
 				}
 		}
 	}

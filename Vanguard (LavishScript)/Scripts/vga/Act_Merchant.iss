@@ -156,7 +156,8 @@ function GetQuests()
 							if ${Pawn[${iCount}].Distance} > 5
 								{
 								call movetoobject ${Me.Target.ID} 4 0
-								IsFollowing:Set[FALSE]
+								if ${DoNaturalFollow}
+									IsFollowing:Set[FALSE]
 								}
 							if ${Dialog[General].ResponseCount}==0
 								{

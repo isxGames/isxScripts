@@ -268,6 +268,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[DoDiploToggle,${DoDiploToggle}]
 	UtilitySR:AddSetting[DoLootToggle,${DoLootToggle}]
 	UtilitySR:AddSetting[DoRemoveLowDiplo,${DoRemoveLowDiplo}]
+	UtilitySR:AddSetting[DoNaturalFollow,${DoNaturalFollow}]
 
 	;===================================================
 	;===                  Spells Save               ====

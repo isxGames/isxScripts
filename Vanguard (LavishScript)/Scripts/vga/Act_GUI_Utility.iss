@@ -51,8 +51,9 @@ function Harvest()
 		}
 	if "(${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<10 && ${Me.Target.Distance}>5 && ${Me.ToPawn.CombatState}==0 && !${leftofname.Equal[remain]}"
 		{
-		call movetoobject ${Me.Target.ID} 4 0
-		IsFollowing:Set[FALSE]
+		obj_Move:MovePawn[${Me.DTarget.ID},FALSE]
+		if ${DoNaturalFollow}
+			IsFollowing:Set[FALSE]
 		VGExecute /autoattack
 		wait 10
 		}	
@@ -88,8 +89,9 @@ function lootit()
 					wait ${LootDelay}
 					if ${Pawn[${iCount}].Distance} > 5
 						{
-						call movetoobject ${Me.Target.ID} 4 0
-						IsFollowing:Set[FALSE]
+						obj_Move:MovePawn[${Me.DTarget.ID},FALSE]
+						if ${DoNaturalFollow}
+							IsFollowing:Set[FALSE]
 						}
 					if ${DoLootOnly}
 						{
@@ -454,15 +456,16 @@ function DoFollowInCombat()
 {
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > 5 && ${Me.Target.Distance} < 7 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-		Face:FacePawn[${Me.Target.ID},FALSE]
-		call movetoobject ${Me.Target.ID} 5 0
-		IsFollowing:Set[FALSE]
+		obj_Face:FacePawn[${Me.Target.ID},FALSE]
+		obj_Move:MovePawn[${Me.DTarget.ID},FALSE]
+		if ${DoNaturalFollow}
+			IsFollowing:Set[FALSE]
 		}
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 5 && ${Pawn[exactname,${followpawn}].Distance} < 5
 		{
-		Face:FacePawn[${Me.Target.ID},FALSE]
+		obj_Face:FacePawn[${Me.Target.ID},FALSE]
 		}
-	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 35 && !${IsFollowing}
+	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 35 && !${IsFollowing} && ${DoNaturalFollow}
 		{
 		Pawn[${followpawn}]:Target
 		VGExecute /fol
@@ -474,7 +477,7 @@ function DoFollowInCombat()
 function facemobb()
 {
 	if ${Me.Target.ID(exists)} && ${fight.ShouldIAttack}
-		Face:FacePawn[${Me.Target.ID},FALSE]
+		obj_Face:FacePawn[${Me.Target.ID},FALSE]
 	return
 
 }
@@ -496,17 +499,21 @@ function TooClose()
 ;********************************************     
 function followpawn()
 {
-	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${IsFollowing}
+	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${IsFollowing} && ${DoNaturalFollow}
 		{
 		Pawn[${followpawn}]:Target
 		VGExecute /fol
 		}
-	if (${Pawn[exactname,${followpawn}].IsMoving} && ${Pawn[exactname,${followpawn}].Distance} > 10 && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${Pawn[exactname,${Me}].IsMoving}
+	if (${Pawn[exactname,${followpawn}].IsMoving} && ${Pawn[exactname,${followpawn}].Distance} > 10 && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${Pawn[exactname,${Me}].IsMoving} && ${DoNaturalFollow}
 		{
 		Pawn[${followpawn}]:Target
 		VGExecute /fol
 		}
-	return
+	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${DoNaturalFollow}
+		{
+		obj_Move:MovePawn[${Pawn[exactname,${followpawn}].ID},FALSE]
+		}
+		return
 }
 
 ; *********************
