@@ -502,6 +502,7 @@ function followpawn()
 		}
 	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${DoNaturalFollow}
 		{
+		obj_Face:FacePawn[${Pawn[exactname,${followpawn}].ID},FALSE]
 		obj_Move:MovePawn[${Pawn[exactname,${followpawn}].ID},FALSE]
 		}
 		return
