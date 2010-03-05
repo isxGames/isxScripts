@@ -82,20 +82,19 @@
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Stun Mode</Text>
-		<AutoTooltip>Will attempt to keep the target stunned when possible.
-		DPS Mode overrides this.</AutoTooltip>
+		<AutoTooltip>Will attempt to keep the target stunned when possible.</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-			Script[EQ2Bot].Variable[StunMode]:Set[TRUE]
-			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["StunMode",TRUE]
-			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].Variable[StunMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["StunMode",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
-			Script[EQ2Bot].Variable[StunMode]:Set[FALSE]
-			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["StunMode",FALSE]
-			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				Script[EQ2Bot].Variable[StunMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["StunMode",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[StunMode]}</Data>
