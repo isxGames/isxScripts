@@ -21,12 +21,6 @@ function LavishEventLoad()
 ;===================================================
 atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
-	if ${ChannelNumber.Equal[42]} && ${Text.Find[Your auto-follow target has moved too far away]} && ${DoNaturalFollow}
-		IsFollowing:Set[FALSE]
-	if ${ChannelNumber.Equal[42]} && ${Text.Find[You have lost your auto-follow target]} && ${DoNaturalFollow}
-		IsFollowing:Set[FALSE]
-	if ${ChannelNumber.Equal[42]} && ${Text.Find[Following ${followpawn}]} && ${DoNaturalFollow}
-		IsFollowing:Set[TRUE]
 	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${LootToggle}]}
 		{
 		If ${DoLoot}
@@ -87,15 +81,11 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]} 
 		{
+		dofollowpawn:Set[TRUE]
+		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
 			if ${DoNaturalFollow}
 				{
-				dofollowpawn:Set[TRUE]
-				UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-				if !${IsFollowing}
-					{
-					Pawn[${followpawn}]:Target
-					VGExecute /fol
-					}
+				obj_Follow:FollowPawn[${Pawn[${followpawn}].ID}]
 				}
 		}
 	}
@@ -103,16 +93,11 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]} 
 		{
+		dofollowpawn:Set[FALSE]
+		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
 			if ${DoNaturalFollow}
 				{
-				dofollowpawn:Set[FALSE]
-				UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-				if ${IsFollowing}
-					{
-					Pawn[${followpawn}]:Target
-					VGExecute /fol
-					IsFollowing:Set[FALSE]
-					}
+				obj_Follow:Stop
 				}
 		}
 	}
