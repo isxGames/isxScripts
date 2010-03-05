@@ -23,7 +23,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20081013
+	declare ClassFileVersion int script 20100303
 	;;;;
 
 	call EQ2BotLib_Init
@@ -99,6 +99,8 @@ function Class_Declaration()
 
 	if (${Me.Equipment[Mirage Star](exists)} && ${Me.Equipment[1].Tier.Equal[MYTHICAL]})
 		HaveMythical:Set[TRUE]
+	elseif ${Me.Maintained[Mirage Mastery](exists)}
+		HaveMythical:Set[TRUE]
 		
 	;;; Optimizations to avoid having to check if an ability exists all of the time
 	if (${Me.Ability[Time Warp](exists)})
@@ -110,7 +112,7 @@ function Class_Declaration()
 	if ${Me.Ability[${SpellType[396]}](exists)}
 		UseNullifyingStaff:Set[TRUE]
 		
-	;; Set this to TRUE as desired for testing
+	;; Set this to TRUE, as desired, for testing
 	;IllyDebugMode:Set[TRUE]
 }
 
