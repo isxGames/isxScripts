@@ -214,7 +214,7 @@
                             <Y>35</Y>
                             <Width>15</Width>
                             <Height>20</Height>
-                            <Text>Auto Follow</Text>
+                            <Text>Follow</Text>
                             <OnLoad>
                               if ${Script[vga].VariableScope.dofollowpawn}
                               {
@@ -226,8 +226,26 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+                          <checkbox Name='DoNaturalFollow' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>310</X>
+                            <Y>35</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>/Fol</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoNaturalFollow}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoNaturalFollow:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
                           <Text Name='txtfollowdistance' Template='VG.BoldText'>
-                            <X>308</X>
+                            <X>268</X>
                             <Y>35</Y>
                             <Width>100</Width>
                             <Height>20</Height>
@@ -235,7 +253,7 @@
                             <Text>Dist</Text>
                           </Text>
                           <Textentry Name='followdistance' Template='VG.TextEntry'>
-                            <X>280</X>
+                            <X>240</X>
                             <Y>35</Y>
                             <Width>26</Width>
                             <Height>19</Height>

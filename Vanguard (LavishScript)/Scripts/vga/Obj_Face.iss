@@ -176,3 +176,5 @@ objectdef obj_Face
 		This.AngleDiffAbs:Set[${Math.Abs[${This.AngleDiff}]}]
 	}
 }
+
+variable obj_Face obj_Face
