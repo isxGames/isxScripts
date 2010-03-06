@@ -67,6 +67,7 @@
     <Compile Include="IniFile.cs" />
     <Compile Include="MdiTabControl.cs" />
     <Compile Include="MessageThread.cs" />
+    <Compile Include="NotifyPropertyChangedBase.cs" />
     <Compile Include="PersistentDetailedListView_ColumnSelectionWindow.xaml.cs">
       <DependentUpon>PersistentDetailedListView_ColumnSelectionWindow.xaml</DependentUpon>
     </Compile>
