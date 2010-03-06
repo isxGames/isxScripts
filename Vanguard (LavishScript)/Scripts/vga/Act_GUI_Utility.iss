@@ -461,6 +461,7 @@ function DoFollowInCombat()
 		}
 	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 35 && ${DoNaturalFollow}
 		{
+		Pawn[${followpawn}]:Target
 		obj_Follow:FollowPawn[${Pawn[${followpawn}].ID}]
 		}
 	if ${Pawn[exactname,${followpawn}].Distance} > 5 && ${Pawn[exactname,${followpawn}].Distance} < 40 && !${DoNaturalFollow}
@@ -498,6 +499,7 @@ function followpawn()
 {
 	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && ${DoNaturalFollow}
 		{
+		Pawn[${followpawn}]:Target
 		obj_Follow:FollowPawn[${Pawn[${followpawn}].ID}]
 		}
 	if (${Pawn[exactname,${followpawn}](exists)} && ${Pawn[exactname,${followpawn}].Distance} > ${followpawndist} && ${Pawn[exactname,${followpawn}].Distance} < 50) && !${DoNaturalFollow}
