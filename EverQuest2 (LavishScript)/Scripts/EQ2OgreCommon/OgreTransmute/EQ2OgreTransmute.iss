@@ -1,5 +1,6 @@
 /**
-EQ2OgreTransmute Version 1.00 - Kannkor
+EQ2OgreTransmute Version 1.01 - Kannkor
+-Fixed Typo (Update -> UpdateInfo)
 Use the interface to selection options. 
 Usage: "Run ogre transmute"
 
@@ -19,9 +20,9 @@ function main()
 
 	;When this script is ran initially, it creates the inventory, some of which are NULL. Wait 1 second and get an update.
 	wait 10
-	OgreBagInfoOb:Update
+	OgreBagInfoOb:UpdateInfo
 	wait 10
-	OgreBagInfoOb:Update
+	OgreBagInfoOb:UpdateInfo
 
 	while ${ContainerCounter:Inc}<=6
 	{
