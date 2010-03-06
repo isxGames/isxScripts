@@ -1,12 +1,20 @@
-;-----------------------------------------------------------------------------------------------
-; New NavCreator by Kannkor (Hotshot). Written from scratch, based off of EQ2NavCreator written by Amadeus
-; Version 1.02a
-;	- Removed wait 1 to see if it can speed up the mapping
-;	- Added Exit without saving
-;	- Added option to save as XML also. Note: Loading will ALWAYS load from the LSO first. So rename/delete the LSO if you want to load an XML file.
-;-----------------------------------------------------------------------------------------------
+/** -----------------------------------------------------------------------------------------------
+ New NavCreator by Kannkor (Hotshot). Written from scratch, based off of EQ2NavCreator written by Amadeus
+ Version 1.03
+	- Added auto plotting options: Auto Plotting (same as current, plots while you move) and Auto Avoid (makes all points you walk over marked as avoid)
+	- Fixed zoning so it saves when you zone.
+	- Made it so you can't "delete" too fast to where you delete the zone file.
+	- Save is now F11
+	- Save and exit is now F12
+	- Exit WITHOUT saving is now Control F12
+ Version 1.02b
+	- Removed wait 1 to see if it can speed up the mapping
+	- Added Exit without saving
+	- Added option to save as XML also. Note: Loading will ALWAYS load from the LSO first. So rename/delete the LSO if you want to load an XML file.
+-----------------------------------------------------------------------------------------------
 
-/**
+
+To-do list
 
 **/
 
@@ -44,6 +52,8 @@ variable(global) bool EQ2OgreMapperExitAndSaveBool=FALSE
 variable(global) bool EQ2OgreMapperMarkAsAvoidBool=FALSE
 variable(global) bool EQ2OgreMapperDeletePointBool=FALSE
 variable(global) bool EQ2OgreMapperSaveXMLCopyBool=FALSE
+variable(global) bool EQ2OgreMapperSaveBool=FALSE
+variable(global) string EQ2OgreMapperPlottingType=Auto Plotting
 
 variable string CustomPointName=NULL
 variable(global) string EQ2OgreNavCreatorLastNamedPoint=None
@@ -60,26 +70,32 @@ function main()
 	OgreNavMapperOb:ImportIt
 
 	Script:Squelch
+	bind EQ2OgreNavCreatorAutoPlottingBind Shift+F1 "EQ2OgreMapperPlottingType:Set[Auto Plotting]"
 	bind EQ2OgreNavCreatorAddCustomPointBind F2 EQ2OgreMapperAddCustomPointBool:Set[TRUE]
 	bind EQ2OgreNavCreatorMarkAsAvoidBind F3 EQ2OgreMapperMarkAsAvoidBool:Set[TRUE]
+	bind EQ2OgreNavCreatorAutoAvoidBind Shift+F3 "EQ2OgreMapperPlottingType:Set[Auto Avoid]"
 	bind EQ2OgreNavCreatorDeletePointBind F4 EQ2OgreMapperDeletePointBool:Set[TRUE]
 	bind EQ2OgreNavCreatorSaveXMLCopyBind F8 EQ2OgreMapperSaveXMLCopyBool:Toggle
-	bind EQ2OgreNavCreatorSaveAndExitBind F11 EQ2OgreMapperExitAndSaveBool:Set[TRUE]
-	bind EQ2OgreNavCreatorExitWithoutSaveBind F12 EQ2OgreMapperExitWithoutSaveBool:Set[TRUE]
+	bind EQ2OgreNavCreatorSaveBind F11 EQ2OgreMapperSaveBool:Set[TRUE]
+	bind EQ2OgreNavCreatorSaveAndExitBind F12 EQ2OgreMapperExitAndSaveBool:Set[TRUE]
+	bind EQ2OgreNavCreatorExitWithoutSaveBind Ctrl+F12 EQ2OgreMapperExitWithoutSaveBool:Set[TRUE]
 
 
-
+	HUD -add EQ2OgreNavCreatorAutoPlottingHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Shift+F1 - Turn plotting to auto plotting (default)."
 	HUD -add EQ2OgreNavCreatorCustomAddPointHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F2 - Re-name and make unique point."
-	HUD -add EQ2OgreNavCreatorLastNamedPointAddedHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Last unique point added: \${EQ2OgreNavCreatorLastNamedPoint}"
+	HUD -add EQ2OgreNavCreatorLastNamedPointAddedHUD ${Math.Calc[${EQ2OgreNavCreatorHUDX}+30].Int},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Last unique point added: \${EQ2OgreNavCreatorLastNamedPoint}"
 	HUD -add EQ2OgreNavCreatorMarkAsAvoidHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F3 - Make current point as AVOID."
+	HUD -add EQ2OgreNavCreatorAutoAvoidHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Shift+F3 - Turn plotting to auto AVOID plotting."
 	HUD -add EQ2OgreNavCreatorDeletePointHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F4 - Delete current point (method of removing unique)."
 
 	HUD -add EQ2OgreNavCreatorSaveXMLCopyHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F8 - Save as XML also [${EQ2OgreMapperSaveXMLCopyBool}]"
-	HUD -add EQ2OgreNavCreatorSaveAndExitHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F11 - Save and Exit."
-	HUD -add EQ2OgreNavCreatorExitWithoutSaveHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F12 - Exit - NO SAVE."
+	HUD -add EQ2OgreNavCreatorSaveHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F11 - Save."
+	HUD -add EQ2OgreNavCreatorSaveAndExitHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "F12 - Save and Exit."
+	HUD -add EQ2OgreNavCreatorExitWithoutSaveHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Control+F12 - Exit - NO SAVE."
 	HUD -add EQ2OgreNavCreatorTotalPointsHUD ${EQ2OgreNavCreatorHUDX},${EQ2OgreNavCreatorHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Total points: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.ChildCount}"
 
 	;**Below is information about the current point you are on**
+	HUD -add EQ2OgreNavCreatorCurrentPointTypeHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current plotting type: ${EQ2OgreMapperPlottingType}"
 	HUD -add EQ2OgreNavCreatorCurrentPointNameHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current point Name: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}"
 	HUD -add EQ2OgreNavCreatorCurrentPointUniqueHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current point Unique?: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Unique}"
 	HUD -add EQ2OgreNavCreatorCurrentPointAvoidHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Valid point?: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].AllPointsValid}"
@@ -93,8 +109,16 @@ function main()
 
 		if ${EQ2OgreMapperExitAndSaveBool} || ${ZoneVar.NotEqual[${Zone}]} || ${EQ2OgreMapperExitWithoutSaveBool}
 			Script:End
-		if ${EQ2OgreMapperMarkAsAvoidBool}
+		if ${EQ2OgreMapperSaveBool}
 		{
+			call ExportIt
+			EQ2OgreMapperSaveBool:Set[FALSE]
+			continue
+		}
+		if ${EQ2OgreMapperMarkAsAvoidBool} || ( ${EQ2OgreMapperPlottingType.Equal[Auto Avoid]} && ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID}!=${EQ2OgreNavRegion.ID} )
+		{
+			if !${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].AllPointsValid}
+				continue
 			;OgreNavMapperOb:MarkAvoid
 			OgreNavMapperOb:RemoveBox
 			AllowConnections:Set[FALSE]
@@ -104,6 +128,8 @@ function main()
 		}
 		if ${EQ2OgreMapperDeletePointBool}
 		{
+			if ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID}==${EQ2OgreNavRegion.ID}
+				continue
 			OgreNavMapperOb:RemoveBox
 			EQ2OgreMapperDeletePointBool:Set[FALSE]
 			continue
@@ -210,7 +236,7 @@ objectdef OgreNavMapperObject
 	method RemoveBox()
 	{
 		RegionConnectionsToBeRemoved:Set[${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name},${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}]
-		echo Adding ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name} To the RegionConnectionsToBeRemoved ( ${RegionConnectionsToBeRemoved.Element[${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}]} )
+		;echo Adding ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name} To the RegionConnectionsToBeRemoved ( ${RegionConnectionsToBeRemoved.Element[${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}]} )
 		EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}]:Remove
 	}
 	method MarkAvoid()
@@ -355,13 +381,18 @@ atom atexit()
 {
 	Script:Squelch
 
+	bind -delete EQ2OgreNavCreatorAutoPlottingBind
+	bind -delete EQ2OgreNavCreatorAutoAvoidBind
 	bind -delete EQ2OgreNavCreatorAddCustomPointBind
 	bind -delete EQ2OgreNavCreatorSaveXMLCopyBind
 	bind -delete EQ2OgreNavCreatorExitWithoutSaveBind
 	bind -delete EQ2OgreNavCreatorSaveAndExitBind
 	bind -delete EQ2OgreNavCreatorMarkAsAvoidBind
 	bind -delete EQ2OgreNavCreatorDeletePointBind
+	bind -delete EQ2OgreNavCreatorSaveBind
 
+	HUD -remove EQ2OgreNavCreatorAutoPlottingHUD
+	HUD -remove EQ2OgreNavCreatorAutoAvoidHUD
 	HUD -remove EQ2OgreNavCreatorSaveXMLCopyHUD
 	HUD -remove EQ2OgreNavCreatorLastNamedPointAddedHUD
 	HUD -remove EQ2OgreNavCreatorCustomAddPointHUD
@@ -370,14 +401,17 @@ atom atexit()
 	HUD -remove EQ2OgreNavCreatorTotalPointsHUD
 	HUD -remove EQ2OgreNavCreatorDeletePointHUD 
 	HUD -remove EQ2OgreNavCreatorMarkAsAvoidHUD 
+	HUD -remove EQ2OgreNavCreatorDeletePointHUD
+	HUD -remove EQ2OgreNavCreatorSaveHUD
 
+	HUD -remove EQ2OgreNavCreatorCurrentPointTypeHUD
 	HUD -remove EQ2OgreNavCreatorCurrentPointNameHUD 
 	HUD -remove EQ2OgreNavCreatorCurrentPointUniqueHUD
 	HUD -remove EQ2OgreNavCreatorCurrentPointAvoidHUD
 
 	Script:Unsquelch
 
-	if ${EQ2OgreMapperExitAndSaveBool}
+	if ${EQ2OgreMapperExitAndSaveBool} || ${ZoneVar.NotEqual[${Zone}]}
 	{
 		call CleanUpConnections
 		call ExportIt
