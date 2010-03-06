@@ -287,7 +287,6 @@ function main()
 		{
 			if ${dofollowpawn}
 				call followpawn
-			echo ${VG.FPS} ${Time}
 			; Only run "downtimefunction" a max of once per second -- this helps with performance.  The "1" could be be a variable added to the UI if desired...
 			if (${Math.Calc[${Math.Calc[${Script.RunningTime}-${LastDowntimeCall}]}/1000]} > 1)
 			{
