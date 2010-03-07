@@ -71,6 +71,7 @@ namespace EQ2GlassCannon
 		private static PlayerController s_Controller = null;
 		private static bool s_bContinueBot = true;
 		private static bool s_bRefreshKnowledgeBook = false;
+		private static string s_strKnowledgeBookDumpPath = null;
 		private static string s_strCurrentINIFilePath = string.Empty;
 		private static string s_strSharedOverridesINIFilePath = string.Empty;
 		private static string s_strNewWindowTitle = null;
