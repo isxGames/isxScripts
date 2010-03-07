@@ -119,7 +119,7 @@ variable bool PullOnlySoloMobs
 variable bool AutoLoot
 variable bool LootCorpses
 variable bool LootAll
-variable int KillTarget
+variable uint KillTarget
 variable string Follow
 variable string PreAction[40]
 variable int PreMobHealth[40,2]
@@ -147,7 +147,7 @@ variable bool direction=TRUE
 variable float targetheading
 variable bool disablebehind=FALSE
 variable bool disablefront=FALSE
-variable int movetimer
+variable uint movetimer
 variable bool isstuck=FALSE
 variable bool MainTank=FALSE
 variable float HomeX
@@ -170,7 +170,7 @@ variable int CurrentPull
 variable bool pathdirection=0
 variable bool movingtowp
 variable bool pulling
-variable int stuckcnt
+variable int stuckcntMa
 variable int grpcnt
 variable bool movinghome
 variable bool haveaggro=FALSE
@@ -182,13 +182,13 @@ variable int oldhealth[5]
 variable int healthtimer[5]
 variable int chgcnt[5]
 variable int tempgrp
-variable int chktimer
-variable int starttimer=${Time.Timestamp}
+variable uint chktimer
+variable uint starttimer=${Time.Timestamp}
 variable bool avoidhate
 variable bool lostaggro
-variable int aggroid
+variable uint aggroid
 variable bool usemanastone
-variable int mstimer=${Time.Timestamp}
+variable uint mstimer=${Time.Timestamp}
 variable int StartLevel=${Me.Level}
 variable int StartAP=${Me.TotalEarnedAPs}
 variable bool PullNonAggro
@@ -324,7 +324,7 @@ function main()
 	variable string tempnme
 	variable bool MobDetected
 	declare LastWindow string script
-	variable int AggroMob
+	variable uint AggroMob
 
 	Debug:Enable
 
@@ -968,7 +968,7 @@ function main()
 						}
 						else
 						{
-							variable int AggroNPC
+							variable uint AggroNPC
 							AggroNPC:Set[${Mob.NearestAggro}]
 							if ${AggroNPC} > 0
 							{
@@ -1029,7 +1029,7 @@ function main()
 					}
 					else
 					{
-						variable int AgressiveNPC
+						variable uint AgressiveNPC
 						AgressiveNPC:Set[${Mob.NearestAggro}]
 						if ${AgressiveNPC} > 0
 						{
@@ -1151,7 +1151,7 @@ function CheckManaStone()
 function CastSpellRange(... Args)
 {
 	;; This format still works.
-	;; function CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, int CastSpellWhen, bool IgnoreIsReady)
+	;; function CastSpellRange(int start, int finish, int xvar1, int xvar2, uint TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, int CastSpellWhen, bool IgnoreIsReady)
 
 	;; Notes:
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
@@ -1168,7 +1168,7 @@ function CastSpellRange(... Args)
 	variable int finish=0
 	variable int xvar1=0
 	variable int xvar2=0
-	variable int TargetID=0
+	variable uint TargetID=0
 	variable int notall=0
 	variable int refreshtimer=0
 	variable bool castwhilemoving=0
@@ -1251,7 +1251,7 @@ function CastSpellRange(... Args)
 
 	variable bool fndspell
 	variable int tempvar
-	variable int originaltarget
+	variable uint originaltarget
 	tempvar:Set[${start}]
 
 	if ${tempvar} <= 0 && ${AbilityID} <= 0
@@ -1420,7 +1420,7 @@ function CastSpellRange(... Args)
 }
 
 
-function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemoving)
+function CastSpellNOW(string spell, int spellid, uint TargetID, bool castwhilemoving)
 {
 	;echo CastSpellNow ${spell}
 	variable int Counter
@@ -1491,7 +1491,7 @@ function CastSpellNOW(string spell, int spellid, int TargetID, bool castwhilemov
 	return SUCCESS
 }
 
-function CastSpell(string spell, uint spellid, int TargetID, bool castwhilemoving, bool WaitWhileCasting)
+function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemoving, bool WaitWhileCasting)
 {
 	;echo CastSpell ${spell}
 	variable int Counter
@@ -2075,7 +2075,7 @@ function Combat(bool PVP=0)
 
 					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
 					{
-						variable int ActorID
+						variable uint ActorID
 						ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
 						if ${Mob.ValidActor[${ActorID}]}
 						{
@@ -2221,7 +2221,7 @@ function Combat(bool PVP=0)
 		{
 			if ${Mob.Detect}
 			{
-				variable int AggroMob
+				variable uint AggroMob
 				AggroMob:Set[${Mob.NearestAggro}]
 
 				if ${AggroMob} > 0
@@ -2442,7 +2442,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	variable point3f destpoint
 	variable point3f destminpoint
 	variable point3f destmaxpoint
-	variable int xTimer
+	variable uint xTimer
 	variable int MoveCount
 	xTimer:Set[${Script.RunningTime}]
 
@@ -2862,7 +2862,7 @@ function CheckQuadrant(uint TID, int quadrant)
 
 function StrafeToLeft(uint TID, float destangle)
 {
-	variable int xTimer
+	variable uint xTimer
 	xTimer:Set[${Script.RunningTime}]
 	variable int movingforward
 	variable int startdistance
@@ -2978,7 +2978,7 @@ function StrafeToLeft(uint TID, float destangle)
 
 function StrafeToRight(uint TID, float destangle)
 {
-	variable int xTimer
+	variable uint xTimer
 	xTimer:Set[${Script.RunningTime}]
 	variable int movingforward
 	variable int startdistance
@@ -3121,8 +3121,8 @@ function Pull(string npcclass)
 	variable int tcount=1
 	variable int tempvar
 	variable bool aggrogrp=FALSE
-	variable int ThisActorID
-	variable int ThisActorTargetID
+	variable uint ThisActorID
+	variable uint ThisActorTargetID
 	variable bool bContinue=FALSE
 	variable point3f interceptpoint
 	variable float timedelay
@@ -3322,7 +3322,7 @@ function Pull(string npcclass)
 			elseif ${PullType.Equal[Pet Pull]}
 			{
 				CurrentAction:Set[Pulling ${Target} (with pet)]
-				variable int AggroMob
+				variable uint AggroMob
 
 				;; This should not happen...but just in case
 				if !${Target(exists)}
@@ -3347,7 +3347,7 @@ function Pull(string npcclass)
 				{
 					CurrentAction:Set[Sending Pet in for attack...]
 					;Debug:Echo["EQ2Bot-Pull():: Sending Pet in for attack..."]
-					variable int StartTime = ${Script.RunningTime}
+					variable uint StartTime = ${Script.RunningTime}
 					do
 					{
 						if (${Math.Calc64[${Script.RunningTime}-${StartTime}]} >= 20000)
@@ -4203,7 +4203,7 @@ function CheckMTAggro()
 {
 	variable int tcount=1
 	variable int tempvar
-	variable int newtarget
+	variable uint newtarget
 
 	; If PathType is 2 make sure we are not to far away from home point first
 	if ${PathType}==2 && ${Math.Distance[${Me.X},${Me.Z},${HomeX},${HomeZ}]}>8
@@ -4610,7 +4610,7 @@ function SetNewKillTarget()
 
 function ReacquireKillTargetFromMA()
 {
-	variable int NextKillTarget
+	variable uint NextKillTarget
 	CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in 0.5 seconds...]
 	wait 5
 
@@ -4661,7 +4661,7 @@ function ReacquireKillTargetFromMA()
 	return FAILED
 }
 
-function VerifyTarget(int TargetID=0)
+function VerifyTarget(uint TargetID=0)
 {
 		if !${TargetID}
 		{
@@ -4880,7 +4880,7 @@ function CheckBuffsOnce()
 objectdef ActorCheck
 {
 	;returns true for valid targets
-	member:bool ValidActor(int actorid)
+	member:bool ValidActor(uint actorid)
 	{
 		if !${Actor[${actorid}](exists)}
 			return FALSE
@@ -4985,7 +4985,7 @@ objectdef ActorCheck
 		return TRUE
 	}
 
-	member:bool CheckActor(int actorid)
+	member:bool CheckActor(uint actorid)
 	{
 		if ${Actor[${actorid}].IsDead}
 			return FALSE
@@ -5042,7 +5042,7 @@ objectdef ActorCheck
 	}
 
 	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
-	member:bool AggroGroup(int actorid)
+	member:bool AggroGroup(uint actorid)
 	{
 		if ${Actor[${actorid}].IsDead}
 			return FALSE
@@ -5207,7 +5207,7 @@ objectdef ActorCheck
 		return 0
 	}
 
-	member:bool FriendlyPet(int actorid)
+	member:bool FriendlyPet(uint actorid)
 	{
 		variable int tempvar
 
@@ -5246,7 +5246,7 @@ objectdef ActorCheck
 	{
 		variable int tcount=1
 		haveaggro:Set[FALSE]
-		variable int ActorID
+		variable uint ActorID
 
 		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
 			return
@@ -5868,7 +5868,7 @@ objectdef EQ2BotObj
 		return TRUE
 	}
 
-	method SetActorLooted(int ActorID, string ActorName)
+	method SetActorLooted(uint ActorID, string ActorName)
 	{
 		if (${ActorsLooted.Used} > 50)
 			ActorsLooted:Clear

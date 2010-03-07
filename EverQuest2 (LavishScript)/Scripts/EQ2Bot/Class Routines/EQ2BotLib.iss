@@ -119,7 +119,7 @@ variable bool AutoFollowMode=FALSE
 variable bool AutoFollowingMA=FALSE
 variable bool CombatFollow=FALSE
 variable string AutoFollowee
-variable int AutoFollowLastSetTime
+variable uint AutoFollowLastSetTime
 
 ;misc
 variable bool EpicMode=FALSE
@@ -617,7 +617,7 @@ function Swap()
 
 }
 
-function IsHealer(int ID)
+function IsHealer(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
@@ -634,7 +634,7 @@ function IsHealer(int ID)
 	}
 }
 
-function IsFighter(int ID)
+function IsFighter(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
@@ -651,7 +651,7 @@ function IsFighter(int ID)
 	}
 }
 
-function IsMage(int ID)
+function IsMage(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
@@ -667,7 +667,7 @@ function IsMage(int ID)
 	}
 }
 
-function IsScout(int ID)
+function IsScout(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
@@ -684,7 +684,7 @@ function IsScout(int ID)
 	}
 }
 
-function IsFighterOrScout(int ID)
+function IsFighterOrScout(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
@@ -1141,7 +1141,7 @@ function CommonHeals(int Health)
 ;function returns the Actor ID from a ActorName.  It prioritzes PCs over pets and npcs
 function GetActorID(string ActorName)
 {
-	variable int ActorID=0
+	variable uint ActorID=0
 	variable int Counter=1
 
 	EQ2:CreateCustomActorArray[byDist,50]

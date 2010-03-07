@@ -63,7 +63,7 @@ function Class_Declaration()
 	declare TimeWarpers collection:uint script
 	declare UseChronosiphoning bool script FALSE
 	declare UseNullifyingStaff bool script FALSE
-	declare RefreshPowerTimer int script 0
+	declare RefreshPowerTimer uint script 0
 	declare FightingEpicMob bool script FALSE
 	declare FightingHeroicMob bool script FALSE
 	declare KillTargetCheck int script 0
