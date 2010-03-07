@@ -1577,7 +1577,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		; if we're not casting a spell and the current spell is not queued, then we have a problem
 		if !${Me.Ability[id,${spellid}].IsQueued} && !${Me.CastingSpell}
 		{
-			echo "DEBUG:: CastSpell() -- Nothing is queued and we're not currently casting a spell.  Restting cache and trying again."
+			;echo "DEBUG:: CastSpell() -- Nothing is queued and we're not currently casting a spell.  Restting cache and trying again."
 			ISXEQ2:ClearAbilitiesCache
 			if (${Me.Ability[${spell}].ID} == 601887089)
 			{
@@ -1637,7 +1637,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		; if we're not casting a spell and the current spell is not queued, then we have a problem
 		if !${Me.Ability[id,${spellid}].IsQueued} && !${Me.CastingSpell}
 		{
-			echo "DEBUG:: CastSpell() -- Nothing is queued and we're not currently casting a spell.  Restting cache and trying again."
+			;echo "DEBUG:: CastSpell() -- Nothing is queued and we're not currently casting a spell.  Restting cache and trying again."
 			ISXEQ2:ClearAbilitiesCache
 			if (${Me.Ability[${spell}].ID} == 601887089)
 			{
