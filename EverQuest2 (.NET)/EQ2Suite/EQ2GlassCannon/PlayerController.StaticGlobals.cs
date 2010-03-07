@@ -154,6 +154,7 @@ namespace EQ2GlassCannon
 					"gc_debug",
 					"gc_defaultverb",
 					"gc_distance",
+					"gc_dumpabilities",
 					"gc_exit",
 					"gc_exitprocess",
 					"gc_findactor",
@@ -359,7 +360,7 @@ namespace EQ2GlassCannon
 							case "dirge": s_Controller = new DirgeController(); break;
 							case "fury": s_Controller = new FuryController(); break;
 							case "illusionist": s_Controller = new IllusionistController(); break;
-							//case "inquisitor": s_Controller = new InquisitorController(); break;
+							case "inquisitor": s_Controller = new InquisitorController(); break;
 							case "mystic": s_Controller = new MysticController(); break;
 							case "templar": s_Controller = new TemplarController(); break;
 							case "troubador": s_Controller = new TroubadorController(); break;

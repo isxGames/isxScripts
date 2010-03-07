@@ -237,6 +237,7 @@ namespace EQ2GlassCannon
 									Ability ThisAbility = Me.Ability(iIndex);
 									OutputFile.WriteNextValue(iIndex);
 									OutputFile.WriteNextValue(ThisAbility.ID);
+									OutputFile.WriteNextValue(ThisAbility.Tier);
 									OutputFile.WriteNextValue(ThisAbility.Name);
 									OutputFile.WriteLine();
 								}

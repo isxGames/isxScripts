@@ -379,6 +379,12 @@ namespace EQ2GlassCannon
 					return true;
 				}
 
+				case "gc_dumpabilities":
+				{
+					/// TODO: Dump all abilities to a .CSV file specified as a parameter.
+					return true;
+				}
+
 				case "gc_exit":
 				{
 					Program.Log("Exit command received!");
