@@ -78,6 +78,7 @@
     <Compile Include="EnchanterController.cs" />
     <Compile Include="FuryController.cs" />
     <Compile Include="IllusionistController.cs" />
+    <Compile Include="InquisitorController.cs" />
     <Compile Include="MageController.cs" />
     <Compile Include="MysticController.cs" />
     <Compile Include="ParseThread.cs" />

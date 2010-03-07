@@ -381,7 +381,9 @@ namespace EQ2GlassCannon
 
 				case "gc_dumpabilities":
 				{
-					/// TODO: Dump all abilities to a .CSV file specified as a parameter.
+					/// Dump all abilities to a .CSV file specified as a parameter, on the next knowledge book refresh.
+					s_strKnowledgeBookDumpPath = strCondensedParameters;
+					s_bRefreshKnowledgeBook = true;
 					return true;
 				}
 

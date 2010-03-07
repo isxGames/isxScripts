@@ -226,23 +226,6 @@ namespace EQ2GlassCannon
 						else
 						{
 							Program.Log("All abilities found.");
-#if DEBUG
-							/// Now dump it all to a file.
-							string strLogFileName = string.Format("{0}.{1} ability table debug dump.csv", ServerName, Name);
-							strLogFileName = Path.Combine(Program.ConfigurationFolderPath, strLogFileName);
-							using (CsvFileWriter OutputFile = new CsvFileWriter(strLogFileName, false))
-							{
-								for (int iIndex = 1; iIndex <= AbilityCount; iIndex++)
-								{
-									Ability ThisAbility = Me.Ability(iIndex);
-									OutputFile.WriteNextValue(iIndex);
-									OutputFile.WriteNextValue(ThisAbility.ID);
-									OutputFile.WriteNextValue(ThisAbility.Tier);
-									OutputFile.WriteNextValue(ThisAbility.Name);
-									OutputFile.WriteLine();
-								}
-							}
-#endif
 							break;
 						}
 					}
@@ -261,6 +244,34 @@ namespace EQ2GlassCannon
 				Program.Log("Waiting for abilities to load from the server...");
 				FrameWait(TimeSpan.FromSeconds(3.0f));
 				RunCommand("/toggleknowledge");
+			} /// while(s_bContinueBot)
+
+			/// Now dump it all to a file, if so requested.
+			if (s_strKnowledgeBookDumpPath != null)
+			{
+				try
+				{
+					using (CsvFileWriter OutputFile = new CsvFileWriter(s_strKnowledgeBookDumpPath, false))
+					{
+						for (int iIndex = 1; iIndex <= AbilityCount; iIndex++)
+						{
+							Ability ThisAbility = Me.Ability(iIndex);
+							OutputFile.WriteNextValue(iIndex);
+							OutputFile.WriteNextValue(ThisAbility.ID);
+							OutputFile.WriteNextValue(ThisAbility.Tier);
+							OutputFile.WriteNextValue(ThisAbility.Name);
+							OutputFile.WriteLine();
+						}
+					}
+				}
+				catch
+				{
+					/// Not our problem. Move along!
+				}
+				finally
+				{
+					s_strKnowledgeBookDumpPath = null;
+				}
 			}
 
 			/// This must be done before any call to SelectHighestAbilityID().
