@@ -1116,6 +1116,8 @@ function Combat_Routine(int xAction)
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
+		if ${IllyDebugMode}
+			Debug:Echo["Combat_Routine() -- Stopping autofollow"]		
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 		wait 3
