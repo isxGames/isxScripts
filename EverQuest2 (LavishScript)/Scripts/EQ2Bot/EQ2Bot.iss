@@ -450,7 +450,7 @@ function main()
 			}
 			while (${EQ2.Zoning} != 0)
 
-			wait 20
+			wait 15
 			if ${AutoFollowingMA(exists)}
 				AutoFollowingMA:Set[FALSE]
 		}
@@ -545,6 +545,20 @@ function main()
 			gRtnCtr:Set[1]
 			do
 			{
+				if (${EQ2.Zoning} != 0)
+				{
+					KillTarget:Set[]
+					do
+					{
+						wait 5
+					}
+					while (${EQ2.Zoning} != 0)
+		
+					wait 15
+					if ${AutoFollowingMA(exists)}
+						AutoFollowingMA:Set[FALSE]
+				}				
+				
 				;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
 
 				; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
