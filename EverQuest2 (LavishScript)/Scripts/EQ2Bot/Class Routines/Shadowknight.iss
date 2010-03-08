@@ -51,6 +51,8 @@ function Class_Declaration()
 	declare HasMythical bool script FALSE
 	declare InPostDeathRoutine bool script FALSE
 	declare NumNPCs int script 
+	declare UseUnholyHunger bool script TRUE
+	declare UseUnholyStrength bool script TRUE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -68,6 +70,8 @@ function Class_Declaration()
 	UseFearlessMoraleAABuff:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFearlessMoraleAABuff,FALSE]}]
 	UseDeathMarch:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseDeathMarch,FALSE]}]
 	UseMastersRage:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseMastersRage,TRUE]}]
+	UseUnholyHunger:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseUnholyHunger,TRUE]}]
+	UseUnholyStrength:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseUnholyStrength,TRUE]}]
 
 
 	BuffArmamentMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffArmamentMember,]}]
@@ -375,23 +379,29 @@ function Buff_Routine(int xAction)
 
 		case Self_Buff1
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+		  	call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			break
 
 		case Self_Buff2
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+		  	call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
 			break
 
 
 		case Group_Buff1
-			if (!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
-		        call CastSpellRange ${PreSpellRange[${xAction},1]}
+			if ${UseUnholyHunger}
+			{
+				if (!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Zone.ShortName.Find[venril]} <= 0)
+			  	call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			break
 
 		case Group_Buff2
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-		        call CastSpellRange ${PreSpellRange[${xAction},1]}
+			if ${UseUnholyStrength}
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			  	call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			break
 
 
