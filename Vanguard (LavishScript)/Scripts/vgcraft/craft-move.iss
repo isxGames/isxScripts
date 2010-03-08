@@ -244,6 +244,7 @@ function MoveToTarget()
 		return
 	}
 
+/* AWSOME ROUTINE... WE NEED TO USE THIS IF WE BUMPED INTO A OBSTACLE BECAUSE RIGHT NOW THE COLLISION CAN BE ANYWHERE
 	if ${VG.CheckCollision[${Me.Target.X},${Me.Target.Y},${Me.Z}](exists)}
 	{
 		; Collision detected, so start over from the top
@@ -313,7 +314,7 @@ function MoveToTarget()
 			}	
 		}
 	}
-
+*/
 
 	call DebugOut "VGCraft:: Moving to Found Target: ${cTargetID}"
 
