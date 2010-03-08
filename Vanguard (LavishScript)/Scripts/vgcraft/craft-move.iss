@@ -5,8 +5,10 @@
 function:bool TargetSupplyNPC()
 {
 	; We should already be targeting the NPC
-	;Pawn[exactname,npc,${cSupplyNPC}]:Target
-	;wait 5
+	
+	;; Go ahead and attempt to retarget the Supply NPC
+	Pawn[exactname,npc,${cSupplyNPC}]:Target
+	wait 5
 
 	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 5) )
 	{
@@ -33,8 +35,10 @@ function:bool TargetSupplyNPC()
 function:bool TargetOrderNPC()
 {
 	; We should already be targeting the NPC
-	;Pawn[exactname,npc,${cWorkNPC}]:Target
-	;wait 5
+
+	;; Go ahead and retarget Work Order NPC
+	Pawn[exactname,npc,${cWorkNPC}]:Target
+	wait 5
 
 	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 6) )
 	{
@@ -92,14 +96,14 @@ function:bool TargetStation()
 		call DebugOut "Targeting: ${cStation}"
 		Pawn[exactname,${cStation}]:Target
 	}
+	
+	wait 5
 
 	if ( !${Me.Target(exists)} || (${Me.Target.Distance} > 5) )
 	{
 		call DebugOut "VG:TargetStation to far away"
 		return FALSE
 	}
-
-	wait 5
 
 	if ${Math.Abs[${Me.Heading} - ${Me.Target.HeadingTo}]} > 40
 		call faceloc ${Me.Target.X} ${Me.Target.Y} 45 2
@@ -119,9 +123,7 @@ function:bool TargetStation()
 /* Is used to check if WO NPC has wandered off */
 function:bool TargetLOS()
 {
-
 	Pawn[exactname,${cTarget}]:Target
-
 	wait 5
 
 	if !${Me.Target(exists)}
@@ -430,13 +432,13 @@ function:string MoveTargetPath(string aTarget, int64 aTargetID)
 			call navi.MovetoTargetID "${aTargetID}" FALSE
 
 		sTest:Set[${Return}]
-
+		
 		if ${sTest.Equal[NO MAP]}
 		{
 			call ErrorOut "VG:ERROR: MTP: navi returned NO MAP"
+			isMoving:Set[FALSE]
 			VG:ExecBinding[moveforward,release]
 			VG:ExecBinding[movebackward,release]
-			isMoving:Set[FALSE]
 			return "${sTest}"
 		}
 		if ${sTest.Equal[NO PATH]}
@@ -462,6 +464,10 @@ function:string MoveTargetPath(string aTarget, int64 aTargetID)
 	VG:ExecBinding[movebackward,release]
 	isMoving:Set[FALSE]
 
+	;; Retarget our pawn now that we should be at location
+	Pawn[exactname,${cTarget}]:Target
+	wait 5
+	
 	call DebugOut "VG:MoveTargetPath: END"
 
 	return "END"
@@ -532,7 +538,13 @@ function:string MovePath(string end)
 	call navi.MovetoXYZ ${cTargetLoc.X} ${cTargetLoc.Y} ${cTargetLoc.Z}
 
 	isMoving:Set[FALSE]
-
+	VG:ExecBinding[moveforward,release]
+	VG:ExecBinding[movebackward,release]
+	
+	;; Retarget our pawn now that we should be at location
+	Pawn[exactname,${cTarget}]:Target
+	wait 5
+	
 	if ${Return.Equal[NO PATH]}
 	{
 		call DebugOut "VG:ERROR: MovePath Could not find a Path to ${end}"
@@ -545,12 +557,7 @@ function:string MovePath(string end)
 		VG:ExecBinding[moveforward,release]
 		return "STUCK"
 	}
-
-	VG:ExecBinding[moveforward,release]
-	VG:ExecBinding[movebackward,release]
-
 	return "END"
-
 }
 
 /* *************************************************************************** */
@@ -564,11 +571,13 @@ function MoveDone()
 	; ${cWorkNPC}
 	; ${cSupplyNPC}
 
+	;; Retarget our pawn now that we are at location
+	Pawn[exactname,${cTarget}]:Target
+	wait 5
+
 	call DebugOut "VGCraft:: MoveDone called :: Distance: ${Me.Target.Distance}"
 
 	isMoving:Set[FALSE]
-
-	wait 2
 
 	if ( ${Me.Target.Distance} > 5 )
 	{
