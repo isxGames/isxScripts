@@ -1327,7 +1327,7 @@ function Combat_Routine(int xAction)
 					if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
 					{
 						;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
-						eq2execute /useabilityonplaye ${MainTankPC} "Doppleganger"
+						eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
 						wait 1
 						do
 						{
