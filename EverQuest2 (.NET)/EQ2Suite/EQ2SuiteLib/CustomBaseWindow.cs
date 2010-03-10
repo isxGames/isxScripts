@@ -26,6 +26,7 @@ namespace EQ2SuiteLib
 		/// </summary>
 		public interface IWindowEventSpy
 		{
+			void OnClosed(EventArgs e);
 			void OnContentRendered(EventArgs e);
 		}
 
@@ -259,6 +260,13 @@ namespace EQ2SuiteLib
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
+
+			ScanChildControl(this,
+				delegate(DependencyObject objThis)
+				{
+					if (objThis is IWindowEventSpy)
+						(objThis as IWindowEventSpy).OnClosed(e);
+				});
 
 			/// Remove this window from the global list.
 			/// Maybe you can do dictionaries using object reference as the key, but I have no time to find out.

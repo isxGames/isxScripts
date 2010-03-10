@@ -99,7 +99,7 @@ namespace EQ2SuiteLib
 				/// It may seem inefficient to close and reopen the handle every poll but that's the only way to get an accurate file size.
 				if ((hFile = OpenFile()) == KERNEL32.INVALID_HANDLE_VALUE)
 				{
-					KERNEL32.Win32Error eError = KERNEL32.GetLastError();
+					Win32ErrorCode eError = KERNEL32.GetLastError();
 					return false;
 				}
 
