@@ -165,6 +165,24 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
+		public void TransferStringListAsSingleString(string strName, string strSeparator, ref List<string> astrValues)
+		{
+			string strColumnOrder = string.Empty;
+			if (m_eTransferMode == TransferMode.Write)
+			{
+				strColumnOrder = string.Join(strSeparator, astrValues.ToArray());
+			}
+			TransferString(strName, ref strColumnOrder);
+			if (m_eTransferMode == TransferMode.Read)
+			{
+				astrValues.Clear();
+				string[] astrColumns = strColumnOrder.Split(new string[] { strSeparator }, StringSplitOptions.RemoveEmptyEntries);
+				astrValues.AddRange(astrColumns);
+			}
+			return;
+		}
+
+		/***************************************************************************/
 		public void TransferBool(string strName, ref bool bValue)
 		{
 			if (TransferMode.Read == m_eTransferMode)
@@ -233,22 +251,31 @@ namespace EQ2SuiteLib
 				}
 			}
 
-			/// Transfer the column order list.
-			string strColumnOrder = string.Empty;
+			/// Transfer the sort order list.
+			List<string> astrColumnSortTokenList = new List<string>();
 			if (m_eTransferMode == TransferMode.Write)
 			{
-				strColumnOrder = string.Join(" ", ThisLayout.m_astrColumnOrderList.ToArray());
+				foreach (PersistentDetailedListView.ColumnLayout.SortDesc ThisDesc in ThisLayout.m_aColumnSortOrderList)
+				{
+					astrColumnSortTokenList.Add(ThisDesc.m_strTag);
+					astrColumnSortTokenList.Add(ThisDesc.m_bSortAscending ? "asc" : "desc");
+				}
 			}
-			TransferString(strNamePrefix + "ColumnOrder", ref strColumnOrder);
+			TransferStringListAsSingleString(strNamePrefix + "ColumnSortOrder", " ", ref astrColumnSortTokenList);
 			if (m_eTransferMode == TransferMode.Read)
 			{
-				ThisLayout.m_astrColumnOrderList.Clear();
-				string[] astrColumns = strColumnOrder.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-				ThisLayout.m_astrColumnOrderList.AddRange(astrColumns);
+				ThisLayout.m_aColumnSortOrderList.Clear();
+				for (int iIndex = 0; iIndex < astrColumnSortTokenList.Count; iIndex += 2)
+				{
+					PersistentDetailedListView.ColumnLayout.SortDesc NewDesc = new PersistentDetailedListView.ColumnLayout.SortDesc();
+					NewDesc.m_strTag = astrColumnSortTokenList[iIndex];
+					NewDesc.m_bSortAscending = (astrColumnSortTokenList[iIndex + 1] == "asc");
+					ThisLayout.m_aColumnSortOrderList.Add(NewDesc);
+				}
 			}
-
-			TransferString(strNamePrefix + "SortColumn", ref ThisLayout.m_strSortedColumnID);
-			TransferBool(strNamePrefix + "SortAscending", ref ThisLayout.m_bSortAscending);
+	
+			TransferStringListAsSingleString(strNamePrefix + "ColumnDisplayOrder", " ", ref ThisLayout.m_astrColumnDisplayOrderList);
+			TransferWindowLocation(strNamePrefix + "ColumnConfigWindow", ThisLayout.m_ConfigWindowLocation);
 
 			return;
 		}

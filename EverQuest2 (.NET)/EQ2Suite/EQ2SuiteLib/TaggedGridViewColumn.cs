@@ -9,25 +9,28 @@ namespace EQ2SuiteLib
 {
 	public class TaggedGridViewColumn : GridViewColumn
 	{
-		public static readonly DependencyProperty s_TagProperty;
-		public static readonly DependencyProperty s_IncludeInDefaultViewProperty;
+		public static readonly DependencyProperty s_TagProperty = DependencyProperty.Register(
+			"Tag",
+			typeof(string),
+			typeof(TaggedGridViewColumn),
+			new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.None, OnTagChanged),
+			OnValidateTag);
+
+		public static readonly DependencyProperty s_IncludeInDefaultViewProperty = DependencyProperty.Register(
+			"IncludeInDefaultView",
+			typeof(bool),
+			typeof(TaggedGridViewColumn),
+			new FrameworkPropertyMetadata(true, OnIncludeInDefaultViewChanged));
+
+		public static readonly DependencyProperty s_IsPrimaryKeyProperty = DependencyProperty.Register(
+			"IsPrimaryKey",
+			typeof(bool),
+			typeof(TaggedGridViewColumn),
+			new FrameworkPropertyMetadata(true, OnIsPrimaryKeyChanged));
 
 		/***************************************************************************/
 		static TaggedGridViewColumn()
 		{
-			s_TagProperty = DependencyProperty.Register(
-				"Tag",
-				typeof(string),
-				typeof(TaggedGridViewColumn),
-				new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.OverridesInheritanceBehavior, OnTagChanged),
-				OnValidateTag);
-
-			s_IncludeInDefaultViewProperty = DependencyProperty.Register(
-				"IncludeInDefaultView",
-				typeof(bool),
-				typeof(TaggedGridViewColumn),
-				new FrameworkPropertyMetadata(true, OnIncludeInDefaultViewChanged));
-
 			return;
 		}
 
@@ -60,6 +63,12 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
+		private static void OnIsPrimaryKeyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+		{
+			return;
+		}
+
+		/***************************************************************************/
 		/// <summary>
 		/// GridViewColumnHeader has a Tag property but it is by no means convenient.
 		/// </summary>
@@ -75,5 +84,14 @@ namespace EQ2SuiteLib
 			get { return (bool)GetValue(s_IncludeInDefaultViewProperty); }
 			set { SetValue(s_IncludeInDefaultViewProperty, value); }
 		}
+
+		/***************************************************************************/
+		public bool IsPrimaryKey
+		{
+			get { return (bool)GetValue(s_IsPrimaryKeyProperty); }
+			set { SetValue(s_IsPrimaryKeyProperty, value); }
+		}
+
+		
 	}
 }

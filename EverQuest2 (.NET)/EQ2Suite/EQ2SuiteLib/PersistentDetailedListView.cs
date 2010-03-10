@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Documents;
 using System.ComponentModel;
 using System.Windows.Data;
+using System.Globalization;
 
 namespace EQ2SuiteLib
 {
@@ -26,12 +27,15 @@ namespace EQ2SuiteLib
 		/// </summary>
 		protected class SortDirectionAdorner : Adorner
 		{
-			private readonly static Geometry s_AscGeometry = Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
-			private readonly static Geometry s_DescGeometry = Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
+			private readonly static Geometry s_DescGeometry = Geometry.Parse("M 0,0 L 10,0 L 5,5 Z");
+			private readonly static Geometry s_AscGeometry = Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
+			public int m_iRank = 0;
 			public bool m_bSortAscending = false;
 
-			public SortDirectionAdorner(UIElement ThisElement, bool bSortAscending) : base(ThisElement)
+			public SortDirectionAdorner(UIElement ThisElement, int iRank, bool bSortAscending)
+				: base(ThisElement)
 			{
+				m_iRank = iRank;
 				m_bSortAscending = bSortAscending;
 				return;
 			}
@@ -43,9 +47,34 @@ namespace EQ2SuiteLib
 				if (AdornedElement.RenderSize.Width < 20)
 					return;
 
-				ThisContext.PushTransform(new TranslateTransform(AdornedElement.RenderSize.Width - 15, (AdornedElement.RenderSize.Height - 5) / 2));
-				ThisContext.DrawGeometry(Brushes.Black, null, m_bSortAscending ? s_AscGeometry : s_DescGeometry);
-				ThisContext.Pop();
+				/// Primary sort criteria.
+				if (m_iRank == 0)
+				{
+					ThisContext.PushTransform(new TranslateTransform(AdornedElement.RenderSize.Width - 15, (AdornedElement.RenderSize.Height - 5) / 2));
+					ThisContext.DrawGeometry(Brushes.Black, null, m_bSortAscending ? s_AscGeometry : s_DescGeometry);
+					ThisContext.Pop();
+				}
+
+				/// Lesser sort criteria.
+				else
+				{
+					ThisContext.PushTransform(new TranslateTransform(AdornedElement.RenderSize.Width - 20, (AdornedElement.RenderSize.Height - 5) / 2));
+					ThisContext.DrawGeometry(Brushes.Gray, null, m_bSortAscending ? s_AscGeometry : s_DescGeometry);
+
+					ThisContext.DrawText(
+						new FormattedText(
+							(m_iRank + 1).ToString(),
+							CultureInfo.CurrentCulture,
+							FlowDirection.LeftToRight,
+							new Typeface("Arial"),
+							10,
+							Brushes.Gray),
+						new Point(10, -5));
+
+					ThisContext.Pop();
+				}
+
+				Console.WriteLine("SortDirectionAdorner.OnRender(): m_iRank {0} m_bSortAscending {1}", m_iRank, m_bSortAscending);
 				return;
 			}
 		}
@@ -58,10 +87,26 @@ namespace EQ2SuiteLib
 				public double m_fWidth = 100;
 			}
 
+			public class SortDesc
+			{
+				public string m_strTag = string.Empty;
+				public bool m_bSortAscending = true;
+				public SortDesc()
+				{
+					return;
+				}
+				public SortDesc(string strTag, bool bSortAscending)
+				{
+					m_strTag = strTag;
+					m_bSortAscending = bSortAscending;
+					return;
+				}
+			}
+
 			public Dictionary<string, ColumnDesc> m_ColumnDescDictionary = new Dictionary<string, ColumnDesc>();
-			public List<string> m_astrColumnOrderList = new List<string>();
-			public string m_strSortedColumnID = string.Empty;
-			public bool m_bSortAscending = true;
+			public List<string> m_astrColumnDisplayOrderList = new List<string>();
+			public List<SortDesc> m_aColumnSortOrderList = new List<SortDesc>();
+			public SavedWindowLocation m_ConfigWindowLocation = new SavedWindowLocation();
 		}
 
 		/***************************************************************************/
@@ -126,7 +171,7 @@ namespace EQ2SuiteLib
 			/// I thought LayoutTransform was supposed to be a dependency object,
 			/// so that it would carry down from the parent if not otherwise interrupted.
 			/// But between the transforms there's all these mysterious Transform.Identity objects filling the gap, which I did not set.
-			for (DependencyObject objThis = objStart; objThis != null; objThis = VisualTreeHelper.GetParent(objThis))
+			for (DependencyObject objThis = objStart; objThis != null; objThis = LogicalTreeHelper.GetParent(objThis))
 			{
 				if (objThis is FrameworkElement)
 				{
@@ -146,20 +191,16 @@ namespace EQ2SuiteLib
 
 		/***************************************************************************/
 		/// <summary>
-		/// Walks the visual tree up from the item until we find the ListView.
+		/// Walks the tree up from the item until we find the ListView.
 		/// </summary>
 		/// <param name="listViewItem"></param>
 		/// <returns></returns>
 		public static PersistentDetailedListView FindListViewForItem(ListViewItem listViewItem)
 		{
-			DependencyObject parent = VisualTreeHelper.GetParent(listViewItem);
-
-			while (parent != null)
+			for (DependencyObject parent = LogicalTreeHelper.GetParent(listViewItem); parent != null; parent = LogicalTreeHelper.GetParent(parent))
 			{
 				if (parent is PersistentDetailedListView)
 					return (parent as PersistentDetailedListView);
-
-				parent = VisualTreeHelper.GetParent(parent);
 			}
 
 			return null;
@@ -169,9 +210,8 @@ namespace EQ2SuiteLib
 		protected PersistentDetailedListView_ColumnSelectionWindow m_wndColumnSelectionWindow = null;
 		protected GridView m_wndGridView = null;
 		protected Dictionary<string, TaggedGridViewColumn> m_ColumnDictionary = new Dictionary<string, TaggedGridViewColumn>();
+		protected Dictionary<string, SortDirectionAdorner> m_LastHeaderAdornerDictionary = new Dictionary<string, SortDirectionAdorner>();
 		protected ColumnLayout m_SavedLayout = null;
-		protected GridViewColumnHeader m_CurrentSortColumnHeader = null;
-		protected SortDirectionAdorner m_CurrentSortDirectionAdorner = null;
 
 		/***************************************************************************/
 		/// <summary>
@@ -293,7 +333,7 @@ namespace EQ2SuiteLib
 					}
 
 					/// An empty list means this is the first time this saved layout is ever attached on this view.
-					if (m_SavedLayout.m_astrColumnOrderList.Count == 0)
+					if (m_SavedLayout.m_astrColumnDisplayOrderList.Count == 0)
 					{
 						/// Remove any columns with default invisibility/non-presence.
 						for (int iIndex = m_wndGridView.Columns.Count - 1; iIndex >= 0; iIndex--)
@@ -304,14 +344,9 @@ namespace EQ2SuiteLib
 						}
 					}
 					/// If an order is specified (which must have at least one column) then impose it.
-					else if (m_SavedLayout.m_astrColumnOrderList.Count > 0)
+					else if (m_SavedLayout.m_astrColumnDisplayOrderList.Count > 0)
 					{
-						/// Clear the official grid.
-						m_wndGridView.Columns.Clear();
-
-						/// Now we add the columns back in saved order.
-						for (int iIndex = 0; iIndex < m_SavedLayout.m_astrColumnOrderList.Count; iIndex++)
-							m_wndGridView.Columns.Add(m_ColumnDictionary[m_SavedLayout.m_astrColumnOrderList[iIndex]]);
+						HideAndShowColumns();
 					}
 					/// ...otherwise all columns are initially visible.
 
@@ -319,12 +354,12 @@ namespace EQ2SuiteLib
 					Unloaded += new System.Windows.RoutedEventHandler(this.OnListViewUnloaded);
 
 					/// Provide default sort parameters.
-					if (string.IsNullOrEmpty(m_SavedLayout.m_strSortedColumnID))
+					if (m_SavedLayout.m_aColumnSortOrderList.Count == 0)
 					{
 						foreach (TaggedGridViewColumn ThisColumn in m_ColumnDictionary.Values)
 						{
-							m_SavedLayout.m_strSortedColumnID = ThisColumn.Tag;
-							break;
+							m_SavedLayout.m_aColumnSortOrderList.Add(new ColumnLayout.SortDesc(ThisColumn.Tag, true));
+							break; // We just need the first one.
 						}
 					}
 
@@ -339,16 +374,6 @@ namespace EQ2SuiteLib
 
 				return;
 			}
-		}
-
-		/***************************************************************************/
-		protected void OnHeaderToolTipOpening(object sender, ToolTipEventArgs e)
-		{
-			ToolTip HeaderToolTip = ((sender as GridViewColumnHeader).ToolTip as ToolTip);
-			ScaleTransform ThisTransform = FindParentScaleTransform(this);
-			if (ThisTransform != null)
-				HeaderToolTip.LayoutTransform = ThisTransform;
-			return;
 		}
 
 		/***************************************************************************/
@@ -377,42 +402,42 @@ namespace EQ2SuiteLib
 		}
 
 		/***************************************************************************/
-		public void SaveLayout()
-		{
-			if (m_SavedLayout == null)
-				throw new Exception("A layout object must be linked to this PersistentDetailedListView.");
-
-			m_SavedLayout.m_astrColumnOrderList.Clear();
-			//m_ColumnDescDictionary.Clear();
-
-			for (int iIndex = 0; iIndex < m_wndGridView.Columns.Count; iIndex++)
-			{
-				TaggedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as TaggedGridViewColumn);
-				m_SavedLayout.m_astrColumnOrderList.Add(ThisColumn.Tag);
-
-				/// Save the details without erasing the dictionary (all of it will be saved to disk somehow).
-				ColumnLayout.ColumnDesc ThisDesc = null;
-				if (m_SavedLayout.m_ColumnDescDictionary.TryGetValue(ThisColumn.Tag, out ThisDesc))
-				{
-					ThisDesc.m_fWidth = ThisColumn.Width;
-				}
-			}
-			return;
-		}
-
-		/***************************************************************************/
 		protected void OnHeaderClick(object sender, RoutedEventArgs e)
 		{
 			GridViewColumnHeader ThisHeader = (sender as GridViewColumnHeader);
 			TaggedGridViewColumn ThisColumn = (ThisHeader.Column as TaggedGridViewColumn);
 
-			/// Toggle the sort parameters.
-			if (m_SavedLayout.m_strSortedColumnID != ThisColumn.Tag)
-				m_SavedLayout.m_strSortedColumnID = ThisColumn.Tag;
+			/// Simply invert the toggle if it is the same column as the main.
+			if (ThisColumn.Tag == m_SavedLayout.m_aColumnSortOrderList[0].m_strTag)
+				m_SavedLayout.m_aColumnSortOrderList[0].m_bSortAscending = !m_SavedLayout.m_aColumnSortOrderList[0].m_bSortAscending;
+
+			/// Otherwise copy it and overwrite everything.
 			else
-				m_SavedLayout.m_bSortAscending = !m_SavedLayout.m_bSortAscending;
+			{
+				bool bSortAscending = m_SavedLayout.m_aColumnSortOrderList[0].m_bSortAscending;
+
+				m_SavedLayout.m_aColumnSortOrderList.Clear();
+				m_SavedLayout.m_aColumnSortOrderList.Add(new ColumnLayout.SortDesc(ThisColumn.Tag, bSortAscending));
+			}
 
 			SortOnce();
+			return;
+		}
+
+		/***************************************************************************/
+		protected void OnHeaderToolTipOpening(object sender, ToolTipEventArgs e)
+		{
+			ToolTip HeaderToolTip = ((sender as GridViewColumnHeader).ToolTip as ToolTip);
+			ScaleTransform ThisTransform = FindParentScaleTransform(this);
+			if (ThisTransform != null)
+				HeaderToolTip.LayoutTransform = ThisTransform;
+			return;
+		}
+
+		/***************************************************************************/
+		void CustomBaseWindow.IWindowEventSpy.OnClosed(EventArgs e)
+		{
+			SaveLayout();
 			return;
 		}
 
@@ -420,6 +445,19 @@ namespace EQ2SuiteLib
 		void CustomBaseWindow.IWindowEventSpy.OnContentRendered(EventArgs e)
 		{
 			SortOnce();
+			return;
+		}
+
+		/***************************************************************************/
+		public void HideAndShowColumns()
+		{
+			/// Clear the official grid.
+			m_wndGridView.Columns.Clear();
+
+			/// Now we add the columns back in saved order.
+			for (int iIndex = 0; iIndex < m_SavedLayout.m_astrColumnDisplayOrderList.Count; iIndex++)
+				m_wndGridView.Columns.Add(m_ColumnDictionary[m_SavedLayout.m_astrColumnDisplayOrderList[iIndex]]);
+
 			return;
 		}
 
@@ -432,19 +470,54 @@ namespace EQ2SuiteLib
 		/// </summary>
 		public void SortOnce()
 		{
-			TaggedGridViewColumn ThisColumn = m_ColumnDictionary[m_SavedLayout.m_strSortedColumnID];
-			GridViewColumnHeader ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
-
-			if (m_CurrentSortColumnHeader != null)
-				AdornerLayer.GetAdornerLayer(m_CurrentSortColumnHeader).Remove(m_CurrentSortDirectionAdorner);
-
-			m_CurrentSortColumnHeader = ThisHeader;
-			m_CurrentSortDirectionAdorner = new SortDirectionAdorner(m_CurrentSortColumnHeader, m_SavedLayout.m_bSortAscending);
-			AdornerLayer.GetAdornerLayer(m_CurrentSortColumnHeader).Add(m_CurrentSortDirectionAdorner);
-
-			string strSortProperty = (ThisColumn.DisplayMemberBinding as Binding).Path.Path;
 			Items.SortDescriptions.Clear();
-			Items.SortDescriptions.Add(new SortDescription(strSortProperty, m_SavedLayout.m_bSortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending));
+
+			/// Clear all adorners.
+			foreach (KeyValuePair<string, SortDirectionAdorner> ThisPair in m_LastHeaderAdornerDictionary)
+			{
+				TaggedGridViewColumn ThisColumn = m_ColumnDictionary[ThisPair.Key];
+				GridViewColumnHeader ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
+				AdornerLayer.GetAdornerLayer(ThisHeader).Remove(ThisPair.Value);
+			}
+
+			m_LastHeaderAdornerDictionary.Clear();
+
+			foreach (ColumnLayout.SortDesc ThisDesc in m_SavedLayout.m_aColumnSortOrderList)
+			{
+				TaggedGridViewColumn ThisColumn = m_ColumnDictionary[ThisDesc.m_strTag];
+				GridViewColumnHeader ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
+
+				SortDirectionAdorner NewAdorner = new SortDirectionAdorner(ThisHeader, Items.SortDescriptions.Count, ThisDesc.m_bSortAscending);
+				AdornerLayer.GetAdornerLayer(ThisHeader).Add(NewAdorner);
+				m_LastHeaderAdornerDictionary.Add(ThisColumn.Tag, NewAdorner);
+
+				string strSortProperty = (ThisColumn.DisplayMemberBinding as Binding).Path.Path;
+				Items.SortDescriptions.Add(new SortDescription(strSortProperty, ThisDesc.m_bSortAscending ? ListSortDirection.Ascending : ListSortDirection.Descending));
+			}
+			return;
+		}
+
+		/***************************************************************************/
+		public void SaveLayout()
+		{
+			if (m_SavedLayout == null)
+				throw new Exception("A layout object must be linked to this PersistentDetailedListView.");
+
+			m_SavedLayout.m_astrColumnDisplayOrderList.Clear();
+			//m_ColumnDescDictionary.Clear();
+
+			for (int iIndex = 0; iIndex < m_wndGridView.Columns.Count; iIndex++)
+			{
+				TaggedGridViewColumn ThisColumn = (m_wndGridView.Columns[iIndex] as TaggedGridViewColumn);
+				m_SavedLayout.m_astrColumnDisplayOrderList.Add(ThisColumn.Tag);
+
+				/// Save the details without erasing the dictionary (all of it will be saved to disk somehow).
+				ColumnLayout.ColumnDesc ThisDesc = null;
+				if (m_SavedLayout.m_ColumnDescDictionary.TryGetValue(ThisColumn.Tag, out ThisDesc))
+				{
+					ThisDesc.m_fWidth = ThisColumn.Width;
+				}
+			}
 			return;
 		}
 
@@ -463,7 +536,9 @@ namespace EQ2SuiteLib
 		{
 			if (m_wndColumnSelectionWindow == null)
 			{
-				m_wndColumnSelectionWindow = new PersistentDetailedListView_ColumnSelectionWindow();
+				SaveLayout();
+
+				m_wndColumnSelectionWindow = new PersistentDetailedListView_ColumnSelectionWindow(m_SavedLayout.m_ConfigWindowLocation, m_SavedLayout);
 
 				/// The parent window of the list will be our parent window.
 				for (DependencyObject objThis = this; objThis != null; objThis = LogicalTreeHelper.GetParent(objThis))
@@ -478,6 +553,12 @@ namespace EQ2SuiteLib
 				m_wndColumnSelectionWindow.Closed +=
 					delegate(object sender2, EventArgs e2)
 					{
+						if (m_wndColumnSelectionWindow.DialogResult.Value)
+						{
+							HideAndShowColumns();
+							SortOnce();
+						}
+
 						m_wndColumnSelectionWindow = null;
 						return;
 					};

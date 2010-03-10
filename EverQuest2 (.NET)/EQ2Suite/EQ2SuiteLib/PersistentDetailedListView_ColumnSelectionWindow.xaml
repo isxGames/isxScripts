@@ -3,7 +3,23 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:EQ2SuiteLib"
 	Title="Column Selection" Height="300" Width="300" MinHeight="300" MinWidth="300"
-	SizeToContent="WidthAndHeight" ShowInTaskbar="False" ResizeMode="CanResizeWithGrip">
+	ShowInTaskbar="False" ResizeMode="CanResizeWithGrip">
+	<local:CustomBaseWindow.Resources>
+		<Style TargetType="{x:Type ListBoxItem}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding Path=IsChecked}" Content="{Binding Path=Label}"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</local:CustomBaseWindow.Resources>
 	<Grid Margin="5">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/>
@@ -14,7 +30,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<ListBox Grid.Row="1" Grid.Column="0">
+		<ListBox Grid.Row="1" Grid.Column="0" Name="m_wndShowColumnsListBox">
 		</ListBox>
 		<StackPanel Grid.Row="1" Grid.Column="2" Width="80">
 			<Button Name="m_wndOkButton" IsDefault="true">_OK</Button>
