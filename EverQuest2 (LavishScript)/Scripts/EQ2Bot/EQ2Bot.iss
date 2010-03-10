@@ -1078,16 +1078,13 @@ function main()
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; pvp / duels
 			;;
-			;; TO DO:
-			;; To work, we need to change CastSpell() so that when pvp, it uses "Ability[]:Use" rather
-			;; than /useabilityonplayer (which only works for beneficial abilities).  Otherwise, uncommenting
-			;; this WILL make pvp combat work.
 			if ${MainTank} && ${Target(exists)}
 			{
 				if ${Target.Type.Equal[PC]}
 				{
 					if ${Target.InCombatMode} && ${Me.ToActor.InCombatMode} && ${Target.Target.ID} == ${Me.ID}
 					{
+						; setting gPVP is simply to keep the bot from using /useabilityonplayer while in pvp combat.
 						gPVP:Set[TRUE]
 						echo "DEBUG:: pvp combat started!"
 						KillTarget:Set[${Target.ID}]
