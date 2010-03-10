@@ -248,6 +248,7 @@ variable bool NoAutoMovementInCombat
 variable bool NoAutoMovement
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
+variable bool gPVP = FALSE
 
 ;===================================================
 ;===          AutoAttack Timing                 ====
@@ -443,7 +444,8 @@ function main()
 
 		if (${EQ2.Zoning} != 0)
 		{
-			KillTarget:Set[]
+			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			do
 			{
 				wait 5
@@ -457,7 +459,8 @@ function main()
 
 		if !${StartBot}
 		{
-			KillTarget:Set[]
+			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			do
 			{
 				wait 5
@@ -468,7 +471,8 @@ function main()
 
 		if ${Me.ToActor.IsDead}
 		{
-			KillTarget:Set[]
+			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			CurrentAction:Set[Dead -- Waiting...]
 			do
 			{
@@ -547,7 +551,8 @@ function main()
 			{
 				if (${EQ2.Zoning} != 0)
 				{
-					KillTarget:Set[]
+					KillTarget:Set[0]
+					gPVP:Set[FALSE]
 					do
 					{
 						wait 5
@@ -597,17 +602,22 @@ function main()
 								else
 								{
 									KillTarget:Set[0]
+									gPVP:Set[FALSE]
 									;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
 								}
 							}
 							else
 							{
 								KillTarget:Set[0]
+								gPVP:Set[FALSE]
 								;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
 							}
 						}
 						else
+						{
 							KillTarget:Set[0]
+							gPVP:Set[FALSE]
+						}
 					}
 				}
 
@@ -809,17 +819,22 @@ function main()
 							else
 							{
 								KillTarget:Set[0]
+								gPVP:Set[FALSE]
 								;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
 							}
 						}
 						else
 						{
 							KillTarget:Set[0]
+							gPVP:Set[FALSE]
 							;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
 						}
 					}
 					else
+					{
 						KillTarget:Set[0]
+						gPVP:Set[FALSE]
+					}
 				}
 			}
 
@@ -1067,17 +1082,21 @@ function main()
 			;; To work, we need to change CastSpell() so that when pvp, it uses "Ability[]:Use" rather
 			;; than /useabilityonplayer (which only works for beneficial abilities).  Otherwise, uncommenting
 			;; this WILL make pvp combat work.
-			;if ${MainTank} && ${Target(exists)}
-			;{
-			;	if ${Target.Type.Equal[PC]}
-			;	{
-			;		if ${Target.InCombatMode} && ${Me.ToActor.InCombatMode} && ${Target.Target.ID} == ${Me.ID}
-			;		{
-			;			KillTarget:Set[${Target.ID}]
-			;			call Combat 1
-			;		}
-			;	}
-			;}
+			if ${MainTank} && ${Target(exists)}
+			{
+				if ${Target.Type.Equal[PC]}
+				{
+					if ${Target.InCombatMode} && ${Me.ToActor.InCombatMode} && ${Target.Target.ID} == ${Me.ID}
+					{
+						gPVP:Set[TRUE]
+						echo "DEBUG:: pvp combat started!"
+						KillTarget:Set[${Target.ID}]
+						call Combat 1
+						gPVP:Set[FALSE]
+						echo "DEBUG:: pvp combat ended"
+					}
+				}
+			}
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1510,6 +1529,8 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 	;echo CastSpell ${spell}
 	variable int Counter
 	variable float TimeOut
+	variable string TargetName
+	variable string TargetType
 	;Debug:Echo["EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${TargetID},${castwhilemoving},${WaitWhileCasting})"]
 	;Debug:Echo["EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"]
 	;Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
@@ -1521,6 +1542,8 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 
 
 	call ProcessTriggers
+	
+	TargetType:Set[${Actor[${TargetID}].Type}]
 
 	;return if trying to cast currently queued ability
 	if (${Me.ToActor.InCombatMode} && ${spell.Equal[${LastQueuedAbility}]} && ${Me.CastingSpell})
@@ -1546,14 +1569,18 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		return
 	}
 
-	if !${Actor[${TargetID}].Type.Equal[Me]}
+	switch ${TargetType}
 	{
-		if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
-		{
-			;Debug:Echo["EQ2Bot-Debug:: Target.ID != TargetID && TargetID != Target.Target.ID && !Actor[TargetID].Type.Equal[PC] --> Returning"]
-			Actor[${TargetID}]:DoTarget
-			wait 10 ${Target.ID}==${TargetID}
-		}
+		case Me
+			;if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID} && !${Actor[${TargetID}].Type.Equal[PC]}
+			if ${TargetID} && ${Target.ID}!=${TargetID} && ${TargetID}!=${Target.Target.ID}
+			{
+				Actor[${TargetID}]:DoTarget
+				wait 10 ${Target.ID}==${TargetID}
+			}
+			break
+		default
+			break
 	}
 
 	;Debug:Echo["EQ2Bot-Debug:: Queueing '${spell}'"]
@@ -1568,10 +1595,25 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 	}
 	else
 	{
-		if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
-			eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
-		else
-			Me.Ability[id,${spellid}]:Use
+		switch ${TargetType}
+		{
+			case PC
+			case Me
+				if !${gPVP}
+				{
+					TargetName:Set[${Actor[${TargetID}].Name}]
+					if (${Actor[${TargetID}].ID} == ${Actor[${TargetName}].ID})
+						eq2execute /useabilityonplayer ${TargetName} "${spell}"
+					else
+						Me.Ability[id,${spellid}]:Use
+				}
+				else
+					Me.Ability[id,${spellid}]:Use
+				break
+			default
+				Me.Ability[id,${spellid}]:Use
+				break
+		}
 	}
 
 
@@ -1600,10 +1642,25 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			}
 			else
 			{
-				if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
-					eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
-				else
-					Me.Ability[id,${spellid}]:Use
+				switch ${TargetType}
+				{
+					case PC
+					case Me
+						if !${gPVP}
+						{
+							TargetName:Set[${Actor[${TargetID}].Name}]
+							if (${Actor[${TargetID}].ID} == ${Actor[${TargetName}].ID})
+								eq2execute /useabilityonplayer ${TargetName} "${spell}"
+							else
+								Me.Ability[id,${spellid}]:Use
+						}
+						else
+							Me.Ability[id,${spellid}]:Use
+						break
+					default
+						Me.Ability[id,${spellid}]:Use
+						break
+				}
 			}
 			;; this is ghetto ..but required
 			wait 4
@@ -1660,10 +1717,25 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			}
 			else
 			{
-				if ${Actor[${TargetID}].Type.Equal[PC]} || ${Actor[${TargetID}].Type.Equal[Me]}
-					eq2execute /useabilityonplayer ${Actor[${TargetID}].Name} "${spell}"
-				else
-					Me.Ability[id,${spellid}]:Use
+				switch ${TargetType}
+				{
+					case PC
+					case Me
+						if !${gPVP}
+						{
+							TargetName:Set[${Actor[${TargetID}].Name}]
+							if (${Actor[${TargetID}].ID} == ${Actor[${TargetName}].ID})
+								eq2execute /useabilityonplayer ${TargetName} "${spell}"
+							else
+								Me.Ability[id,${spellid}]:Use
+						}
+						else
+							Me.Ability[id,${spellid}]:Use
+						break
+					default
+						Me.Ability[id,${spellid}]:Use
+						break
+				}
 			}
 			;; this is ghetto ..but required
 			wait 4
@@ -1856,7 +1928,7 @@ function Combat(bool PVP=0)
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
-
+	
 	if !${Actor[${KillTarget}](exists)}
 		return
 
@@ -1907,6 +1979,7 @@ function Combat(bool PVP=0)
 		{
 			EQ2Execute /target_none
 			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			break
 		}
 
@@ -1931,12 +2004,13 @@ function Combat(bool PVP=0)
 			{
 				EQ2Execute /target_none
 				KillTarget:Set[0]
+				gPVP:Set[FALSE]
 				break
 			}
 
 			;face ${Target.X} ${Target.Y} ${Target.Z}
 
-			if (${Mob.ValidActor[${KillTarget}]} || ${PVP})
+			if (${PVP} || ${Mob.ValidActor[${KillTarget},${PVP}]})
 			{
 				gRtnCtr:Set[1]
 				do
@@ -1948,21 +2022,27 @@ function Combat(bool PVP=0)
 
 					if ${MainTank}
 					{
-						Target ${KillTarget}
-						waitframe
-
-						if ${Actor[${KillTarget}].Target.ID}==${Me.ID}
-							call CheckMTAggro
-						else
+						if ${KillTarget}
 						{
-							call Lost_Aggro ${KillTarget}
-							if ${UseCustomRoutines}
-								call Custom__Lost_Aggro ${KillTarget}
+							Target ${KillTarget}
+							waitframe
+						}
+
+						if !${PVP}
+						{
+							if ${Actor[${KillTarget}].Target.ID}==${Me.ID}
+								call CheckMTAggro
+							else
+							{
+								call Lost_Aggro ${KillTarget}
+								if ${UseCustomRoutines}
+									call Custom__Lost_Aggro ${KillTarget}
+							}
 						}
 					}
 					else
 					{
-						Mob:CheckMYAggro
+						Mob:CheckMYAggro[${PVP}]
 
 						if ${Actor[${MainAssistID}].IsDead}
 						{
@@ -2007,6 +2087,7 @@ function Combat(bool PVP=0)
 					{
 						EQ2Execute /target_none
 						KillTarget:Set[0]
+						gPVP:Set[FALSE]
 						break
 					}
 
@@ -2072,7 +2153,7 @@ function Combat(bool PVP=0)
 						}
 					}
 
-					if ${Me.ToActor.Power}<55 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+					if ${usemanastone} && ${Me.ToActor.Power}<55 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} 
 					{
 						if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
 						{
@@ -2098,8 +2179,11 @@ function Combat(bool PVP=0)
 						}
 					}
 					call ProcessTriggers
+					
+					if !${Mob.ValidActor[${KillTarget},${PVP}]}
+						break
 				}
-				while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+				while ${gRtnCtr:Inc}<=40
 			}
 			else
 				break
@@ -2119,14 +2203,17 @@ function Combat(bool PVP=0)
 
 					if ${MainTank}
 					{
-						if ${Target.Target.ID}==${Me.ID}
-							call CheckMTAggro
-						else
-							call Custom__Lost_Aggro ${Target.ID}
+						if !${PVP}
+						{
+							if ${Target.Target.ID}==${Me.ID}
+								call CheckMTAggro
+							else
+								call Custom__Lost_Aggro ${Target.ID}
+						}
 					}
 					else
 					{
-						Mob:CheckMYAggro
+						Mob:CheckMYAggro[${PVP}]
 
 						if ${Actor[${MainAssistID}].IsDead}
 						{
@@ -2152,7 +2239,7 @@ function Combat(bool PVP=0)
 						gRtnCtr:Set[40]
 					}
 
-					if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)} && ${usemanastone}
+					if ${usemanastone} && ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)}
 					{
 						if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
 						{
@@ -2171,6 +2258,7 @@ function Combat(bool PVP=0)
 					{
 						EQ2Execute /target_none
 						KillTarget:Set[0]
+						gPVP:Set[FALSE]
 						break
 					}
 
@@ -2184,8 +2272,11 @@ function Combat(bool PVP=0)
 						}
 					}
 					call ProcessTriggers
+					
+					if !${Mob.ValidActor[${KillTarget},${PVP}]}
+						break
 				}
-				while ${gRtnCtr:Inc}<=40 && ${Mob.ValidActor[${KillTarget}]}
+				while ${gRtnCtr:Inc}<=40
 			}
 			;;;; END Combat_Routine Loop ;;;;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2197,6 +2288,7 @@ function Combat(bool PVP=0)
 			{
 				EQ2Execute /target_none
 				KillTarget:Set[0]
+				gPVP:Set[FALSE]
 				break
 			}
 			if ${Me.ToActor.IsDead}
@@ -2205,8 +2297,11 @@ function Combat(bool PVP=0)
 				break
 			}
 			call ProcessTriggers
+			
+			if !${Mob.ValidActor[${KillTarget},${PVP}]}
+				break
 		}
-		while ((!${Actor[${KillTarget}].IsDead} && ${Mob.ValidActor[${KillTarget}]}) || ${PVP})
+		while (!${Actor[${KillTarget}].IsDead})
 		;;; END LOOP DEALING WITH CURRENT TARGET ;;;;;;
 
 		disablebehind:Set[FALSE]
@@ -2220,7 +2315,7 @@ function Combat(bool PVP=0)
 			if ${Mob.Detect}
 				wait 50 ${Actor[${MainAssistID}].Target(exists)}
 
-			if ((${Actor[${MainAssistID}].Target(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID}]}) || ${PVP})
+			if (${Actor[${MainAssistID}].Target(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID},${PVP}]})
 			{
 				KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 				Actor[${KillTarget}]:DoTarget
@@ -2233,10 +2328,10 @@ function Combat(bool PVP=0)
 		}
 		elseif ${MainTank} && !${Me.IsMoving}
 		{
-			if ${Mob.Detect}
+			if ${Mob.Detect[${ScanRange},${PVP}]}
 			{
 				variable uint AggroMob
-				AggroMob:Set[${Mob.NearestAggro}]
+				AggroMob:Set[${Mob.NearestAggro[${ScanRange},${PVP}]}]
 
 				if ${AggroMob} > 0
 				{
@@ -2300,7 +2395,6 @@ function Combat(bool PVP=0)
 
 	if ${Me.AutoAttackOn}
 		EQ2Execute /toggleautoattack
-
 
 
 	;Debug:Echo["Calling CheckLootNoMove()"]
@@ -2867,7 +2961,7 @@ function CheckQuadrant(uint TID, int quadrant)
 				return
 			}
 			break
-		case default
+		default
 			return
 			break
 	}
@@ -3316,7 +3410,7 @@ function Pull(string npcclass)
 
 					if ${Target(exists)}
 					{
-							KillTarget:Set[${Target.ID}]
+						KillTarget:Set[${Target.ID}]
 						engagetarget:Set[TRUE]
 						return ${Target.ID}
 					}
@@ -4026,7 +4120,8 @@ function ProcessTriggers()
 function IamDead(string Line)
 {
 	variable uint deathtimer=${Time.Timestamp}
-	KillTarget:Set[]
+	KillTarget:Set[0]
+	gPVP:Set[FALSE]
 	grpcnt:Set[${Me.GroupCount}]
 	tempgrp:Set[1]
 
@@ -4046,7 +4141,8 @@ function IamDead(string Line)
 				waitframe
 			}
 			while (${EQ2.Zoning} != 0)
-			KillTarget:Set[]
+			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			wait 15
 			if ${AutoFollowingMA(exists)}
 				AutoFollowingMA:Set[FALSE]
@@ -4086,7 +4182,8 @@ function IamDead(string Line)
 						waitframe
 					}
 					while (${EQ2.Zoning} != 0)
-					KillTarget:Set[]
+					KillTarget:Set[0]
+					gPVP:Set[FALSE]
 					wait 100
 					echo "reloading config"
 					EQ2Bot:Init_Config
@@ -4141,7 +4238,8 @@ function IamDead(string Line)
 	}
 	else
 	{
-		KillTarget:Set[]
+		KillTarget:Set[0]
+		gPVP:Set[FALSE]
 		CurrentAction:Set["You have been killed..."]
 		do
 		{
@@ -4688,6 +4786,7 @@ function VerifyTarget(uint TargetID=0)
 				if ${Return.Equal[FAILED]}
 				{
 					KillTarget:Set[0]
+					gPVP:Set[FALSE]
 					return FALSE
 				}
 			}
@@ -4703,6 +4802,7 @@ function VerifyTarget(uint TargetID=0)
 				if ${Return.Equal[FAILED]}
 				{
 					KillTarget:Set[0]
+					gPVP:Set[FALSE]
 					return FALSE
 				}
 			}
@@ -4999,7 +5099,7 @@ objectdef ActorCheck
 		return TRUE
 	}
 
-	member:bool CheckActor(uint actorid)
+	member:bool CheckActor(uint actorid, bool PVP=0)
 	{
 		if ${Actor[${actorid}].IsDead}
 			return FALSE
@@ -5012,10 +5112,11 @@ objectdef ActorCheck
 			case NamedNPC
 				if ${IgnoreNamed}
 					return FALSE
-				break
-
+						
 			case PC
-				return FALSE
+				if !${PVP}
+					return FALSE
+				break
 
 			case Pet
 					return FALSE
@@ -5056,7 +5157,7 @@ objectdef ActorCheck
 	}
 
 	; Check if mob is aggro on Raid, group, or pet only, doesn't check agro on Me
-	member:bool AggroGroup(uint actorid)
+	member:bool AggroGroup(uint actorid, bool PVP=0)
 	{
 		if ${Actor[${actorid}].IsDead}
 			return FALSE
@@ -5069,8 +5170,11 @@ objectdef ActorCheck
 			return FALSE
 		}
 
-		if ${Actor[${actorid}].Type.Equal[PC]}
-			return FALSE
+		if !${PVP}
+		{
+			if ${Actor[${actorid}].Type.Equal[PC]}
+				return FALSE
+		}
 
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
@@ -5127,20 +5231,26 @@ objectdef ActorCheck
 	}
 
 	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
-	member:int Count()
+	member:int Count(bool PVP=0)
 	{
 		variable int tcount=1
 		variable int mobcount
 
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+		if !${PVP}
 		{
-			return 0
+			if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+			{
+				return 0
+			}
 		}
 
-		EQ2:CreateCustomActorArray[byDist,15,npc]
+		if !${PVP}
+			EQ2:CreateCustomActorArray[byDist,15,npc]
+		else
+			EQ2:CreateCustomActorArray[byDist,15]
 		do
 		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
+			if ${This.ValidActor[${CustomActor[${tcount}].ID},${PVP}]} && ${CustomActor[${tcount}].InCombatMode}
 			{
 				mobcount:Inc
 			}
@@ -5151,26 +5261,36 @@ objectdef ActorCheck
 	}
 
 	;returns true if you, group, raidmember, or pets have agro from mob in range
-	member:bool Detect(int iEngageDistance=${ScanRange})
+	member:bool Detect(int iEngageDistance=${ScanRange}, bool PVP=0)
 	{
 		variable int tcount=1
 
-		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
+		if !${PVP}
 		{
-			;Debug:Echo["No NPCs within a range of ${iEngageDistance}m"]
-			return FALSE
+			if !${Actor[NPC,range,${iEngageDistance}](exists)}
+			{
+				if (!(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
+				{
+					;Debug:Echo["No NPCs within a range of ${iEngageDistance}m"]
+					return FALSE
+				}
+			}
 		}
 
-		EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
+		if !${PVP}
+			EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
+		else
+			EQ2:CreateCustomActorArray[byDist,${iEngageDistance}]
+			
 		;Debug:Echo["Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."]
 		do
 		{
-			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode} && !${CustomActor[${tcount}].IsDead}
+			if ${This.CheckActor[${CustomActor[${tcount}].ID},${PVP}]} && ${CustomActor[${tcount}].InCombatMode} && !${CustomActor[${tcount}].IsDead}
 			{
 				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
 					return TRUE
 
-				if ${This.AggroGroup[${CustomActor[${tcount}].ID}]}
+				if ${This.AggroGroup[${CustomActor[${tcount}].ID},${PVP}]}
 					return TRUE
 			}
 		}
@@ -5192,23 +5312,29 @@ objectdef ActorCheck
 		return FALSE
 	}
 
-	member:int NearestAggro(int iEngageDistance=${ScanRange})
+	member:int NearestAggro(int iEngageDistance=${ScanRange},bool PVP=0)
 	{
 		variable int tcount=1
 
-		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !${Actor[NamedNPC,range,${iEngageDistance}](exists)}
+		if !${PVP}
 		{
-			return 0
+			if !${Actor[NPC,range,${iEngageDistance}](exists)} && !${Actor[NamedNPC,range,${iEngageDistance}](exists)}
+			{
+				return 0
+			}
 		}
 
-		EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
+		if !${PVP}
+			EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
+		else
+			EQ2:CreateCustomActorArray[byDist,${iEngageDistance}]
 		do
 		{
 				; this should not be necessary, but I will put it here anyway
 				if ${CustomActor[${tcount}].IsDead}
 						continue
 
-			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode} && ${This.CheckActor[${CustomActor[${tcount}].ID}]}
+			if (${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${This.AggroGroup[${CustomActor[${tcount}].ID}]}) && ${CustomActor[${tcount}].InCombatMode} && ${This.CheckActor[${CustomActor[${tcount}].ID},${PVP}]}
 			{
 				if ${CustomActor[${tcount}].ID}
 				{
@@ -5256,23 +5382,29 @@ objectdef ActorCheck
 		return false
 	}
 
-	method CheckMYAggro()
+	method CheckMYAggro(bool PVP=0)
 	{
 		variable int tcount=1
 		haveaggro:Set[FALSE]
 		variable uint ActorID
 
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
-			return
+		if !${PVP}
+		{
+			if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+				return
+		}
 
-		EQ2:CreateCustomActorArray[byDist,15,npc]
+		if !${PVP}
+			EQ2:CreateCustomActorArray[byDist,15,npc]
+		else 
+			EQ2:CreateCustomActorArray[byDist,15]
 		do
 		{
 			ActorID:Set[${CustomActor[${tcount}].ID}]
 
 			if ${ActorID} > 0
 			{
-					if ${This.ValidActor[${ActorID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
+					if ${This.ValidActor[${ActorID},${PVP}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
 					{
 						haveaggro:Set[TRUE]
 						aggroid:Set[${ActorID}]
@@ -5648,7 +5780,8 @@ objectdef EQ2BotObj
 		{
 			MainAssist:Set[${OriginalMA}]
 			MainAssistID:Set[${Actor[exactname,${MainAssist}].ID}]
-			KillTarget:Set[]
+			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			Echo Switching back to the original MainAssist ${MainAssist}
 			return
 		}
@@ -5668,7 +5801,8 @@ objectdef EQ2BotObj
 			MainTank:Set[FALSE]
 			MainTankPC:Set[${OriginalMT}]
 			MainTankID:Set[${Actor[exactname,${MainTankPC}].ID}]
-			KillTarget:Set[]
+			KillTarget:Set[0]
+			gPVP:Set[FALSE]
 			Echo Switching back to the original MainTank ${MainTankPC}
 			return
 		}
@@ -5873,7 +6007,7 @@ objectdef EQ2BotObj
 					}
 					return FALSE
 
-				case default
+				default
 					break
 			}
 		}
@@ -6587,7 +6721,10 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		if ${KillTarget} && ${Actor[${KillTarget}](exists)}
 		{
 			if !${Actor[${KillTarget}].InCombatMode}
+			{
 				KillTarget:Set[0]
+				gPVP:Set[FALSE]
+			}
 		}
 		InitialBuffsDone:Set[0]
 		return
