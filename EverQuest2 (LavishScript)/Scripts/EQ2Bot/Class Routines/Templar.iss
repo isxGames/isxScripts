@@ -335,7 +335,7 @@ function Buff_Routine(int xAction)
 				; we have the templar mythical so using different logic for this buff
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
-					if !${Me.Equipment[The Impact of the Sacrosanct](exists)}
+					if !${Me.Equipment[The Impact of the Sacrosanct](exists)} && !${Me.Maintained[Impenetrable Faith](exists)}
 					{
 						tempMH:Set[${Me.Equipment[Primary].Name}]
 						waitframe
