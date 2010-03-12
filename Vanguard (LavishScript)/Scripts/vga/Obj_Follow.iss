@@ -74,7 +74,13 @@ objectdef obj_Follow
 			if ${Pawn[id,${This.FollowID}](exists)}
 			{
 				;; go ahead and set our DTarget
-				Pawn[${This.FollowID}]:Target
+				Pawn[id,${This.FollowID}]:Target
+
+				if ${Me.DTarget.ID}!=${This.FollowID}
+				{
+					return
+				}
+				
 				VGExecute /Follow
 				
 				;; update our location
@@ -131,6 +137,13 @@ objectdef obj_Follow
 			This:Stop
 			return
 		}
+		
+		;; Must make sure we are following!
+		if !${This.isFollowing}
+		{
+			This:Start
+			return
+		}
 
 		;; Wait 1 second and check our distance
 		if (${Math.Calc[${Math.Calc[${Script.RunningTime}-${This.Delay}]}/1000]} > 1)
@@ -159,9 +172,12 @@ objectdef obj_Follow
 
 			;; update our delay timer
 			This.Delay:Set[${Script.RunningTime}]
+			
+			;echo "FOLLOW:  isFollowing=${This.isFollowing}, doFollow=${This.doFollow}"
 		}
 		
 	}
 }
+
 
 variable obj_Follow obj_Follow
