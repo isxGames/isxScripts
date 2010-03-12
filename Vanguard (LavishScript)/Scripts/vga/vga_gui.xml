@@ -916,7 +916,7 @@
                       <Y>460</Y>
                       <Width>15</Width>
                       <Height>20</Height>
-                      <Text>Do VGA Healing</Text>
+                      <Text>Dont Use VGA Healing</Text>
                       <OnLoad>
                         if ${Script[vga].VariableScope.DoByPassVGAHeals}
                         {
