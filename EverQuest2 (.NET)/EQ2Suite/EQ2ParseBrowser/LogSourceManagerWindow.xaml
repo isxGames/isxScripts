@@ -18,14 +18,14 @@
 			<RowDefinition Height="5"/><!-- Margin -->
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		
-		<Label Grid.Row="0" Grid.Column="0" IsTabStop="True">Select a log _source from the list below:</Label>
-		
+
+		<Label Grid.Row="0" Grid.Column="0" IsTabStop="True">Manage your log sources using the active list below:</Label>
+
 		<eq2suitelib:PersistentDetailedListView Name="m_wndSourceList" Grid.Row="2" Grid.Column="0"
 			IsTabStop="True" SelectionMode="Extended" ItemActivated="OnSourceListItemActivated">
 			<eq2suitelib:PersistentDetailedListView.View>
 				<GridView ColumnHeaderContainerStyle="{StaticResource LeftJustifiedHeaderStyle}">
-					<eq2suitelib:TaggedGridViewColumn Tag="Name" Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"/>
+					<eq2suitelib:TaggedGridViewColumn Tag="Name" IsPrimaryKey="True" Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"/>
 					<eq2suitelib:TaggedGridViewColumn Tag="Type" Header="Type" Width="100" DisplayMemberBinding="{Binding Path=Source, Converter={StaticResource SourceTypeFormatter}}" />
 					<eq2suitelib:TaggedGridViewColumn Tag="Source" Header="Source" Width="100" DisplayMemberBinding="{Binding SourceContextString}" />
 				</GridView>
@@ -47,7 +47,7 @@
 				<Button Width="70">_Delete</Button>
 			</StackPanel>
 			<StackPanel Grid.Column="2" Orientation="Horizontal">
-				<Button Width="70" Click="OnCloseButtonClick">_Close</Button>
+				<Button Width="70" Click="OnCloseButtonClick" IsCancel="True">_Close</Button>
 				<Rectangle Width="10"/> <!-- Gap to allow Window grip to be visible -->
 			</StackPanel>
 		</Grid>

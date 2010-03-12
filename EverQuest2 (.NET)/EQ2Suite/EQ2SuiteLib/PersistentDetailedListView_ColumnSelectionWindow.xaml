@@ -2,40 +2,119 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:EQ2SuiteLib"
-	Title="Column Selection" Height="300" Width="300" MinHeight="300" MinWidth="300"
+	Title="Column Selection" Height="330" Width="432" MinHeight="300" MinWidth="300"
 	ShowInTaskbar="False" ResizeMode="CanResizeWithGrip">
 	<local:CustomBaseWindow.Resources>
-		<Style TargetType="{x:Type ListBoxItem}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding Path=IsChecked}" Content="{Binding Path=Label}"/>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
 	</local:CustomBaseWindow.Resources>
+	
 	<Grid Margin="5">
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition Width="5"/>
-			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
+			<RowDefinition Height="5"/> <!-- Margin -->
+			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
-		<ListBox Grid.Row="1" Grid.Column="0" Name="m_wndShowColumnsListBox">
-		</ListBox>
-		<StackPanel Grid.Row="1" Grid.Column="2" Width="80">
-			<Button Name="m_wndOkButton" IsDefault="true">_OK</Button>
-			<Rectangle Height="5"/>
-			<Button Name="m_wndCancelButton" Click="OnCancelButtonClick">_Cancel</Button>
+
+		<TabControl Grid.Row="0" Grid.Column="0">
+			<TabItem Header="_Visible">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<!-- Top row, collapse it till we know what to say. -->
+					<TextBlock Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="5">Configure blah blah blah asd;lkfma sdlk;fja sdlkfj adl;kjf</TextBlock>
+
+					<TextBlock Grid.Column="0" Grid.Row="1">All Possible Columns</TextBlock>
+					<TextBlock Grid.Column="2" Grid.Row="1">Final Visible Order</TextBlock>
+
+					<ListBox Grid.Column="0" Grid.Row="2" Name="m_wndViewOrderSourceList" DisplayMemberPath="Content">
+					</ListBox>
+					<StackPanel Grid.Column="1" Grid.Row="2" Margin="5">
+						<Button Name="m_wndViewOrderAddButton">
+							<TextBlock>Add <TextBlock FontFamily="Symbol">®</TextBlock></TextBlock>
+						</Button>
+						<Rectangle Height="5" />
+						<Button Name="m_wndViewOrderRemoveButton">
+							<TextBlock><TextBlock FontFamily="Symbol">¬</TextBlock> Remove</TextBlock>
+						</Button>
+						<Rectangle Height="20" />
+						<Button>
+							<TextBlock>Move Up <TextBlock FontFamily="Symbol">­</TextBlock></TextBlock>
+						</Button>
+						<Rectangle Height="5" />
+						<Button>
+							<TextBlock>Move Down <TextBlock FontFamily="Symbol">¯</TextBlock></TextBlock>
+						</Button>
+					</StackPanel>
+					<ListBox Grid.Column="2" Grid.Row="2" Name="m_wndViewOrderDestinationList" DisplayMemberPath="Content">
+					</ListBox>
+				</Grid>
+			</TabItem>
+			
+			<TabItem Header="_Sort Order">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<!-- Top row, collapse it till we know what to say. -->
+					<TextBlock Visibility="Collapsed" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="5">Configure blah blah blah asd;lkfma sdlk;fja sdlkfj adl;kjf </TextBlock>
+
+					<TextBlock Grid.Column="0" Grid.Row="1">All Possible Columns</TextBlock>
+					<TextBlock Grid.Column="2" Grid.Row="1">Final Sort Order</TextBlock>
+
+					<ListBox Grid.Column="0" Grid.Row="2" Name="m_wndSortSourceList" DisplayMemberPath="Content">
+					</ListBox>
+					<StackPanel Grid.Column="1" Grid.Row="2" Margin="5">
+						<Button Name="m_wndSortOrderAddAscendingButton">
+							<TextBlock>Add Asc <TextBlock FontFamily="Symbol">®</TextBlock></TextBlock>
+						</Button>
+						<Rectangle Height="5" />
+						<Button Name="m_wndSortOrderAddDescendingButton">
+							<TextBlock>Add Desc <TextBlock FontFamily="Symbol">®</TextBlock></TextBlock>
+						</Button>
+						<Rectangle Height="5" />
+						<Button Name="m_wndSortOrderRemoveButton">
+							<TextBlock><TextBlock FontFamily="Symbol">¬</TextBlock> Remove</TextBlock>
+						</Button>
+						<Rectangle Height="20" />
+						<Button>
+							<TextBlock>Move Up <TextBlock FontFamily="Symbol">­</TextBlock></TextBlock>
+						</Button>
+						<Rectangle Height="5" />
+						<Button>
+							<TextBlock>Move Down <TextBlock FontFamily="Symbol">¯</TextBlock></TextBlock>
+						</Button>
+					</StackPanel>
+					<ListBox Grid.Column="2" Grid.Row="2" Name="m_wndSortDestinationList" DisplayMemberPath="Content">
+					</ListBox>
+				</Grid>
+			</TabItem>
+
+		</TabControl>
+
+		<StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Name="m_wndOkButton" IsDefault="true" Width="70" Click="OnOkButtonClick">_OK</Button>
+			<Rectangle Width="5"/>
+			<Button Name="m_wndCancelButton" IsCancel="True" Click="OnCancelButtonClick" Width="70">_Cancel</Button>
+			<Rectangle Width="10"/> <!-- Gap to allow Window grip to be visible -->
 		</StackPanel>
 	</Grid>
 </local:CustomBaseWindow>
