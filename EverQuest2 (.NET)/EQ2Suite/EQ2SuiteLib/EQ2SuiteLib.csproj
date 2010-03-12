@@ -81,6 +81,7 @@
     <Compile Include="SharedStringCache.cs" />
     <Compile Include="CustomBaseWindow.cs" />
     <Compile Include="ThreadSafeQueue.cs" />
+    <Compile Include="UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">

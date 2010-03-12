@@ -538,7 +538,7 @@ namespace EQ2SuiteLib
 			{
 				SaveLayout();
 
-				m_wndColumnSelectionWindow = new PersistentDetailedListView_ColumnSelectionWindow(m_SavedLayout.m_ConfigWindowLocation, m_SavedLayout);
+				m_wndColumnSelectionWindow = new PersistentDetailedListView_ColumnSelectionWindow(m_SavedLayout.m_ConfigWindowLocation, m_SavedLayout, m_ColumnDictionary);
 
 				/// The parent window of the list will be our parent window.
 				for (DependencyObject objThis = this; objThis != null; objThis = LogicalTreeHelper.GetParent(objThis))
@@ -553,7 +553,7 @@ namespace EQ2SuiteLib
 				m_wndColumnSelectionWindow.Closed +=
 					delegate(object sender2, EventArgs e2)
 					{
-						if (m_wndColumnSelectionWindow.DialogResult.Value)
+						if (m_wndColumnSelectionWindow.ModelessDialogResult.Value)
 						{
 							HideAndShowColumns();
 							SortOnce();

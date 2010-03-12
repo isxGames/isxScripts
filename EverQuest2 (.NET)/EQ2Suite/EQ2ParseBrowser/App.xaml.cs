@@ -32,7 +32,6 @@ namespace EQ2ParseBrowser
 				s_fInterfaceScaleFactor = 0.5;
 
 			CustomBaseWindow.UniversalScale = s_fInterfaceScaleFactor;
-
 			return;
 		}
 

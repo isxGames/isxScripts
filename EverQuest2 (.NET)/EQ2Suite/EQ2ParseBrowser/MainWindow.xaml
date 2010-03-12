@@ -42,11 +42,19 @@
 			</MenuItem>
 		</Menu>
 		<ToolBar DockPanel.Dock="Top">
-			<Button Content="&lt;-- Back"></Button>
-			<Button Content="--&gt; Forward"></Button>
-			<Button Content="^ Up"></Button>
+			<Button>
+				<TextBlock><TextBlock FontFamily="Symbol">¬</TextBlock> Back</TextBlock>
+			</Button>
+			<Button>
+				<TextBlock><TextBlock FontFamily="Symbol">®</TextBlock> Forward</TextBlock>
+			</Button>
+			<Button>
+				<TextBlock><TextBlock FontFamily="Symbol">­</TextBlock> Up</TextBlock>
+			</Button>
 			<Separator/>
-			<Button Content="X Delete"></Button>
+			<Button>
+				<TextBlock><TextBlock FontFamily="Marlett">r</TextBlock> Delete</TextBlock>
+			</Button>
 		</ToolBar>
 		<StatusBar Name="m_wndStatusBar" DockPanel.Dock="Bottom">
 			<StatusBarItem Name="StatusBarStatisticsPane" Content="(insert stats here)"></StatusBarItem>

@@ -16,6 +16,7 @@ namespace EQ2SuiteLib
 		protected bool m_bCloseOnEscape = true;
 		protected bool m_bShowMinimizeButton = false;
 		protected bool m_bShowSystemMenu = false;
+		protected bool? m_bModelessDialogResult = null;
 		protected SavedWindowLocation m_SavedWindowLocation = null;
 		protected SavedWindowLocation m_LastSavedWindowLocation = null;
 
@@ -119,6 +120,24 @@ namespace EQ2SuiteLib
 			{
 				m_bShowSystemMenu = value;
 				/// TODO: If window is live, apply the style immediately.
+				return;
+			}
+		}
+
+		/************************************************************************************/
+		/// <summary>
+		/// DialogResult throws an exception when it gets set in modeless mode.
+		/// Maybe someone forgot to tell Microsoft that modeless windows have OK and Cancel buttons too.
+		/// </summary>
+		public bool? ModelessDialogResult
+		{
+			get
+			{
+				return m_bModelessDialogResult;
+			}
+			set
+			{
+				m_bModelessDialogResult = value;
 				return;
 			}
 		}
@@ -259,6 +278,10 @@ namespace EQ2SuiteLib
 		/************************************************************************************/
 		protected override void OnClosed(EventArgs e)
 		{
+			if (ModelessDialogResult == null)
+				ModelessDialogResult = false;
+
+			/// Call the events.
 			base.OnClosed(e);
 
 			ScanChildControl(this,
@@ -338,6 +361,7 @@ namespace EQ2SuiteLib
 			if (m_bCloseOnEscape && (e.Key == Key.Escape))
 			{
 				e.Handled = true;
+				ModelessDialogResult = false;
 				Close();
 			}
 

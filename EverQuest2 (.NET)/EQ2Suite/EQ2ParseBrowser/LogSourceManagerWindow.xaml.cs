@@ -36,10 +36,22 @@ namespace EQ2ParseBrowser
 	/***************************************************************************/
 	public class LogSourceConfiguration : NotifyPropertyChangedBase
 	{
-		public string m_DUMMYNAME = Guid.NewGuid().ToString("N");
+		protected string m_strName = string.Empty;
 		public string Name
 		{
-			get { return m_DUMMYNAME; }
+			get
+			{
+				return m_strName;
+			}
+			set
+			{
+				if (m_strName != value)
+				{
+					m_strName = value;
+					NotifyPropertyChanged("Name");
+				}
+				return;
+			}
 		}
 
 		public enum SourceType : int
@@ -54,10 +66,7 @@ namespace EQ2ParseBrowser
 		{
 			get
 			{
-				if (m_DUMMYNAME[0] == '2')
-					return SourceType.File;
-				else
-					return SourceType.Socket;
+				return m_eSourceType;
 			}
 			set
 			{
@@ -66,6 +75,7 @@ namespace EQ2ParseBrowser
 					m_eSourceType = value;
 					NotifyPropertyChanged("Source");
 				}
+				return;
 			}
 		}
 
@@ -96,7 +106,11 @@ namespace EQ2ParseBrowser
 			m_wndSourceList.ItemsSource = DUMMYLIST;
 
 			for (int iIndex = 0; iIndex < 100; iIndex++)
-				DUMMYLIST.Add(new LogSourceConfiguration());
+			{
+				LogSourceConfiguration NewConfig = new LogSourceConfiguration();
+				NewConfig.Name = Guid.NewGuid().ToString("N");
+				DUMMYLIST.Add(NewConfig);
+			}
 
 			//ItemsSource is ObservableCollection of EmployeeInfo objects
 			//m_wndSourceList.ItemsSource = new myEmployees();
@@ -115,7 +129,6 @@ namespace EQ2ParseBrowser
 		protected override void OnClosed(EventArgs e)
 		{
 			base.OnClosed(e);
-			m_wndSourceList.SaveLayout();
 			return;
 		}
 
@@ -130,7 +143,8 @@ namespace EQ2ParseBrowser
 		protected void OnSourceListItemActivated(object sender, RoutedEventArgs e)
 		{
 			/// DEBUG
-			List<LogSourceConfiguration> TEMPLIST = new List<LogSourceConfiguration>();
+			
+			/*List<LogSourceConfiguration> TEMPLIST = new List<LogSourceConfiguration>();
 			Random THISRANDOM = new Random();
 			for (int iIndex = 0; iIndex < 1000; iIndex++)
 			{
@@ -138,7 +152,10 @@ namespace EQ2ParseBrowser
 				NEWITEM.m_DUMMYNAME = "!!!!" + THISRANDOM.NextDouble().ToString();
 				TEMPLIST.Add(NEWITEM);
 			}
-			DUMMYLIST.AddRange(TEMPLIST);
+			DUMMYLIST.AddRange(TEMPLIST);*/
+
+			foreach (LogSourceConfiguration ThisConfig in DUMMYLIST)
+				ThisConfig.Source = LogSourceConfiguration.SourceType.Unknown;
 			m_wndSourceList.SortOnce();
 			return;
 		}
