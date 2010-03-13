@@ -87,7 +87,7 @@ namespace PInvoke
 			ReadOnly = 0x1,
 			Hidden = 0x2,
 			System = 0x4,
-			Directory = 0x8,
+			Directory = 0x10,
 			Archive = 0x20,
 			Device = 0x40,
 			Normal = 0x80,
@@ -128,6 +128,9 @@ namespace PInvoke
 
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern FileFlagsAndAttributes GetFileAttributes(string lpFileName);
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern bool SetFileAttributes(string lpFileName, FileFlagsAndAttributes dwFileAttributes);
 
 		public enum FilePointerMoveMethod : uint
 		{
