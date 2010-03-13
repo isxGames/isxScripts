@@ -1,4 +1,4 @@
-;variable string Ver=1.005
+;variable string Ver=1.007
 ;*****Login procedure specifics**
 
 
@@ -54,7 +54,7 @@ function FPreInit(string LoginModifer, string CharToLogin)
 
 	echo ********Ogre Combat Assistant: Version: ${BotVer}**********
 	;If no Modifer is typed in, then we have to copy the login name to char name. Example: run Ogre Fred
-	if ${CharToLogin.Length}<=0 && ${LoginModifer.NotEqual[resume]} && ${LoginModifer.NotEqual[true]} && ${LoginModifer.NotEqual[false]} && ${LoginModifer.NotEqual[pause]} && ${LoginModifer.NotEqual[paused]}
+	if ${CharToLogin.Length}<=0 && ${LoginModifer.NotEqual[resume]} && ${LoginModifer.NotEqual[true]} && ${LoginModifer.NotEqual[false]} && ${LoginModifer.NotEqual[pause]} && ${LoginModifer.NotEqual[paused]} && ${LoginModifer.NotEqual[debug]}
 		CharToLogin:Set[${LoginModifer}]
 
 	;echo LoginModifer - ${LoginModifer}, CharToLogin: ${CharToLogin}
@@ -215,8 +215,20 @@ objectdef NPCTargetObject
 		else
 		{
 			;NPCTargetID:Set[NULL]
-			return NULL
+			return 999999998
 		}
+	}
+}
+objectdef PCTargetObject
+{
+	member:int ID()
+	{
+		if ${Target.Type.Equal[PC]}
+			return ${Target.ID}
+		elseif ${Target.Target.Type.Equal[PC]}
+			return ${Target.Target.ID}
+		else
+			return NULL
 	}
 }
 objectdef EQ2Position
@@ -232,8 +244,8 @@ objectdef EQ2Position
 	member:float Angle(uint ActorID)
 	{
 		variable float Retval
-		variable float Heading=${Actor[${ActorID}].Heading}
-		variable float HeadingTo=${Actor[${ActorID}].HeadingTo}
+		variable float Heading=${Actor[id,${ActorID}].Heading}
+		variable float HeadingTo=${Actor[id,${ActorID}].HeadingTo}
 		Retval:Set[${Math.Calc[${Math.Cos[${Heading}]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}]} * ${Math.Sin[${HeadingTo}]}]}]
 		Retval:Set[${Math.Acos[${Retval}]}]
 		return ${Retval}
@@ -243,8 +255,8 @@ objectdef EQ2Position
 	member:string Side(uint ActorID)
 	{
 		variable float Side
-		variable float Heading=${Actor[${ActorID}].Heading}
-		variable float HeadingTo=${Actor[${ActorID}].HeadingTo}
+		variable float Heading=${Actor[id,${ActorID}].Heading}
+		variable float HeadingTo=${Actor[id,${ActorID}].HeadingTo}
 		Side:Set[${Math.Calc[${Math.Cos[${Heading}+90]} * ${Math.Cos[${HeadingTo}]} + ${Math.Sin[${Heading}+90]} * ${Math.Sin[${HeadingTo}]}]}]
 		if ${Side}>0
 			return Left
@@ -258,18 +270,18 @@ objectdef EQ2Position
 	; 0 to 180 (or -0 to -180 if you wish to get a point on the opposite side.)
 	member:point3f PointAtAngle(uint ActorID, float Angle, float Distance = 5)
 	{
-		variable float Heading=${Actor[${ActorID}].Heading}
-		Returning.Y:Set[${Math.Calc[${Actor[${ActorID}].Y}+2]}]
+		variable float Heading=${Actor[id,${ActorID}].Heading}
+		Returning.Y:Set[${Math.Calc[${Actor[id,${ActorID}].Y}+2]}]
 
 		if ${This.Side[${ActorID}].Equal[Right]}
 		{
 			Angle:Set[-(${Angle})]
 		}
 		;Distance:Set[${Math.Calc[(${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale})*.8]}]
-		Distance:Set[${Math.Calc[(${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale})]}]
+		Distance:Set[${Math.Calc[(${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale})]}]
 
-		Returning.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].X}]
-		Returning.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[${ActorID}].Z}]
+		Returning.X:Set[-${Distance} * ${Math.Sin[-(${Heading}+(${Angle}))]} + ${Actor[id,${ActorID}].X}]
+		Returning.Z:Set[${Distance} * ${Math.Cos[-(${Heading}+(${Angle}))]} + ${Actor[id,${ActorID}].Z}]
 		return
 	}
 	
@@ -280,7 +292,7 @@ objectdef EQ2Position
 	{
 		variable point3f Velocity
 
-		Velocity:Set[${Actor[${ActorID}].Velocity}]
+		Velocity:Set[${Actor[id,${ActorID}].Velocity}]
 
 		Returning:Set[${This.PointAtAngle[${ActorID},${Angle},${Distance}]}]
 
@@ -292,16 +304,16 @@ objectdef EQ2Position
 
 	member:float GetBaseMaxRange(uint ActorID)
 	{
-		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale}]}
+		return ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale}]}
 	}
 
 	member:float GetMeleeMaxRange(uint ActorID)
 	{
-		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + 2]}
+		return ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + 2]}
 	}
 	member:float GetBaseMinRange(uint ActorID)
 	{
-		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale}]}
+		return ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale}]}
 	}
 	member:bool GetAbilityMaxRange(uint ActorID, string abilString)
 	{
@@ -353,15 +365,22 @@ objectdef EQ2Position
 			AbilityRange:Set[${SpellOb.MaxRange[${AbilityID}]}]
 			AbilityMinRange:Set[${SpellOb.MinRange[${AbilityID}]}]
 		}
+
+		if ${SpellOb.SpellBookType[${AbilityID}]}==0 && ${SpellOb.EffectRadius[${AbilityID}]}==0
+			AbilityRange:Inc[${Int[${UIElement[${TEBoxSetupSpellRangeExtenderID}].Text}]}]
+
 		;echo Is the box checked?? ${UIElement[${ChkBoxIgnoreRangeOnCASID}].Checked}
-		if ${UIElement[${ChkBoxIgnoreRangeOnCASID}].Checked} && ${SpellOb.TargetType[${AbilityID}]}!=2 && ${Actor[${ActorID}].Type.NotEqual[PC]}
+		if ${UIElement[${ChkBoxIgnoreRangeOnCASID}].Checked} && ${SpellOb.TargetType[${AbilityID}]}!=2 && ${Actor[id,${ActorID}].Type.NotEqual[PC]}
 		{
-			;echo Dist < ColR*ColS +AbilRange: ${Actor[${ActorID}].Distance} < ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${AbilityRange}]} -- Each one: ${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${AbilityRange}]
+			;echo Dist < ColR*ColS +AbilRange: ${Actor[id,${ActorID}].Distance} < ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + ${AbilityRange}]} -- Each one: ${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + ${AbilityRange}]
 			return TRUE
 		}
 
+		;if ${DebugCasting} && ${AbilityID}!=4078480875
+		;	echo ${Time} 	${abilString} ( ${SpellOb.Name[${AbilityID}]} ) 	if ${Actor[id,${ActorID}].Distance} < ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + ${AbilityRange}]} && (${AbilityMinRange}==0 || ${Actor[id,${ActorID}].Distance} > ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + ${AbilityMinRange}]} )
+
 		;Could make a small extender for range. Either use percentage like above, or a raw #
-		if ${Actor[${ActorID}].Distance} < ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${AbilityRange}]} && (${AbilityMinRange}==0 || ${Actor[${ActorID}].Distance} > ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${AbilityMinRange}]} )
+		if ${Actor[id,${ActorID}].Distance} < ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + ${AbilityRange}]} && (${AbilityMinRange}==0 || ${Actor[id,${ActorID}].Distance} > ${Math.Calc[${Actor[id,${ActorID}].CollisionRadius} * ${Actor[id,${ActorID}].CollisionScale} + ${AbilityMinRange}]} )
 			return TRUE
 		else
 		{

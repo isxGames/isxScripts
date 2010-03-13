@@ -1,4 +1,5 @@
-/** ***********Version: 1.00*********************
+/** ***********Version: 1.01*********************
+* 	***Created by Kannkor (HotShot)***	*
 * Forwards tells via uplink 			*
 * Pops up a new window and displays tells from	*
 *	all uplink sessions			*
@@ -7,13 +8,18 @@
 *		the uplink			*
 *	-R -- Means when tells come through the	*
 *		uplink, displays them on screen	*
+*	-N -- Means noise when tell received	*
 *						*
-* 	***Created by Kannkor (HotShot)***	*
+*	Version 1.01 - Added sound option	*
+*		- Sound file itself came from	*
+*			eq2afkalarm		*
 ********************************************* **/
 
 variable(global) int ConsoleTellWindow
+variable string ChatAlarm="${LavishScript.HomeDirectory}/scripts/Eq2OgreCommon/Sounds/chatalarm.wav"
 variable bool BroadcastTells=FALSE
 variable bool ReceiveBroadcastTells=FALSE
+variable bool PlayNoiseOnReceivedBroadCast=FALSE
 function main(string Args)
 {
 	if ${Args.Length}==0
@@ -21,6 +27,7 @@ function main(string Args)
 		echo Usage: Run EQ2OgreTellWindow -b-r
 		echo -B -- Means broadcast all tells through the uplink
 		echo -R -- Means when tells come through the uplink, displays them on screen
+		echo -N -- Means noise when tell received
 		Script:End
 	}
 	if ${Args.Find[-b](exists)}
@@ -33,6 +40,12 @@ function main(string Args)
 	{
 		echo EQ2OgreTellWindow: Displaying tells broadcast from the uplink
 		ReceiveBroadcastTells:Set[TRUE]
+	}
+
+	if ${Args.Find[-n](exists)}
+	{
+		echo EQ2OgreTellWindow: Playing a noise when tells received
+		PlayNoiseOnReceivedBroadCast:Set[TRUE]
 	}
 
 	if !${BroadcastTells} && !${ReceiveBroadcastTells}
@@ -58,7 +71,6 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 }
 function TellBroadcastReceived(string Message)
 {
-;echo Message: ${Message}
 	if ${ReceiveBroadcastTells}
 	{
 		if !${UIElement[eq2ogretellwindowxml](exists)}
@@ -82,6 +94,10 @@ function TellBroadcastReceived(string Message)
 			return
 		}
 		UIElement[${ConsoleTellWindow}]:Echo["${Message}"]
+		if ${PlayNoiseOnReceivedBroadCast}
+		{
+			play "${ChatAlarm}"
+		}
 	}
 }
 atom atexit()
