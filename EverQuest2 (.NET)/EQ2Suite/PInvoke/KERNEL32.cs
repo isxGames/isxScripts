@@ -110,6 +110,7 @@ namespace PInvoke
 			FlagNoBuffering = 0x20000000,
 			FlagOverlapped = 0x40000000,
 			FlagWriteThrough = 0x80000000,
+			Failure = 0xFFFFFFFF,
 		}
 
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -124,6 +125,9 @@ namespace PInvoke
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		public static extern bool GetFileSizeEx(IntPtr hFile, ref long lpFileSize);
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern FileFlagsAndAttributes GetFileAttributes(string lpFileName);
 
 		public enum FilePointerMoveMethod : uint
 		{
@@ -191,6 +195,18 @@ namespace PInvoke
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool DeleteFile(string lpFileName);
+
+		[StructLayout(LayoutKind.Sequential)]
+		public class SECURITY_ATTRIBUTES
+		{
+			public int nLength;
+			public IntPtr lpSecurityDescriptor;
+			public int bInheritHandle;
+		}
+
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool CreateDirectory(string lpPathName, SECURITY_ATTRIBUTES lpSecurityAttributes);
 
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
