@@ -119,7 +119,7 @@ variable bool PullOnlySoloMobs
 variable bool AutoLoot
 variable bool LootCorpses
 variable bool LootAll
-variable uint KillTarget
+variable(global) uint KillTarget
 variable string Follow
 variable string PreAction[40]
 variable int PreMobHealth[40,2]
