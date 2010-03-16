@@ -2614,7 +2614,11 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 		}
 		;verify distance and return
 		if ${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange}
+		{	
+			if ${TID}
+				face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 			return ${Return}
+		}
 	}
 
 	;
@@ -2711,6 +2715,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	press -release ${backward}
 	press -release ${straferight}
 	press -release ${strafeleft}
+	face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 }
 
 function CheckQuadrant(uint TID, int quadrant)
