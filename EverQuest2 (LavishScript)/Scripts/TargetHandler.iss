@@ -1,21 +1,35 @@
+#include EQ2Common/Debug.iss
+
 function main()
 {
 	declare ltarget uint local
-	declare ltank uint local
+	declare ltankpc unit local
 	do
 	{
 		ltarget:Set[${Script[EQ2Bot].Variable[KillTarget]}]
-		ltankpc:Set[${Script[EQ2Bot].Variable[MainTankPC]}]
+		ltankpc:Set[${Script[EQ2Bot].Variable[MainTankID]}]
 		
-		if !${ltarget} && ${Actor[pc,${ltankpc}].InCombatMode} && (${Actor[pc,${ltankpc}].Target(exists)} && ${Actor[pc,${ltankpc}].Target}!=${Actor[pc,${ltankpc}].ID})
+		
+		if !${ltarget} && ${Actor[pc,${ltankpc}].InCombatMode} && (${Actor[${ltankpc}].Target(exists)} && ${Actor[${ltankpc}].Target.ID}!=${ltankpc})
 		{
-			echo targetcheck - no killtarget and tank is targeting something
-			${Script[EQ2Bot].Variable[KillTarget]:Set[${Actor[pc,${ltankpc}].Target.ID}]
+			Debug:Echo[targetcheck - no killtarget and tank is targeting something 1]
+			${Script[EQ2Bot].Variable[KillTarget]:Set[${Actor[${ltankpc}].Target.ID}]
 		}
-		elseif ${Actor[pc,${ltarget}].Health}<=0
+		elseif ${Actor[${ltarget}](exists)} && ${Actor[${ltarget}].Health}<=0
 		{
-			${Script[EQ2Bot].Variable[KillTarget]:Set[${Actor[pc,${ltankpc}].Target.ID}]
+			Debug:Echo[targetcheck - no killtarget and tank is targeting something 2]
+			${Script[EQ2Bot].Variable[KillTarget]:Set[${Actor[${ltankpc}].Target.ID}]
 		}
+		elseif !${Actor[pc,${ltarget}](exists)}
+		{
+			if ${Actor[pc,${ltankpc}].Target(exists)} && ${Actor[${ltankpc}].Target.ID}!=${ltankpc}
+			{
+				Debug:Echo[targetcheck - target doesn't exist and setting it to mt's target]
+				${Script[EQ2Bot].Variable[KillTarget]:Set[${Actor[${ltankpc}].Target.ID}]
+			}
+		}
+		
+		;echo waiting some
 		wait 5
 	}
 	while ${Script[EQ2Bot](exists)}
