@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace EQ2SuiteLib
 {
@@ -64,9 +65,9 @@ namespace EQ2SuiteLib
 			}
 		}
 
-		public class ColumnSortDesc : SimpleColumnDesc
+		public class SortedColumnDesc : SimpleColumnDesc
 		{
-			public ColumnSortDesc(string strTag, object objContent, bool bSortAscending)
+			public SortedColumnDesc(string strTag, object objContent, bool bSortAscending)
 				: base(strTag, objContent)
 			{
 				m_bSortAscending = bSortAscending;
@@ -95,10 +96,10 @@ namespace EQ2SuiteLib
 		protected PersistentDetailedListView.ColumnLayout m_SavedLayout = null;
 		protected Dictionary<string, TaggedGridViewColumn> m_ColumnDictionary = null;
 
-		protected List<SimpleColumnDesc> m_aShowColumnSourceList = new List<SimpleColumnDesc>();
-		protected List<SimpleColumnDesc> m_aShowColumnDestinationList = new List<SimpleColumnDesc>();
-		protected List<SimpleColumnDesc> m_aSortColumnSourceList = new List<SimpleColumnDesc>();
-		protected List<ColumnSortDesc> m_aSortColumnDestinationList = new List<ColumnSortDesc>();
+		protected BindingList<SimpleColumnDesc> m_aShowColumnSourceList = new BindingList<SimpleColumnDesc>();
+		protected BindingList<SimpleColumnDesc> m_aShowColumnDestinationList = new BindingList<SimpleColumnDesc>();
+		protected BindingList<SimpleColumnDesc> m_aSortColumnSourceList = new BindingList<SimpleColumnDesc>();
+		protected BindingList<SortedColumnDesc> m_aSortColumnDestinationList = new BindingList<SortedColumnDesc>();
 
 		/***************************************************************************/
 		public PersistentDetailedListView_ColumnSelectionWindow(
@@ -152,7 +153,7 @@ namespace EQ2SuiteLib
 				if (ThisDesc == null)
 					m_aSortColumnSourceList.Add(new SimpleColumnDesc(ThisPair.Key, objContent));
 				else
-					m_aSortColumnDestinationList.Add(new ColumnSortDesc(ThisDesc.m_strTag, objContent, ThisDesc.m_bSortAscending));
+					m_aSortColumnDestinationList.Add(new SortedColumnDesc(ThisDesc.m_strTag, objContent, ThisDesc.m_bSortAscending));
 			}
 
 			/// Finalize the bindings.
@@ -174,7 +175,6 @@ namespace EQ2SuiteLib
 					m_SavedLayout.m_astrColumnDisplayOrderList.Add(ThisDesc.Tag);
 */
 			ModelessDialogResult = true;
-			Close();
 			return;
 		}
 
@@ -182,7 +182,6 @@ namespace EQ2SuiteLib
 		private void OnCancelButtonClick(object sender, RoutedEventArgs e)
 		{
 			ModelessDialogResult = false;
-			Close();
 			return;
 		}
 
@@ -191,13 +190,104 @@ namespace EQ2SuiteLib
 		{
 			try
 			{
+				m_SavedLayout.m_astrColumnDisplayOrderList.Clear();
+				foreach (SimpleColumnDesc ThisDesc in m_aShowColumnDestinationList)
+				{
+					m_SavedLayout.m_astrColumnDisplayOrderList.Add(ThisDesc.Tag);
+				}
+
+
+				//m_SavedLayout.m_aColumnSortOrderList.Add();
+
 				base.OnClosed(e);
 			}
-			catch
+			catch (Exception ex)
 			{
 			}
 
 			return;
+		}
+
+		/***************************************************************************/
+		protected override void EnableDisableControls()
+		{
+			base.EnableDisableControls();
+
+			/// Shorthand aliases.
+			int iSelectedIndex = -1;
+			int iItemCount = -1;
+
+			iSelectedIndex = m_wndViewOrderSourceList.SelectedIndex;
+			m_wndViewOrderAddButton.IsEnabled = (iSelectedIndex != -1);
+
+			iSelectedIndex = m_wndViewOrderDestinationList.SelectedIndex;
+			iItemCount = m_wndViewOrderDestinationList.Items.Count;
+			m_wndViewOrderRemoveButton.IsEnabled = (iSelectedIndex != -1) && (iItemCount > 1);
+			m_wndViewOrderMoveUpButton.IsEnabled = (iSelectedIndex > 0);
+			m_wndViewOrderMoveDownButton.IsEnabled = (0 <= iSelectedIndex) && (iSelectedIndex < (iItemCount - 1));
+
+			return;
+		}
+
+		private void m_wndViewOrderSourceList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			EnableDisableControls();
+			return;
+		}
+
+		private void m_wndViewOrderDestinationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			EnableDisableControls();
+			return;
+		}
+
+		private void m_wndSortSourceList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			EnableDisableControls();
+			return;
+		}
+
+		private void m_wndSortDestinationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			EnableDisableControls();
+			return;
+		}
+
+		private void m_wndViewOrderAddButton_Click(object sender, RoutedEventArgs e)
+		{
+			SimpleColumnDesc ThisListItem = m_aShowColumnSourceList[m_wndViewOrderSourceList.SelectedIndex];
+			m_aShowColumnSourceList.RemoveAt(m_wndViewOrderSourceList.SelectedIndex);
+			m_aShowColumnDestinationList.Add(ThisListItem);
+			return;
+		}
+
+		private void m_wndViewOrderRemoveButton_Click(object sender, RoutedEventArgs e)
+		{
+			SimpleColumnDesc ThisListItem = m_aShowColumnDestinationList[m_wndViewOrderDestinationList.SelectedIndex];
+			m_aShowColumnDestinationList.RemoveAt(m_wndViewOrderDestinationList.SelectedIndex);
+			m_aShowColumnSourceList.Add(ThisListItem);
+			return;
+		}
+
+		private void m_wndViewOrderMoveUpButton_Click(object sender, RoutedEventArgs e)
+		{
+			int iSelectedIndex = m_wndViewOrderDestinationList.SelectedIndex;
+			SimpleColumnDesc ThisListItem = m_aShowColumnDestinationList[iSelectedIndex];
+			m_aShowColumnDestinationList.RemoveAt(iSelectedIndex);
+			m_aShowColumnDestinationList.Insert(iSelectedIndex - 1, ThisListItem);
+			m_wndViewOrderDestinationList.SelectedIndex = iSelectedIndex - 1;
+			m_wndViewOrderDestinationList.Focus(); /// Doesn't focus the item the way a mouse click does, though.
+			return;
+		}
+
+		private void m_wndViewOrderMoveDownButton_Click(object sender, RoutedEventArgs e)
+		{
+			int iSelectedIndex = m_wndViewOrderDestinationList.SelectedIndex;
+			SimpleColumnDesc ThisListItem = m_aShowColumnDestinationList[iSelectedIndex];
+			m_aShowColumnDestinationList.RemoveAt(iSelectedIndex);
+			m_aShowColumnDestinationList.Insert(iSelectedIndex + 1, ThisListItem);
+			m_wndViewOrderDestinationList.SelectedIndex = iSelectedIndex + 1;
+			m_wndViewOrderDestinationList.Focus(); /// Doesn't focus the item the way a mouse click does, though.
 		}
 	}
 }

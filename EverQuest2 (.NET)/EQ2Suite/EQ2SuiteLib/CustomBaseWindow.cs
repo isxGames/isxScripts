@@ -59,7 +59,6 @@ namespace EQ2SuiteLib
 				}
 
 				s_fUniversalScale = value;
-
 				return;
 			}
 		}
@@ -138,6 +137,7 @@ namespace EQ2SuiteLib
 			set
 			{
 				m_bModelessDialogResult = value;
+				Close(); // This is what Window.DialogResult does.
 				return;
 			}
 		}
@@ -238,9 +238,10 @@ namespace EQ2SuiteLib
 				USER32.SetWindowPosFlags.FrameChanged;
 			USER32.SetWindowPos(m_hWin32Window, IntPtr.Zero, 0, 0, 0, 0, eSetWindowPosFlags);
 
+			EnableDisableControls();
+
 			if (s_fUniversalScale != null)
 				Scale = s_fUniversalScale.Value;
-
 			return;
 		}
 
@@ -266,12 +267,20 @@ namespace EQ2SuiteLib
 		{
 			base.OnContentRendered(e);
 
+			/// This event is vital for knowing when adorner layers get created.
 			ScanChildControl(this,
 				delegate(DependencyObject objThis)
 				{
 					if (objThis is IWindowEventSpy)
 						(objThis as IWindowEventSpy).OnContentRendered(e);
 				});
+			return;
+		}
+
+		/************************************************************************************/
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			base.OnClosing(e);
 			return;
 		}
 
@@ -358,14 +367,14 @@ namespace EQ2SuiteLib
 		/************************************************************************************/
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (m_bCloseOnEscape && (e.Key == Key.Escape))
+			base.OnKeyDown(e);
+
+			if ((e.Key == Key.Escape) && m_bCloseOnEscape)
 			{
 				e.Handled = true;
 				ModelessDialogResult = false;
-				Close();
 			}
 
-			base.OnKeyDown(e);
 			return;
 		}
 
@@ -390,6 +399,12 @@ namespace EQ2SuiteLib
 			eExtendedStyle &= ~(eRemovedStyles);
 
 			USER32.SetWindowLong(m_hWin32Window, USER32.GWL_EXSTYLE, (int)eExtendedStyle);
+			return;
+		}
+
+		/***************************************************************************/
+		protected virtual void EnableDisableControls()
+		{
 			return;
 		}
 	}

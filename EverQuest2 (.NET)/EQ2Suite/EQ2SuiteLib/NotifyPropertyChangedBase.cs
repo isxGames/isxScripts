@@ -15,10 +15,10 @@ namespace EQ2SuiteLib
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		/***************************************************************************/
-		protected void NotifyPropertyChanged(string info)
+		protected void NotifyPropertyChanged(string strPropertyName)
 		{
 			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(info));
+				PropertyChanged(this, new PropertyChangedEventArgs(strPropertyName));
 			return;
 		}
 	}
