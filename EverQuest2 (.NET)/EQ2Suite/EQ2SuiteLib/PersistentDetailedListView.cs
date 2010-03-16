@@ -31,12 +31,26 @@ namespace EQ2SuiteLib
 			private readonly static Geometry s_AscGeometry = Geometry.Parse("M 0,5 L 10,5 L 5,0 Z");
 			public int m_iRank = 0;
 			public bool m_bSortAscending = false;
+			protected FormattedText m_RankedSortText = null;
 
 			public SortDirectionAdorner(UIElement ThisElement, int iRank, bool bSortAscending)
 				: base(ThisElement)
 			{
 				m_iRank = iRank;
 				m_bSortAscending = bSortAscending;
+
+				if (m_iRank > 0)
+				{
+					/// Allocating this each OnRender() hurts performance.
+					m_RankedSortText = new FormattedText(
+							(m_iRank + 1).ToString(),
+							CultureInfo.CurrentCulture,
+							FlowDirection.LeftToRight,
+							new Typeface("Arial"),
+							10,
+							Brushes.Gray);
+				}
+
 				return;
 			}
 
@@ -60,21 +74,10 @@ namespace EQ2SuiteLib
 				{
 					ThisContext.PushTransform(new TranslateTransform(AdornedElement.RenderSize.Width - 20, (AdornedElement.RenderSize.Height - 5) / 2));
 					ThisContext.DrawGeometry(Brushes.Gray, null, m_bSortAscending ? s_AscGeometry : s_DescGeometry);
-
-					ThisContext.DrawText(
-						new FormattedText(
-							(m_iRank + 1).ToString(),
-							CultureInfo.CurrentCulture,
-							FlowDirection.LeftToRight,
-							new Typeface("Arial"),
-							10,
-							Brushes.Gray),
-						new Point(10, -5));
-
+					ThisContext.DrawText(m_RankedSortText, new Point(10, -5));
 					ThisContext.Pop();
 				}
 
-				Console.WriteLine("SortDirectionAdorner.OnRender(): m_iRank {0} m_bSortAscending {1}", m_iRank, m_bSortAscending);
 				return;
 			}
 		}
@@ -458,6 +461,7 @@ namespace EQ2SuiteLib
 			for (int iIndex = 0; iIndex < m_SavedLayout.m_astrColumnDisplayOrderList.Count; iIndex++)
 				m_wndGridView.Columns.Add(m_ColumnDictionary[m_SavedLayout.m_astrColumnDisplayOrderList[iIndex]]);
 
+			/// Note: the adorner layer is gone now. Thanks, WPF.
 			return;
 		}
 
@@ -477,18 +481,24 @@ namespace EQ2SuiteLib
 			{
 				TaggedGridViewColumn ThisColumn = m_ColumnDictionary[ThisPair.Key];
 				GridViewColumnHeader ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
-				AdornerLayer.GetAdornerLayer(ThisHeader).Remove(ThisPair.Value);
+
+				AdornerLayer ThisLayer = AdornerLayer.GetAdornerLayer(ThisHeader);
+				if (ThisLayer != null)
+					ThisLayer.Remove(ThisPair.Value);
 			}
 
 			m_LastHeaderAdornerDictionary.Clear();
 
+			/// Add new adorners.
 			foreach (ColumnLayout.SortDesc ThisDesc in m_SavedLayout.m_aColumnSortOrderList)
 			{
 				TaggedGridViewColumn ThisColumn = m_ColumnDictionary[ThisDesc.m_strTag];
 				GridViewColumnHeader ThisHeader = (ThisColumn.Header as GridViewColumnHeader);
 
 				SortDirectionAdorner NewAdorner = new SortDirectionAdorner(ThisHeader, Items.SortDescriptions.Count, ThisDesc.m_bSortAscending);
-				AdornerLayer.GetAdornerLayer(ThisHeader).Add(NewAdorner);
+				AdornerLayer ThisLayer = AdornerLayer.GetAdornerLayer(ThisHeader);
+				if (ThisLayer != null)
+					ThisLayer.Add(NewAdorner);
 				m_LastHeaderAdornerDictionary.Add(ThisColumn.Tag, NewAdorner);
 
 				string strSortProperty = (ThisColumn.DisplayMemberBinding as Binding).Path.Path;

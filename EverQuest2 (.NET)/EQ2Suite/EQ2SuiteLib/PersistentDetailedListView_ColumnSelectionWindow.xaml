@@ -37,26 +37,28 @@
 					<TextBlock Grid.Column="0" Grid.Row="1">All Possible Columns</TextBlock>
 					<TextBlock Grid.Column="2" Grid.Row="1">Final Visible Order</TextBlock>
 
-					<ListBox Grid.Column="0" Grid.Row="2" Name="m_wndViewOrderSourceList" DisplayMemberPath="Content">
+					<ListBox Grid.Column="0" Grid.Row="2" Name="m_wndViewOrderSourceList" DisplayMemberPath="Content"
+								SelectionChanged="m_wndViewOrderSourceList_SelectionChanged">
 					</ListBox>
 					<StackPanel Grid.Column="1" Grid.Row="2" Margin="5">
-						<Button Name="m_wndViewOrderAddButton">
+						<Button Name="m_wndViewOrderAddButton" Click="m_wndViewOrderAddButton_Click">
 							<TextBlock>Add <TextBlock FontFamily="Symbol">®</TextBlock></TextBlock>
 						</Button>
 						<Rectangle Height="5" />
-						<Button Name="m_wndViewOrderRemoveButton">
+						<Button Name="m_wndViewOrderRemoveButton" Click="m_wndViewOrderRemoveButton_Click">
 							<TextBlock><TextBlock FontFamily="Symbol">¬</TextBlock> Remove</TextBlock>
 						</Button>
 						<Rectangle Height="20" />
-						<Button>
+						<Button Name="m_wndViewOrderMoveUpButton" Click="m_wndViewOrderMoveUpButton_Click">
 							<TextBlock>Move Up <TextBlock FontFamily="Symbol">­</TextBlock></TextBlock>
 						</Button>
 						<Rectangle Height="5" />
-						<Button>
+						<Button Name="m_wndViewOrderMoveDownButton" Click="m_wndViewOrderMoveDownButton_Click">
 							<TextBlock>Move Down <TextBlock FontFamily="Symbol">¯</TextBlock></TextBlock>
 						</Button>
 					</StackPanel>
-					<ListBox Grid.Column="2" Grid.Row="2" Name="m_wndViewOrderDestinationList" DisplayMemberPath="Content">
+					<ListBox Grid.Column="2" Grid.Row="2" Name="m_wndViewOrderDestinationList" DisplayMemberPath="Content"
+								SelectionChanged="m_wndViewOrderDestinationList_SelectionChanged">
 					</ListBox>
 				</Grid>
 			</TabItem>
@@ -80,7 +82,8 @@
 					<TextBlock Grid.Column="0" Grid.Row="1">All Possible Columns</TextBlock>
 					<TextBlock Grid.Column="2" Grid.Row="1">Final Sort Order</TextBlock>
 
-					<ListBox Grid.Column="0" Grid.Row="2" Name="m_wndSortSourceList" DisplayMemberPath="Content">
+					<ListBox Grid.Column="0" Grid.Row="2" Name="m_wndSortSourceList" DisplayMemberPath="Content"
+								SelectionChanged="m_wndSortSourceList_SelectionChanged">
 					</ListBox>
 					<StackPanel Grid.Column="1" Grid.Row="2" Margin="5">
 						<Button Name="m_wndSortOrderAddAscendingButton">
@@ -103,7 +106,8 @@
 							<TextBlock>Move Down <TextBlock FontFamily="Symbol">¯</TextBlock></TextBlock>
 						</Button>
 					</StackPanel>
-					<ListBox Grid.Column="2" Grid.Row="2" Name="m_wndSortDestinationList" DisplayMemberPath="Content">
+					<ListBox Grid.Column="2" Grid.Row="2" Name="m_wndSortDestinationList" DisplayMemberPath="Content"
+								SelectionChanged="m_wndSortDestinationList_SelectionChanged">
 					</ListBox>
 				</Grid>
 			</TabItem>
