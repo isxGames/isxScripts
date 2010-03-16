@@ -1,7 +1,10 @@
-#include EQ2Common/Debug.iss
+#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/Debug.iss"
 
 function main()
 {
+	;; Comment this to disable debug echos throughout
+	Debug:Enable
+
 	declare ltarget uint local
 	declare ltankID unit local
 	do
@@ -9,16 +12,18 @@ function main()
 		ltarget:Set[${Script[EQ2Bot].Variable[KillTarget]}]
 		ltankID:Set[${Script[EQ2Bot].Variable[MainTankID]}]
 		
-		
 		if !${ltarget} && ${Actor[${ltankID}].InCombatMode} && (${Actor[${ltankID}].Target(exists)} && ${Actor[${ltankID}].Target.ID} != ${ltankID})
 		{
 			Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something 1"]
 			Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltankID}].Target.ID}]
 		}
-		elseif ${Actor[${ltarget}](exists)} && ${Actor[${ltarget}].Health}<=0
+		elseif ${Actor[${ltarget}](exists)}
 		{
-			Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something 2"]
-			Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltankID}].Target.ID}]
+			if (${Actor[${ltarget}].Health}<=0)
+			{
+				Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something 2"]
+				Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltankID}].Target.ID}]
+			}
 		}
 		elseif !${Actor[${ltarget}](exists)}
 		{
@@ -30,7 +35,7 @@ function main()
 		}
 		
 		;echo waiting some
-		wait 2
+		wait 4
 	}
 	while ${Script[EQ2Bot](exists)}
 
