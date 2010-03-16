@@ -95,7 +95,6 @@ function Class_Declaration()
 	declare UseBallLightning bool script 0
 	declare UseWrathOfNature bool script 0
 	declare UseMythicalOn string script
-	declare HaveAbility_TunaresGrace bool script FALSE
 
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
@@ -148,10 +147,6 @@ function Class_Declaration()
 	NoEQ2BotStance:Set[TRUE]
 
 	Event[EQ2_FinishedZoning]:AttachAtom[Fury_FinishedZoning]
-	
-	;;; Optimizations to avoid having to check if an ability exists all of the time
-	if (${Me.Ability[Tunare's Grace](exists)})
-		HaveAbility_TunaresGrace:Set[TRUE]	
 }
 
 function Pulse()
@@ -937,9 +932,9 @@ function Combat_Routine(int xAction)
 		;Debug:Echo["Checking Energy Vortex..."]
 		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
 		{
-			;Debug:Echo["SpellType[385]: ${SpellType[385]}"]
+			;Debug:Echo["SpellType[395]: ${SpellType[385]}"]
 			;Debug:Echo["Energy Vortex -- Target is not solo...check"]
-			if ${Me.Ability[${SpellType[385]}].IsReady}
+			if ${Me.Ability[${SpellType[395]}].IsReady}
 			{
 				;Debug:Echo["Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"]
 				switch ${Actor[${KillTarget}].ConColor}
@@ -951,14 +946,14 @@ function Combat_Routine(int xAction)
 					case Blue
 						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
 						{
-							Me.Ability[${SpellType[385]}]:Use
+							Me.Ability[${SpellType[395]}]:Use
 							wait 2
 							break
 						}
 					default
 						if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
 						{
-							Me.Ability[${SpellType[385]}]:Use
+							Me.Ability[${SpellType[395]}]:Use
 							wait 2
 						}
 						break
@@ -1737,7 +1732,7 @@ function CureGroupMember(int gMember)
 function CureMe()
 {
 	
-	; Check to see if Healer needs cured of the curse and cure it first.
+		; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 	
@@ -1750,8 +1745,8 @@ function CureMe()
 	if !${Me.ToActor.CanTurn} || !${Me.ToActor.IsRooted}
 		call CastSpellRange 289
 
-	;if ${Me.Cursed}
-	;	call CastSpellRange 211 0 0 0 ${Me.ID}
+	if ${Me.Cursed}
+		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<4
 	{
@@ -1765,11 +1760,6 @@ function CureMe()
 
 function CheckCures(int InCombat=1)
 {
-	declare temphl int local 1
-	declare grpcure int local 0
-	declare Affcnt int local 0
-	declare CureTarget string local	
-	
   if ${InCombat}
   {
     if !${EpicMode}
@@ -1778,7 +1768,7 @@ function CheckCures(int InCombat=1)
             return
     }
   }
-  
+
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
@@ -1808,8 +1798,14 @@ function CheckCures(int InCombat=1)
 			}
 		}
 		DoCallCheckPosition:Set[FALSE]
-	}  
-  
+	}
+
+	declare temphl int local 1
+	declare grpcure int local 0
+	declare Affcnt int local 0
+	declare CureTarget string local
+	
+	
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
@@ -1833,37 +1829,9 @@ function CheckCures(int InCombat=1)
 					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
 				}
 			}
-	}  
-  
-  if (${HaveAbility_TunaresGrace})
-  {
-  	if ${Me.Ability[${SpellType[385]}].IsReady}
-  	{
-	  		if ${Me.IsAfflicted}	
-	  			grpcure:Inc
-  		
-				do
-				{
-					;make sure they in zone and in range
-					if (${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance} <= 25)
-							grpcure:Inc
-				}
-				while ${temphl:Inc} <= ${Me.GroupCount}  	
-  		
-  			if ${grpcure} > 1
-  			{
-  				;echo "DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"
-  				call CastSpellRange 385 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
-  				return
-  			}
-  			else
-  				return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
-  	}
-  }
-  temphl:Set[1]
-  grpcure:Set[0]
-  
+	}
 
+	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount} > 1
 	{
 		;check ourselves
@@ -1889,30 +1857,30 @@ function CheckCures(int InCombat=1)
 
 		;Debug:Echo["CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
 
-    if ${EpicMode}
-    {
-  		if ${grpcure} > 2
-  		{
-  			call CastSpellRange 220
-  			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-  			wait 5
-  			call FindAfflicted
-  			if ${Return} <= 0
-  			    return
-  		}
-    }
-    else
-    {
-  		if ${grpcure} > 1
-  		{
-  			call CastSpellRange 220
-  			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-  			wait 5
-  			call FindAfflicted
-  			if ${Return} <= 0
-  			    return
-  		}
-		}
+        if ${EpicMode}
+        {
+    		if ${grpcure} > 2
+    		{
+    			call CastSpellRange 220
+    			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
+    			wait 5
+    			call FindAfflicted
+    			if ${Return} <= 0
+    			    return
+    		}
+        }
+        else
+        {
+    		if ${grpcure} > 1
+    		{
+    			call CastSpellRange 220
+    			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
+    			wait 5
+    			call FindAfflicted
+    			if ${Return} <= 0
+    			    return
+    		}
+    	}
 	}
 
 	;Cure Ourselves first
