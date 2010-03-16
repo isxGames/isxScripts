@@ -220,64 +220,62 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Bow_Attack]
-	SpellRange[1,1]:Set[250]
+	Action[1]:Set[AoE2]
+	SpellRange[1,1]:Set[91]
 
-	Action[2]:Set[Combat_Buff]
-	SpellRange[2,1]:Set[155]
+	Action[2]:Set[Nuke2]
+	SpellRange[2,1]:Set[61]
 
-	Action[3]:Set[Nuke2]
-	SpellRange[3,1]:Set[61]
+	Action[3]:Set[Nuke1]
+	SpellRange[3,1]:Set[60]
 
-	Action[4]:Set[AoE1]
-	SpellRange[4,1]:Set[90]
+	Action[4]:Set[Nuke2]
+	SpellRange[4,1]:Set[62]
 
-	Action[5]:Set[AoE2]
-	SpellRange[5,1]:Set[91]
+	Action[5]:Set[AARhythm_Blade]
+	SpellRange[5,1]:Set[397]
 
-	Action[6]:Set[AoE3]
-	SpellRange[6,1]:Set[92]
+	Action[6]:Set[Melee_Attack1]
+	SpellRange[6,1]:Set[151]
 
 	Action[7]:Set[Mastery]
 	SpellRange[7,1]:Set[360]
 	SpellRange[7,2]:Set[379]
 
-	Action[8]:Set[Nuke1]
-	SpellRange[8,1]:Set[60]
+	Action[8]:Set[Stealth_Attack]
+	SpellRange[8,1]:Set[391]
+	SpellRange[8,2]:Set[130]
 
-	Action[9]:Set[Melee_Attack1]
-	SpellRange[9,1]:Set[151]
+	Action[9]:Set[Melee_Attack2]
+	SpellRange[9,1]:Set[152]
 
 	Action[10]:Set[Flank_Attack]
 	SpellRange[10,1]:Set[110]
 
-	Action[11]:Set[Stealth_Attack]
-	SpellRange[11,1]:Set[391]
-	SpellRange[11,2]:Set[130]
+	Action[11]:Set[AoE3]
+	SpellRange[11,1]:Set[92]
 
-	Action[12]:Set[Melee_Attack2]
-	SpellRange[12,1]:Set[152]
+	Action[12]:Set[Evasive]
+	SpellRange[12,1]:Set[401]
 
-	Action[13]:Set[Evasive]
-	SpellRange[13,1]:Set[401]
+	Action[13]:Set[Bow_Attack]
+	SpellRange[13,1]:Set[250]
 
-	Action[14]:Set[Nuke2]
-	SpellRange[14,1]:Set[61]
+	Action[14]:Set[Stun]
+	SpellRange[14,1]:Set[190]
 
-	Action[15]:Set[AARhythm_Blade]
-	SpellRange[15,1]:Set[397]
+	Action[15]:Set[Debuff2]
+	SpellRange[15,1]:Set[50]
 
-	Action[16]:Set[Stun]
-	SpellRange[16,1]:Set[190]
+	Action[16]:Set[AAHarmonizing_Shot]
+	SpellRange[16,1]:Set[386]
 
-	Action[17]:Set[Debuff2]
-	SpellRange[17,1]:Set[50]
+	Action[17]:Set[AAMessenger]
+	SpellRange[17,1]:Set[505]
+	
+	Action[18]:Set[AoE1]
+	SpellRange[18,1]:Set[90]
 
-	Action[18]:Set[AAHarmonizing_Shot]
-	SpellRange[18,1]:Set[386]
-
-	Action[19]:Set[AAMessenger]
-	SpellRange[19,1]:Set[505]
 }
 
 
@@ -482,9 +480,17 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn}) && ${Me.Ability[${SpellType[92]}].IsReady}
 	{
 		Me.Ability[${SpellType[92]}]:Use
+		call CheckPosition 1 1 ${KillTarget}
+		if !${Me.AutoAttackOn}
+			EQ2Execute /auto 1
+	}
+
+	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn}) && ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		Me.Ability[${SpellType[60]}]:Use
 		call CheckPosition 1 1 ${KillTarget}
 		if !${Me.AutoAttackOn}
 			EQ2Execute /auto 1
@@ -493,16 +499,24 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${DoHOs}
 		call CastSpellRange 303
 
+	call DoJesterCap
+
+	; PoTM
+	if !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
+	{
+		call CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 0
+		return
+	}
+
 	if ${MezzMode}
 		call Mezmerise_Targets
 
 	if ${Charm}
+	{
 		call DoCharm
-
-	call PetAttack
-
-	call DoJesterCap
-
+		call PetAttack
+	}
+	
 	call CheckHeals
 
 	if ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
@@ -540,13 +554,6 @@ function Combat_Routine(int xAction)
 
 	call ActionChecks
 
-	; PoTM
-	if !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
-	{
-		call CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 0
-		return
-	}
-
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
@@ -556,34 +563,6 @@ function Combat_Routine(int xAction)
 		if !${Me.Maintained[${SpellType[91]}](exists)} && ${Me.Ability[${SpellType[91]}].IsReady}
 		{
 			call CastSpellRange 91 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Master Strike
-		if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode} && !${InvalidMasteryTargets.Element[${Target.ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-		{
-			Target ${KillTarget}
-			call CheckPosition 1 1
-			Me.Ability[Sinister Strike]:Use
-			do
-			{
-				waitframe
-			}
-			while ${Me.CastingSpell}
-			wait 1
-		}
-
-		; Flank debuff
-		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-		{
-			call CastSpellRange 110 0 0 0 ${KillTarget} 0 0 1
-			;return
-		}
-
-		; Long casting AoE - Good for setting off proc gear
-		if ${Me.Ability[${SpellType[92]}].IsReady}
-		{
-			call CastSpellRange 92 0 ${range} 0 ${KillTarget} 0 0 1
 			return
 		}
 
@@ -597,51 +576,23 @@ function Combat_Routine(int xAction)
 			{
 				wait 2
 			}
-			call CastSpellRange 391 0 0 0 ${KillTarget}
+			Me.Ability[${SpellType[391]}]:Use
 			call CastSpellRange 130 0 0 0 ${KillTarget}
 			return
 		}
 
 
-		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
-		if ${Me.Ability[${SpellType[61]}].IsReady} && ${Actor[id, ${KillTarget}].Distance}<=${Me.Ability[${SpellType[61]}].Range}
-		{
-			call CastSpellRange 61 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
 		; Fast Cast Nuke
 		if ${Me.Ability[${SpellType[60]}].IsReady}
 		{
-			call CastSpellRange 60 0 ${range} 0 ${KillTarget} 0 0 1
+			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 1
 			return
 		}
 
 		; Evasive Maneuvers
 		if ${Me.Ability[${SpellType[401]}].IsReady} && !${MainTank}
 		{
-			call CastSpellRange 401 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; De-agro if not MainTank
-		if ${Me.Ability[${SpellType[180]}].IsReady} && !${MainTank}
-		{
-			call CastSpellRange 180 0 ${range} 0 ${KillTarget} 0 0 0
-			return
-		}
-
-		; Low Damage Power Tap
-		if ${Me.Ability[${SpellType[62]}].IsReady}
-		{
-			call CastSpellRange 62 0 ${range} 0 ${KillTarget} 0 0 0
-			return
-		}
-
-		; Moderate Melee Attack
-		if ${Me.Ability[${SpellType[151]}].IsReady} && !${RangedAttackMode}
-		{
-			call CastSpellRange 151 0 ${range} 0 ${KillTarget} 0 0 1
+			call CastSpellRange 401 0 0 0 ${KillTarget} 0 0 1
 			return
 		}
 	}
