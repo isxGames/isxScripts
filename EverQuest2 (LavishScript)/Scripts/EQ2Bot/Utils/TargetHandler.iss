@@ -20,7 +20,7 @@ function main()
 			{
 				Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something (1) [ltarget: ${ltarget}, ltankID: ${ltankID}, tank's target ID: ${ltanktargetID})"]
 				Script[EQ2Bot].VariableScope.KillTarget:Set[${ltanktargetID}]
-				Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${ltanktargetID})"]
+				;Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${ltanktargetID})"]
 			}
 		}
 		else
@@ -33,7 +33,7 @@ function main()
 					{
 						Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something (2)"]
 						Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltanktargetID}]
-						Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${ltanktargetID})"]
+						;Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${ltanktargetID})"]
 					}
 				}
 		  }
@@ -43,7 +43,7 @@ function main()
 				{
 					Debug:Echo["TargetHandler:: TargetCheck - KillTarget doesn't exist -- setting to MT's target"]
 					Script[EQ2Bot].VariableScope.KillTarget:Set[${ltanktargetID}]
-					Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${Actor[${ltanktargetID})"]
+					;Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${Actor[${ltanktargetID})"]
 				}
 		  }
 		}
