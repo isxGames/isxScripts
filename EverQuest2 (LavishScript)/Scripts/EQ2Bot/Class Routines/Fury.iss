@@ -1,59 +1,10 @@
 ;*************************************************************
-;Fury.iss 20081013
+;Fury.iss 20100316
 ;version
 ;
-;20080417a
-; * Tweaked cure and MT heal code to be a bit more 'raid' friendly.  The fury should recover from Spike damage to MT better.
+; 20100316
+; * Massive Combat_Routine() re-write (Pygar)
 ;
-;20080416a
-; * Added a UI option (and code) for "Summon Imp of Ro" for those that follow Solosek Ro and want to maintain that buff.
-;
-;20080410a
-; * Fixed "Buff Spirit of the Bat" to work on the fury him/herself if so set
-;
-;20080405a
-; * Modified heal routine to check for Me.Group[0] (which should be the Fury him/herself)
-; * Optimized the heal routine a bit
-;
-;20080323a
-; * Fury will no longer cast any offensive spells if his/her health is under 51%
-; * Fury will now cast "Favor of the Phoenix" when "Start EQ2Bot" is first pressed and after
-;   full group wipes.
-; * Fury will now CheckHeals() before initiating a HO each round
-; * Fury will now no longer cast an offensive spell on an NPC that is currently mezzed (using the CheckForMez() function)
-; * Added an option to the UI to choose whether or not to cast "Melee Proc Spells" (such as Fae Fire)
-;
-;20070725a
-; Fixed running into combat range un-necesarily
-;	Added a toggle for Combat Range AAs to enable or disable thier use.
-;
-;20070504a
-; Tweaked Heal Code
-; Updated Group Cures to check target health and group health before casting cures
-;	Misc small fixes
-;
-;20070404a
-;	Updated for latest eq2bot
-;
-;20070226a
-; Full support for KoS and EoF AA lines
-; Toggle of incombat rez
-; Toggle of initiating HO
-; Added Missing Spells (Carnal Mask, Maddening Swarm, Barbarous Intimidation)
-; Fixed bug in Storms Usage
-; Fixed a bug in UI file
-;
-;20070201a
-; Intelligent Casting of Int Buffs
-; Crystalized Shard usage added to checkheals
-; Fixed Curing of uncurables
-; Added toggle for buffing Thorns on MA (raid stacking contention with other furies/wardens)
-; Optomized Storms/Ring of fire when selected
-; Added AA Lines
-; Optomized DPS
-;
-;20061130a
-; Tweaked Rez, fixed some spell list errors.  Hacked buff canceling
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -63,7 +14,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20100130
+	declare ClassFileVersion int script 20100316
 	;;;;
 
 	declare OffenseMode bool script
@@ -91,10 +42,10 @@ function Class_Declaration()
 	declare SpamHealMode bool script 0
 	declare UseRootSpells boot script 0
 	declare FeastAction int script 9
-	declare UseFastOffensiveSpellsOnly bool script 0
 	declare UseBallLightning bool script 0
 	declare UseWrathOfNature bool script 0
 	declare UseMythicalOn string script
+	declare HaveAbility_TunaresGrace bool script FALSE
 
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
@@ -103,6 +54,7 @@ function Class_Declaration()
 	declare BuffSpirit bool script FALSE
 	declare BuffHunt bool script FALSE
 	declare BuffMask bool script FALSE
+	declare PrimaryHealer bool script TRUE
 
 	declare EquipmentChangeTimer int script
 
@@ -127,10 +79,10 @@ function Class_Declaration()
 	KeepMTHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepMTHOTUp,FALSE]}]
 	KeepGroupHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepGroupHOTUp,FALSE]}]
 	RaidHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Raid Heals,FALSE]}]
-	UseFastOffensiveSpellsOnly:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFastOffensiveSpellsOnly,FALSE]}]
 	UseBallLightning:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseBallLightning,FALSE]}]
 	UseWrathOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseWrathOfNature,FALSE]}]
 	UseMythicalOn:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseMythicalOn,"No One"]}]
+	PrimaryHealer:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PrimaryHealer,TRUE]}]
 
 	BuffBatGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBatGroupMember,]}]
 	BuffSavageryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSavageryGroupMember,]}]
@@ -147,6 +99,10 @@ function Class_Declaration()
 	NoEQ2BotStance:Set[TRUE]
 
 	Event[EQ2_FinishedZoning]:AttachAtom[Fury_FinishedZoning]
+	
+	;;; Optimizations to avoid having to check if an ability exists all of the time
+	if (${Me.Ability[Tunare's Grace](exists)})
+		HaveAbility_TunaresGrace:Set[TRUE]	
 }
 
 function Pulse()
@@ -177,6 +133,13 @@ function Pulse()
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
+
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
+	{
+		call CastSpellRange 157
+		ClassPulseTimer:Set[${Script.RunningTime}]
+	}
+	
 }
 
 function Class_Shutdown()
@@ -637,18 +600,27 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; - For Fury, this function is utilized throughout the Combat_Routine to make sure that we are making desired checks before any spell cast
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
+	
+	variable int iReturn
 
 	call CheckEmergencyHeals
 
 
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
-	return ${Return}
+	iReturn:Set[${Return}]
+	
+	return ${iReturn}
 }
 
 function Combat_Routine(int xAction)
 {
+	declare SpellCnt int local
+	declare SpellMax int local
 	declare DebuffCnt int local
 	declare TankToTargetDistance float local
+
+	;this should be a var based upon our dps to damage ratio, it could even be 0
+	SpellMax:Set[2]
 
 	if ${Me.ToActor.WhoFollowing(exists)}
 	{
@@ -677,7 +649,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 		}
-		elseif (${TankToTargetDistance} > 15)
+		elseif (${TankToTargetDistance} > 12)
 		{
 			if ${Actor[${MainTankID}](exists)}
 			{
@@ -697,18 +669,18 @@ function Combat_Routine(int xAction)
 
     if ${EpicMode} || ${RaidHealMode}
     {
-        call CheckCures
-    		call CheckHeals
+  		if ${CureMode}
+      	call CheckCures
+  		call CheckHeals			; Note: CheckHeals() calls CheckHOTs()
     }
     else
     {
-    	call CheckHeals
-
+    	call CheckHeals			; Note: CheckHeals() calls CheckHOTs()
     	if ${CureMode}
     		call CheckCures
 		}
 
-    call CheckSKFD
+    ;call CheckSKFD
     call RefreshPower
     if ${ShardMode}
    		call Shard
@@ -751,12 +723,13 @@ function Combat_Routine(int xAction)
   	{
       if ${EpicMode} || ${RaidHealMode}
       {
-       	call CheckCures
-      	call CheckHOTs
+      	if ${CureMode}
+	       	call CheckCures
+      	call CheckHeals		; Note: CheckHeals() calls CheckHOTs()
       }
       else
       {
-      	call CheckHOTs
+      	call CheckHeals		; Note: CheckHeals() calls CheckHOTs()
 
       	if ${CureMode}
       		call CheckCures
@@ -796,38 +769,14 @@ function Combat_Routine(int xAction)
   }
   ;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	else
+		call CheckHeals		; Note: CheckHeals() calls CheckHOTs()
 
-	if !${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<=0
-    return CombatComplete
+	if ${CureMode}
+		call CheckCures
 
-	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
-
-
-  if ${EpicMode} || ${RaidHealMode}
-  {
-  	call CheckCures
-  	call CheckHeals
-  }
-  else
-  {
-  	call CheckHeals
-
-  	if ${CureMode}
-  		call CheckCures
-	}
-
-	call RefreshPower
-
-	if (${StartHO})
-	{
-		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-			call _CastSpellRange 304
-	}
-
-	if ${ShardMode}
-		call Shard
-
-	;if named epic, maintain debuffs
+	;maintain debuffs
+	DebuffCnt:Set[0]
 	if (${DebuffMode})
 	{
 		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
@@ -848,7 +797,7 @@ function Combat_Routine(int xAction)
 				DebuffCnt:Inc
 			}
 		}
-		elseif ${Actor[${KillTarget}].IsHeroic}
+		elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health}>50
 		{
 			;; Fast-casting encounter debuff that should be used always
 			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
@@ -858,341 +807,325 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
-	elseif (${Actor[${KillTarget}].IsHeroic} || ${Actor[${KillTarget}].IsEpic})
+	
+	if ${DebuffCnt}
 	{
-		switch ${Actor[${KillTarget}].ConColor}
-		{
-			case Yellow
-			case Orange
-			case Red
-				;; encounter debuff
-				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
-				{
-					call _CastSpellRange 52 0 0 0 ${KillTarget}
-					DebuffCnt:Inc
-				}
-				break
-			
-			default
-				break
-		}
+  	call CheckHeals	
+  	if ${CureMode}
+  		call CheckCures	
 	}
 
-	;if we cast a debuff, check heals again before continue
-	if (${DebuffCnt} > 0)
+	if (${StartHO})
 	{
-        if ${EpicMode} || ${RaidHealMode}
-        {
-            call CheckCures
-        	call CheckHOTs
-        }
-        else
-        {
-        	call CheckHOTs
-
-        	if ${CureMode}
-        		call CheckCures
-    	}
+		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
+			call _CastSpellRange 304
 	}
 
-
-	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
-	{
-		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
-		{
-			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-			Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]
-
-			if (${MainTank} || ${TankToTargetDistance} <= 7.5)
-			{
-				if ${FightingEpicMob}
-					call CheckPosition 1 1 ${KillTarget}
-				else
-				{
-					switch ${Actor[${KillTarget}].ConColor}
-					{
-						case Green
-						case Grey
-							Debug:Echo["Calling CheckPosition(1 0)"]
-							call CheckPosition 1 0 ${KillTarget}
-							break
-						Default
-							Debug:Echo["Calling CheckPosition(1 1)"]
-							call CheckPosition 1 1 ${KillTarget}
-							break
-					}
-				}
-			}
-		}
-	}
-
-
+	;; Vortex
 	if (${VortexMode})
+		Me.Ability[${SpellType[395]}]:Use
+	if ${PrimaryHealer}
 	{
-		;Debug:Echo["Checking Energy Vortex..."]
-		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+
+	;; Porcupine
+	if ${Me.Ability[${SpellType[360]}].IsReady}
+	{
+		call CheckCondition Power 10 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 360
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+
+	
+	;; Ball Lightning
+	if ${UseBallLightning} && ${Me.Ability[${SpellType[97]}].IsReady}
+	{
+		call CheckCondition Power 40 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 97
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; Stormbolt
+	if ${UseStormBolt} && ${Me.Ability[${SpellType[96]}].IsReady}
+	{
+		call CheckCondition Power 40 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 96
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; StarNova
+	if ${Me.Ability[${SpellType[90]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 90 0 0 0 ${KillTarget}
+			SpellCnt:Inc
+		}
+	}	
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; Wrath of Nature
+	if ${Me.Ability[${SpellType[379]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 379 0 0 0 ${KillTarget}
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	; Thunderbolt
+	if ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 60 0 0 0 ${KillTarget}
+			SpellCnt:Inc
+		}
+	}	
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; Master Strike
+	if ${Me.Ability[Master's Smite].IsReady} && ${Mob.CheckActor[${KillTarget}]}
+	{
+		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
+		;;;;;;;;;;
+		if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
 		{
-			;Debug:Echo["SpellType[395]: ${SpellType[385]}"]
-			;Debug:Echo["Energy Vortex -- Target is not solo...check"]
-			if ${Me.Ability[${SpellType[395]}].IsReady}
-			{
-				;Debug:Echo["Energy Vortex -- Ability (${Me.Ability[${SpellType[385]}]})' is ready...check"]
-				switch ${Actor[${KillTarget}].ConColor}
-				{
-					case Red
-					case Orange
-					case Yellow
-					case White
-					case Blue
-						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
-						{
-							Me.Ability[${SpellType[395]}]:Use
-							wait 2
-							break
-						}
-					default
-						if (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed})
-						{
-							Me.Ability[${SpellType[395]}]:Use
-							wait 2
-						}
-						break
-				}
-			}
+			Target ${KillTarget}
+			Me.Ability[Master's Smite]:Use
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; Tempest
+	if ${Me.Ability[${SpellType[70]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 70 0 0 0 ${KillTarget}
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; DeathSwarm
+	if ${Me.Ability[${SpellType[51]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 51 0 0 0 ${KillTarget}
+			SpellCnt:Inc
+		}
+	}	
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; ThunderSpike
+	if ${Me.Ability[${SpellType[383]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 383 0 0 0 ${KillTarget}
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
+	;; Melee Spike
+	if ${Actor[${KillTarget}].Distance}<6 && ${Me.Ability[${SpellType[383]}].IsReady}
+	{
+		call CheckCondition Power 20 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 383 0 0 0 ${KillTarget}
+			SpellCnt:Inc
 		}
 	}
 
-	;Debug:Echo["Combat_Routine() -- Action: ${Action[${xAction}]} (xAction: ${xAction})"]
-	;Debug:Echo["Combat_Routine() -- MainAssist: ${MainAssist}"]
-
-	switch ${Action[${xAction}]}
-	{
-		case Nuke
-	    ;if ${UseFastOffensiveSpellsOnly}
-	    ;    break
-			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CheckForMez "Fury Nuke"
-				if ${Return.Equal[FALSE]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				else
-					call ReacquireTargetFromMA
-			}
-			break
-
-		case AANuke
-	    if !${UseWrathOfNature}
-	        break
-			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CheckForMez "Fury AANuke"
-				if ${Return.Equal[FALSE]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				else
-					call ReacquireTargetFromMA
-
-			}
-			break
-
-		case AA_Thunderspike
-			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
-			{
-			    if ${Me.Ability[Thunderspike](exists)}
-			    {
-    				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-    				if ${Return.Equal[OK]}
-    				{
-    					if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-    					{
-    						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-    					}
-    				}
-    			}
-			}
-			break
-
-		case AoE
-			if ${AoEMode} && !${UseFastOffensiveSpellsOnly}
-			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CheckForMez "Fury AoE"
-					if ${Return.Equal[FALSE]}
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					else
-						call ReacquireTargetFromMA
-				}
-			}
-			break
-
-		case Proc
-			if ${UseMeleeProcSpells} && ${Me.GroupCount} > 1
-			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-			}
-			break
-
-		case DoT
-			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CheckForMez "Fury DoT"
-				if ${Return.Equal[FALSE]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				else
-					call ReacquireTargetFromMA
-			}
-
-			break
-
-		case DoT2
-			call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call CheckForMez "Fury DoT2"
-				if ${Return.Equal[FALSE]}
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				else
-					call ReacquireTargetFromMA
-			}
-			break
-
-		case AA_Primordial_Strike
-			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
-			{
-			    if ${Me.Ability[Primordial Strike](exists)}
-			    {
-    				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-    				if ${Return.Equal[OK]}
-    					call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-    			}
-			}
-			break
-
-		case AA_Nature_Blade
-			if (${MeleeAAAttacksMode} && ${Actor[${KillTarget}].Distance} <= 5)
-			{
-			    if ${Me.Ability[Nature Blade](exists)}
-			    {
-    				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-    				if ${Return.Equal[OK]}
-    					call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-    			}
-			}
-			break
-
-		case RingOfFire
-			if ${UseRingOfFire}
-			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CheckForMez "Fury Ring of Fire"
-					if ${Return.Equal[FALSE]}
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					else
-						call ReacquireTargetFromMA
-				}
-			}
-			break
-
-		case BallLightning
-			if ${UseBallLightning}
-			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CheckForMez "Fury Ball Lightning"
-					if ${Return.Equal[FALSE]}
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					else
-						call ReacquireTargetFromMA
-				}
-			}
-			break
-
-		case Snare
-		case Feast
-			if !${Actor[${KillTarget}].IsEpic}
-			{
-				if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} <= 15)
-				{
-					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-					if ${Return.Equal[OK]}
-					{
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					}
-				}
-			}
-			break
-
-		case Mastery
-	    if ${UseFastOffensiveSpellsOnly}
-	    {
-		    break
-		   }
-
-			if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
-				break
-
-			call CheckForMez "Fury Mastery"
-			if ${Return.Equal[FALSE]}
-			{
-				if ${Me.Ability[${SpellType[xAction]}].IsReady}
-				{
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-				}
-			}
-			else
-			{
-				call ReacquireTargetFromMA
-			}
-
-			break
-				
-		case RootSpells
-			if ${UseRootSpells}
-			{
-				if ${Me.Ability[${SpellType[xAction]}].IsReady}
-					{
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					}
-			}
-			break
-
-		case Storms
-			;need to add disable to heal routine to prevent stun lock
-			if ${UseStormBolt}
-			{
-				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
-				if ${Return.Equal[OK]}
-				{
-					call CheckForMez "Fury Storms"
-					if ${Return.Equal[FALSE]}
-						call _CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-					else
-						call ReacquireTargetFromMA
-				}
-			}
-			break
-			
-		default
-			return CombatComplete
-	}
 
 
-	if ${DoHOs}
-	{
-		call CheckGroupHealth 60
-		if ${Return}
-			objHeroicOp:DoHO
-	}
+	call CheckHeals
+	if ${CureMode}
+		call CheckCures
+	call RefreshPower
+	if ${ShardMode}
+		call Shard
+	return CombatComplete
 }
+
 
 function Post_Combat_Routine(int xAction)
 {
@@ -1402,6 +1335,7 @@ function CheckHeals()
 		if (!${Me.ToActor.InCombatMode} || ${CombatRez})
 			call CastSpellRange 300 0 1 1 ${MainTankID}
 	}
+	
 	call CheckHOTs
 
     if (${MainTankExists})
@@ -1732,7 +1666,7 @@ function CureGroupMember(int gMember)
 function CureMe()
 {
 	
-		; Check to see if Healer needs cured of the curse and cure it first.
+	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 	
@@ -1745,8 +1679,8 @@ function CureMe()
 	if !${Me.ToActor.CanTurn} || !${Me.ToActor.IsRooted}
 		call CastSpellRange 289
 
-	if ${Me.Cursed}
-		call CastSpellRange 211 0 0 0 ${Me.ID}
+	;if ${Me.Cursed}
+	;	call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<4
 	{
@@ -1760,6 +1694,11 @@ function CureMe()
 
 function CheckCures(int InCombat=1)
 {
+	declare temphl int local 1
+	declare grpcure int local 0
+	declare Affcnt int local 0
+	declare CureTarget string local	
+	
   if ${InCombat}
   {
     if !${EpicMode}
@@ -1768,7 +1707,7 @@ function CheckCures(int InCombat=1)
             return
     }
   }
-
+  
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
@@ -1798,14 +1737,8 @@ function CheckCures(int InCombat=1)
 			}
 		}
 		DoCallCheckPosition:Set[FALSE]
-	}
-
-	declare temphl int local 1
-	declare grpcure int local 0
-	declare Affcnt int local 0
-	declare CureTarget string local
-	
-	
+	}  
+  
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
@@ -1829,9 +1762,37 @@ function CheckCures(int InCombat=1)
 					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
 				}
 			}
-	}
+	}  
+  
+  if (${HaveAbility_TunaresGrace})
+  {
+  	if ${Me.Ability[${SpellType[385]}].IsReady}
+  	{
+	  		if ${Me.IsAfflicted}	
+	  			grpcure:Inc
+  		
+				do
+				{
+					;make sure they in zone and in range
+					if (${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance} <= 25)
+							grpcure:Inc
+				}
+				while ${temphl:Inc} <= ${Me.GroupCount}  	
+  		
+  			if ${grpcure} > 1
+  			{
+  				;echo "DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"
+  				call CastSpellRange 385 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
+  				return
+  			}
+  			else
+  				return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
+  	}
+  }
+  temphl:Set[1]
+  grpcure:Set[0]
+  
 
-	;check for group cures, if it is ready and we are in a large enough group
 	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount} > 1
 	{
 		;check ourselves
@@ -1857,30 +1818,30 @@ function CheckCures(int InCombat=1)
 
 		;Debug:Echo["CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
 
-        if ${EpicMode}
-        {
-    		if ${grpcure} > 2
-    		{
-    			call CastSpellRange 220
-    			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-    			wait 5
-    			call FindAfflicted
-    			if ${Return} <= 0
-    			    return
-    		}
-        }
-        else
-        {
-    		if ${grpcure} > 1
-    		{
-    			call CastSpellRange 220
-    			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-    			wait 5
-    			call FindAfflicted
-    			if ${Return} <= 0
-    			    return
-    		}
-    	}
+    if ${EpicMode}
+    {
+  		if ${grpcure} > 2
+  		{
+  			call CastSpellRange 220
+  			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
+  			wait 5
+  			call FindAfflicted
+  			if ${Return} <= 0
+  			    return
+  		}
+    }
+    else
+    {
+  		if ${grpcure} > 1
+  		{
+  			call CastSpellRange 220
+  			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
+  			wait 5
+  			call FindAfflicted
+  			if ${Return} <= 0
+  			    return
+  		}
+		}
 	}
 
 	;Cure Ourselves first
