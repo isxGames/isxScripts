@@ -2624,14 +2624,20 @@ function DoTheTimeWarp()
 		{
 			BuffTarget:Set[${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 			ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+			;echo "DEBUG::DoTheTimeWarp() -- BuffTarget: ${BuffTarget}, ActorID: ${ActorID}"
 			if (${ActorID} <= 0)
 				continue
 			switch ${Actor[${ActorID}].Type}
 			{
 				case PC
-					if (!${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...1"
+					if (!${Me.Group[${Actor[${ActorID}].Name}](exists)})
 						break
 				case Me
+					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...2"
+					if (${Actor[${ActorID}].IsDead})
+						break
+					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...3 (is ${Actor[${ActorID}].Distance} < ${Me.Ability[Time Warp].Range}?)"
 					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].Range} || !${NoAutoMovement})
 					{
 						LastTimeWarp:Set[${TimeWarpers.Element[${Actor[${ActorID}].Name}]}]
@@ -2654,7 +2660,7 @@ function DoTheTimeWarp()
 			if ${DoBreak}
 				break
 		}
-		while ${Counter:Inc}<=${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+		while ${Counter:Inc}<=${UIElement[lbBuffTimeWarp@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 	}		
 }
 
