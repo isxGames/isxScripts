@@ -7,30 +7,41 @@ function main()
 
 	declare ltarget uint local
 	declare ltankID unit local
+	declare ltanktargetID uint local
 	do
 	{
 		ltarget:Set[${Script[EQ2Bot].Variable[KillTarget]}]
 		ltankID:Set[${Script[EQ2Bot].Variable[MainTankID]}]
+		ltanktargetID:Set[${Actor[${ltankID}].Target.ID}]
 		
-		if !${ltarget} && ${Actor[${ltankID}].InCombatMode} && (${Actor[${ltankID}].Target(exists)} && ${Actor[${ltankID}].Target.ID} != ${ltankID})
+		if !${ltarget}
 		{
-			Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something 1"]
-			Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltankID}].Target.ID}]
+			if (${Actor[${ltankID}].InCombatMode} && (${Actor[${ltankID}].Target(exists)} && ${ltanktargetID} != ${ltankID})
+			{
+				Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something (1) [ltarget: ${ltarget}, ltankID: ${ltankID}, tank's target ID: ${ltanktargetID})"]
+				Script[EQ2Bot].VariableScope.KillTarget:Set[${ltanktargetID}]
+				Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${ltanktargetID})"]
+			}
 		}
 		elseif ${Actor[${ltarget}](exists)}
 		{
 			if (${Actor[${ltarget}].Health}<=0)
 			{
-				Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something 2"]
-				Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltankID}].Target.ID}]
+				if ${Actor[${ltankID}].Target(exists)} && ${Actor[${ltankID}].InCombatMode} && ${ltanktargetID} != ${ltankID}
+				{
+					Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something (2)"]
+					Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltanktargetID}]
+					Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${ltanktargetID})"]
+				}
 			}
 		}
 		elseif !${Actor[${ltarget}](exists)}
 		{
-			if ${Actor[${ltankID}].Target(exists)} && ${Actor[${ltankID}].InCombatMode} && ${Actor[${ltankID}].Target.ID} != ${ltankID}
+			if ${Actor[${ltankID}].Target(exists)} && ${Actor[${ltankID}].InCombatMode} && ${ltanktargetID} != ${ltankID}
 			{
 				Debug:Echo["TargetHandler:: TargetCheck - KillTarget doesn't exist -- setting to MT's target"]
-				Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltankID}].Target.ID}]
+				Script[EQ2Bot].VariableScope.KillTarget:Set[${ltanktargetID}]
+				Debug:Echo["TargetHandler:: KillTarget is ${Script[EQ2Bot].Variable[KillTarget]} (Should be: ${Actor[${ltanktargetID})"]
 			}
 		}
 		
