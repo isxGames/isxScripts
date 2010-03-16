@@ -283,7 +283,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 512 0 0 0 ${KillTarget}
 
 	;use Castigate or Aura Self Cure
-	if ${Me.Afflicted}
+	if ${Me.IsAfflicted}
 	{
 		if ${AoEMode} && ${Me.Ability[${SpellType[523]}].IsReady}
 			call CastSpellRange 523
