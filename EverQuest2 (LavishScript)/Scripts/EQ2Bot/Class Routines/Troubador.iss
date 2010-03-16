@@ -423,11 +423,6 @@ function Combat_Routine(int xAction)
 	elseif ${BowAttacksMode}
 		range:Set[3]
 
-	if ${Actor[ID,${KillTarget}].Distance2D}>${Position.GetMeleeMaxRange[${TID}]} && !${Me.RangedAutoAttackOn}
-		EQ2Execute /auto 2
-	elseif ${Actor[ID,${KillTarget}].Distance2D}<${Position.GetMeleeMaxRange[${TID}]} && !${Me.AutoAttackOn}
-		EQ2Execute /auto 1
-
 	if ${JoustMode}
 	{
 		if ${JoustStatus}==0 && ${RangedAttackMode}
@@ -487,6 +482,14 @@ function Combat_Routine(int xAction)
 		}
 	}
 
+	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	{
+		Me.Ability[${SpellType[92]}]:Use
+		call CheckPosition 1 1 ${KillTarget}
+		if !${Me.AutoAttackOn}
+			EQ2Execute /auto 1
+	}
+	
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${DoHOs}
 		call CastSpellRange 303
 
@@ -502,12 +505,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-	{
-		call CheckPosition 1 1 ${KillTarget}
-		if !${Me.AutoAttackOn}
-			EQ2Execute /auto 1
-	}
 	if ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
 	{
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
@@ -579,7 +576,7 @@ function Combat_Routine(int xAction)
 		; Flank debuff
 		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
-			call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 1
+			call CastSpellRange 110 0 0 0 ${KillTarget} 0 0 1
 			;return
 		}
 
@@ -600,8 +597,8 @@ function Combat_Routine(int xAction)
 			{
 				wait 2
 			}
-			call CastSpellRange 391 0 1 1 ${KillTarget}
-			call CastSpellRange 130 0 1 1 ${KillTarget}
+			call CastSpellRange 391 0 0 0 ${KillTarget}
+			call CastSpellRange 130 0 0 0 ${KillTarget}
 			return
 		}
 
@@ -654,14 +651,14 @@ function Combat_Routine(int xAction)
 		case AATurnstrike
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
 		case AARhythm_Blade
 			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
@@ -682,7 +679,7 @@ function Combat_Routine(int xAction)
 		case Stun
 			if !${RangedAttackMode} && !${Actor[${KillTarget}].IsEpic}
 			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 
