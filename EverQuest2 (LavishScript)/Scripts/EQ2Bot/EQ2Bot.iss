@@ -1287,18 +1287,27 @@ function CastSpellRange(... Args)
 
 	;if we are moving and we can't cast while moving, lets not cast...
 	if ${Me.IsMoving} && !${castwhilemoving}
+	{
+		;Debug:Echo["CastSpellRange() -- I'm moving and castwhilemoving is set to FALSE"]
 		return -1
+	}
 
 	;if a target was specified, and we can't find it, lets not try to cast
 	if ${TargetID}>0 && !${Actor[${TargetID}](exists)}
+	{
+		;Debug:Echo["CastSpellRange() -- TargetID was greater than zero; however, it doesn't exist!"]
 		return -1
+	}
 
 	;if casting on killtarget, lets make sure it is still valid and find new one if needed
 	if ${TargetID} && ${TargetID}==${KillTarget}
 	{
 		call VerifyTarget ${TargetID}
 		if !${Return}
+		{
+			;Debug:Echo["CastSpellRange() -- TargetID was the same was KillTarget; however, VerifyTarget() reported it as invalid"]
 			return -1
+		}
 	}
 
 
@@ -3584,7 +3593,7 @@ function CheckLootNoMove()
 			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"]
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
-			wait 1
+			wait 3
 			call ProcessTriggers
 		}
 	}
@@ -3677,7 +3686,7 @@ function CheckLoot()
 			}
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
-			wait 2
+			wait 3
 			call ProcessTriggers
 			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
 			{
@@ -4390,9 +4399,9 @@ atom(script) LootWDw(string ID)
 		if ${PauseBot} || !${StartBot}
 				return
 
-		Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
-		Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
-		Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
+	;Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
+	;Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
+	;Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
 
 	declare i int local
 	variable int tmpcnt=1
