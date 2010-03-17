@@ -136,7 +136,8 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-
+	if (${DoNoCombat})
+		return
 
 	;; check this at least every 1 seconds
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
@@ -321,46 +322,49 @@ function Buff_Routine(int xAction)
 	;echo "DEBUG:: Buff_Routine(${PreSpellRange[${xAction},1]}:${SpellType[${PreSpellRange[${xAction},1]}]})"
 	;CurrentAction:Set[Buff Routine :: ${PreAction[${xAction}]} (${xAction})]
 
-	if (!${InPostDeathRoutine} && !${CheckingBuffsOnce})
+	if (!${DoNoCombat})
 	{
-		call CheckHeals
-		call RefreshPower
-		call CheckSKFD
-
-		;; Prismatic Proc
-		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
-		if !${MainTank} || ${AutoMelee}
+		if (!${InPostDeathRoutine} && !${CheckingBuffsOnce})
 		{
-			if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
+			call CheckHeals
+			call RefreshPower
+			call CheckSKFD
+	
+			;; Prismatic Proc
+			;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
+			if !${MainTank} || ${AutoMelee}
 			{
-				if ${Actor[${MainTankID}].InCombatMode}
+				if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
 				{
-					if ${Me.Ability[${SpellType[72]}].IsReady}
+					if ${Actor[${MainTankID}].InCombatMode}
 					{
-						BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-						if !${BuffTarget.Equal["No one"]}
+						if ${Me.Ability[${SpellType[72]}].IsReady}
 						{
-							if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+							BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+							if !${BuffTarget.Equal["No one"]}
 							{
-								call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+								if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+								{
+									call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+									LastSpellCast:Set[72]
+									return
+								}
+								else
+									echo "ERROR3: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
+							}
+							else
+							{
+								call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 								LastSpellCast:Set[72]
 								return
 							}
-							else
-								echo "ERROR3: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
-						}
-						else
-						{
-							call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
-							LastSpellCast:Set[72]
-							return
 						}
 					}
 				}
 			}
 		}
 	}
-
+	
 	switch ${PreAction[${xAction}]}
 	{
 		case Self_Buff
@@ -859,6 +863,8 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	bReturn:Set[${Return}]
 
+	if (${DoNoCombat})
+		return ${bReturn}
 
 	if ${DoCallCheckPosition}
 	{

@@ -121,6 +121,9 @@ variable bool CombatFollow=FALSE
 variable string AutoFollowee
 variable uint AutoFollowLastSetTime
 
+;BGs
+variable bool BG_NoCombat
+
 ;misc
 variable bool EpicMode=FALSE
 variable bool DoCallCheckPosition=FALSE
@@ -153,6 +156,8 @@ function EQ2BotLib_Init()
 	ElementalPotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Elemental Potion Name,NULL]}]
 	NoxiousPotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Noxious Potion Name,NULL]}]
 	TraumaPotion:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Trauma Potion Name,NULL]}]
+	
+	BG_NoCombat:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[BG_NoCombat,TRUE]}]
 
 	;Triggers
 	AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
