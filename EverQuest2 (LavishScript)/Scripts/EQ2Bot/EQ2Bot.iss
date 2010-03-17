@@ -248,6 +248,7 @@ variable bool NoAutoMovementInCombat
 variable bool NoAutoMovement
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
+variable bool DoNoCombat
 
 ;===================================================
 ;===          AutoAttack Timing                 ====
@@ -466,6 +467,17 @@ function main()
 			while !${StartBot}
 		}
 
+		;;;;;;;;;;;;;;
+		;; If DoNoCombat is TRUE, then the bot should avoid calling Combat() or any related functions.
+		if (${EQ2.OnBattleground} && ${BG_NoCombat})	
+			DoNoCombat:Set[TRUE]
+		else
+			DoNoCombat:Set[FALSE]
+		;;
+		;;;;;;;;;;;;;;
+		
+		;Debug:Echo["main() -- DoNoCombat: ${DoNoCombat} (${EQ2.OnBattleground} - ${BG_NoCombat})"]
+		
 		if ${Me.ToActor.IsDead}
 		{
 			KillTarget:Set[]
@@ -561,112 +573,118 @@ function main()
 				
 				;Debug:Echo["Pre-Combat Routines Loop: Test - ${gRtnCtr}"]
 
-				; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
-				if ${PathType}==3 && !${AutoPull}
+				if (!${DoNoCombat})
 				{
-					if ${Actor[${MainAssistID}](exists)}
+					; For dungeon crawl and not pulling, then follow the nav path instead of using follow.
+					if ${PathType}==3 && !${AutoPull}
 					{
-						target ${Actor[${MainAssistID}]}
-						wait 10 ${Target.ID}==${MainAssistID}
-					}
-
-					; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
-					if !${Me.TargetLOS} && ${Target.Distance}>10
-						call MovetoMaster
-					elseif ${Target.Distance}>10
-						call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
-				}
-
-				if !${MainTank}
-				{
-					if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
-						KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
-
-					; Add additional check to see if Mob is in Camp OR MainTank is within designated range
-					if ${KillTarget}
-					{
-						if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
+						if ${Actor[${MainAssistID}](exists)}
 						{
-							if (${Actor[${KillTarget}].Health} <= ${AssistHP} && !${Actor[${KillTarget}].IsDead})
+							target ${Actor[${MainAssistID}]}
+							wait 10 ${Target.ID}==${MainAssistID}
+						}
+	
+						; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
+						if !${Me.TargetLOS} && ${Target.Distance}>10
+							call MovetoMaster
+						elseif ${Target.Distance}>10
+							call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
+					}
+	
+					if !${MainTank}
+					{
+						if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
+							KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
+	
+						; Add additional check to see if Mob is in Camp OR MainTank is within designated range
+						if ${KillTarget}
+						{
+							if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 							{
-								if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance} < ${MARange})
+								if (${Actor[${KillTarget}].Health} <= ${AssistHP} && !${Actor[${KillTarget}].IsDead})
 								{
-									if ${Mob.Target[${KillTarget}]}
-										call Combat
+									if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance} < ${MARange})
+									{
+										if ${Mob.Target[${KillTarget}]}
+											call Combat
+									}
+									else
+									{
+										KillTarget:Set[0]
+										;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+									}
 								}
 								else
 								{
 									KillTarget:Set[0]
-									;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+									;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
 								}
 							}
 							else
-							{
 								KillTarget:Set[0]
-								;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
-							}
 						}
-						else
-							KillTarget:Set[0]
 					}
-				}
 
-				;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
-				if ${PathType}==4 && ${MainTank}
-				{
-					if ${Me.ToActor.InCombatMode} && ${Mob.Detect}
+					;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
+					if ${PathType}==4 && ${MainTank}
 					{
-						call Pull any
-						if ${engagetarget}
-							call Combat
-					}
-				}
-
-				MobDetected:Set[${Mob.Detect}]
-				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-				;;
-				;this should force the tank to react to any aggro, regardless
-				if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
-				{
-					do
-					{
-						if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
+						if ${Me.ToActor.InCombatMode} && ${Mob.Detect}
 						{
-							KillTarget:Set[${Target.ID}]
-							call Combat
+							call Pull any
+							if ${engagetarget}
+								call Combat
 						}
-						else
+					}
+					
+					MobDetected:Set[${Mob.Detect}]
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;;
+					;this should force the tank to react to any aggro, regardless
+					if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
+					{
+						do
 						{
-							AggroMob:Set[${Mob.NearestAggro}]
-							if ${AggroMob} > 0
+							if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 							{
-								if ${KillTarget} != ${AggroMob}
-								{
-									CurrentAction:Set["Targetting Nearest Aggro Mob"]
-									echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-									KillTarget:Set[${AggroMob}]
-								}
-								target ${AggroMob}
+								KillTarget:Set[${Target.ID}]
 								call Combat
 							}
+							else
+							{
+								AggroMob:Set[${Mob.NearestAggro}]
+								if ${AggroMob} > 0
+								{
+									if ${KillTarget} != ${AggroMob}
+									{
+										CurrentAction:Set["Targetting Nearest Aggro Mob"]
+										echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+										KillTarget:Set[${AggroMob}]
+									}
+									target ${AggroMob}
+									call Combat
+								}
+							}
+							MobDetected:Set[${Mob.Detect}]
 						}
-						MobDetected:Set[${Mob.Detect}]
+						while ${MobDetected}
 					}
-					while ${MobDetected}
+					;;
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				}
-				;;
-				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 				if !${MobDetected} || (${MainTank} && ${Me.Group}!=1) || ${KillTarget}
 				{
-					if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health} <= ${AssistHP} && ${Actor[${KillTarget}].Distance} <= 35
+					if (!${DoNoCombat})
 					{
-						if ${Mob.Target[${KillTarget}]}
+						if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health} <= ${AssistHP} && ${Actor[${KillTarget}].Distance} <= 35
 						{
-							gRtnCtr:Set[40]
-							if !${Me.ToActor.InCombatMode}
-								CurrentAction:Set["Idle..."]
-							break
+							if ${Mob.Target[${KillTarget}]}
+							{
+								gRtnCtr:Set[40]
+								if !${Me.ToActor.InCombatMode}
+									CurrentAction:Set["Idle..."]
+								break
+							}
 						}
 					}
 					if !${Me.ToActor.IsDead}
@@ -692,15 +710,18 @@ function main()
 					}
 
 					;disable autoattack if not in combat
-					if ${MainTank}
+					if (!${DoNoCombat})
 					{
-						if (${Me.AutoAttackOn} && !${Mob.Detect})
-							EQ2Execute /toggleautoattack
-					}
-					else
-					{
-						if !${Actor[${MainTankID}].InCombatMode} && ${Me.AutoAttackOn}
-							EQ2Execute /toggleautoattack
+						if ${MainTank}
+						{
+							if (${Me.AutoAttackOn} && !${Mob.Detect})
+								EQ2Execute /toggleautoattack
+						}
+						else
+						{
+							if !${Actor[${MainTankID}].InCombatMode} && ${Me.AutoAttackOn}
+								EQ2Execute /toggleautoattack
+						}
 					}
 				}
 			}
@@ -713,17 +734,19 @@ function main()
 					gRtnCtr:Set[1]
 					do
 					{
-						if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health} <= ${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget}].Distance} <= 35
+						if (!${DoNoCombat})
 						{
-							if ${Mob.Target[${KillTarget}]}
+							if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health} <= ${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget}].Distance} <= 35
 							{
-								gRtnCtr:Set[40]
-								if !${Me.ToActor.InCombatMode}
-									CurrentAction:Set["Idle..."]
-								break
+								if ${Mob.Target[${KillTarget}]}
+								{
+									gRtnCtr:Set[40]
+									if !${Me.ToActor.InCombatMode}
+										CurrentAction:Set["Idle..."]
+									break
+								}
 							}
 						}
-
 						call Custom__Buff_Routine ${gRtnCtr}
 						if ${Return.Equal[BuffComplete]} || ${Return.Equal[Buff Complete]}
 						{
@@ -789,97 +812,102 @@ function main()
 					call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
 			}
 
-			if !${MainTank}
+			if (!${DoNoCombat})
 			{
-				if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
-					KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
-
-				; Add additional check to see if Mob is in Camp OR MainTank is within designated range
-				if ${KillTarget}
+				if !${MainTank}
 				{
-					if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
+					if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
+						KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
+	
+					; Add additional check to see if Mob is in Camp OR MainTank is within designated range
+					if ${KillTarget}
 					{
-						if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
+						if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead}
 						{
-							if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance}<${MARange})
+							if (${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead})
 							{
-								if ${Mob.Target[${KillTarget}]}
-									call Combat
+								if (${Mob.Detect} || ${Actor[${MainAssistID}].Distance}<${MARange})
+								{
+									if ${Mob.Target[${KillTarget}]}
+										call Combat
+								}
+								else
+								{
+									KillTarget:Set[0]
+									;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+								}
 							}
 							else
 							{
 								KillTarget:Set[0]
-								;Debug:Echo[" if ({Mob.Detect} || {Actor[ExactName,{MainAssist}].Distance}<{MARange})"]
+								;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
 							}
 						}
 						else
-						{
 							KillTarget:Set[0]
-							;Debug:Echo[" if ({Actor[{KillTarget}].Health}<={AssistHP} && !{Actor[{KillTarget}].IsDead})"]
-						}
 					}
-					else
-						KillTarget:Set[0]
 				}
-			}
-
-			;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
-			if ${PathType}==4 && ${MainTank}
-			{
-				if ${Me.ToActor.InCombatMode} && ${Mob.Detect}
+	
+				;; This used to be duplicated in Combat(); however, now it just appears here (as I think it should be)
+				if ${PathType}==4 && ${MainTank}
 				{
-					call Pull any
-					if ${engagetarget}
-						call Combat
-				}
-			}
-
-			MobDetected:Set[${Mob.Detect}]
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			;;
-			;this should force the tank to react to any aggro, regardless
-			if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
-			{
-				do
-				{
-					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
+					if ${Me.ToActor.InCombatMode} && ${Mob.Detect}
 					{
-						KillTarget:Set[${Target.ID}]
-						call Combat
+						call Pull any
+						if ${engagetarget}
+							call Combat
 					}
-					else
+				}
+	
+				MobDetected:Set[${Mob.Detect}]
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;;
+				;this should force the tank to react to any aggro, regardless
+				if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
+				{
+					do
 					{
-						AggroMob:Set[${Mob.NearestAggro}]
-						if ${AggroMob} > 0
+						if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 						{
-							if ${KillTarget} != ${AggroMob}
-							{
-								CurrentAction:Set["Targetting Nearest Aggro Mob"]
-								echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-								KillTarget:Set[${AggroMob}]
-							}
-							target ${AggroMob}
+							KillTarget:Set[${Target.ID}]
 							call Combat
 						}
+						else
+						{
+							AggroMob:Set[${Mob.NearestAggro}]
+							if ${AggroMob} > 0
+							{
+								if ${KillTarget} != ${AggroMob}
+								{
+									CurrentAction:Set["Targetting Nearest Aggro Mob"]
+									echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+									KillTarget:Set[${AggroMob}]
+								}
+								target ${AggroMob}
+								call Combat
+							}
+						}
+						MobDetected:Set[${Mob.Detect}]
 					}
-					MobDetected:Set[${Mob.Detect}]
+					while ${MobDetected}
 				}
-				while ${MobDetected}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			}
-			;;
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+			
 			if !${MobDetected} || (${MainTank} && ${Me.GroupCount}!=1) || ${KillTarget}
 			{
-				if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget}].Distance} <= 35
+				if (!${DoNoCombat})
 				{
-					if ${Mob.Target[${KillTarget}]}
+					if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health}<=${AssistHP} && !${Actor[${KillTarget}].IsDead} && ${Actor[${KillTarget}].Distance} <= 35
 					{
-						if !${Me.ToActor.InCombatMode}
-							CurrentAction:Set["Idle..."]
+						if ${Mob.Target[${KillTarget}]}
+						{
+							if !${Me.ToActor.InCombatMode}
+								CurrentAction:Set["Idle..."]
+						}
 					}
 				}
-
 				;disable autoattack if not in combat
 				if ${MainTank}
 				{
@@ -952,144 +980,151 @@ function main()
 				EQ2Execute /target_none
 			}
 
-			if ${Mob.Detect} || ${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}
+			if (!${DoNoCombat})
 			{
-				if (${Me.ToActor.Power}>=${PowerCheck} && ${Me.ToActor.Health}>=${HealthCheck})
+				if ${Mob.Detect} || ${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}
 				{
-					if ${PathType}==4 && !${Me.ToActor.InCombatMode}
+					if (${Me.ToActor.Power}>=${PowerCheck} && ${Me.ToActor.Health}>=${HealthCheck})
 					{
-						if ${EQ2Bot.PriestPower}
+						if ${PathType}==4 && !${Me.ToActor.InCombatMode}
 						{
-							call Pull any
-							if ${engagetarget}
+							if ${EQ2Bot.PriestPower}
 							{
-								wait 10
-								if ${Mob.Target[${Target.ID}]}
+								call Pull any
+								if ${engagetarget}
 								{
-									;Debug:Echo[": Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"]
-									call Combat
-									;Debug:Echo[": Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"]
-								}
-							}
-						}
-					}
-					else
-					{
-						if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
-						{
-							;Debug:Echo["Calling Combat(2) within AutoPull Loop: Test-${Time.Timestamp}"]
-							call Combat
-						}
-						else
-						{
-							variable uint AggroNPC
-							AggroNPC:Set[${Mob.NearestAggro}]
-							if ${AggroNPC} > 0
-							{
-								if ${Mob.ValidActor[${AggroNPC}]}
-								{
-									target ${AggroNPC}
-									;Debug:Echo["Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"]
-									call Combat
-								}
-							}
-							else
-							{
-								if ${EQ2Bot.PriestPower}
-								{
-									EQ2Execute /target_none
-									call Pull any
-									if ${engagetarget}
+									wait 10
+									if ${Mob.Target[${Target.ID}]}
 									{
-										;Debug:Echo["Calling Combat(4) within AutoPull Loop: Test-${Time.Timestamp}"]
+										;Debug:Echo[": Calling Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"]
 										call Combat
+										;Debug:Echo[": Ending Combat(1) within AutoPull Loop: Test-${Time.Timestamp}"]
 									}
 								}
 							}
 						}
-
-						if ${EQ2Bot.PriestPower} || ${Mob.Detect}
+						else
 						{
-							EQ2Execute /target_none
-							call Pull any
-							if ${engagetarget}
+							if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
 							{
-								;Debug:Echo["Calling Combat(5) within AutoPull Loop: Test-${Time.Timestamp}"]
+								;Debug:Echo["Calling Combat(2) within AutoPull Loop: Test-${Time.Timestamp}"]
 								call Combat
+							}
+							else
+							{
+								variable uint AggroNPC
+								AggroNPC:Set[${Mob.NearestAggro}]
+								if ${AggroNPC} > 0
+								{
+									if ${Mob.ValidActor[${AggroNPC}]}
+									{
+										target ${AggroNPC}
+										;Debug:Echo["Calling Combat(3) within AutoPull Loop: Test-${Time.Timestamp}"]
+										call Combat
+									}
+								}
+								else
+								{
+									if ${EQ2Bot.PriestPower}
+									{
+										EQ2Execute /target_none
+										call Pull any
+										if ${engagetarget}
+										{
+											;Debug:Echo["Calling Combat(4) within AutoPull Loop: Test-${Time.Timestamp}"]
+											call Combat
+										}
+									}
+								}
+							}
+	
+							if ${EQ2Bot.PriestPower} || ${Mob.Detect}
+							{
+								EQ2Execute /target_none
+								call Pull any
+								if ${engagetarget}
+								{
+									;Debug:Echo["Calling Combat(5) within AutoPull Loop: Test-${Time.Timestamp}"]
+									call Combat
+								}
 							}
 						}
 					}
 				}
+			;Debug:Echo["END AutoPull Loop: Test-${Time.Timestamp}"]
 			}
-		;Debug:Echo["END AutoPull Loop: Test-${Time.Timestamp}"]
 		}
+		
 		call ProcessTriggers
 
-		if (${Script.RunningTime} >= ${Math.Calc64[${AggroDetectionTimer}+${AggroDetectionTimerInterval}]})
+		if (!${DoNoCombat})
 		{
-			;Debug:Echo["${Script.RunningTime} -- Performing Aggro Detection Routines"]
-			MobDetected:Set[${Mob.Detect}]
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			;;;; This is repeated here for instances where the MT is the same as the MA
-			;;
-			if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
+			if (${Script.RunningTime} >= ${Math.Calc64[${AggroDetectionTimer}+${AggroDetectionTimerInterval}]})
 			{
-				do
+				;Debug:Echo["${Script.RunningTime} -- Performing Aggro Detection Routines"]
+				MobDetected:Set[${Mob.Detect}]
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;;;; This is repeated here for instances where the MT is the same as the MA
+				;;
+				if ${MobDetected} && ${MainTank} && !${Me.IsMoving}
 				{
-					if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
+					do
 					{
-						KillTarget:Set[${Target.ID}]
-						call Combat
-					}
-					else
-					{
-						variable uint AgressiveNPC
-						AgressiveNPC:Set[${Mob.NearestAggro}]
-						if ${AgressiveNPC} > 0
+						if ${Mob.Target[${Target.ID}]} && !${Target.IsDead}
 						{
-							CurrentAction:Set["Targetting Nearest Aggro Mob"]
-							echo "EQ2Bot:: Targetting Nearest Aggro Mob"
-							KillTarget:Set[${AgressiveNPC}]
-							target ${AgressiveNPC}
+							KillTarget:Set[${Target.ID}]
 							call Combat
 						}
+						else
+						{
+							variable uint AgressiveNPC
+							AgressiveNPC:Set[${Mob.NearestAggro}]
+							if ${AgressiveNPC} > 0
+							{
+								CurrentAction:Set["Targetting Nearest Aggro Mob"]
+								echo "EQ2Bot:: Targetting Nearest Aggro Mob"
+								KillTarget:Set[${AgressiveNPC}]
+								target ${AgressiveNPC}
+								call Combat
+							}
+						}
+						MobDetected:Set[${Mob.Detect}]
 					}
-					MobDetected:Set[${Mob.Detect}]
+					while ${MobDetected}
 				}
-				while ${MobDetected}
+				AggroDetectionTimer:Set[${Script.RunningTime}]
+	
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; pvp / duels
+				;;
+				;; TO DO:
+				;; To work, we need to change CastSpell() so that when pvp, it uses "Ability[]:Use" rather
+				;; than /useabilityonplayer (which only works for beneficial abilities).  Otherwise, uncommenting
+				;; this WILL make pvp combat work.
+				;if ${MainTank} && ${Target(exists)}
+				;{
+				;	if ${Target.Type.Equal[PC]}
+				;	{
+				;		if ${Target.InCombatMode} && ${Me.ToActor.InCombatMode} && ${Target.Target.ID} == ${Me.ID}
+				;		{
+				;			KillTarget:Set[${Target.ID}]
+				;			call Combat 1
+				;		}
+				;	}
+				;}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+				if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+				{
+					ExecuteAtom AutoFollowTank
+					wait 5
+				}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			}
-			AggroDetectionTimer:Set[${Script.RunningTime}]
-
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			;; pvp / duels
-			;;
-			;; TO DO:
-			;; To work, we need to change CastSpell() so that when pvp, it uses "Ability[]:Use" rather
-			;; than /useabilityonplayer (which only works for beneficial abilities).  Otherwise, uncommenting
-			;; this WILL make pvp combat work.
-			;if ${MainTank} && ${Target(exists)}
-			;{
-			;	if ${Target.Type.Equal[PC]}
-			;	{
-			;		if ${Target.InCombatMode} && ${Me.ToActor.InCombatMode} && ${Target.Target.ID} == ${Me.ID}
-			;		{
-			;			KillTarget:Set[${Target.ID}]
-			;			call Combat 1
-			;		}
-			;	}
-			;}
-			;;
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-			if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
-			{
-				ExecuteAtom AutoFollowTank
-				wait 5
-			}
-			;;
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		}
-
+		
 		; Check if we have leveled and reset XP Calculations in UI
 		if ${Me.Level} < 90
 		{
@@ -1865,7 +1900,13 @@ function Combat(bool PVP=0)
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
-
+	
+	if (${DoNoCombat})
+	{
+		KillTarget:Set[0]
+		return
+	}
+	
 	if !${Actor[${KillTarget}](exists)}
 		return
 
