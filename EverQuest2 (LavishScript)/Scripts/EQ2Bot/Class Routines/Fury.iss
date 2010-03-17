@@ -1207,7 +1207,7 @@ function Post_Combat_Routine(int xAction)
 			if ${Me.ToActor.InCombatMode}
     			call CheckCures 1
     		else
-    		    call CheckCures 0
+    		  call CheckCures 0
 			break
 		case AutoFollowTank
 			if ${AutoFollowMode}
@@ -1500,7 +1500,7 @@ function CheckHeals()
 	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)} && ${Actor[${PetToHeal}].InCombatMode} && !${EpicMode} && !${Me.InRaid}
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
 
-	if ${EpicMode}
+	if (${EpicMode} && ${CureMode})
 		call CheckCures
 		
 		
@@ -1699,15 +1699,13 @@ function CheckCures(int InCombat=1)
 	declare Affcnt int local 0
 	declare CureTarget string local	
 	
-  if ${InCombat}
-  {
-    if !${EpicMode}
-    {
-        if !${CureMode} && ${Me.ToActor.InCombatMode}
-            return
-    }
-  }
-  
+	; Check to see if Healer needs cured of the curse and cure it first.
+	if ${Me.Cursed} && ${CureCurseSelfMode}
+		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0	
+	
+	if (!${CureMode})
+		return
+	
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
@@ -1739,10 +1737,6 @@ function CheckCures(int InCombat=1)
 		DoCallCheckPosition:Set[FALSE]
 	}  
   
-	; Check to see if Healer needs cured of the curse and cure it first.
-	if ${Me.Cursed} && ${CureCurseSelfMode}
-		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
-	
 	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
 	if ${CureCurseOthersEnabled}
 	{
