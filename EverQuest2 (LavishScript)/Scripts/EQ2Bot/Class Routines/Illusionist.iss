@@ -1319,7 +1319,7 @@ function Combat_Routine(int xAction)
 		{
 			if ${Me.Ability[Doppleganger].IsReady}
 			{
-				switch ${Target.ConColor}
+				switch ${Actor[${KillTarget}].ConColor}
 				{
 				case Red
 				case Orange
