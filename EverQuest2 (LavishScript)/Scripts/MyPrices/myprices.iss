@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14l :  released 20th January 2010"
+variable string Version="Version 0.14m :  released 18th March 2010"
 ;
 ; Declare Variables
 ;
@@ -72,6 +72,10 @@ variable int WaitTimer
 variable int StopWaiting
 variable int InventorySlotsFree=${Me.InventorySlotsFree}
 variable int ClickID
+variable int ShiniesBox=0
+variable int RawsBox=0
+variable int RaresBox=0
+variable int UncommonBox=0
 
 variable float MyBasePrice
 variable float MerchPrice
@@ -1598,8 +1602,6 @@ function:float BrokerSearch(string ItemName, bool NameOnly)
 			do
 			{
 				waitframe
-				if ${Vendor.CurrentSearchPage} == -1
-					break
 			}
 			while ${Vendor.CurrentSearchPage} != ${CurrentPage}
 			
@@ -1700,6 +1702,8 @@ function LoadList()
 				Me.Vending[${i}]:TakeCoin
 				wait 10
 			}
+			ItemName:Set[${Me.Vending[${i}].Consignment[1]}]
+			wait 5
 			if ${Me.Vending[${i}].NumItems}>0
 			{
 				do
@@ -2660,6 +2664,38 @@ objectdef BrokerBot
 		PlaceRaws:Set[${General.FindSetting[PlaceRaws]}]
 		PlaceRares:Set[${General.FindSetting[PlaceRares]}]
 		PlaceUncommon:Set[${General.FindSetting[PlaceUncommon]}]
+
+		if ${General.FindSetting[ShiniesBox]}
+		{
+			ShiniesBox:Set[${General.FindSetting[ShiniesBox]}]
+
+			if ${ShiniesBox} > ${brokerslots} || !${Me.Vending[${ShiniesBox}](exists)}
+				ShiniesBox:set[0]
+		}
+		
+		if ${General.FindSetting[RawsBox]}
+		{
+			RawsBox:Set[${General.FindSetting[RawsBox]}]
+		
+			if ${RawsBox} > ${brokerslots} || !${Me.Vending[${RawsBox}](exists)}
+				RawsBox:set[0]
+		}
+		
+		if ${General.FindSetting[RaresBox]}
+		{
+			RaresBox:Set[${General.FindSetting[RaresBox]}]
+		
+			if ${RaresBox} > ${brokerslots} || !${Me.Vending[${RaresBox}](exists)}
+				RaresBox:set[0]
+		}
+
+		if ${General.FindSetting[UncommonBox]}
+		{
+			UncommonBox:Set[${General.FindSetting[UncommonBox]}]
+		
+			if ${UncommonBox} > ${brokerslots} || !${Me.Vending[${UncommonBox}](exists)}
+				UncommonBox:set[0]
+		}
 		
 		i:Set[1]
 		do
@@ -2703,7 +2739,7 @@ objectdef BrokerBot
 }
 
 ;search your current broker boxes for existing stacks of items and see if theres room for more
-function placeitem(string ItemName)
+function placeitem(string ItemName, int ItemBox)
 {
 	call echolog "<start> placeitem ${ItemName}"
 	variable int xvar
@@ -2718,7 +2754,6 @@ function placeitem(string ItemName)
 	nospace:Set[FALSE]
 	storebox:Set[0]
 
-
 	Me:CreateCustomInventoryArray[nonbankonly]
 	
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
@@ -2730,17 +2765,24 @@ function placeitem(string ItemName)
 	; if there are items to be placed
 	if ${numitems} > 0
 	{
-		box:Set[0]
-		do
+		If ${ItemBox} > 0 && ${ItemList.FindSet["${ItemName}"].FindSetting[Box${ItemBox}]} != 3
 		{
-			if ${ItemList.FindSet["${ItemName}"].FindSetting[Box${xvar}]} == 2
-			{
-				box:Set[${xvar}]
-				break
-			}
+			box:Set[${ItemBox}]
 		}
-		while ${xvar:Inc} <= ${brokerslots}
-		
+		else
+		{
+			box:Set[0]
+			do
+			{
+				if ${ItemList.FindSet["${ItemName}"].FindSetting[Box${xvar}]} == 2
+				{
+					box:Set[${xvar}]
+					break
+				}
+			}
+			while ${xvar:Inc} <= ${brokerslots}
+		}
+			
 		if ${box} > 0
 			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 
@@ -2755,9 +2797,8 @@ function placeitem(string ItemName)
 			do
 			{
 				; check to see if there is are boxes with the same item in already
-
 				; if that box has no been marked as a no-place box for that item
-				if ${ItemList.FindSet["${ItemName}"].FindSetting[Box${xvar}]} != 3
+				if ${ItemList.FindSet["${ItemName}"].FindSetting[Box${i}]} != 3
 				{
 					call FindItem ${i} "${ItemName}"
 					if ${Return} != -1
@@ -2774,7 +2815,7 @@ function placeitem(string ItemName)
 					}
 				}
 			}
-			while ${i:Inc} <= ${brokerslots} && ${numitems} > 0		
+			while ${i:Inc} <= ${brokerslots} && ${numitems} > 0
 		}
 		;   place the rest of the items (if any) where there are spaces , boxes with most space first
 		if ${numitems} >0
@@ -2970,6 +3011,9 @@ function:int placeitems(string ItemName, int box, int numitems)
 					if ${BadContainer}
 					{
 						; change the setting for that item so the container is marked as ignore
+						if !${ItemList.FindSet["${ItemName}"]}
+							ItemList:AddSet["${ItemName}"]
+							
 						Item:Set[${ItemList.FindSet["${ItemName}"]}]
 						Item:AddSetting[Box${box},3]
 						
@@ -3000,8 +3044,8 @@ function:int placeitems(string ItemName, int box, int numitems)
 							; make the script wait till the inventory total has changed (item was added)
 							; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
 
-					
 							loopcount:Set[1]
+
 							do
 							{
 								if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
@@ -3011,6 +3055,20 @@ function:int placeitems(string ItemName, int box, int numitems)
 
 							}
 							while ${loopcount:Inc} <= 10
+
+							if ${BadContainer}
+							{
+								if !${ItemList.FindSet["${ItemName}"]}
+									ItemList:AddSet["${ItemName}"]
+
+								; change the setting for that item so the container is marked as ignore
+								Item:Set[${ItemList.FindSet["${ItemName}"]}]
+								Item:AddSetting[Box${box},3]
+						
+								; reset the bad Container Flag
+								BadContainer:Set[FALSE]
+							}					
+
 
 						}
 					}
@@ -3277,7 +3335,7 @@ function placeshinies()
 						if !${NewCollection}
 						{
 							NewCollection:Set[FALSE]
-							call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+							call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${ShiniesBox}
 	
 							PSxvar:Set[1]
 							Me:CreateCustomInventoryArray[nonbankonly]
@@ -3286,21 +3344,21 @@ function placeshinies()
 					}
 					elseif ${PlaceRaws} && ${Raws.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
 					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${RawsBox}
 						PSxvar:Set[1]
 						Me:CreateCustomInventoryArray[nonbankonly]
 						waitframe
 					}
 					elseif ${PlaceRares} && ${Rares.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
 					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${RaresBox}
 						PSxvar:Set[1]
 						Me:CreateCustomInventoryArray[nonbankonly]
 						waitframe
 					}
 					elseif ${PlaceUncommon} && ${Uncommon.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
 					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
+						call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${UncommonBox}
 						PSxvar:Set[1]
 						Me:CreateCustomInventoryArray[nonbankonly]
 						waitframe
@@ -3439,7 +3497,7 @@ function:int InventoryContainer(int ID)
 		if ${ID} == ${NoSaleID[${xvar}]}
 		Return ${xvar}
 	}
-	while ${xvar:Inc} <= 6
+	while ${xvar:Inc} <= ${InventorySlots}
 	Return -1
 }
 

@@ -399,6 +399,30 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<Text Name='ShniesBoxText'>
+						<X>135</X>
+						<Y>252</Y>
+						<Width>25</Width> 
+						<Height>20</Height>
+						<Text>Box :</Text>
+					</Text>
+					<Textentry Name='ShiniesBox'>
+						<X>165</X>
+						<Y>250</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<MaxLength>2</MaxLength>
+						<OnLoad>
+							UIElement[ShiniesBox@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.ShiniesBox}]
+						</OnLoad>
+						<OnChange>
+							if ${UIElement[ShiniesBox@Sell@GUITabs@MyPrices].Text.Length} > 0
+							{
+								Script[myprices]:QueueCommand[call SaveSetting ShiniesBox ${UIElement[ShiniesBox@Sell@GUITabs@MyPrices].Text}]
+							}
+						</OnChange>
+					</Textentry>
+
 					<checkbox Name='Raws'>
 						<X>5%</X>
 						<Y>270</Y>
@@ -431,6 +455,30 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<Text Name='RawsBoxText'>
+						<X>135</X>
+						<Y>272</Y>
+						<Width>25</Width> 
+						<Height>20</Height>
+						<Text>Box :</Text>
+					</Text>
+					<Textentry Name='RawsBox'>
+						<X>165</X>
+						<Y>270</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<MaxLength>2</MaxLength>
+						<OnLoad>
+							UIElement[RawsBox@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.RawsBox}]
+						</OnLoad>
+						<OnChange>
+							if ${UIElement[RawsBox@Sell@GUITabs@MyPrices].Text.Length} > 0
+							{
+								Script[myprices]:QueueCommand[call SaveSetting RawsBox ${UIElement[RawsBox@Sell@GUITabs@MyPrices].Text}]
+							}
+						</OnChange>
+					</Textentry>
+
 					<checkbox Name='Rares'>
 						<X>5%</X>
 						<Y>290</Y>
@@ -463,6 +511,30 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<Text Name='RaresBoxText'>
+						<X>135</X>
+						<Y>292</Y>
+						<Width>25</Width> 
+						<Height>20</Height>
+						<Text>Box :</Text>
+					</Text>
+					<Textentry Name='RaresBox'>
+						<X>165</X>
+						<Y>290</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<MaxLength>2</MaxLength>
+						<OnLoad>
+							UIElement[RaresBox@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.RaresBox}]
+						</OnLoad>
+						<OnChange>
+							if ${UIElement[RaresBox@Sell@GUITabs@MyPrices].Text.Length} > 0
+							{
+								Script[myprices]:QueueCommand[call SaveSetting RaresBox ${UIElement[RaresBox@Sell@GUITabs@MyPrices].Text}]
+							}
+						</OnChange>
+					</Textentry>
+
 					<checkbox Name='Uncommon'>
 						<X>5%</X>
 						<Y>310</Y>
@@ -495,6 +567,30 @@
 							}
 						</OnLeftClick>
 					</checkbox>
+					<Text Name='UncommonBoxText'>
+						<X>135</X>
+						<Y>312</Y>
+						<Width>25</Width> 
+						<Height>20</Height>
+						<Text>Box :</Text>
+					</Text>
+					<Textentry Name='UncommonBox'>
+						<X>165</X>
+						<Y>310</Y>
+						<Width>20</Width> 
+						<Height>15</Height>
+						<MaxLength>2</MaxLength>
+						<OnLoad>
+							UIElement[UncommonBox@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.UncommonBox}]
+						</OnLoad>
+						<OnChange>
+							if ${UIElement[UncommonBox@Sell@GUITabs@MyPrices].Text.Length} > 0
+							{
+								Script[myprices]:QueueCommand[call SaveSetting UncommonBox ${UIElement[UncommonBox@Sell@GUITabs@MyPrices].Text}]
+							}
+						</OnChange>
+					</Textentry>
+					
 					<Text Name='PauseTimerText'>
 						<X>25</X>
 						<Y>350</Y>
