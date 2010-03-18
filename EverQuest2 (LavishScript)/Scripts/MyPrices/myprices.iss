@@ -2664,38 +2664,25 @@ objectdef BrokerBot
 		PlaceRaws:Set[${General.FindSetting[PlaceRaws]}]
 		PlaceRares:Set[${General.FindSetting[PlaceRares]}]
 		PlaceUncommon:Set[${General.FindSetting[PlaceUncommon]}]
+		ShiniesBox:Set[${General.FindSetting[ShiniesBox]}]
 
-		if ${General.FindSetting[ShiniesBox]}
-		{
-			ShiniesBox:Set[${General.FindSetting[ShiniesBox]}]
+		if ${ShiniesBox} > ${brokerslots} || !${Me.Vending[${ShiniesBox}](exists)}
+			ShiniesBox:Set[0]
+		
+		RawsBox:Set[${General.FindSetting[RawsBox]}]
+		
+		if ${RawsBox} > ${brokerslots} || !${Me.Vending[${RawsBox}](exists)}
+			RawsBox:Set[0]
+		
+		RaresBox:Set[${General.FindSetting[RaresBox]}]
+		
+		if ${RaresBox} > ${brokerslots} || !${Me.Vending[${RaresBox}](exists)}
+			RaresBox:Set[0]
 
-			if ${ShiniesBox} > ${brokerslots} || !${Me.Vending[${ShiniesBox}](exists)}
-				ShiniesBox:set[0]
-		}
+		UncommonBox:Set[${General.FindSetting[UncommonBox]}]
 		
-		if ${General.FindSetting[RawsBox]}
-		{
-			RawsBox:Set[${General.FindSetting[RawsBox]}]
-		
-			if ${RawsBox} > ${brokerslots} || !${Me.Vending[${RawsBox}](exists)}
-				RawsBox:set[0]
-		}
-		
-		if ${General.FindSetting[RaresBox]}
-		{
-			RaresBox:Set[${General.FindSetting[RaresBox]}]
-		
-			if ${RaresBox} > ${brokerslots} || !${Me.Vending[${RaresBox}](exists)}
-				RaresBox:set[0]
-		}
-
-		if ${General.FindSetting[UncommonBox]}
-		{
-			UncommonBox:Set[${General.FindSetting[UncommonBox]}]
-		
-			if ${UncommonBox} > ${brokerslots} || !${Me.Vending[${UncommonBox}](exists)}
-				UncommonBox:set[0]
-		}
+		if ${UncommonBox} > ${brokerslots} || !${Me.Vending[${UncommonBox}](exists)}
+			UncommonBox:Set[0]
 		
 		i:Set[1]
 		do
