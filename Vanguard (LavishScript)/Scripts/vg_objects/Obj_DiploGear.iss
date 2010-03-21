@@ -1,3 +1,49 @@
+;======================
+/* Diplo Gear
+
+	Usage
+	____________________________________
+
+	**Place the following line at the top of your .iss file
+		#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_DiploGear.iss"
+
+	**In your script call the following object with these commands, or type this in the console
+
+	Loading Gear-------------------------
+		obj_diplogear:Load[Merchants]
+		obj_diplogear:Load[Academics]
+		obj_diplogear:Load[Outsiders]
+		obj_diplogear:Load[Domestics]
+		obj_diplogear:Load[Soldiers]
+		obj_diplogear:Load[Nobles]
+		obj_diplogear:Load[Craftsmen]
+		obj_diplogear:Load[Clergy]
+	
+	Saving Gear--------------------------
+		obj_diplogear:Save[Merchants]
+		obj_diplogear:Save[Academics]
+		obj_diplogear:Save[Outsiders]
+		obj_diplogear:Save[Domestics]
+		obj_diplogear:Save[Soldiers]
+		obj_diplogear:Save[Nobles]
+		obj_diplogear:Save[Craftsmen]
+		obj_diplogear:Save[Clergy]
+	
+	Notes
+	____________________________________
+	**  You dont need to know how an object works to use it.  
+	**  Objects are bits of code that perform specific functions.
+	**  This function specifically loads and saves sets of diplomacy gear 
+	**  You can switch Diplomacy sets quickly either from a script or from the console
+
+	Credits
+	____________________________________
+ 	*  Created by mmoaddict
+	*  Special Thanks to Amadeus and Lax for all their work
+	
+*/
+;======================
+
 objectdef obj_diplogear
 {
 	;======================
@@ -24,13 +70,6 @@ objectdef obj_diplogear
 ;===================================================
 ;===           Methods to be Used               ====
 ;===================================================
-
-	;======================
-	/* Object Methods
-		Example:  obj_diplogear:Load[Academics]
-		Example:  obj_diplogear:Save[Academics]
- 	*/
-	;======================
 
 	method Load(string Presence, bool debug)
 	{
