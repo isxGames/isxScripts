@@ -9,7 +9,7 @@
 
 	**In your script call the following object with these commands, or type this in the console
 
-	Loading Gear-------------------------
+	Loading Gear(It will automatically put the saved set of gear on your toon)
 		obj_diplogear:Load[Merchants]
 		obj_diplogear:Load[Academics]
 		obj_diplogear:Load[Outsiders]
@@ -19,7 +19,7 @@
 		obj_diplogear:Load[Craftsmen]
 		obj_diplogear:Load[Clergy]
 	
-	Saving Gear--------------------------
+	Saving Gear(Manually Put the Gear you want to save on your toon)
 		obj_diplogear:Save[Merchants]
 		obj_diplogear:Save[Academics]
 		obj_diplogear:Save[Outsiders]
@@ -35,6 +35,7 @@
 	**  Objects are bits of code that perform specific functions.
 	**  This function specifically loads and saves sets of diplomacy gear 
 	**  You can switch Diplomacy sets quickly either from a script or from the console
+	**  You have to Save a gear set before you can Load it!
 
 	Credits
 	____________________________________
