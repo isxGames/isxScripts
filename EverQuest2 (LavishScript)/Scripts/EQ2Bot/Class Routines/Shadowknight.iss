@@ -591,88 +591,86 @@ function Combat_Routine(int xAction)
 				return CombatComplete
 		}  
     
-    if ${PBAoEMode}
+	  ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
+    if (${Me.Ability[${SpellType[55]}].IsReady})
+    {	
+      call _CastSpellRange 55 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+  	}   	
+  	;; Grave Sacrament
+    if (${Me.Ability[${SpellType[45]}].IsReady})
     {
-		  ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
-	    if (${Me.Ability[${SpellType[55]}].IsReady})
-	    {	
-	      call _CastSpellRange 55 0 0 0 ${KillTarget} 0 0 0 1
+    	;Debug:Echo["${SpellType[45]}..."]
+	    call _CastSpellRange 45 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}    	
+  	;; Tap Veins
+    if (${Me.Ability[${SpellType[98]}].IsReady})
+    {
+    	;Debug:Echo["${SpellType[98]}..."]
+	    call _CastSpellRange 98 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}
+		;; Lance
+		if ${Me.Ability[${SpellType[347]}](exists)}
+		{
+			;Debug:Echo["${SpellType[347]}..."]
+			if (${Me.Ability[${SpellType[347]}].IsReady})
+			{
+				call _CastSpellRange 347 0 0 0 ${Me.ToActor.ID} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
 					return CombatComplete
-	  	}   	
-    	;; Grave Sacrament
-	    if (${Me.Ability[${SpellType[45]}].IsReady})
+			}
+		}
+		;hammer ground stun
+		if !${Actor[${KillTarget}].IsEpic}
+		{
+			if (${Me.Ability[${SpellType[505]}].IsReady})
 	    {
-	    	;Debug:Echo["${SpellType[45]}..."]
-		    call _CastSpellRange 45 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-				if ${Return.Equal[CombatComplete]}
-					return CombatComplete
-			}    	
-    	;; Tap Veins
-	    if (${Me.Ability[${SpellType[98]}].IsReady})
-	    {
-	    	;Debug:Echo["${SpellType[98]}..."]
-		    call _CastSpellRange 98 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+		    call _CastSpellRange 505 0 0 0 ${Me.ToActor.ID} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
 					return CombatComplete
 			}
-			;; Lance
-			if ${Me.Ability[${SpellType[347]}](exists)}
-			{
-				;Debug:Echo["${SpellType[347]}..."]
-				if (${Me.Ability[${SpellType[347]}].IsReady})
-				{
-					call _CastSpellRange 347 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-					if ${Return.Equal[CombatComplete]}
-						return CombatComplete
-				}
-			}
-			;hammer ground stun
-			if !${Actor[${KillTarget}].IsEpic}
-			{
-				if (${Me.Ability[${SpellType[505]}].IsReady})
-		    {
-			    call _CastSpellRange 505 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-					if ${Return.Equal[CombatComplete]}
-						return CombatComplete
-				}
-			}
-			if ${NumNPCs} > 4
-			{
-				;; Pestilence
-				if (${Me.Ability[${SpellType[99]}].IsReady})
-				{					
-					;Debug:Echo["${SpellType[99]}..."]
-					call _CastSpellRange 99 0 0 0 ${KillTarget} 0 0 0 1
-					if ${Return.Equal[CombatComplete]}
-						return CombatComplete
-				}
-			}
-			;; Doom Judgement
-			if (${Me.Ability[${SpellType[97]}].IsReady})
-			{
-				;Debug:Echo["${SpellType[97]}..."]
-				call _CastSpellRange 97 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+		}
+		if ${NumNPCs} > 4
+		{
+			;; Pestilence
+			if (${Me.Ability[${SpellType[99]}].IsReady})
+			{					
+				;Debug:Echo["${SpellType[99]}..."]
+				call _CastSpellRange 99 0 0 0 ${KillTarget} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
 					return CombatComplete
 			}
-			;; Death Cloud
-			if (${Me.Ability[${SpellType[95]}].IsReady})
-			{
-				;Debug:Echo["${SpellType[95]}..."]
-				call _CastSpellRange 95 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-				if ${Return.Equal[CombatComplete]}
-					return CombatComplete
-			}			
-			;; Unending Agony
-			if (${Me.Ability[${SpellType[96]}].IsReady})
-			{
-				;Debug:Echo["${SpellType[96]}..."]
-				call _CastSpellRange 96 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-				if ${Return.Equal[CombatComplete]}
-					return CombatComplete
-			}							
-  	}
+		}
+		;; Doom Judgement
+		if (${Me.Ability[${SpellType[97]}].IsReady})
+		{
+			;Debug:Echo["${SpellType[97]}..."]
+			call _CastSpellRange 97 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}
+		;; Death Cloud
+		if (${Me.Ability[${SpellType[95]}].IsReady})
+		{
+			;Debug:Echo["${SpellType[95]}..."]
+			call _CastSpellRange 95 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}			
+		;; Unending Agony
+		if (${Me.Ability[${SpellType[96]}].IsReady})
+		{
+			;Debug:Echo["${SpellType[96]}..."]
+			call _CastSpellRange 96 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}						
+			
     ;; Self Reverse DS (with life tap proc)
   	if ${Me.Ability[${SpellType[7]}].IsReady}
   	{
