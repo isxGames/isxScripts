@@ -34,6 +34,7 @@ function Class_Declaration()
 	declare DoAEs bool script 
 	declare UseUnholyHunger bool script TRUE
 	declare UseUnholyStrength bool script TRUE
+	declare AlwaysUseAEs bool script FALSE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -53,6 +54,7 @@ function Class_Declaration()
 	UseMastersRage:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseMastersRage,TRUE]}]
 	UseUnholyHunger:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseUnholyHunger,TRUE]}]
 	UseUnholyStrength:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseUnholyStrength,TRUE]}]
+	AlwaysUseAEs:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[AlwaysUseAEs,FALSE]}]
 
 
 	BuffArmamentMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffArmamentMember,]}]
@@ -535,27 +537,36 @@ function Combat_Routine(int xAction)
     }
   }
 	
-  EQ2:CreateCustomActorArray[ByDist,12,npc]
-  NumNPCs:Set[${EQ2.CustomActorArraySize}]
-  DoAEs:Set[FALSE]
-  if ${NumNPCs} > 3
-  	DoAEs:Set[TRUE]
-  elseif ${Actor[${KillTarget}].IsEpic}
-  	DoAEs:Set[TRUE]
-  elseif ${Actor[${KillTarget}].IsHeroic}
-  {
-  	if ${Actor[${KillTarget}].Difficulty} >= 2
-  	{
-			switch ${Actor[${KillTarget}].ConColor}
-			{
-				case Red
-				case Orange
-				case Yellow
-				case White
-					DoAEs:Set[TRUE]
-					break
-				default
-					break
+	DoAEs:Set[FALSE]
+	if ${PBAoEMode}
+	{
+		if ${AlwaysUseAEs}
+			DoAEs:Set[TRUE]
+		else
+		{
+		  EQ2:CreateCustomActorArray[ByDist,12,npc]
+		  NumNPCs:Set[${EQ2.CustomActorArraySize}]
+		  DoAEs:Set[FALSE]
+		  if ${NumNPCs} > 2
+		  	DoAEs:Set[TRUE]
+		  elseif ${Actor[${KillTarget}].IsEpic}
+		  	DoAEs:Set[TRUE]
+		  elseif ${Actor[${KillTarget}].IsHeroic}
+		  {
+		  	if ${Actor[${KillTarget}].Difficulty} >= 2
+		  	{
+					switch ${Actor[${KillTarget}].ConColor}
+					{
+						case Red
+						case Orange
+						case Yellow
+						case White
+							DoAEs:Set[TRUE]
+							break
+						default
+							break
+					}
+				}
 			}
 		}
 	}
