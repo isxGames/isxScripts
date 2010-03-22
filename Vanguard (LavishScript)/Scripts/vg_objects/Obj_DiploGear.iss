@@ -171,6 +171,7 @@ objectdef obj_diplogear
 		Me.Inventory[${DiploNeck}]:Equip
 		Me.Inventory[${DiploShoulders}]:Equip
 		Me.Inventory[${DiploWrist}]:Equip
+		Me.Inventory[${DiploChest}]:Equip
 		Me.Inventory[${DiploHands}]:Equip
 		Me.Inventory[${DiploHeld}]:Equip
 		Me.Inventory[${DiploBelt}]:Equip
@@ -194,7 +195,7 @@ objectdef obj_diplogear
 		DiploFace:Set[${GearSet_ssr.FindSetting[DiploFace_${di}]}]
 		DiploCloak:Set[${GearSet_ssr.FindSetting[DiploCloak_${di}]}]
 		DiploNeck:Set[${GearSet_ssr.FindSetting[DiploNeck_${di}]}]
-		DiploShoulders:Set[${GearSet_ssr.FindSetting[DiploShoulders_${di}]}]
+		DiploShoulders:Set[${GearSet_ssr.FindSetting[DiploShoulder_${di}]}]
 		DiploWrist:Set[${GearSet_ssr.FindSetting[DiploWrist_${di}]}]
 		DiploChest:Set[${GearSet_ssr.FindSetting[DiploChest_${di}]}]
 		DiploHands:Set[${GearSet_ssr.FindSetting[DiploHands_${di}]}]
@@ -260,24 +261,64 @@ function(global):int ConvertPresence(string Presence)
 {
 		switch ${Presence}
 			{
+			case 1
+				Return 1
 			case Merchants
 				Return 1
+			case 2
+				Return 2
 			case Academics
 				Return 2
+			case 3
+				Return 3
 			case Outsiders
 				Return 3
+			case 4
+				Return 4
 			case Domestics
 				Return 4
+			case 5
+				Return 5
 			case Soldiers
 				Return 5
+			case 6
+				Return 6
 			case Nobles
 				Return 6
+			case 7
+				Return 7
 			case Craftsmen
 				Return 7
+			case 8
+				Return 8
 			case Clergy
 				Return 8
 			default
 				Return 0
+			}
+}
+function(global):string PresenceNeeded()
+{
+	switch ${Dialog[Civic Diplomacy,1].PresenceRequiredType}
+			{
+			case Academic Presence
+				Return Academics
+			case Merchant Presence
+				Return Merchants
+			case Outsider Presence
+				Return Outsiders
+			case Domestic Presence
+				Return Domestics
+			case Soldier Presence
+				Return Soldiers
+			case Noble Presence
+				Return Nobles
+			case Craftsmen Presence
+				Return Craftsmen
+			case Clergy Presence
+				Return Clergy			
+			default
+				Return PresenceNotFound
 			}
 }
 
