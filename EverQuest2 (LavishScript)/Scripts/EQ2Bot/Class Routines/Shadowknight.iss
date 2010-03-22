@@ -571,15 +571,17 @@ function Combat_Routine(int xAction)
 		}
 	}
 	
+	
+  ;; DeathMarch
+  if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
+  {
+		call _CastSpellRange 312 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+  }
+	
   if ${DoAEs}
   {
-    ;; DeathMarch
-    if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
-	  {
-			call _CastSpellRange 312 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-    }
   	;; AE Taunt
     if (${Me.Ability[${SpellType[340]}].IsReady})
     {
