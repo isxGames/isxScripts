@@ -10,7 +10,7 @@ Amadeus, for another fine product, ISXVG.
 Xeon, for the movement code stolen from vgcraftbot.
 Gavkra, for the inspiration, the initial RateCard, DoParleyCard, and IsPlayable functions.
 Chayce, for the rewrite of the RateCard function.
-mmoaddict, continuation of project
+mmoaddict, continuation of project 4_22_2010
 */
 
 #include "${Script.CurrentDirectory}/dip-bnavobjects.iss
