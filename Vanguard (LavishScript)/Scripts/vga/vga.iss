@@ -94,7 +94,13 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Obj_Face.iss"
 #include "${Script.CurrentDirectory}/Obj_Move.iss"
 #include "${Script.CurrentDirectory}/Obj_Follow.iss"
+
+
+;-------------------------------------------
+;************VG_Objects Scripts**************
+;-------------------------------------------
 #include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_DiploGear.iss"
+#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_Friends.iss"
 
 ;-------------------------------------------
 ;************Utilities Scripts**************
@@ -108,7 +114,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/UTL_LavishEvents.iss"
 #include "${Script.CurrentDirectory}/Act_GUI_Utility.iss"
 #include "${Script.CurrentDirectory}/Act_MoveToAttack.iss"
-#include "${Script.CurrentDirectory}/GUI_Friends.iss"
+;#include "${Script.CurrentDirectory}/GUI_Friends.iss"
 #include "${Script.CurrentDirectory}/Act_Interactions.iss"
 ;-------------------------------------------
 ;************Main-Tab Scripts***************
