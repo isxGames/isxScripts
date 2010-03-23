@@ -81,8 +81,8 @@
 		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Stun Mode</Text>
-		<AutoTooltip>Will attempt to keep the target stunned when possible.</AutoTooltip>
+		<Text>Use stun abilities</Text>
+		<AutoTooltip>Will attempt to keep the target stunned as a part of the spell lineup.</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
@@ -99,28 +99,33 @@
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[StunMode]}</Data>
 	</CommandCheckbox>
-	<Commandcheckbox Name='SpamSpells'>
+	<Commandcheckbox Name='ChainStunMode'>
 	<X>10</X>
 	<Y>110</Y>
 	<Width>30</Width>
 	<Height>20</Height>
-	<Text>Spam Spells</Text>
-	<AutoTooltip>This currently does nothing unless defined in charactername.iss</AutoTooltip>
+	<Text>Chain-cast stun &amp; mez abilities</Text>
+	<AutoTooltip>cast stun and mez abilities as often as possible</AutoTooltip>
 	<OnLeftClick>
 	  if ${This.Checked}
 	  {
-	  Script[EQ2Bot].Variable[SpamSpells]:Set[TRUE]
-	  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["SpamSpells",TRUE]
-	  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		  Script[EQ2Bot].Variable[ChainStunMode]:Set[TRUE]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["ChainStunMode",TRUE]
+		  
+		  UIElement[EQ2 Bot].FindUsableChild[Stun Mode,CommandCheckbox]:SetChecked
+			Script[EQ2Bot].Variable[StunMode]:Set[TRUE]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["StunMode",TRUE]
+			
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	  }
 	  else
 	  {
-	  Script[EQ2Bot].Variable[SpamSpells]:Set[FALSE]
-	  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["SpamSpells",FALSE]
-	  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		  Script[EQ2Bot].Variable[ChainStunMode]:Set[FALSE]
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["ChainStunMode",FALSE]
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	  }
 	</OnLeftClick>
-	<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting["SpamSpells"]}</Data>
+	<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting["ChainStunMode"]}</Data>
   </Commandcheckbox>
   <Commandcheckbox Name='SummonImpOfRo'>
 		<X>10</X>

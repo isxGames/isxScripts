@@ -54,7 +54,7 @@ function Class_Declaration()
 	declare IllyCasterBuffsOn collection:string script
 	declare IllyDPSBuffsOn collection:string script
 	declare MakePetWhileInCombat bool script TRUE
-	declare SpamSpells bool script FALSE
+	declare ChainStunMode bool script FALSE
 	declare Custom custom_overrides script
 	declare ManaFlowThreshold int script 60
 	declare CureMode bool script FALSE
@@ -87,7 +87,7 @@ function Class_Declaration()
 	UseIlluminate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseIlluminate,FALSE]}]
 	BlinkMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BlinkMode,FALSE]}]
 	MakePetWhileInCombat:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MakePetWhileInCombat,TRUE]}]
-	SpamSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamSpells,FALSE]}]
+	ChainStunMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ChainStunMode,FALSE]}]
 	ManaFlowThreshold:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ManaFlowThreshold,60]}]
 	UIElement[EQ2 Bot].FindUsableChild[sldManaFlowThreshold,slider]:SetValue[${ManaFlowThreshold}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureMode,FALSE]}]
@@ -185,7 +185,9 @@ function Pulse()
 							return
 						}
 					}
-					call CastSomething
+					;call CastSomething
+					ClassPulseTimer:Set[${Script.RunningTime}]
+					return
 				}
 			}
 		}
@@ -791,6 +793,41 @@ function CheckNonDps(... Args)
 {
 	variable int spellsused
 	
+	
+	if ${ChainStunMode}
+	{
+		; Entrance
+		if (${Me.Ability[${SpellType[352]}].IsReady})
+		{
+			LastSpellCast:Set[352]
+			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Bewilderment
+		if (${Me.Ability[${SpellType[191]}].IsReady})
+		{
+			LastSpellCast:Set[191]
+			call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Paranoia
+		if (${Me.Ability[${SpellType[190]}].IsReady})
+		{
+			LastSpellCast:Set[190]
+			call _CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Regalia
+		if (${Me.Ability[${SpellType[92]}].IsReady})
+		{
+			LastSpellCast:Set[92]
+			call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Entrance
+		if (${Me.Ability[${SpellType[352]}].IsReady})
+		{
+			LastSpellCast:Set[352]
+			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		}
+	}	
+	
 	; Check mezzmode
 	if ${MezzMode}
 		call Mezmerise_Targets
@@ -816,7 +853,7 @@ function CheckNonDps(... Args)
 	}
 
 	; Check stunmode
-	if ${StunMode} && !${DPSMode}
+	if ${StunMode}
 	{
 		if ${KillTarget} && !${Actor[${KillTarget}].IsEpic}
 		{
@@ -865,7 +902,41 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 
 	if (${DoNoCombat})
 		return ${bReturn}
-
+		
+	if ${ChainStunMode}
+	{
+		; Entrance
+		if (${Me.Ability[${SpellType[352]}].IsReady})
+		{
+			LastSpellCast:Set[352]
+			call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Bewilderment
+		if (${Me.Ability[${SpellType[191]}].IsReady})
+		{
+			LastSpellCast:Set[191]
+			call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Paranoia
+		if (${Me.Ability[${SpellType[190]}].IsReady})
+		{
+			LastSpellCast:Set[190]
+			call CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Regalia
+		if (${Me.Ability[${SpellType[92]}].IsReady})
+		{
+			LastSpellCast:Set[92]
+			call CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Entrance
+		if (${Me.Ability[${SpellType[352]}].IsReady})
+		{
+			LastSpellCast:Set[352]
+			call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		}
+	}
+		
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
@@ -1056,6 +1127,40 @@ function Combat_Routine(int xAction)
 			Debug:Echo["Combat_Routine() -- Exiting (In PostDeathRoutine or CheckingBuffsOnce)"]
 		return
 	}
+	
+	if ${ChainStunMode}
+	{
+		; Entrance
+		if (${Me.Ability[${SpellType[352]}].IsReady})
+		{
+			LastSpellCast:Set[352]
+			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Bewilderment
+		if (${Me.Ability[${SpellType[191]}].IsReady})
+		{
+			LastSpellCast:Set[191]
+			call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Paranoia
+		if (${Me.Ability[${SpellType[190]}].IsReady})
+		{
+			LastSpellCast:Set[190]
+			call _CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Regalia
+		if (${Me.Ability[${SpellType[92]}].IsReady})
+		{
+			LastSpellCast:Set[92]
+			call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
+		}
+		; Entrance
+		if (${Me.Ability[${SpellType[352]}].IsReady})
+		{
+			LastSpellCast:Set[352]
+			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		}
+	}	
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;;; Set some local variables... ;;;;
@@ -1141,6 +1246,9 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 	}
+	
+
+			
 
 	call CheckNonDps
 	if ${Return.Equal[CombatComplete]}
@@ -2117,8 +2225,6 @@ function RefreshPower()
 				{
 					if (${Me.Group[${MemberLowestPower}].ToActor.Power} < ${ManaFlowThreshold} && ${Me.Group[${MemberLowestPower}].ToActor.Distance} < 30  && ${Me.ToActor.Health} > 30)
 					{
-						if ${SpamSpells} && ${Me.Ability[${SpellType[360]}].IsReady}
-							Custom:Spam[Mana Flow,${Me.Group[${MemberLowestPower}].ToActor.ID}]
 						call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
 						LastSpellCast:Set[360]
 					}

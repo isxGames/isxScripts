@@ -935,7 +935,8 @@ function main()
 		if ${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,pc,${OriginalMT}](exists)} && ${Actor[exactname,pc,${OriginalMT}].Health}>80
 		{
 			MainTankID:Set[${Actor[exactname,pc,${OriginalMT}].ID}]
-			Debug:Echo["${Script.RunningTime} -- Maintank Reset to UI Selection"]
+			MainTankPC:Set[${OriginalMT}]
+			Debug:Echo["${Script.RunningTime} -- Maintank Reset to UI Selection (${MainTankPC} - ID: ${MainTankID})"]
 		}
 
 		;;;;;;;;;;;;;;
