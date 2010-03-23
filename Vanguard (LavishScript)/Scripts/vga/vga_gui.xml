@@ -1854,11 +1854,51 @@
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
+						             <ComboBox Name="diplogearCombo" Template="VG.ComboBox">
+                  <X>13</X>
+                  <Y>55</Y>
+                  <Width>110</Width>
+                  <Height>20</Height>
+		  <Items>
+		   <Item Value='1' Default='1'>Merchants</Item>
+		   <Item Value='2'>Academics</Item>
+		   <Item Value='3'>Outsiders</Item>
+		   <Item Value='4'>Domestics</Item>
+		   <Item Value='5'>Soldiers</Item>
+		   <Item Value='6'>Nobles</Item>
+		   <Item Value='5'>Craftsmen</Item>
+		   <Item Value='6'>Clergy</Item>
+		  </Items>
+                  <OnSelect>
+                  </OnSelect>
+                </ComboBox>
+            <CommandButton Name="diplogearSave" Template="VG.RedCommandButton">
+              <visible>4</visible>
+              <X>130</X>
+              <Y>55</Y>
+              <Height>18</Height>
+              <Width>80</Width>
+              <text>Save Gear</Text>
+              <OnLeftClick>
+				obj_diplogear:Save[${UIElement[diplogearCombo@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].Selection}]
+              </OnLeftClick>
+            </CommandButton>
+            <CommandButton Name="diplogearLoad" Template="VG.RedCommandButton">
+              <visible>0</visible>
+              <X>220</X>
+              <Y>55</Y>
+              <Height>18</Height>
+              <Width>80</Width>
+              <text>Load Gear</Text>
+              <OnLeftClick>
+				obj_diplogear:Load[${UIElement[diplogearCombo@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].Selection}]
+              </OnLeftClick>
+            </CommandButton>
                 <Listbox Name="DiploNPCsList" Template="VG.ListBox">
                   <X>13</X>
-                  <Y>56</Y>
+                  <Y>76</Y>
                   <Width>95%</Width>
-                  <Height>180</Height>
+                  <Height>160</Height>
                   <AutoSort>TRUE</AutoSort>
                   <Sort>Text</Sort>
                   <OnLoad>
