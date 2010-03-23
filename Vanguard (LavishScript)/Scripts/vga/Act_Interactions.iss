@@ -2,18 +2,9 @@
 ;********************************************
 function:bool CheckFriend(string Who)
 {
-	variable iterator Iterator
-	Friends:GetSettingIterator[Iterator]
-	UIElement[FriendsList@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui]:ClearItems
-	while ( ${Iterator.Key(exists)} )
-	{
-		if ${Iterator.Key.Equal[${Who}]}
-			{
-			echo ${Who} is a friend
+	obj_friends.IsFriend[${Who}]
+		if ${Return}
 			return TRUE
-			}
-		Iterator:Next
-	}
 	return FALSE
 }
 ;********************************************

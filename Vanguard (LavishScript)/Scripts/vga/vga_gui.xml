@@ -5187,10 +5187,9 @@
                   <Text>Add</Text>
                   <Alignment>Center</Alignment>
                   <OnLeftClick>
-                    AddFriends "${UIElement[FriendsEntry@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}"
-                    BuildFriends
+                    obj_friends:Add[${UIElement[FriendsEntry@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}]
+                    obj_friends:Populate[FriendsList@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui]
                     UIElement[UIElement[FriendsEntry@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui]:ClearItems
-                    Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </CommandButton>
                 <Listbox Name="FriendsList" Template="VG.ListBox">
@@ -5201,13 +5200,12 @@
                   <AutoSort>TRUE</AutoSort>
                   <Sort>Text</Sort>
                   <OnLoad>
-                    BuildFriends
+                    obj_friends:Populate[FriendsList@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui]
                   </OnLoad>
                   <OnRightClick>
-                    RemoveFriends "${This.SelectedItem}"
+                    obj_friends:Remove[${This.SelectedItem}]
                     This.SelectedItem:Remove
-                    BuildFriends
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    obj_friends:Populate[FriendsList@FriendsCFrm@Friends@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui]
                   </OnRightClick>
                 </Listbox>
 
