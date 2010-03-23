@@ -94,6 +94,7 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Obj_Face.iss"
 #include "${Script.CurrentDirectory}/Obj_Move.iss"
 #include "${Script.CurrentDirectory}/Obj_Follow.iss"
+#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_DiploGear.iss"
 
 ;-------------------------------------------
 ;************Utilities Scripts**************

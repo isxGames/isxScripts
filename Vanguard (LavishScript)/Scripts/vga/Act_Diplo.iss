@@ -22,6 +22,9 @@ function AssistDiplo()
 				{
 				if ${Dialog[Civic Diplomacy,${CivicINT}].Text.Find[${Iterator.Value}](exists)}
 					{
+     					call PresenceNeeded
+      					echo Equipping Gear: ${Return}
+      					obj_diplogear:Load[${Return}]
 					Dialog[Civic Diplomacy,${CivicINT}]:Select
 					wait 5
 					OurTurn:Set[TRUE]
