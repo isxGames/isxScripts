@@ -1762,18 +1762,18 @@ function CheckCures(int InCombat=1)
   {
   	if ${Me.Ability[${SpellType[385]}].IsReady}
   	{
-	  		if ${Me.IsAfflicted}	
+	  		if (${Me.IsAfflicted} && ${Me.Arcane} != -1)	
 	  			grpcure:Inc
   		
 				do
 				{
 					;make sure they in zone and in range
-					if (${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance} <= 25)
+					if (${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temph1}].Arcane} != -1 && ${Me.Group[${temphl}].ToActor.Distance} <= 25)
 							grpcure:Inc
 				}
 				while ${temphl:Inc} <= ${Me.GroupCount}  	
   		
-  			if ${grpcure} > 1
+  			if ${grpcure} > 0
   			{
   				;echo "DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"
   				call CastSpellRange 385 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
@@ -1794,7 +1794,10 @@ function CheckCures(int InCombat=1)
 		{
 			;add ticks for group cures based upon our afflicions
 			if ${Me.Noxious}>0 || ${Me.Elemental}>0
-				grpcure:Inc
+			{
+				if (${Me.Arcane} != -1)
+					grpcure:Inc
+			}
 		}
 		;Debug:Echo["CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
 
@@ -1805,7 +1808,10 @@ function CheckCures(int InCombat=1)
 			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[220]}].Range}
 			{
 				if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Elemental}>0
-					grpcure:Inc
+				{
+					if (${Me.Group[${temph1}].Arcane} != -1)
+						grpcure:Inc
+				}
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
