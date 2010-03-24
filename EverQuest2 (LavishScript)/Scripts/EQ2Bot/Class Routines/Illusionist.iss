@@ -185,9 +185,7 @@ function Pulse()
 							return
 						}
 					}
-					;call CastSomething
-					ClassPulseTimer:Set[${Script.RunningTime}]
-					return
+					call CastSomething
 				}
 			}
 		}
@@ -795,38 +793,7 @@ function CheckNonDps(... Args)
 	
 	
 	if ${ChainStunMode}
-	{
-		; Entrance
-		if (${Me.Ability[${SpellType[352]}].IsReady})
-		{
-			LastSpellCast:Set[352]
-			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Bewilderment
-		if (${Me.Ability[${SpellType[191]}].IsReady})
-		{
-			LastSpellCast:Set[191]
-			call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Paranoia
-		if (${Me.Ability[${SpellType[190]}].IsReady})
-		{
-			LastSpellCast:Set[190]
-			call _CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Regalia
-		if (${Me.Ability[${SpellType[92]}].IsReady})
-		{
-			LastSpellCast:Set[92]
-			call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Entrance
-		if (${Me.Ability[${SpellType[352]}].IsReady})
-		{
-			LastSpellCast:Set[352]
-			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
-		}
-	}	
+		call ChainStunMez
 	
 	; Check mezzmode
 	if ${MezzMode}
@@ -904,38 +871,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		return ${bReturn}
 		
 	if ${ChainStunMode}
-	{
-		; Entrance
-		if (${Me.Ability[${SpellType[352]}].IsReady})
-		{
-			LastSpellCast:Set[352]
-			call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Bewilderment
-		if (${Me.Ability[${SpellType[191]}].IsReady})
-		{
-			LastSpellCast:Set[191]
-			call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Paranoia
-		if (${Me.Ability[${SpellType[190]}].IsReady})
-		{
-			LastSpellCast:Set[190]
-			call CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Regalia
-		if (${Me.Ability[${SpellType[92]}].IsReady})
-		{
-			LastSpellCast:Set[92]
-			call CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
-		}
-		; Entrance
-		if (${Me.Ability[${SpellType[352]}].IsReady})
-		{
-			LastSpellCast:Set[352]
-			call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
-		}
-	}
+		call ChainStunMez
 		
 	if ${DoCallCheckPosition}
 	{
@@ -1921,6 +1857,9 @@ function CastSomething()
 	call VerifyTarget
 	if !${Return}
 		return
+
+	if ${ChainStunMode}
+		call ChainStunMez
 
 	call CheckCastBeam
 
@@ -3255,3 +3194,31 @@ objectdef custom_overrides
 	}
 }
 
+function ChainStunMez()
+{
+	; Entrance
+	if (${Me.Ability[${SpellType[352]}].IsReady})
+	{
+		call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+	}
+	; Bewilderment
+	if (${Me.Ability[${SpellType[191]}].IsReady})
+	{
+		call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+	}
+	; Paranoia
+	if (${Me.Ability[${SpellType[190]}].IsReady})
+	{
+		call _CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
+	}
+	; Regalia
+	if (${Me.Ability[${SpellType[92]}].IsReady})
+	{
+		call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
+	}
+	; Entrance
+	if (${Me.Ability[${SpellType[352]}].IsReady})
+	{
+		call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+	}
+}	
