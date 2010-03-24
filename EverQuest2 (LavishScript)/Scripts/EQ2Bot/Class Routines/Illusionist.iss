@@ -3199,26 +3199,26 @@ function ChainStunMez()
 	; Entrance
 	if (${Me.Ability[${SpellType[352]}].IsReady})
 	{
-		call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
 	}
 	; Bewilderment
 	if (${Me.Ability[${SpellType[191]}].IsReady})
 	{
-		call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
 	}
 	; Paranoia
 	if (${Me.Ability[${SpellType[190]}].IsReady})
 	{
-		call _CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
+		call CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
 	}
 	; Regalia
 	if (${Me.Ability[${SpellType[92]}].IsReady})
 	{
-		call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
+		call CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
 	}
 	; Entrance
 	if (${Me.Ability[${SpellType[352]}].IsReady})
 	{
-		call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+		call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
 	}
 }	
