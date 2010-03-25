@@ -79,21 +79,22 @@ objectdef obj_friends
 			}
 
 	}
-	member:bool IsFriend(string queryname)
+	member:bool IsFriend(string QueryName)
 	{
 		This:LS
 
-		variable iterator Iterat
-		Friends_ssr:GetSettingIterator[Iterat]
-		while ( ${Iterat.Key(exists)} )
+		variable iterator Iter
+		Friends_ssr:GetSettingIterator[Iter]
+		UIElement[${UIElementXML}]:ClearItems
+		while ( ${Iter.Key(exists)} )
 			{
-			if ${queryname.Equal[${Iterat.Key}]}
+			if ${QueryName.Equal[${Iter.Key}]}
 				return TRUE
+			Iter:Next
 			}
 		return FALSE
-	
-	}
 
+	}
 
 
 
