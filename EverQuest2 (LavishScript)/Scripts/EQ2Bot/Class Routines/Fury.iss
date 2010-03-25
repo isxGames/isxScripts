@@ -46,6 +46,7 @@ function Class_Declaration()
 	declare UseWrathOfNature bool script 0
 	declare UseMythicalOn string script
 	declare HaveAbility_TunaresGrace bool script FALSE
+	declare MaxHealthModified int script 0
 
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
@@ -103,6 +104,12 @@ function Class_Declaration()
 	;;; Optimizations to avoid having to check if an ability exists all of the time
 	if (${Me.Ability[Tunare's Grace](exists)})
 		HaveAbility_TunaresGrace:Set[TRUE]	
+		
+	;; If we're NOT the primary healer (based on the checkbox in the UI), then we don't need to heal as much
+	if ${PrimaryHealer}
+		MaxHealthModified:Set[100]
+	else
+		MaxHealthModified:Set[80]
 }
 
 function Pulse()
@@ -1280,7 +1287,7 @@ function CheckHeals()
 	declare cGroupMemberDistance float local 0
 	declare cGroupMemberClass string local 0
 	declare cGroupMemberIsDead bool local FALSE
-
+	
 		; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
@@ -1340,7 +1347,7 @@ function CheckHeals()
 
     if (${MainTankExists})
     {
-  	    if ${Actor[${MainTankID}].Health}<90
+  	    if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 10]}
   	    {
   		    if ${Me.ID}==${MainTankID}
   			    call HealMe
@@ -1349,12 +1356,12 @@ function CheckHeals()
   	    }
 
   	    ;Check My health after MT
-        if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<65
+        if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 35]}
 	        call HealMe
     }
     else
     {
-        if ${Me.ToActor.Health}<85
+        if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 15]}
 	        call HealMe
     }
 
@@ -1368,7 +1375,7 @@ function CheckHeals()
     		    cGroupMemberID:Set[${Me.Group[${temphl}].ID}]
 
     		    ; FIRST -- If group member has health below a certain threshold, heal them immediately
-    		    if ${Me.Group[${temphl}].ToActor.Health} < 60 && !${Me.Group[${temphl}].ToActor.IsDead}
+    		    if ${Me.Group[${temphl}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.IsDead}
     		    {
     		    	if ${Me.Ability[${SpellType[2]}].IsReady}
     		    	{
@@ -1387,7 +1394,7 @@ function CheckHeals()
     		    ;;
     		    ;;;;;;;;
 
-    			if (${cGroupMemberHealth}<100 && !${cGroupMemberIsDead})
+    			if (${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 0]} && !${cGroupMemberIsDead})
     			{
     				if (${cGroupMemberHealth}<${lGroupMemberHealth} || !${lowestset}) && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[1]}].Range}
     				{
@@ -1400,17 +1407,17 @@ function CheckHeals()
     			if ${Me.Group[${temphl}].ID}==${MainTankID}
     				MainTankInGroup:Set[1]
 
-    			if !${cGroupMemberIsDead} && ${cGroupMemberHealth}<80 && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[15]}].Range}
+    			if !${cGroupMemberIsDead} && ${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 20]} && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[15]}].Range}
     				grpheal:Inc
 
     			if (${cGroupMemberClass.Equal[conjuror]}  || ${cGroupMemberClass.Equal[necromancer]} || ${cGroupMemberClass.Equal[coercer]})
     			{
-        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
+        			if (${Me.Group[${temphl}].ToActor.Pet.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
         				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
     			}
     			elseif (${cGroupMemberClass.Equal[illusionist]} && !${Me.InCombat})
     			{
-        			if (${Me.Group[${temphl}].ToActor.Pet.Health}<60 && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
+        			if (${Me.Group[${temphl}].ToActor.Pet.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
         				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
     			}
     		}
@@ -1418,7 +1425,7 @@ function CheckHeals()
     	while ${temphl:Inc} <= ${Me.GroupCount}
     }
 
-	;if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
+	;if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 20]} && !${Me.ToActor.IsDead}
 	;	grpheal:Inc
 
 
@@ -1433,14 +1440,14 @@ function CheckHeals()
 
 		if (${Me.Group[${lowest}].ToActor(exists)} && !${Me.Group[${lowest}].ToActor.IsDead})
 		{
-			if ${Me.Group[${lowest}].ToActor.Health}<65 && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
+			if ${Me.Group[${lowest}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 35]} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
 			{
 			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 			    if ${Me.Ability[${SpellType[2]}].IsReady}
 						call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
 			}
 	
-			if ${Me.Group[${lowest}].ToActor.Health}<75 && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
+			if ${Me.Group[${lowest}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 25]} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[7]}].Range}
 			{
 				if ${Me.Ability[${SpellType[7]}].IsReady}
 				{
@@ -1464,7 +1471,7 @@ function CheckHeals()
 	;RAID HEALS - Only check if in raid, raid heal mode on, maintank is green, I'm above 50, and a direct heal is available.  Otherwise don't waste time.
 	if (${MainTankExists})
 	{
-    	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health}>50 && ${Actor[${MainTankID}].Health}>70 && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
+    	if ${RaidHealMode} && ${Me.InRaid} && ${Me.ToActor.Health} > ${Math.Calc[${MaxHealthModified} - 50]} && ${Actor[${MainTankID}].Health} > ${Math.Calc[${MaxHealthModified} - 30]} && (${Me.Ability[${SpellType[4]}].IsReady} || ${Me.Ability[${SpellType[1]}].IsReady})
     	{
     		do
     		{
@@ -1472,7 +1479,7 @@ function CheckHeals()
     			{
     			    if ${Me.Raid[${temph2}].Name.NotEqual[${Me.Name}]}
     				{
-      				    if ${Me.Raid[${temph2}].ToActor.Health} < 100 && !${Me.Raid[${temph2}].ToActor.IsDead} && ${Me.Raid[${temph2}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+      				    if ${Me.Raid[${temph2}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 0]} && !${Me.Raid[${temph2}].ToActor.IsDead} && ${Me.Raid[${temph2}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
           				{
           					if ${Me.Raid[${temph2}].ToActor.Health} < ${Me.Raid[${raidlowest}].ToActor.Health} || ${raidlowest}==0
           						raidlowest:Set[${temph2}]
@@ -1484,7 +1491,7 @@ function CheckHeals()
 
 	      if (${Me.Raid[${raidlowest}].ToActor(exists)})
 	      {
-      		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < 60 && !${Me.Raid[${raidlowest}].ToActor.IsDead} && ${Me.Raid[${raidlowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+      		if ${Me.InCombat} && ${Me.Raid[${raidlowest}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Raid[${raidlowest}].ToActor.IsDead} && ${Me.Raid[${raidlowest}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
       		{
       			;Debug:Echo["Raid Lowest: ${Me.Raid[${raidlowest}].Name} -> ${Me.Raid[${raidlowest}].ToActor.Health} health"]
       			if ${Me.Ability[${SpellType[4]}].IsReady}
@@ -1529,10 +1536,10 @@ function HealMe()
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
-	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 30]} && ${Me.ToActor.InCombatMode}
 		Me.Inventory[Crystallized Spirit]:Use
 
-	if ${Me.ToActor.Health}<40
+	if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 60]}
 	{
 		if ${haveaggro}
 			call EmergencyHeal ${Me.ID}
@@ -1545,13 +1552,13 @@ function HealMe()
 		}
 	}
 
-	if ${Me.ToActor.Health}<55
+	if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 45]}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 			call CastSpellRange 1 0 0 0 ${Me.ID}
 	}
 
-	if ${Me.ToActor.Health}<80
+	if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 20]}
 	{
 		if !${EpicMode} || (${haveaggro} && ${Me.ToActor.InCombatMode})
 		{
@@ -1580,22 +1587,22 @@ function HealMT(int NotUsed, int MTInMyGroup)
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Actor[${MainTankID}].Health}<45
+	if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 55]}
 		call EmergencyHeal ${MainTankID} ${MTInMyGroup}
 
 	;Frey Check
-	if ${Actor[${MainTankID}].Health}<55 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].Range}
+	if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 45]} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].Range}
 	{
 		if ${Me.Ability[${SpellType[2]}].IsReady}
 			call CastSpellRange 2 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<65 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
+	if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 35]} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 			call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
-	if ${Actor[${MainTankID}].Health}<75 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].Range}
+	if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 25]} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].Range}
 	{
 		if ${Me.Ability[${SpellType[4]}].IsReady}
 			call CastSpellRange 4 0 0 0 ${MainTankID}
@@ -1603,7 +1610,7 @@ function HealMT(int NotUsed, int MTInMyGroup)
 
 	;MAINTANK HEALS
 	; Use regens first, then Patch Heals
-	if ${Actor[${MainTankID}].Health}<90
+	if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 10]}
 	{
 		if ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.Maintained[${SpellType[7]}].Target.ID} != ${MainTankID} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[7]}].Range}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
@@ -1686,7 +1693,7 @@ function CureMe()
 	{
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
-		if ${Me.ToActor.Health}<30 && ${EpicMode}
+		if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 70]} && ${EpicMode}
 			call HealMe
 	}
 
@@ -1862,7 +1869,7 @@ function CheckCures(int InCombat=1)
 			break
 
 		;Check MT health and heal him if needed
-		if ${Actor[${MainTankID}].Health}<50
+		if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 50]}
 		{
 			if ${MainTankID}==${Me.ID}
 				call HealMe
@@ -2038,7 +2045,7 @@ function CheckHOTs()
 
 function CheckEmergencyHeals()
 {
-	if (${Actor[${MainTankID}].Health} <= 40)
+	if (${Actor[${MainTankID}].Health} <= ${Math.Calc[${MaxHealthModified} - 60]})
 	{
 		call EmergencyHeal ${MainTankID}
 		; Hibernate
@@ -2049,7 +2056,7 @@ function CheckEmergencyHeals()
 		}
 	}		
 		
-	if (${Me.ToActor.Health} <= 50)
+	if (${Me.ToActor.Health} <= ${Math.Calc[${MaxHealthModified} - 50]})
 		call HealMe
 }
 
