@@ -414,9 +414,12 @@ function Combat_Routine(int xAction)
 	declare debuffused int local 0
 	declare pricast int local 0
 
-	AutoFollowingMA:Set[FALSE]
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	if ${DoHOs}
 		objHeroicOp:DoHO

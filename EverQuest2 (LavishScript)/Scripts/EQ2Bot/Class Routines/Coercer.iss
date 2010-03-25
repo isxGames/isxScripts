@@ -376,12 +376,13 @@ function Combat_Routine(int xAction)
 	spellsused:Set[0]
 	spellthreshold:Set[3]
 
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
+		wait 3
 	}
-
+	
 	if ${MezzMode}
 	{
 		CurrentAction:Set[Combat Checking Mezzes]

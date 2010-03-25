@@ -412,9 +412,12 @@ function Combat_Routine(int xAction)
 	declare DebuffCnt int  0
 	declare range int 0
 
-	AutoFollowingMA:Set[FALSE]
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	if ${RangedAttackMode}
 		range:Set[2]

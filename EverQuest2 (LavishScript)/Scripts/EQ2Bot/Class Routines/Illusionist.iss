@@ -1063,7 +1063,16 @@ function Combat_Routine(int xAction)
 			Debug:Echo["Combat_Routine() -- Exiting (In PostDeathRoutine or CheckingBuffsOnce)"]
 		return
 	}
-	
+
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
+		if ${IllyDebugMode}
+			Debug:Echo["Combat_Routine() -- Stopping autofollow"]		
+		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
+
 	if ${ChainStunMode}
 	{
 		; Entrance
@@ -1159,16 +1168,6 @@ function Combat_Routine(int xAction)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	CurrentAction:Set[Combat :: ${Action[${xAction}]} (${xAction})]
-
-
-	if ${Me.ToActor.WhoFollowing(exists)}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Stopping autofollow"]		
-		EQ2Execute /stopfollow
-		AutoFollowingMA:Set[FALSE]
-		wait 3
-	}
 
 	if ${DoHOs}
 		objHeroicOp:DoHO

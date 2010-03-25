@@ -400,10 +400,13 @@ if !${InitialBuffsDone}
 
 function Combat_Routine(int xAction)
 {
-	AutoFollowingMA:Set[FALSE]
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
 		EQ2Execute /stopfollow
-
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
+	
 	if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}
 		call CastSpellRange 396
 

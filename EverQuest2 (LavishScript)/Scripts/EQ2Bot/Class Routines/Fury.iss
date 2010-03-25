@@ -629,7 +629,7 @@ function Combat_Routine(int xAction)
 	;this should be a var based upon our dps to damage ratio, it could even be 0
 	SpellMax:Set[2]
 
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]

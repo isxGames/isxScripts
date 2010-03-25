@@ -625,12 +625,11 @@ function Combat_Routine(int xAction)
 {
 	declare counter int local 1
 
-	; Turn off Auto Follow on the MA
-	AutoFollowingMA:Set[FALSE]
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
-		wait 5
+		AutoFollowingMA:Set[FALSE]
+		wait 3
 	}
 
 	; If we are in Cure Mode call the check cure function

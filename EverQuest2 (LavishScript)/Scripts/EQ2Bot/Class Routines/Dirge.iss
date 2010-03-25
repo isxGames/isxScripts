@@ -456,9 +456,12 @@ function Combat_Routine(int xAction)
 	if !${JoustMode}
 		call DoBladeDance
 	
-	AutoFollowingMA:Set[FALSE]
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].MaxRange}]}
 	{

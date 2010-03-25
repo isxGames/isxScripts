@@ -116,6 +116,7 @@ variable(script) collection:int SKFDSpells
 
 ;AutoFollow Variables
 variable bool AutoFollowMode=FALSE
+variable bool RetainAutoFollowInCombat=FALSE
 variable bool AutoFollowingMA=FALSE
 variable bool CombatFollow=FALSE
 variable string AutoFollowee
@@ -136,6 +137,7 @@ function EQ2BotLib_Init()
 	CharacterSet:AddSet[EQ2BotExtras]
 
 	AutoFollowMode:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode,FALSE]}]
+	RetainAutoFollowInCombat:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[RetainAutoFollowInCombat,FALSE]}]
 	NoAutoMovement:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovement,FALSE]}]
 	NoAutoMovementInCombat:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[NoAutoMovementInCombat,FALSE]}]
 	CombatFollow:Set[${CharacterSet.FindSet[EQ2BotExtras].FindSetting[CombatFollow,FALSE]}]
