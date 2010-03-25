@@ -437,8 +437,8 @@
             </Frame>
             <Frame Name='Following Frame'>
               <X>1</X>
-              <Y>40</Y>
-              <Height>40</Height>
+              <Y>60</Y>
+              <Height>60</Height>
               <Width>95%</Width>
               <OnLoad>
                 if ${Script[EQ2Bot].Variable[PathType]}
@@ -456,7 +456,7 @@
                   <Y>13</Y>
                   <Width>40</Width>
                   <Height>20</Height>
-                  <Text>Auto Follow:</Text>
+                  <Text>EQ2's Auto Follow:</Text>
                   <AutoTooltip>Select to use EQ2 AutoFollow on the Main Assist instead of EQ2bot Follow</AutoTooltip>
                   <OnLeftClick>
                     if ${This.Checked}
@@ -475,7 +475,7 @@
                   <Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode]}</Data>
                 </Commandcheckbox>
                 <combobox name='AutoFollowee'>
-                  <x>28%</x>
+                  <x>33%</x>
                   <y>10</y>
                   <Width>
                     20%
@@ -513,11 +513,34 @@
                     while ${tmpvar:Inc}&lt; ${Me.Group}
                   </OnLeftClick>
                 </combobox>
+                <Commandcheckbox Name='RetainAutoFollowInCombat'>
+                  <X>5%</X>
+                  <Y>35</Y>
+                  <Width>40</Width>
+                  <Height>20</Height>
+                  <Text>Retain EQ2's Auto Follow in combat</Text>
+                  <AutoTooltip>Retain EQ2's Auto Follow while in combat</AutoTooltip>
+                  <OnLeftClick>
+                    if ${This.Checked}
+                    {
+	                    Script[EQ2Bot].Variable[RetainAutoFollowInCombat]:Set[TRUE]
+	                    LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[RetainAutoFollowInCombat,TRUE]
+	                    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                    }
+                    else
+                    {
+	                    Script[EQ2Bot].Variable[RetainAutoFollowInCombat]:Set[FALSE]
+	                    LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting[RetainAutoFollowInCombat,FALSE]
+	                    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                    }
+                  </OnLeftClick>
+                  <Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[RetainAutoFollowInCombat]}</Data>
+                </Commandcheckbox>                
               </Children>
             </Frame>
             <Frame Name='Movement Frame'>
               <X>1</X>
-              <Y>62</Y>
+              <Y>102</Y>
               <Height>60</Height>
               <Width>95%</Width>
               <OnLoad>
@@ -528,7 +551,7 @@
                   <Y>13</Y>
                   <Width>40</Width>
                   <Height>20</Height>
-                  <Text>No in-combat auto movement</Text>
+                  <Text>No scripted movement while in combat</Text>
                   <AutoTooltip>Select to have the bot do NO 'auto' movement during combat</AutoTooltip>
                   <OnLeftClick>
                     if ${This.Checked}
@@ -551,7 +574,7 @@
                   <Y>33</Y>
                   <Width>40</Width>
                   <Height>20</Height>
-                  <Text>No auto movement whatsoever</Text>
+                  <Text>No scripted movement whatsoever</Text>
                   <AutoTooltip>Select to have the bot do NO 'auto' movement whatsoever</AutoTooltip>
                   <OnLeftClick>
                     if ${This.Checked}
@@ -573,7 +596,7 @@
             </Frame>
             <Frame Name='Pathing Frame'>
               <X>1</X>
-              <Y>110</Y>
+              <Y>170</Y>
               <Height>160</Height>
               <Width>95%</Width>
               <OnLoad>
@@ -741,7 +764,7 @@
             </Frame>
             <Frame Name='Combat Frame'>
               <X>1</X>
-              <Y>45%</Y>
+              <Y>55%</Y>
               <Height>150</Height>
               <Width>95%</Width>
               <Visible>0</Visible>

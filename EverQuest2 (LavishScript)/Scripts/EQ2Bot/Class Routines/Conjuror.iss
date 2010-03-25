@@ -404,10 +404,12 @@ function Combat_Routine(int xAction)
 	
 	variable int Counter
 
-	AutoFollowingMA:Set[FALSE]
-
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	;check if we have a pet or a hydromancy not up
 	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}

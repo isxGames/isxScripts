@@ -309,10 +309,11 @@ function Combat_Routine(int xAction)
 	shapeused:Set[0]
 	spellthreshold:Set[3]
 
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
+		wait 3
 	}
 
 	if ${DoHOs}

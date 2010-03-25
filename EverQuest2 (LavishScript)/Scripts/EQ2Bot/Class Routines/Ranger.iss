@@ -215,12 +215,11 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-
-	AutoFollowingMA:Set[FALSE]
-
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
 	}
 
 	if ${BowAttacksMode} || ${RangedAttackMode}

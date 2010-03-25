@@ -479,6 +479,13 @@ function Combat_Routine(int xAction)
   declare BuffTarget string local
 	declare TankToTargetDistance float local
 
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
+		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
+
 	if ${DoHOs}
 	objHeroicOp:DoHO
 
@@ -487,7 +494,6 @@ function Combat_Routine(int xAction)
   	if !${EQ2.HOWindowActive}
   		call CastSpellRange 303
   }
-
 
 	if !${NoAutoMovementInCombat} && !${NoAutoMovement} && ${AutoMelee}
 	{

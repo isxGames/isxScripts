@@ -127,13 +127,12 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	;Stops auto follow for combat routine, this is optional, but if you stay on follow you look like a crappy bot
-	AutoFollowingMA:Set[FALSE]
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
 	}
-
 
 	;Function Library Calls
 	;This one will advance an HO if you have selected to participate in them

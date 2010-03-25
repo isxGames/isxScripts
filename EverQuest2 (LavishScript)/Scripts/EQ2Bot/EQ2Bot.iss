@@ -1913,6 +1913,13 @@ function Combat(bool PVP=0)
 
 	if ${Me.ToActor.IsDead}
 		return
+		
+	if (!${RetainAutoFollowInCombat} && ${AutoFollowMode})
+	{
+		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	FollowTask:Set[2]
 	; Make sure we are still not moving when we enter combat
@@ -1922,6 +1929,7 @@ function Combat(bool PVP=0)
 		press -release ${backward}
 		wait 20 !${Me.IsMoving}
 	}
+
 
 	target ${KillTarget}
 	wait 2
@@ -5525,16 +5533,16 @@ objectdef EQ2BotObj
 		MARange:Set[${CharacterSet.FindSet[General Settings].FindSetting[What RANGE to Engage from Main Assist?,15]}]
 		PowerCheck:Set[${CharacterSet.FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?,80]}]
 		HealthCheck:Set[${CharacterSet.FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?,90]}]
-		IgnoreEpic:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Epic Encounters?,TRUE]}]
-		IgnoreNamed:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Named Encounters?,TRUE]}]
+		IgnoreEpic:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Epic Encounters?,FALSE]}]
+		IgnoreNamed:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Named Encounters?,FALSE]}]
 		IgnoreHeroic:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Heroic Encounters?,FALSE]}]
-		IgnoreRedCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Red Con Mobs?,TRUE]}]
-		IgnoreOrangeCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Orange Con Mobs?,TRUE]}]
+		IgnoreRedCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Red Con Mobs?,FALSE]}]
+		IgnoreOrangeCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Orange Con Mobs?,FALSE]}]
 		IgnoreYellowCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Yellow Con Mobs?,FALSE]}]
 		IgnoreWhiteCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore White Con Mobs?,FALSE]}]
 		IgnoreBlueCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Blue Con Mobs?,FALSE]}]
 		IgnoreGreenCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Green Con Mobs?,FALSE]}]
-		IgnoreGreyCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Grey Con Mobs?,TRUE]}]
+		IgnoreGreyCon:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Ignore Grey Con Mobs?,FALSE]}]
 		PullNonAggro:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Pull Non Aggro Mobs?,TRUE]}]
 		AssistHP:Set[${CharacterSet.FindSet[General Settings].FindSetting[Assist and Engage in combat at what Health?,96]}]
 		OORThreshold:Set[${CharacterSet.FindSet[General Settings].FindSetting[Out of Range Reaction Distance,25]}]

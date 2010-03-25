@@ -352,10 +352,12 @@ function Combat_Routine(int xAction)
 	declare spellsused int local
 	spellsused:Set[0]
 
-	AutoFollowingMA:Set[FALSE]
-
-	if ${Me.ToActor.WhoFollowing(exists)}
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
 		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 3
+	}
 
 	if ${Me.ToActor.Pet(exists)}
 		call PetAttack
