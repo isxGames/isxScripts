@@ -1339,7 +1339,7 @@ function CastSpellRange(... Args)
 	if ${TargetID} && ${TargetID}==${KillTarget}
 	{
 		call VerifyTarget ${TargetID}
-		if !${Return}
+		if ${Return.Equal[FALSE]}
 		{
 			;Debug:Echo["CastSpellRange() -- TargetID was the same was KillTarget; however, VerifyTarget() reported it as invalid"]
 			return -1
@@ -1800,7 +1800,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
 			{
 				call VerifyTarget ${TargetID}
-				if !${Return}
+				if ${Return.Equal[FALSE]}
 				{
 					CurrentAction:Set[]
 					LastQueuedAbility:Set[${spell}]
@@ -1848,7 +1848,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
 				{
 					call VerifyTarget ${TargetID}
-					if !${Return}
+					if ${Return.Equal[FALSE]}
 					{
 						CurrentAction:Set[]
 						return
@@ -1908,8 +1908,10 @@ function Combat(bool PVP=0)
 		return
 	}
 	
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	Debug:Echo["Combat() - Me.ToActor.WhoFollowing: ${Me.ToActor.WhoFollowing}"]
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)} && !${Me.IsMoving})
 	{
+		Debug:Echo["Combat() - Stopping Autofollow"]
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 		wait 2
@@ -4371,11 +4373,11 @@ atom(script) EQ2_onIncomingText(string Text)
 	; -------------------------------------------
 
 	if (${Text.Find[YOU hit ]} > 0 || ${Text.Find[YOU critically hit ]} > 0 || ${Text.Find[YOU double attack]} > 0 || ${Text.Find[YOU critically double attack]} > 0)
-		{
+	{
 		;echo AutoAttackReady: FALSE
 		AutoAttackReady:Set[FALSE]
 		LastAutoAttack:Set[${Script.RunningTime}/1000]
-		}
+	}
 
 	; END ---------------------------------------
 	; -------------------------------------------
@@ -4420,6 +4422,10 @@ atom(script) EQ2_onIncomingText(string Text)
 	}
 	elseif (${Text.Find[No Eligible Target]} > 0)
 		NoEligibleTarget:Set[TRUE]
+	;elseif (${Text.Equal["Target is not alive"]})
+	;	Debug:Echo["TARGET IS NOT ALIVE!"]
+	;elseif (${Text.Find["eligible"]})
+	;	Debug:Echo["NO ELIGIBLE TARGET! ('${Text}')"]
 
 
 }
@@ -4686,11 +4692,14 @@ function SetNewKillTarget()
 		return OK
 }
 
-function ReacquireKillTargetFromMA()
+function ReacquireKillTargetFromMA(int WaitTime=5)
 {
 	variable uint NextKillTarget
-	CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in 0.5 seconds...]
-	wait 5
+	if (${WaitTime} > 0)
+	{
+		CurrentAction:Set[Reacquiring KillTarget from ${MainAssist} in ${WaitTime}/10 seconds...]
+		wait ${WaitTime}
+	}
 
 	if ${Actor[${MainAssistID}](exists)}
 	{
@@ -4725,7 +4734,7 @@ function ReacquireKillTargetFromMA()
 		}
 		else
 		{
-			;Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"]
+			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"]
 			return FAILED
 		}
 	}
@@ -4746,13 +4755,13 @@ function VerifyTarget(uint TargetID=0)
 			if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
 			{
 				if ${MainAssist.Equal[${Me.Name}]}
-					return FALSE
+					return "FALSE"
 
-				call ReacquireKillTargetFromMA
+				call ReacquireKillTargetFromMA 0
 				if ${Return.Equal[FAILED]}
 				{
 					KillTarget:Set[0]
-					return FALSE
+					return "FALSE"
 				}
 			}
 		}
@@ -4761,20 +4770,20 @@ function VerifyTarget(uint TargetID=0)
 			if (${TargetID}==${KillTarget} && ${Actor[${KillTarget}].IsDead})
 			{
 				if ${MainAssist.Equal[${Me.Name}]}
-					return FALSE
+					return "FALSE"
 
-				call ReacquireKillTargetFromMA
+				call ReacquireKillTargetFromMA 0
 				if ${Return.Equal[FAILED]}
 				{
 					KillTarget:Set[0]
-					return FALSE
+					return "FALSE"
 				}
 			}
 			elseif (!${Actor[${TargetID}](exists)} || ${Actor[${TargetID}].IsDead})
-				return FALSE
+				return "FALSE"
 		}
 
-		return TRUE
+		return "TRUE"
 }
 
 function StartBot()

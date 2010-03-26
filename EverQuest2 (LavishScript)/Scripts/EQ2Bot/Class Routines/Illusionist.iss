@@ -815,8 +815,8 @@ function CheckNonDps(... Args)
 	if ${KillTarget}
 	{
 		call VerifyTarget
-		if !${Return}
-			return ${spellsused}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 	}
 
 	; Check stunmode
@@ -910,7 +910,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		call Mezmerise_Targets
 
 	call VerifyTarget ${TargetID}
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 		return CombatComplete
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -993,7 +993,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		RefreshPowerTimer:Inc
 
 	call VerifyTarget ${TargetID}
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 		return CombatComplete
 		
 	call CheckCastBeam
@@ -1183,8 +1183,6 @@ function Combat_Routine(int xAction)
 	}
 	
 
-			
-
 	call CheckNonDps
 	if ${Return.Equal[CombatComplete]}
 	{
@@ -1223,7 +1221,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc[${Return}]
 
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1245,7 +1243,7 @@ function Combat_Routine(int xAction)
 			spellsused:Inc[${Return}]		
 	}
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1288,7 +1286,7 @@ function Combat_Routine(int xAction)
 	}
 	
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1338,7 +1336,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc[${Return}]
 		
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1441,7 +1439,7 @@ function Combat_Routine(int xAction)
 	}
 
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1483,7 +1481,7 @@ function Combat_Routine(int xAction)
 	}
 
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1551,7 +1549,7 @@ function Combat_Routine(int xAction)
 	call CheckNonDps
 
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1583,7 +1581,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc[${Return}]
 	
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1618,7 +1616,7 @@ function Combat_Routine(int xAction)
 				}
 			}
 			call VerifyTarget
-			if !${Return}
+			if ${Return.Equal[FALSE]}
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1643,7 +1641,7 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 			call VerifyTarget
-			if !${Return}
+			if ${Return.Equal[FALSE]}
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1686,7 +1684,7 @@ function Combat_Routine(int xAction)
 						spellsused:Inc
 					}
 					call VerifyTarget
-					if !${Return}
+					if ${Return.Equal[FALSE]}
 					{
 						if ${IllyDebugMode}
 							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1854,7 +1852,7 @@ function CastSomething()
 	;; This function is intended to cast SOMETHING in order to keep "Perputuality" going.
 
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 		return
 
 	if ${ChainStunMode}
@@ -2878,7 +2876,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
@@ -2930,7 +2928,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		}
 	}
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]		
@@ -2981,7 +2979,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		}
 	}
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
@@ -3032,7 +3030,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	call VerifyTarget
-	if !${Return}
+	if ${Return.Equal[FALSE]}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
