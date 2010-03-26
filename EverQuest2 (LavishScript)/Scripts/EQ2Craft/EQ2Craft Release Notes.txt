@@ -1,5 +1,9 @@
 Revision History ||
 ===================
+v9.1  - French Localization
+        * Should work properly in guildhalls; however, writs in TS Instances may not function perfectly due to lack of data
+        * Wholesaler names (not guild tags) should be added to the appropriate section of /eq2craft/Recipe Data/Common.xml
+        
 v9.00 - Integration of Recipe Search function, thanks to Noob536.
 
 v8.99 - Infestation by CyberTechs!
