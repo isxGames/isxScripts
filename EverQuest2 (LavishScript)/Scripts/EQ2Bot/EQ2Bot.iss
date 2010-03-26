@@ -1908,19 +1908,19 @@ function Combat(bool PVP=0)
 		return
 	}
 	
+	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	{
+		EQ2Execute /stopfollow
+		AutoFollowingMA:Set[FALSE]
+		wait 2
+	}	
+	
 	if !${Actor[${KillTarget}](exists)}
 		return
 
 	if ${Me.ToActor.IsDead}
 		return
 		
-	if (!${RetainAutoFollowInCombat} && ${AutoFollowMode})
-	{
-		EQ2Execute /stopfollow
-		AutoFollowingMA:Set[FALSE]
-		wait 3
-	}
-
 	FollowTask:Set[2]
 	; Make sure we are still not moving when we enter combat
 	if (${Me.IsMoving} && !${NoAutoMovement})
