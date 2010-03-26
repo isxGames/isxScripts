@@ -115,6 +115,7 @@
     <Setting Name="Wholesaler"></Setting>
     <Setting Name="Fuel Merchant"></Setting>
     <Setting Name="Guild Fuel Merchant"></Setting>
+    <Setting Name="Vendeur de Combustibles"></Setting>
 
   </Set>
 </InnerSpaceSettings>
