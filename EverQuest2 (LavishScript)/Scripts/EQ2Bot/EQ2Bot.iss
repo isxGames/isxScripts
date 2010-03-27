@@ -4422,10 +4422,9 @@ atom(script) EQ2_onIncomingText(string Text)
 	}
 	elseif (${Text.Find[No Eligible Target]} > 0)
 		NoEligibleTarget:Set[TRUE]
+		;Debug:Echo["NO ELIGIBLE TARGET! ('${Text}')"]
 	;elseif (${Text.Equal["Target is not alive"]})
 	;	Debug:Echo["TARGET IS NOT ALIVE!"]
-	;elseif (${Text.Find["eligible"]})
-	;	Debug:Echo["NO ELIGIBLE TARGET! ('${Text}')"]
 
 
 }
@@ -4462,15 +4461,30 @@ atom(script) LootWDw(string ID)
 	declare i int local
 	variable int tmpcnt=1
 	variable int deccnt=0
+	variable bool LootThisAlways=FALSE
+	
+	;; accept some items regardless
+	;Debug:Echo["LootWDw() - Item[1]: '${LootWindow[${ID}].Item[1].Name}'"]
+	switch ${LootWindow[${ID}].Item[1].Name}
+	{
+		case Void Shard
+		case Mark of Manaar
+			;Debug:Echo["LootWDw() - LootThisAlways set to TRUE"]
+			LootThisAlways:Set[TRUE]
+			break
+		
+		default
+			break
+	}
 
-	if ${ID.Equal[${LastWindow}]}
+	if (${ID.Equal[${LastWindow}]} && !${LootThisAlways})
 	{
 			switch ${LootWindow[${ID}].Type}
 			{
 				case Free For All
 				case Lottery
 					LootWindow[${ID}]:DeclineLotto
-								return
+					return
 				case Need Before Greed
 					LootWindow[${ID}]:DeclineNBG
 					return
@@ -4481,8 +4495,7 @@ atom(script) LootWDw(string ID)
 			}
 	}
 
-
-	if ${LootMethod.Equal[Accept]}
+	if (${LootMethod.Equal[Accept]})
 	{
 		do
 		{
@@ -4525,7 +4538,7 @@ atom(script) LootWDw(string ID)
 	{
 		deccnt:Inc[${LootWindow[${ID}].NumItems}]
 	}
-	elseif ${LootMethod.Equal[Idle]}
+	elseif (${LootMethod.Equal[Idle]} && !${LootThisAlways})
 	{
 		LastWindow:Set[${ID}]
 		return
@@ -4537,18 +4550,24 @@ atom(script) LootWDw(string ID)
 	switch ${LootWindow[${ID}].Type}
 	{
 		case Lottery
-			if ${deccnt}
+			if ${LootThisAlways}
+				LootWindow[${ID}]:RequestAll
+			elseif ${deccnt}
 				LootWindow[${ID}]:DeclineLotto
 			else
 				LootWindow[${ID}]:RequestAll
 			break
 		case Free For All
+			if ${LootThisAlways}
+				LootWindow[${ID}]:LootAll
 			if ${deccnt}
 				LootWindow[${ID}]:DeclineLotto
 			else
 				LootWindow[${ID}]:LootAll
 			break
 		case Need Before Greed
+			if if ${LootThisAlways}
+				LootWindow[${ID}]:SelectNeed
 			if ${deccnt}
 				LootWindow[${ID}]:DeclineNBG
 			else
@@ -6728,7 +6747,6 @@ function atexit()
 
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
-	;Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 
