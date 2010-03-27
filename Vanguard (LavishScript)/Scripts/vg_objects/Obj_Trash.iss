@@ -77,6 +77,23 @@ objectdef obj_trash
 			}
 
 	}
+	method Destroy()
+	{
+		This:LS
+
+		variable iterator Itera
+		Trash_ssr:GetSettingIterator[Itera]
+		while ( ${Itera.Key(exists)} )
+			{
+	    if ${Me.Inventory[ExactName,${Itera.Key}](exists)}
+	                {
+	                Echo Destroying ${Itera.Key}
+              		Me.Inventory[ExactName,${Itera.Key}]:Delete[ExactName,${Itera.Key}.Quantity]
+              		}
+			Itera:Next
+			}
+
+	}
 
 
 
