@@ -5,23 +5,21 @@
 	____________________________________
 
 	**Place the following line at the top of your .iss file
-		#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_Friends.iss"
+		#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_Trash.iss"
 
 	**In your script call the following object with these commands, or type this in the console
 
 	Friends Methods(Things you can do)
-		obj_friends:Add[Name of your Friend]
-		obj_friends:Remove[Name of your Past Friend]
-		obj_friends:Populate[fieldName@frameName@TabName@TabControlName@WindowName]
-	
-	Friends Members(Thing you can question)
-		obj_friends.IsFriend[Name of your Friend]
+		obj_trash:Add[Name of your Friend]
+		obj_trash:Remove[Name of your Past Friend]
+		obj_trash:Populate[fieldName@frameName@TabName@TabControlName@WindowName]
+		obj_trash:Destroy
 	
 	Notes
 	____________________________________
 	**  You dont need to know how an object works to use it.  
 	**  Objects are bits of code that perform specific functions.
-	**  This function specifically Adds and Removes People from a Friend List 
+	**  This function specifically Destroys trash items from your inventory
 
 
 	Credits
@@ -32,35 +30,35 @@
 */
 ;======================
 
-objectdef obj_friends
+objectdef obj_trash
 {
 	;======================
 	/* Object Variables */
 	;======================
 
-	variable settingsetref Friends_ssr
+	variable settingsetref Trash_ssr
 
 ;===================================================
 ;===       Methods/Members to be Used           ====
 ;===================================================
 
-	method Add(string FriendName)
+	method Add(string ItemName)
 	{
-		if ( ${FriendName.Length} > 1 )
+		if ( ${ItemName.Length} > 1 )
 			{
-			echo adding ${FriendName}
+			echo adding ${ItemName}
 			This:LS
-			LavishSettings[Friends].FindSet[FriendsList]:AddSetting[${FriendName}, ${FriendName}]
+			LavishSettings[Trash].FindSet[TrashList]:AddSetting[${ItemName}, ${ItemName}]
 			This:XMLSave
 			}
 			
 	}
-	method Remove(string NoLongerFriendName)
+	method Remove(string ItemName)
 	{
-		if ( ${NoLongerFriendName.Length} > 1 )
+		if ( ${ItemName.Length} > 1 )
 			{
 			This:LS
-			Friends_ssr.FindSetting[${NoLongerFriendName}]:Remove
+			ItemName_ssr.FindSetting[${ItemName}]:Remove
 			This:XMLSave
 			}
 	}
@@ -70,7 +68,7 @@ objectdef obj_friends
 		This:LS
 
 		variable iterator Iter
-		Friends_ssr:GetSettingIterator[Iter]
+		Trash_ssr:GetSettingIterator[Iter]
 		UIElement[${UIElementXML}]:ClearItems
 		while ( ${Iter.Key(exists)} )
 			{
@@ -93,11 +91,11 @@ objectdef obj_friends
 	;============================
 	method LS()
 	{
-		LavishSettings[Friends]:Clear
-		LavishSettings:AddSet[Friends]
-		LavishSettings[Friends]:AddSet[FriendsList]
-		LavishSettings[Friends]:Import[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_Friends.xml]	
-		Friends_ssr:Set[${LavishSettings[Friends].FindSet[FriendsList]}]
+		LavishSettings[Trash]:Clear
+		LavishSettings:AddSet[Trash]
+		LavishSettings[Trash]:AddSet[TrashList]
+		LavishSettings[Trash]:Import[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_Trash.xml]	
+		Trash_ssr:Set[${LavishSettings[Trash].FindSet[TrashList]}]
 	}
 
 	;============================
@@ -105,9 +103,9 @@ objectdef obj_friends
 	;============================
 	method XMLSave()
 	{
-		LavishSettings[Friends]:Export[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_Friends.xml]
+		LavishSettings[Trash]:Export[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_Trash.xml]
 	}
 
 }
 
-variable(global) obj_friends obj_friends
+variable(global) obj_trash obj_trash
