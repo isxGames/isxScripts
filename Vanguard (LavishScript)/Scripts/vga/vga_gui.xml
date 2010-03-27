@@ -1648,10 +1648,9 @@
                   <Text>Add</Text>
                   <Alignment>Center</Alignment>
                   <OnLeftClick>
-                    AddTrash "${UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui].Text}"
-                    BuildTrash
+                    obj_trash:Add[${UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui].Text}]
+                    obj_trash:Populate[TrashList@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui]
                     UIElement[UIElement[TrashEntry@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
-                    Script[VGA]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </CommandButton>
                 <Listbox Name="TrashList" Template="VG.ListBox">
@@ -1662,13 +1661,12 @@
                   <AutoSort>TRUE</AutoSort>
                   <Sort>Text</Sort>
                   <OnLoad>
-                    BuildTrash
+                    obj_trash:Populate[TrashList@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui]
                   </OnLoad>
                   <OnRightClick>
-                    RemoveTrash "${This.SelectedItem}"
+                    obj_trash:Remove[${This.SelectedItem}]
                     This.SelectedItem:Remove
-                    BuildTrash
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    obj_trash:Populate[TrashList@TrashFrm@Trash@MainSubTab@MainFrm@Main@ABot@vga_gui]
                   </OnRightClick>
                 </Listbox>
               </Children>

@@ -24,21 +24,7 @@ function groupup()
 		}
 
 } 
-;********************************************
-function Trash()
-{
-	variable iterator Iterator
-	Trash:GetSettingIterator[Iterator]
-	Iterator:First
-	     while ( ${Iterator.Key(exists)} )
-	      {
-        	if ${Me.Inventory[ExactName,${Iterator.Key}](exists)}
-              		Me.Inventory[ExactName,${Iterator.Key}]:Delete[ExactName,${Iterator.Key}.Quantity]
-       	     Iterator:Next
-	      }
 
-
-}
 ;********************************************
 function Harvest()
 {
