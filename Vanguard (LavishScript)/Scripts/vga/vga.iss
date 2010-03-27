@@ -96,11 +96,13 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/Obj_Follow.iss"
 
 
+
 ;-------------------------------------------
 ;************VG_Objects Scripts**************
 ;-------------------------------------------
 #include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_DiploGear.iss"
 #include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_Friends.iss"
+#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_Trash.iss"
 
 ;-------------------------------------------
 ;************Utilities Scripts**************
@@ -123,7 +125,6 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/GUI_BuffWatch.iss"
 #include "${Script.CurrentDirectory}/ACT_Merchant.iss"
 #include "${Script.CurrentDirectory}/GUI_Merchant.iss"
-#include "${Script.CurrentDirectory}/GUI_Trash.iss"
 #include "${Script.CurrentDirectory}/Act_Mob.iss"
 #include "${Script.CurrentDirectory}/GUI_Mobs.iss"
 #include "${Script.CurrentDirectory}/GUI_Quests.iss"
@@ -340,9 +341,9 @@ function downtimefunction()
 		call ShiftingImage
 	if ${DoAutoAcceptGroupInvite}
 		call groupup
-    	if ${doTrash} 
-		call Trash
-    	if ${doHarvest}
+  if ${doTrash}
+		obj_trash:Destroy
+  if ${doHarvest}
 		call Harvest
 	if ${DoRemoveLowDiplo}
 		call RemoveLowLevelDiplo
