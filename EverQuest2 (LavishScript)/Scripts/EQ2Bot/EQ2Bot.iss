@@ -4451,8 +4451,8 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 
 atom(script) LootWDw(string ID)
 {
-		if ${PauseBot} || !${StartBot}
-				return
+	if ${PauseBot} || !${StartBot}
+		return
 
 	;Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
 	;Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
@@ -4462,6 +4462,8 @@ atom(script) LootWDw(string ID)
 	variable int tmpcnt=1
 	variable int deccnt=0
 	variable bool LootThisAlways=FALSE
+
+	
 	
 	;; accept some items regardless
 	;Debug:Echo["LootWDw() - Item[1]: '${LootWindow[${ID}].Item[1].Name}'"]
@@ -4494,6 +4496,8 @@ atom(script) LootWDw(string ID)
 					return
 			}
 	}
+	
+	LastWindow:Set[${ID}]
 
 	if (${LootMethod.Equal[Accept]})
 	{
@@ -4539,13 +4543,7 @@ atom(script) LootWDw(string ID)
 		deccnt:Inc[${LootWindow[${ID}].NumItems}]
 	}
 	elseif (${LootMethod.Equal[Idle]} && !${LootThisAlways})
-	{
-		LastWindow:Set[${ID}]
 		return
-	}
-
-	LastWindow:Set[${ID}]
-
 
 	switch ${LootWindow[${ID}].Type}
 	{
@@ -4566,7 +4564,7 @@ atom(script) LootWDw(string ID)
 				LootWindow[${ID}]:LootAll
 			break
 		case Need Before Greed
-			if if ${LootThisAlways}
+			if ${LootThisAlways}
 				LootWindow[${ID}]:SelectNeed
 			if ${deccnt}
 				LootWindow[${ID}]:DeclineNBG
@@ -4725,6 +4723,7 @@ function ReacquireKillTargetFromMA(int WaitTime=5)
 		if !${Actor[${MainAssistID}].InCombatMode}
 		{
 			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist is no longer in combat mode]"]
+			KillTarget:Set[0]
 			return FAILED
 		}
 
