@@ -68,7 +68,6 @@ function lootit()
 				if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance} < 10 && ${Pawn[${iCount}].ContainsLoot}
 				{
 					;First clear inventory of any trash items
-					call Trash
 
 					Pawn[${iCount}]:Target
 					wait ${LootDelay}

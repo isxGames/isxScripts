@@ -143,7 +143,7 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		{
 		variable string who
 		who:Set[${Text.Mid[1,${Math.Calc[${Text.Length}-${Math.Calc[${Text.Length}-${Text.Find[is ]}+2]}]}]}]
-		call CheckFriend "${who}"
+		obj_friends:IsFriend[${who}]
 		if ${Return}
 			{
 			VGExecute /reza
