@@ -6,7 +6,6 @@ function merchant()
 		{
 		call CrateCrush
 		}
-  	call Trash
   	call Repair
   	call Sell
 	}
