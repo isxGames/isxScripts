@@ -1,5 +1,5 @@
 ;======================
-/* Friends
+/* Trash
 
 	Usage
 	____________________________________
@@ -10,8 +10,8 @@
 	**In your script call the following object with these commands, or type this in the console
 
 	Friends Methods(Things you can do)
-		obj_trash:Add[Name of your Friend]
-		obj_trash:Remove[Name of your Past Friend]
+		obj_trash:Add[Name of Item]
+		obj_trash:Remove[Name of Item]
 		obj_trash:Populate[fieldName@frameName@TabName@TabControlName@WindowName]
 		obj_trash:Destroy
 	
@@ -58,7 +58,7 @@ objectdef obj_trash
 		if ( ${ItemName.Length} > 1 )
 			{
 			This:LS
-			ItemName_ssr.FindSetting[${ItemName}]:Remove
+			Trash_ssr.FindSetting[${ItemName}]:Remove
 			This:XMLSave
 			}
 	}
@@ -87,7 +87,6 @@ objectdef obj_trash
 			{
 	    if ${Me.Inventory[ExactName,${Itera.Key}](exists)}
 	                {
-	                Echo Destroying ${Itera.Key}
               		Me.Inventory[ExactName,${Itera.Key}]:Delete[ExactName,${Itera.Key}.Quantity]
               		}
 			Itera:Next
