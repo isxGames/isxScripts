@@ -1,13 +1,5 @@
 
 ;********************************************
-function:bool CheckFriend(string Who)
-{
-	obj_friends.IsFriend[${Who}]
-		if ${Return}
-			return TRUE
-	return FALSE
-}
-;********************************************
 function TSLoot()
 {
 	wait 20
