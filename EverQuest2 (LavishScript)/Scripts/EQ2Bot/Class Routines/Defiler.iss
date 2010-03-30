@@ -118,6 +118,16 @@ function Pulse()
 	;; check this at least every 0.5 seconds
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
+		if ${Actor[${MainTankID}].InCombatMode}
+		{
+			if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+			{
+				;Debug:Echo["Pulse() -- Stopping autofollow"]		
+				EQ2Execute /stopfollow
+				AutoFollowingMA:Set[FALSE]
+				waitframe
+			}
+		}
 		call CheckHeals
 		call CheckCures
 
@@ -449,6 +459,9 @@ function Combat_Routine(int xAction)
 	declare BuffTarget string local
 	declare spellsused int local
 
+	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
+		return CombatComplete
+
 	if ${EpicMode}
 		spellsused:Set[0]
 	else
@@ -764,7 +777,7 @@ function MA_Dead()
 
 function CheckCures()
 {
-	declare temphl int local 1
+	variable int i = 1
 	declare grpcure int local 0
 	declare Affcnt int local 0
 	declare CureTarget string local
@@ -777,61 +790,94 @@ function CheckCures()
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 	
 	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
-	if ${CureCurseOthersEnabled}
+	if !${CureCurseGroupMember.Equal[No One]}
 	{
-		CureTarget:Set[${CureCurseGroupMember}]
-
-		if  !${Me.Raid} > 0 
+		CureTarget:Set[${CureCurseGroupMember.Token[1,:]}]
+		Debug:Echo["CheckCures() - CureTarget for Curse; '${CureTarget}'"]
+		if ${Me.Raid} > 0 
+		{
+			if ${Me.Raid[${CureTarget}].Cursed}
 			{
-				if ${Me.Group[${CureTarget.Token[1,:]}].Cursed}
+				if ${Me.Ability[${SpellType[211]}].IsReady}
 				{
-					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget}].ID} 0 0 0 0 1 0
+					wait 5
+					while ${Me.CastingSpell}
+					{
+						if !${Me.Raid[${CureTarget}].Cursed}
+						{
+							press esc
+							break
+						}
+						waitframe
+					}	
+				}
+			}			
+		}
+		else
+		{
+			if ${Me.Group[${CureTarget}].Cursed}
+			{
+				Debug:Echo["CheckCures() - ${CureTarget} is CURSED -- curing."]
+				if ${Me.Ability[${SpellType[211]}].IsReady}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget}].ID} 0 0 0 0 1 0
+					wait 5
+					while ${Me.CastingSpell}
+					{
+						if !${Me.Group[${CureTarget}].Cursed}
+						{
+							press esc
+							break
+						}
+						waitframe
+					}	
 				}
 			}
-			else
-			{
-					if ${Me.Raid[${CureTarget.Token[1,:]}].Cursed}
-				{
-					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
-				}
-			}
+		}
 	}
 	
 	;check for group cures, if it is ready and we are in a large enough group
-	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount}>2
+	if (${Me.GroupCount} > 2)
 	{
-		;check ourselves
-		if ${Me.IsAfflicted}
+		if ${Me.Ability[${SpellType[220]}].IsReady}
 		{
-			;add ticks for group cures based upon our afflicions
-			if ${Me.Noxious}>0 || ${Me.Trauma}>0
-				grpcure:Inc
-		}
-
-		;loop group members, and check for group curable afflictions
-		do
-		{
-			;make sure they in zone and in range
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[220]}].Range}
+			;Debug:Echo["CheckCures() - Mail of Souls READY!"]
+			if (${Me.Arcane} != -1)
 			{
-				if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Trauma}>0
+	  		if (${Me.IsAfflicted})	
+	  		{
+	  			;Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
+	  			grpcure:Inc
+	  		}
+	  	}
+		
+			do
+			{
+				if (${Me.Group[${i}].Arcane} == -1)
+					continue
+					
+				if (${Me.Group[${i}].ToActor(exists)} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].ToActor.Distance} <= 25)
+				{
+					;Debug:Echo["Group member ${i}. ${Me.Group[${i}].ToActor.Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].ToActor.Distance}]"]
 					grpcure:Inc
+				}
 			}
-		}
-		while ${temphl:Inc} <= ${Me.GroupCount}
-
-		;Use group cure if more than 3 afflictions will be removed
-		if ${grpcure}>3
-		{
-			call CastSpellRange 220 0 0 0 ${KillTarget} 0 0 0 0 1 0
-			wait 5
-			while ${Me.CastingSpell}
+			while ${i:Inc} <= ${Me.GroupCount}  	
+		
+			if ${grpcure} > 3
 			{
-				waitframe
+				Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Mail of Souls"]
+				call CastSpellRange 220 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
+				wait 5
+				while ${Me.CastingSpell}
+				{
+					waitframe
+				}	
 			}
-		}
+	  }
 	}
-
+	
 	;Cure Ourselves first
   if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
 		call CureMe
@@ -861,9 +907,9 @@ function CheckCures()
 			break
 
 		;Check MT health and heal him if needed
-		if ${Actor[pc,ExactName,${MainTankPC}].Health}<50
+		if ${Actor[${MainTankID}].Health}<50
 		{
-			if ${Actor[pc,ExactName,${MainTankPC}].ID}==${Me.ID}
+			if ${MainTankID}==${Me.ID}
 				call HealMe
 			else
 				call HealMT

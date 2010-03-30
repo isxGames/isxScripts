@@ -181,17 +181,8 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
-				Script[EQ2Bot].Variable[CureCurseGroupMember]:Set[${This.SelectedItem.Value}]
+				Script[EQ2Bot].Variable[CureCurseGroupMember]:Set[${This.SelectedItem.Text}]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[CureCurseGroupMember,${This.SelectedItem.Text}]
-				Switch ${This.SelectedItem.ID}
-				{
-					case 1
-						Script[EQ2Bot].Variable[CureCurseOthersMode]:Set[0]
-						break
-					default
-						Script[EQ2Bot].Variable[CureCurseOthersMode]:Set[1]
-						break			
-				}
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnLeftClick>
@@ -443,7 +434,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffHorrorGroupMember,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
 		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffHorrorGroupMember,1,1,0]
 		</OnLeftClick>
@@ -470,7 +461,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffAlacrityGroupMember,${This.SelectedItem.Text}]
-Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
 		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffAlacrityGroupMember,0,1,0]
 		</OnLeftClick>

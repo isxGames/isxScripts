@@ -542,6 +542,21 @@ function Combat_Routine(int xAction)
     	}
     }
   }
+  
+	;; Siphon Strength (Always cast this when it is ready!)
+  if (${Me.Ability[${SpellType[80]}].IsReady})
+  {
+    call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+	}
+	;; Swift Attack
+  if (${Me.Ability[${SpellType[381]}].IsReady})
+  {
+    call _CastSpellRange 381 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+	}
 	
 	DoAEs:Set[FALSE]
 	if ${PBAoEMode}
@@ -716,18 +731,6 @@ function Combat_Routine(int xAction)
   if ${MainTank}
   {
   	;; Always try to cast fast casting Combat Arts aftewards to gain aggro (if tank)
-    if (${Me.Ability[${SpellType[152]}].IsReady})
-    {
-      call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-    }
-    if (${Me.Ability[${SpellType[151]}].IsReady})
-    {
-      call _CastSpellRange 151 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-    }
 		; shield bash
     if (${Me.Ability[${SpellType[240]}].IsReady})
     {
@@ -756,14 +759,6 @@ function Combat_Routine(int xAction)
   	}
   }
 	
-	;; Siphon Strength (Always cast this when it is ready!)
-  if (${Me.Ability[${SpellType[80]}].IsReady})
-  {
-    call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
-			return CombatComplete
-	}
-
   ;;;;;
 	;;; Quick Spells for aggro
 	; Hateful Slam (shield bash)
@@ -777,13 +772,6 @@ function Combat_Routine(int xAction)
 	if (${MainTank} && ${Me.Ability[${SpellType[160]}].IsReady})
   {
     call _CastSpellRange 160 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-			return CombatComplete
-	}
-	; kick
-	if (${Me.Ability[${SpellType[151]}].IsReady})
-  {
-    call _CastSpellRange 151 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
@@ -897,63 +885,84 @@ function Combat_Routine(int xAction)
 	
 	
 	;;;; DPS Lineup
-	;; Devour Vitae
+	;; Dreadful Wrath (dmg)
+	if (${Me.Ability[${SpellType[154]}].IsReady})
+  {
+    call _CastSpellRange 154 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+	}		
+	;; Devour Vitae (dmg, + heal)
 	if (${Me.Ability[${SpellType[153]}].IsReady})
   {
     call _CastSpellRange 153 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}	
-	;; Mana Sieve
+	;; Mana Sieve (dmg + DoT + power tap)
 	if (${Me.Ability[${SpellType[81]}].IsReady})
   {
     call _CastSpellRange 81 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}			
-	;; Siphon Strike
-	if (${Me.Ability[${SpellType[61]}].IsReady})
+	;; Joust (dmg)
+	if (${Me.Ability[${SpellType[344]}].IsReady} && ${Actor[${KillTarget}].Distance} <= 7)
   {
-    call _CastSpellRange 61 0 0 0 ${KillTarget}
+    call _CastSpellRange 344 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
-	}
-	;; Shadow Coil
+	}		
+	;; Cleave Flesh (WIS debuff + dmg)
+  if (${Me.Ability[${SpellType[152]}].IsReady})
+  {
+    call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+  }
+	;; Malice (dmg)
+	if (${Me.Ability[${SpellType[62]}].IsReady})
+  {
+    call _CastSpellRange 62 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+	}	
+	;; Shadow Coil (dmg + dot)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
   {
     call _CastSpellRange 60 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
-	;; Dreadful Wrath
-	if (${Me.Ability[${SpellType[154]}].IsReady})
+	;; Siphon Strike (dmg, + dot)
+	if (${Me.Ability[${SpellType[61]}].IsReady})
   {
-    call _CastSpellRange 154 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-			return CombatComplete
-	}	
-	;; Malice
-	if (${Me.Ability[${SpellType[62]}].IsReady})
-  {
-    call _CastSpellRange 62 0 0 0 ${KillTarget}
+    call _CastSpellRange 61 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
-	;; Painbringer
+	;; Legionnaire's Smite (dmg)
+	if (${Me.Ability[${SpellType[332]}].IsReady})
+  {
+    call _CastSpellRange 332 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+	}
+	;; Painbringer (low dmg)
 	if (${Me.Ability[${SpellType[150]}].IsReady})
   {
     call _CastSpellRange 150 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
-	;; Soulrend
+	;; Soulrend (low dmg + knockdown)
 	if (${Me.Ability[${SpellType[151]}].IsReady})
   {
     call _CastSpellRange 151 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
-	
+
 	CurrentAction:Set[Combat :: CombatComplete]
 	return CombatComplete
 }

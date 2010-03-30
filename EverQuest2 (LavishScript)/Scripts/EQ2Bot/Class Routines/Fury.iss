@@ -130,6 +130,16 @@ function Pulse()
 	;; check this at least every 0.5 seconds
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
+		if ${Actor[${MainTankID}].InCombatMode}
+		{
+			if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+			{
+				;Debug:Echo["Pulse() -- Stopping autofollow"]		
+				EQ2Execute /stopfollow
+				AutoFollowingMA:Set[FALSE]
+				waitframe
+			}
+		}		
 		call CheckHeals
 		if ${CureMode}
     		call CheckCures
@@ -140,13 +150,6 @@ function Pulse()
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
-	{
-		call CastSpellRange 157
-		ClassPulseTimer:Set[${Script.RunningTime}]
-	}
-	
 }
 
 function Class_Shutdown()
@@ -326,7 +329,7 @@ function Buff_Routine(int xAction)
 	if ${Me.ToActor.Power}>85
 		call CheckHOTs
 
-  call CheckSKFD
+  ;call CheckSKFD
   
 	switch ${PreAction[${xAction}]}
 	{
@@ -626,6 +629,9 @@ function Combat_Routine(int xAction)
 	declare DebuffCnt int local
 	declare TankToTargetDistance float local
 
+	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
+		return CombatComplete
+
 	;this should be a var based upon our dps to damage ratio, it could even be 0
 	SpellMax:Set[2]
 
@@ -639,7 +645,7 @@ function Combat_Routine(int xAction)
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+		Debug:Echo["Combat_Routine()::TankToTargetDistance: ${TankToTargetDistance}"]
 
 		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 		{
@@ -1287,6 +1293,7 @@ function CheckHeals()
 	declare cGroupMemberDistance float local 0
 	declare cGroupMemberClass string local 0
 	declare cGroupMemberIsDead bool local FALSE
+	declare TankToTargetDistance float local
 	
 		; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
@@ -1294,43 +1301,43 @@ function CheckHeals()
 
 	if ${DoCallCheckPosition}
 	{
-		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-
-		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+		if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
 		{
-			if ${MainTank}
-				call CheckPosition 1 0
-			else
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["CheckHeals()::TankToTargetDistance: ${TankToTargetDistance}"]
+	
+			if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 			{
-				if (${TankToTargetDistance} <= 7.5)
+				if ${MainTank}
+					call CheckPosition 1 0
+				else
 				{
-					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
-						call CheckPosition 1 1
-					else
-						call CheckPosition 1 0
+					if (${TankToTargetDistance} <= 7.5)
+					{
+						if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+							call CheckPosition 1 1
+						else
+							call CheckPosition 1 0
+					}
 				}
 			}
 		}
-		elseif (${TankToTargetDistance} > 15)
+		elseif (${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance} > 15)
 		{
-			if ${Actor[${MainTankID}](exists)}
-			{
-				Debug:Echo["Out of Range :: Moving to within 15m of tank"]
-				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 15 1 1
-			}
+			Debug:Echo["Out of Range :: Moving to within 15m of tank"]
+			call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 15 1 1
 		}
 		DoCallCheckPosition:Set[FALSE]
 	}
 
 
-    if !${Actor[${MainTankID}](exists)}
-    {
-				echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
-        MainTankExists:Set[FALSE]
-    }
-    else
-        MainTankExists:Set[TRUE]
+  if !${Actor[${MainTankID}](exists)}
+  {
+			echo "EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+      MainTankExists:Set[FALSE]
+  }
+  else
+      MainTankExists:Set[TRUE]
 
 	;curses cause heals to do damage and must be cleared off healer
 	if ${Me.Cursed}
@@ -1345,85 +1352,85 @@ function CheckHeals()
 	
 	call CheckHOTs
 
-    if (${MainTankExists})
-    {
-  	    if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 10]}
-  	    {
-  		    if ${Me.ID}==${MainTankID}
-  			    call HealMe
-  		    else
-  			    call HealMT ${MainTankID} ${MainTankInGroup}
-  	    }
+  if (${MainTankExists})
+  {
+	    if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 10]}
+	    {
+		    if ${Me.ID}==${MainTankID}
+			    call HealMe
+		    else
+			    call HealMT ${MainTankID} ${MainTankInGroup}
+	    }
 
-  	    ;Check My health after MT
-        if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 35]}
-	        call HealMe
-    }
-    else
-    {
-        if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 15]}
-	        call HealMe
-    }
+	    ;Check My health after MT
+      if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 35]}
+        call HealMe
+  }
+  else
+  {
+      if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 15]}
+        call HealMe
+  }
 
-    if ${Me.GroupCount} > 1
-    {
-    	do
-    	{
-    		if ${Me.Group[${temphl}].ToActor(exists)}
-    		{
-    		    ;; Set some variables now:
-    		    cGroupMemberID:Set[${Me.Group[${temphl}].ID}]
+  if ${Me.GroupCount} > 1
+  {
+  	do
+  	{
+  		if ${Me.Group[${temphl}].ToActor(exists)}
+  		{
+  		    ;; Set some variables now:
+  		    cGroupMemberID:Set[${Me.Group[${temphl}].ID}]
 
-    		    ; FIRST -- If group member has health below a certain threshold, heal them immediately
-    		    if ${Me.Group[${temphl}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.IsDead}
-    		    {
-    		    	if ${Me.Ability[${SpellType[2]}].IsReady}
-    		    	{
-								call CastSpellRange 2 0 0 0 ${cGroupMemberID}
-								continue
-							}
+  		    ; FIRST -- If group member has health below a certain threshold, heal them immediately
+  		    if ${Me.Group[${temphl}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.IsDead}
+  		    {
+  		    	if ${Me.Ability[${SpellType[2]}].IsReady}
+  		    	{
+							call CastSpellRange 2 0 0 0 ${cGroupMemberID}
+							continue
 						}
+					}
 
-    		    ;;;;;;;;
-    		    ;; Set variables now:
-    		    cGroupMemberHealth:Set[${Me.Group[${temphl}].ToActor.Health}]
-    		    lGroupMemberHealth:Set[${Me.Group[${lowest}].ToActor.Health}]
-    		    cGroupMemberDistance:Set[${Me.Group[${temphl}].ToActor.Distance}]
-    		    cGroupMemberClass:Set[${Me.Group[${temphl}].Class}]
-    		    cGroupMemberIsDead:Set[${Me.Group[${temphl}].ToActor.IsDead}]
-    		    ;;
-    		    ;;;;;;;;
+  		    ;;;;;;;;
+  		    ;; Set variables now:
+  		    cGroupMemberHealth:Set[${Me.Group[${temphl}].ToActor.Health}]
+  		    lGroupMemberHealth:Set[${Me.Group[${lowest}].ToActor.Health}]
+  		    cGroupMemberDistance:Set[${Me.Group[${temphl}].ToActor.Distance}]
+  		    cGroupMemberClass:Set[${Me.Group[${temphl}].Class}]
+  		    cGroupMemberIsDead:Set[${Me.Group[${temphl}].ToActor.IsDead}]
+  		    ;;
+  		    ;;;;;;;;
 
-    			if (${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 0]} && !${cGroupMemberIsDead})
-    			{
-    				if (${cGroupMemberHealth}<${lGroupMemberHealth} || !${lowestset}) && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[1]}].Range}
-    				{
-    			      lowestset:Set[TRUE]
-    						lowest:Set[${temphl}]
-    						;Debug:Echo["CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"]
-    				}
-    			}
+  			if (${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 0]} && !${cGroupMemberIsDead})
+  			{
+  				if (${cGroupMemberHealth}<${lGroupMemberHealth} || !${lowestset}) && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[1]}].Range}
+  				{
+  			      lowestset:Set[TRUE]
+  						lowest:Set[${temphl}]
+  						;Debug:Echo["CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"]
+  				}
+  			}
 
-    			if ${Me.Group[${temphl}].ID}==${MainTankID}
-    				MainTankInGroup:Set[1]
+  			if ${Me.Group[${temphl}].ID}==${MainTankID}
+  				MainTankInGroup:Set[1]
 
-    			if !${cGroupMemberIsDead} && ${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 20]} && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[15]}].Range}
-    				grpheal:Inc
+  			if !${cGroupMemberIsDead} && ${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 20]} && ${cGroupMemberDistance}<=${Me.Ability[${SpellType[15]}].Range}
+  				grpheal:Inc
 
-    			if (${cGroupMemberClass.Equal[conjuror]}  || ${cGroupMemberClass.Equal[necromancer]} || ${cGroupMemberClass.Equal[coercer]})
-    			{
-        			if (${Me.Group[${temphl}].ToActor.Pet.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
-        				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-    			}
-    			elseif (${cGroupMemberClass.Equal[illusionist]} && !${Me.InCombat})
-    			{
-        			if (${Me.Group[${temphl}].ToActor.Pet.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
-        				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
-    			}
-    		}
-    	}
-    	while ${temphl:Inc} <= ${Me.GroupCount}
-    }
+  			if (${cGroupMemberClass.Equal[conjuror]}  || ${cGroupMemberClass.Equal[necromancer]} || ${cGroupMemberClass.Equal[coercer]})
+  			{
+      			if (${Me.Group[${temphl}].ToActor.Pet.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
+      				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+  			}
+  			elseif (${cGroupMemberClass.Equal[illusionist]} && !${Me.InCombat})
+  			{
+      			if (${Me.Group[${temphl}].ToActor.Pet.Health} < ${Math.Calc[${MaxHealthModified} - 40]} && !${Me.Group[${temphl}].ToActor.Pet.IsDead})
+      				PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+  			}
+  		}
+  	}
+  	while ${temphl:Inc} <= ${Me.GroupCount}
+  }
 
 	;if ${Me.ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 20]} && !${Me.ToActor.IsDead}
 	;	grpheal:Inc
@@ -1701,10 +1708,11 @@ function CureMe()
 
 function CheckCures(int InCombat=1)
 {
-	declare temphl int local 1
+	variable int i = 1
 	declare grpcure int local 0
 	declare Affcnt int local 0
 	declare CureTarget string local	
+	declare TankToTargetDistance float local
 	
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
@@ -1715,144 +1723,184 @@ function CheckCures(int InCombat=1)
 	
 	if ${DoCallCheckPosition}
 	{
-		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-
-		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+		if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
 		{
-			if ${MainTank}
-				call CheckPosition 1 0
-			else
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			Debug:Echo["CheckCures()::TankToTargetDistance: ${TankToTargetDistance}"]
+	
+			if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 			{
-				if (${TankToTargetDistance} <= 7.5)
+				if ${MainTank}
+					call CheckPosition 1 0
+				else
 				{
-					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
-						call CheckPosition 1 1
-					else
-						call CheckPosition 1 0
+					if (${TankToTargetDistance} <= 7.5)
+					{
+						if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+							call CheckPosition 1 1
+						else
+							call CheckPosition 1 0
+					}
 				}
 			}
 		}
-		elseif (${TankToTargetDistance} > 15)
+		elseif (${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance} > 15)
 		{
-			if ${Actor[${MainTankID}](exists)}
-			{
-				Debug:Echo["Out of Range :: Moving to within 15m of tank"]
-				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 15 1 1
-			}
+			Debug:Echo["Out of Range :: Moving to within 15m of tank"]
+			call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 15 1 1
 		}
 		DoCallCheckPosition:Set[FALSE]
 	}  
   
 	; Check if curse curing on others is enabled it if is find out who we are to cure and do it.
-	if ${CureCurseOthersEnabled}
+	if !${CureCurseGroupMember.Equal[No One]}
 	{
-		CureTarget:Set[${CureCurseGroupMember}]
-
-		if  !${Me.Raid} > 0 
+		CureTarget:Set[${CureCurseGroupMember.Token[1,:]}]
+		Debug:Echo["CheckCures() - CureTarget for Curse; '${CureTarget}'"]
+		if ${Me.Raid} > 0 
+		{
+			if ${Me.Raid[${CureTarget}].Cursed}
 			{
-				if ${Me.Group[${CureTarget.Token[1,:]}].Cursed}
+				if ${Me.Ability[${SpellType[211]}].IsReady}
 				{
-					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
+					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget}].ID} 0 0 0 0 1 0
+					wait 5
+					while ${Me.CastingSpell}
+					{
+						if !${Me.Raid[${CureTarget}].Cursed}
+						{
+							press esc
+							break
+						}
+						waitframe
+					}	
+				}
+			}			
+		}
+		else
+		{
+			if ${Me.Group[${CureTarget}].Cursed}
+			{
+				Debug:Echo["CheckCures() - ${CureTarget} is CURSED -- curing."]
+				if ${Me.Ability[${SpellType[211]}].IsReady}
+				{
+					call CastSpellRange 211 0 0 0 ${Me.Group[${CureTarget}].ID} 0 0 0 0 1 0
+					wait 5
+					while ${Me.CastingSpell}
+					{
+						if !${Me.Group[${CureTarget}].Cursed}
+						{
+							press esc
+							break
+						}
+						waitframe
+					}	
 				}
 			}
-			else
-			{
-					if ${Me.Raid[${CureTarget.Token[1,:]}].Cursed}
-				{
-					call CastSpellRange 211 0 0 0 ${Me.Raid[${CureTarget.Token[1,:]}].ID} 0 0 0 0 1 0
-				}
-			}
-	}  
+		}
+	} 
   
-  if (${HaveAbility_TunaresGrace})
+  if (${Me.GroupCount} > 1)
   {
-  	if ${Me.Ability[${SpellType[385]}].IsReady}
-  	{
-	  		if (${Me.IsAfflicted} && ${Me.Arcane} != -1)	
-	  			grpcure:Inc
-  		
+  	;; Tunare's Grace (Group Cure AA)
+	  if (${HaveAbility_TunaresGrace})
+	  {
+	  	;Debug:Echo["CheckCures() - Tunare's Grace available..."]
+	  	if ${Me.Ability[${SpellType[385]}].IsReady}
+	  	{
+	  		;Debug:Echo["CheckCures() - Tunare's Grace READY!"]
+				if (${Me.Arcane} != -1)
+				{
+		  		if (${Me.IsAfflicted})	
+		  		{
+		  			;Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
+		  			grpcure:Inc
+		  		}
+		  	}
+			
 				do
 				{
-					;make sure they in zone and in range
-					if (${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temph1}].Arcane} != -1 && ${Me.Group[${temphl}].ToActor.Distance} <= 25)
-							grpcure:Inc
-				}
-				while ${temphl:Inc} <= ${Me.GroupCount}  	
-  		
-  			if ${grpcure} > 0
-  			{
-  				;echo "DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"
-  				call CastSpellRange 385 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
-  				return
-  			}
-  			else
-  				return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
-  	}
-  }
-  temphl:Set[1]
-  grpcure:Set[0]
-  
-
-	if ${Me.Ability[${SpellType[220]}].IsReady} && ${Me.GroupCount} > 1
-	{
-		;check ourselves
-		if ${Me.IsAfflicted}
-		{
-			;add ticks for group cures based upon our afflicions
-			if ${Me.Noxious}>0 || ${Me.Elemental}>0
-			{
-				if (${Me.Arcane} != -1)
-					grpcure:Inc
-			}
-		}
-		;Debug:Echo["CheckCures() -- Checked 'Me' -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
-
-		;loop group members, and check for group curable afflictions
-		do
-		{
-			;make sure they in zone and in range
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[220]}].Range}
-			{
-				if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Elemental}>0
-				{
-					if (${Me.Group[${temph1}].Arcane} != -1)
+					if (${Me.Group[${i}].Arcane} == -1)
+						continue
+						
+					if (${Me.Group[${i}].ToActor(exists)} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].ToActor.Distance} <= 25)
+					{
+						;Debug:Echo["Group member ${i}. ${Me.Group[${i}].ToActor.Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].ToActor.Distance}]"]
 						grpcure:Inc
+					}
+				}
+				while ${i:Inc} <= ${Me.GroupCount}  	
+			
+				if ${grpcure} > 0
+				{
+					Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"]
+					call CastSpellRange 385 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
+					wait 5
+					while ${Me.CastingSpell}
+					{
+						waitframe
+					}	
+	  			;;;;; This is what we would do if we wanted to keep checking for cures after doing the "group cure"
+	  			;wait 5
+	  			;call FindAfflicted
+	  			;if ${Return} <= 0
+	  			;   return							
+					return
+				}
+				else
+					return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
+	  	}
+	  }
+	  
+		;; Abolishment (Group Cure Spell)
+	  if ${Me.Ability[${SpellType[220]}].IsReady}
+		{
+			;Debug:Echo["CheckCures() - Abolishment READY!"]
+			if (${Me.Arcane} != -1)
+			{
+	  		if (${Me.IsAfflicted})	
+	  		{
+	  			;Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
+	  			grpcure:Inc
+	  		}
+	  	}
+		
+			do
+			{
+				if (${Me.Group[${i}].Arcane} == -1)
+					continue
+					
+				if (${Me.Group[${i}].ToActor(exists)} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].ToActor.Distance} <= 25)
+				{
+					;Debug:Echo["Group member ${i}. ${Me.Group[${i}].ToActor.Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].ToActor.Distance}]"]
+					grpcure:Inc
 				}
 			}
-		}
-		while ${temphl:Inc} <= ${Me.GroupCount}
-
-		;Debug:Echo["CheckCures() -- Checked Group -- grpcure: ${grpcure} (Noxious and Elemental Only)"]
-
-    if ${EpicMode}
-    {
-  		if ${grpcure} > 2
-  		{
-  			call CastSpellRange 220
-  			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-  			wait 5
-  			call FindAfflicted
-  			if ${Return} <= 0
-  			    return
-  		}
-    }
-    else
-    {
-  		if ${grpcure} > 1
-  		{
-  			call CastSpellRange 220
-  			; need a slight wait here for the client to catch up with the server and know that the cure counters were updated
-  			wait 5
-  			call FindAfflicted
-  			if ${Return} <= 0
-  			    return
-  		}
-		}
-	}
-
-	;Cure Ourselves first
-	call CureMe
+			while ${i:Inc} <= ${Me.GroupCount}  	
+		
+			if ${grpcure} > 0
+			{
+				Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Abolishment"]
+				call CastSpellRange 220 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
+				wait 5
+				while ${Me.CastingSpell}
+				{
+					waitframe
+				}	
+  			;;;;; This is what we would do if we wanted to keep checking for cures after doing the "group cure"
+  			;wait 5
+  			;call FindAfflicted
+  			;if ${Return} <= 0
+  			;   return				
+				return
+			}
+			else
+				return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
+	  }
+  }	
+  	
+  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
+		call CureMe
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
@@ -1868,6 +1916,10 @@ function CheckCures(int InCombat=1)
 		if !${EpicMode}
 			break
 
+		;Cure Ourselves first
+	  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
+			call CureMe
+
 		;Check MT health and heal him if needed
 		if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 50]}
 		{
@@ -1881,9 +1933,7 @@ function CheckCures(int InCombat=1)
 		call CheckGroupHealth 50
 		if !${Return}
 			break
-
 	}
-
 }
 
 
@@ -1920,7 +1970,7 @@ function FindAfflicted()
 	}
 	while ${temphl:Inc} <= ${Me.GroupCount}
 
-    ;Debug:Echo["FindAfflicted() returning ${mostafflicted}"]
+  ;Debug:Echo["FindAfflicted() returning ${mostafflicted}"]
 
 	if ${mostafflicted}>0
 		return ${mostafflicted}
@@ -2094,20 +2144,22 @@ function HandleGroupWiped()
 
 function CheckSKFD()
 {
-    if !${Me.ToActor.IsFD}
-        return
+	; This is not being used...for now
 
-    if !${Actor[${MainTankID}](exists)}
-        return
+  if !${Me.ToActor.IsFD}
+      return
 
-    if ${Actor[${MainTankID}].IsDead}
-        return
+  if !${Actor[${MainTankID}](exists)}
+      return
 
-    if ${Me.ToActor.Health} < 20
-        return
+  if ${Actor[${MainTankID}].IsDead}
+      return
 
-    call RemoveSKFD "Fury::CheckSKFD"
-    return
+  if ${Me.ToActor.Health} < 20
+      return
+
+  call RemoveSKFD "Fury::CheckSKFD"
+  return
 }
 
 function PostDeathRoutine()
