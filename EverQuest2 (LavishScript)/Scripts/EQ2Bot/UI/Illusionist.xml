@@ -11,14 +11,12 @@
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-
 				Script[EQ2Bot].Variable[Makepet]:Set[TRUE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Makepet",TRUE]
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
-			{
-
+			{
 				Script[EQ2Bot].Variable[Makepet]:Set[FALSE]
 				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Makepet",FALSE]
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings

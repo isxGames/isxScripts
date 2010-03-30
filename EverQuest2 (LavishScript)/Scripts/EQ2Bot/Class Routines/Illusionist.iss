@@ -152,7 +152,7 @@ function Pulse()
 		; check power (It should not be necessary to call this function here.)
 		;call RefreshPower
 
-		call CheckSKFD
+		;call CheckSKFD
 
 		;; Prismatic Proc
 		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
@@ -162,6 +162,14 @@ function Pulse()
 			{
 				if ${Actor[${MainTankID}].InCombatMode}
 				{
+					if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+					{
+						if ${IllyDebugMode}
+							Debug:Echo["Pulse() -- Stopping autofollow"]		
+						EQ2Execute /stopfollow
+						AutoFollowingMA:Set[FALSE]
+						waitframe
+					}
 					if ${Me.Ability[${SpellType[72]}].IsReady}
 					{
 						BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -185,7 +193,7 @@ function Pulse()
 							return
 						}
 					}
-					call CastSomething
+					call CastSomething	
 				}
 			}
 		}
@@ -328,7 +336,7 @@ function Buff_Routine(int xAction)
 		{
 			call CheckHeals
 			call RefreshPower
-			call CheckSKFD
+			;call CheckSKFD
 	
 			;; Prismatic Proc
 			;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
@@ -873,6 +881,10 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	if ${ChainStunMode}
 		call ChainStunMez
 		
+	call VerifyTarget ${TargetID}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete		
+		
 	if ${DoCallCheckPosition}
 	{
 		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
@@ -894,14 +906,11 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 				}
 			}
 		}
-		elseif (${TankToTargetDistance} > 20)
+		elseif (${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance} > 20)
 		{
-			if ${Actor[${MainTankID}](exists)}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["_CastSpellRange():: Out of Range - Moving to within 20m of tank"]
-				call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 20 1 1
-			}
+			if ${IllyDebugMode}
+				Debug:Echo["_CastSpellRange():: Out of Range - Moving to within 20m of tank"]
+			call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 20 1 1
 		}
 		DoCallCheckPosition:Set[FALSE]
 	}
@@ -1547,7 +1556,15 @@ function Combat_Routine(int xAction)
 	}
 
 	call CheckNonDps
-
+	if ${Return.Equal[CombatComplete]}
+	{
+		if ${IllyDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+		return CombatComplete
+	}
+	else
+		spellsused:Inc[${Return}]
+		
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
 	{
@@ -1623,7 +1640,15 @@ function Combat_Routine(int xAction)
 				return CombatComplete
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething			
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets		
 			break
@@ -1648,7 +1673,15 @@ function Combat_Routine(int xAction)
 				return CombatComplete
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething			
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets				
 			break
@@ -1693,7 +1726,15 @@ function Combat_Routine(int xAction)
 				;}
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething			
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}		
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets				
 			break
@@ -1718,7 +1759,15 @@ function Combat_Routine(int xAction)
 				;}
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething			
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets				
 			break
@@ -1727,7 +1776,15 @@ function Combat_Routine(int xAction)
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
 			{
 				if ${spellsused} < 1 && !${MezzMode}
-						call CastSomething			
+				{
+					call CastSomething			
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${IllyDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						return CombatComplete
+					}
+				}	
 				ExecuteQueued Mezmerise_Targets
 				FlushQueued Mezmerise_Targets				
 				break
@@ -1737,7 +1794,15 @@ function Combat_Routine(int xAction)
 			if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
 			{
 				if ${spellsused} < 1 && !${MezzMode}
-						call CastSomething			
+				{
+					call CastSomething			
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${IllyDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						return CombatComplete
+					}
+				}	
 				ExecuteQueued Mezmerise_Targets
 				FlushQueued Mezmerise_Targets				
 				break
@@ -1761,7 +1826,15 @@ function Combat_Routine(int xAction)
 				}
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething			
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}	
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
@@ -1769,7 +1842,13 @@ function Combat_Routine(int xAction)
 		case Constructs
 			if ${UltraDPSMode}
 			{
-				call CastSomething			
+				call CastSomething		
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}					
 				ExecuteQueued Mezmerise_Targets
 				FlushQueued Mezmerise_Targets
 				break
@@ -1788,7 +1867,15 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething			
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}			
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
@@ -1806,7 +1893,15 @@ function Combat_Routine(int xAction)
 				spellsused:Inc
 			}
 			if ${spellsused} < 1 && !${MezzMode}
-					call CastSomething
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}	
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets					
 			break
@@ -1823,8 +1918,16 @@ function Combat_Routine(int xAction)
 				}
 				spellsused:Inc
 			}
-			if (${spellsused} < 1) && !${MezzMode}
-				call CastSomething
+			if ${spellsused} < 1 && !${MezzMode}
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}	
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			return CombatComplete
@@ -1832,8 +1935,16 @@ function Combat_Routine(int xAction)
 
 	if !${MezzMode}
 	{
-		if (${spellsused} < 1)
-			call CastSomething
+		if ${spellsused} < 1
+		{
+			call CastSomething			
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+				return CombatComplete
+			}
+		}	
 	}
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
@@ -1853,7 +1964,7 @@ function CastSomething()
 
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
-		return
+		return "CombatComplete"
 
 	if ${ChainStunMode}
 		call ChainStunMez
@@ -2585,6 +2696,8 @@ function Mezmerise_Targets()
 
 function CheckSKFD()
 {
+	;; This is not being called....for now.
+	
 	if !${Me.ToActor.IsFD}
 		return
 
