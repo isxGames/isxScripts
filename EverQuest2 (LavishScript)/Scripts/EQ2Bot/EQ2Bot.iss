@@ -1908,10 +1908,10 @@ function Combat(bool PVP=0)
 		return
 	}
 	
-	Debug:Echo["Combat() - Me.ToActor.WhoFollowing: ${Me.ToActor.WhoFollowing}"]
+	;Debug:Echo["Combat() - Me.ToActor.WhoFollowing: ${Me.ToActor.WhoFollowing}"]
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)} && !${Me.IsMoving})
 	{
-		Debug:Echo["Combat() - Stopping Autofollow"]
+		;Debug:Echo["Combat() - Stopping Autofollow"]
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 		wait 2
@@ -4461,25 +4461,21 @@ atom(script) LootWDw(string ID)
 	declare i int local
 	variable int tmpcnt=1
 	variable int deccnt=0
-	variable bool LootThisAlways=FALSE
 
-	
-	
 	;; accept some items regardless
 	;Debug:Echo["LootWDw() - Item[1]: '${LootWindow[${ID}].Item[1].Name}'"]
 	switch ${LootWindow[${ID}].Item[1].Name}
 	{
 		case Void Shard
 		case Mark of Manaar
-			;Debug:Echo["LootWDw() - LootThisAlways set to TRUE"]
-			LootThisAlways:Set[TRUE]
-			break
+			run "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Utils/LootAll" ${ID} ${Math.Rand[30]:Inc[1]}
+			return
 		
 		default
 			break
 	}
 
-	if (${ID.Equal[${LastWindow}]} && !${LootThisAlways})
+	if (${ID.Equal[${LastWindow}]})
 	{
 			switch ${LootWindow[${ID}].Type}
 			{
@@ -4542,7 +4538,7 @@ atom(script) LootWDw(string ID)
 	{
 		deccnt:Inc[${LootWindow[${ID}].NumItems}]
 	}
-	elseif (${LootMethod.Equal[Idle]} && !${LootThisAlways})
+	elseif (${LootMethod.Equal[Idle]})
 		return
 
 	switch ${LootWindow[${ID}].Type}
@@ -4722,7 +4718,7 @@ function ReacquireKillTargetFromMA(int WaitTime=5)
 	{
 		if !${Actor[${MainAssistID}].InCombatMode}
 		{
-			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist is no longer in combat mode]"]
+			Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist is no longer in combat mode]"]
 			KillTarget:Set[0]
 			return FAILED
 		}
@@ -4740,25 +4736,25 @@ function ReacquireKillTargetFromMA(int WaitTime=5)
 				}
 				else
 				{
-					Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target was not valid]"]
+					Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist's target was not valid]"]
 					return FAILED
 				}
 			}
 			else
 			{
-				Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist's target ID was zero]"]
+				Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist's target ID was zero]"]
 				return FAILED
 			}
 		}
 		else
 		{
-			Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist does not currently have a target]"]
+			Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist does not currently have a target]"]
 			return FAILED
 		}
 	}
 	else
 	{
-		Debug:Echo["ReacquireKillTargetFromMA() FAILED [MainAssist doesn't exist!]"]
+		Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist doesn't exist!]"]
 		return FAILED
 	}
 

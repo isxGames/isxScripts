@@ -47,6 +47,7 @@ function Class_Declaration()
 	declare UseMythicalOn string script
 	declare HaveAbility_TunaresGrace bool script FALSE
 	declare MaxHealthModified int script 0
+	declare CheckCuresTimer uint script 0
 
 	declare VimBuffsOn collection:string script
 	declare BuffBatGroupMember string script
@@ -56,6 +57,7 @@ function Class_Declaration()
 	declare BuffHunt bool script FALSE
 	declare BuffMask bool script FALSE
 	declare PrimaryHealer bool script TRUE
+	declare FuryDebugMode bool script FALSE
 
 	declare EquipmentChangeTimer int script
 
@@ -110,6 +112,9 @@ function Class_Declaration()
 		MaxHealthModified:Set[100]
 	else
 		MaxHealthModified:Set[80]
+		
+	;; Set this to TRUE, as desired, for testing
+	;FuryDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -619,6 +624,31 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	iReturn:Set[${Return}]
 	
+	call VerifyTarget ${TargetID}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete	
+	
+	;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
+	;; DeathSwarm
+	if ${Me.Ability[${SpellType[51]}].IsReady}
+	{
+		call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+	}		
+	
+	call VerifyTarget ${TargetID}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+			
+	;; Thunderbolt
+	if ${Me.Ability[${SpellType[60]}].IsReady}
+	{
+		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+	}	
+
+	call VerifyTarget ${TargetID}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+	
 	return ${iReturn}
 }
 
@@ -704,30 +734,65 @@ function Combat_Routine(int xAction)
   	{
   		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.ToActor.Power}>30
   		{
-  			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
-  			{
-  				call _CastSpellRange 50 0 0 0 ${KillTarget}
-  				DebuffCnt:Inc
-  			}
-  			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
+   			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady}
   			{
   				call _CastSpellRange 51 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}
+  				DebuffCnt:Inc
+  			}
+  			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady} && ${DebuffCnt}<1
+  			{
+  				call _CastSpellRange 50 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}  				
   				DebuffCnt:Inc
   			}
   			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
   			{
   				call _CastSpellRange 52 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}  				
   				DebuffCnt:Inc
   			}
   		}
   		elseif ${Actor[${KillTarget}].IsHeroic}
   		{
 				;; Fast-casting encounter debuff that should be used always
-				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+				if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady}
 				{
 					call _CastSpellRange 52 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}					
 					DebuffCnt:Inc
 				}
+   			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady}
+  			{
+  				call _CastSpellRange 51 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}  				
+  				DebuffCnt:Inc
+  			}				
 			}
   	}
 
@@ -752,7 +817,15 @@ function Combat_Routine(int xAction)
   	if (${StartHO})
   	{
   		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
+  		{
   			call _CastSpellRange 304
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				} 
+			} 			
   	}
 
   	;;
@@ -766,6 +839,12 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[OK]}
 				{
 					call _CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}					
 				}
 			}
 		}
@@ -788,6 +867,7 @@ function Combat_Routine(int xAction)
 	if ${CureMode}
 		call CheckCures
 
+
 	;maintain debuffs
 	DebuffCnt:Set[0]
 	if (${DebuffMode})
@@ -797,27 +877,40 @@ function Combat_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
 			{
 				call _CastSpellRange 50 0 0 0 ${KillTarget}
-				DebuffCnt:Inc
-			}
-			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && ${DebuffCnt}<1
-			{
-				call _CastSpellRange 51 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
 				DebuffCnt:Inc
 			}
 			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
 			{
 				call _CastSpellRange 52 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}				
 				DebuffCnt:Inc
 			}
 		}
-		elseif ${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health}>50
+		elseif ${Actor[${KillTarget}].IsHeroic}
 		{
 			;; Fast-casting encounter debuff that should be used always
-			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
+			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady}
 			{
 				call _CastSpellRange 52 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}				
 				DebuffCnt:Inc
-			}
+			}	
 		}
 	}
 	
@@ -831,7 +924,23 @@ function Combat_Routine(int xAction)
 	if (${StartHO})
 	{
 		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
+		{
 			call _CastSpellRange 304
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+		}			
+	}
+
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+		return CombatComplete
 	}
 
 	;; Vortex
@@ -851,6 +960,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 360
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}			
 			SpellCnt:Inc
 		}
 	}
@@ -879,6 +994,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 97
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}
@@ -899,6 +1020,14 @@ function Combat_Routine(int xAction)
   		call CheckCures
 	}
 	
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+		return CombatComplete
+	}
+	
 	;; Stormbolt
 	if ${UseStormBolt} && ${Me.Ability[${SpellType[96]}].IsReady}
 	{
@@ -906,6 +1035,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 96
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}
@@ -933,6 +1068,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 90 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}	
@@ -953,6 +1094,15 @@ function Combat_Routine(int xAction)
   		call CheckCures
 	}
 	
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+		return CombatComplete
+	}
+	
+	
 	;; Wrath of Nature
 	if ${Me.Ability[${SpellType[379]}].IsReady}
 	{
@@ -960,6 +1110,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 379 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}
@@ -980,13 +1136,19 @@ function Combat_Routine(int xAction)
   		call CheckCures
 	}
 	
-	; Thunderbolt
+	; Thunderbolt  (should be able to remove this since it's now checked in _CastSpellRange())
 	if ${Me.Ability[${SpellType[60]}].IsReady}
 	{
 		call CheckCondition Power 20 100
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 60 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}	
@@ -1036,6 +1198,14 @@ function Combat_Routine(int xAction)
   		call CheckCures
 	}
 	
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+		return CombatComplete
+	}
+	
 	;; Tempest
 	if ${Me.Ability[${SpellType[70]}].IsReady}
 	{
@@ -1043,36 +1213,15 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 70 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
-	}
-	
-	;; DeathSwarm
-	if ${Me.Ability[${SpellType[51]}].IsReady}
-	{
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 51 0 0 0 ${KillTarget}
-			SpellCnt:Inc
-		}
-	}	
 	if (${SpellCnt} >= ${SpellMax})
 	{
 		call CheckHeals
@@ -1097,6 +1246,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 383 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}
@@ -1124,6 +1279,12 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[OK]}
 		{	
 			call _CastSpellRange 383 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 			SpellCnt:Inc
 		}
 	}
@@ -1800,6 +1961,14 @@ function CheckCures(int InCombat=1)
 		}
 	} 
   
+	;; We need a throttle on this.  Obviously the client is not updating fast enough and we end up curing twice for the same thing (group cures especially.)  For now, we'll say 3 seconds.
+	;; CheckCuresTimer should be set to ${Time.Timestamp} every time a group cure is cast throughout this function.  We'll leave single cures alone..for now.
+	if (${Time.Timestamp} <= ${Math.Calc64[${CheckCuresTimer}+3]})
+	{
+		;Debug:Echo["Waiting for at least 3 seconds before checking cures again..."]
+		return
+	}
+  
   if (${Me.GroupCount} > 1)
   {
   	;; Tunare's Grace (Group Cure AA)
@@ -1844,7 +2013,8 @@ function CheckCures(int InCombat=1)
 	  			;wait 5
 	  			;call FindAfflicted
 	  			;if ${Return} <= 0
-	  			;   return							
+	  			;   return		
+	  			CheckCuresTimer:Set[${Time.Timestamp}]					
 					return
 				}
 				else
@@ -1891,7 +2061,8 @@ function CheckCures(int InCombat=1)
   			;wait 5
   			;call FindAfflicted
   			;if ${Return} <= 0
-  			;   return				
+  			;   return			
+  			CheckCuresTimer:Set[${Time.Timestamp}]	
 				return
 			}
 			else
