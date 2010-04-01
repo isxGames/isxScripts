@@ -71,6 +71,7 @@ function Class_Declaration()
 	declare BuffHorrorGroupMember string script
 	declare BuffAlacrityGroupMember string script
 	declare CureCurseGroupMember string script
+	declare DefilerDebugMode bool script FALSE
 	
 
 	declare EquipmentChangeTimer int script
@@ -98,6 +99,9 @@ function Class_Declaration()
 	BuffHorrorGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHorrorGroupMember,]}]
 	BuffAlacrityGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAlacrityGroupMember,]}]
 	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
+
+	;; Set this to TRUE, as desired, for testing
+	;DefilerDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -563,6 +567,14 @@ function Combat_Routine(int xAction)
 
 		if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
 			call CastSpellRange 398 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2 0
+	}
+	
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+	{
+		if ${DefilerDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+		return CombatComplete
 	}
 
 	;Before we do our Action, check to make sure our group doesnt need healing

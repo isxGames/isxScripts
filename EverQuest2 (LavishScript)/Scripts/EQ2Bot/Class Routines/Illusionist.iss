@@ -772,6 +772,12 @@ function CheckCastBeam()
 	{
 		LastSpellCast:Set[60]
 		call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CheckCastBeam() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		spellsused:Inc
 		return ${spellsused}
 	}
@@ -783,6 +789,12 @@ function CheckCastBeam()
 		{
 			LastSpellCast:Set[60]
 			call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CheckCastBeam() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 			spellsused:Inc
 			return ${spellsused}
 		}
@@ -1089,30 +1101,60 @@ function Combat_Routine(int xAction)
 		{
 			LastSpellCast:Set[352]
 			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
 		}
 		; Bewilderment
 		if (${Me.Ability[${SpellType[191]}].IsReady})
 		{
 			LastSpellCast:Set[191]
 			call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
 		}
 		; Paranoia
 		if (${Me.Ability[${SpellType[190]}].IsReady})
 		{
 			LastSpellCast:Set[190]
 			call _CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
 		}
 		; Regalia
 		if (${Me.Ability[${SpellType[92]}].IsReady})
 		{
 			LastSpellCast:Set[92]
 			call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
 		}
 		; Entrance
 		if (${Me.Ability[${SpellType[352]}].IsReady})
 		{
 			LastSpellCast:Set[352]
 			call _CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
 		}
 	}	
 
@@ -2053,6 +2095,12 @@ function CastSomething()
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
 		call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		LastSpellCast:Set[80]
 		return
 	}
@@ -2060,6 +2108,12 @@ function CastSomething()
 	if (${Me.Ability[${SpellType[70]}].IsReady})
 	{
 		call _CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}		
 		LastSpellCast:Set[70]
 		return
 	}
@@ -2070,24 +2124,25 @@ function CastSomething()
 	if (${Me.Ability[${SpellType[51]}].IsReady})
 	{
 		call _CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-		return
-	}
-
-	;; AA Melee Ability (very fast casting -- low dmg
-	if ${Me.Ability[Spellblade's Counter](exists)} && ${AutoMelee}
-	{
-		if (${Me.Ability[Spellblade's Counter].IsReady})
+		if ${Return.Equal[CombatComplete]}
 		{
-			Actor[${KillTarget}]:DoTarget
-			call CastSpell "Spellblade's Counter" 398 ${KillTargeT} 0
-			return
-		}
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}		
+		return
 	}
 
 	; fast-casting encounter stun
 	if (${Me.Ability[${SpellType[191]}].IsReady})
 	{
 		call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		LastSpellCast:Set[191]
 		return
 	}
@@ -2096,6 +2151,12 @@ function CastSomething()
 	if (${Me.Ability[${SpellType[50]}].IsReady})
 	{
 		call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		LastSpellCast:Set[50]
 		return
 	}
@@ -2104,6 +2165,12 @@ function CastSomething()
 	if (${Me.Ability[${SpellType[309]}].IsReady})
 	{
 		call _CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		LastSpellCast:Set[309]
 		return
 	}
@@ -2112,6 +2179,12 @@ function CastSomething()
 	if (${Me.Ability[${SpellType[230]}].IsReady})
 	{
 		call _CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		LastSpellCast:Set[230]
 		return
 	}
@@ -2191,6 +2264,12 @@ function MA_Lost_Aggro()
 	if ${Me.Ability[${SpellType[386]}].IsReady}
 	{
 		call _CastSpellRange 386 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["MA_Lost_Aggro() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}
 		LastSpellCast:Set[386]
 	}
 }
