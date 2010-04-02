@@ -6196,9 +6196,6 @@ objectdef Navigation
 		variable index:lnavregionref CheckPOI
 		variable int Index
 
-		LavishNav:Clear
-		UIElement[POI List@Navigation@EQ2Bot Tabs@EQ2 Bot]:ClearItems
-
 		while ${Index:Inc}<=50
 		{
 			POIList[${Index}]:Set[]
