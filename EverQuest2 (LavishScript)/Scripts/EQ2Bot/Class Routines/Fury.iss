@@ -24,7 +24,6 @@ function Class_Declaration()
 	declare CureMode bool script
 	declare CureCurseSelfMode bool script 0
 	declare CureCurseOthersMode bool script 0
-	declare UseStormBolt bool script
 	declare InfusionMode bool script
 	declare KeepReactiveUp bool script
 	declare BuffEel bool script 1
@@ -39,6 +38,7 @@ function Class_Declaration()
 	declare RaidHealMode bool script 0
 	declare ShiftForm int script 1
 	declare PactOfNature string script
+	declare AnimalForm string script
 	declare SpamHealMode bool script 0
 	declare UseRootSpells boot script 0
 	declare FeastAction int script 9
@@ -46,6 +46,7 @@ function Class_Declaration()
 	declare UseWrathOfNature bool script 0
 	declare UseMythicalOn string script
 	declare HaveAbility_TunaresGrace bool script FALSE
+	declare HaveAbility_AnimalForm bool script FALSE
 	declare MaxHealthModified int script 0
 	declare CheckCuresTimer uint script 0
 
@@ -62,6 +63,11 @@ function Class_Declaration()
 	declare EquipmentChangeTimer int script
 
 	call EQ2BotLib_Init
+	
+	UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
+	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
+	ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}_Buffs.xml"
+	
 
 	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
@@ -71,7 +77,6 @@ function Class_Declaration()
 	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
 	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
 	InfusionMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[InfusionMode,FALSE]}]
-	UseStormBolt:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseStormBolt,FALSE]}]
 	MeleeAAAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MeleeAAAttacksMode,FALSE]}]
 	BuffThorns:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Thorns,FALSE]}]
 	VortexMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Vortex,FALSE]}]
@@ -95,6 +100,7 @@ function Class_Declaration()
 	BuffEel:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEel,FALSE]}]
 	ShiftForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ShiftForm,]}]
 	PactOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PactOfNature,]}]
+	AnimalForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[AnimalForm,]}]
 	SpamHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamHealMode,]}]
 	UseRootSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRootSpells,]}]
 	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
@@ -106,6 +112,8 @@ function Class_Declaration()
 	;;; Optimizations to avoid having to check if an ability exists all of the time
 	if (${Me.Ability[Tunare's Grace](exists)})
 		HaveAbility_TunaresGrace:Set[TRUE]	
+	if (${Me.Ability[Animal Form](exists)})
+		HaveAbility_AnimalForm:Set[TRUE]
 		
 	;; If we're NOT the primary healer (based on the checkbox in the UI), then we don't need to heal as much
 	if ${PrimaryHealer}
@@ -408,12 +416,12 @@ function Buff_Routine(int xAction)
 				if ${Me.Maintained[${Counter}].Name.Equal["${SpellType[${PreSpellRange[${xAction},1]}]}"]}
 				{
 					;iterate through the members to buff
-					if ${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					if ${UIElement[lbBuffVim@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 					{
 						tempvar:Set[1]
 						do
 						{
-							BuffTarget:Set[${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							BuffTarget:Set[${UIElement[lbBuffVim@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
 
 							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 							{
@@ -422,7 +430,7 @@ function Buff_Routine(int xAction)
 								break
 							}
 						}
-						while ${tempvar:Inc}<=${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						while ${tempvar:Inc}<=${UIElement[lbBuffVim@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 
 						;we went through the buff collection and had no match for this maintaned target so cancel it
 						if !${BuffMember.Equal[OK]}
@@ -442,11 +450,11 @@ function Buff_Routine(int xAction)
 
 			Counter:Set[1]
 			;iterate through the to be buffed Selected Items and buff them
-			if ${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			if ${UIElement[lbBuffVim@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
 			{
 				do
 				{
-					BuffTarget:Set[${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					BuffTarget:Set[${UIElement[lbBuffVim@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
 					{
 						ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
@@ -479,7 +487,7 @@ function Buff_Routine(int xAction)
 						}
 					}
 				}
-				while ${Counter:Inc}<=${UIElement[lbBuffVim@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+				while ${Counter:Inc}<=${UIElement[lbBuffVim@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
 			}
 			break
 		case BuffHunt
@@ -511,7 +519,7 @@ function Buff_Routine(int xAction)
 				break
 
 		case BuffMythical
-			BuffTarget:Set[${UIElement[cbUseMythicalOn@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			BuffTarget:Set[${UIElement[cbUseMythicalOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 			if ${BuffTarget.Equal[No One]}
 				break
@@ -552,8 +560,8 @@ function Buff_Routine(int xAction)
 			}
 			break
 
-		case BuffBat
-			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+		case BuffBat                 
+			BuffTarget:Set[${UIElement[cbBuffBatGroupMember@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 			if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				break
@@ -567,7 +575,7 @@ function Buff_Routine(int xAction)
 			break
 			
 		case BuffSavagery
-			BuffTarget:Set[${UIElement[cbBuffSavageryGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			BuffTarget:Set[${UIElement[cbBuffSavageryGroupMember@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 			if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				break
@@ -584,7 +592,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Ability[Pact of Nature](exists)}
 				break
 
-			BuffTarget:Set[${UIElement[PactOfNature@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			BuffTarget:Set[${UIElement[PactOfNature@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 			if ${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}
 				break
@@ -628,26 +636,29 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	if ${Return.Equal[FALSE]}
 		return CombatComplete	
 	
-	;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
-	;; DeathSwarm
-	if ${Me.Ability[${SpellType[51]}].IsReady}
+	if (${OffenseMode})
 	{
-		call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-	}		
+		;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
+		;; DeathSwarm
+		if ${Me.Ability[${SpellType[51]}].IsReady}
+		{
+			call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+		}		
+		
+		call VerifyTarget ${TargetID}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+				
+		;; Thunderbolt
+		if ${Me.Ability[${SpellType[60]}].IsReady}
+		{
+			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+		}	
 	
-	call VerifyTarget ${TargetID}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
-			
-	;; Thunderbolt
-	if ${Me.Ability[${SpellType[60]}].IsReady}
-	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-	}	
-
-	call VerifyTarget ${TargetID}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
+		call VerifyTarget ${TargetID}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+	}
 	
 	return ${iReturn}
 }
@@ -658,6 +669,7 @@ function Combat_Routine(int xAction)
 	declare SpellMax int local
 	declare DebuffCnt int local
 	declare TankToTargetDistance float local
+	declare BuffTarget string local
 
 	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
 		return CombatComplete
@@ -702,6 +714,38 @@ function Combat_Routine(int xAction)
 		}
 		DoCallCheckPosition:Set[FALSE]
 	}
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Animal Form
+	;; (If an 'animal form' target is selected in the UI, then we should cast it 
+	;;  whenever the spell is ready.)   [TODO:  Test and see if this should go in _CastSpellRange()]
+	if (${HaveAbility_AnimalForm})
+	{
+		if (${Me.Group} > 1 || ${Me.Raid} > 1)
+		{
+			if ${Actor[${MainTankID}].InCombatMode}
+			{
+				if ${Me.Ability[${SpellType[386]}].IsReady}
+				{
+					BuffTarget:Set[${UIElement[AnimalForm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+					if !${BuffTarget.Equal["No one"]}
+					{
+						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+						{
+							if ${FuryDebugMode}
+								Debug:Echo["Combat_Routine() -- Casting Animal Form on '${BuffTarget}'"]
+							call CastSpellRange 386 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+						}
+						else
+							echo "ERROR3: Animal Form target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
+					}
+				}
+			}
+		}
+	}
+	
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; IF "Cast Offensive Spells" is NOT checked
@@ -1029,7 +1073,7 @@ function Combat_Routine(int xAction)
 	}
 	
 	;; Stormbolt
-	if ${UseStormBolt} && ${Me.Ability[${SpellType[96]}].IsReady}
+	if ${AoEMode} && ${Me.Ability[${SpellType[96]}].IsReady}
 	{
 		call CheckCondition Power 40 100
 		if ${Return.Equal[OK]}
@@ -1101,6 +1145,41 @@ function Combat_Routine(int xAction)
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
 		return CombatComplete
 	}
+	
+	
+	;; Ring of Fire
+	if ${UseRingOfFire} && ${Me.Ability[${SpellType[95]}].IsReady}
+	{
+		call CheckCondition Power 40 100
+		if ${Return.Equal[OK]}
+		{	
+			call _CastSpellRange 95
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			SpellCnt:Inc
+		}
+	}
+	if (${SpellCnt} >= ${SpellMax})
+	{
+		call CheckHeals
+		if ${CureMode}
+			call CheckCures		
+		call RefreshPower
+		if ${ShardMode}
+			call Shard		
+		return CombatComplete
+	}
+	elseif ${PrimaryHealer}
+	{
+  	call CheckHeals
+  	if ${CureMode}
+  		call CheckCures
+	}
+	
 	
 	
 	;; Wrath of Nature

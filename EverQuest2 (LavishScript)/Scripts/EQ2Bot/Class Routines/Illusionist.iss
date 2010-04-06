@@ -60,6 +60,7 @@ function Class_Declaration()
 	declare CureMode bool script FALSE
 	declare StunMode bool script FALSE
 	declare HaveAbility_TimeWarp bool script FALSE
+	declare HaveAbility_PeaceOfMind bool script FALSE
 	declare TimeWarpers collection:uint script
 	declare UseChronosiphoning bool script FALSE
 	declare UseNullifyingStaff bool script FALSE
@@ -111,6 +112,8 @@ function Class_Declaration()
 		UseChronosiphoning:Set[TRUE]
 	if ${Me.Ability[${SpellType[396]}](exists)}
 		UseNullifyingStaff:Set[TRUE]
+	if ${Me.Ability[${SpellType[383]}](exists)}
+		HaveAbility_PeaceOfMind:Set[TRUE]
 		
 	;; Set this to TRUE, as desired, for testing
 	;IllyDebugMode:Set[TRUE]
@@ -824,7 +827,7 @@ function CheckNonDps(... Args)
 	{
 		if ${KillTarget}
 		{
-			if ${Me.IsHated} && ${Actor[${MainTankID}].InCombatMode}
+			if ${Actor[${MainTankID}].InCombatMode}
 			{
 				call CastSpellRange AbilityID=3903537279 TargetID=${KillTarget} IgnoreMaintained=1
 				spellsused:Inc
@@ -2962,7 +2965,7 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 		}
 		
 		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
-		if (${Me.Ability[${SpellType[383]}].IsReady})
+		if (${HaveAbility_PeaceOfMind} && ${Me.Ability[${SpellType[383]}].IsReady})
 		{
 			call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
 			LastSpellCast:Set[383]
