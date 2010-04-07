@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.15 :  released 7th April 2010"
+variable string Version="Version 0.15b :  released 7th April 2010"
 ;
 ; Declare Variables
 ;
@@ -132,7 +132,8 @@ variable int Box5
 variable int Box6
 variable int Box7
 variable int Box8
-variable float BoxDefault[6]
+variable float BoxMaxDefault[6]
+variable float BoxMinDefault[6]
 variable bool Collectible
 variable bool NewCollection
 variable bool LowerNumber
@@ -404,6 +405,8 @@ function main(string goscan, string goscan2)
 										call AddLog "${ItemName} : Merchant Would buy for  more : ${Return}" FFFF0000
 										call SetColour Sell ${currentpos} FFFF0000
 									}
+									
+									echo ${ItemName} : ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 									; **** if that price is Less than the price you are willing to sell for , don't do anything
 									if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 									{
@@ -413,6 +416,16 @@ function main(string goscan, string goscan2)
 										call AddLog "${ItemName} : ${MinBasePriceS} : My Lowest : ${Return}" FFFF0000
 										; Set the text in the list box line to red
 										call SetColour Sell ${currentpos} FFFF0000
+									}
+									elseif ${MinBasePrice}<${BoxMinDefault[${i}]} && ${BoxMinDefault[${i}]} > 0 && !${MinPriceSet}
+									{
+											; OR if no minimum price for this item is set BUT it is Less than the set BOX price , don't do anything
+											call StringFromPrice ${MinBasePrice}
+											MinBasePriceS:Set[${Return}]
+											call StringFromPrice ${BoxMinDefault[${i}]}
+											call AddLog "${ItemName} : ${MinBasePriceS} : Box Lowest : ${Return}" FFFF0000
+											; Set the text in the list box line to red
+											call SetColour Sell ${currentpos} FFFF0000
 									}
 									else
 									{
@@ -424,7 +437,7 @@ function main(string goscan, string goscan2)
 											call StringFromPrice ${MaxSalePrice}
 											call AddLog "${ItemName} : Price higher than you will allow: ${Return}" FFFF0000
 										}
-										
+									
 										; otherwise inform/change value to match
 										call StringFromPrice ${MinBasePrice}
 										call AddLog "${ItemName} :  Price to match is ${Return}" FF00FF00
@@ -552,13 +565,13 @@ function main(string goscan, string goscan2)
 								; if if no match or max price was found and the item was STILL listed for sale before
 								; then re-list it
 								
-								if ${BoxDefault[${i}]} > 0
+								if ${BoxMaxDefault[${i}]} > 0
 								{
 									; Find where the Item is stored in the container
 									call FindItem ${i} "${ItemName}"
 									j:Set[${Return}]
 									; Read the maximum price you will allow and set it to that price								
-									call SetItemPrice ${i} ${j} ${BoxDefault[${i}]}
+									call SetItemPrice ${i} ${j} ${BoxMaxDefault[${i}]}
 								}
 
 								if !${ItemUnlisted}
@@ -3519,15 +3532,31 @@ function SaveDefault()
 	do
 	{
 		; Read the values held in the GUI boxes
-		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}PP].Text}]
-		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}GP].Text}]
-		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}SP].Text}]
-		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}CP].Text}]
+		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxPP].Text}]
+		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxGP].Text}]
+		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxSP].Text}]
+		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxCP].Text}]
 
 		; calclulate the value in silver
 		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
 
-		Call SaveSetting Box${xvar}Default ${Return}
+		Call SaveSetting BoxMax${xvar}Default ${Return}
+
+		Platina:Set[0]
+		Gold:Set[0]
+		Silver:Set[0]
+		Copper:Set[0]
+
+		; Read the values held in the GUI boxes
+		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinPP].Text}]
+		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinGP].Text}]
+		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinSP].Text}]
+		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinCP].Text}]
+
+		; calclulate the value in silver
+		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
+
+		Call SaveSetting BoxMin${xvar}Default ${Return}
 
 		Platina:Set[0]
 		Gold:Set[0]
@@ -3549,8 +3578,8 @@ function LoadDefault()
 	do
 	{
 	
-		Money:Set[${General.FindSetting[Box${xvar}Default]}]
-		BoxDefault[${xvar}]:Set[${Money}]
+		Money:Set[${General.FindSetting[BoxMax${xvar}Default]}]
+		BoxMaxDefault[${xvar}]:Set[${Money}]
 		
 		Platina:Set[${Math.Calc[${Money}/10000]}]
 		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -3560,10 +3589,27 @@ function LoadDefault()
 		Money:Set[${Math.Calc[${Money}-${Silver}]}]
 		Copper:Set[${Math.Calc[${Money}*100]}]
 	
-		UIElement[Box${xvar}PP@Admin@GUITabs@MyPrices]:SetText[${Platina}]
-		UIElement[Box${xvar}GP@Admin@GUITabs@MyPrices]:SetText[${Gold}]
-		UIElement[Box${xvar}SP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
-		UIElement[Box${xvar}CP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
+		UIElement[Box${xvar}MaxPP@Admin@GUITabs@MyPrices]:SetText[${Platina}]
+		UIElement[Box${xvar}MaxGP@Admin@GUITabs@MyPrices]:SetText[${Gold}]
+		UIElement[Box${xvar}MaxSP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
+		UIElement[Box${xvar}MaxCP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
+
+
+		Money:Set[${General.FindSetting[BoxMin${xvar}Default]}]
+		BoxMinDefault[${xvar}]:Set[${Money}]
+		
+		Platina:Set[${Math.Calc[${Money}/10000]}]
+		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
+		Gold:Set[${Math.Calc[${Money}/100]}]
+		Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
+		Silver:Set[${Money}]
+		Money:Set[${Math.Calc[${Money}-${Silver}]}]
+		Copper:Set[${Math.Calc[${Money}*100]}]
+	
+		UIElement[Box${xvar}MinPP@Admin@GUITabs@MyPrices]:SetText[${Platina}]
+		UIElement[Box${xvar}MinGP@Admin@GUITabs@MyPrices]:SetText[${Gold}]
+		UIElement[Box${xvar}MinSP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
+		UIElement[Box${xvar}MinCP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
 	}
 	while ${xvar:Inc} <= ${InventorySlots}
 }
