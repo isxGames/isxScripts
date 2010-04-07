@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.14m :  released 18th March 2010"
+variable string Version="Version 0.15 :  released 7th April 2010"
 ;
 ; Declare Variables
 ;
@@ -132,6 +132,7 @@ variable int Box5
 variable int Box6
 variable int Box7
 variable int Box8
+variable float BoxDefault[6]
 variable bool Collectible
 variable bool NewCollection
 variable bool LowerNumber
@@ -550,6 +551,16 @@ function main(string goscan, string goscan2)
 							{
 								; if if no match or max price was found and the item was STILL listed for sale before
 								; then re-list it
+								
+								if ${BoxDefault[${i}]} > 0
+								{
+									; Find where the Item is stored in the container
+									call FindItem ${i} "${ItemName}"
+									j:Set[${Return}]
+									; Read the maximum price you will allow and set it to that price								
+									call SetItemPrice ${i} ${j} ${BoxDefault[${i}]}
+								}
+
 								if !${ItemUnlisted}
 									call ReListItem ${i} "${ItemName}"
 							}
@@ -2702,6 +2713,11 @@ objectdef BrokerBot
 		HighLatency:Set[${General.FindSetting[HighLatency]}]
 		NewItemsOnly:Set[${General.FindSetting[NewItemsOnly]}]
 
+		UIElement[Box1PP@Admin@GUITabs@MyPrices]:SetText["9999"]
+		UIElement[Box1GP@Admin@GUITabs@MyPrices]:SetText["99"]
+		UIElement[Box1SP@Admin@GUITabs@MyPrices]:SetText["99"]
+		UIElement[Box1CP@Admin@GUITabs@MyPrices]:SetText["99"]
+
 		call echolog "Settings being used"
 		call echolog "-------------------"
 		call echolog "MatchLowPrice is ${MatchLowPrice}"
@@ -3460,6 +3476,8 @@ function StartUp()
 	{
 		call AddLog "Pausing ${PauseTimer} minutes between scans" FFCC00FF
 	}
+	Call LoadDefault
+		
 }
 
 function:bool Rejected(string ItemName)
@@ -3486,6 +3504,68 @@ function:int InventoryContainer(int ID)
 	}
 	while ${xvar:Inc} <= ${InventorySlots}
 	Return -1
+}
+
+function SaveDefault()
+{
+	Declare xvar int local
+	Declare Platina int local
+	Declare Gold int local
+	Declare Silver int local
+	Declare Copper int local
+
+	xvar:Set[1]
+	
+	do
+	{
+		; Read the values held in the GUI boxes
+		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}PP].Text}]
+		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}GP].Text}]
+		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}SP].Text}]
+		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}CP].Text}]
+
+		; calclulate the value in silver
+		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
+
+		Call SaveSetting Box${xvar}Default ${Return}
+
+		Platina:Set[0]
+		Gold:Set[0]
+		Silver:Set[0]
+		Copper:Set[0]
+	}
+	while ${xvar:Inc} <= ${InventorySlots}
+}
+
+function LoadDefault()
+{
+	Declare xvar int local
+	Declare Platina int local
+	Declare Gold int local
+	Declare Silver int local
+	Declare Copper int local
+	xvar:Set[1]
+	
+	do
+	{
+	
+		Money:Set[${General.FindSetting[Box${xvar}Default]}]
+		BoxDefault[${xvar}]:Set[${Money}]
+		
+		Platina:Set[${Math.Calc[${Money}/10000]}]
+		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
+		Gold:Set[${Math.Calc[${Money}/100]}]
+		Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
+		Silver:Set[${Money}]
+		Money:Set[${Math.Calc[${Money}-${Silver}]}]
+		Copper:Set[${Math.Calc[${Money}*100]}]
+	
+		UIElement[Box${xvar}PP@Admin@GUITabs@MyPrices]:SetText[${Platina}]
+		UIElement[Box${xvar}GP@Admin@GUITabs@MyPrices]:SetText[${Gold}]
+		UIElement[Box${xvar}SP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
+		UIElement[Box${xvar}CP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
+	}
+	while ${xvar:Inc} <= ${InventorySlots}
 }
 
 atom(script) EQ2_onInventoryUpdate()
