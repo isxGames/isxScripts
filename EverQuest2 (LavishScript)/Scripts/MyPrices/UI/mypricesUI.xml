@@ -2767,11 +2767,18 @@
 						</AutoTooltip>
 					</checkbox>
 					<Text Name='BoxPriceText'>
-						<X>145</X>
-						<Y>230</Y>
-						<Width>250</Width> 
+						<X>175</X>
+						<Y>215</Y>
+						<Width>350</Width> 
 						<Height>20</Height>
-						<Text>PP            GP        SP        CP</Text>
+						<Text>Min Price                                          Max Price</Text>
+					</Text>
+					<Text Name='BoxPriceText2'>
+						<X>130</X>
+						<Y>230</Y>
+						<Width>350</Width> 
+						<Height>20</Height>
+						<Text>PP          GP        SP       CP                PP          GP        SP       CP</Text>
 					</Text>
 					<Text Name='Box1Text'>
 						<X>20</X>
@@ -2780,29 +2787,197 @@
 						<Height>20</Height>
 						<Text>Box 1 Default Price</Text>
 					</Text>
-					<Textentry Name='Box1PP'>
+					<Textentry Name='Box1MinPP'>
 						<X>125</X>
 						<Y>245</Y>
-						<Width>50</Width> 
+						<Width>40</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Textentry Name='Box1GP'>
-						<X>185</X>
+					<Textentry Name='Box1MinGP'>
+						<X>170</X>
 						<Y>245</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box1SP'>
-						<X>225</X>
+					<Textentry Name='Box1MinSP'>
+						<X>205</X>
 						<Y>245</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box1CP'>
-						<X>265</X>
+					<Textentry Name='Box1MinCP'>
+						<X>240</X>
+						<Y>245</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box2MinPP'>
+						<X>125</X>
+						<Y>265</Y>
+						<Width>40</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Textentry Name='Box2MinGP'>
+						<X>170</X>
+						<Y>265</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box2MinSP'>
+						<X>205</X>
+						<Y>265</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box2MinCP'>
+						<X>240</X>
+						<Y>265</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box3MinPP'>
+						<X>125</X>
+						<Y>285</Y>
+						<Width>40</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Textentry Name='Box3MinGP'>
+						<X>170</X>
+						<Y>285</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box3MinSP'>
+						<X>205</X>
+						<Y>285</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box3MinCP'>
+						<X>240</X>
+						<Y>285</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box4MinPP'>
+						<X>125</X>
+						<Y>305</Y>
+						<Width>40</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Textentry Name='Box4MinGP'>
+						<X>170</X>
+						<Y>305</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box4MinSP'>
+						<X>205</X>
+						<Y>305</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box4MinCP'>
+						<X>240</X>
+						<Y>305</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box5MinPP'>
+						<X>125</X>
+						<Y>325</Y>
+						<Width>40</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Textentry Name='Box5MinGP'>
+						<X>170</X>
+						<Y>325</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box5MinSP'>
+						<X>205</X>
+						<Y>325</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box5MinCP'>
+						<X>240</X>
+						<Y>325</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box6MinPP'>
+						<X>125</X>
+						<Y>345</Y>
+						<Width>40</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Textentry Name='Box6MinGP'>
+						<X>170</X>
+						<Y>345</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box6MinSP'>
+						<X>205</X>
+						<Y>345</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box6MinCP'>
+						<X>240</X>
+						<Y>345</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box1MaxPP'>
+						<X>310</X>
+						<Y>245</Y>
+						<Width>40</Width> 
+						<Height>15</Height>
+						<MaxLength>5</MaxLength>
+					</Textentry>
+					<Textentry Name='Box1MaxGP'>
+						<X>355</X>
+						<Y>245</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box1MaxSP'>
+						<X>390</X>
+						<Y>245</Y>
+						<Width>30</Width> 
+						<Height>15</Height>
+						<MaxLength>3</MaxLength>
+					</Textentry>
+					<Textentry Name='Box1MaxCP'>
+						<X>425</X>
 						<Y>245</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
@@ -2815,29 +2990,29 @@
 						<Height>20</Height>
 						<Text>Box 2 Default Price</Text>
 					</Text>
-					<Textentry Name='Box2PP'>
-						<X>125</X>
+					<Textentry Name='Box2MaxPP'>
+						<X>310</X>
 						<Y>265</Y>
-						<Width>50</Width> 
+						<Width>40</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Textentry Name='Box2GP'>
-						<X>185</X>
+					<Textentry Name='Box2MaxGP'>
+						<X>355</X>
 						<Y>265</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box2SP'>
-						<X>225</X>
+					<Textentry Name='Box2MaxSP'>
+						<X>390</X>
 						<Y>265</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box2CP'>
-						<X>265</X>
+					<Textentry Name='Box2MaxCP'>
+						<X>425</X>
 						<Y>265</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
@@ -2850,29 +3025,29 @@
 						<Height>20</Height>
 						<Text>Box 3 Default Price</Text>
 					</Text>
-					<Textentry Name='Box3PP'>
-						<X>125</X>
+					<Textentry Name='Box3MaxPP'>
+						<X>310</X>
 						<Y>285</Y>
-						<Width>50</Width> 
+						<Width>40</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Textentry Name='Box3GP'>
-						<X>185</X>
+					<Textentry Name='Box3MaxGP'>
+						<X>355</X>
 						<Y>285</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box3SP'>
-						<X>225</X>
+					<Textentry Name='Box3MaxSP'>
+						<X>390</X>
 						<Y>285</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box3CP'>
-						<X>265</X>
+					<Textentry Name='Box3MaxCP'>
+						<X>425</X>
 						<Y>285</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
@@ -2885,29 +3060,29 @@
 						<Height>20</Height>
 						<Text>Box 4 Default Price</Text>
 					</Text>
-					<Textentry Name='Box4PP'>
-						<X>125</X>
+					<Textentry Name='Box4MaxPP'>
+						<X>310</X>
 						<Y>305</Y>
-						<Width>50</Width> 
+						<Width>40</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Textentry Name='Box4GP'>
-						<X>185</X>
+					<Textentry Name='Box4MaxGP'>
+						<X>355</X>
 						<Y>305</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box4SP'>
-						<X>225</X>
+					<Textentry Name='Box4MaxSP'>
+						<X>390</X>
 						<Y>305</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box4CP'>
-						<X>265</X>
+					<Textentry Name='Box4MaxCP'>
+						<X>425</X>
 						<Y>305</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
@@ -2920,29 +3095,29 @@
 						<Height>20</Height>
 						<Text>Box 5 Default Price</Text>
 					</Text>
-					<Textentry Name='Box5PP'>
-						<X>125</X>
+					<Textentry Name='Box5MaxPP'>
+						<X>310</X>
 						<Y>325</Y>
-						<Width>50</Width> 
+						<Width>40</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Textentry Name='Box5GP'>
-						<X>185</X>
+					<Textentry Name='Box5MaxGP'>
+						<X>355</X>
 						<Y>325</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box5SP'>
-						<X>225</X>
+					<Textentry Name='Box5MaxSP'>
+						<X>390</X>
 						<Y>325</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box5CP'>
-						<X>265</X>
+					<Textentry Name='Box5MaxCP'>
+						<X>425</X>
 						<Y>325</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
@@ -2955,37 +3130,37 @@
 						<Height>20</Height>
 						<Text>Box 6 Default Price</Text>
 					</Text>
-					<Textentry Name='Box6PP'>
-						<X>125</X>
+					<Textentry Name='Box6MaxPP'>
+						<X>310</X>
 						<Y>345</Y>
-						<Width>50</Width> 
+						<Width>40</Width> 
 						<Height>15</Height>
 						<MaxLength>5</MaxLength>
 					</Textentry>
-					<Textentry Name='Box6GP'>
-						<X>185</X>
+					<Textentry Name='Box6MaxGP'>
+						<X>355</X>
 						<Y>345</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box6SP'>
-						<X>225</X>
+					<Textentry Name='Box6MaxSP'>
+						<X>390</X>
 						<Y>345</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
-					<Textentry Name='Box6CP'>
-						<X>265</X>
+					<Textentry Name='Box6MaxCP'>
+						<X>425</X>
 						<Y>345</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
 					</Textentry>
 					<Commandbutton name='UpdatePrice'> 
-						<X>340</X> 
-						<Y>345</Y> 
+						<X>400</X> 
+						<Y>370</Y> 
 						<Width>50</Width> 
 						<Height>15</Height>
 						<Text>Save</Text>
