@@ -406,7 +406,6 @@ function main(string goscan, string goscan2)
 										call SetColour Sell ${currentpos} FFFF0000
 									}
 									
-									echo ${ItemName} : ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 									; **** if that price is Less than the price you are willing to sell for , don't do anything
 									if ${MinBasePrice}<${MinSalePrice} && ${MinPriceSet}
 									{
