@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.15b :  released 7th April 2010"
+variable string Version="Version 0.15c :  released 12th April 2010"
 ;
 ; Declare Variables
 ;
@@ -132,8 +132,8 @@ variable int Box5
 variable int Box6
 variable int Box7
 variable int Box8
-variable float BoxMaxDefault[6]
-variable float BoxMinDefault[6]
+variable float BoxMaxDefault[8]
+variable float BoxMinDefault[8]
 variable bool Collectible
 variable bool NewCollection
 variable bool LowerNumber
@@ -340,7 +340,6 @@ function main(string goscan, string goscan2)
 						; Broker search returns -1 if no items to compare were found
 						if ${Return} != -1
 						{
-						
 
 							; record the minimum broker price
 							MinPrice:Set[${Return}]
@@ -365,20 +364,32 @@ function main(string goscan, string goscan2)
 								}
 								else
 								{
-									
-									if ${MatchActual}
-										MinBasePrice:Set[${MinPrice}]
-									else
-										MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
-
-									; if the flag to ignore copper is set and the price is > 1 gold
-									if ${IgnoreCopper} && ${MinBasePrice} > 100
+									; If there is a minimum box price and no individual minimum item price set
+									If (${MyBasePrice} < ${BoxMinDefault[${i}]}) && ${BoxMinDefault[${i}]} > 0
 									{
-										; round the value to remove the coppers
-										IntMinBasePrice:Set[${MinBasePrice}]
-										MinBasePrice:Set[${IntMinBasePrice}]
+										MinBasePrice:Set[${BoxMinDefault[${i}]}]
+										call StringFromPrice ${BoxMinDefault[${i}]}
+										call AddLog "${ItemName} : Item price lower than your Minimum Box Price: ${Return}" FFFF0000
 									}
-
+									else
+									{
+										if ${MatchActual}
+										{
+											MinBasePrice:Set[${MinPrice}]
+										}
+										else
+										{
+											MinBasePrice:Set[${Math.Calc[((${MinPrice}/${Math.Calc[100+${Commission}]})*100)]}]
+										}
+										
+										; if the flag to ignore copper is set and the price is > 1 gold
+										if ${IgnoreCopper} && ${MinBasePrice} > 100
+										{
+											; round the value to remove the coppers
+											IntMinBasePrice:Set[${MinBasePrice}]
+											MinBasePrice:Set[${IntMinBasePrice}]
+										}
+									}
 								}
 
 								; do conversion from silver value to pp gp sp cp format
@@ -536,10 +547,20 @@ function main(string goscan, string goscan2)
 							}
 							else
 							{
-								call AddLog "Adding ${ItemName} at ${MyBasePrice}" FF00CCFF
+								Echo NO Sale Price found in XML
 								
-								Money:Set[${MyBasePrice}]
-								MaxMoney:Set[${MyBasePrice}]
+								if ${BoxMinDefault[${i}]} > 0
+									Money:Set[${BoxMinDefault[${i}]}]
+								else
+									Money:Set[${MyBasePrice}]
+
+								if ${BoxMaxDefault[${i}]} > 0
+									MaxMoney:Set[${BoxMaxDefault[${i}]}]
+								else
+									MaxMoney:Set[${MyBasePrice}]
+									
+								call AddLog "Adding ${ItemName} at ${Money}" FF00CCFF
+
 								Call Saveitem Prices
 							}
 
@@ -1683,6 +1704,10 @@ function checkitem(string checktype, string ItemName)
 function LoadList()
 {
 	call echolog "<start> : Loadlist"
+
+	Declare Min float local
+	Declare Max float local
+	
 	; clear all totals held in the craft set
 	LavishSettings[craft]:Clear
 	waitframe
@@ -1758,7 +1783,14 @@ function LoadList()
 					{
 						call SetColour Sell ${numitems} FF0000FF
 						call AddLog "Item Missing from Settings File,  Adding : ${ItemName}" FF00CCFF
-						call Saveitem Sell "${ItemName}" ${Me.Vending[${i}].Consignment[${j}].BasePrice} ${Me.Vending[${i}].Consignment[${j}].BasePrice}
+						
+						Money:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
+
+						if ${BoxMaxDefault[${i}]} > 0
+							Money:Set[${BoxMaxDefault[${i}]}]
+
+						; Add the item into the data file with default settings
+						call Saveitem Add
 					}
 					
 					; Item sold before but currently unlisted
@@ -1928,6 +1960,14 @@ function Saveitem(string Saveset)
 		{
 			Item:AddSetting[LowerNumber,FALSE]
 		}
+	}
+	elseif ${Saveset.Equal["Add"]}
+	{
+		Item:AddSetting[Sell,${Money}]
+		Item:AddSetting[MinSalePrice,FALSE]
+		Item:AddSetting[MaxSalePrice,FALSE]
+		Item:AddSetting[CraftItem,FALSE]
+		Item:AddSetting[LowerNumber,FALSE]
 	}
 	elseif ${Saveset.Equal["Craft"]} || ${Saveset.Equal["Inventory"]}
 	{
@@ -2721,14 +2761,23 @@ objectdef BrokerBot
 		}
 		while ${i:Inc} <= ${InventorySlots}
 
+		i:Set[1]
+		do
+		{
+			BoxMinDefault[${i}]:Set[${General.FindSetting[BoxMin${i}Default]}]
+		}
+		while ${i:Inc} <= ${brokerslots}
+
+		i:Set[1]
+		do
+		{
+			BoxMaxDefault[${i}]:Set[${General.FindSetting[BoxMax${i}Default]}]
+		}
+		while ${i:Inc} <= ${brokerslots}
+
 		Natural:Set[${General.FindSetting[Natural]}]
 		HighLatency:Set[${General.FindSetting[HighLatency]}]
 		NewItemsOnly:Set[${General.FindSetting[NewItemsOnly]}]
-
-		UIElement[Box1PP@Admin@GUITabs@MyPrices]:SetText["9999"]
-		UIElement[Box1GP@Admin@GUITabs@MyPrices]:SetText["99"]
-		UIElement[Box1SP@Admin@GUITabs@MyPrices]:SetText["99"]
-		UIElement[Box1CP@Admin@GUITabs@MyPrices]:SetText["99"]
 
 		call echolog "Settings being used"
 		call echolog "-------------------"
@@ -3531,22 +3580,6 @@ function SaveDefault()
 	do
 	{
 		; Read the values held in the GUI boxes
-		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxPP].Text}]
-		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxGP].Text}]
-		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxSP].Text}]
-		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxCP].Text}]
-
-		; calclulate the value in silver
-		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
-
-		Call SaveSetting BoxMax${xvar}Default ${Return}
-
-		Platina:Set[0]
-		Gold:Set[0]
-		Silver:Set[0]
-		Copper:Set[0]
-
-		; Read the values held in the GUI boxes
 		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinPP].Text}]
 		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinGP].Text}]
 		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MinSP].Text}]
@@ -3555,12 +3588,33 @@ function SaveDefault()
 		; calclulate the value in silver
 		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
 
+		BoxMinDefault[${xvar}]:Set[${Return}]
+
 		Call SaveSetting BoxMin${xvar}Default ${Return}
 
 		Platina:Set[0]
 		Gold:Set[0]
 		Silver:Set[0]
 		Copper:Set[0]
+
+		; Read the values held in the GUI boxes
+		Platina:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxPP].Text}]
+		Gold:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxGP].Text}]
+		Silver:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxSP].Text}]
+		Copper:Set[${UIElement[MyPrices].FindChild[GUITabs].FindChild[Admin].FindChild[Box${xvar}MaxCP].Text}]
+
+		; calclulate the value in silver
+		call calcsilver ${Platina} ${Gold} ${Silver} ${Copper}
+
+		BoxMaxDefault[${xvar}]:Set[${Return}]
+
+		Call SaveSetting BoxMax${xvar}Default ${Return}
+
+		Platina:Set[0]
+		Gold:Set[0]
+		Silver:Set[0]
+		Copper:Set[0]
+
 	}
 	while ${xvar:Inc} <= ${InventorySlots}
 }
@@ -3577,8 +3631,22 @@ function LoadDefault()
 	do
 	{
 	
-		Money:Set[${General.FindSetting[BoxMax${xvar}Default]}]
-		BoxMaxDefault[${xvar}]:Set[${Money}]
+		Money:Set[${BoxMinDefault[${xvar}]}]
+		
+		Platina:Set[${Math.Calc[${Money}/10000]}]
+		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
+		Gold:Set[${Math.Calc[${Money}/100]}]
+		Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
+		Silver:Set[${Money}]
+		Money:Set[${Math.Calc[${Money}-${Silver}]}]
+		Copper:Set[${Math.Calc[${Money}*100]}]
+	
+		UIElement[Box${xvar}MinPP@Admin@GUITabs@MyPrices]:SetText[${Platina}]
+		UIElement[Box${xvar}MinGP@Admin@GUITabs@MyPrices]:SetText[${Gold}]
+		UIElement[Box${xvar}MinSP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
+		UIElement[Box${xvar}MinCP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
+
+		Money:Set[${BoxMaxDefault[${xvar}]}]
 		
 		Platina:Set[${Math.Calc[${Money}/10000]}]
 		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -3593,24 +3661,8 @@ function LoadDefault()
 		UIElement[Box${xvar}MaxSP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
 		UIElement[Box${xvar}MaxCP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
 
-
-		Money:Set[${General.FindSetting[BoxMin${xvar}Default]}]
-		BoxMinDefault[${xvar}]:Set[${Money}]
-		
-		Platina:Set[${Math.Calc[${Money}/10000]}]
-		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
-		Gold:Set[${Math.Calc[${Money}/100]}]
-		Money:Set[${Math.Calc[${Money}-(${Gold}*100)]}]
-		Silver:Set[${Money}]
-		Money:Set[${Math.Calc[${Money}-${Silver}]}]
-		Copper:Set[${Math.Calc[${Money}*100]}]
-	
-		UIElement[Box${xvar}MinPP@Admin@GUITabs@MyPrices]:SetText[${Platina}]
-		UIElement[Box${xvar}MinGP@Admin@GUITabs@MyPrices]:SetText[${Gold}]
-		UIElement[Box${xvar}MinSP@Admin@GUITabs@MyPrices]:SetText[${Silver}]
-		UIElement[Box${xvar}MinCP@Admin@GUITabs@MyPrices]:SetText[${Copper}]
 	}
-	while ${xvar:Inc} <= ${InventorySlots}
+	while ${xvar:Inc} <= ${brokerslots}
 }
 
 atom(script) EQ2_onInventoryUpdate()
