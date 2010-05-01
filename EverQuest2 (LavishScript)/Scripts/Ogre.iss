@@ -32,7 +32,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		echo Run Ogre OP -- Loads Ogre Portal UI
 		echo Run Ogre toonname -- Loads the toon and loads Ogrebot
 		echo Run Ogre login toonname -- Runs a seperate login script that loads the toon but does NOT load the bot
-		echo Run Ogre up | uplink -- Loads the uplink
+		echo Run Ogre up | uplink || OgreMCP || MCP -- Loads OgreMCP (Previously known as Uplink)
 		echo Run Ogre Spell | SpellExport -- Runs the spellexport
 		echo Run Ogre Move <string location> | Movement <string location> -- Runs movement script with the arg of location using lavishnav
 		echo Run Ogre Broker | B -- Runs the broker pricing bot
@@ -44,6 +44,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		echo Run Ogre Harvest -- Runs EQ2OgreHarvest
 		echo Run Ogre Transmute -- Loads the Transmute UI
 		echo Run Ogre Reset | Zone -- Loads the Zone reset UI
+		echo Run Ogre OSA | OnScreen -- Loads the On-screen-Assistant (OSA)
 		echo Run Ogre End <Loadcommand> -- Any script that doesn't have an interface can be ended the same way it is run. "All" will end all Ogre scripts that use the End command.
 		echo                         -- Example: "Run Ogre hire" runs the hireling, "run Ogre end hire" ends the hireling script
 		return
@@ -51,6 +52,16 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	elseif ${LoginModifer.Equal[OP]}
 	{
 		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
+		return
+	}
+	elseif ${LoginModifer.Equal[OSA]} || ${LoginModifer.Equal[OnScreen]}
+	{
+		if ${Script[Eq2OgreOnScreenAssistant](exists)}
+		{
+			endscript eq2ogreonscreenassistant
+			wait 5
+		}
+		runscript eq2Ogrecommon/ogreOnScreenAssistant/eq2ogreOnScreenAssistant
 		return
 	}
 	elseif ${LoginModifer.Equal[harvest]}
@@ -69,7 +80,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		;runscript eq2Ogrecommon/ogretransmute/eq2ogretransmuteshell
 		return
 	}
-	elseif ${LoginModifer.Equal[up]} || ${LoginModifer.Equal[uplink]}
+	elseif ${LoginModifer.Equal[up]} || ${LoginModifer.Equal[uplink]} || ${LoginModifer.Equal[MCP]} || ${LoginModifer.Equal[OgreMCP]}
 	{
 		runscript eq2Ogrebot/up
 		return
@@ -134,6 +145,8 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 			if ${Script[eq2ogrehireling](exists)}
 				endscript eq2ogrehireling
 		}
+		if ${Script[Eq2OgreOnScreenAssistant](exists)} && ( ${CharToLogin.Equal[OSA]} || ${CharToLogin.Equal[OnScreen]}  || ${CharToLogin.Equal[all]} )
+			endscript eq2ogreonscreenassistant
 		if ${Script[BrokerPricer](exists)} && ( ${CharToLogin.Equal[b]} || ${CharToLogin.Equal[brokerbot]}  || ${CharToLogin.Equal[all]} )
 			endscript BrokerPricer
 		if ${Script[eq2ogretellwindow](exists)} && ( ${CharToLogin.Equal[tell]} || ${CharToLogin.Equal[tellwindow]}  || ${CharToLogin.Equal[all]} )
