@@ -196,5 +196,34 @@
 		<Setting name="80,10">Winds of Healing VI</Setting>
 		<Setting name="80,329">Nature\'s Renewal IV</Setting>
 		<Setting name="80,211">Cure Curse</Setting>
+		<Setting name="81,363">Ward of the Untamed V</Setting>
+		<Setting name="81,35">Spirit of the Bat IV</Setting>
+		<Setting name="81,4">Sylvan Bloom IX</Setting>
+		<Setting name="82,60">Dawnstrike VIII</Setting>
+		<Setting name="82,23">Essence of the Great Bear VI</Setting>
+		<Setting name="82,36">Aspect of the Forest VII</Setting>
+		<Setting name="83,21">Favor of the Wild VI</Setting>
+		<Setting name="83,365">Sandstorm IV</Setting>
+		<Setting name="83,1">Nature\'s Embrace VIII</Setting>
+		<Setting name="84,20">Armor of Seasons VII</Setting>
+		<Setting name="84,90">Winds of Permafrost V</Setting>
+		<Setting name="84,332">Nature\'s Pack III</Setting>
+		<Setting name="85,37">Regenerating Spores V</Setting>
+		<Setting name="85,233">Undergrowth IV</Setting>
+		<Setting name="86,330">Healing Grove III</Setting>
+		<Setting name="86,230">Root VII</Setting>
+		<Setting name="86,25">Warden of the Forest VI</Setting>
+		<Setting name="87,40">Thorncoat VIII</Setting>
+		<Setting name="87,70">Frostbite VI</Setting>
+		<Setting name="88,61">Icefall VIII</Setting>
+		<Setting name="88,7">Photosynthesis VIII</Setting>
+		<Setting name="88,214">Tranquility III</Setting>
+		<Setting name="89,180">Willow Wisp VII</Setting>
+		<Setting name="89,38">Instinct VI</Setting>
+		<Setting name="89,15">Healstorm VII</Setting>
+		<Setting name="90,9">Hierophantic Genesis IV</Setting>
+		<Setting name="90,331">Faerie Ally II</Setting>
+		<Setting name="90,10">Winds of Healing VII</Setting>
+		<Setting name="90,329">Nature\'s Renewal V</Setting>
 	</Set>
 </InnerSpaceSettings>

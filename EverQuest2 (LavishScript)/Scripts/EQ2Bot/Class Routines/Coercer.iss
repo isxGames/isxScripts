@@ -1,34 +1,6 @@
 ;*************************************************************
-;Coercer.iss
-;version 20090616a
-;by Pygar
-;
-;20090616a
-;	Update for TSO AA and GU52
-;
-;20080515a Pygar
-; * Complete retuning for class revamp.
-;20070725a (pygar)
-; Updated weapon swapping changes
-; Fixed clarity buff loop (cheesy fix, I know)
-;
-; 20070427a
-;	Fixed Mastery not to move to melee range
-;	Fixed Clarity casting loop
-;
-; 20070404a
-;	Updated for newest eq2bot
-;	Concentration checks for some buffs
-;	Updated Master Strike
-;
-;20061207a
-;Implemented AA Thought Snap
-;Implemented AA Manaward
-;Implemented AA Tashiana
-;Implemented AA Coercive Healing
-;Added EoF mastery strikes
-;Implemented Vampire Spell Sunbolt
-;Implemented Crystalize Spirit Healing
+;Updated bob0builder
+;Ability to turn on and off PuppetMaster, breeze, Pre-Buff DMind while casting on other players.
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -47,16 +19,27 @@ function Class_Declaration()
 	declare MezzMode bool script FALSE
 	declare Charm bool script FALSE
 	declare BuffInstigation bool script FALSE
+	declare Breeze bool script FALSE	
 	declare BuffSignet bool script FALSE
 	declare BuffHate bool script FALSE
 	declare BuffCoerciveHealing bool script FALSE
+	declare ManaFlow bool script FALSE	
 	declare BuffHateGroupMember string script
 	declare BuffCoerciveHealingGroupMember string script
 	declare BuffManaward bool script
 	declare DPSMode bool script 1
+	declare NullifyStaff bool script 1
 	declare TSMode bool script 1
 	declare StartHO bool script 1
+	declare Mythical bool script FALSE
+	declare DestructiveMind bool script FALSE	
+	declare PuppetMaster bool script FALSE	
 
+	;Initialized by UI
+	declare BuffDMindTimers collection:int script
+	declare BuffDMindIterator iterator script
+	declare BuffDMindMember int script 1
+	
 	declare CharmTarget int script
 
 	call EQ2BotLib_Init
@@ -69,13 +52,21 @@ function Class_Declaration()
 	BuffHate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffHate,FALSE]}]
 	BuffInstigation:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffInstigation,,FALSE]}]
 	BuffSignet:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffSignet,FALSE]}]
+	Breeze:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Breeze,FALSE]}]	
 	BuffCoerciveHealing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealing,FALSE]}]
 	BuffCoerciveHealingGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffCoerciveHealingGroupMember,]}]
 	BuffManaward:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffManaward,FALSE]}]
 	DPSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DPSMode,FALSE]}]
+	NullifyStaff:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[NullifyStaff,FALSE]}]
+	ManaFlow:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[ManaFlow,FALSE]}]		
 	TSMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseTS,FALSE]}]
 	MezzMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mezz Mode,FALSE]}]
 	Charm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Charm,FALSE]}]
+	Mythical:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Mythical,FALSE]}]	
+	DestructiveMind:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DestructiveMind,FALSE]}]
+	PuppetMaster:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PuppetMaster,FALSE]}]		
+		
+	BuffJesterCap:GetIterator[BuffJesterCapIterator]
 }
 
 function Pulse()
@@ -107,15 +98,6 @@ function Pulse()
 		call Mezmerise_Targets
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer2:Set[${Script.RunningTime}]
-	}
-
-	if ${MezzMode} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+5000]})
-	{
-		;;;; Cataclysmic Mind
-		if ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)} && ${Actor[${MainTank}].Target.Type.Equal[npc]}
-		{
-			eq2execute /useabilityonplayer ${Me.ToActor.Name} ${SpellType[72]}
-		}
 	}
 }
 
@@ -173,6 +155,42 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
+if !${InitialBuffsDone}
+{
+	echo Starting eq2bot and starting one time initilization
+
+	UIElement[EQ2 Bot]:SetAlpha[0.3]
+		
+	Me.Inventory[ExactName,Crispy Fried King Prawn Heads]:Equip 
+	Me.Inventory[ExactName,Di'Zok Tranquil Tipple]:Equip
+	wait 22
+	Me.Equipment[ExactName,Crispy Fried King Prawn Heads]:UnEquip 					
+	Me.Equipment[ExactName,Di'Zok Tranquil Tipple]:UnEquip 	
+
+	if !${Me.Maintained[Hover](exists)} && !${Me.Maintained[Call Ykeshan Spellbear](exists)}
+		Me.Ability[Hover]:Use	
+		
+	if !${Me.Maintained[${SpellType[42]}](exists)}
+		call CastSpellRange 42
+
+	InitialBuffsDone:Set[TRUE]		
+}
+
+	;;;; Cast Myth on MT
+	if ${Mythical} && !${Me.Maintained[Siren's Stare](exists)}
+	{
+		Actor[pc,ExactName,${MainTankPC}]:DoTarget
+		wait 12 ${Target.ID}==${Actor[pc,ExactName,${MainTankPC}].ID}
+		Me.Equipment[ExactName,Eye of the Siren]:Use
+		wait 12	
+	}
+
+	;;;; Pre-Buff Destructive Mind
+	if ${DestructiveMind} && ${Me.Ability[${SpellType[72]}].IsReady}
+	{
+		call DoDMind
+	}
+
 	CurrentAction:Set[Buffing ${xAction}]
 
 	call CheckHeals
@@ -185,12 +203,17 @@ function Buff_Routine(int xAction)
 			break
 
 		case AAEmpathic_Aura
+			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			break		
 		case Clarity
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Breeze}
+			;if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 				wait 20
 			}
+			else
+				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel			
 			break
 		case Signet
 			if ${BuffSignet}
@@ -374,7 +397,15 @@ function Combat_Routine(int xAction)
 	declare spellthreshold int local
 
 	spellsused:Set[0]
-	spellthreshold:Set[3]
+	spellthreshold:Set[1]
+
+;;;; Check the tank and see if he needs agro from multiple mob pull
+	;;;; Coercive Shout
+	if ${Me.Ability[${SpellType[509]}].IsReady} && ${Mob.Count}>1 || ${Actor[${MainTankID}].Health}<40
+	{
+		call CastSpellRange 509 0 0 0 ${MainTank}	
+		eq2execute /p "Shout at the Devil!"
+	}
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
@@ -383,16 +414,22 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 	
+	if ${DPSMode}
+	{
+		spellthreshold:Set[3]
+	}
+	
 	if ${MezzMode}
 	{
 		CurrentAction:Set[Combat Checking Mezzes]
-		call Mezmerise_Targets
 		spellthreshold:Set[1]
+		call Mezmerise_Targets
 	}
 
 	if ${Charm}
 	{
 		CurrentAction:Set[Combat Checking Charms]
+		spellthreshold:Set[1]
 		call DoCharm
 	}
 
@@ -401,134 +438,85 @@ function Combat_Routine(int xAction)
 		CurrentAction:Set[Combat Checking ThoughtSnap]
 		call DoAmnesia
 	}
-
+	
 	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
 		call PetAttack
+	
+	if ${ManaFlow}
+	{		
+		CurrentAction:Set[Combat Checking Power]
+		call RefreshPower
+	}	
 
-	if !${DPSMode}
-	{
-		CurrentAction:Set[Combat Checking Cures]
-		call CheckHeals
-		spellthreshold:Set[5]
-		call CastSpellRange 503 0 0 0 ${KillTarget}
-	}
-
+	call CheckHeals
 	call CommonHeals 70
+		
+	if ${DoHOs} && ${Mob.CheckActor[${KillTarget}]} 
+		objHeroicOp:DoHO
 
-	;;; Screw spell loops, priority casting
-	;;;; Chronosiphon
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady}
+	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO} && ${Mob.CheckActor[${KillTarget}]}
+		call CastSpellRange 303
+
+	;;;; Buff Destructive Mind
+	if ${Me.Ability[${SpellType[72]}].IsReady}
 	{
-		call CastSpellRange 382 0 0 0 ${KillTarget}
+		call DoDMind
+	}
+
+;;;; BEGIN Spell Casting Routine
+		;;;; First check if there are multiple mobs on the pull and let's stun them so we can mez them if needed
+	;;;;Stupefy
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${AoEMode} && ${Me.Ability[${SpellType[191]}].IsReady} && !${Me.Maintained[${SpellType[191]}](exists)}
+	{
+		call CastSpellRange 191 0 0 0 ${KillTarget}
 		spellsused:Inc
-	}
-	;;;; Intellectual Remedy
-	if ${Me.Ability[${SpellType[503]}].IsReady} && ${Actor[pc,exactname,${MainTankPC}].Health}<50 && ${Actor[${KillTarget}].Health}>10
-	{
-		call CastSpellRange 503 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
-	;;;; Cataclysmic Mind
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)}
-	{
-			eq2execute /useabilityonplayer ${Me.ToActor.Name} ${SpellType[72]}
-			spellsused:Inc
-	}
-
-	;;; AoE Checks
-	if ${Mob.Count}>1
-	{
-		if ${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
-		{
-			call CastSpellRange 95 0 1 0 ${KillTarget}
-			spellsused:Inc
-		}
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[90]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
-		{
-			call CastSpellRange 90 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[91]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
-		{
-			call CastSpellRange 91 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-	}
-
-
+	}	
 	;;;; Tashani
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[377]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
+	if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[377]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
 		call CastSpellRange 377 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-	;;;; Mental Debuff
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	;;;; Chronosiphon
+	if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[382]}].IsReady} && !${Me.Maintained[${SpellType[382]}](exists)}
+	{
+		call CastSpellRange 382 0 0 0 ${KillTarget}
+		spellsused:Inc		
+	}	
+	;;;; Obliterated Psyche
+	if ${spellsused}<=${spellthreshold} && ${DPSMode} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
 	{
 		call CastSpellRange 50 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Hostage
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	if ${spellsused}<=${spellthreshold} && ${Me.Grouped} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)}
 	{
 		call CastSpellRange 71 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-	;;;; Lash
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	;;;;Spell Curse
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
 	{
 		call CastSpellRange 92 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-	;;;; PuppetMaster
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call CastSpellRange 391 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
-	;;;; Piece of Mind
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[501]}].IsReady} && !${Me.Maintained[${SpellType[501]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		Me:InitializeEffects
-
-		while ${Me.InitializingEffects}
-			wait 2
-
-		;don't PoM if PoM is up
-		if !${Me.Effect[beneficial,${SpellType[501]}](exists)}
-		{
-			call CastSpellRange 501 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-	}
-	;;;; Bewilderment
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady} && !${Me.Maintained[${SpellType[500]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	;;;;Bewilderment
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady}
 	{
 		call CastSpellRange 500 0 0 0 ${KillTarget}
 		spellsused:Inc
-	}
-	;;;; Daze
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call CastSpellRange 260 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
-	;;;; Despair
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}	
+	;;;; Asylum
+	if ${spellsused}<=${spellthreshold} && ${Me.ToActor.Power}>55 && ${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)}
 	{
 		call CastSpellRange 80 0 0 0 ${KillTarget}
 		spellsused:Inc
-	}
-	;;;; Anguish
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}		
+	;;;; Brainshock
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)}
 	{
 		call CastSpellRange 70 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
-	;;;; Nuke
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call CastSpellRange 60 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
 	;;;; Master Strike
@@ -542,35 +530,84 @@ function Combat_Routine(int xAction)
 			Me.Ability[Master's Strike]:Use
 			spellsused:Inc
 		}
+	}							
+	;;;; Hemorrhage
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} && !${Me.Maintained[${SpellType[60]}](exists)}
+	{
+		call CastSpellRange 60 0 0 0 ${KillTarget}
+		spellsused:Inc
 	}
-	;;;; Stun
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[190]}].IsReady} && !${Me.Maintained[${SpellType[190]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	;;;; Absolute Silence
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[260]}].IsReady} && !${Me.Maintained[${SpellType[260]}](exists)}
+	{
+		call CastSpellRange 260 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}		
+	;;;;Shock Wave
+	if ${spellsused}<=${spellthreshold} && ${PBAoEMode} && !${MezzMode} && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)} && ${Actor[${KillTarget}].Distance}<11
+	{
+		call CastSpellRange 95 0 1 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;;;;Ego Melt
+	if ${spellsused}<=${spellthreshold} && ${AoEMode} && !${MezzMode} && ${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)}
+	{
+		call CastSpellRange 91 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;;;;Simple Minds
+	if ${spellsused}<=${spellthreshold} && ${AoEMode} && !${MezzMode} && ${Me.Ability[${SpellType[90]}].IsReady} && !${Me.Maintained[${SpellType[90]}](exists)}
+	{
+		call CastSpellRange 90 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;; PuppetMaster 
+	if ${PuppetMaster} && (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>=35  && ${Me.Ability[${SpellType[391]}].IsReady}
+	{
+		CurrentAction:Set[PuppetMaster]	
+		call CastSpellRange 391 0 0 0 ${KillTarget}
+	}
+	;;;;Medusa Gaze
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[190]}].IsReady} && !${Me.Maintained[${SpellType[190]}](exists)}
 	{
 		call CastSpellRange 190 0 0 0 ${KillTarget}
 		spellsused:Inc
-	}
-	;;;; Sunbolt
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}		
+	;;;;Mindbend
+	if ${spellsused}<=${spellthreshold} && !${Actor[${KillTarget}].IsEpic} && ${Me.Ability[${SpellType[192]}].IsReady} && !${Me.Maintained[${SpellType[192]}](exists)}
 	{
-		call CastSpellRange 62 0 0 0 ${KillTarget}
+		call CastSpellRange 192 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
+	
 
+;;;;;; After Spell Casting let's check our buffs are up during combat	
+	;;;; Nullify Staff
+	if ${NullifyStaff} && ${Me.Ability[${SpellType[389]}].IsReady} && !${Me.Maintained[${SpellType[389]}](exists)}
+	{
+		call CastSpellRange 389 0 1 0 ${KillTarget}
+	}	
+	
+	;;;; Make sure Mind's Eye is buffed, note: this is a 10 min buff.
+	if !${Me.Maintained[${SpellType[42]}](exists)}
+		call CastSpellRange 42	
 
-	if ${DoHOs} && ${Mob.CheckActor[${KillTarget}]}
-		objHeroicOp:DoHO
+	;;;; Piece of Mind after mob has been beat on a bit
+	if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}<90
+	{
+		Me:InitializeEffects
 
-	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO} && ${Mob.CheckActor[${KillTarget}]}
-		call CastSpellRange 303
+		while ${Me.InitializingEffects}
+			wait 2
 
-	;make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady}
-		call CastSpellRange 42
-
-	CurrentAction:Set[Combat Checking Power]
-	call RefreshPower
-
-	return CombatComplete
+		;don't PoM if PoM is up
+		if !${Me.Effect[beneficial,${SpellType[501]}](exists)}
+		{
+			CurrentAction:Set[Piece of Mind]
+			call CastSpellRange 501
+			eq2execute /p "Piece of Mind is active!"
+		}
+	}
 }
 
 function Post_Combat_Routine(int xAction)
@@ -589,19 +626,16 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro()
 {
-
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
 		eq2execute /tell ${MainTank}  ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
-	;AE Fear
-	if ${PBAoEMode}
-	{
-		call CastSpellRange 181
-	}
 	;Blink
-	;call CastSpellRange 180
+	if ${Me.Ability[${SpellType[180]}].IsReady}
+		call CastSpellRange 180 0 0 0 ${aggroid}
+	elseif ${Me.Ability[${SpellType[181]}].IsReady}
+		call CastSpellRange 181 0 0 0 ${aggroid}
 }
 
 function Lost_Aggro()
@@ -629,6 +663,9 @@ function RefreshPower()
 	declare tempvar int local
 	declare MemberLowestPower int local
 
+	if ${Me.Power}<40 && ${Me.ToActor.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+		Me.Inventory[${Manastone}]:Use
+
 	if ${ShardMode}
 		call Shard 45
 
@@ -647,27 +684,33 @@ function RefreshPower()
 		MemberLowestPower:Set[0]
 		do
 		{
-			if ${Me.Group[${tempvar}].ToActor.Power}<45 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+			if ${Me.Group[${tempvar}].ToActor.Power}<55 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
 			{
 				if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
 					MemberLowestPower:Set[${tempvar}]
 			}
+	}
+	while ${tempvar:Inc}<${Me.GroupCount}
+		
+	;;;; Canbalize Thoughts
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<90 && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+		call CastSpellRange 51 0 0 0 ${KillTarget}
 
-		}
-		while ${tempvar:Inc}<${Me.GroupCount}
-
-		if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<45 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
-		{
-			call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
-		}
-
-		;Channel if group member is below 20 and we are in combat
-		if ${Me.Grouped}  && ${Me.Group[${MemberLowestPower}].ToActor.Power}<40 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
-			call CastSpellRange 310
+	;;;; Mana Flow
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<65 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.ToActor.Health}>50 && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+		call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+			
+	;Channel if group member is below 20 and we are in combat and manaflow isnt ready and it isn't the MT
+	if ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<30 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<50  && ${Me.InCombat} && ${Me.Group[${MemberLowestPower}].ToActor(exists)}
+	{
+	if  ${Me.Group[${MemberLowestPower}].ToActor.ID}!=${Actor[pc,ExactName,${MainTankPC}].ID} && !${Me.Ability[${SpellType[378]}].IsReady}
+		call CastSpellRange 310
 	}
 
+}
+
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<40 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power}<80 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 		call CastSpellRange 354
 
 }
@@ -677,9 +720,34 @@ function CheckHeals()
 
 	call CommonHeals 70
 
-	if ${BuffManaward} && ${Me.InCombat}
-		call CastSpellRange 378
+	;if ${BuffManaward} && ${Me.InCombat}
+		;call CastSpellRange 378
 
+	declare temphl int local 1
+	grpcnt:Set[${Me.GroupCount}]
+
+	; Cure Arcane Me
+	if ${Me.Arcane}>0
+	{
+		call CastSpellRange 210 0 0 0 ${Me.ID}
+
+		if ${Actor[${KillTarget}](exists)}
+			Target ${KillTarget}
+	}
+
+	do
+	{
+		; Cure Arcane
+		if ${Me.Group[${temphl}].Arcane}>0
+		{
+			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+
+			if ${Actor[${KillTarget}](exists)}
+				Target ${KillTarget}
+		}
+	}
+	while ${temphl:Inc}<${grpcnt}		
+		
 }
 
 function Mezmerise_Targets()
@@ -826,6 +894,33 @@ function DoCharm()
 			EQ2Execute /target_none
 	}
 }
+function DoDMind()
+{
+	variable string DMActor=${UIElement[lbDMind@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${BuffDMindMember}].Text}
+
+	if !${Me.Ability[${SpellType[72]}].IsReady}
+		return
+
+	if ${UIElement[lbDMind@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}==0
+		return
+
+	if ${Actor[${DMActor.Token[2,:]},${DMActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[72]}].Range}]}
+	{
+		EQ2Execute /useabilityonplayer ${DMActor.Token[1,:]} ${SpellType[72]}
+		wait 5
+		while ${Me.CastingSpell}
+		wait 1
+		BuffDMindMember:Inc
+	}
+	else
+	{
+		BuffDMindMember:Inc
+	}
+
+	;We have gone through everyone in the list so start back at the begining
+	if ${BuffDMindMember}>${UIElement[lbDMind@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+		BuffDMindMember:Set[1]
+}
 
 function DoAmnesia()
 {
@@ -872,11 +967,16 @@ function DoAmnesia()
 
 			if ${aggrogrp}
 			{
-				;Try AA Thought Snap first
+				;;;; Coercive Shout
+				if ${Me.Ability[${SpellType[509]}].IsReady}
+				{
+					call CastSpellRange 509 0 0 0 ${MainTank}	
+				}
+				;Try AA Thought Snap next if we have it
 				if ${Me.Ability[${SpellType[376]}].IsReady}
 					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
-				elseif ${Me.Ability[${SpellType[384]}].IsReady}
-					call CastSpellRange 382 0 0 0 ${KillTarget}
+				elseif ${Me.Ability[${SpellType[383]}].IsReady}
+					call CastSpellRange 383 0 0 0 ${KillTarget}
 				else
 					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
 				return

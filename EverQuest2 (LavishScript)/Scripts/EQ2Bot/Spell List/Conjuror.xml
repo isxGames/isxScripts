@@ -195,5 +195,34 @@
 		<Setting name="80,1">Heal Servant VII</Setting>
 		<Setting name="80,375">Communion</Setting>
 		<Setting name="80,295">Defensive Haven VI</Setting>
+		<Setting name="81,61">Crystal Blast IX</Setting>
+		<Setting name="81,95">Earthquake VI</Setting>
+		<Setting name="81,331">Vampire Bats IV</Setting>
+		<Setting name="82,190">Petrify VI</Setting>
+		<Setting name="82,73">Fiery Annihilation VIII</Setting>
+		<Setting name="83,230">Quicksand VII</Setting>
+		<Setting name="83,355">Aery Hunter V</Setting>
+		<Setting name="84,47">Master\'s Intervention IV</Setting>
+		<Setting name="84,72">Winds of Velious III</Setting>
+		<Setting name="84,361">Sacrifice V</Setting>
+		<Setting name="85,330">Roaring Flames V</Setting>
+		<Setting name="85,21">Elemental Aspect VII</Setting>
+		<Setting name="85,356">Fiery Magician VI</Setting>
+		<Setting name="86,40">Flameshield VI</Setting>
+		<Setting name="86,91">Ice Storm VIII</Setting>
+		<Setting name="86,363">Elemental Unity III</Setting>
+		<Setting name="87,357">Earthen Avatar VIII</Setting>
+		<Setting name="87,35">Fire Seed VI</Setting>
+		<Setting name="87,329">Aqueous Swarm VI</Setting>
+		<Setting name="88,4">Vehement Skin V</Setting>
+		<Setting name="88,90">Shattered Earth VI</Setting>
+		<Setting name="88,290">Antagonize VII</Setting>
+		<Setting name="89,309">Essence Shift VII</Setting>
+		<Setting name="89,20">Geotic Rune VII</Setting>
+		<Setting name="90,71">Blazing Avatar IV</Setting>
+		<Setting name="90,45">Conjuror\'s Pact VII</Setting>
+		<Setting name="90,1">Heal Servant VIII</Setting>
+		<Setting name="90,375">Communion II</Setting>
+		<Setting name="90,295">Defensive Haven VII</Setting>
 	</Set>
 </InnerSpaceSettings>
