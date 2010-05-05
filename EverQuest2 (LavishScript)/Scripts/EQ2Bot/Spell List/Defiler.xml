@@ -183,12 +183,32 @@
 		<Setting name="80,211">Cure Curse</Setting>
 		<Setting name="80,324">Ancestral Avenger IV</Setting>
 		<Setting name="81,4">Dire Balm IX</Setting>
+		<Setting name="81,283">Crystallize Soul V</Setting>
+		<Setting name="82,80">Imprecate VIII</Setting>
 		<Setting name="82,72">Soul Cannibalize III</Setting>
-		<Setting name="84,90">Absolute Corruption V</Setting>
+		<Setting name="82,35">Harbinger VII</Setting>
+		<Setting name="82,23">Noxious Efflux VI</Setting>
+		<Setting name="83,41">Invective IV</Setting>
+		<Setting name="83,1">Sacrificial Restoration VIII</Setting>
+		<Setting name="83,20">Vehemence VI</Setting>
 		<Setting name="84,326">Voice of the Ancestors III</Setting>
+		<Setting name="84,90">Absolute Corruption V</Setting>
+		<Setting name="84,21">Shroud of Armor VII</Setting>
 		<Setting name="85,53">Abhorrent Seal IV</Setting>
+		<Setting name="86,25">Sinister Countenance VI</Setting>
 		<Setting name="86,52">Abomination VII</Setting>
 		<Setting name="86,16">Spiritual Circle III</Setting>
+		<Setting name="87,181">Ancient Terror V</Setting>
+		<Setting name="87,51">Fuliginous Whip VI</Setting>
+		<Setting name="88,91">Defile III</Setting>
+		<Setting name="88,71">Putrefy VIII</Setting>
+		<Setting name="88,7">Ancient Shroud VIII</Setting>
 		<Setting name="89,15">Carrion Warding VII</Setting>
+		<Setting name="89,322">Bane of Warding VI</Setting>
+		<Setting name="89,180">Terror Chant VII</Setting>
+		<Setting name="90,317">Maelstrom IV</Setting>
+		<Setting name="90,8">Deathward II</Setting>
+		<Setting name="90,10">Wild Accretion VII</Setting>
+		<Setting name="90,324">Ancestral Avenger V</Setting>
 	</Set>
 </InnerSpaceSettings>
