@@ -183,5 +183,33 @@
 		<Setting name="80,93">Berserker Onslaught V</Setting>
 		<Setting name="80,80">Mutilate VI</Setting>
 		<Setting name="80,91">Rampage III</Setting>
+		<Setting name="81,28">Aggressive Defense VII</Setting>
+		<Setting name="81,152">Rupture VII</Setting>
+		<Setting name="81,150">Frenzy IV</Setting>
+		<Setting name="82,505">Insolence III</Setting>
+		<Setting name="82,160">Mock VIII</Setting>
+		<Setting name="82,295">Unflinching Will VII</Setting>
+		<Setting name="82,155">Weapon Counter V</Setting>
+		<Setting name="83,92">Stunning Roar V</Setting>
+		<Setting name="83,21">Destructive Rage VI</Setting>
+		<Setting name="83,82">Head Crush VI</Setting>
+		<Setting name="84,27">Berserk Rage VIII</Setting>
+		<Setting name="84,153">Knee Break VII</Setting>
+		<Setting name="85,25">Blood Rage VI</Setting>
+		<Setting name="85,94">Bloodbath VII</Setting>
+		<Setting name="86,290">Abandoned Fury VII</Setting>
+		<Setting name="86,20">Bloodlust VII</Setting>
+		<Setting name="86,170">Enrage VII</Setting>
+		<Setting name="87,161">Raging Blow VII</Setting>
+		<Setting name="87,22">War Cry VI</Setting>
+		<Setting name="87,81">Maul VII</Setting>
+		<Setting name="88,323">Controlled Rage VI</Setting>
+		<Setting name="88,151">Demolish V</Setting>
+		<Setting name="89,240">Body Check VII</Setting>
+		<Setting name="89,156">Chaos VII</Setting>
+		<Setting name="89,324">Wall of Rage VII</Setting>
+		<Setting name="90,93">Berserker Onslaught VI</Setting>
+		<Setting name="90,80">Mutilate VII</Setting>
+		<Setting name="90,91">Rampage IV</Setting>
 	</Set>
 </InnerSpaceSettings>

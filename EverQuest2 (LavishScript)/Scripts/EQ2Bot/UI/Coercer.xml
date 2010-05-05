@@ -270,6 +270,130 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[DPSMode]}</Data>
 	</Commandcheckbox>
+  <Commandcheckbox Name='NullifyStaff'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>210</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Nullify Staff</Text>
+		<AutoTooltip>Used for Nullify Staff and get close and attack</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[NullifyStaff]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["NullifyStaff",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[NullifyStaff]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["NullifyStaff",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[NullifyStaff]}</Data>
+	</Commandcheckbox>
+
+  <Commandcheckbox Name='ManaFlow'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>290</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Mana Flow and Mana Cloak</Text>
+		<AutoTooltip>Used for Mana Flow and Mana Cloak</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ManaFlow]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["ManaFlow",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ManaFlow]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["ManaFlow",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[ManaFlow]}</Data>
+	</Commandcheckbox>
+	
+  <Commandcheckbox Name='Mythical'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>270</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Mythical on MT</Text>
+		<AutoTooltip>Used for Mythical on MT</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[Mythical]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Mythical",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[Mythical]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Mythical",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Mythical]}</Data>
+	</Commandcheckbox>
+				
+  <Commandcheckbox Name='PuppetMaster'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>250</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Puppet Master</Text>
+		<AutoTooltip>Used for casting Puppet Master</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PuppetMaster]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["PuppetMaster",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PuppetMaster]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["PuppetMaster",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PuppetMaster]}</Data>
+	</Commandcheckbox>	
+
+  <Commandcheckbox Name='Breeze'>
+		<Visible>1</Visible>
+		<X>120</X>
+		<Y>110</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Breeze</Text>
+		<AutoTooltip>Used for casting Breeze</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[Breeze]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Breeze",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[Breeze]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Breeze",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Breeze]}</Data>
+	</Commandcheckbox>		
   <Commandcheckbox Name='TSMode'>
 		<Visible>1</Visible>
 		<X>10</X>
@@ -424,4 +548,92 @@ LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffAn
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>
+  <Commandcheckbox Name='DestructiveMind'>
+		<Visible>1</Visible>
+		<X>120</X>
+		<Y>130</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Pre buff Destructive Mind</Text>
+		<AutoTooltip>Used for pre buffing Destructive Mind</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[DestructiveMind]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["DestructiveMind",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[DestructiveMind]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["DestructiveMind",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[DestructiveMind]}</Data>
+	</Commandcheckbox>		
+	<Commandbutton name='RefreshDMind'>
+		<X>115</X>
+		<Y>150</Y>
+		<Width>20</Width>
+		<Height>20</Height>
+		<Text></Text>
+		<AutoTooltip>Refresh</AutoTooltip>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbDMind@${This.Parent.FullName},DMind,1,1,1]
+		</OnLeftClick>
+	</Commandbutton>
+	<Text Name='lblDMind'>
+		<X>140</X>
+		<Y>150</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff DMind On:</Text>
+		<AutoTooltip>Shift Left click to select group members to buff DMind on</AutoTooltip>
+	</Text>
+	<listbox name='lbDMind'>
+		<x>140</x>
+		<y>170</y>
+		<width>120</width>
+		<height>110</height>
+		<SelectMultiple>1</SelectMultiple>
+		<Items></items>
+		<OnLoad>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},DMind,1,1,1]
+		</OnLoad>
+		<OnSelect>
+		  declare tmpvar int
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[DMind]
+LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[DMind]:Clear
+
+		  tmpvar:Set[1]
+		  if ${This.SelectedItems}&gt;0
+		  {
+		  do
+		  {
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[DMind]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+		  }
+		  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+		  }
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+		<OnDeselect>
+		  declare tmpvar int
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[DMind]
+LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[DMind]:Clear
+
+		  tmpvar:Set[1]
+		  if ${This.SelectedItems}&gt;0
+		  {
+		  do
+		  {
+		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[DMind]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+		  }
+		  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+		  }
+		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnDeselect>
+		<OnLeftClick></OnLeftClick>
+	</listbox>	
 </ISUI>
