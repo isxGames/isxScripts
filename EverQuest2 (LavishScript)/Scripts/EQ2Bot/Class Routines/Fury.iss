@@ -1689,7 +1689,7 @@ function CheckHeals()
 		{
 			if ${Me.Group[${lowest}].ToActor.Health} < ${Math.Calc[${MaxHealthModified} - 35]} && ${Me.Group[${lowest}].ToActor.Distance}<=${Me.Ability[${SpellType[2]}].Range}
 			{
-			    Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+			    ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<60) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 			    if ${Me.Ability[${SpellType[2]}].IsReady}
 						call CastSpellRange 2 0 0 0 ${Me.Group[${lowest}].ID}
 			}
@@ -1698,17 +1698,17 @@ function CheckHeals()
 			{
 				if ${Me.Ability[${SpellType[7]}].IsReady}
 				{
-				  Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+				  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 					call CastSpellRange 7 0 0 0 ${Me.Group[${lowest}].ID}
 				}
 				elseif ${Me.Ability[${SpellType[1]}].IsReady}
 				{
-				  Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+				  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 					call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
 				}
 				elseif ${Me.Ability[${SpellType[4]}].IsReady}
 				{
-				  Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
+				  ;Debug:Echo["${Me.Group[${lowest}]}'s health is lowest (<75) at ${Me.Group[${lowest}].ToActor.Health} -- HEALING"]
 					call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
 				}
 			}
