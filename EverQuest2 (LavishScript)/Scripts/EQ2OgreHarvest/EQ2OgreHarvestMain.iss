@@ -1,5 +1,5 @@
-;Version BETA 1.005d
-
+;Version BETA 1.005e
+;Changed it to scan everything instead of resources.
 /**
 To-do
 Make pause actually pause everything
@@ -131,7 +131,8 @@ function main()
 		
 		;Scan the area for resource and lets pick which one we want.
 		;***Change 150 to the # in the UI***
-		EQ2:CreateCustomActorArray[byDist,150,resource]
+		;EQ2:CreateCustomActorArray[byDist,150,resource]
+		EQ2:CreateCustomActorArray[byDist,150]
 		EQ2OgreHarvestResourceFound:Set[FALSE]
 		ResourcesInArea:Set[0]
 
