@@ -1,6 +1,8 @@
-;Version BETA 1.005e
-;Changed it to scan everything instead of resources.
+;Version BETA 1.006
 /**
+Version 1.006 - Kannkor
+Changed CustomActorArray to use OgreCustomArrayControllerScript
+
 To-do
 Make pause actually pause everything
 When scripts ending - ensure movement is stopped
@@ -74,6 +76,19 @@ function main()
 	if !${Script[EQ2OgreHarvestPathThread](exists)}
 		execute run "\"${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestPathThread\""
 
+	;Load OgreCustomActorArray
+
+	if !${Script[OgreCustomArrayControllerScript](exists)}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreCustomArrayControllerScript"
+		waitframe
+		wait ${Script[OgreCustomArrayControllerScript](exists)}
+		wait frame
+	}
+	;Load our distance into the Object
+	;Change this to the number in the UI
+	OgreCustomArrayControllerOb:Load[150]
+
 	call LoadResources
 
 	while ${EQ2OgreHarvestLoaded} && !${EQ2OgreHarvestStop} && ${OptionsOb.AliveCheck}
@@ -130,9 +145,14 @@ function main()
 		;Since you can't path without roaming, we should always check roaming first
 		
 		;Scan the area for resource and lets pick which one we want.
+		/**
 		;***Change 150 to the # in the UI***
 		;EQ2:CreateCustomActorArray[byDist,150,resource]
-		EQ2:CreateCustomActorArray[byDist,150]
+		;EQ2:CreateCustomActorArray[byDist,150]
+			This should no longer be needed since it is handled by the object below.
+		**/
+		OgreCustomArrayControllerOb:Update
+
 		EQ2OgreHarvestResourceFound:Set[FALSE]
 		ResourcesInArea:Set[0]
 
@@ -588,6 +608,7 @@ atom EQ2_onLootWindowAppeared(string LootID)
 atom atexit()
 {
 	LavishSettings[EQ2OgreDepotResourceInformation]:Clear
+	OgreCustomArrayControllerOb:UnLoad
 
 	UIElement[${CmdOHStartID}]:Show
 	UIElement[${CmdOHEndID}]:Hide

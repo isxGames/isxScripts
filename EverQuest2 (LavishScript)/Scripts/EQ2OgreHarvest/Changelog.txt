@@ -1,3 +1,9 @@
+Version 1.006 - Updated by Kannkor
+Instead of using CAA (CustomActorArray) it now uses a script that handles this
+
+Version 1.005e - Updated by Kannkor
+Changed CAA to use all instead of resource
+
 Version 1.005(a/d) - Updated by Kannkor
 Updated precision for harvesting.. Should fix the standing beside a node not doing anything.
 
