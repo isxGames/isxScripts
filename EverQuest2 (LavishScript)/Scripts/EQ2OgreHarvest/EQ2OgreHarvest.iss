@@ -1,4 +1,4 @@
-variable string EQOHVersion=Beta 1.000
+variable string EQOHVersion=Beta 1.001
 /**
 *********EQ2OgreHarvest***Please note this script is in BETA************
 
@@ -16,5 +16,6 @@ function main()
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
 	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestShellXML.xml"
 
-	Execute run "\"${LavishScript.HomeDirectory}/Scripts/eq2ogreharvest/InjectTab\" ${EQ2OgreHarvestTabControl} 1"
+	;Execute run "\"${LavishScript.HomeDirectory}/Scripts/eq2ogreharvest/InjectTab\" ${EQ2OgreHarvestTabControl} 1"
+	runscript "${LavishScript.HomeDirectory}/Scripts/eq2ogreharvest/InjectTab" ${EQ2OgreHarvestTabControl} 1
 }
