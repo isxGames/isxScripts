@@ -1,4 +1,4 @@
-;Version BETA 1.006
+;Version BETA 1.006a
 /**
 Version 1.006 - Kannkor
 Changed CustomActorArray to use OgreCustomArrayControllerScript
@@ -83,11 +83,12 @@ function main()
 		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreCustomArrayControllerScript"
 		waitframe
 		wait ${Script[OgreCustomArrayControllerScript](exists)}
+		wait 10
 		wait frame
 	}
 	;Load our distance into the Object
 	;Change this to the number in the UI
-	OgreCustomArrayControllerOb:Load[150]
+	OgreCustomArrayControllerOb:Load[${Script.Filename},150]
 
 	call LoadResources
 
@@ -608,7 +609,7 @@ atom EQ2_onLootWindowAppeared(string LootID)
 atom atexit()
 {
 	LavishSettings[EQ2OgreDepotResourceInformation]:Clear
-	OgreCustomArrayControllerOb:UnLoad
+	OgreCustomArrayControllerOb:UnLoad[${Script.Filename}]
 
 	UIElement[${CmdOHStartID}]:Show
 	UIElement[${CmdOHEndID}]:Hide

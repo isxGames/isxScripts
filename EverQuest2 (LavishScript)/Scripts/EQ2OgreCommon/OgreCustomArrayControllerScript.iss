@@ -17,7 +17,9 @@ OgreCustomArrayControllerOb:Load[distance] - Distance is used because the lowest
 	;Then see Usage
 
 ******Usage******
-OgreCustomArrayControllerOb:Load[distance(default 10)]
+OgreCustomArrayControllerOb:Load[${Script.Filename},distance(default 10)]
+Example: OgreCustomArrayControllerOb:Load[${Script.Filename},150]
+**Note: Don't change the variable, only the distance**
 OgreCustomArrayControllerOb:UnLoad
 OgreCustomArrayControllerOb:Update
 OgreCustomArrayControllerOb:SetUpdateInterval[delay in milliseconds - default is 500 (half second)]
