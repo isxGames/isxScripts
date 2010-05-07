@@ -1,5 +1,8 @@
-;Version BETA 1.006a
+;Version BETA 1.007a
 /**
+Version 1.007 - Kannkor
+Updated a few routines to help with NULLS / CAA changing
+
 Version 1.006 - Kannkor
 Changed CustomActorArray to use OgreCustomArrayControllerScript
 
@@ -40,6 +43,7 @@ variable TimerObject TimerOb
 variable(global) string EQ2OgreHarvestMovementTypeAllowed=NONE
 variable HarvestStatsObject HarvestStatsOb
 ;EQ2OgreHarvestMovementTypeAllowed Options are: Path and Resource (or None)
+;variable index:actor ResourceActors
 
 #include "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreMapController.inc"
 
@@ -151,8 +155,10 @@ function main()
 		;EQ2:CreateCustomActorArray[byDist,150,resource]
 		;EQ2:CreateCustomActorArray[byDist,150]
 			This should no longer be needed since it is handled by the object below.
+		
 		**/
 		OgreCustomArrayControllerOb:Update
+		;noop NoOp ${EQ2.GetActors[ResourceActors,Range,20,resource]}
 
 		EQ2OgreHarvestResourceFound:Set[FALSE]
 		ResourcesInArea:Set[0]
@@ -161,13 +167,17 @@ function main()
 		{
 			;Check some IgnoreNodes list here
 			;Lets double confirm we're going after a resource..
+			/** This section shouldn't be needed, as OptionsOb.Valid takes care of it.
 			if ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0
 			{
+				echo Is Null Valid? ${OptionsOb.ValidResource[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]}
 				echo ${Time}: HarvestMain: Found a 0: ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0 // {Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0 \\ {Actor[{CustomActor[${ResourcesInArea}].ID}].ID}==0
 				EQ2OgreHarvestLoopDone:Set[TRUE]
 				EQ2OgreHarvestAllowPathing:Set[FALSE]
-				break
+				continue
+				;break
 			}
+			**/
 
 			if !${OptionsOb.IgnoreNode[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]} && ${OptionsOb.ValidResource[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]} &&  ${OptionsOb.ValidDistance[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]}
 			{
@@ -302,6 +312,8 @@ objectdef OptionsObject
 		;Check for NULLs and return FALSE also
 		;If it makes it to the end, it's valid
 		if !${setEQ2OgreHarvestResourceInfo.FindSetting[${Actor[${ResourceID}].Name}].FindAttribute[Type].String.Equal[NULL](exists)}
+			return FALSE
+		if ${Actor[${ResourceID}].Type.NotEqual[resource]}
 			return FALSE
 		if !${UIElement[${ChkBoxOreID}].Checked} && ${setEQ2OgreHarvestResourceInfo.FindSetting[${Actor[${ResourceID}].Name}].FindAttribute[Type].String.Equal[Ore]}
 			return FALSE
