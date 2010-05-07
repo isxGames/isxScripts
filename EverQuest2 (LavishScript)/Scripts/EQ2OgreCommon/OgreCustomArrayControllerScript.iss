@@ -1,13 +1,11 @@
-;***Verison 1.02***
+;***Verison 1.02a***
 /**
-Version 1.02 - Kannkor
+Version 1.02(a) - Kannkor
 Updated information on how to use
 Version 1.01 - Kannkor
 Made this script end when no scripts are using this script. The check is on the Unload event incase you load it without using it for a few frames.
 Note: If you unload your script, ensure you have a check before you try to load it again.
 
-*********What this script does***********
-OgreCustomArrayControllerOb:Load[distance] - Distance is used because the lowest distance will be used (saves CPU cycles)
 *********How to call this script in your other script********
 	if !${Script[OgreCustomArrayControllerScript](exists)}
 	{
@@ -24,6 +22,7 @@ Example: OgreCustomArrayControllerOb:Load[${Script.Filename},150]
 **Note: Don't change the variable, only the distance**
 OgreCustomArrayControllerOb:UnLoad[${Script.Filename}]
 OgreCustomArrayControllerOb:Update
+	Update will update the CAA, only if the Interval time has passed, otherwise the CAA is deemed up to date.
 OgreCustomArrayControllerOb:SetUpdateInterval[delay in milliseconds - default is 500 (half second)]
 Example: OgreCustomArrayControllerOb:SetUpdateInterval[250]
 **/
