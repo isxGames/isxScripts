@@ -106,6 +106,7 @@ variable int StartAttackTime = 0
 variable int EndAttackTime = 0
 variable int TimeFought = 0
 variable bool ResetParse = TRUE
+variable bool doRepair = TRUE
 
 variable bool doForm = TRUE
 variable bool FURIOUS = FALSE
@@ -242,9 +243,45 @@ function MainRoutines()
 	call GroupInviteAccept
 	call Follow
 
+	;; Take down that pesky POTA barrier
 	if ${Pawn[Kheolim's Barrier].Distance}<3
 	{
 		Pawn[Kheolim's Barrier]:DoubleClick
+	}
+	
+	;; Sweet, repair our equipment whether we need to or not
+	if ${Pawn[Essence of Replenishment].Distance}<5
+	{
+		if ${doRepair}
+		{
+			Pawn[Essence of Replenishment]:Target
+			wait 10 ${Me.Target.Name.Find[Replenishment]}
+			if ${Me.Target.Name.Find[Replenishment]}
+			{
+				Merchant:Begin[Repair]
+				wait 3
+				Merchant:RepairAll
+				Merchant:End
+				TimedCommand 600 Script[VG-PSI].Variable[doRepair]:Set[TRUE]
+				vgecho Repaired equipment
+				VGExecute "/cleartargets"
+				doRepair:Set[FALSE]
+			}
+		}
+	}
+
+	;; Merchant targeted, auto repair
+	if ${Me.Target.Type.Equal[Merchant]}
+	{
+		if ${doRepair}
+		{
+			Merchant:Begin[Repair]
+			wait 3
+			Merchant:RepairAll
+			Merchant:End
+			TimedCommand 600 Script[VG-PSI].Variable[doRepair]:Set[TRUE]
+			doRepair:Set[FALSE]
+		}
 	}
 }
 
@@ -1891,6 +1928,13 @@ atom CombatText(string aText, int aType)
 		{
 			;; Update our total damage
 			ParseDamage:Set[${aText.Mid[${aText.Find[deals <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
+			DamageDone:Set[${Math.Calc[${DamageDone}+${ParseDamage}]}]
+			CalculateDPS "${aText}"
+		}
+		elseif ${aText.Find[draw <]}
+		{
+			;; Update our total damage
+			ParseDamage:Set[${aText.Mid[${aText.Find[draw <highlight>]},${aText.Length}].Token[2,>].Token[1,<]}]
 			DamageDone:Set[${Math.Calc[${DamageDone}+${ParseDamage}]}]
 			CalculateDPS "${aText}"
 		}
