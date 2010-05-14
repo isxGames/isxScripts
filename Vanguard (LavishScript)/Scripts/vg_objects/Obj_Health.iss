@@ -124,7 +124,7 @@ objectdef obj_Health
 	method FindLowestHealth()
 	{
 		;; Go find a group member
-		if ${This.GroupMemberCount} < 7
+		if ${This.GroupMemberCount}<7
 		{
 			This:FindGroupMembers
 			return
@@ -154,7 +154,7 @@ objectdef obj_Health
 
 		;; Setup our temp variables
 		variable int i = 0
-		variable int low = 100
+		variable int low = 90
 
 		;; GROUP MEMBERS
 		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
@@ -184,7 +184,7 @@ objectdef obj_Health
 		}
 		
 		;; RAID MEMBERS
-		low:Set[100]
+		low:Set[90]
 		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
 		{
 			if ${Group[${i}].Health}>0 && ${Group[${i}].Health}<${low}
