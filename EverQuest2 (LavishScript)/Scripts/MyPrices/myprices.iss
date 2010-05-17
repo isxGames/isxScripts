@@ -1285,6 +1285,10 @@ function BuyItems()
 								Call CheckFocus
 								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
 								wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+
+								if ${HighLatency}
+									wait 30
+
 							}
 							if ${AutoTransmute}
 								Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
@@ -1317,7 +1321,9 @@ function BuyItems()
 									Call CheckFocus
 									Vendor.Item[${CurrentItem}]:Buy[1]  
 									wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
-									wait 5
+
+									if ${HighLatency}
+										wait 30
 									
 									if ${AutoTransmute}
 										Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
@@ -1398,6 +1404,10 @@ function BuyItems()
 
 			if ${Exitmyprices} || ${Pausemyprices}
 				break
+
+			if ${HighLatency}
+				wait 30
+
 		}
 		; keep going till all items listed have been scanned and bought or you have reached your limit
 		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${Number} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
@@ -1599,6 +1609,7 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	if ${namesearch.Length}>0
 	{
 		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
+		echo broker "${namesearch}" ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
 
 		if ${HighLatency}
 			wait 30
@@ -1607,6 +1618,7 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	else
 	{
 		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
+		echo broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
 
 		if ${HighLatency}
 			wait 30
