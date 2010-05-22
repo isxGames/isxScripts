@@ -1,7 +1,7 @@
 ;
 ; MyPrices  - EQ2 Broker Buy/Sell script
 ;
-variable string Version="Version 0.15c :  released 12th April 2010"
+variable string Version="Version 0.15d :  released 22nd May 2010"
 ;
 ; Declare Variables
 ;
@@ -34,6 +34,7 @@ variable bool runautoscan
 variable bool runplace
 variable bool ItemNotStack
 variable bool BadContainer=FALSE
+variable bool BadItem=FALSE
 variable bool HighLatency
 variable bool NewItemsOnly
 variable bool Shinies
@@ -138,6 +139,7 @@ variable bool Collectible
 variable bool NewCollection
 variable bool LowerNumber
 variable int LowerItemNumber
+variable collection:string BadItems
 
 
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
@@ -278,7 +280,7 @@ function main(string goscan, string goscan2)
 				else
 					Commission:Set[20]
 
-				if ${SellCon.Equal["Veteran's Display Case"]} || ${SellCon.Equal["Veteranen-Vitrine"]}
+				if ${SellCon.Equal["Veteran's Display Case"]} || ${SellCon.Equal["Veteranen-Schaukasten"]}
 					Commission:Set[${Math.Calc[${Commission}/2]}]
 
 				; Find where the Item is stored in the container
@@ -1145,6 +1147,7 @@ function BuyItems()
 	Declare endsearch string local
 	Declare tiersearch string local
 	Declare costsearch string local
+	Declare loopcount int local
 
 	Call CheckFocus
 	if ${NameOnly}
@@ -1263,11 +1266,32 @@ function BuyItems()
 									
 									if ${NewCollection}
 									{
-										CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
 										Call CheckFocus
+
+										call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+										CurrentQuantity:Set[${Return}]
+										
 										Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
 										NewCollection:Set[FALSE]
-										wait 100 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
+
+										; make the script wait till the inventory total has changed (item was added)
+										; skips to the next item if nothing changes within 10 seconds
+					
+										loopcount:Set[1]
+										do
+										{
+											call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+											
+											if ${Return} != ${CurrentQuantity}
+											Break
+
+											wait 10
+											
+											if ${HighLatency}
+												wait 20
+
+										}
+										while ${loopcount:Inc} <= 10
 									}
 									else
 									{
@@ -1281,13 +1305,32 @@ function BuyItems()
 							}
 							else
 							{
-								CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
 								Call CheckFocus
-								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
-								wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 
-								if ${HighLatency}
-									wait 30
+								call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+								CurrentQuantity:Set[${Return}]
+
+								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+
+
+								; make the script wait till the inventory total has changed (item was added)
+								; skips to the next item if nothing changes within 10 seconds
+					
+								loopcount:Set[1]
+								do
+								{
+									call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+											
+									if ${Return} != ${CurrentQuantity}
+										Break
+
+									wait 10
+											
+									if ${HighLatency}
+										wait 20
+
+								}
+								while ${loopcount:Inc} <= 10
 
 							}
 							if ${AutoTransmute}
@@ -1317,13 +1360,32 @@ function BuyItems()
 								; Number on broker not changed ( Buy Singles )
 								do
 								{
-									CurrentQuantity:Set[${Vendor.Item[${CurrentItem}].Quantity}]
 									Call CheckFocus
-									Vendor.Item[${CurrentItem}]:Buy[1]  
-									wait 50 ${Vendor.Item[${CurrentItem}].Quantity} != ${CurrentQuantity}
 
-									if ${HighLatency}
-										wait 30
+									call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+									CurrentQuantity:Set[${Return}]
+
+									Vendor.Broker[${CurrentItem}]:Buy[1]
+
+
+									; make the script wait till the inventory total has changed (item was added)
+									; skips to the next item if nothing changes within 10 seconds
+					
+									loopcount:Set[1]
+									do
+									{
+										call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+											
+										if ${Return} != ${CurrentQuantity}
+											Break
+
+										wait 10
+											
+										if ${HighLatency}
+											wait 20
+
+									}
+									while ${loopcount:Inc} <= 10
 									
 									if ${AutoTransmute}
 										Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
@@ -3078,83 +3140,108 @@ function:int placeitems(string ItemName, int box, int numitems)
 						if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
 							Break
 
+						if ${BadItem}
+							{
+								BadItems:Set["${ItemName}"]
+								echo BadItems now has ${BadItems.Used} items in it.
+								Break
+							}
+	
 						wait 10
+						
+
+						if ${HighLatency}
+							wait 20
 
 					}
 					while ${loopcount:Inc} <= 10
-
-					; if the system reports that an item will not fit into the container chosen
-					if ${BadContainer}
+					
+					; if a part used item.....skip it
+					if ${BadItem}
 					{
-						; change the setting for that item so the container is marked as ignore
-						if !${ItemList.FindSet["${ItemName}"]}
-							ItemList:AddSet["${ItemName}"]
-							
-						Item:Set[${ItemList.FindSet["${ItemName}"]}]
-						Item:AddSetting[Box${box},3]
-						
-						; reset the bad Container Flag
-						BadContainer:Set[FALSE]
-						
-						echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
-						
-						; Get a new container number
-						call boxwithmostspace "${ItemName}"
-						box:Set[${Return}]
-						
-						; if no container is available then stop placing that set of items
-						if ${box} == 0
+						Echo Bad Item (Part Used) , Skipping
+						BadItem:Set[FALSE]
+					}
+					else
+					{
+						; if the system reports that an item will not fit into the container chosen
+						if ${BadContainer}
 						{
-							nospace:Set[TRUE]
-							break
-						}
-						else
-						{
-							; Otherwise try and place item in the new container
+							; change the setting for that item so the container is marked as ignore
+							if !${ItemList.FindSet["${ItemName}"]}
+								ItemList:AddSet["${ItemName}"]
 							
-							itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
-							
-							; place the item into the consignment system , grouping it with similar items
-							Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
-							
-							; make the script wait till the inventory total has changed (item was added)
-							; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
-
-							loopcount:Set[1]
-
-							do
+							Item:Set[${ItemList.FindSet["${ItemName}"]}]
+							Item:AddSetting[Box${box},3]
+						
+							; reset the bad Container Flag
+							BadContainer:Set[FALSE]
+						
+							echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
+						
+							; Get a new container number
+							call boxwithmostspace "${ItemName}"
+							box:Set[${Return}]
+						
+							; if no container is available then stop placing that set of items
+							if ${box} == 0
 							{
-								if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
-									Break
+								nospace:Set[TRUE]
+								break
+							}
+							else
+							{
+								; Otherwise try and place item in the new container
+							
+								itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
+								
+								; place the item into the consignment system , grouping it with similar items
+								Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
+								
+								; make the script wait till the inventory total has changed (item was added)
+								; skips to the next item if nothing changes within 10/30 seconds (one of the items was unplaceable)
+	
+								loopcount:Set[1]
 
-								wait 10
+								do
+								{
+									if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
+										Break
+
+									if ${BadItem}
+										Break
+
+									wait 10
+									
+									if ${HighLatency}
+										wait 20
+
+								}
+								while ${loopcount:Inc} <= 10
+
+								if ${BadContainer}
+								{
+									if !${ItemList.FindSet["${ItemName}"]}
+										ItemList:AddSet["${ItemName}"]
+
+									; change the setting for that item so the container is marked as ignore
+									Item:Set[${ItemList.FindSet["${ItemName}"]}]
+									Item:AddSetting[Box${box},3]
+						
+									; reset the bad Container Flag
+									BadContainer:Set[FALSE]
+								}					
+
 
 							}
-							while ${loopcount:Inc} <= 10
-
-							if ${BadContainer}
-							{
-								if !${ItemList.FindSet["${ItemName}"]}
-									ItemList:AddSet["${ItemName}"]
-
-								; change the setting for that item so the container is marked as ignore
-								Item:Set[${ItemList.FindSet["${ItemName}"]}]
-								Item:AddSetting[Box${box},3]
-						
-								; reset the bad Container Flag
-								BadContainer:Set[FALSE]
-							}					
-
-
 						}
 					}
-					
 					space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
 					numitems:Dec
 				}
 			}
 		}
-		while ${xvar:Inc}<=${Me.CustomInventoryArraySize} && ${space} > 0
+		while ${xvar:Inc}<=${Me.CustomInventoryArraySize} && ${space} > 0 && ${numitems} > 0
 	}
 	call echolog "<end> placeitems ${numitems}"
 	return ${numitems}
@@ -3378,6 +3465,7 @@ function placeshinies()
 	Raws:Set[${LavishSettings.FindSet[Raws]}]
 	Rares:Set[${LavishSettings.FindSet[Rares]}]
 	Uncommon:Set[${LavishSettings.FindSet[Uncommon]}]
+	BadItems:Clear
 	
 	if ${Return}
 	{
@@ -3439,7 +3527,7 @@ function placeshinies()
 						Me:CreateCustomInventoryArray[nonbankonly]
 						waitframe
 					}
-					elseif ${ItemList.FindSet["${Me.CustomInventory[${PSxvar}].Name}"].FindSetting[CraftItem]}
+					elseif ${ItemList.FindSet["${Me.CustomInventory[${PSxvar}].Name}"].FindSetting[CraftItem]} && !${BadItems.Element["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
 					{
 						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
 						PSxvar:Set[1]
@@ -3727,6 +3815,11 @@ atom(script) EQ2_onIncomingText(string Text)
 	if ${Text.Find["That container cannot store "]} > 0 
 	{
 		BadContainer:Set[TRUE]
+	}
+
+	if ${Text.Find["You cannot place an expendable with consumed "]} > 0 
+	{
+		BadItem:Set[TRUE]
 	}
 	return
 }
