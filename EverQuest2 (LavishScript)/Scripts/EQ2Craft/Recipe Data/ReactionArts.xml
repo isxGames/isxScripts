@@ -24,7 +24,7 @@
 		<Setting Name="Alchemist's Insight">3</Setting>
 		<Setting Name="Flawless Reaction">3</Setting>
 		<Setting Name="Favor of Innovation">3</Setting>
-		<Setting Name="Far Seas Innovation">3</Setting>
+		<Setting Name="Far Seas Innovation">1</Setting>
 	</Set>
 	<Set Name="Apothecary">
 		<Setting Name="Minor Negative Result">1</Setting>
