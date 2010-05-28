@@ -40,6 +40,10 @@
 		<Setting Name="10,500">Supplication of the Fallen</Setting>
 		<Setting Name="10,501">Peaceful Agression</Setting>
 		<Setting Name="10,502">Focused Prayers</Setting>
+		<Setting Name="10,503">Impenetrable Faith</Setting>
+		<Setting Name="10,504">Divine Light</Setting>
+		<Setting Name="10,505">Divine Guidance</Setting>
+		<Setting Name="10,506">True Faith</Setting>
 		<Setting Name="11,310">Divine Awakening</Setting>
 		<Setting Name="11,61">Divine Strike II</Setting>
 		<Setting Name="12,7">Vital Intercession</Setting>
@@ -181,6 +185,34 @@
 		<Setting Name="80,2">Repent</Setting>
 		<Setting Name="80,211">Cure Curse</Setting>
 		<Setting Name="80,10">Word of Redemption VI</Setting>
-	</Set>
+		<Setting Name="80,211">Cure Curse</Setting>
+		<Setting Name="81,4">Meliorate IX</Setting>
+		<Setting Name="81,71">Smite Corruption IV</Setting>
+		<Setting Name="81,221">Shield of Faith V</Setting>
+		<Setting Name="82,60">Divine Smite VIII</Setting>
+		<Setting Name="82,35">Aegolism VII</Setting>
+		<Setting Name="82,21">Symbol of Marzin VI</Setting>
+		<Setting Name="83,1">Restoration VIII</Setting>
+		<Setting Name="83,51">Mark of Divinity VI</Setting>
+		<Setting Name="84,90">Blaze of Faith V</Setting>
+		<Setting Name="84,20">Holy Armor VII</Setting>
+		<Setting Name="85,38">Glory IV</Setting>
+		<Setting Name="85,52">Involuntary Gift V</Setting>
+		<Setting Name="86,312">Healing Fate VI</Setting>
+		<Setting Name="86,55">Sign of Pacification VII</Setting>
+		<Setting Name="87,56">Awestruck V</Setting>
+		<Setting Name="87,50">Rebuke VIII</Setting>
+		<Setting Name="87,70">Warring Deities VI</Setting>
+		<Setting Name="88,61">Divine Strike VIII</Setting>
+		<Setting Name="88,230">Unswerving Hammer III</Setting>
+		<Setting Name="88,7">Vital Intercession VIII</Setting>
+		<Setting Name="89,180">Harmony VII</Setting>
+		<Setting Name="89,15">Holy Intercession VII</Setting>
+		<Setting Name="89,36">Virtue VI</Setting>
+		<Setting Name="90,2">Repent II</Setting>
+		<Setting Name="90,10">Word of Redemption VII</Setting>
+		<Setting Name="90,316">Holy Salvation V</Setting>
+		<Setting Name="90,9">Focused Intervention IV</Setting>
+	</set>
 </InnerSpaceSettings>
 
