@@ -45,7 +45,6 @@ function Class_Declaration()
 	declare Stance int script 1
 
 	declare BuffWaterBreathing bool script FALSE
-	declare BuffGloryGroupMember string script
 	declare BuffBennedictionGroupMember string script
 	declare BuffPraetorateGroupMember string script
  	declare BuffShieldAllyGroupMember string script
@@ -78,7 +77,6 @@ function Class_Declaration()
 	Stance:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Stance,]}]
 
 	BuffWaterBreathing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffWaterBreathing,FALSE]}]
-	BuffGloryGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffGloryGroupMember,]}]
 	BuffBennedictionGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffBennedictionGroupMember,]}]
 	BuffPraetorateGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffPraetorateGroupMember,]}]
 	BuffShieldAllyGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffShieldAllyGroupMember,]}]
@@ -279,6 +277,14 @@ function Buff_Routine(int xAction)
 			Counter:Set[1]
 			tempvar:Set[1]
 
+			;First lets see if we have envenerated
+			if ${Me.Ability[Impenetrable Faith](exists)}
+			{
+				if !${Me.Ability[Impenetrable Faith].IsReady}
+					call CastSpellRange 503 0 0 0 ${Me.ID}
+				break
+			}
+			
 			if !${Me.Equipment[The Impact of the Sacrosanct](exists)} && !${Me.Inventory[The Impact of the Sacrosanct](exists)}
 			{
 				;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
@@ -376,12 +382,58 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case BuffGlory
-			BuffTarget:Set[${UIElement[cbBuffGloryGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
-				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+			Counter:Set[1]
+			tempvar:Set[1]
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
+			do
+			{
+				BuffMember:Set[]
+				;check if the maintained buff is of the spell type we are buffing
+				if ${Me.Maintained[${Counter}].Name.Equal[${SpellType[${PreSpellRange[${xAction},1]}]}]}
+				{
+					;iterate through the members to buff
+					if ${UIElement[lbBuffGlory@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+					{
+						tempvar:Set[1]
+						do
+						{
+							BuffTarget:Set[${UIElement[lbBuffGlory@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${tempvar}].Text}]
+							if ${Me.Maintained[${Counter}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+							{
+								BuffMember:Set[OK]
+								break
+							}
+						}
+						while ${tempvar:Inc}<=${UIElement[lbBuffGlory@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+						;we went through the buff collection and had no match for this maintaned target so cancel it
+						if !${BuffMember.Equal[OK]}
+						{
+							;we went through the buff collection and had no match for this maintaned target so cancel it
+							Me.Maintained[${Counter}]:Cancel
+						}
+					}
+					else
+					{
+						;our buff member collection is empty so this maintained target isnt in it
+						Me.Maintained[${Counter}]:Cancel
+					}
+				}
+			}
+			while ${Counter:Inc}<=${Me.CountMaintained}
+
+			Counter:Set[1]
+			;iterate through the to be buffed Selected Items and buff them
+			if ${UIElement[lbBuffGlory@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}>0
+			{
+				do
+				{
+					BuffTarget:Set[${UIElement[lbBuffGlory@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				}
+				while ${Counter:Inc}<=${UIElement[lbBuffGlory@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}
+			}
+			
 			break
 		case Bennediction
 			BuffTarget:Set[${UIElement[cbBuffBennedictionGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -973,7 +1025,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
 		call EmergencyHeal ${MainTankID}
 
-	if ${Actor[${MainTankID}].Health}<50 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && !${Me.Equipment[The Impact of the Sacrosanct].IsReady}
+	if ${Actor[${MainTankID}].Health}<50 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Me.Equipment[The Impact of the Sacrosanct].IsReady}
 	{
 		Actor[${MainTankID}]:DoTarget
 		wait 2
@@ -986,6 +1038,12 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		while ${Me.CastingSpell}
 		wait 1
 	}
+
+	if ${Actor[${MainTankID}].Health}<90 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Me.Ability[Divine Light].IsReady}
+		call CastSpellRange 504 0 0 0 ${MainTankID}
+	
+	if ${Actor[${MainTankID}].Health}<90 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Me.Ability[Divine Guidance].IsReady}
+		call CastSpellRange 505 0 0 0 ${MainTankID}
 
 	;MAINTANK HEALS
 	if ${Actor[${MainTankID}].Health}<60 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
@@ -1023,6 +1081,9 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		if ${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Maintained[${SpellType[7]}](exists)} && ${EpicMode}
 			call CastSpellRange 7 0 0 0 ${MainTankID}
 	}
+	
+		if ${Actor[${MainTankID}].Health}<80 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)} && ${Me.Ability[True Faith].IsReady}
+		call CastSpellRange 506 0 0 0 ${MainTankID}
 }
 
 function GroupHeal()
