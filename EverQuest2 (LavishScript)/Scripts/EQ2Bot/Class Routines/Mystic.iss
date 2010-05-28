@@ -525,7 +525,7 @@ function Combat_Routine(int xAction)
 				{
 					call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 					if ${Return.Equal[OK]}
-					{
+					{      
 						if ${MeleeMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},2]}]}].IsReady}
 							call CastSpellRange ${SpellRange[${xAction},2]} 0 0 0 ${KillTarget}
 						else
@@ -540,29 +540,29 @@ function Combat_Routine(int xAction)
 			{
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			}
-
+			break
 		case AARabies
 			if ${AoEMode}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 			
 		case Mastery
+		;;;; Master Strike
+		if ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
+		{
 			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
 			;;;;;;;;;;
-			if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
+			if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
 			{
-				break
+				Target ${KillTarget}
+				Me.Ability[Master's Strike]:Use
 			}
-			
-			if ${Me.Ability[${SpellType[xAction]}].IsReady}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-			
+		}	
+		break
 		case ThermalShocker
 			if ${Me.Inventory[ExactName,"Brock's Thermal Shocker"](exists)} && ${Me.Inventory[ExactName,"Brock's Thermal Shocker"].IsReady} && ${OffenseMode}
 				Me.Inventory[ExactName,"Brock's Thermal Shocker"]:Use
+		break
 		default
 			return CombatComplete
 			break
