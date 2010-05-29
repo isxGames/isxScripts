@@ -23,14 +23,14 @@ variable obj_Move Move
 ;===================================================
 ;===         VARIABLES USED BY UI               ====
 ;===================================================
-variable string Version = "1.0"
+variable string Version = "1.1"
 variable bool doEcho = TRUE
 variable bool isPaused = TRUE
 variable bool isRunning = TRUE
 variable int StartAttack = 99
 variable string Tank
-variable string CurrentAction = Waiting
-variable string TargetsTarget = No Target
+variable string CurrentAction = "Loading Variables"
+variable string TargetsTarget = "No Target"
 
 variable int ParseDamage = 0
 variable int DPS = 0
@@ -51,7 +51,6 @@ variable int ThoughtSurge = 0
 variable int Chronoshift = 0
 variable int CRIT = 0
 variable int EPIC = 0
-
 
 ;variable string TargetImmunity
 ;variable bool doArcane
@@ -116,6 +115,8 @@ variable int NextUpdateDisplay = ${Script.RunningTime}
 ;; Cursed
 variable string Cursed = "None"
 variable bool RemoveCurseRequest = FALSE
+
+/*
 ;; Push Hate
 variable string MemoryShift = "Memory Shift IV"
 ;; Remove Hate
@@ -148,6 +149,7 @@ variable string RegenDot2 = "Psychic Schism IV"
 variable string Defense1 = "Psionic Barrier IV"
 variable string Defense2 = "Diamond Skin"
 variable string Defense3 = "Mass Amnesia"
+*/
 
 ;
 ;===================================================
@@ -172,6 +174,43 @@ function main()
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 	ui -reload -skin VGSkin "${Script.CurrentDirectory}/VG-PSI.xml"
 	
+	;; Setup and Declare Abilities
+	;; === PUSH HATE ===
+	SetHighestAbility "MemoryShift" "Memory Shift"
+	;; === REMOVE HATE ===
+	SetHighestAbility "MindWipe" "Mind Wipe"
+	;; === DOTS ===
+	SetHighestAbility "Dot1" "Temporal Shift"
+	SetHighestAbility "Dot2" "Compression Sphere"
+	SetHighestAbility "Dot3" "Psychic Schism"
+	;; === AE ===
+	SetHighestAbility "AE1" "Dementia"
+	SetHighestAbility "AE2" "Thought Surge"
+	SetHighestAbility "AE3" "Chronoshift"
+	;; === NUKES ===
+	SetHighestAbility "Nuke1" "Corporeal Smash"
+	SetHighestAbility "Nuke2" "Corporeal Hammer"
+	SetHighestAbility "Nuke3" "Psionic Blast"
+	SetHighestAbility "Nuke4" "Thought Pulse"
+	SetHighestAbility "Nuke5" "Mental Blast"
+	;; === CHAINS ===
+	SetHighestAbility "Chain1" "Mindfire"
+	SetHighestAbility "Chain2" "Telekinetic Blast"
+	SetHighestAbility "Chain3" "Temporal Fracture"
+	;; === COUNTERS ===
+	SetHighestAbility "Counter1" "Nullifying Field"
+	SetHighestAbility "Counter2" "Psychic Mutation"
+	;; === DEFENSE ===
+	SetHighestAbility "Defense1" "Psionic Barrier"
+	SetHighestAbility "Defense2" "Diamond Skin"
+	SetHighestAbility "Defense3" "Mass Amnesia"
+	;; === REGEN DOTS ===
+	;;
+	;; MANUALLY MODIFY REGEN DOT TO WHAT YOU WANT TO USE!
+	;;
+	SetHighestAbility "RegenDot1" "Compression Sphere VIII"
+	SetHighestAbility "RegenDot2" "Psychic Schism IV"
+	
 	;; Turn on our event monitors
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
 	Event[VG_OnIncomingCombatText]:AttachAtom[CombatText]
@@ -191,34 +230,16 @@ function main()
 			FlushQueued
 		}
 		
-		;; Loop while casting or ability not ready
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			if ${Me.IsCasting}
-			{
-				;; Update our current action
-				CurrentAction:Set[Casting ${Me.Casting}]
-			}
-			
-			;; Check to see if we want to counter a spell
-			call HandleCounters
-
-			;; Set our timer
-			LastDowntimeCall:Set[${Script.RunningTime}]
-		}
-		
-		;; Update our current action
-		CurrentAction:Set[Waiting]
-
-		waitframe
+		;; Take down that pesky POTA barrier
+		call OpenPotaBarrier
 		
 		if !${isPaused} 
 		{
 			;; Counters, Crits, and anything else
 			call CriticalRoutines
 
-			;; Execute any main routines
-			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${LastDowntimeCall}]}/1000]}>1.5 || ${doFullThrottle}
+			;; Execute main routines
+			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${LastDowntimeCall}]}/1000]}>1 || ${doFullThrottle}
 			{
 				call MainRoutines
 				LastDowntimeCall:Set[${Script.RunningTime}]
@@ -226,7 +247,7 @@ function main()
 		}
 		else
 		{
-			call Check4Immunites
+			wait 3
 		}
 	}
 }
@@ -236,53 +257,142 @@ function main()
 ;===================================================
 function MainRoutines()
 {
-	call AttackTarget
-	call ClearTargets
-	call ChangeForm
-	call Check4Immunites
+	;; Update our current action
+	if ${Me.IsCasting}
+	{
+		CurrentAction:Set[Casting ${Me.Casting}]
+	}
+			
+	;; Check to see if we want to counter a spell
+	call HandleCounters
+
+	;; Auto Accept Group Invites
 	call GroupInviteAccept
+	
+	;; Clear our Target
+	call ClearTargets
+	
+	;; Follow our Tank
 	call Follow
 
-	;; Take down that pesky POTA barrier
-	if ${Pawn[Kheolim's Barrier].Distance}<3
-	{
-		Pawn[Kheolim's Barrier]:DoubleClick
-	}
-	
 	;; Sweet, repair our equipment whether we need to or not
-	if ${Pawn[Essence of Replenishment].Distance}<5
+	;; Essence of Replenishment
+	if ${Pawn[Essence of Replenishment](exists)}
 	{
 		if ${doRepair}
 		{
-			Pawn[Essence of Replenishment]:Target
-			wait 10 ${Me.Target.Name.Find[Replenishment]}
-			if ${Me.Target.Name.Find[Replenishment]}
+			if ${Pawn[Essence of Replenishment].Distance}<5
+			{
+				if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+				{
+					Pawn[Essence of Replenishment]:Target
+					wait 10 ${Me.Target.Name.Find[Replenishment]}
+					if ${Me.Target.Name.Find[Replenishment]}
+					{
+						Merchant:Begin[Repair]
+						wait 3
+						Merchant:RepairAll
+						Merchant:End
+						vgecho Repaired equipment
+						VGExecute "/cleartargets"
+					}
+				}
+			}
+		}
+		TimedCommand 150 Script[VG-BM].Variable[doRepair]:Set[TRUE]
+		doRepair:Set[FALSE]
+	}
+
+	;; Merchant Djinn
+	if ${Pawn[Merchant Djinn](exists)}
+	{
+		if ${doRepair}
+		{
+			if ${Pawn[Merchant Djinn].Distance}<5
+			{
+				if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+				{
+					Pawn[Merchant Djinn]:Target
+					wait 10 ${Me.Target.Name.Find[Merchant Djinn]}
+					if ${Me.Target.Name.Find[Merchant Djinn]}
+					{
+						Merchant:Begin[Repair]
+						wait 3
+						Merchant:RepairAll
+						Merchant:End
+						vgecho Repaired equipment
+						VGExecute "/cleartargets"
+					}
+				}
+			}
+		}
+		TimedCommand 150 Script[VG-BM].Variable[doRepair]:Set[TRUE]
+		doRepair:Set[FALSE]
+	}
+
+	;; Reparitron 5703
+	if ${Pawn[Reparitron 5703](exists)}
+	{
+		if ${doRepair}
+		{
+			if ${Pawn[Reparitron 5703].Distance}<5
+			{
+				if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+				{
+					Pawn[Reparitron 5703]:Target
+					wait 10 ${Me.Target.Name.Find[Reparitron 5703]}
+					if ${Me.Target.Name.Find[Reparitron 5703]}
+					{
+						Merchant:Begin[Repair]
+						wait 3
+						Merchant:RepairAll
+						Merchant:End
+						vgecho Repaired equipment
+						VGExecute "/cleartargets"
+					}
+				}
+			}
+		}
+		TimedCommand 150 Script[VG-BM].Variable[doRepair]:Set[TRUE]
+		doRepair:Set[FALSE]
+	}
+	
+	;; Merchant
+	if ${Me.Target.Type.Equal[Merchant]}
+	{
+		if ${doRepair}
+		{
+			if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
 			{
 				Merchant:Begin[Repair]
 				wait 3
 				Merchant:RepairAll
 				Merchant:End
-				TimedCommand 600 Script[VG-PSI].Variable[doRepair]:Set[TRUE]
 				vgecho Repaired equipment
 				VGExecute "/cleartargets"
-				doRepair:Set[FALSE]
 			}
 		}
+		TimedCommand 150 Script[VG-BM].Variable[doRepair]:Set[TRUE]
+		doRepair:Set[FALSE]
 	}
 
-	;; Merchant targeted, auto repair
-	if ${Me.Target.Type.Equal[Merchant]}
+	;; Change forms
+	call ChangeForm
+	
+	;; slight pause
+	waitframe
+	
+	;; Return if we are still casting or abilities are not ready
+	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 	{
-		if ${doRepair}
-		{
-			Merchant:Begin[Repair]
-			wait 3
-			Merchant:RepairAll
-			Merchant:End
-			TimedCommand 600 Script[VG-PSI].Variable[doRepair]:Set[TRUE]
-			doRepair:Set[FALSE]
-		}
+		return
 	}
+
+	;; Update our current action
+	CurrentAction:Set[Waiting]
+	
+	;; Attack our target!
+	call AttackTarget
 }
 
 ;===================================================
@@ -306,7 +416,9 @@ function RemoveCurse()
 {
 	;; event handler controls this
 	if !${RemoveCurseRequest}
+	{
 		return
+	}
 	
 	;; Make sure we have the ability
 	if !${Me.Ability[Spellbind Void](exists)} || !${Me.Ability[Spellbind Void].IsReady}
@@ -317,18 +429,11 @@ function RemoveCurse()
 	;; Check if within distance
 	if ${Pawn[${Cursed}].Distance}<10
 	{
-		call UseAbility "Cursed Leech"
+		call UseAbility "Spellbind Void"
 		if ${Return}
 		{
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
 			RemoveCurseRequest:Set[FALSE]
-			if ${doEcho}
-			{
-				EchoIt "RemoveCurse:  SUCCESSFUL removed Curse: ${Cursed}"
-			}
+			EchoIt "RemoveCurse:  SUCCESSFUL removed Curse: ${Cursed}"
 		}
 	}
 }
@@ -345,6 +450,10 @@ function TargetOnMe()
 			if ${Me.Target.Distance}<10
 			{
 				;; Mass wipe aggro onto self
+				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+				{
+					waitframe
+				}
 				call UseAbility "${Defense3}"
 				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 				{
@@ -354,6 +463,10 @@ function TargetOnMe()
 				if ${Me.ToT.Name.Find[${Me.FName}]}
 				{
 					;; get our barrier up!
+					while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+					{
+						waitframe
+					}
 					if !${Me.Effect[${Defense1}](exists)}
 					{
 						call UseAbility "${Defense1}"
@@ -377,15 +490,6 @@ function TargetOnMe()
 		}
 		return
 	}
-	if ${Me.ToT.Name.Find[${Me.FName}]}
-	{
-		if ${Me.Target.Distance}<10
-		{
-			call UseAbility "Mindspy: Resist the Elements"
-			if ${Return}
-				return
-		}
-	}
 }
 		
 		
@@ -395,41 +499,32 @@ function TargetOnMe()
 ;===================================================
 function ScanAreaToBuff()
 {
-	;; Make sure this is up
-	;if !${Me.Effect[True Sight](exists)}
-	;{
-		Pawn[Me]:Target
-		call UseAbility "True Sight"
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-	;}
+	;; Recast this
+	Pawn[Me]:Target
+	call UseAbility "True Sight"
+	wait 5
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
+		waitframe
+	}
 	
-	;; Definitely don't forget this one too
-	;if !${Me.Effect[Union of Thought VI](exists)}
-	;{
-		Pawn[Me]:Target
-		call UseAbility "Union of Thought VI"
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-	;}
-	
-	;; Check and buff self
-	;if !${Me.Effect[Mass Mental Focus](exists)}
-	;{
-		Pawn[Me]:Target
-		call UseAbility "Mass Mental Focus"
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-	;}
+	;; Recast this
+	Pawn[Me]:Target
+	call UseAbility "Union of Thought VI"
+	wait 5
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
+		waitframe
+	}
+
+	;; Recast this
+	Pawn[Me]:Target
+	call UseAbility "Mass Mental Focus"
+	wait 5
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
+		waitframe
+	}
 
 	;; Check other players 10m and buff them if needed
 	for (i:Set[1] ; ${i}<=${VG.PawnCount} ; i:Inc)
@@ -438,7 +533,7 @@ function ScanAreaToBuff()
 		{
 			if ${Pawn[${i}].Distance}<20 && ${Pawn[${i}].HaveLineOfSightTo} 
 			{
-				;; We aren't gonna buff low level toons
+				;; For now, we aren't gonna buff low level toons
 				if ${Pawn[${i}].Level}<35
 				{
 					continue
@@ -512,7 +607,7 @@ function Follow()
 		{
 			if ${Pawn[name,${FollowName}](exists)}
 			{
-				if ${Pawn[name,${FollowName}].Distance}>7 && ${Pawn[name,${FollowName}].Distance}<40
+				if ${Pawn[name,${FollowName}].Distance}>7 && ${Pawn[name,${FollowName}].Distance}<100
 				{
 					Face:Pawn[${Pawn[id,${FollowID}].ID},FALSE]
 					Move:Pawn[${Pawn[id,${FollowID}].ID},5]
@@ -530,7 +625,7 @@ function Follow()
 			{
 				Move:Pawn[${Me.Target.ID},5]
 			}
-			if ${Me.Target.Distance.Int}<=1
+			elseif ${Me.Target.Distance.Int}<=1
 			{
 				VGExecute /walk
 				while ${Me.Target(exists)} && ${Me.Target.Distance.Int}<=1
@@ -540,7 +635,12 @@ function Follow()
 				}
 				VG:ExecBinding[movebackward,release]
 				VGExecute /run
-			}			
+			}
+			else
+			{
+				;; call this once or as many times you want
+				Move:Stop
+			}
 		}
 		;elseif !${Me.InCombat} && ${Pawn[id,${FollowID}].Distance}>10
 		;{
@@ -554,8 +654,6 @@ function Follow()
 		Move:Stop
 	}
 }
-
-
 
 ;===================================================
 ;===          GROUP INVITE ACCEPT               ====
@@ -577,12 +675,6 @@ function GroupInviteAccept()
 function OpenDoor()
 {
 	VG:ExecBinding[UseDoorEtc]
-	
-	;; save a few clock cycles by putting here
-	if ${Pawn[Kheolim's Barrier].Distance}<2
-	{
-		Pawn[Kheolim's Barrier]:DoubleClick
-	}
 }
 
 ;===================================================
@@ -591,7 +683,7 @@ function OpenDoor()
 function OpenPotaBarrier()
 {
 	;;  - drop that Pota barrier!
-	if ${Pawn[Kheolim's Barrier].Distance}<2
+	if ${Pawn[Kheolim's Barrier].Distance}<3
 	{
 		Pawn[Kheolim's Barrier]:DoubleClick
 	}
@@ -673,8 +765,6 @@ function Mezmerize(int64 TargetID)
 	EchoIt "Mezmerize - ${Me.Target.Name}"
 	call UseAbility "Time Trick III"
 }
-
-
 
 ;===================================================
 ;===       CHANGE TO CORRECT FORM               ====
@@ -867,6 +957,16 @@ function ClearTargets()
 		{
 			TargetsTarget:Set[${Me.ToT.Name}]
 		}
+
+		;; loot everything
+		if ${doLootAll}
+		{
+			if ${Me.TargetHealth}<5
+			{
+				call LootAll
+			}
+		}
+
 		
 		;; execute only if target is a corpse
 		if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead}
@@ -1555,6 +1655,66 @@ atom Bump(string aObstacleActorName, float fX_Offset, float fY_Offset, float fZ_
 }
 
 ;===================================================
+;===       ATOM - SET HIGHEST ABILITIES         ====
+;===================================================
+atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
+{
+	declare L int local 9
+	declare ABILITY string local ${AbilityName}
+	declare AbilityLevels[9] string local
+
+	AbilityLevels[1]:Set[I]
+	AbilityLevels[2]:Set[II]
+	AbilityLevels[3]:Set[III]
+	AbilityLevels[4]:Set[IV]
+	AbilityLevels[5]:Set[V]
+	AbilityLevels[6]:Set[VI]
+	AbilityLevels[7]:Set[VII]
+	AbilityLevels[8]:Set[VIII]
+	AbilityLevels[9]:Set[IX]
+
+	;-------------------------------------------
+	; Return if Ability already exists - based upon current level
+	;-------------------------------------------
+	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${ABILITY}].LevelGranted}<=${Me.Level}
+	{
+		EchoIt " --> ${AbilityVariable}:  Level=${Me.Ability[${ABILITY}].LevelGranted} - ${ABILITY}"
+		declare	${AbilityVariable}	string	script "${ABILITY}"
+		return
+	}
+
+	;-------------------------------------------
+	; Find highest Ability level - based upon current level
+	;-------------------------------------------
+	do
+	{
+		if ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"](exists)} && ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"].LevelGranted}<=${Me.Level}
+		{
+			ABILITY:Set["${AbilityName} ${AbilityLevels[${L}]}"]
+			break
+		}
+	}
+	while (${L:Dec}>0)
+
+	;-------------------------------------------
+	; If Ability exist then return
+	;-------------------------------------------
+	if ${Me.Ability["${ABILITY}"](exists)} && ${Me.Ability["${ABILITY}"].LevelGranted}<=${Me.Level}
+	{
+		EchoIt " --> ${AbilityVariable}:  Level=${Me.Ability[${ABILITY}].LevelGranted} - ${ABILITY}"
+		declare	${AbilityVariable}	string	script "${ABILITY}"
+		return
+	}
+
+	;-------------------------------------------
+	; Otherwise, new Ability is named "None"
+	;-------------------------------------------
+	EchoIt " --> ${AbilityVariable}:  None"
+	declare	${AbilityVariable}	string	script "None"
+	return
+}
+
+;===================================================
 ;===     ATOM - Load Variables from XML         ====
 ;===================================================
 atom(script) LoadXMLSettings()
@@ -1651,6 +1811,44 @@ atom(script) SaveXMLSettings()
 	LavishSettings[VG-PSI]:Export[${savePath}/MySettings.xml]
 }
 
+variable bool doCounters = TRUE
+
+;===================================================
+;===      ATOM - CATCH THEM COUNTERS!           ====
+;===================================================
+atom(script) Counters()
+{
+	if ${doCounters}
+	{
+		if ${Me.Ability[${Counter1}].IsReady}
+		{
+			if ${Me.Ability[${Counter1}].TimeRemaining}==0 || ${Me.Ability[${Counter1}].TriggeredCountdown}>0
+			{
+				VGExecute "/reactioncounter 1"
+				EchoIt "${Counter1} COUNTERED ${Me.TargetCasting}"
+
+				;; Set delay of 1 second
+				TimedCommand 10 Script[VG-PSI].Variable[doCounters]:Set[TRUE]
+				doCounters:Set[FALSE]
+				return
+			}
+		}
+		if ${Me.Ability[${Counter2}].IsReady}
+		{
+			if ${Me.Ability[${Counter2}].TimeRemaining}==0 || ${Me.Ability[${Counter2}].TriggeredCountdown}>0
+			{
+				VGExecute "/reactioncounter 2"
+				EchoIt "${Counter2} COUNTERED ${Me.TargetCasting}"
+
+				;; Set delay of 1 second
+				TimedCommand 10 Script[VG-PSI].Variable[doCounters]:Set[TRUE]
+				doCounters:Set[FALSE]
+				return
+			}
+		}
+	}
+}
+
 ;===================================================
 ;===      ATOM - UPDATE OUR GUI DISPLAY         ====
 ;===================================================
@@ -1665,6 +1863,9 @@ atom(script) UpdateDisplay()
 
 	if ${Me.InCombat} && !${Me.Target.IsDead}
 	{
+		;; Catch them Counters
+		Counters
+
 		;; update Timer
 		EndAttackTime:Set[${Script.RunningTime}]
 	}
@@ -1753,6 +1954,9 @@ atom(script) UpdateDisplay()
 	UIElement[Follow Name@Misc@Tabs@VG-PSI]:SetText[Follow:  ${FollowName}]
 	UIElement[PushHateTo Name@Misc@Tabs@VG-PSI]:SetText[PushHateTo:  ${PushHateTo}]
 	UIElement[RemoveHateFrom Name@Misc@Tabs@VG-PSI]:SetText[RemoveHateFrom:  ${RemoveHateFrom}]
+	
+	;; Update our immunity Display
+	call Check4Immunites
 }
 
 ;===================================================
