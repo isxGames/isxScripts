@@ -209,6 +209,30 @@
 								UIElement[doRemoveHate@Misc@Tabs@VG-PSI]:ToggleChecked
 							</OnLeftClick>
 						</checkbox>
+						<checkbox Name="DoSprint" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>30%</X>
+							<Y>32%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Sprint</Text>
+							<OnLoad>
+								if ${Me.IsSprinting}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${Me.IsSprinting}
+								{
+									Me:Sprint
+								}
+								else
+								{
+									Me:Sprint[100]
+								}
+							</OnLeftClick>
+						</checkbox>
 
 						<checkbox Name="doFaceSlow" Template="VG.GreenCheckbox">
 							<visible>1</visible>

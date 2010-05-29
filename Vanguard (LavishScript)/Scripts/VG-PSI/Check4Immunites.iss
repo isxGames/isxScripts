@@ -133,7 +133,8 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 
 	;; Update out display
 	TargetImmunity:Set[${temp}]
-	
+
+	;; Check our passed ability
 	if !${ABILITY.Equal[SKIP]}
 	{
 		if ${Me.Ability[${ABILITY}].School.Find[Arcane]} || ${Me.Ability[${ABILITY}].Description.Find[Arcane]}
