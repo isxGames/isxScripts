@@ -321,64 +321,31 @@ function:bool CheckGroupDamage()
 	}
 }
 
-function:int FindLowestHealth()
+
+function:bool SafeToCast()
 {
-	variable int EmergencyInjuries
-	variable int EmergencyHurt
-	variable int Injuries
-	variable int HURT
-	variable int L
-	variable int ELO
-	variable int HLO
+	variable int L = 0
+	variable int SafeZone = 70
 
-	ELO:Set[100]
-	HLO:Set[100]
-	HURT:Set[0]
-	Injuries:Set[0]
-	L:Set[1]
-
-
+	;; Check group if in safezone
 	if ${Me.IsGrouped}
 	{
-		if ${Group.Count} > 6
+		for ( L:Set[1] ;  ${Group[${L}].ID(exists)} ; L:Inc )
 		{
-		;-------------------------------------------
-		; Let's figure out who and how many has the lowest health
-		;-------------------------------------------
-		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
-			{
-			call checkgroupstats ${L}
-			if ${Return}			
-				{
-				if ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
-					{
-					if ${Group[${L}].Health} < ${ELO}
-						{
-						EmergencyHurt:Set[${L}]
-						ELO:Set[${Group[${L}].Health}]
-						}
-					}
-				}
-			}
-		}
-		if ${Group.Count} < 7
-		{
-		;-------------------------------------------
-		; Let's figure out who and how many has the lowest health
-		;-------------------------------------------
-		for ( L:Set[1] ; ${Group[${L}].ID(exists)} ; L:Inc )
-			{
 			if ${Group[${L}].Health}>0 && ${Group[${L}].Distance}<25
+			{
+				if ${Group[${L}].Health} < ${SafeZone}
 				{
-				if ${Group[${L}].Health} < ${ELO}
-					{
-					EmergencyHurt:Set[${L}]
-					ELO:Set[${Group[${L}].Health}]
-					}
+					return FALSE
 				}
 			}
 		}
-		Pawn[ID,${Group[${L}].ID}]:Target
-			
 	}
+	
+	;; Check self in safe zone
+	if ${Me.HealthPct} < ${SafeZone}
+	{
+		return FALSE
+	}
+	return TRUE
 }
