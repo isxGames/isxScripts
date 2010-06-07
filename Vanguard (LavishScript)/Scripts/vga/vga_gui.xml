@@ -3133,7 +3133,7 @@
                       <Y>450</Y>
                       <Width>15</Width>
                       <Height>20</Height>
-                      <Text>Counter Spells</Text>
+                      <Text>Counter Only</Text>
                       <OnLoad>
                         if ${Script[vga].VariableScope.doCounter}
                         {

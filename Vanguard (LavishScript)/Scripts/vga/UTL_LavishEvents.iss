@@ -293,8 +293,7 @@ function TextSplitter(string aText)
 	}
 }
 
-
-
+variable string LastTargetAbility = ""
 atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTimer)
 {
 	;echo "VG_onCombatReaction(${aType},${iPawnID} (${Pawn[id,${iPawnID}].Name}),${iAbilityID} (${Me.Ability[id,${iAbilityID}].Name}),${fTimer})"
@@ -305,6 +304,44 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 		CounterReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
 		CounterReactionPawnID:Set[${iPawnID}]
 		CounterReactionAbilities:Insert[${iAbilityID}]
+		
+		
+		;; Addition by Zandros... Ama has a great idea here but iAbilityID is not reporting the correct ID
+		variable bool doCounterIt = TRUE
+		if !${Me.TargetCasting.Equal[None]}
+		{
+			LastTargetAbility:Set[${Me.TargetCasting}]
+			UIElement[CounterEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SetText[${LastTargetAbility}]
+			if ${doCounter}
+			{
+				doCounterIt:Set[FALSE]
+
+				variable iterator Iterator
+				Counter:GetSettingIterator[Iterator]
+				while ( ${Iterator.Key(exists)} )
+				{
+					if ${Me.TargetCasting.Find[${Iterator.Key}]}
+					{
+						doCounterIt:Set[TRUE]
+						break
+					}
+					Iterator:Next
+				}
+			}
+		}
+		if ${doCounterIt}
+		{
+			if ${Me.Ability[${CounterSpell1}].IsReady} && ${Me.Ability[${CounterSpell1}].TimeRemaining}==0 && ${Me.Ability[${CounterSpell1}].TriggeredCountdown}>0
+			{
+				VGExecute "/reactionautocounter"
+				return
+			}
+			if ${Me.Ability[${CounterSpell2}].IsReady} && ${Me.Ability[${CounterSpell2}].TimeRemaining}==0 && ${Me.Ability[${CounterSpell2}].TriggeredCountdown}>0
+			{
+				VGExecute "/reactionautocounter"
+				return
+			}
+		}
 		return
 	}
 	elseif ${aType.Equal[Chain]}
