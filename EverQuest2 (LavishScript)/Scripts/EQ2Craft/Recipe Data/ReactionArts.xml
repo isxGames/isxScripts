@@ -153,7 +153,7 @@
 		<Setting Name="Extensive Material Catch">2</Setting>
 		<Setting Name="Clumsy Fingers">2</Setting>
 		<Setting Name="Severe Clumsy Fingers">2</Setting>
-		<Setting Name="Small Material Catch">2</Setting>
+		<Setting Name="Small Material Snag">2</Setting>
 		<Setting Name="Minor Frayed Material">3</Setting>
 		<Setting Name="Frayed Material">3</Setting>
 		<Setting Name="Substantial Frayed Material">3</Setting>
