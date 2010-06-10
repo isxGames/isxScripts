@@ -1309,7 +1309,7 @@ function BuyItems()
 
 								call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
 								CurrentQuantity:Set[${Return}]
-
+								
 								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
 
 
@@ -1320,7 +1320,7 @@ function BuyItems()
 								do
 								{
 									call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
-											
+									
 									if ${Return} != ${CurrentQuantity}
 										Break
 
@@ -1671,7 +1671,6 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	if ${namesearch.Length}>0
 	{
 		broker ${namesearch} ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
-		echo broker "${namesearch}" ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
 
 		if ${HighLatency}
 			wait 30
@@ -1680,7 +1679,6 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 	else
 	{
 		broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
-		echo broker ${startsearch} ${endsearch} ${tiersearch} ${costsearch} ${typesearch} Sort ByPriceAsc
 
 		if ${HighLatency}
 			wait 30
@@ -3255,7 +3253,9 @@ function:int numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 	
 	Declare xvar int local 1
 	Declare numitems int local 0
-	
+
+	Me:CreateCustomInventoryArray[nonbankonly]
+
 	do
 	{
 		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && ${Me.CustomInventory[${xvar}].InInventory}
