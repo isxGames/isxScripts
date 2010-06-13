@@ -1,5 +1,9 @@
-;***Version 3.00***
+;***Version 3.01***
 /**
+
+Version 3.01, 06/13/2010 by Valerian -- Bugfix only.
+*  Fixed MovementKeys.iss support to allow for older MovementKeys include file.
+   Will no longer error out with _AUTORUN_ press error.
 
 Version 3.00, 03/01/2010 by Valerian
 Added MovementKeys.iss support
@@ -25,15 +29,18 @@ Initial release. If any changes are made please update the version, and provide 
 #endif /* _DEBUG_ */
 
 
+#define AUTORUN "num lock" ; Set up default.
+
+;* This could be done easier with a simple #ifdef _AUTORUN_ but the method
+;  used is optimal for possible future usage of other movement keys.
 #includeoptional "${LavishScript.HomeDirectory}/Scripts/EQ2Common/MovementKeys.iss"
-#ifndef _MOVE_KEYS_
-	#define AUTORUN "num lock"
-#else
+#if ${Int[_MOVE_KEYS_]} >= 2 ; MovementKeys did not have an autorun define prior to version 2
+	#undef AUTORUN
 	#define AUTORUN _AUTORUN_
-#endif /* _MOVE_KEYS_ */
+#endif /* _MOVE_KEYS_ >= 2 */
 
 
-variable dijkstrapathfinder PathFinder	    
+variable dijkstrapathfinder PathFinder
 variable lnavregionref CurrentRegion
 variable lnavregionref ZoneRegion
 variable lnavregionref DestZoneRegion
