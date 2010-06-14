@@ -34,7 +34,10 @@ Initial release. If any changes are made please update the version, and provide 
 ;* This could be done easier with a simple #ifdef _AUTORUN_ but the method
 ;  used is optimal for possible future usage of other movement keys.
 #includeoptional "${LavishScript.HomeDirectory}/Scripts/EQ2Common/MovementKeys.iss"
-#if ${Int[_MOVE_KEYS_]} >= 2 ; MovementKeys did not have an autorun define prior to version 2
+
+; MovementKeys did not have an autorun define prior to version 2
+; Lax needs to make comments in preprocessor lines work as intended.
+#if ${Int[_MOVE_KEYS_]} >= 2
 	#undef AUTORUN
 	#define AUTORUN _AUTORUN_
 #endif /* _MOVE_KEYS_ >= 2 */
