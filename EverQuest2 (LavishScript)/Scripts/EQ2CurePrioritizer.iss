@@ -44,7 +44,7 @@ function main()
 		if ${gCureRequest}
 			ExecuteQueued gCure
 		ExecuteQueued
-		wait 1
+		wait 2
 	}
 	while 1
 }
@@ -224,6 +224,7 @@ function inqCure()
 
 function stCure(int ActorID)
 {
+	variable(local) int count = 0
 	echo Function stCure Started
 
 	if ${Me.InRaid} && ${Me.ID}!=${ActorID}
@@ -265,6 +266,44 @@ function stCure(int ActorID)
 		return
 	}
 
+	if ${Me.ID}==${ActorID} && (${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Noxious}>0 || ${Me.Arcane}>0)
+		count:Inc
+		
+	if !${count}
+	{
+		call inmygroup ${ActorID}
+	
+		if ${Return}
+		{
+			if ${Me.Group[${Return}].Trauma}>0 || ${Me.Group[${Return}].Elemental}>0 || ${Me.Group[${Return}].Noxious}>0 || ${Me.Group[${Return}].Arcane}>0
+				count:Inc	
+		}
+	}
+	
+	if !${count}
+	{
+		call inmyraid ${ActorID}
+
+		if ${Return}
+		{
+			if ${Me.Raid[${Return}].Trauma}>0 || ${Me.Raid[${Return}].Elemental}>0 || ${Me.Raid[${Return}].Noxious}>0 || ${Me.Raid[${Return}].Arcane}>0
+				count:Inc	
+		}		
+		
+	}
+	
+	if !${count}
+	{
+		echo stCure - Actor not Found in Group or Raid
+		return
+	}
+	
+	if ${Actor[${ActorID}].Distance}>25
+	{
+		echo stCure - Actor out of range, aborting
+		return
+	}
+	
 	if ${Script[Eq2bot](exists)}
 	{
 		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
@@ -540,6 +579,36 @@ function InitCures()
 			echo Not a Healer class, no group cures
 			break
 	}
+}
+
+function inmygroup(uint ActorID)
+{
+	variable(local) int gmember = 1
+	
+	do
+	{
+		if ${Me.Group[${gmember}](exists)} && ${Me.Group[${gmember}].ID}==${ActorID}
+			return ${gmember}
+	}
+	while ${gmember:Inc}<6
+	
+	return 0
+
+}
+
+function inmyraid(uint ActorID)
+{
+	variable(local) int rmember = 1
+	
+	do
+	{
+		if ${Me.Raid[${rmember}](exists)} && ${Me.Raid[${rmember}].ID}==${ActorID}
+			return ${rmember}
+	}
+	while ${rmember:Inc}<24
+	
+	return 0
+
 }
 
 function atexit()
