@@ -1254,7 +1254,7 @@ function Combat_Routine(int xAction)
 	}
 
 	call CheckHeals
-	if ${Return}
+	if ${Return.Length}
 		call RefreshPower
 
 	;; Add back later...(TODO)
@@ -2033,7 +2033,7 @@ function CastSomething()
 						call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 0 1
 						LastSpellCast:Set[387]
 						call CheckCastBeam
-						if ${Return}
+						if ${Return.Length}
 							return
 					}
 				}
@@ -2043,7 +2043,7 @@ function CastSomething()
 					call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
 					LastSpellCast:Set[385]
 					call CheckCastBeam
-					if ${Return}
+					if ${Return.Length}
 						return
 				}
 				;; 'Nullifying Staff' and the mob is within range
@@ -2738,7 +2738,7 @@ function Mezmerise_Targets()
 			wait 10 ${Target.ID}==${MezzTargets.CurrentKey}
 
 			call CheckForMez
-			if ${Return}
+			if ${Return.Length}
 				continue
 
 			if ${Me.Ability[${SpellType[353]}].IsReady} /* AoE mez first */
