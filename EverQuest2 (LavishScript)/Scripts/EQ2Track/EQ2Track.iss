@@ -9,6 +9,7 @@
 ; ** Additional credits to Karye & Blazer: Some of the UI & Elements & Coding
 ; used were taken from previous version of EQ2BotCommand **
 
+
 /* -------------------------------------------------------------------------
    01/12/10 v3.0 
       - Updated to allow saving and loading of filter lists.
