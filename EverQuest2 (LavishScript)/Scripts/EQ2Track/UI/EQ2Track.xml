@@ -10,6 +10,16 @@
 	<BorderColor>00000000</BorderColor>
 	<StorePosition>1</StorePosition>
 	<Title>${Me.Name} Track</Title>
+	<TitleBar template='window.Titlebar'>
+	  <Children>
+		<Text Name='Title' Template='window.Titlebar.Title' />
+		<Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		<Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		<commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>endscript EQ2Track.iss</Command>
+		</commandbutton>	
+	  </Children>
+	</TitleBar>
 	<OnLoad>
 	</OnLoad>
 	<OnUnload>
@@ -18,7 +28,6 @@
 	  This:SetFocus
 	</OnLeftClick>
 	<Children>
-
 	  <checkbox Name='TrackAggro'>
 		<X>20</X>
 		<Y>50</Y>
