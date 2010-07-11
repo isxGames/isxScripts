@@ -105,7 +105,9 @@ function CriticalRoutines()
 	{
 		wait 1
 		call Rescues
+		wait 1
 		call HandleChains
+		wait 1
 		call HandleCounters
 	}
 }
@@ -180,9 +182,9 @@ function MainRoutines()
 	call Consumables
 	
 	; === Use our heal if we got it! ===
-	if ${Me.HealthPct}<50
+	if ${Me.HealthPct}<70
 	{
-		call UseAbility "Cull"
+		call UseAbility "${Cull}"
 		if ${Return}
 			return
 	}
@@ -195,7 +197,7 @@ function MainRoutines()
 	{
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 15
 	}
-	if ${Me.Target.Distance}>4
+	if ${doRanged} && ${Me.Target.Distance}>4
 	{
 		call UseAbility "Ranged Attack"
 		if ${Return}
@@ -304,27 +306,32 @@ function MainRoutines()
 			if ${Return}
 				return
 		}
-		if ${doBacklash}
+		if ${doBacklash} && ${Me.EndurancePct}>=25
 		{
+			;; 15 Endurance
 			call UseAbility "${Backlash}"
 			if ${Return}
 				return
 		}
-		if ${doVexingStrike} && ${Me.EndurancePct}>65
+		if ${doMutilate} && ${Me.EndurancePct}>=50
 		{
-			call UseAbility "${VexingStrike}"
-			if ${Return}
-				return
-		}
-		if ${doMutilate} && ${Me.EndurancePct}>60
-		{
+			;; 40 Endurance
 			call UseAbility "${Mutilate}"
 			if ${Return}
 				return
 		}
-		if ${doMalice} && ${Me.EndurancePct}>60
+		if ${doMalice} && ${Me.EndurancePct}>=44
 		{
+			;; 24 Endurance
 			call UseAbility "${Malice}"
+			if ${Return}
+				return
+		}
+		;; This is your crit maker here!!
+		if ${doVexingStrike} && ${Me.EndurancePct}>=50
+		{
+			;; 20 Endurance
+			call UseAbility "${VexingStrike}"
 			if ${Return}
 				return
 		}
@@ -422,7 +429,7 @@ function CycleTargets()
 ;===================================================
 function DPS()
 {
-	EchoIt "=== D P S ===
+	EchoIt "=== D P S ==="
 	CurrentAction:Set[DPS Called]
 
 	call CastBuff "${HatredIncarnate}"
@@ -507,12 +514,17 @@ function DPS()
 ;===================================================
 function FaceTarget()
 {
-	if !${doFace} || !${Me.Target(exists)}
+	if !${Me.Target(exists)}
 	{
 		return
 	}
+
+	if ${doFace}
+	{
+		call facemob "${Me.Target.ID}"
+	}
 	
-	call facemob "${Me.Target.ID}"
+	face ${Me.Target.X} ${Me.Target.Y}
 	
 	;Face:Pawn[${Me.DTarget.ID},FALSE]
 	return
@@ -684,13 +696,13 @@ function HandleChains()
 	}
 	
 	; Return if target is Furious or Furious Rage
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS} 
-	{
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.Effect[Furious Rage](exists)} || ${FURIOUS} 
+	{ 
 		return
 	}
 	
 	;; 1st - we want to increase hatred
-	if ${doIncite}
+	if ${doIncite} && ${Me.IsGrouped}
 	{
 		call ExecuteChain "${Incite}" 2
 		call ExecuteChain "${Inflame}" 2
@@ -698,7 +710,7 @@ function HandleChains()
 	}
 	
 	;; 2nd - make sure we restore some energy
-	if ${doVileStrike}
+	if ${doVileStrike} && !${Me.Effect[${Anguish}](exists)} 
 	{
 		if ${Me.EnergyPct}<80
 		{
@@ -708,22 +720,45 @@ function HandleChains()
 	}
 	
 	;; 3rd - increase our block, damage, and AC
-	if ${doShieldOfFear}
+	if ${doShieldOfFear} && !${Me.Effect[${DarkBastion}](exists)} 
 	{
 		call ExecuteChain "${ShieldOfFear}" 3
 		call ExecuteChain "${DarkBastion}" 3
 	}
 	
 	;; 4th - decrease target's damage and increases your damage
-	if ${doHexOfIllomen}
+	if ${doHexOfIllOmen} && !${Me.Effect[${HexOfImpendingDoom}](exists)}
 	{
-		call ExecuteChain "${HexOfIllOmen}" 1
-		call ExecuteChain "${HexOfImpendingDoom}" 1
+		if ${Me.Ability[${HexOfIllOmen}].IsReady}
+		{
+			CurrentAction:Set[Chain - ${HexOfIllOmen}]
+			EchoIt "Chain - ${HexOfIllOmen}"
+			Me.Ability[${HexOfIllOmen}]:Use
+			VGExecute "/reactionchain 1"
+			wait 4
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+		}
+		if ${Me.Ability[${HexOfImpendingDoom}].IsReady}
+		{
+			CurrentAction:Set[Chain - ${HexOfImpendingDoom}]
+			EchoIt "Chain - ${HexOfImpendingDoom}"
+			Me.Ability[${HexOfImpendingDoom}]:Use
+			VGExecute "/reactionchain 1"
+			wait 4
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+		}
 	}
 
 	;; 5th - +400% weapon damage
 	if ${doWrack}
 	{
+		call ExecuteChain "${SoulWrack}" 5
 		call ExecuteChain "${Wrack}" 5
 		call ExecuteChain "${Ruin}" 5
 	}
@@ -891,6 +926,7 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 		CurrentAction:Set[Casting ${ABILITY}]
 		Me.Ability[${ABILITY}]:Use
 		wait 5
+		call HandleChains
 		return TRUE
 	}
 	return FALSE
