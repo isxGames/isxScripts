@@ -37,6 +37,8 @@ function SetupAbilities()
 	SetHighestAbility "Ruin" "Ruin"
 	;	400% damage -- 10 Endurance
 	SetHighestAbility "Wrack" "Wrack"
+	;	400% damage -- 10 Endurance
+	SetHighestAbility "SoulWrack" "Soul Wrack"
 	
 	;; === RESCUES / FORCE ATTACKS ===
 	;	force opponent to attack me for 6 attacks or 10s
