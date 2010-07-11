@@ -33,7 +33,7 @@ function main()
 	ISXEQ2:SetAfflictionEventsTimeInterval[400]
 
 	Event[EQ2_onGroupMemberAfflicted]:AttachAtom[GroupAfflicted]
-	Event[EQ2_onRaidMemberAfflicted]:AttachAtom[RaidAfflicted]
+	;Event[EQ2_onRaidMemberAfflicted]:AttachAtom[RaidAfflicted]
 	Event[EQ2_onMeAfflicted]:AttachAtom[MeAfflicted]
 
 	call InitCures
