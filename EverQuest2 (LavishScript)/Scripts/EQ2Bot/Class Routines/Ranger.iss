@@ -1,10 +1,4 @@
-;Ranger.iss 20070117a by Karye
-
-;TODO Some EoF AAs
-;TODO Stream of Arrows
-;TODO SNiper SHot
-;TODO Hawk Dive
-;TODO Thorny Trap
+;Ranger.iss 20100712a by Pygar
 
 #ifndef _Eq2Botlib_
 	#include "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/EQ2BotLib.iss"
@@ -13,23 +7,15 @@
 
 function Class_Declaration()
 {
-    ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-    declare ClassFileVersion int script 20080408
-    ;;;;
+  ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
+  declare ClassFileVersion int script 20100712
+  ;;;;
     
 	declare AoEMode bool script FALSE
 	declare PBAoEMode bool script FALSE
 	declare BowAttacksMode bool script TRUE
 	declare RangedAttackMode bool script TRUE
 	declare SurroundingAttacksMode bool Script FALSE
-
-	declare WeaponSword string script
-	declare WeaponRapier string script
-	declare WeaponSpear string script
-	declare WeaponDagger string script
-	declare WeaponMain string script
-	declare OffHand string script
-	declare EquipmentChangeTimer int script
 
 	call EQ2BotLib_Init
 
@@ -38,13 +24,6 @@ function Class_Declaration()
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
 	SurroundingAttacksMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Buff Surrounding Attacks,FALSE]}]
-
-	WeaponMain:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Main",""]}]
-	WeaponSword:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Sword",""]}]
-	WeaponRapier:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Rapier",""]}]
-	WeaponSpear:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Spear",""]}]
-	WeaponDagger:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Dagger",""]}]
-	OffHand:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[OffHand,]}]
 }
 
 function Pulse()
@@ -62,9 +41,11 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	
-	;; This has to be set WITHIN any 'if' block that uses the timer.
-	;ClassPulseTimer:Set[${Script.RunningTime}]
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+20000]})
+	{
+		ClassPulseTimer:Set[${Script.RunningTime}]
+		ISXEQ2:ClearAbilitiesCache
+	}  
 }
 
 function Class_Shutdown()
@@ -73,10 +54,10 @@ function Class_Shutdown()
 
 function Buff_Init()
 {
-	PreAction[1]:Set[Reconnoiter]
+	PreAction[1]:Set[Reflexes]
 	PreSpellRange[1,1]:Set[25]
 
-	PreAction[2]:Set[Hunters_Instinct]
+	PreAction[2]:Set[PathFinding]
 	PreSpellRange[2,1]:Set[26]
 
 	PreAction[3]:Set[AA_Surrounding_Attacks]
@@ -84,131 +65,55 @@ function Buff_Init()
 
 	PreAction[4]:Set[AA_Neurotoxic_Coating]
 	PreSpellRange[4,1]:Set[391]
+	
+	PreAction[5]:Set[Stance]
+	PreSpellRange[5,1]:Set[291]
+	PreSpellRange[5,1]:Set[295]
+	
+	PreAction[6]:Set[MakeShift]
+	PreSpellRange[6,1]:Set[302]
 }
 
 function Combat_Init()
 {
 
-	Action[1]:Set[Trick_Shot]
-	SpellRange[1,1]:Set[253]
-
-	Action[2]:Set[Storm_of_Arrows]
-	SpellRange[2,1]:Set[90]
-
-	Action[3]:Set[Wounding_Arrow]
-	SpellRange[3,1]:Set[252]
-
-	Action[4]:Set[Triple_Shot]
-	SpellRange[4,1]:Set[251]
-	
-	Action[5]:Set[Miracle_Shot]
-	SpellRange[5,1]:Set[254]
-	
-	Action[6]:Set[Double_Shot]
-	SpellRange[6,1]:Set[250]
-
-	Action[7]:Set[Leg_Shot]
-	SpellRange[7,1]:Set[259]
-
-	Action[8]:Set[AA_Placting_Strike]
-	SpellRange[8,1]:Set[394]
-
-	Action[9]:Set[Mastery]
-
-	Action[10]:Set[AA_Bladed_Opening]
-	SpellRange[10,1]:Set[399]
-
-	Action[11]:Set[Pounce]
-	SpellRange[11,1]:Set[95]
-
-	Action[12]:Set[AA_Spinning_Spear]
-	SpellRange[12,1]:Set[397]
-
-	Action[13]:Set[Shadow_Leap]
-	SpellRange[13,1]:Set[135]
-
-	Action[11]:Set[Back_Fire]
-	SpellRange[14,1]:Set[255]
-
-	Action[15]:Set[Ensnare]
-	MobHealth[15,1]:Set[5]
-	MobHealth[15,2]:Set[100]
-	Power[15,1]:Set[5]
-	Power[15,2]:Set[100]
-	SpellRange[15,1]:Set[235]
-
-	Action[16]:Set[Bleeding_Cut]
-	SpellRange[16,1]:Set[70]
-
-	Action[17]:Set[Stalker_Strike]
-	SpellRange[17,1]:Set[130]
-
-	Action[18]:Set[Rip]
-	SpellRange[18,1]:Set[153]
-
-	Action[19]:Set[AA_Point_Blank_Shot]
-	SpellRange[19,1]:Set[398]
-
-	Action[20]:Set[AA_Poison_Combination]
-	SpellRange[20,1]:Set[392]
-
-	Action[21]:Set[Lunge]
-	SpellRange[21,1]:Set[122]
-
-	Action[22]:Set[Strike]
-	SpellRange[22,1]:Set[150]
-
-	Action[23]:Set[Trap]
-	MobHealth[23,1]:Set[5]
-	MobHealth[23,2]:Set[100]
-	Power[23,1]:Set[5]
-	Power[23,2]:Set[100]
-	SpellRange[23,1]:Set[50]
 }
 
 function PostCombat_Init()
 {
 
-	PostAction[1]:Set[Summon_Arrows]
-	PostSpellRange[1,1]:Set[310]
-
-	PostAction[2]:Set[AA_Intoxication]
-	PostSpellRange[2,1]:Set[390]
-
-	PostAction[3]:Set[BuffPoison]
-
 }
 
 function Buff_Routine(int xAction)
 {
-	call WeaponChange
 
 	switch ${PreAction[${xAction}]}
 	{
 		case AA_Surrounding_Attacks
 			if ${SurroundingAttacksMode}
-			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			}
 			else
-			{
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
-			}
 			break
-		case Hunters_Instinct
-			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 1
+		case Stance
+			if ${MainTank}
+				call CastSpellRange ${PreSpellRange[${xAction},2]} 0 0 0 0 0 0 1
+			else
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 1
 			break
+		case MakeShift
+		case PathFinding
 		case AA_Neurotoxic_Coating
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
-		case Reconnoiter
+		case Reflexes
 			if !${MainTank}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 0 0 0 1
 			}
 			break
 		Default
-			xAction:Set[40]
+			return Buff Complete
 			break
 	}
 }
@@ -222,196 +127,253 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
-	if ${BowAttacksMode} || ${RangedAttackMode}
+	if ${Me.ToActor.IsStealthed} && !${MainTank}
 	{
-		call CastSpellRange 185
-		call CastSpellRange 260
+		if ${Me.Ability[${SpellType[260]}].TimeUntilReady}<.1
+		{
+			Me.Ability[${SpellType[260]}]:Use
+			echo waiting on 260
+			wait 10
+		}
+		elseif ${Me.Ability[${SpellType[131]}].TimeUntilReady}<.1
+		{
+			Me.Ability[${SpellType[131]}]:Use
+			echo waiting on 131
+			wait 10
+		}
+		elseif ${Me.Ability[${SpellType[262]}].TimeUntilReady}<.1
+		{
+			Me.Ability[${SpellType[262]}]:Use
+			echo waiting on 262
+			wait 10
+		}
+		elseif ${Me.Ability[${SpellType[261]}].TimeUntilReady}<.1
+		{
+			Me.Ability[${SpellType[261]}]:Use	
+			echo echo waiting on 261
+			wait 10
+		}
+	}
+	declare spellsused int local
+	declare spellthreshold int local
+
+	spellsused:Set[0]
+	spellthreshold:Set[2]
+
+	if ${MainTank}
+	{
+		echo I'm a main tank yo
+		;;;;Bladed Opening
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[380]}].IsReady}
+		{
+			call CastSpellRange 380 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}	
+
+		;;;;Bloody Reminder
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[160]}].IsReady} && !${Me.Maintained[${SpellType[160]}](exists)}
+		{
+			call CastSpellRange 160 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		;;;;Lightning Strike
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[150]}].IsReady}
+		{
+			call CastSpellRange 150 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}	
+
+		;;;;Arrow Rip
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady}
+		{
+			call CastSpellRange 151 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}	
+
+		;;;;Immobilizing Lunge
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[152]}].IsReady}
+		{
+			call CastSpellRange 152 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}	
+
+		;;;;Point Blank Shot
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[398]}].IsReady}
+		{
+			call CastSpellRange 398 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}	
+
+		;;;;Snipe
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[192]}].IsReady} && !${Me.Maintained[${SpellType[192]}](exists)}
+		{
+			call CastSpellRange 192 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		return CombatComplete
 	}
 
 	if !${Me.AutoAttackOn}
 	eq2execute /auto 2
+	
+	if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Distance}>10 
+		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 8 1 1
+
+	if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Distance}<5
+	{
+		press -hold ${backward}
+		wait 5
+		press -release ${backward}
+	}
+
+	;;;Tempbuffs
+	if ${Actor[${KillTarget}].IsHeroic} || ${Actor[${KillTarget}].IsEpic}
+	{
+		;;;;Honed Reflexes
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[231]}].IsReady} && !${Me.Maintained[${SpellType[231]}](exists)}
+		{
+			call CastSpellRange 231 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}		
+
+		;;;;Killing Instinct
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[232]}].IsReady} && !${Me.Maintained[${SpellType[232]}](exists)}
+		{
+			call CastSpellRange 232 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		
+		;;;;Focus Aim
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[230]}].IsReady} && !${Me.Maintained[${SpellType[230]}](exists)}
+		{
+			call CastSpellRange 230 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}		
+	}
+
+	;;;; nifty stealth chain logic
+	if ${Me.Ability[${SpellType[260]}].TimeUntilReady}<.1 || ${Me.Ability[${SpellType[261]}].TimeUntilReady}<.1 || ${Me.Ability[${SpellType[262]}].TimeUntilReady}<.1 || ${Me.Ability[${SpellType[131]}].TimeUntilReady}<.1
+	{
+		call CastStealth
+		if ${Return}
+		{
+			echo go stealth attack1
+			if ${Me.Ability[${SpellType[260]}].TimeUntilReady}<.1
+			{
+				Me.Ability[${SpellType[260]}]:Use
+				echo waiting on 260
+				wait 10
+			}
+			elseif ${Me.Ability[${SpellType[131]}].TimeUntilReady}<.1
+			{
+				Me.Ability[${SpellType[131]}]:Use
+				echo waiting on 131
+				wait 10
+			}
+			elseif ${Me.Ability[${SpellType[262]}].TimeUntilReady}<.1
+			{
+				Me.Ability[${SpellType[262]}]:Use
+				echo waiting on 262
+				wait 10
+			}
+			elseif ${Me.Ability[${SpellType[261]}].TimeUntilReady}<.1
+			{ 
+				Me.Ability[${SpellType[261]}]:Use
+				echo waiting on 261
+				wait 10
+			}
+		}
+	}
+
+
+	;;;;Storm of Arrows
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[255]}].IsReady}
+	{
+		call CalcAutoAttackTimer				
+		if ${TimeUntilNextAutoAttack} > ${Me.Ability[${SpellType[255]}].CastingTime}		
+		{
+			call CastSpellRange 255 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}
+	
+	;;;;Stream of Arrows
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[256]}].IsReady}
+	{
+		call CalcAutoAttackTimer				
+		if ${TimeUntilNextAutoAttack} > ${Me.Ability[${SpellType[256]}].CastingTime}			
+		{
+			call CastSpellRange 256 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}	
+
+	;;;;Rear Shot
+	if ${spellsused}<=${spellthreshold} && ((${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335))
+	{
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[96]}].IsReady}
+		{
+			call CalcAutoAttackTimer				
+			if ${TimeUntilNextAutoAttack} >  ${Me.Ability[${SpellType[96]}].CastingTime}				
+			{
+				call CastSpellRange 96 0 0 0 ${KillTarget}
+				spellsused:Inc
+			}
+		}	
+	}
+
+	;;;;Triple Shot
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[249]}].IsReady}
+	{
+		call CalcAutoAttackTimer				
+		if ${TimeUntilNextAutoAttack} > ${Me.Ability[${SpellType[249]}].IsReady}				
+		{
+			call CastSpellRange 249 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}	
+
+	;;;;Miracle Shot
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[253]}].IsReady}
+	{
+		call CalcAutoAttackTimer				
+		if ${TimeUntilNextAutoAttack} > ${Me.Ability[${SpellType[253]}].IsReady}		
+		{
+			call CastSpellRange 253 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}	
+
+	;;;;Searing Shot
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[250]}].IsReady}
+	{
+		call CalcAutoAttackTimer				
+		if ${TimeUntilNextAutoAttack} > ${Me.Ability[${SpellType[250]}].IsReady}			
+		{
+			call CastSpellRange 250 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}	
+
+	;;;;Snaring Shot
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[254]}].IsReady}
+	{
+		call CalcAutoAttackTimer				
+		if ${TimeUntilNextAutoAttack} > ${Me.Ability[${SpellType[254]}].IsReady}		
+		{
+			call CastSpellRange 254 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}	
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
 
 
-	;Always keep Honed Reflexes Buffed
-	call CastSpellRange 158
 
-	;Always keep Feral Instinct Buffed
-	call CastSpellRange 156 
-
-
-	;Allways keep short combat buff up (take aim)
-	;if we are using bow attacks or ranged only
-	if ${BowAttacksMode} || ${RangedAttackMode}
-	{
-		call CastSpellRange 155
-	}
-
-	switch ${Action[${xAction}]}
-	{
-		case AA_Bladed_Opening
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-		case AA_Poison_Combination
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-		case AA_Spinning_Spear
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${PBAoEMode} && ${Mob.Count}>=2
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-		case AA_Placting_Strike
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-		case Mastery
-			if !${MainTank} && ${Target.Target.ID}!=${Me.ID} && !${RangedAttackMode}
-			{
-				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
-				{
-					Target ${KillTarget}
-					call CheckPosition 1 1
-					Me.Ability[Sinister Strike]:Use
-				}
-			}
-			break
-		case Trap
-			if ${DebuffMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
-			}
-			break
-
-		case Ensnare
-			if !${RangedAttackMode} && ${DebuffMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
-			break
-		case Rip
-		case Lunge
-		case Bleeding_Cut
-		case Strike
-			if !${RangedAttackMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
-			}
-			break
-		case Back_Fire
-			if ${BowAttacksMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 1 ${KillTarget} 0 0 1
-			}
-			break
-		case Bounty
-			if ${Actor[${KillTarget}].ConColor.NotEqual[Green]} && ${Actor[${KillTarget}].ConColor.NotEqual[Grey]} && !${RangedAttackMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-		case Stalker_Strike
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${RangedAttackMode}
-			{
-				if !${Me.ToActor.IsStealthed}
-				{
-					call CastStealth
-
-				}
-
-				if ${Me.ToActor.IsStealthed}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1
-				}
-
-			}
-			break
-		case Storm_of_Arrows
-			if ${BowAttacksMode} && ${AoEMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
-			}
-			break
-		case AA_Point_Blank_Shot
-			if !${RangedAttackMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
-		case Leg_Shot
-		case Miracle_Shot
-		case Triple_Shot
-		case Trick_Shot
-		case Double_Shot
-		case Wounding_Arrow
-			if ${BowAttacksMode}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
-			}
-			break
-		case Hidden_Shot
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${BowAttacksMode}
-			{
-				if !${Me.ToActor.IsStealthed}
-				{
-					call CastStealth
-
-				}
-
-				if ${Me.ToActor.IsStealthed}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget}
-				}
-
-			}
-			break
-		case Shadow_Leap
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${RangedAttackMode}
-			{
-				if !${Me.ToActor.IsStealthed}
-				{
-					call CastStealth
-
-				}
-
-				if ${Me.ToActor.IsStealthed}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1
-				}
-
-			}
-			break
-		case Pounce
-			if ${PBAoEMode} && ${Mob.Count}>=2 && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${BowAttacksMode}
-			{
-				if !${Me.ToActor.IsStealthed}
-				{
-					call CastStealth
-
-				}
-
-				if ${Me.ToActor.IsStealthed}
-				{
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1
-				}
-
-			}
-			break
-		Default
-			return CombatComplete
-			break
-		}
 }
 
 function Post_Combat_Routine(int xAction)
@@ -483,51 +445,60 @@ function MA_Dead()
 
 function CastStealth()
 {
-
+	echo CastStealth Called
 	;sneak attack
-	variable int Stealth1=320
+	variable int Stealth1=195
 	;stalk
-	variable int Stealth2=185
+	variable int Stealth2=196
+	;coverage
+	variable int Stealth3=197
 	;stealth
-	variable int Stealth3=201
+	variable int Stealth4=198	
 	;AA_Smoke_Bomb
-	variable int Stealth4=393
-
-	if  ${Me.Ability[${SpellType[${Stealth1}]}].IsReady} && !${RangedAttackMode}
+	variable int Stealth5=393
+	variable int StealthCast
+	
+	StealthCast:Set[0]
+	if ${Me.Ability[${SpellType[${Stealth1}]}].IsReady}
 	{
-		call CastSpellRange ${Stealth1} 0 1 1 ${KillTarget} 0 0 1
+		echo Casting Stealth1
+		call CastSpellRange ${Stealth1} 0 0 0 ${KillTarget} 0 0 1
+		StealthCast:Set[1]
 	}
-	elseif ${Me.Ability[${SpellType[${Stealth4}]}].IsReady} && ${PBAoEMode}
+	elseif ${Me.Ability[${SpellType[${Stealth5}]}].IsReady} && ${PBAoEMode}
 	{
-		call CastSpellRange ${Stealth4}
+		echo Casting Stealth5
+		call CastSpellRange ${Stealth4} 0 0 0 ${KillTarget}
+		StealthCast:Set[1]
 	}
 	elseif ${Me.Ability[${SpellType[${Stealth2}]}].IsReady}
 	{
+		echo Casting Stealth2
 		call CastSpellRange ${Stealth2} 0 0 0 ${KillTarget} 0 0 1
+		StealthCast:Set[1]
 	}
 	elseif ${Me.Ability[${SpellType[${Stealth3}]}].IsReady}
 	{
-		call CastSpellRange ${Stealth3} 0 0 0 0 0 0 1
+		echo Casting Stealth3
+		call CastSpellRange ${Stealth3} 0 0 0 ${KillTarget} 0 0 1
+		StealthCast:Set[1]
 	}
-
-	wait 20 ${Me.ToActor.IsStealthed}
-}
-
-function WeaponChange()
-{
-
-	;equip main hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[1].Name.Equal[${WeaponMain}]}
+	elseif ${Me.Ability[${SpellType[${Stealth4}]}].IsReady}
 	{
-		Me.Inventory[${WeaponMain}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
+		echo Casting Stealth4
+		call CastSpellRange ${Stealth4} 0 0 0 ${KillTarget} 0 0 1
+		StealthCast:Set[1]
 	}
-
-	;equip off hand
-	if ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2  && !${Me.Equipment[2].Name.Equal[${OffHand}]} && !${Me.Equipment[1].WieldStyle.Find[Two-Handed]}
+	
+	if !${StealthCast}
 	{
-		Me.Inventory[${OffHand}]:Equip
-		EquipmentChangeTimer:Set[${Time.Timestamp}]
+		echo no stealth cast
+		return FALSE
+	}
+	else
+	{
+		echo steath cast
+		return TRUE
 	}
 }
 
