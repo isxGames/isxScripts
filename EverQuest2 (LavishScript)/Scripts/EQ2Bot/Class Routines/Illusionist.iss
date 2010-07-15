@@ -888,7 +888,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; we should actually cast the spell we wanted to cast originally before doing anything else
 	LastSpellCast:Set[${start}]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
-	bReturn:Set[${Return}]
+	bReturn:Set[${Int[${Return}]}]
 
 	if (${DoNoCombat})
 		return ${bReturn}
@@ -1245,7 +1245,7 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 	else
-		spellsused:Inc[${Return}]
+		spellsused:Inc[${Int[${Return}]}]
 
 	if ${Me.Pet(exists)}
 	{
@@ -1272,7 +1272,7 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 	else
-		spellsused:Inc[${Return}]
+		spellsused:Inc[${Int[${Return}]}]
 
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
@@ -1294,7 +1294,7 @@ function Combat_Routine(int xAction)
 			return CombatComplete
 		}
 		else
-			spellsused:Inc[${Return}]		
+			spellsused:Inc[${Int[${Return}]}]		
 	}
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
@@ -1318,7 +1318,7 @@ function Combat_Routine(int xAction)
 			return CombatComplete
 		}
 		else
-			spellsused:Inc[${Return}]
+			spellsused:Inc[${Int[${Return}]}]
 		if (${KillTarget} != ${KillTargetCheck})
 		{
 			if ${IllyDebugMode}
@@ -1336,7 +1336,7 @@ function Combat_Routine(int xAction)
 			return CombatComplete
 		}
 		else
-			spellsused:Inc[${Return}]
+			spellsused:Inc[${Int[${Return}]}]
 	}
 	
 	call VerifyTarget
@@ -1387,7 +1387,7 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 	else
-		spellsused:Inc[${Return}]
+		spellsused:Inc[${Int[${Return}]}]
 		
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
@@ -1411,7 +1411,7 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 	else
-		spellsused:Inc[${Return}]
+		spellsused:Inc[${Int[${Return}]}]
 
 	
 	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
@@ -1608,7 +1608,7 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 	else
-		spellsused:Inc[${Return}]
+		spellsused:Inc[${Int[${Return}]}]
 		
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
@@ -1640,7 +1640,7 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 	else
-		spellsused:Inc[${Return}]
+		spellsused:Inc[${Int[${Return}]}]
 	
 	call VerifyTarget
 	if ${Return.Equal[FALSE]}
@@ -2998,7 +2998,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3017,7 +3017,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
 		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3044,7 +3044,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 				if ${IllyDebugMode}
 					Debug:Echo["Casting ''Prismatic Chaos'"]
 				call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
-				if (${Return} == -1)
+				if (${Return.Equal[-1]})
 				{
 					if ${IllyDebugMode}
 						Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3059,7 +3059,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		else
 		{
 			call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
-			if (${Return} == -1)
+			if (${Return.Equal[-1]})
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3092,7 +3092,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3113,7 +3113,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		if (${Me.Ability[${SpellType[70]}].IsReady})
 		{
 			call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return} == -1)
+			if (${Return.Equal[-1]})
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3143,7 +3143,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3164,7 +3164,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		if (${Me.Ability[${SpellType[91]}].IsReady})
 		{
 			call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return} == -1)
+			if (${Return.Equal[-1]})
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3193,7 +3193,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3214,7 +3214,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		if (${Me.Ability[${SpellType[388]}].IsReady})
 		{
 			call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return} == -1)
+			if (${Return.Equal[-1]})
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3245,7 +3245,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3322,7 +3322,7 @@ function CheckStuns()
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["CheckStuns() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
@@ -3361,7 +3361,7 @@ function CheckStuns()
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return} == -1)
+		if (${Return.Equal[-1]})
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["CheckStuns() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
