@@ -74,6 +74,7 @@ variable bool doLootOnly
 variable int LootDelay
 variable string LootOnly
 variable bool doLootEcho
+variable bool doLootInCombat
 ;; Hunt
 variable bool doHunt = FALSE
 variable int MobMinLevel
@@ -92,4 +93,5 @@ variable bool FURIOUS = FALSE
 variable int LastDowntimeCall=${Script.RunningTime}
 variable int NextUpdateDisplay = ${Script.RunningTime}
 variable bool doCycleTargetsReady = TRUE
+variable bool doDisEnchant = FALSE
 ;

@@ -190,8 +190,8 @@
 							<Y>14%</Y>
 							<Width>15</Width>
 							<Height>15</Height>
-							<Text>Cycle Targets</Text>
-							<AutoTooltip>  cycle through encounters </AutoTooltip>
+							<Text>Auto Assist</Text>
+							<AutoTooltip>  assist anyone that is in combat </AutoTooltip>
 							<OnLoad>
 								if ${Script[VG-DK].VariableScope.doCycleTargets}
 								{
@@ -1133,13 +1133,30 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[VG-DK].VariableScope.doLootEcho:Set[${This.Checked}]
-								UIElement[doLootEcho@Main@Tabs@VG-DK]:ToggleChecked
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doLootInCombat' Template='VG.GreenCheckbox'>
+							<visible>4</visible>
+							<X>3%</X>
+							<Y>34%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Loot while in Combat</Text>
+							<AutoTooltip>  enabling this will allow you to loot during combat </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doLootInCombat}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doLootInCombat:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='doLootOnly' Template='VG.GreenCheckbox'>
 							<visible>4</visible>
 							<X>3%</X>
-							<Y>34%</Y>
+							<Y>43%</Y>
 							<Width>15</Width>
 							<Height>15</Height>
 							<Text>Loot Only</Text>
@@ -1155,7 +1172,7 @@
 						</checkbox>
 						<Textentry Name='LootOnlyEntry' Template='VG.TextEntry'>
 							<X>27%</X>
-							<Y>33%</Y>
+							<Y>43%</Y>
 							<Width>70%</Width>
 							<Height>16</Height>
 							<Color>FFDDBB00</Color>
@@ -1465,6 +1482,8 @@
 					{
 						Script[VG-DK].Variable[isPaused]:Set[TRUE]
 						This:SetText[This script is Paused]
+						VG:ExecBinding[moveforward,release]
+						VG:ExecBinding[movebackward,release]
 					}
 				</OnLeftClick>
 			</Commandbutton>

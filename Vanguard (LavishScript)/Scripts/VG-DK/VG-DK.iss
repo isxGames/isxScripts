@@ -19,6 +19,9 @@
 #include ./VG-DK/Includes/FindTarget.iss
 #include ./VG-DK/Includes/MoveCloser.iss
 #include ./VG-DK/Includes/FaceSlow.iss
+#include ./VG-DK/Includes/Rescues.iss
+#include ./VG-DK/Includes/HandleCounters.iss
+#include ./VG-DK/Includes/HandleChains.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -46,6 +49,7 @@ function main()
 	call SetupAbilities
 	
 	;; Turn on our event monitors
+	Event[OnFrame]:AttachAtom[HandleChains]
 	Event[OnFrame]:AttachAtom[UpdateDisplay]
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
 	Event[VG_OnIncomingCombatText]:AttachAtom[CombatText]
@@ -57,7 +61,7 @@ function main()
 	while ${isRunning}
 	{
 		;; This significantly improves FPS
-		wait 3
+		;; wait 3
 	
 		;; Wait until we are ready to cast and use an ability
 		if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
@@ -103,11 +107,8 @@ function CriticalRoutines()
 {
 	if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsDead}
 	{
-		wait 1
 		call Rescues
-		wait 1
-		call HandleChains
-		wait 1
+		HandleChains
 		call HandleCounters
 	}
 }
@@ -117,6 +118,10 @@ function CriticalRoutines()
 ;===================================================
 function MainRoutines()
 {
+	variable int i
+	variable int x = 0
+	variable bool doSkipCheck = FALSE
+
 	;; Be sure to switch into correct form
 	call ChangeForm
 
@@ -135,35 +140,88 @@ function MainRoutines()
 	;; Hunt for a target
 	call Hunt
 	
-	;-------------------------------------------
-	; Always make sure we are targeting the tank's target
-	;-------------------------------------------
-	if ${Pawn[name,${Tank}](exists)}
+	if !${Me.InCombat} && ${Me.IsGrouped} && ${doCycleTargets}
 	{
-		;; Do not assist Tank if Tank is not in combat
-		if ${Pawn[name,${Tank}].CombatState}==0
+		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
 		{
-			return
-		}
-		if ${Pawn[name,${Tank}].Distance}<40
-		{
-			;; Assist the Tank
-			VGExecute "/assist ${Tank}"
-			;; Pause... health sometimes reports NULL or 0
-			if ${Me.Target(exists)} && ${Me.TargetHealth}<1
+			if ${Pawn[id,${Group[${i}].ID}].CombatState}
 			{
-				wait 2
-				waitframe
+				VGExecute "/assist ${Group[${i}].Name}"
+				wait 3
+				doSkipCheck:Set[TRUE]
+			}
+		}
+		
+		if !${Me.Target(exists)}
+		{
+			if ${Pawn[AggroNPC,radius,10].CombatState}
+			{
+				Pawn[AggroNPC,radius,10]:Target
+				wait 3
+				doSkipCheck:Set[TRUE]
 			}
 		}
 	}
+	
+	if ${doSkipCheck}
+	{
+		;-------------------------------------------
+		; Always make sure we are targeting the tank's target
+		;-------------------------------------------
+		if ${Pawn[name,${Tank}](exists)}
+		{
+			;; Do not assist Tank if Tank is not in combat
+			if ${Pawn[name,${Tank}].CombatState}==0 && !${doHunt}
+			{
+				return
+			}
+			if ${Pawn[name,${Tank}].Distance}<40
+			{
+				;; Assist the Tank
+				VGExecute "/assist ${Tank}"
+				;; Always assist offensive target
+				VGExecute /assistoffensive
+				;; Pause... health sometimes reports NULL or 0
+				if ${Me.Target(exists)} && ${Me.TargetHealth}<1
+				{
+					wait 2
+					waitframe
+				}
+			}
+		}
 
-	;; Do not resume if we are not in combat or target is dead!
-	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || ${Me.Target.CombatState}==0
+	}
+
+	
+	;; Return if target is not in Combat unless we are hunting
+	if ${Me.Target.CombatState}==0 && !${doHunt}
+	{
+		return
+	}
+	
+	;; We don't fight dead things or while harvesting
+	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]}
 	{
 		return
 	}
 
+	;; Allow system to update its variables and recheck
+	wait 2
+	
+	;; Return if target is not in Combat unless we are hunting
+	if ${Me.Target.CombatState}==0 && !${doHunt}
+	{
+		return
+	}
+	
+	;; We don't fight dead things or while harvesting
+	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]}
+	{
+		return
+	}
+
+	
+	
 	;-------------------------------------------
 	; EMERGENCY - SAVE OUR BACON ROUTINE
 	;-------------------------------------------
@@ -192,10 +250,18 @@ function MainRoutines()
 	;; Let's face the target
 	call FaceTarget
 	
+	if ${doDisEnchant}
+	{
+		call UseAbility "Despoil III"
+		if ${Return}
+		{
+			doDisEnchant:Set[FALSE]
+		}
+	}
 
 	if ${doRanged} && ${doMove} && ${Me.Target.Distance}>15 && !${isPaused}
 	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 15
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 13
 	}
 	if ${doRanged} && ${Me.Target.Distance}>4
 	{
@@ -208,7 +274,7 @@ function MainRoutines()
 			}
 		}
 	}
-	if !${doRanged} && ${doMove} && ${Me.Target.Distance}>5 && !${isPaused}
+	if ${doMove} && ${Me.Target.Distance}>5 && !${isPaused}
 	{
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 5
 	}
@@ -216,7 +282,13 @@ function MainRoutines()
 	; === Return if target is FURIOUS ===
 	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS}
 	{
-		;; wait for variables to update
+		;; Stuns target for 4 seconds
+		call UseAbility "OminousFate"
+
+		;; Blocks incoming attack
+		call UseAbility "BleakFoeman"
+
+		;; wait for refresh
 		wait 5
 		
 		;; Stop attacks
@@ -224,6 +296,7 @@ function MainRoutines()
 		{
 			Me.Ability[Auto Attack]:Use
 		}
+		
 		
 		;; Keep increasing hate for those that like plowing furious
 		if ${doHatred} && ${doProvoke} && ${Me.IsGrouped}
@@ -247,8 +320,6 @@ function MainRoutines()
 	;-------------------------------------------
 	if ${doHatred}
 	{
-		variable int i
-		variable int x = 0
 		for ( i:Set[1] ; ${i}<=${VG.PawnCount} && ${Pawn[${i}].Distance}<10 ; i:Inc )
 		{
 			;; Find out how many pawns near me that is in combat
@@ -264,17 +335,17 @@ function MainRoutines()
 			if ${Return}
 				return
 		}
-		if ${doProvoke} && ${Me.IsGrouped}
-		{
-			;; Increase Hatred
-			call UseAbility "${Provoke}"
-			if ${Return}
-				return
-		}
 		if ${doTorture} && !${Me.TargetMyDebuff[${Torture}](exists)}
 		{
 			;; DOT - Damage and increase hatred
 			call UseAbility "${Torture}"
+			if ${Return}
+				return
+		}
+		if ${doProvoke} && ${Me.IsGrouped}
+		{
+			;; Increase Hatred
+			call UseAbility "${Provoke}"
 			if ${Return}
 				return
 		}
@@ -338,44 +409,6 @@ function MainRoutines()
 	}
 }
 
-;===================================================
-;===            RESCUES                         ====
-;===================================================
-function Rescues()
-{
-	if !${doRescues} || !${Me.InCombat} || ${TargetsTarget.Equal[No Target]}
-	{
-		return
-	}
-
-	if !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
-	{
-		;; Set DTarget
-		VGExecute /assistoffensive
-		wait 3
-
-		; Force target to attack me for 10s or 5 attacks
-		call UseAbility "${SeethingHatred}" "- RESCUED ${Me.DTarget.Name}"
-		if ${Return}
-		{
-			return
-		}
-
-		; Force target to attack me for 4s or 2 attacks and adds HATRED
-		call UseAbility "${Scourge}" "- RESCUED ${Me.DTarget.Name}"
-		if ${Return}
-		{
-			return
-		}
-
-		; Force all targets to attack me for 10s or 4-8 attacks
-		call UseAbility "${NexusOfHatred}" "- RESCUED ${Me.DTarget.Name}"
-		if ${Return}
-		{
-			return
-		}
-	}
-}
 
 
 ;===================================================
@@ -639,178 +672,24 @@ function ChangeForm()
 	}
 }
 
-;===================================================
-;===          HANDLE COUNTERS                   ====
-;===================================================
-function HandleCounters()
-{
-	if !${doCounters}
-	{
-		return
-	}
-	
-	;; This goes first since it has a cooldown timer
-	if ${doVengeance}
-	{
-		if ${Me.Ability[${Vengeance}].IsReady}
-		{
-			echo Vengeance = Timereamining=${Me.Ability[${Vengeance}].TimeRemaining}, Countdown=${Me.Ability[${Vengeance}].TriggeredCountdown}
-			if ${Me.Ability[${Vengeance}].TimeRemaining}==0 && ${Me.Ability[${Vengeance}].TriggeredCountdown}>0
-			{
-				Me.Ability[${Vengeance}]:Use
-				;VGExecute "/reactioncounter 2"
-				CurrentAction:Set[Counterattack - Vengeance]
-				EchoIt "Counterattack - Vengeance"
-				wait 5
-			}
-		}
-	}
-	
-	;; This will eat up you endurance FAST leaving nothing for the good stuff
-	if ${doRetaliate} && ${Me.EndurancePct}>50
-	{
-		if ${Me.Ability[${Retaliate}].IsReady}
-		{
-			;echo Vengeance = Timereamining=${Me.Ability[${Retaliate}].TimeRemaining}, Countdown=${Me.Ability[${Retaliate}].TriggeredCountdown}
-			if ${Me.Ability[${Retaliate}].TimeRemaining}==0 && ${Me.Ability[${Retaliate}].TriggeredCountdown}>0
-			{
-				Me.Ability[${Retaliate}]:Use
-				;VGExecute "/reactioncounter 1"
-				CurrentAction:Set[Counterattack - Retaliate]
-				EchoIt "Counterattack - Retaliate"
-				wait 5
-			}
-		}
-	}
-}
 
-;===================================================
-;===    HANDLE CHAINS THAT LEADS INTO COMBOS    ====
-;===================================================
-function HandleChains()
-{
-	;; return if we do not want to do chains
-	if !${doChains}
-	{
-		return
-	}
-	
-	; Return if target is Furious or Furious Rage
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.Effect[Furious Rage](exists)} || ${FURIOUS} 
-	{ 
-		return
-	}
-	
-	;; 1st - we want to increase hatred
-	if ${doIncite} && ${Me.IsGrouped}
-	{
-		call ExecuteChain "${Incite}" 2
-		call ExecuteChain "${Inflame}" 2
-		call ExecuteChain "${Superior Inflame}" 2
-	}
-	
-	;; 2nd - make sure we restore some energy
-	if ${doVileStrike} && !${Me.Effect[${Anguish}](exists)} 
-	{
-		if ${Me.EnergyPct}<80
-		{
-			call ExecuteChain "${VileStrike}" 4
-			call ExecuteChain "${Anguish}" 4
-		}
-	}
-	
-	;; 3rd - increase our block, damage, and AC
-	if ${doShieldOfFear} && !${Me.Effect[${DarkBastion}](exists)} 
-	{
-		call ExecuteChain "${ShieldOfFear}" 3
-		call ExecuteChain "${DarkBastion}" 3
-	}
-	
-	;; 4th - decrease target's damage and increases your damage
-	if ${doHexOfIllOmen} && !${Me.Effect[${HexOfImpendingDoom}](exists)}
-	{
-		if ${Me.Ability[${HexOfIllOmen}].IsReady}
-		{
-			CurrentAction:Set[Chain - ${HexOfIllOmen}]
-			EchoIt "Chain - ${HexOfIllOmen}"
-			Me.Ability[${HexOfIllOmen}]:Use
-			VGExecute "/reactionchain 1"
-			wait 4
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
-		}
-		if ${Me.Ability[${HexOfImpendingDoom}].IsReady}
-		{
-			CurrentAction:Set[Chain - ${HexOfImpendingDoom}]
-			EchoIt "Chain - ${HexOfImpendingDoom}"
-			Me.Ability[${HexOfImpendingDoom}]:Use
-			VGExecute "/reactionchain 1"
-			wait 4
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
-		}
-	}
 
-	;; 5th - +400% weapon damage
-	if ${doWrack}
-	{
-		call ExecuteChain "${SoulWrack}" 5
-		call ExecuteChain "${Wrack}" 5
-		call ExecuteChain "${Ruin}" 5
-	}
-}
-
-;===================================================
-;===       Execute Chain/Combo                  ====
-;===================================================
-function ExecuteChain(string Chain, int ReactionNumber)
-{
-	if ${Me.Ability[${Chain}].IsReady}
-	{
-		if ${Me.Ability[${Chain}].TimeRemaining}==0 && ${Me.Ability[${Chain}].TriggeredCountdown}>0
-		{
-			;; Check if mob is immune
-			call Check4Immunites "${Chain}"
-			if !${Return}
-			{
-				CurrentAction:Set[Chain - ${Chain}]
-				EchoIt "Chain - ${Chain}"
-				Me.Ability[${Chain}]:Use
-				;VGExecute "/reactionchain ${ReactionNumber}"
-				wait 4
-				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-				{
-					waitframe
-				}
-			}
-		}
-	}
-}
 
 ;===================================================
 ;===       CLEAR TARGET IF TARGET IS DEAD       ====
 ;===================================================
 function ClearTargets()
 {
-	variable string temp
+	;; loot everything
+	if ${doLoot}
+	{
+		call Loot
+	}
+
+
 
 	if ${Me.Target(exists)}
 	{
-		;; update our display
-		temp:Set[${Me.ToT.Name}]
-		if ${temp.Equal[NULL]}
-		{
-			TargetsTarget:Set[No Target]
-		}
-		else
-		{
-			TargetsTarget:Set[${Me.ToT.Name}]
-		}
-
 		;; loot everything
 		if ${doLoot}
 		{
@@ -819,7 +698,6 @@ function ClearTargets()
 				call Loot
 			}
 		}
-
 		
 		;; execute only if target is a corpse
 		if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead}
@@ -850,6 +728,7 @@ function ClearTargets()
 				call Loot
 			}
 			
+			
 			;; clear target
 			CurrentAction:Set[Clearing Targets]
 			VGExecute "/cleartargets"
@@ -864,13 +743,6 @@ function ClearTargets()
 			SpellCounter:Set[0]
 		}
 	}
-	else
-	{
-		;; update display
-		TargetsTarget:Set[No Target]
-		TargetImmunity:Set[No Target]
-	}
-
 }
 
 ;===================================================
@@ -926,7 +798,7 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 		CurrentAction:Set[Casting ${ABILITY}]
 		Me.Ability[${ABILITY}]:Use
 		wait 5
-		call HandleChains
+		HandleChains
 		return TRUE
 	}
 	return FALSE
@@ -982,6 +854,10 @@ function atexit()
 	
 	;; Say we are done
 	EchoIt "Stopped VG-DK Script"
+	
+	;; Make sure we stop moving
+	VG:ExecBinding[moveforward,release]
+	VG:ExecBinding[movebackward,release]
 }
 
 ;===================================================
@@ -1084,6 +960,7 @@ atom(script) LoadXMLSettings()
 	doLootOnly:Set[${VG-DK_SSR.FindSetting[doLootOnly,FALSE]}]
 	LootOnly:Set[${VG-DK_SSR.FindSetting[LootOnly,""]}]
 	doLootEcho:Set[${VG-DK_SSR.FindSetting[doLootEcho,TRUE]}]
+	doLootInCombat:Set[${VG-DK_SSR.FindSetting[doLootInCombat,TRUE]}]
 	MobMinLevel:Set[${VG-DK_SSR.FindSetting[MobMinLevel,"0"]}]
 	MobMaxLevel:Set[${VG-DK_SSR.FindSetting[MobMaxLevel,"0"]}]
 	ConCheck:Set[${VG-DK_SSR.FindSetting[ConCheck,"0"]}]
@@ -1153,6 +1030,7 @@ atom(script) SaveXMLSettings()
 	VG-DK_SSR:AddSetting[doLootOnly,${doLootOnly}]
 	VG-DK_SSR:AddSetting[LootOnly,${LootOnly}]
 	VG-DK_SSR:AddSetting[doLootEcho,${doLootEcho}]
+	VG-DK_SSR:AddSetting[doLootInCombat,${doLootInCombat}]
 	VG-DK_SSR:AddSetting[MobMinLevel,${MobMinLevel}]
 	VG-DK_SSR:AddSetting[MobMaxLevel,${MobMaxLevel}]
 	VG-DK_SSR:AddSetting[ConCheck,${ConCheck}]
@@ -1164,53 +1042,34 @@ atom(script) SaveXMLSettings()
 
 ;variable bool doCounters = TRUE
 
-;===================================================
-;===      ATOM - CATCH THEM COUNTERS!           ====
-;===================================================
-atom(script) Counters()
-{
-	if ${doCounters}
-	{
-		if ${Me.Ability[${Counter1}].IsReady}
-		{
-			if ${Me.Ability[${Counter1}].TimeRemaining}==0 || ${Me.Ability[${Counter1}].TriggeredCountdown}>0
-			{
-				VGExecute "/reactioncounter 1"
-				EchoIt "${Counter1} COUNTERED ${Me.TargetCasting}"
-
-				;; Set delay of 1 second
-				TimedCommand 10 Script[VG-DK].Variable[doCounters]:Set[TRUE]
-				doCounters:Set[FALSE]
-				return
-			}
-		}
-		if ${Me.Ability[${Counter2}].IsReady}
-		{
-			if ${Me.Ability[${Counter2}].TimeRemaining}==0 || ${Me.Ability[${Counter2}].TriggeredCountdown}>0
-			{
-				VGExecute "/reactioncounter 2"
-				EchoIt "${Counter2} COUNTERED ${Me.TargetCasting}"
-
-				;; Set delay of 1 second
-				TimedCommand 10 Script[VG-DK].Variable[doCounters]:Set[TRUE]
-				doCounters:Set[FALSE]
-				return
-			}
-		}
-	}
-}
 
 ;===================================================
 ;===      ATOM - UPDATE OUR GUI DISPLAY         ====
 ;===================================================
 atom(script) UpdateDisplay()
 {
-	if ${Me.InCombat} && !${Me.Target.IsDead}
+	variable string temp
+
+	if ${Me.Target(exists)}
 	{
-		;; Catch them Counters
-		Counters
+		;; update our display
+		temp:Set[${Me.ToT.Name}]
+		if ${temp.Equal[NULL]}
+		{
+			TargetsTarget:Set[No Target]
+		}
+		else
+		{
+			TargetsTarget:Set[${Me.ToT.Name}]
+		}
 	}
-	
+	else
+	{
+		;; update display
+		TargetsTarget:Set[No Target]
+		TargetImmunity:Set[No Target]
+	}
+
 	;; Main
 	UIElement[Text-Status@VG-DK]:SetText[ Current Action:  ${CurrentAction}]
 	UIElement[Text-Immune@VG-DK]:SetText[ Target's Immunity:  ${TargetImmunity}]
@@ -1313,6 +1172,23 @@ atom CombatText(string aText, int aType)
 			;; display the info
 			echo ${Me.Target.Name} absorbed/healed/immune to ${aText.Token[2,">"].Token[1,"<"]}
 			vgecho Immune: ${aText.Token[2,">"].Token[1,"<"]}
+		}
+	}
+	
+	if ${aText.Find[is enchanted by]}
+	{
+		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]}
+		{
+			vgecho [${aText.Token[2,">"].Token[1,"<"]}]
+			doDisEnchant:Set[TRUE]
+		}
+	}
+	if ${aText.Find[ casts ]} && ${aText.Find[ on ]}
+	{
+		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]}
+		{
+			vgecho [${aText.Token[2,">"].Token[1,"<"]}]
+			doDisEnchant:Set[TRUE]
 		}
 	}
 }
