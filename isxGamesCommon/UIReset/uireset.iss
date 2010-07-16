@@ -1,3 +1,7 @@
+; This script will scan all top-level UI elements and reset all windows not included in
+; the IS Default UI to their xml-defined locations.
+
+
 function main()
 {
 	variable string elementname = ${UIElement[screen].Children}
