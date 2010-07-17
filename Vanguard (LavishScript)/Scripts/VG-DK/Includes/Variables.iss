@@ -35,6 +35,7 @@ variable bool doSprint
 variable int Speed
 variable bool doCancelBuffs
 variable bool doSound
+variable bool doShadowStep
 ;; Abilities
 variable bool doRanged
 variable bool doMelee
@@ -94,4 +95,6 @@ variable int LastDowntimeCall=${Script.RunningTime}
 variable int NextUpdateDisplay = ${Script.RunningTime}
 variable bool doCycleTargetsReady = TRUE
 variable bool doDisEnchant = FALSE
+variable int TargetBuffs = 0
+variable int TargetHeading = 0
 ;

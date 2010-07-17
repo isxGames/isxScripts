@@ -22,7 +22,7 @@ function Loot()
 	variable int iCount
 
 	;; Loot routine if target is a corpse
-	if ${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
+	if ${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5 && ${doLootInCombat}
 	{
 		;; Start Loot Window
 		Loot:BeginLooting
@@ -58,30 +58,42 @@ function Loot()
 						vgecho "*Looted:  ${Loot.Item[${a}]}"
 						waitframe
 					}
-					Loot.Item[${a}]:Loot
-					waitframe
+					if ${a}<${Loot.NumItems}
+					{
+						Loot.Item[${a}]:Loot
+					}
+					else
+					{
+						Loot:LootAll
+					}
 				}
 			}
+			wait 3
 		}
 		
 		;; End Looting
-		if ${Me.IsLooting}
-		{
-			wait 1
-			Loot:EndLooting
-		}
+		;if ${Me.IsLooting}
+		;{
+		;	wait 3
+		;	Loot:EndLooting
+		;}
 
 		;; Clear Target - this is a MUST if you are tanking and other's are assisting!
 		CurrentAction:Set[Clearing Targets]
 		VGExecute "/cleartargets"
+		wait 5
 		call ChangeForm
 		EchoIt "---------------------------------"
 
-		;; wait long enough
-		wait 3
-			
+		if ${Me.IsLooting}
+		{
+			Loot:EndLooting
+			wait 3
+		}
+
 		;; update stats
 		FURIOUS:Set[FALSE]
+		return
 	}
 
 	;;  === Scan area to loot ===
@@ -124,8 +136,8 @@ function Loot()
 						{
 							if ${doLootEcho}
 							{
-								vgecho "*Looted:  ${Loot.Item[${a}]}"
-								wait 2
+								vgecho "**Looted:  ${Loot.Item[${a}]}"
+								waitframe
 							}
 							Loot.Item[${LootOnly}]:Loot
 							waitframe
@@ -141,31 +153,36 @@ function Loot()
 						if ${doLootEcho}
 						{
 							vgecho "*Looted:  ${Loot.Item[${a}]}"
-							wait 2
+							waitframe
 						}
-						Loot.Item[${a}]:Loot
-						waitframe
+						if ${a}<${Loot.NumItems}
+						{
+							Loot.Item[${a}]:Loot
+						}
+						else
+						{
+							Loot:LootAll
+						}
 					}
-					;Loot:LootAll
 				}
+				wait 3
 			}
 					
 			;; End Looting, the wait is so that loot will appear in the chat logs
-			if ${Me.IsLooting}
-			{
-				wait 2
-				Loot:EndLooting
-			}
 
 			;; Clear Target - this is a MUST if you are tanking and other's are assisting!
 			CurrentAction:Set[Clearing Targets]
 			VGExecute "/cleartargets"
+			wait 5
 			call ChangeForm
 			EchoIt "---------------------------------"
 
-			;; wait long enough
-			wait 3
-				
+			if ${Me.IsLooting}
+			{
+				Loot:EndLooting
+				wait 3
+			}
+		
 			;; update stats
 			FURIOUS:Set[FALSE]
 		}

@@ -41,6 +41,7 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 	
 		;; I do not know of any mobs that are immune to Spiritual
 		Immune2Spiritual:Clear
+		Immune2Spiritual:Set["Ancient Gorger","Ancient Gorger"]
 
 		;; mobs that are immune to Physical	
 		Immune2Physical:Clear

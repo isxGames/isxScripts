@@ -22,6 +22,7 @@
 #include ./VG-DK/Includes/Rescues.iss
 #include ./VG-DK/Includes/HandleCounters.iss
 #include ./VG-DK/Includes/HandleChains.iss
+#include ./VG-DK/Includes/ShadowStepHeal.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -64,22 +65,22 @@ function main()
 		;; wait 3
 	
 		;; Wait until we are ready to cast and use an ability
-		if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			;; Update our current action
-			if ${Me.IsCasting}
-			{
-				CurrentAction:Set[Casting ${Me.Casting}]
-			}
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
-		}
-		else
-		{
-			CurrentAction:Set[Waiting]
-		}
+		;if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		;{
+		;	;; Update our current action
+		;	if ${Me.IsCasting}
+		;	{
+		;		CurrentAction:Set[Casting ${Me.Casting}]
+		;	}
+		;	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		;	{
+		;		waitframe
+		;	}
+		;}
+		;else
+		;{
+		;	CurrentAction:Set[Waiting]
+		;}
 		
 		;; Execute any queued commands
 		if ${QueuedCommands}
@@ -96,6 +97,25 @@ function main()
 		{
 			call CriticalRoutines
 			call MainRoutines
+		}
+		
+		if !${Me.Target(exists)}
+		{
+			TargetBuffs:Set[0]
+		}
+		
+		if ${Me.TargetBuff}>${TargetBuffs}
+		{
+			doDisEnchant:Set[TRUE]
+			TargetBuffs:Set[${Me.TargetBuff}]
+		}
+		if ${Me.TargetBuff}<${TargetBuffs}
+		{
+			TargetBuffs:Set[${Me.TargetBuff}]
+		}
+		if ${Me.TargetHealth}>30 && ${Me.TargetHealth}<70
+		{
+			TargetHeading:Set[${Pawn[id,${Me.Target.ID}].Heading}]
 		}
 	}
 }
@@ -189,7 +209,6 @@ function MainRoutines()
 				}
 			}
 		}
-
 	}
 
 	
@@ -219,8 +238,6 @@ function MainRoutines()
 	{
 		return
 	}
-
-	
 	
 	;-------------------------------------------
 	; EMERGENCY - SAVE OUR BACON ROUTINE
@@ -239,24 +256,50 @@ function MainRoutines()
 	; === Use any consumables in our inventory ===
 	call Consumables
 	
-	; === Use our heal if we got it! ===
-	if ${Me.HealthPct}<70
-	{
-		call UseAbility "${Cull}"
-		if ${Return}
-			return
-	}
-	
 	;; Let's face the target
 	call FaceTarget
 	
-	if ${doDisEnchant}
+	;if ${doDisEnchant}
+	;{
+	;	call UseAbility "${Despoil}"
+	;	if ${Return}
+	;	{
+	;		doDisEnchant:Set[FALSE]
+	;	}
+	;}
+
+	; === Return if target is FURIOUS ===
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS}
 	{
-		call UseAbility "Despoil III"
-		if ${Return}
+		if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Target.HaveLineOfSightTo}
 		{
-			doDisEnchant:Set[FALSE]
+			;; Stuns target for 4 seconds
+			Me.Ability[${OminousFate}]:Use
+			wait 2
+			EchoIt "UseAbility - ${OminousFate}"
+
+			;; Blocks incoming attack
+			Me.Ability[${BleakFoeman}]:Use
+			wait 2
+			EchoIt "UseAbility - ${BleakFoeman}"
 		}
+
+		;; wait for refresh
+		wait 3
+		
+		;; Stop attacks
+		if ${Me.Ability[Auto Attack].Toggled}
+		{
+			Me.Ability[Auto Attack]:Use
+		}
+		
+		;; Keep increasing hate for those that like plowing furious
+		if ${doHatred} && ${doProvoke} && ${Me.IsGrouped}
+		{
+			;; Increase Hatred
+			call UseAbility "${Provoke}"
+		}
+		return
 	}
 
 	if ${doRanged} && ${doMove} && ${Me.Target.Distance}>15 && !${isPaused}
@@ -276,41 +319,65 @@ function MainRoutines()
 	}
 	if ${doMove} && ${Me.Target.Distance}>5 && !${isPaused}
 	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 5
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
 	}
 	
-	; === Return if target is FURIOUS ===
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS}
+	;; === Stun opponent when they start to run away ===
+	if ${Me.TargetHealth}<80
 	{
-		;; Stuns target for 4 seconds
-		call UseAbility "OminousFate"
-
-		;; Blocks incoming attack
-		call UseAbility "BleakFoeman"
-
-		;; wait for refresh
-		wait 5
-		
-		;; Stop attacks
-		if ${Me.Ability[Auto Attack].Toggled}
+		variable float result
+		result:Set[${Math.Calc[${Pawn[id,${Me.Target.ID}].Heading} - ${Me.Heading}]}]
+		while ${result} > 180
 		{
-			Me.Ability[Auto Attack]:Use
+			result:Set[${Math.Calc[${result} - 360]}]
 		}
-		
-		
-		;; Keep increasing hate for those that like plowing furious
-		if ${doHatred} && ${doProvoke} && ${Me.IsGrouped}
+		while ${result} < -180
 		{
-			;; Increase Hatred
-			call UseAbility "${Provoke}"
+			result:Set[${Math.Calc[${result} + 360]}]
 		}
-		return
+		result:Set[${Math.Abs[${result}]}]
+		if ${result}<95 
+		{
+			;if ${Me.Ability[${OminousFate}].IsReady} && ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
+			if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
+			{
+				Me.Ability[${OminousFate}]:Use
+				wait 2
+				EchoIt "UseAbility - ${OminousFate}"
+			}
+			if ${Me.Ability[${Harrow}].TimeRemaining}==0 && ${Me.Endurance}>28
+			{
+				Me.Ability[${Harrow}]:Use
+				wait 2
+				EchoIt "UseAbility - ${Harrow}"
+				return
+			}
+			;if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
+			;{
+			;	Me.Ability[${AbyssalChains}]:Use
+			;	wait 2
+			;	EchoIt "UseAbility - ${AbyssalChains}"
+			;	return
+			;}
+		}
 	}
 
 	;; === Drain target's endurance and returns it to us -- 40 second cooldown ===
-	if ${Me.Endurance}<=30 && !${Me.TargetMyDebuff[${RavagingDarkness}](exists)}
+	if ${Me.Endurance}>=10 && ${Me.Endurance}<30 && !${Me.TargetMyDebuff[${RavagingDarkness}](exists)}
 	{
 		call UseAbility "${RavagingDarkness}"
+		if ${Return}
+			return
+	}
+
+	; === Use our heal if we got it! ===
+	if ${Me.HealthPct}<70 && ${doShadowStep}
+	{
+		call ShadowStepHeal
+		if ${Return}
+			return
+	
+		call UseAbility "${Cull}"
 		if ${Return}
 			return
 	}
@@ -328,7 +395,7 @@ function MainRoutines()
 				x:Inc
 			}
 		}
-		if ${doScytheOfDoom} && ${Me.HealthPct}<50 && ${x}>2
+		if ${doScytheOfDoom} && ${Me.HealthPct}<50 && ${x}>1
 		{
 			;; frontal AE that heals
 			call UseAbility "${ScytheOfDoom}"
@@ -555,9 +622,9 @@ function FaceTarget()
 	if ${doFace}
 	{
 		call facemob "${Me.Target.ID}"
+		face ${Me.Target.X} ${Me.Target.Y}
 	}
 	
-	face ${Me.Target.X} ${Me.Target.Y}
 	
 	;Face:Pawn[${Me.DTarget.ID},FALSE]
 	return
@@ -930,6 +997,7 @@ atom(script) LoadXMLSettings()
 	doRanged:Set[${VG-DK_SSR.FindSetting[doRanged,TRUE]}]
 	doMelee:Set[${VG-DK_SSR.FindSetting[doMelee,TRUE]}]
 	doSound:Set[${VG-DK_SSR.FindSetting[doSound,TRUE]}]
+	doShadowStep:Set[${VG-DK_SSR.FindSetting[doShadowStep,TRUE]}]
 	doHatred:Set[${VG-DK_SSR.FindSetting[doHatred,TRUE]}]
 	doRescues:Set[${VG-DK_SSR.FindSetting[doRescues,TRUE]}]
 	doCounters:Set[${VG-DK_SSR.FindSetting[doCounters,TRUE]}]
@@ -1000,6 +1068,7 @@ atom(script) SaveXMLSettings()
 	VG-DK_SSR:AddSetting[doRanged,${doRanged}]
 	VG-DK_SSR:AddSetting[doMelee,${doMelee}]
 	VG-DK_SSR:AddSetting[doSound,${doSound}]
+	VG-DK_SSR:AddSetting[doShadowStep,${doShadowStep}]
 	VG-DK_SSR:AddSetting[doRescues,${doRescues}]
 	VG-DK_SSR:AddSetting[doCounters,${doCounters}]
 	VG-DK_SSR:AddSetting[doChains,${doChains}]

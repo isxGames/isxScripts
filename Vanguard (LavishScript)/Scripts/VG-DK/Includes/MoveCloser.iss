@@ -55,9 +55,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		;-------------------------------------------
 		if ${X}==${Me.Target.X}
 		{
-			if ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}>${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			if ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
-				while ${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}>${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+				while ${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 				{
 					VG:ExecBinding[movebackward,release]
 					VG:ExecBinding[moveforward]
@@ -65,9 +65,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 				}
 				VG:ExecBinding[moveforward,release]
 			}
-			if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
-				while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+				while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 				{
 					VG:ExecBinding[moveforward,release]
 					VG:ExecBinding[movebackward]
@@ -88,9 +88,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		;-------------------------------------------
 		; Keep moving forward while facing the target
 		;-------------------------------------------
-		if !${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+		if !${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 		{
-			while !${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			while !${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
 				VG:ExecBinding[movebackward,release]
 				VG:ExecBinding[moveforward]
@@ -102,9 +102,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		;-------------------------------------------
 		; Keep moving backward while facing the target
 		;-------------------------------------------
-		while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+		if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 		{
-			while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
 				VG:ExecBinding[moveforward,release]
 				VG:ExecBinding[movebackward]
