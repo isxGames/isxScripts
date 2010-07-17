@@ -364,6 +364,24 @@
 								Script[VG-DK].VariableScope.doSound:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
+						<checkbox Name='doShadowStep' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>72%</X>
+							<Y>32%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>ShadowStep</Text>
+							<AutoTooltip>  Use ShadowStep and Cull for heals </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doShadowStep}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doShadowStep:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
 						<Text Name="Text-UseAbility" Template="VG.BoldText">
 							<X>3%</X>
 							<Y>45%</Y>

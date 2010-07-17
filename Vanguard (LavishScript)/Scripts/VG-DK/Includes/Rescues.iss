@@ -11,6 +11,15 @@ function Rescues()
 
 	;; Always assist offensive target - sets DTarget
 	VGExecute /assistoffensive
+
+	variable string temp
+	
+	;; update our display
+	temp:Set[${Me.ToT.Name}]
+	if ${temp.Equal[NULL]}
+	{
+		return
+	}
 	
 	if !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 	{

@@ -75,6 +75,10 @@ function:bool Hunt()
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 22
 		if !${Return}
 		{
+			;; clear target
+			CurrentAction:Set[Clearing Targets]
+			VGExecute "/cleartargets"
+			wait 10
 			return FALSE
 		}
 	}
@@ -83,6 +87,10 @@ function:bool Hunt()
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 5
 		if !${Return}
 		{
+			;; clear target
+			CurrentAction:Set[Clearing Targets]
+			VGExecute "/cleartargets"
+			wait 10
 			return FALSE
 		}
 	}

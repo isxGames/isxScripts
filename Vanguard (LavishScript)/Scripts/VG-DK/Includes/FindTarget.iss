@@ -62,7 +62,7 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 	;-------------------------------------------
 	; Let's find us a target
 	;-------------------------------------------
-	for (i:Set[1] ; ${i}<=${VG.PawnCount} && ${Pawn[${i}].Distance}<${Distance} ; i:Inc)
+	for (i:Set[1] ; ${i}<=${VG.PawnCount} && ${Pawn[${i}].Distance.Int}<${Distance} ; i:Inc)
 	{
 		;-------------------------------------------
 		; Find our Target Type
@@ -80,8 +80,8 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 			;-------------------------------------------
 			if ${Pawn[${i}].Distance.Int}>${Distance}
 				break
-			;if ${Math.Distance[${Pawn[${i}].X},${Pawn[${i}].Y},${X},${Y}]}>${Dist}
-			;	continue
+			if ${Math.Distance[${Pawn[${i}].X},${Pawn[${i}].Y},${HomeX},${HomeY}]}>${Dist}
+				break
 
 			;-------------------------------------------
 			; Must pass our first check

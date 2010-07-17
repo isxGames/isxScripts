@@ -20,7 +20,7 @@ atom(script) HandleChains()
 	}
 	
 	;; Allow 1/5th a second to pass by before handling any chains
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<.2
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<.3
 	{
 		return
 	}
@@ -39,8 +39,8 @@ atom(script) HandleChains()
 		if ${Me.EnergyPct}<80
 		{
 			call ExecuteChain "${VileStrike}" 4
-			call ExecuteChain "${Anguish}" 4
 		}
+			call ExecuteChain "${Anguish}" 4
 	}
 	
 	;; 3rd - increase our block, damage, and AC
