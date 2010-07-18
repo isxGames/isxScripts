@@ -1,3 +1,7 @@
+variable collection:int64 LootBlackList
+variable bool doClearLoot=TRUE
+
+
 function Loot()
 {
 	;; return if we do not want to loot
@@ -117,6 +121,17 @@ function Loot()
 	{
 		if ${Pawn[${iCount}].Type.Equal[Corpse]} && ${Pawn[${iCount}].Distance}<5 && ${Pawn[${iCount}].ContainsLoot}
 		{
+			;-------------------------------------------
+			; Exclude things we don't want
+			;-------------------------------------------
+			if ${LootBlackList.Element[${Pawn[${iCount}].ID}](exists)}
+				continue
+			;-------------------------------------------
+			; BlackList the target from future scans
+			;-------------------------------------------
+			if !${LootBlackList.Element[${Pawn[${iCount}].ID}](exists)}
+				LootBlackList:Set[${Pawn[${iCount}].ID}, ${Pawn[${iCount}].ID}]
+		
 			CurrentAction:Set[Looting]
 			Pawn[${iCount}]:Target
 			wait ${LootDelay}
@@ -168,7 +183,6 @@ function Loot()
 				wait 3
 			}
 					
-			;; End Looting, the wait is so that loot will appear in the chat logs
 
 			;; Clear Target - this is a MUST if you are tanking and other's are assisting!
 			CurrentAction:Set[Clearing Targets]
@@ -188,4 +202,13 @@ function Loot()
 		}
 	}	
 	while ${iCount:Inc} <= ${VG.PawnCount}
+
+	;; Clear our collections every 10 seconds
+	if ${doClearLoot}
+	{
+		LootBlackList:Clear
+		TimedCommand 10 Script[VG-DK].Variable[doClearLoot]:Set[TRUE]
+		doClearLoot:Set[FALSE]
+	}
+	
 }

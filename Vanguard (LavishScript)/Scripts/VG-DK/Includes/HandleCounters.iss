@@ -13,7 +13,6 @@ function HandleCounters()
 	{
 		if ${Me.Ability[${Vengeance}].IsReady}
 		{
-			echo Vengeance = Timereamining=${Me.Ability[${Vengeance}].TimeRemaining}, Countdown=${Me.Ability[${Vengeance}].TriggeredCountdown}
 			if ${Me.Ability[${Vengeance}].TimeRemaining}==0 && ${Me.Ability[${Vengeance}].TriggeredCountdown}>0
 			{
 				Me.Ability[${Vengeance}]:Use
@@ -30,7 +29,6 @@ function HandleCounters()
 	{
 		if ${Me.Ability[${Retaliate}].IsReady}
 		{
-			;echo Vengeance = Timereamining=${Me.Ability[${Retaliate}].TimeRemaining}, Countdown=${Me.Ability[${Retaliate}].TriggeredCountdown}
 			if ${Me.Ability[${Retaliate}].TimeRemaining}==0 && ${Me.Ability[${Retaliate}].TriggeredCountdown}>0
 			{
 				Me.Ability[${Retaliate}]:Use

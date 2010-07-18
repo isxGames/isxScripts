@@ -48,7 +48,7 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 	;-------------------------------------------
 	; Move if we are over our distance "looks natural if we move and turn at the same time"
 	;-------------------------------------------
-	if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 || ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance}
+	if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 || ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance}
 	{
 		;-------------------------------------------
 		; Our Target matches our X so move to target
@@ -65,9 +65,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 				}
 				VG:ExecBinding[moveforward,release]
 			}
-			if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
-				while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+				while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 				{
 					VG:ExecBinding[moveforward,release]
 					VG:ExecBinding[movebackward]
@@ -102,9 +102,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		;-------------------------------------------
 		; Keep moving backward while facing the target
 		;-------------------------------------------
-		if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+		if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 		{
-			while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
 				VG:ExecBinding[moveforward,release]
 				VG:ExecBinding[movebackward]

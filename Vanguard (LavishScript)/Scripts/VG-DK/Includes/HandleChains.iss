@@ -20,7 +20,7 @@ atom(script) HandleChains()
 	}
 	
 	;; Allow 1/5th a second to pass by before handling any chains
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<.3
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<2.5
 	{
 		return
 	}
@@ -105,6 +105,12 @@ atom(script) HandleChains()
 ;===================================================
 function ExecuteChain(string Chain, int ReactionNumber)
 {
+	;; Allow 1/5th a second to pass by before handling any chains
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<2.5
+	{
+		return
+	}
+	
 	if ${Me.Ability[${Chain}].IsReady}
 	{
 		if ${Me.Ability[${Chain}].TimeRemaining}==0 && ${Me.Ability[${Chain}].TriggeredCountdown}>0
@@ -116,14 +122,7 @@ function ExecuteChain(string Chain, int ReactionNumber)
 				CurrentAction:Set[Chain - ${Chain}]
 				EchoIt "Chain - ${Chain}"
 				Me.Ability[${Chain}]:Use
-				;VGExecute "/reactionchain ${ReactionNumber}"
-				;wait 4
-				;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-				;{
-				;	waitframe
-				;}
 				WaitOnChains:Set[${Script.RunningTime}]
-				
 			}
 		}
 	}
