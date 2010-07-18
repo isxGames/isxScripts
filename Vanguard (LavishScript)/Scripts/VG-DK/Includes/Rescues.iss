@@ -20,12 +20,12 @@ function Rescues()
 	{
 		return
 	}
+
+	;; allow time to update
+	waitframe
 	
 	if !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 	{
-	
-		;; allow time to update
-		waitframe
 
 		; Force target to attack me for 10s or 5 attacks
 		call UseAbility "${SeethingHatred}" "- RESCUED ${Me.ToT.Name}"

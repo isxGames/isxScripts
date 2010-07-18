@@ -27,7 +27,7 @@ variable string NonCombatForm
 ;; Toggles
 variable bool doFace
 variable bool doMove
-variable bool doCycleTargets
+variable bool doAutoAssist
 variable bool doAutoRez
 variable bool doAutoRepair
 variable bool doConsumables
@@ -43,6 +43,7 @@ variable bool doRescues
 variable bool doCounters
 variable bool doChains
 variable bool doHatred
+variable bool doMisc
 ;; Counters
 variable bool doRetaliate
 variable bool doVengeance
@@ -68,6 +69,9 @@ variable bool doMutilate
 variable bool doRavagingDarkness
 variable bool doSlay
 variable bool doBacklash
+;; Misc
+variable bool doDespoil
+variable bool doAbyssalChains
 ;; Loot
 variable bool doLoot
 variable bool doRaidLoot

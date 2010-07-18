@@ -123,21 +123,37 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 			; Let's target what we found
 			;-------------------------------------------
 			Pawn[${i}]:Target
-			waitframe
+			wait 10
 
 			;-------------------------------------------
 			; BlackList the target from future scans
 			;-------------------------------------------
 			if !${TargetBlackList.Element[${Pawn[${i}].ID}](exists)}
 				TargetBlackList:Set[${Pawn[${i}].ID}, ${Pawn[${i}].ID}]
+				
+			;vgecho ${Me.Target.Name}
+			;vgecho Level=${Me.Target.Level}, Difficulty=${Me.TargetAsEncounter.Difficulty}
+			;vgecho Owner=${Me.Target.Owner(exists)}, OwnedByMe=${Me.Target.OwnedByMe}
+			
+			;-------------------------------------------
+			; Return if target is owned by somebody else
+			;-------------------------------------------
+			if ${Me.Target.Owner(exists)} && !${Me.Target.OwnedByMe}
+			{
+				EchoIt "FindTarget: ${Me.Target.Name} is owned by somebody else"
+				VGExecute /cleartargets
+				waitframe
+				continue
+			}
 
 			;-------------------------------------------
-			; Must pass our final check
+			; Return if target is too difficult
 			;-------------------------------------------
-			if ${Me.Target.Type.Find[PC]} && ${Me.Target.Owner(exists)} && !${Me.Target.OwnedByMe} && ${Me.TargetAsEncounter.Difficulty}>${ConCheck}
+			;if ${Me.Target.Type.Find[PC]} && ${Me.Target.Owner(exists)} && !${Me.Target.OwnedByMe} && ${Me.TargetAsEncounter.Difficulty}>${ConCheck}
+			if ${Me.TargetAsEncounter.Difficulty}>${ConCheck}
 			{
 				if ${Me.TargetAsEncounter.Difficulty}>${ConCheck} 
-					EchoIt "FindTarget: Too Dificult - ${Me.Target.Name}, Level=${Me.Target.Level}"
+					EchoIt "FindTarget: Too Dificult - ${Me.Target.Name}, Level=${Me.Target.Level}, Difficulty=${Me.TargetAsEncounter.Difficulty}"
 				VGExecute /cleartargets
 				waitframe
 				continue
@@ -146,7 +162,7 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 			;-------------------------------------------
 			; Target is good to go
 			;-------------------------------------------
-			EchoIt "FindTarget: (${TargetType}) - ${Me.Target.Name}, Level=${Me.Target.Level}"
+			EchoIt "FindTarget: (${TargetType}) - ${Me.Target.Name}, Level=${Me.Target.Level}, Difficulty=${Me.TargetAsEncounter.Difficulty}"
 			break
 		}
 	}

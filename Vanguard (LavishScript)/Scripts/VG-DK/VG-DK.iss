@@ -61,6 +61,16 @@ function main()
 	;-------------------------------------------
 	while ${isRunning}
 	{
+		;; Update our current action
+		if ${Me.IsCasting}
+		{
+			CurrentAction:Set[Casting ${Me.Casting}]
+		}
+		if !${Me.IsCasting} && ${Me.Ability["Torch"].IsReady}
+		{
+			CurrentAction:Set[Waiting]
+		}
+
 		;; This significantly improves FPS
 		;; wait 3
 	
@@ -77,7 +87,7 @@ function main()
 		;		waitframe
 		;	}
 		;}
-		;else
+		else
 		;{
 		;	CurrentAction:Set[Waiting]
 		;}
@@ -140,7 +150,7 @@ function MainRoutines()
 {
 	variable int i
 	variable int x = 0
-	variable bool doSkipCheck = FALSE
+	variable bool doAssistCheck = TRUE
 
 	;; Be sure to switch into correct form
 	call ChangeForm
@@ -160,15 +170,19 @@ function MainRoutines()
 	;; Hunt for a target
 	call Hunt
 	
-	if !${Me.InCombat} && ${Me.IsGrouped} && ${doCycleTargets}
+	if !${Me.InCombat} && ${Me.IsGrouped} && ${doAutoAssist}
 	{
 		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
 		{
 			if ${Pawn[id,${Group[${i}].ID}].CombatState}
 			{
+				CurrentAction:Set[Assisting ${Group[${i}].Name}]
+				;vgecho "Assisting ${Group[${i}].Name}"
+				VGExecute "/cleartargets"
 				VGExecute "/assist ${Group[${i}].Name}"
-				wait 3
-				doSkipCheck:Set[TRUE]
+				VGExecute "/assistoffensive"
+				wait 5
+				doAssistCheck:Set[FALSE]
 			}
 		}
 		
@@ -178,12 +192,12 @@ function MainRoutines()
 			{
 				Pawn[AggroNPC,radius,10]:Target
 				wait 3
-				doSkipCheck:Set[TRUE]
+				doAssistCheck:Set[FALSE]
 			}
 		}
 	}
 	
-	if ${doSkipCheck}
+	if ${doAssistCheck}
 	{
 		;-------------------------------------------
 		; Always make sure we are targeting the tank's target
@@ -205,12 +219,10 @@ function MainRoutines()
 				if ${Me.Target(exists)} && ${Me.TargetHealth}<1
 				{
 					wait 2
-					waitframe
 				}
 			}
 		}
 	}
-
 	
 	;; Return if target is not in Combat unless we are hunting
 	if ${Me.Target.CombatState}==0 && !${doHunt}
@@ -259,14 +271,14 @@ function MainRoutines()
 	;; Let's face the target
 	call FaceTarget
 	
-	;if ${doDisEnchant}
-	;{
-	;	call UseAbility "${Despoil}"
-	;	if ${Return}
-	;	{
-	;		doDisEnchant:Set[FALSE]
-	;	}
-	;}
+	if ${doDisEnchant} && ${doMisc} && ${doDespoil}
+	{
+		call UseAbility "${Despoil}"
+		if ${Return}
+		{
+			doDisEnchant:Set[FALSE]
+		}
+	}
 
 	; === Return if target is FURIOUS ===
 	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS}
@@ -321,6 +333,10 @@ function MainRoutines()
 	{
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
 	}
+	if ${doMove} && !${isPaused}
+	{
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
+	}
 	
 	;; === Stun opponent when they start to run away ===
 	if ${Me.TargetHealth}<80
@@ -352,13 +368,16 @@ function MainRoutines()
 				EchoIt "UseAbility - ${Harrow}"
 				return
 			}
-			;if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
-			;{
-			;	Me.Ability[${AbyssalChains}]:Use
-			;	wait 2
-			;	EchoIt "UseAbility - ${AbyssalChains}"
-			;	return
-			;}
+			if ${doMisc} && ${doAbyssalChains}
+			{
+			if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
+				{
+					Me.Ability[${AbyssalChains}]:Use
+					wait 2
+					EchoIt "UseAbility - ${AbyssalChains}"
+					return
+				}
+			}
 		}
 	}
 
@@ -436,8 +455,7 @@ function MainRoutines()
 	;-------------------------------------------
 	if ${doMelee}
 	{
-		waitframe
-		if ${doSlay} && ${Me.TargetHealth}<20
+		if ${doSlay} && ${Me.TargetHealth}<20 && ${Me.EndurancePct}>=30
 		{
 			;; Only usable below 20% health
 			call UseAbility "${Slay}"
@@ -451,14 +469,14 @@ function MainRoutines()
 			if ${Return}
 				return
 		}
-		if ${doMutilate} && ${Me.EndurancePct}>=50
+		if ${doMutilate} && ${Me.EndurancePct}>=40
 		{
 			;; 40 Endurance
 			call UseAbility "${Mutilate}"
 			if ${Return}
 				return
 		}
-		if ${doMalice} && ${Me.EndurancePct}>=44
+		if ${doMalice} && ${Me.EndurancePct}>=40
 		{
 			;; 24 Endurance
 			call UseAbility "${Malice}"
@@ -466,7 +484,7 @@ function MainRoutines()
 				return
 		}
 		;; This is your crit maker here!!
-		if ${doVexingStrike} && ${Me.EndurancePct}>=50
+		if ${doVexingStrike} && ${Me.EndurancePct}>=40
 		{
 			;; 20 Endurance
 			call UseAbility "${VexingStrike}"
@@ -483,7 +501,7 @@ function MainRoutines()
 ;===================================================
 function CycleTargets()
 {
-	if !${doCycleTargets} || !${doCycleTargetsReady}
+	if !${doAutoAssist} || !${doAutoAssistReady}
 	{
 		return
 	}
@@ -501,8 +519,8 @@ function CycleTargets()
 			{
 				Pawn[ID,${Me.Encounter[${i}].ID}]:Target
 				wait 5
-				doCycleTargetsReady:Set[FALSE]
-				TimedCommand 100 Script[VG-DK].Variable[doCycleTargetsReady]:Set[TRUE]
+				doAutoAssistReady:Set[FALSE]
+				TimedCommand 100 Script[VG-DK].Variable[doAutoAssistReady]:Set[TRUE]
 				
 				face ${Pawn[ID,${Me.Target.ID}].X} ${Pawn[ID,${Me.Target.ID}].Y}
 
@@ -831,7 +849,7 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 		call Check4Immunites "${ABILITY}"
 		if ${Return}
 		{
-			EchoIt "Immune to ${ABILITY}"
+			;EchoIt "Immune to ${ABILITY}"
 			return FALSE
 		}
 	
@@ -985,7 +1003,7 @@ atom(script) LoadXMLSettings()
 	NonCombatForm:Set[${VG-DK_SSR.FindSetting[NonCombatForm,"Armor of Darkness"]}]
 	doFace:Set[${VG-DK_SSR.FindSetting[doFace,TRUE]}]
 	doMove:Set[${VG-DK_SSR.FindSetting[doMove,FALSE]}]
-	doCycleTargets:Set[${VG-DK_SSR.FindSetting[doCycleTargets,TRUE]}]
+	doAutoAssist:Set[${VG-DK_SSR.FindSetting[doAutoAssist,TRUE]}]
 	doAutoRez:Set[${VG-DK_SSR.FindSetting[doAutoRez,TRUE]}]
 	doAutoRepair:Set[${VG-DK_SSR.FindSetting[doAutoRepair,TRUE]}]
 	doConsumables:Set[${VG-DK_SSR.FindSetting[doConsumables,FALSE]}]
@@ -1002,6 +1020,9 @@ atom(script) LoadXMLSettings()
 	doRescues:Set[${VG-DK_SSR.FindSetting[doRescues,TRUE]}]
 	doCounters:Set[${VG-DK_SSR.FindSetting[doCounters,TRUE]}]
 	doChains:Set[${VG-DK_SSR.FindSetting[doChains,TRUE]}]
+	doMisc:Set[${VG-DK_SSR.FindSetting[doMisc,TRUE]}]
+	doDespoil:Set[${VG-DK_SSR.FindSetting[doDespoil,TRUE]}]
+	doAbyssalChains:Set[${VG-DK_SSR.FindSetting[doAbyssalChains,TRUE]}]
 	doRetaliate:Set[${VG-DK_SSR.FindSetting[doRetaliate,TRUE]}]
 	doVengeance:Set[${VG-DK_SSR.FindSetting[doVengeance,TRUE]}]
 	doSeethingHatred:Set[${VG-DK_SSR.FindSetting[doSeethingHatred,TRUE]}]
@@ -1056,7 +1077,7 @@ atom(script) SaveXMLSettings()
 	VG-DK_SSR:AddSetting[NonCombatForm,${NonCombatForm}]
 	VG-DK_SSR:AddSetting[doFace,${doFace}]
 	VG-DK_SSR:AddSetting[doMove,${doMove}]
-	VG-DK_SSR:AddSetting[doCycleTargets,${doCycleTargets}]
+	VG-DK_SSR:AddSetting[doAutoAssist,${doAutoAssist}]
 	VG-DK_SSR:AddSetting[doAutoRez,${doAutoRez}]
 	VG-DK_SSR:AddSetting[doAutoRepair,${doAutoRepair}]
 	VG-DK_SSR:AddSetting[doConsumables,${doConsumables}]
@@ -1072,6 +1093,9 @@ atom(script) SaveXMLSettings()
 	VG-DK_SSR:AddSetting[doRescues,${doRescues}]
 	VG-DK_SSR:AddSetting[doCounters,${doCounters}]
 	VG-DK_SSR:AddSetting[doChains,${doChains}]
+	VG-DK_SSR:AddSetting[doMisc,${doMisc}]
+	VG-DK_SSR:AddSetting[doDespoil,${doDespoil}]
+	VG-DK_SSR:AddSetting[doAbyssalChains,${doAbyssalChains}]
 	VG-DK_SSR:AddSetting[doHatred,${doHatred}]
 	VG-DK_SSR:AddSetting[doRetaliate,${doRetaliate}]
 	VG-DK_SSR:AddSetting[doVengeance,${doVengeance}]
@@ -1248,7 +1272,7 @@ atom CombatText(string aText, int aType)
 	{
 		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]}
 		{
-			vgecho [${aText.Token[2,">"].Token[1,"<"]}]
+			;vgecho [${aText.Token[2,">"].Token[1,"<"]}]
 			doDisEnchant:Set[TRUE]
 		}
 	}
@@ -1256,7 +1280,7 @@ atom CombatText(string aText, int aType)
 	{
 		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]}
 		{
-			vgecho [${aText.Token[2,">"].Token[1,"<"]}]
+			;vgecho [${aText.Token[2,">"].Token[1,"<"]}]
 			doDisEnchant:Set[TRUE]
 		}
 	}

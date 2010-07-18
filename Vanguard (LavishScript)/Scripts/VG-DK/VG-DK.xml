@@ -177,6 +177,9 @@
 								if ${Script[VG-DK].VariableScope.doHunt}
 								{
 									UIElement[doHunt@Hunt@Tabs@VG-DK]:SetText[Stop Hunting]
+									Script[VG-DK].Variable[HomeX]:Set[${Me.X}]
+									Script[VG-DK].Variable[HomeY]:Set[${Me.Y}]
+									Script[VG-DK].Variable[HomeZ]:Set[${Me.Z}]
 								}
 								else
 								{
@@ -184,7 +187,7 @@
 								}
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name="doCycleTargets" Template="VG.GreenCheckbox">
+						<checkbox Name="doAutoAssist" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>72%</X>
 							<Y>14%</Y>
@@ -193,14 +196,13 @@
 							<Text>Auto Assist</Text>
 							<AutoTooltip>  assist anyone that is in combat </AutoTooltip>
 							<OnLoad>
-								if ${Script[VG-DK].VariableScope.doCycleTargets}
+								if ${Script[VG-DK].VariableScope.doAutoAssist}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VG-DK].VariableScope.doCycleTargets:Set[${This.Checked}]
-								;UIElement[doPushHate@Misc@Tabs@VG-DK]:ToggleChecked
+								Script[VG-DK].VariableScope.doAutoAssist:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -382,6 +384,25 @@
 								Script[VG-DK].VariableScope.doShadowStep:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
+						<checkbox Name='doMisc' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>72%</X>
+							<Y>41%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>MISC</Text>
+							<AutoTooltip>  Misc abilities as Despoil and Abyssal Chains </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doMisc}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doMisc:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
 						<Text Name="Text-UseAbility" Template="VG.BoldText">
 							<X>3%</X>
 							<Y>45%</Y>
@@ -952,6 +973,53 @@
 								Script[VG-DK].VariableScope.doWrack:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
+
+						<Text Name="Text-Misc" Template="VG.BoldText">
+							<X>35%</X>
+							<Y>65%</Y>
+							<Width>99%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>MISC:</Text>
+						</Text>
+						<checkbox Name="doDespoil" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>35%</X>
+							<Y>73%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Despoil</Text>
+							<AutoTooltip>  Remove Enchantments </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doDespoil}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doDespoil:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doAbyssalChains" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>35%</X>
+							<Y>82%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>AbyssalChains</Text>
+							<AutoTooltip>  Snare your target slowing them down </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doAbyssalChains}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doAbyssalChains:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+
 						
 						<Text Name="Text-Melee" Template="VG.BoldText">
 							<X>67%</X>
