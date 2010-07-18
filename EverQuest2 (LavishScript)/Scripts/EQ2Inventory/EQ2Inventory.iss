@@ -1,6 +1,7 @@
 ;EQ2Broker v2
 ;By Syliac
-#include ${LavishScript.HomeDirectory}/Scripts/EQ2Common/SettingManager.iss
+#include EQ2Common/SettingManager.iss
+#include EQ2Common/Debug.iss
 ;=================================
 ;Consignment Box Variables
 ;=================================
@@ -33,6 +34,7 @@ variable bool RunJunk=TRUE
 variable bool RunDestroy=TRUE
 variable bool SlotFull=FALSE
 variable bool SkipItem=FALSE
+variable bool DepotItemsPlaced=FALSE
 ;=================================
 ;Setting references
 ;=================================
@@ -62,6 +64,7 @@ objectdef _EQ2InvInterface
 }
 function main()
 {
+	Debug:Enable
 	declare EQ2InvInterface _EQ2InvInterface global
 	call InitializeSettings
 
@@ -260,7 +263,7 @@ function PlaceItems()
 	RunBroker:Set[TRUE]
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
-	call AddLog "**Starting EQ2Broker v2 By Syliac**" FF00FF00
+	call AddLog "**Starting EQ2Broker v3 By Syliac**" FF00FF00
 	EQ2:CreateCustomActorArray[byDist,15]
 	if ${Actor[guild,Guild World Market Broker](exists)}
 	{
@@ -412,7 +415,7 @@ function PlaceCollection()
 
 function PlaceTradeskillBooks()
 {
-	ItemType:Set[Recipe Book]
+	ItemType:Set[Item]
 	NameFilter1:Set[Advanced]
 	NameFilter2:Set[Enigma]
 	NameFilter3:Set[Ancient]
@@ -478,7 +481,7 @@ function PlaceTradeskillBooks()
 
 function PlaceSpellBooks()
 {
-	ItemType:Set[Spell Scroll]
+	ItemType:Set[Item]
 	NameFilter1:Set[(Adept)]
 	NameFilter2:Set[(Master)]
 	NameFilter3:Set[(Expert)]
@@ -785,11 +788,22 @@ function SellJunk()
 	{
 		do
 		{
-			if ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
+			Debug:Echo["${iter.Key}"] 
+			Debug:Echo["${Me.CustomInventory[ExactName,${iter.Key}]}"]  
+			Debug:Echo["${iter.Key} ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]}"] 
+			
+			if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]}
 			{
-				call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.Merchandise[${iter.Key}]}" FF11CCFF
-				Me.Merchandise[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
-				wait 15
+				echo In Loop
+				do
+				{
+					Debug:Echo["${iter.Key}"]
+					Debug:Echo["${Me.Merchandise[${iter.Key}]}"]
+					call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.Merchandise[${iter.Key}]}" FF11CCFF
+					Me.Merchandise[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
+					wait 15
+				}
+				while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
 			}
 		}
 		while ${iter:Next(exists)} && ${RunJunk}
@@ -974,7 +988,7 @@ function AddToDepot()
 			Drop:Set[1]
 			SkipItem:Set[FALSE]
 			SlotFull:Set[FALSE]
-			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull} && !${Me.CustomInventory[${iter.Key}].IsFoodOrDrink}
+			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull}
 			{
 				if (${iter.Key.Length} <= 4)
 					break
@@ -1010,7 +1024,7 @@ function AddToDepot()
 			}
 		}
 		while ${iter:Next(exists)} && ${RunDepot}
-
+		DepotItemsPlaced:Set[TRUE]
 	}
 
 	if ${RunDepot}
