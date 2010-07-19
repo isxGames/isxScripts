@@ -105,13 +105,13 @@ function FindTarget(string TargetType, int Distance, int ConCheck, int MinLevel,
 			if !${Pawn[${i}].HaveLineOfSightTo}
 			{
 				Obstacle:Set[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}]
-				echo Obstacle=[${Obstacle}]
+				;echo Obstacle=[${Obstacle}]
 				if !${Obstacle.Find[Terrain]}
 				{
-					echo LOS=[${Pawn[${i}].HaveLineOfSightTo}], Obstacle=[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}], Target=[${Pawn[${i}].Name}], Distance=[${Pawn[${i}].Distance}]
+					;echo LOS=[${Pawn[${i}].HaveLineOfSightTo}], Obstacle=[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}], Target=[${Pawn[${i}].Name}], Distance=[${Pawn[${i}].Distance}]
 					if ${doEcho}
 					{
-						echo "[${Time}][VG:EB] --> FindTarget: Obstacle between ${Pawn[${i}].Name} at ${Pawn[${i}].Distance} meters away"
+						;echo "[${Time}][VG:EB] --> FindTarget: Obstacle between ${Pawn[${i}].Name} at ${Pawn[${i}].Distance} meters away"
 					}
 					continue
 				}
