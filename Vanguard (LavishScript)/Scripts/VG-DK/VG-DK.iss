@@ -61,6 +61,8 @@ function main()
 	;-------------------------------------------
 	while ${isRunning}
 	{
+		wait 1
+		waitframe
 		;; Update our current action
 		if ${Me.IsCasting}
 		{
@@ -70,6 +72,12 @@ function main()
 		{
 			CurrentAction:Set[Waiting]
 		}
+		
+		if !${Me.InCombat}
+		{
+			doBackup:Set[TRUE]
+		}
+
 
 		;; This significantly improves FPS
 		;; wait 3
@@ -87,7 +95,7 @@ function main()
 		;		waitframe
 		;	}
 		;}
-		else
+		;else
 		;{
 		;	CurrentAction:Set[Waiting]
 		;}
@@ -246,11 +254,20 @@ function MainRoutines()
 	}
 	
 	;; We don't fight dead things or while harvesting
-	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]}
+	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
 	{
 		return
 	}
 	
+	if ${Me.Target.Distance}>20 && ${Me.TargetHealth}<30
+	{
+		;; clear target
+		CurrentAction:Set[Clearing Targets]
+		VGExecute "/cleartargets"
+		wait 5
+		return
+	}
+
 	;-------------------------------------------
 	; EMERGENCY - SAVE OUR BACON ROUTINE
 	;-------------------------------------------
@@ -368,14 +385,21 @@ function MainRoutines()
 				EchoIt "UseAbility - ${Harrow}"
 				return
 			}
-			if ${doMisc} && ${doAbyssalChains}
+			if ${doMisc} && ${doAbyssalChains} && ${doSnare}
 			{
-			if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
+		
+				if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
 				{
-					Me.Ability[${AbyssalChains}]:Use
-					wait 2
-					EchoIt "UseAbility - ${AbyssalChains}"
-					return
+					call Check4Immunites "${AbyssalChains}"
+					if !${Return}
+					{
+						TimedCommand 10 Script[VG-DK].Variable[doSnare]:Set[TRUE]
+						doSnare:Set[FALSE]
+						Me.Ability[${AbyssalChains}]:Use
+						wait 2
+						EchoIt "UseAbility - ${AbyssalChains}"
+						return
+					}
 				}
 			}
 		}
@@ -400,6 +424,22 @@ function MainRoutines()
 		if ${Return}
 			return
 	}
+
+	;; === Build our Dread ===
+	if ${GV[int,ProgressiveFormPhase]}<4
+	{
+		;; Symbol to generate more Dread
+		;call CastBuff "${SymbolOfWrath}"
+		; 30 energy, 2s wait
+		call UseAbility "${DreadfulVisage}"
+		if ${Return}
+		{
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+		}
+	}	
 	
 	;-------------------------------------------
 	; BUILD HATRED ROUTINES
@@ -409,17 +449,32 @@ function MainRoutines()
 		for ( i:Set[1] ; ${i}<=${VG.PawnCount} && ${Pawn[${i}].Distance}<10 ; i:Inc )
 		{
 			;; Find out how many pawns near me that is in combat
-			if ${Pawn[${i}].CombatState}>0
+			if ${Pawn[${i}].CombatState}>0 && ${Pawn[${i}].Type.Equal[AggroNPC]}
 			{
 				x:Inc
 			}
 		}
-		if ${doScytheOfDoom} && ${Me.HealthPct}<50 && ${x}>1
+		if ${doScytheOfDoom} && ${Me.HealthPct}<60 && ${Me.EndurancePct}>48 && ${x}>1
 		{
 			;; frontal AE that heals
-			call UseAbility "${ScytheOfDoom}"
-			if ${Return}
+			if ${Me.Ability[${ScytheOfDoom}].IsReady}
+			{
+				CurrentAction:Set[${ScytheOfDoom}]
+				if ${doBackup}
+				{
+					doBackup:Set[FALSE]
+					VG:ExecBinding[moveforward,release]
+					VG:ExecBinding[movebackward]
+					wait 5
+					VG:ExecBinding[movebackward,release]
+					wait 5
+				}
+				EchoIt "UseAbility - ${ScytheOfDoom} - Total Targets=${x}"
+				CurrentAction:Set[${ScytheOfDoom}]
+				Me.Ability[${ScytheOfDoom}]:Use
+				wait 5
 				return
+			}
 		}
 		if ${doTorture} && !${Me.TargetMyDebuff[${Torture}](exists)}
 		{
@@ -484,7 +539,7 @@ function MainRoutines()
 				return
 		}
 		;; This is your crit maker here!!
-		if ${doVexingStrike} && ${Me.EndurancePct}>=40
+		if ${doVexingStrike} && ${Me.EndurancePct}>=50
 		{
 			;; 20 Endurance
 			call UseAbility "${VexingStrike}"
@@ -757,7 +812,33 @@ function ChangeForm()
 	}
 }
 
-
+function Jump()
+{
+	if ${doJump}
+	{
+		doJump:Set[FALSE]
+		;VG:ExecBinding[moveforward,release]
+		if ${Math.Rand[10]}<5
+		{
+			VG:ExecBinding[StrafeRight,release]
+			VG:ExecBinding[StrafeLeft]
+			wait 5
+		}
+		if ${Math.Rand[10]}>5
+		{
+			VG:ExecBinding[StrafeLeft,release]
+			VG:ExecBinding[StrafeRight]
+			wait 5
+		}
+		;VG:ExecBinding[moveforward]
+		;wait 2
+		VG:ExecBinding[StrafeLeft,release]
+		VG:ExecBinding[StrafeRight,release]
+		VG:ExecBinding[Jump]
+		wait 2
+		VG:ExecBinding[Jump,release]
+	}
+}
 
 
 ;===================================================
@@ -975,7 +1056,10 @@ atom Bump(string aObstacleActorName, float fX_Offset, float fY_Offset, float fZ_
 	if (${aObstacleActorName.Find[Mover]})
 	{
 		Script[VG-DK]:QueueCommand[call OpenDoor]
+		return
 	}
+	
+	doJump:Set[TRUE]
 }
 
 

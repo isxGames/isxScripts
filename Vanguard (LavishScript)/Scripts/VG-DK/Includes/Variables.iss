@@ -95,6 +95,8 @@ variable float HomeZ
 ;===================================================
 variable bool doForm = TRUE
 variable bool FURIOUS = FALSE
+variable bool doSnare = TRUE
+variable bool doJump = FALSE
 variable int LastDowntimeCall=${Script.RunningTime}
 variable int NextUpdateDisplay = ${Script.RunningTime}
 variable bool doCycleTargetsReady = TRUE

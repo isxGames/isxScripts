@@ -17,8 +17,8 @@ function HandleCounters()
 			{
 				Me.Ability[${Vengeance}]:Use
 				;VGExecute "/reactioncounter 2"
-				CurrentAction:Set[Counterattack - Vengeance]
-				EchoIt "Counterattack - Vengeance"
+				CurrentAction:Set[Counterattack - ${Vengeance}]
+				EchoIt "Counterattack - ${Vengeance}"
 				wait 5
 			}
 		}
@@ -33,8 +33,8 @@ function HandleCounters()
 			{
 				Me.Ability[${Retaliate}]:Use
 				;VGExecute "/reactioncounter 1"
-				CurrentAction:Set[Counterattack - Retaliate]
-				EchoIt "Counterattack - Retaliate"
+				CurrentAction:Set[Counterattack - ${Retaliate}]
+				EchoIt "Counterattack - ${Retaliate}"
 				wait 5
 			}
 		}

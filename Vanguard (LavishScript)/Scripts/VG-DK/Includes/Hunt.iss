@@ -100,6 +100,20 @@ function:bool Hunt()
 	;-------------------------------------------
 	if ${Me.Target(exists)} && ${Me.Target.Type.Equal[Corpse]}
 		return FALSE
+		
+	if ${Me.Target(exists)}
+	{
+		if !${Me.Target.HaveLineOfSightTo}
+		{
+			;; clear target
+			CurrentAction:Set[Clearing Targets]
+			VGExecute "/cleartargets"
+			wait 10
+			return FALSE
+		}
+		call FaceTarget
+	}
+		
 
 	;-------------------------------------------
 	; Successfully found a target and moved into attack range

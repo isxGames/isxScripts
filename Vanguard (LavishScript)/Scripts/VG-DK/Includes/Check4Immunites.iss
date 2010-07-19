@@ -75,6 +75,7 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 		Immune2Physical:Set["Assaulting Death Hound","Assaulting Death Hound"]
 		Immune2Physical:Set["Blood-crazed Ettercap","Blood-crazed Ettercap"]
 		Immune2Physical:Set["Earth Elemental","Earth Elemental"]
+		Immune2Physical:Set["Untrenz","Untrenz"]
 	}
 
 	;; Return FALSE if no target

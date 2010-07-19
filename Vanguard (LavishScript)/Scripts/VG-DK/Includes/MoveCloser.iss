@@ -43,8 +43,8 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 	;-------------------------------------------
 	variable int bailOut
 	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(10000)]}]
-
-
+	doBump:Set[FALSE]
+	
 	;-------------------------------------------
 	; Move if we are over our distance "looks natural if we move and turn at the same time"
 	;-------------------------------------------
@@ -62,16 +62,35 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 					VG:ExecBinding[movebackward,release]
 					VG:ExecBinding[moveforward]
 					face ${Me.Target.X} ${Me.Target.Y}
+					if !${Me.Target.HaveLineOfSightTo} && ${Me.Target.Distance}<10
+					{
+						;; clear target
+						CurrentAction:Set[Clearing Targets]
+						VGExecute "/cleartargets"
+						VG:ExecBinding[moveforward,release]
+						wait 10
+						return FALSE
+					}
+					call Jump
 				}
 				VG:ExecBinding[moveforward,release]
 			}
-			if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+			if ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
-				while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+				while ${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 				{
 					VG:ExecBinding[moveforward,release]
 					VG:ExecBinding[movebackward]
-					face ${X} ${Y}
+					face ${Me.Target.X} ${Me.Target.Y}
+					if !${Me.Target.HaveLineOfSightTo} && ${Me.Target.Distance}<10
+					{
+						;; clear target
+						CurrentAction:Set[Clearing Targets]
+						VGExecute "/cleartargets"
+						VG:ExecBinding[movebackward,release]
+						wait 10
+						return FALSE
+					}
 				}
 				VG:ExecBinding[movebackward,release]
 			}
@@ -95,6 +114,7 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 				VG:ExecBinding[movebackward,release]
 				VG:ExecBinding[moveforward]
 				face ${X} ${Y}
+				call Jump
 			}
 			VG:ExecBinding[moveforward,release]
 		}
