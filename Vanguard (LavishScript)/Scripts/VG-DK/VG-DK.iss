@@ -61,8 +61,16 @@ function main()
 	;-------------------------------------------
 	while ${isRunning}
 	{
-		wait 1
+		;; sometimes, health will report 0 so lets wait (do not remove that waitframe)
 		waitframe
+		if ${Me.Target(exists)}
+		{
+			if ${Me.TargetHealth}==0 && !${Me.Target.IsDead}
+			{
+				wait 10 ${Me.TargetHealth} && ${Me.Target(exists)}
+			}
+		}
+		
 		;; Update our current action
 		if ${Me.IsCasting}
 		{
@@ -73,32 +81,11 @@ function main()
 			CurrentAction:Set[Waiting]
 		}
 		
+		;; Set the move backward flag
 		if !${Me.InCombat}
 		{
 			doBackup:Set[TRUE]
 		}
-
-
-		;; This significantly improves FPS
-		;; wait 3
-	
-		;; Wait until we are ready to cast and use an ability
-		;if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		;{
-		;	;; Update our current action
-		;	if ${Me.IsCasting}
-		;	{
-		;		CurrentAction:Set[Casting ${Me.Casting}]
-		;	}
-		;	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		;	{
-		;		waitframe
-		;	}
-		;}
-		;else
-		;{
-		;	CurrentAction:Set[Waiting]
-		;}
 		
 		;; Execute any queued commands
 		if ${QueuedCommands}
@@ -109,31 +96,28 @@ function main()
 		
 		;; Take down that pesky POTA barrier
 		call OpenPotaBarrier
-		
+
 		;; execute main routine
 		if !${isPaused} 
 		{
+			;; Reset TargetBuff counter
+			if !${Me.Target(exists)}
+			{
+				TargetBuffs:Set[0]
+			}
+			
+			;; Targetbuff counter increased so set the doDisEnchant flag
+			if ${Me.TargetBuff}>${TargetBuffs}
+			{
+				doDisEnchant:Set[TRUE]
+			}
+			
+			;; Update our Targetbuff counter
+			TargetBuffs:Set[${Me.TargetBuff}]
+
+			;; Call our routines
 			call CriticalRoutines
 			call MainRoutines
-		}
-		
-		if !${Me.Target(exists)}
-		{
-			TargetBuffs:Set[0]
-		}
-		
-		if ${Me.TargetBuff}>${TargetBuffs}
-		{
-			doDisEnchant:Set[TRUE]
-			TargetBuffs:Set[${Me.TargetBuff}]
-		}
-		if ${Me.TargetBuff}<${TargetBuffs}
-		{
-			TargetBuffs:Set[${Me.TargetBuff}]
-		}
-		if ${Me.TargetHealth}>30 && ${Me.TargetHealth}<70
-		{
-			TargetHeading:Set[${Pawn[id,${Me.Target.ID}].Heading}]
 		}
 	}
 }
@@ -158,6 +142,7 @@ function MainRoutines()
 {
 	variable int i
 	variable int x = 0
+	variable int y = 0
 	variable bool doAssistCheck = TRUE
 
 	;; Be sure to switch into correct form
@@ -175,9 +160,33 @@ function MainRoutines()
 	;; Loot and Clear Targets
 	call ClearTargets
 	
+	;; This will cycle targets in your encounter list
+	call CycleTargets
+	
 	;; Hunt for a target
 	call Hunt
-	
+
+	if !${Me.IsGrouped} && ${Me.Target(exists)}
+	{
+		;; find a closer Encounter if my target moved 10 meters away
+		if ${Me.Target.Distance}>10 && ${Me.Encounter}
+		{
+			x:Set[1000]
+			y:Set[1]
+			for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+			{
+				if ${Me.Encounter[${i}].Distance}<${x}
+				{
+					x:Set[${Me.Encounter[${i}].Distance}]
+					y:Set[${i}]
+				}
+			}
+			Pawn[ID,${Me.Encounter[${y}].ID}]:Target
+			wait 5
+		}
+	}
+
+	;; AutoAssist anyone in combat when I am not in combat
 	if !${Me.InCombat} && ${Me.IsGrouped} && ${doAutoAssist}
 	{
 		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
@@ -185,23 +194,32 @@ function MainRoutines()
 			if ${Pawn[id,${Group[${i}].ID}].CombatState}
 			{
 				CurrentAction:Set[Assisting ${Group[${i}].Name}]
-				;vgecho "Assisting ${Group[${i}].Name}"
 				VGExecute "/cleartargets"
 				VGExecute "/assist ${Group[${i}].Name}"
 				VGExecute "/assistoffensive"
-				wait 5
 				doAssistCheck:Set[FALSE]
+				
+				;; Must wait a tad bit!
+				wait 5
 			}
 		}
 		
-		if !${Me.Target(exists)}
+		;; Target nearest encounter
+		if !${Me.Target(exists)} && ${Me.Encounter}
 		{
-			if ${Pawn[AggroNPC,radius,10].CombatState}
+			x:Set[1000]
+			y:Set[1]
+			for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
 			{
-				Pawn[AggroNPC,radius,10]:Target
-				wait 3
-				doAssistCheck:Set[FALSE]
+				if ${Me.Encounter[${i}].Distance}<${x}
+				{
+					x:Set[${Me.Encounter[${i}].Distance}]
+					y:Set[${i}]
+				}
 			}
+			Pawn[ID,${Me.Encounter[${y}].ID}]:Target
+			doAssistCheck:Set[FALSE]
+			wait 5
 		}
 	}
 	
@@ -226,7 +244,7 @@ function MainRoutines()
 				;; Pause... health sometimes reports NULL or 0
 				if ${Me.Target(exists)} && ${Me.TargetHealth}<1
 				{
-					wait 2
+					wait 5
 				}
 			}
 		}
@@ -238,36 +256,18 @@ function MainRoutines()
 		return
 	}
 	
-	;; We don't fight dead things or while harvesting
-	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]}
-	{
-		return
-	}
-
-	;; Allow system to update its variables and recheck
-	wait 2
-	
 	;; Return if target is not in Combat unless we are hunting
 	if ${Me.Target.CombatState}==0 && !${doHunt}
 	{
 		return
 	}
 	
-	;; We don't fight dead things or while harvesting
+	;; We don't fight dead things or while harvesting or can't see target
 	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
 	{
 		return
 	}
 	
-	if ${Me.Target.Distance}>20 && ${Me.TargetHealth}<30
-	{
-		;; clear target
-		CurrentAction:Set[Clearing Targets]
-		VGExecute "/cleartargets"
-		wait 5
-		return
-	}
-
 	;-------------------------------------------
 	; EMERGENCY - SAVE OUR BACON ROUTINE
 	;-------------------------------------------
@@ -298,7 +298,7 @@ function MainRoutines()
 	}
 
 	; === Return if target is FURIOUS ===
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS}
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.Effect[Aura of Death](exists)} || ${FURIOUS}
 	{
 		if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Target.HaveLineOfSightTo}
 		{
@@ -419,10 +419,6 @@ function MainRoutines()
 		call ShadowStepHeal
 		if ${Return}
 			return
-	
-		call UseAbility "${Cull}"
-		if ${Return}
-			return
 	}
 
 	;; === Build our Dread ===
@@ -454,7 +450,7 @@ function MainRoutines()
 				x:Inc
 			}
 		}
-		if ${doScytheOfDoom} && ${Me.HealthPct}<60 && ${Me.EndurancePct}>48 && ${x}>1
+		if ${doScytheOfDoom} && ${Me.HealthPct}<70 && ${Me.EndurancePct}>48 && ${x}>1
 		{
 			;; frontal AE that heals
 			if ${Me.Ability[${ScytheOfDoom}].IsReady}
@@ -547,6 +543,14 @@ function MainRoutines()
 				return
 		}
 	}
+
+	; === Use our heal if we got it! ===
+	if ${Me.HealthPct}<70 && ${doShadowStep}
+	{
+		call UseAbility "${Cull}"
+		if ${Return}
+			return
+	}
 }
 
 
@@ -572,25 +576,27 @@ function CycleTargets()
 			;; Hit target's that are not targetting me
 			if ${Me.Encounter[${i}].Distance}<5 && !${Me.FName.Equal[${Me.Encounter[${i}].Target}]} && ${Me.Encounter[${i}].Health}>10
 			{
+				EchoIt "CycleTargets - Switching to ${Me.Encounter[${i}].Name} who's on ${Me.Encounter[${i}].Target}"
+			
+				;; change targets to target not targeting me
 				Pawn[ID,${Me.Encounter[${i}].ID}]:Target
 				wait 5
-				doAutoAssistReady:Set[FALSE]
-				TimedCommand 100 Script[VG-DK].Variable[doAutoAssistReady]:Set[TRUE]
-				
+
+				;; face our target
 				face ${Pawn[ID,${Me.Target.ID}].X} ${Pawn[ID,${Me.Target.ID}].Y}
 
-				if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<20
+				;; Make sure we have nothing that will interfere with the next ability
+				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 				{
-					Me.Ability[Ranged Attack]:Use
+					waitframe
 				}
-				if ${Me.Target.Distance} < 5
-				{
-					call UseAbility "${Provoke}"
-					if !${Return}
-					{
-						Me.Ability[${VexingStrike}]:Use
-					}
-				}
+
+				;; Push Hatred onto target -- if this doesn't pull the mob then our Rescue will
+				call UseAbility "${Provoke}"
+				call UseAbility "${VexingStrike}"
+				
+				doAutoAssistReady:Set[FALSE]
+				TimedCommand 100 Script[VG-DK].Variable[doAutoAssistReady]:Set[TRUE]
 			}
 		}
 	}
@@ -605,8 +611,12 @@ function DPS()
 	EchoIt "=== D P S ==="
 	CurrentAction:Set[DPS Called]
 
-	call CastBuff "${HatredIncarnate}"
-	
+	;; Stop attacks
+	if ${Me.Ability[Auto Attack].Toggled}
+	{
+		Me.Ability[Auto Attack]:Use
+	}
+
 	;; Ensure we are in combat form
 	if !${Me.CurrentForm.Name.Equal[Ebon Blade]}
 	{
@@ -616,70 +626,158 @@ function DPS()
 		wait 10 ${Me.CurrentForm.Name.Equal[Ebon Blade]}
 		EchoIt "** New Form = ${Me.CurrentForm.Name}"
 	}
+	
+	if ${Me.Target.Distance}>=5
+	{
+		EchoIt "Need to be within 5 meters to max out Dread (Terror Incarnate)"
+	}
 
-	;; Use Blood Mage's Conduct to regain some Health
+	;; wait and use DPS crits
+	call IsReady
+	
+	;; Max out our Dread so we can use BANE!
+	if ${GV[int,ProgressiveFormPhase]}<4 && ${Me.Target.Distance}<5
+	{
+		if ${Me.Ability[${TerrorIncarnate}].IsReady}
+		{
+			EchoIt "UseAbility ${TerrorIncarnate}"
+			Me.Ability[${TerrorIncarnate}]:Use
+			wait 3
+		}
+	}
+
+	;; wait and use DPS crits
+	call IsReady
+
+	;; Increase damage by 100% for 30 sec
+	call CastBuff "${HatredIncarnate}"
+
+	;; wait and use DPS crits
+	call IsReady
+	
+	;; Use Blood Mage's Quickening Jolt for crit
 	if ${Me.Ability[Quickening Jolt](exists)} && ${Me.Ability[Quickening Jolt].TimeRemaining}==0 && ${Me.Ability[Quickening Jolt].IsReady}
 	{
-		EchoIt "Quickening Jolt"
+		EchoIt "UseAbility - Quickening Jolt"
 		CurrentAction:Set[Quickening Jolt]
 		Me.Ability[Quickening Jolt]:Use
 		wait 1
 	}
 
-	;; Make sure we have nothing that will interfere with the next ability
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-	{
-		waitframe
-	}
-
-	;; Cast our Word of Doom series
-	if ${Me.Ability[${AncientWordOfDoom}].IsReady}
-	{
-		EchoIt "${AncientWordOfDoom}"
-		Me.Ability[${AncientWordOfDoom}]:Use
-		wait 3
-	}
-
-	if ${Me.Ability[${WordOfDoomHarDaalMur}].IsReady}
-	{
-		EchoIt "${WordOfDoomHarDaalMur}"
-		Me.Ability[${WordOfDoomHarDaalMur}]:Use
-		wait 3
-	}
-
-	if ${Me.Ability[${WordOfDoomCeimDor}].IsReady}
-	{
-		EchoIt "${WordOfDoomCeimDor}"
-		Me.Ability[${WordOfDoomCeimDor}]:Use
-		wait 3
-	}
-
-	if ${Me.Ability[${WordOfDoomAmarthic}].IsReady}
-	{
-		EchoIt "${WordOfDoomAmarthic}"
-		Me.Ability[${WordOfDoomAmarthic}]:Use
-		wait 3
-	}
-
-	if ${Me.Ability[${WordOfDoomAlthen}].IsReady}
-	{
-		EchoIt "${WordOfDoomAlthen}"
-		Me.Ability[${WordOfDoomAlthen}]:Use
-		wait 3
-	}
+	;; wait and use DPS crits
+	call IsReady
 	
-	;; Make sure we have nothing that will interfere with the next ability
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	;; Check if mob is immune to Spiritual
+	call Check4Immunites "${WordOfDoomAlthen}"
+	if !${Return}
 	{
-		waitframe
+		;; Cast Bane 
+		if ${Me.Ability[${Bane}].IsReady}
+		{
+			EchoIt "UseAbility - ${Bane}"
+			Me.Ability[${Bane}]:Use
+			wait 3
+		}
+		
+		;; wait and use DPS crits
+		call IsReady
+		
+		;; Cast our Word of Doom series from highest to lowest
+		if ${Me.Ability[${AncientWordOfDoom}].IsReady}
+		{
+			EchoIt "UseAbility - ${AncientWordOfDoom}"
+			Me.Ability[${AncientWordOfDoom}]:Use
+			wait 3
+		}
+
+		if ${Me.Ability[${WordOfDoomHarDaalMur}].IsReady}
+		{
+			EchoIt "UseAbility - ${WordOfDoomHarDaalMur}"
+			Me.Ability[${WordOfDoomHarDaalMur}]:Use
+			wait 3
+		}
+
+		if ${Me.Ability[${WordOfDoomCeimDor}].IsReady}
+		{
+			EchoIt "UseAbility - ${WordOfDoomCeimDor}"
+			Me.Ability[${WordOfDoomCeimDor}]:Use
+			wait 3
+		}
+
+		if ${Me.Ability[${WordOfDoomAmarthic}].IsReady}
+		{
+			EchoIt "UseAbility - ${WordOfDoomAmarthic}"
+			Me.Ability[${WordOfDoomAmarthic}]:Use
+			wait 3
+		}
+
+		if ${Me.Ability[${WordOfDoomAlthen}].IsReady}
+		{
+			EchoIt "UseAbility - ${WordOfDoomAlthen}"
+			Me.Ability[${WordOfDoomAlthen}]:Use
+			wait 3
+		}
+
+		;; wait and use DPS crits
+		call IsReady
+		
+		;; Damage and hate
+		if ${Me.Ability[${IncantationOfHate}].IsReady}
+		{
+			EchoIt "UseAbility - ${IncantationOfHate}"
+			Me.Ability[${IncantationOfHate}]:Use
+			wait 3
+		}
 	}
 
+	;; wait and use DPS crits
+	call IsReady
+	
 	if ${Me.TargetHealth}<20
 	{
 		; Only available under 20%
-		call UseAbility "${Slay}" "Ebon Blade"
+		call UseAbility "${Slay}"
+	}
+	
+	if ${Me.EndurancePct}>=40
+	{
+		;; 40 Endurance
+		call UseAbility "${Mutilate}"
+		if ${Return}
+			return
+	}
+	if ${Me.EndurancePct}>=24
+	{
+		;; 24 Endurance
+		call UseAbility "${Malice}"
+		if ${Return}
+			return
 	}
 }
+
+function IsReady()
+{
+	VGExecute "/reactionchain 5"
+	VGExecute "/reactionchain 1"
+	VGExecute "/reactionchain 4"
+
+	;; Make sure we have nothing that will interfere with the next ability
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
+		waitframe
+	}
+
+	VGExecute "/reactionchain 5"
+	VGExecute "/reactionchain 1"
+	VGExecute "/reactionchain 4"
+
+		;; Make sure we have nothing that will interfere with the next ability
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
+		waitframe
+	}
+}
+
 
 ;===================================================
 ;===      TURN SLOWLY TO FACE YOUR TARGET       ====
@@ -816,27 +914,25 @@ function Jump()
 {
 	if ${doJump}
 	{
-		doJump:Set[FALSE]
 		;VG:ExecBinding[moveforward,release]
 		if ${Math.Rand[10]}<5
 		{
 			VG:ExecBinding[StrafeRight,release]
 			VG:ExecBinding[StrafeLeft]
-			wait 5
+			wait 2.5
 		}
 		if ${Math.Rand[10]}>5
 		{
 			VG:ExecBinding[StrafeLeft,release]
 			VG:ExecBinding[StrafeRight]
-			wait 5
+			wait 2.5
 		}
-		;VG:ExecBinding[moveforward]
-		;wait 2
 		VG:ExecBinding[StrafeLeft,release]
 		VG:ExecBinding[StrafeRight,release]
 		VG:ExecBinding[Jump]
 		wait 2
 		VG:ExecBinding[Jump,release]
+		doJump:Set[FALSE]
 	}
 }
 
@@ -1282,7 +1378,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	;; Check if target is no longer FURIOUS
 	if ${ChannelNumber}==7 && ${aText.Find[is no longer FURIOUS]}
 	{
-		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<30
+		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<25
 		{
 			vgecho "FURIOUS - RESUME ATTACKING"
 			FURIOUS:Set[FALSE]
@@ -1292,7 +1388,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	; Check if target went into FURIOUS - Has delays for notification
 	if ${ChannelNumber}==7 && ${aText.Find[becomes FURIOUS]}
 	{
-		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<30
+		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<25
 		{
 			;; Turn on FURIOUS flag and stop attack
 			vgecho "FURIOUS -- STOP ATTACKS"

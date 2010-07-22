@@ -194,7 +194,7 @@
 							<Width>15</Width>
 							<Height>15</Height>
 							<Text>Auto Assist</Text>
-							<AutoTooltip>  assist anyone that is in combat </AutoTooltip>
+							<AutoTooltip>  assist anyone that is in combat and cycle through encounter list </AutoTooltip>
 							<OnLoad>
 								if ${Script[VG-DK].VariableScope.doAutoAssist}
 								{

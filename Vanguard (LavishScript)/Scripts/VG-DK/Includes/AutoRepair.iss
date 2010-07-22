@@ -3,10 +3,29 @@
 ;===================================================
 function AutoRepair()
 {
+	if ${Me.InCombat}
+	{
+		return
+	}
+
+	if ${doUseRepairStone}
+	{
+		if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<50
+		{
+			if ${Me.Inventory[Repair Stone](exists)}
+			{
+				Me.Inventory[Repair Stone]:Use
+				wait 5
+			}
+		}
+		TimedCommand 600 Script[VG-DK].Variable[doUseRepairStone]:Set[TRUE]
+		doUseRepairStone:Set[FALSE]
+	}
+
 	;; Essence of Replenishment
 	if ${Pawn[Essence of Replenishment](exists)}
 	{
-		if ${doRepair}
+		if ${doAutoRepair}
 		{
 			if ${Pawn[Essence of Replenishment].Distance}<5
 			{
@@ -26,14 +45,14 @@ function AutoRepair()
 				}
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doRepair]:Set[TRUE]
-		doRepair:Set[FALSE]
+		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		doAutoRepair:Set[FALSE]
 	}
 
 	;; Merchant Djinn
 	if ${Pawn[Merchant Djinn](exists)}
 	{
-		if ${doRepair}
+		if ${doAutoRepair}
 		{
 			if ${Pawn[Merchant Djinn].Distance}<5
 			{
@@ -53,14 +72,14 @@ function AutoRepair()
 				}
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doRepair]:Set[TRUE]
-		doRepair:Set[FALSE]
+		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		doAutoRepair:Set[FALSE]
 	}
 
 	;; Reparitron 5703
 	if ${Pawn[Reparitron 5703](exists)}
 	{
-		if ${doRepair}
+		if ${doAutoRepair}
 		{
 			if ${Pawn[Reparitron 5703].Distance}<5
 			{
@@ -80,14 +99,14 @@ function AutoRepair()
 				}
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doRepair]:Set[TRUE]
-		doRepair:Set[FALSE]
+		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		doAutoRepair:Set[FALSE]
 	}
 	
 	;; Merchant
 	if ${Me.Target.Type.Equal[Merchant]}
 	{
-		if ${doRepair}
+		if ${doAutoRepair}
 		{
 			if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
 			{
@@ -99,7 +118,7 @@ function AutoRepair()
 				VGExecute "/cleartargets"
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doRepair]:Set[TRUE]
-		doRepair:Set[FALSE]
+		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		doAutoRepair:Set[FALSE]
 	}
 }
