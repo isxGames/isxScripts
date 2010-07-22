@@ -10,7 +10,7 @@ function AutoRepair()
 
 	if ${doUseRepairStone}
 	{
-		if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<50
+		if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<60
 		{
 			if ${Me.Inventory[Repair Stone](exists)}
 			{
@@ -29,7 +29,7 @@ function AutoRepair()
 		{
 			if ${Pawn[Essence of Replenishment].Distance}<5
 			{
-				if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+				if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
 				{
 					Pawn[Essence of Replenishment]:Target
 					wait 10 ${Me.Target.Name.Find[Replenishment]}
@@ -56,7 +56,7 @@ function AutoRepair()
 		{
 			if ${Pawn[Merchant Djinn].Distance}<5
 			{
-				if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+				if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
 				{
 					Pawn[Merchant Djinn]:Target
 					wait 10 ${Me.Target.Name.Find[Merchant Djinn]}
@@ -83,7 +83,7 @@ function AutoRepair()
 		{
 			if ${Pawn[Reparitron 5703].Distance}<5
 			{
-				if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+				if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
 				{
 					Pawn[Reparitron 5703]:Target
 					wait 10 ${Me.Target.Name.Find[Reparitron 5703]}
@@ -108,7 +108,7 @@ function AutoRepair()
 	{
 		if ${doAutoRepair}
 		{
-			if ${Me.Inventory[CurrentEquipSlot,Primary Hand].Durability}<99
+			if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
 			{
 				Merchant:Begin[Repair]
 				wait 3
