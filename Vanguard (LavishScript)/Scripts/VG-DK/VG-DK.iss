@@ -131,6 +131,8 @@ function CriticalRoutines()
 	{
 		call Rescues
 		HandleChains
+		waitframe
+		HandleChains
 		call HandleCounters
 	}
 }
@@ -194,6 +196,7 @@ function MainRoutines()
 			if ${Pawn[id,${Group[${i}].ID}].CombatState}
 			{
 				CurrentAction:Set[Assisting ${Group[${i}].Name}]
+				;vgecho Assisting ${Group[${i}].Name}
 				VGExecute "/cleartargets"
 				VGExecute "/assist ${Group[${i}].Name}"
 				VGExecute "/assistoffensive"
@@ -220,6 +223,7 @@ function MainRoutines()
 			Pawn[ID,${Me.Encounter[${y}].ID}]:Target
 			doAssistCheck:Set[FALSE]
 			wait 5
+			;vgecho Target Nearest mob 
 		}
 	}
 	
@@ -1012,7 +1016,8 @@ function ClearTargets()
 ;===================================================
 function:bool UseAbility(string ABILITY, TEXT=" ")
 {
-
+	HandleChains
+	
 	;; does ability exist?
 	if !${Me.Ability[${ABILITY}](exists)}
 	{

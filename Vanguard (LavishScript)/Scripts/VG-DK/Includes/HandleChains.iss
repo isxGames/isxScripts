@@ -20,7 +20,7 @@ atom(script) HandleChains()
 	}
 	
 	;; Allow 1/5th a second to pass by before handling any chains
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<2.5
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${WaitOnChains}]}/1000]}<1.25
 	{
 		return
 	}
