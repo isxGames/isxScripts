@@ -16,7 +16,7 @@ function HandleCounters()
 			if ${Me.Ability[${Vengeance}].TimeRemaining}==0 && ${Me.Ability[${Vengeance}].TriggeredCountdown}>0
 			{
 				Me.Ability[${Vengeance}]:Use
-				;VGExecute "/reactioncounter 2"
+				VGExecute "/reactioncounter 2"
 				CurrentAction:Set[Counterattack - ${Vengeance}]
 				EchoIt "Counterattack - ${Vengeance}"
 				wait 5
@@ -32,7 +32,7 @@ function HandleCounters()
 			if ${Me.Ability[${Retaliate}].TimeRemaining}==0 && ${Me.Ability[${Retaliate}].TriggeredCountdown}>0
 			{
 				Me.Ability[${Retaliate}]:Use
-				;VGExecute "/reactioncounter 1"
+				VGExecute "/reactioncounter 1"
 				CurrentAction:Set[Counterattack - ${Retaliate}]
 				EchoIt "Counterattack - ${Retaliate}"
 				wait 5
