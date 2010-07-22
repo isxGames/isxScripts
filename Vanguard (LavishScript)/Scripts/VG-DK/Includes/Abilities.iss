@@ -143,10 +143,10 @@ function SetupAbilities()
 	;; === MISCELLANEOUS - I'm too low a level to test these abilities ===
 	SetHighestAbility "VileHowl" "Vile Howl"
 	SetHighestAbility "Bane" "Bane"
-	SetHighestAbility "SymbolOfSuffering" "Symbol of Suffering"
 	SetHighestAbility "HatredIncarnate" "Hatred Incarnate"
+	SetHighestAbility "IncantationOfHate" "Incantation of Hate"
+	SetHighestAbility "SymbolOfSuffering" "Symbol of Suffering"
 	SetHighestAbility "EnthrallingNexus" "Enthralling Nexus"
-	SetHighestAbility "IncarnationOfHate" "Incarnation of Hate"
 }
 
 ;===================================================

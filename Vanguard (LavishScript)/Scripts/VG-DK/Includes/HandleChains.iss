@@ -14,7 +14,7 @@ atom(script) HandleChains()
 	}
 	
 	; Return if target is Furious or Furious Rage
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.Effect[Furious Rage](exists)} || ${FURIOUS} 
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.Effect[Furious Rage](exists)} || ${Me.Effect[Aura of Death](exists)} || ${FURIOUS} 
 	{ 
 		return
 	}
@@ -65,11 +65,6 @@ atom(script) HandleChains()
 				Me.Ability[${HexOfIllOmen}]:Use
 				VGExecute "/reactionchain 1"
 				WaitOnChains:Set[${Script.RunningTime}]
-				;wait 4
-				;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-				;{
-				;	waitframe
-				;}
 			}
 		}
 		if ${Me.Ability[${HexOfImpendingDoom}].IsReady}
@@ -83,11 +78,6 @@ atom(script) HandleChains()
 				Me.Ability[${HexOfImpendingDoom}]:Use
 				VGExecute "/reactionchain 1"
 				WaitOnChains:Set[${Script.RunningTime}]
-				;wait 4
-				;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-				;{
-				;	waitframe
-				;}
 			}
 		}
 	}

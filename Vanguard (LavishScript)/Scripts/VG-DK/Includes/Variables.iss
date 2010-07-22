@@ -97,10 +97,11 @@ variable bool doForm = TRUE
 variable bool FURIOUS = FALSE
 variable bool doSnare = TRUE
 variable bool doJump = FALSE
+variable bool doUseRepairStone = TRUE
 variable int LastDowntimeCall=${Script.RunningTime}
 variable int NextUpdateDisplay = ${Script.RunningTime}
 variable bool doCycleTargetsReady = TRUE
 variable bool doDisEnchant = FALSE
 variable int TargetBuffs = 0
-variable int TargetHeading = 0
+variable int64 LastTargetID = 0
 ;
