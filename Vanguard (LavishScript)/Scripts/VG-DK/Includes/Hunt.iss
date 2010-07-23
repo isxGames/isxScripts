@@ -66,13 +66,12 @@ function:bool Hunt()
 		call FaceTarget
 	}
 
-	
 	;-------------------------------------------
-	; Move closer to target (20m) - This ain't good if we get stuck
+	; Move closer to target (15m) - This ain't good if we get stuck
 	;-------------------------------------------
 	while ${doRanged} && ${doMove} && ${Me.Target(exists)} && ${Me.Target.Distance}>25 && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
 	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 22
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 15
 		if !${Return}
 		{
 			;; clear target
@@ -84,7 +83,7 @@ function:bool Hunt()
 	}
 	while !${doRanged} && ${doMove} && ${Me.Target(exists)} && ${Me.Target.Distance}>5 && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
 	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 5
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
 		if !${Return}
 		{
 			;; clear target

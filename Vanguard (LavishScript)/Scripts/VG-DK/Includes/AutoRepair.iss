@@ -10,7 +10,7 @@ function AutoRepair()
 
 	if ${doUseRepairStone}
 	{
-		if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<60
+		if ${Me.Inventory[CurrentEquipSlot,Hand].Durability}<80 || ${Me.Inventory[CurrentEquipSlot,Harvesting Chest].Durability}<60 || ${Me.Inventory[CurrentEquipSlot,Crafting Chest].Durability}<60 || ${Me.Inventory[CurrentEquipSlot,Diplomacy Chest].Durability}<60
 		{
 			if ${Me.Inventory[Repair Stone](exists)}
 			{
@@ -29,7 +29,7 @@ function AutoRepair()
 		{
 			if ${Pawn[Essence of Replenishment].Distance}<5
 			{
-				if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
+				if ${Me.Inventory[CurrentEquipSlot,Hand].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Harvesting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Crafting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Diplomacy Chest].Durability}<99
 				{
 					Pawn[Essence of Replenishment]:Target
 					wait 10 ${Me.Target.Name.Find[Replenishment]}
@@ -45,7 +45,7 @@ function AutoRepair()
 				}
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		TimedCommand 600 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
 		doAutoRepair:Set[FALSE]
 	}
 
@@ -56,7 +56,7 @@ function AutoRepair()
 		{
 			if ${Pawn[Merchant Djinn].Distance}<5
 			{
-				if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
+				if ${Me.Inventory[CurrentEquipSlot,Hand].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Harvesting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Crafting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Diplomacy Chest].Durability}<99
 				{
 					Pawn[Merchant Djinn]:Target
 					wait 10 ${Me.Target.Name.Find[Merchant Djinn]}
@@ -72,7 +72,7 @@ function AutoRepair()
 				}
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		TimedCommand 600 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
 		doAutoRepair:Set[FALSE]
 	}
 
@@ -83,7 +83,7 @@ function AutoRepair()
 		{
 			if ${Pawn[Reparitron 5703].Distance}<5
 			{
-				if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
+				if ${Me.Inventory[CurrentEquipSlot,Hand].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Harvesting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Crafting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Diplomacy Chest].Durability}<99
 				{
 					Pawn[Reparitron 5703]:Target
 					wait 10 ${Me.Target.Name.Find[Reparitron 5703]}
@@ -99,7 +99,7 @@ function AutoRepair()
 				}
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		TimedCommand 600 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
 		doAutoRepair:Set[FALSE]
 	}
 	
@@ -108,17 +108,21 @@ function AutoRepair()
 	{
 		if ${doAutoRepair}
 		{
-			if ${Me.Inventory[CurrentEquipSlot,Chest].Durability}<99
+			if ${Me.Inventory[CurrentEquipSlot,Hand].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Harvesting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Crafting Chest].Durability}<99 || ${Me.Inventory[CurrentEquipSlot,Diplomacy Chest].Durability}<99
 			{
+				variable int64 tempID
 				Merchant:Begin[Repair]
-				wait 3
+				wait 2
 				Merchant:RepairAll
 				Merchant:End
 				vgecho Repaired equipment
 				VGExecute "/cleartargets"
+				wait 1
+				Pawn[id,${tempID}]:DoubleClick
+				wait 1
 			}
 		}
-		TimedCommand 150 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
+		TimedCommand 600 Script[VG-DK].Variable[doAutoRepair]:Set[TRUE]
 		doAutoRepair:Set[FALSE]
 	}
 }
