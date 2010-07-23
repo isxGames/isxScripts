@@ -14,7 +14,7 @@
 #include ./VG-DK/Includes/Check4Immunites.iss
 #include ./VG-DK/Includes/Buffs.iss
 #include ./VG-DK/Includes/Consumables.iss
-#include ./VG-DK/Includes/Loot.iss
+#include ./VG-DK/Includes/LootTargets.iss
 #include ./VG-DK/Includes/Hunt.iss
 #include ./VG-DK/Includes/FindTarget.iss
 #include ./VG-DK/Includes/MoveCloser.iss
@@ -23,6 +23,8 @@
 #include ./VG-DK/Includes/HandleCounters.iss
 #include ./VG-DK/Includes/HandleChains.iss
 #include ./VG-DK/Includes/ShadowStepHeal.iss
+#include ./VG-DK/Includes/UseAbility.iss
+#include ./VG-DK/Includes/UI.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -50,7 +52,6 @@ function main()
 	call SetupAbilities
 	
 	;; Turn on our event monitors
-	Event[OnFrame]:AttachAtom[HandleChains]
 	Event[OnFrame]:AttachAtom[UpdateDisplay]
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
 	Event[VG_OnIncomingCombatText]:AttachAtom[CombatText]
@@ -129,10 +130,18 @@ function CriticalRoutines()
 {
 	if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsDead}
 	{
+		;; Chains/Finishers are up so lets wait and use them
+		while ${Me.Target(exists)} && !${Me.Ability["Torch"].IsReady} && (${Me.Ability[${Ruin}].TriggeredCountdown}>0 || ${Me.Ability[${Wrack}].TriggeredCountdown}>0 || ${Me.Ability[${SoulWrack}].TriggeredCountdown}>0)
+		{
+			if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.Effect[Aura of Death](exists)} || ${FURIOUS}
+			{
+				return
+			}
+			waitframe
+		}
+		
 		call Rescues
-		HandleChains
-		waitframe
-		HandleChains
+		call HandleChains
 		call HandleCounters
 	}
 }
@@ -159,71 +168,77 @@ function MainRoutines()
 	;; Ensure we remove certain buffs
 	call CancelBuffs
 	
-	;; Loot and Clear Targets
-	call ClearTargets
+	;; Loot and clear dead targets that are within 5 meters
+	call LootTargets
 	
 	;; This will cycle targets in your encounter list
 	call CycleTargets
 	
 	;; Hunt for a target
 	call Hunt
-
-	if !${Me.IsGrouped} && ${Me.Target(exists)}
+	
+	if !${Me.IsGrouped}
 	{
-		;; find a closer Encounter if my target moved 10 meters away
-		if ${Me.Target.Distance}>10 && ${Me.Encounter}
+		if ${Me.Target(exists)}
 		{
-			x:Set[1000]
-			y:Set[1]
-			for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+			;; find a closer Encounter if my target moved 10 meters away
+			if ${Me.Target.Distance}>10 && ${Me.Encounter}
 			{
-				if ${Me.Encounter[${i}].Distance}<${x}
+				x:Set[${Me.Target.Distance}]
+				y:Set[1]
+				for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
 				{
-					x:Set[${Me.Encounter[${i}].Distance}]
-					y:Set[${i}]
+					if ${Me.Encounter[${i}].Distance}<${x}
+					{
+						x:Set[${Me.Encounter[${i}].Distance}]
+						y:Set[${i}]
+					}
 				}
-			}
-			Pawn[ID,${Me.Encounter[${y}].ID}]:Target
-			wait 5
-		}
-	}
-
-	;; AutoAssist anyone in combat when I am not in combat
-	if !${Me.InCombat} && ${Me.IsGrouped} && ${doAutoAssist}
-	{
-		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
-		{
-			if ${Pawn[id,${Group[${i}].ID}].CombatState}
-			{
-				CurrentAction:Set[Assisting ${Group[${i}].Name}]
-				;vgecho Assisting ${Group[${i}].Name}
-				VGExecute "/cleartargets"
-				VGExecute "/assist ${Group[${i}].Name}"
-				VGExecute "/assistoffensive"
-				doAssistCheck:Set[FALSE]
-				
-				;; Must wait a tad bit!
+				Pawn[ID,${Me.Encounter[${y}].ID}]:Target
 				wait 5
 			}
 		}
-		
-		;; Target nearest encounter
-		if !${Me.Target(exists)} && ${Me.Encounter}
+	}
+	
+	if ${Me.IsGrouped}
+	{
+		;; AutoAssist anyone in combat when I am not in combat
+		if !${Me.InCombat} && ${doAutoAssist}
 		{
-			x:Set[1000]
-			y:Set[1]
-			for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
 			{
-				if ${Me.Encounter[${i}].Distance}<${x}
+				if ${Pawn[id,${Group[${i}].ID}].CombatState}
 				{
-					x:Set[${Me.Encounter[${i}].Distance}]
-					y:Set[${i}]
+					CurrentAction:Set[Assisting ${Group[${i}].Name}]
+					;vgecho Assisting ${Group[${i}].Name}
+					VGExecute "/cleartargets"
+					VGExecute "/assist ${Group[${i}].Name}"
+					VGExecute "/assistoffensive"
+					doAssistCheck:Set[FALSE]
+					
+					;; Must wait a tad bit!
+					wait 5
 				}
 			}
-			Pawn[ID,${Me.Encounter[${y}].ID}]:Target
-			doAssistCheck:Set[FALSE]
-			wait 5
-			;vgecho Target Nearest mob 
+			
+			;; Target nearest encounter
+			if !${Me.Target(exists)} && ${Me.Encounter}
+			{
+				x:Set[1000]
+				y:Set[1]
+				for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+				{
+					if ${Me.Encounter[${i}].Distance}<${x}
+					{
+						x:Set[${Me.Encounter[${i}].Distance}]
+						y:Set[${i}]
+					}
+				}
+				Pawn[ID,${Me.Encounter[${y}].ID}]:Target
+				doAssistCheck:Set[FALSE]
+				wait 5
+				;vgecho Target Nearest mob 
+			}
 		}
 	}
 	
@@ -269,6 +284,12 @@ function MainRoutines()
 	;; We don't fight dead things or while harvesting or can't see target
 	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
 	{
+		;; Turn off attacks!
+		if ${GV[bool,bIsAutoAttacking]} && !${GV[bool,bHarvesting]}
+		{
+			Me.Ability[Auto Attack]:Use
+			wait 5
+		}
 		return
 	}
 	
@@ -277,39 +298,41 @@ function MainRoutines()
 	;-------------------------------------------
 	if ${Me.HealthPct}<30
 	{
+		
 		;; Get our Immunity shield up if we are severely wounded
 		call UseAbility "${AphoticShield}"
 		if ${Return}
-			return
-	}
-
-	;-------------------------------------------
-	; REGAIN HEALTH, ENDURANCE, AND ENERGY ROUTINES
-	;-------------------------------------------
-	; === Use any consumables in our inventory ===
-	call Consumables
-	
-	;; Let's face the target
-	call FaceTarget
-	
-	if ${doDisEnchant} && ${doMisc} && ${doDespoil}
-	{
-		call UseAbility "${Despoil}"
-		if ${Return}
 		{
-			doDisEnchant:Set[FALSE]
+			vgecho "10 second immunity buff is up"
+			return
 		}
 	}
 
+	;-------------------------------------------
+	; Use any consumables in our inventory
+	;-------------------------------------------
+	call Consumables
+
+	;-------------------------------------------
+	; Let's face the target
+	;-------------------------------------------
+	call FaceTarget
+	
+	;-------------------------------------------
 	; === Return if target is FURIOUS ===
+	;-------------------------------------------
 	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.Effect[Aura of Death](exists)} || ${FURIOUS}
 	{
-		if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Target.HaveLineOfSightTo}
+		if ${Me.Target.HaveLineOfSightTo}
 		{
-			;; Stuns target for 4 seconds
-			Me.Ability[${OminousFate}]:Use
-			wait 2
-			EchoIt "UseAbility - ${OminousFate}"
+			;; STUN target
+			if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
+			{
+				;; Stuns target for 4 seconds
+				Me.Ability[${OminousFate}]:Use
+				wait 2
+				EchoIt "UseAbility - ${OminousFate}"
+			}
 
 			;; Blocks incoming attack
 			Me.Ability[${BleakFoeman}]:Use
@@ -317,7 +340,7 @@ function MainRoutines()
 			EchoIt "UseAbility - ${BleakFoeman}"
 		}
 
-		;; wait for refresh
+		;; wait to allow attacks to stop after using Bleak Foeman
 		wait 3
 		
 		;; Stop attacks
@@ -332,9 +355,13 @@ function MainRoutines()
 			;; Increase Hatred
 			call UseAbility "${Provoke}"
 		}
+		
 		return
 	}
 
+	;-------------------------------------------
+	; Move within Range to attack with a bow
+	;-------------------------------------------
 	if ${doRanged} && ${doMove} && ${Me.Target.Distance}>15 && !${isPaused}
 	{
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 13
@@ -350,16 +377,18 @@ function MainRoutines()
 			}
 		}
 	}
-	if ${doMove} && ${Me.Target.Distance}>5 && !${isPaused}
-	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
-	}
+
+	;-------------------------------------------
+	; Move within Range for Melee attacks
+	;-------------------------------------------
 	if ${doMove} && !${isPaused}
 	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
 	}
-	
-	;; === Stun opponent when they start to run away ===
+
+	;-------------------------------------------
+	; Target turned their back on us so let's stun them, heal ourselves with harrow, and try to snare them
+	;-------------------------------------------
 	if ${Me.TargetHealth}<80
 	{
 		variable float result
@@ -373,15 +402,17 @@ function MainRoutines()
 			result:Set[${Math.Calc[${result} + 360]}]
 		}
 		result:Set[${Math.Abs[${result}]}]
-		if ${result}<95 
+		;; anything within 90 degrees is fair play
+		if ${result}<90 
 		{
-			;if ${Me.Ability[${OminousFate}].IsReady} && ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
+			;; === STUN target ===
 			if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
 			{
 				Me.Ability[${OminousFate}]:Use
 				wait 2
 				EchoIt "UseAbility - ${OminousFate}"
 			}
+			;; === Heal ourselves with Harrow ===
 			if ${Me.Ability[${Harrow}].TimeRemaining}==0 && ${Me.Endurance}>28
 			{
 				Me.Ability[${Harrow}]:Use
@@ -389,9 +420,9 @@ function MainRoutines()
 				EchoIt "UseAbility - ${Harrow}"
 				return
 			}
+			;; === SNARE target slowing them down ===
 			if ${doMisc} && ${doAbyssalChains} && ${doSnare}
 			{
-		
 				if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
 				{
 					call Check4Immunites "${AbyssalChains}"
@@ -409,7 +440,9 @@ function MainRoutines()
 		}
 	}
 
-	;; === Drain target's endurance and returns it to us -- 40 second cooldown ===
+	;-------------------------------------------
+	; Drain target's endurance and returns it to us -- 40 second cooldown
+	;-------------------------------------------
 	if ${Me.Endurance}>=10 && ${Me.Endurance}<30 && !${Me.TargetMyDebuff[${RavagingDarkness}](exists)}
 	{
 		call UseAbility "${RavagingDarkness}"
@@ -417,7 +450,9 @@ function MainRoutines()
 			return
 	}
 
-	; === Use our heal if we got it! ===
+	;-------------------------------------------
+	; Use ShadowStep to heal
+	;-------------------------------------------
 	if ${Me.HealthPct}<70 && ${doShadowStep}
 	{
 		call ShadowStepHeal
@@ -425,22 +460,6 @@ function MainRoutines()
 			return
 	}
 
-	;; === Build our Dread ===
-	if ${GV[int,ProgressiveFormPhase]}<4
-	{
-		;; Symbol to generate more Dread
-		;call CastBuff "${SymbolOfWrath}"
-		; 30 energy, 2s wait
-		call UseAbility "${DreadfulVisage}"
-		if ${Return}
-		{
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
-		}
-	}	
-	
 	;-------------------------------------------
 	; BUILD HATRED ROUTINES
 	;-------------------------------------------
@@ -456,7 +475,7 @@ function MainRoutines()
 		}
 		if ${doScytheOfDoom} && ${Me.HealthPct}<70 && ${Me.EndurancePct}>48 && ${x}>1
 		{
-			;; frontal AE that heals
+			;; frontal AE that heals (NICE)
 			if ${Me.Ability[${ScytheOfDoom}].IsReady}
 			{
 				CurrentAction:Set[${ScytheOfDoom}]
@@ -499,10 +518,17 @@ function MainRoutines()
 		}
 	}
 
-	;-------------------------------------------
-	; EMERGENCY - SAVE OUR BACON ROUTINE
-	;-------------------------------------------
-	; === Blocks 25% damage for 4-5 hits -- 1 minute cooldown ===
+	;; === Remove an Enchantment
+	if ${doDisEnchant} && ${doMisc} && ${doDespoil}
+	{
+		call UseAbility "${Despoil}"
+		if ${Return}
+		{
+			doDisEnchant:Set[FALSE]
+		}
+	}
+	
+	;; === Blocks 25% damage for 4-5 hits -- 1 minute cooldown ===
 	call CastBuff "${DarkWard}"
 	
 	;-------------------------------------------
@@ -548,6 +574,16 @@ function MainRoutines()
 		}
 	}
 
+	;; === Build our Dread ===
+	if ${GV[int,ProgressiveFormPhase]}<5
+	{
+		call UseAbility "${DreadfulVisage}"
+		if ${Return}
+		{
+			return
+		}
+	}	
+	
 	; === Use our heal if we got it! ===
 	if ${Me.HealthPct}<70 && ${doShadowStep}
 	{
@@ -865,7 +901,7 @@ function CancelBuffs()
 
 
 ;===================================================
-;===     CALLED ROUTINE VIA ATOM - BUMP         ====
+;===     OPEN THE DOOR                          ====
 ;===================================================
 function OpenDoor()
 {
@@ -873,7 +909,7 @@ function OpenDoor()
 }
 
 ;===================================================
-;===       NOW CONTROLLED BY ATOM - BUMP        ====
+;===     TAKE DOWN THAT PESKY POTA BARRIER      ====
 ;===================================================
 function OpenPotaBarrier()
 {
@@ -881,6 +917,7 @@ function OpenPotaBarrier()
 	if ${Pawn[Kheolim's Barrier].Distance}<3
 	{
 		Pawn[Kheolim's Barrier]:DoubleClick
+		wait 5
 	}
 }
 
@@ -923,13 +960,13 @@ function Jump()
 		{
 			VG:ExecBinding[StrafeRight,release]
 			VG:ExecBinding[StrafeLeft]
-			wait 2.5
+			wait 2
 		}
 		if ${Math.Rand[10]}>5
 		{
 			VG:ExecBinding[StrafeLeft,release]
 			VG:ExecBinding[StrafeRight]
-			wait 2.5
+			wait 2
 		}
 		VG:ExecBinding[StrafeLeft,release]
 		VG:ExecBinding[StrafeRight,release]
@@ -941,135 +978,6 @@ function Jump()
 }
 
 
-;===================================================
-;===       CLEAR TARGET IF TARGET IS DEAD       ====
-;===================================================
-function ClearTargets()
-{
-	;; loot everything
-	if ${doLoot}
-	{
-		call Loot
-	}
-
-
-
-	if ${Me.Target(exists)}
-	{
-		;; loot everything
-		if ${doLoot}
-		{
-			if ${Me.TargetHealth}<5
-			{
-				call Loot
-			}
-		}
-		
-		;; execute only if target is a corpse
-		if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead}
-		{
-			;; Stop melee attacks
-			if ${GV[bool,bIsAutoAttacking]}
-			{
-				Me.Ability[Auto Attack]:Use
-			}
-
-			;; looting??
-			while ${Me.IsLooting}
-			{
-				CurrentAction:Set[Looting]
-				waitframe
-			}
-			
-			;; harvesting??
-			while ${GV[bool,bHarvesting]} && ${Me.Target(exists)}
-			{
-				CurrentAction:Set[Harvesting]
-				waitframe
-			}
-			
-			;; loot everything
-			if ${doLoot}
-			{
-				call Loot
-			}
-			
-			
-			;; clear target
-			CurrentAction:Set[Clearing Targets]
-			VGExecute "/cleartargets"
-			call ChangeForm
-			EchoIt "---------------------------------"
-
-			;; wait long enough
-			wait 5
-			
-			;; update stats
-			FURIOUS:Set[FALSE]
-			SpellCounter:Set[0]
-		}
-	}
-}
-
-;===================================================
-;===              USE AN ABILITY                ====
-;===================================================
-function:bool UseAbility(string ABILITY, TEXT=" ")
-{
-	HandleChains
-	
-	;; does ability exist?
-	if !${Me.Ability[${ABILITY}](exists)}
-	{
-		;EchoIt "${ABILITY} does not exist"
-		return FALSE
-	}
-
-	if ${Me.Ability[${ABILITY}].IsReady}
-	{
-		;; Check if mob is immune
-		call Check4Immunites "${ABILITY}"
-		if ${Return}
-		{
-			;EchoIt "Immune to ${ABILITY}"
-			return FALSE
-		}
-	
-		;; do we have energy to use ability?
-		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
-		{
-			EchoIt "Not enought Energy for ${ABILITY}"
-			return FALSE
-		}
-		;; do we have endurance to use ability?
-		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance} 
-		{
-			EchoIt "Not enough Endurance for ${ABILITY}"
-			return FALSE
-		}
-		;; is target in range to use ability?
-		if ${Me.Ability[${ABILITY}].Range}<${Me.Target.Distance} && ${Me.Ability[${ABILITY}].IsOffensive}
-		{
-			EchoIt "(${Me.Target.Distance} meters) too far away to use ${ABILITY}"
-			return FALSE
-		}	
-		;; are we waiting to use ability?
-		if ${Me.Ability[${ABILITY}].TimeRemaining}>0
-		{
-			EchoIt "TimeRemaining - ${ABILITY}"
-			return FALSE
-		}
-		
-		;; execute ability
-		EchoIt "UseAbility - ${ABILITY} ${TEXT}"
-		CurrentAction:Set[Casting ${ABILITY}]
-		Me.Ability[${ABILITY}]:Use
-		wait 5
-		HandleChains
-		return TRUE
-	}
-	return FALSE
-}		
 
 ;===================================================
 ;===  Scan area for my tombstone and loot it    ====
@@ -1160,166 +1068,9 @@ atom Bump(string aObstacleActorName, float fX_Offset, float fY_Offset, float fZ_
 		return
 	}
 	
+	;; Seems to jump alot but it works!
 	doJump:Set[TRUE]
 }
-
-
-;===================================================
-;===     ATOM - Load Variables from XML         ====
-;===================================================
-atom(script) LoadXMLSettings()
-{
-	;; Create the Save directory incase it doesn't exist
-	variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/VG-DK/Save"
-	mkdir "${savePath}"
-
-	;; Define our SSR
-	variable settingsetref VG-DK_SSR
-	
-	;;Load Lavish Settings 
-	LavishSettings[VG-DK]:Clear
-	LavishSettings:AddSet[VG-DK]
-	LavishSettings[VG-DK]:AddSet[MySettings]
-	LavishSettings[VG-DK]:Import[${savePath}/MySettings.xml]	
-	VG-DK_SSR:Set[${LavishSettings[VG-DK].FindSet[MySettings]}]
-
-	;;Set values for MySettings
-	CombatForm:Set[${VG-DK_SSR.FindSetting[CombatForm,"Armor of Darkness"]}]
-	NonCombatForm:Set[${VG-DK_SSR.FindSetting[NonCombatForm,"Armor of Darkness"]}]
-	doFace:Set[${VG-DK_SSR.FindSetting[doFace,TRUE]}]
-	doMove:Set[${VG-DK_SSR.FindSetting[doMove,FALSE]}]
-	doAutoAssist:Set[${VG-DK_SSR.FindSetting[doAutoAssist,TRUE]}]
-	doAutoRez:Set[${VG-DK_SSR.FindSetting[doAutoRez,TRUE]}]
-	doAutoRepair:Set[${VG-DK_SSR.FindSetting[doAutoRepair,TRUE]}]
-	doConsumables:Set[${VG-DK_SSR.FindSetting[doConsumables,FALSE]}]
-	doSprint:Set[${VG-DK_SSR.FindSetting[doSprint,FALSE]}]
-	Speed:Set[${VG-DK_SSR.FindSetting[Speed,100]}]
-	doCancelBuffs:Set[${VG-DK_SSR.FindSetting[doCancelBuffs,TRUE]}]
-	doPhysical:Set[${VG-DK_SSR.FindSetting[doPhysical,TRUE]}]
-	doSpiritual:Set[${VG-DK_SSR.FindSetting[doSpiritual,TRUE]}]
-	doRanged:Set[${VG-DK_SSR.FindSetting[doRanged,TRUE]}]
-	doMelee:Set[${VG-DK_SSR.FindSetting[doMelee,TRUE]}]
-	doSound:Set[${VG-DK_SSR.FindSetting[doSound,TRUE]}]
-	doShadowStep:Set[${VG-DK_SSR.FindSetting[doShadowStep,TRUE]}]
-	doHatred:Set[${VG-DK_SSR.FindSetting[doHatred,TRUE]}]
-	doRescues:Set[${VG-DK_SSR.FindSetting[doRescues,TRUE]}]
-	doCounters:Set[${VG-DK_SSR.FindSetting[doCounters,TRUE]}]
-	doChains:Set[${VG-DK_SSR.FindSetting[doChains,TRUE]}]
-	doMisc:Set[${VG-DK_SSR.FindSetting[doMisc,TRUE]}]
-	doDespoil:Set[${VG-DK_SSR.FindSetting[doDespoil,TRUE]}]
-	doAbyssalChains:Set[${VG-DK_SSR.FindSetting[doAbyssalChains,TRUE]}]
-	doRetaliate:Set[${VG-DK_SSR.FindSetting[doRetaliate,TRUE]}]
-	doVengeance:Set[${VG-DK_SSR.FindSetting[doVengeance,TRUE]}]
-	doSeethingHatred:Set[${VG-DK_SSR.FindSetting[doSeethingHatred,TRUE]}]
-	doScourge:Set[${VG-DK_SSR.FindSetting[doScourge,TRUE]}]
-	doNexusOfHatred:Set[${VG-DK_SSR.FindSetting[doNexusOfHatred,TRUE]}]
-	doHexOfIllOmen:Set[${VG-DK_SSR.FindSetting[doHexOfIllOmen,TRUE]}]
-	doIncite:Set[${VG-DK_SSR.FindSetting[doIncite,TRUE]}]
-	doShieldOfFear:Set[${VG-DK_SSR.FindSetting[doShieldOfFear,TRUE]}]
-	doVileStrike:Set[${VG-DK_SSR.FindSetting[doVileStrike,TRUE]}]
-	doWrack:Set[${VG-DK_SSR.FindSetting[doWrack,TRUE]}]
-	doProvoke:Set[${VG-DK_SSR.FindSetting[doProvoke,TRUE]}]
-	doTorture:Set[${VG-DK_SSR.FindSetting[doTorture,TRUE]}]
-	doBlackWind:Set[${VG-DK_SSR.FindSetting[doBlackWind,TRUE]}]
-	doScytheOfDoom:Set[${VG-DK_SSR.FindSetting[doScytheOfDoom,TRUE]}]
-	doVexingStrike:Set[${VG-DK_SSR.FindSetting[doVexingStrike,TRUE]}]
-	doMalice:Set[${VG-DK_SSR.FindSetting[doMalice,TRUE]}]
-	doMutilate:Set[${VG-DK_SSR.FindSetting[doMutilate,TRUE]}]
-	doRavagingDarkness:Set[${VG-DK_SSR.FindSetting[doRavagingDarkness,TRUE]}]
-	doSlay:Set[${VG-DK_SSR.FindSetting[doSlay,TRUE]}]
-	doBacklash:Set[${VG-DK_SSR.FindSetting[doBacklash,TRUE]}]
-	doLoot:Set[${VG-DK_SSR.FindSetting[doLoot,TRUE]}]
-	LootDelay:Set[${VG-DK_SSR.FindSetting[LootDelay,"0"]}]
-	doRaidLoot:Set[${VG-DK_SSR.FindSetting[doRaidLoot,FALSE]}]
-	doLootOnly:Set[${VG-DK_SSR.FindSetting[doLootOnly,FALSE]}]
-	LootOnly:Set[${VG-DK_SSR.FindSetting[LootOnly,""]}]
-	doLootEcho:Set[${VG-DK_SSR.FindSetting[doLootEcho,TRUE]}]
-	doLootInCombat:Set[${VG-DK_SSR.FindSetting[doLootInCombat,TRUE]}]
-	MobMinLevel:Set[${VG-DK_SSR.FindSetting[MobMinLevel,"0"]}]
-	MobMaxLevel:Set[${VG-DK_SSR.FindSetting[MobMaxLevel,"0"]}]
-	ConCheck:Set[${VG-DK_SSR.FindSetting[ConCheck,"0"]}]
-	Distance:Set[${VG-DK_SSR.FindSetting[Distance,"100"]}]
-}
-;===================================================
-;===      ATOM - Save Variables to XML          ====
-;===================================================
-atom(script) SaveXMLSettings()
-{
-	;; Create the Save directory incase it doesn't exist
-	variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/VG-DK/Save"
-	mkdir "${savePath}"
-	;; Define our SSR
-	variable settingsetref VG-DK_SSR
-	;; Load Lavish Settings 
-	LavishSettings[VG-DK]:Clear
-	LavishSettings:AddSet[VG-DK]
-	LavishSettings[VG-DK]:AddSet[MySettings]
-	LavishSettings[VG-DK]:Import[${savePath}/MySettings.xml]	
-	VG-DK_SSR:Set[${LavishSettings[VG-DK].FindSet[MySettings]}]
-
-	;; Save MySettings
-	VG-DK_SSR:AddSetting[CombatForm,${CombatForm}]
-	VG-DK_SSR:AddSetting[NonCombatForm,${NonCombatForm}]
-	VG-DK_SSR:AddSetting[doFace,${doFace}]
-	VG-DK_SSR:AddSetting[doMove,${doMove}]
-	VG-DK_SSR:AddSetting[doAutoAssist,${doAutoAssist}]
-	VG-DK_SSR:AddSetting[doAutoRez,${doAutoRez}]
-	VG-DK_SSR:AddSetting[doAutoRepair,${doAutoRepair}]
-	VG-DK_SSR:AddSetting[doConsumables,${doConsumables}]
-	VG-DK_SSR:AddSetting[doSprint,${doSprint}]
-	VG-DK_SSR:AddSetting[Speed,${Speed}]
-	VG-DK_SSR:AddSetting[doCancelBuffs,${doCancelBuffs}]
-	VG-DK_SSR:AddSetting[doPhysical,${doPhysical}]
-	VG-DK_SSR:AddSetting[doSpiritual,${doSpiritual}]
-	VG-DK_SSR:AddSetting[doRanged,${doRanged}]
-	VG-DK_SSR:AddSetting[doMelee,${doMelee}]
-	VG-DK_SSR:AddSetting[doSound,${doSound}]
-	VG-DK_SSR:AddSetting[doShadowStep,${doShadowStep}]
-	VG-DK_SSR:AddSetting[doRescues,${doRescues}]
-	VG-DK_SSR:AddSetting[doCounters,${doCounters}]
-	VG-DK_SSR:AddSetting[doChains,${doChains}]
-	VG-DK_SSR:AddSetting[doMisc,${doMisc}]
-	VG-DK_SSR:AddSetting[doDespoil,${doDespoil}]
-	VG-DK_SSR:AddSetting[doAbyssalChains,${doAbyssalChains}]
-	VG-DK_SSR:AddSetting[doHatred,${doHatred}]
-	VG-DK_SSR:AddSetting[doRetaliate,${doRetaliate}]
-	VG-DK_SSR:AddSetting[doVengeance,${doVengeance}]
-	VG-DK_SSR:AddSetting[doSeethingHatred,${doSeethingHatred}]
-	VG-DK_SSR:AddSetting[doScourge,${doScourge}]
-	VG-DK_SSR:AddSetting[doNexusOfHatred,${doNexusOfHatred}]
-	VG-DK_SSR:AddSetting[doHexOfIllOmen,${doHexOfIllOmen}]
-	VG-DK_SSR:AddSetting[doIncite,${doIncite}]
-	VG-DK_SSR:AddSetting[doShieldOfFear,${doShieldOfFear}]
-	VG-DK_SSR:AddSetting[doVileStrike,${doVileStrike}]
-	VG-DK_SSR:AddSetting[doWrack,${doWrack}]
-	VG-DK_SSR:AddSetting[doProvoke,${doProvoke}]
-	VG-DK_SSR:AddSetting[doTorture,${doTorture}]
-	VG-DK_SSR:AddSetting[doBlackWind,${doBlackWind}]
-	VG-DK_SSR:AddSetting[doScytheOfDoom,${doScytheOfDoom}]
-	VG-DK_SSR:AddSetting[doVexingStrike,${doVexingStrike}]
-	VG-DK_SSR:AddSetting[doMalice,${doMalice}]
-	VG-DK_SSR:AddSetting[doMutilate,${doMutilate}]
-	VG-DK_SSR:AddSetting[doRavagingDarkness,${doRavagingDarkness}]
-	VG-DK_SSR:AddSetting[doSlay,${doSlay}]
-	VG-DK_SSR:AddSetting[doBacklash,${doBacklash}]
-	VG-DK_SSR:AddSetting[doLoot,${doLoot}]
-	VG-DK_SSR:AddSetting[LootDelay,${LootDelay}]
-	VG-DK_SSR:AddSetting[doRaidLoot,${doRaidLoot}]
-	VG-DK_SSR:AddSetting[doLootOnly,${doLootOnly}]
-	VG-DK_SSR:AddSetting[LootOnly,${LootOnly}]
-	VG-DK_SSR:AddSetting[doLootEcho,${doLootEcho}]
-	VG-DK_SSR:AddSetting[doLootInCombat,${doLootInCombat}]
-	VG-DK_SSR:AddSetting[MobMinLevel,${MobMinLevel}]
-	VG-DK_SSR:AddSetting[MobMaxLevel,${MobMaxLevel}]
-	VG-DK_SSR:AddSetting[ConCheck,${ConCheck}]
-	VG-DK_SSR:AddSetting[Distance,${Distance}]
-
-	;; Save to file
-	LavishSettings[VG-DK]:Export[${savePath}/MySettings.xml]
-}
-
-;variable bool doCounters = TRUE
-
 
 ;===================================================
 ;===      ATOM - UPDATE OUR GUI DISPLAY         ====
