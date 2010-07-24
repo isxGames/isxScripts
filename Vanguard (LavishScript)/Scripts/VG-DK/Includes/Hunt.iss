@@ -69,9 +69,18 @@ function:bool Hunt()
 	;-------------------------------------------
 	; Move closer to target (15m) - This ain't good if we get stuck
 	;-------------------------------------------
-	while ${doRanged} && ${doMove} && ${Me.Target(exists)} && ${Me.Target.Distance}>25 && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
+	variable int i = 0
+	while ${doRanged} && ${doMove} && ${Me.Target(exists)} && ${Me.Target.Distance}>=${Me.Ability[Ranged Attack].Range} && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
 	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 15
+		i:Set[${Me.Ability[Ranged Attack].Range}]
+		if ${i}<15
+		{
+			;; maximum range to move to
+			i:Set[15]
+		}
+		i:Dec
+
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
 		if !${Return}
 		{
 			;; clear target
