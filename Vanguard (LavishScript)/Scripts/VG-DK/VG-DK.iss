@@ -295,6 +295,13 @@ function MainRoutines()
 	;; We don't fight dead things or while harvesting or can't see target
 	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
 	{
+		if ${doHunt}
+		{
+			;; clear our target
+			VGExecute "/cleartargets"
+			wait 5 !${Me.Target(exists)}
+		}
+	
 		;; Turn off attacks!
 		if ${GV[bool,bIsAutoAttacking]} && !${GV[bool,bHarvesting]}
 		{
