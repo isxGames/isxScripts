@@ -70,16 +70,21 @@ function:bool Hunt()
 	; Move closer to target (15m) - This ain't good if we get stuck
 	;-------------------------------------------
 	variable int i = 0
-	while ${doRanged} && ${doMove} && ${Me.Target(exists)} && ${Me.Target.Distance}>=${Me.Ability[Ranged Attack].Range} && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
+	if ${doRanged} && ${doMove} && ${Me.Target(exists)} && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
 	{
+		CurrentAction:Set[Hunt - Moving closer (Ranged)]
 		i:Set[${Me.Ability[Ranged Attack].Range}]
 		if ${i}<15
 		{
 			;; maximum range to move to
-			i:Set[15]
+			i:Set[14]
 		}
-		i:Dec
-
+		if ${i}>25
+		{
+			;; maximum range to move to
+			i:Set[24]
+		}
+		i:Set[${Math.Calc[${i}-3]]
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
 		if !${Return}
 		{
@@ -90,8 +95,9 @@ function:bool Hunt()
 			return FALSE
 		}
 	}
-	while !${doRanged} && ${doMove} && ${Me.Target(exists)} && ${Me.Target.Distance}>5 && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
+	if !${doRanged} && ${doMove} && ${Me.Target(exists)} && !${Me.InCombat} && !${isPaused} && ${Me.Encounter}==0
 	{
+		CurrentAction:Set[Hunt - Moving closer (Melee)]
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
 		if !${Return}
 		{

@@ -33,7 +33,7 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 			return FALSE
 		}
 		;; is target in range to use ability?
-		if ${Me.Ability[${ABILITY}].Range}<${Me.Target.Distance} && ${Me.Ability[${ABILITY}].IsOffensive}
+		if ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance} && ${Me.Ability[${ABILITY}].IsOffensive}
 		{
 			EchoIt "(${Me.Target.Distance} meters) too far away to use ${ABILITY}"
 			return FALSE

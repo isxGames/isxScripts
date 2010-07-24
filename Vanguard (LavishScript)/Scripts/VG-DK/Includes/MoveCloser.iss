@@ -23,13 +23,14 @@ External Routines that must be in your program:  faceloc
 ;===================================================
 ;===       Move Closer if target exists         ====
 ;===================================================
-function:bool MoveCloser(float X, float Y, int Distance=300)
+function:bool MoveCloser(float X, float Y, int Distance=3)
 {
 	;-------------------------------------------
 	; Return if we don't want to move
 	;-------------------------------------------
 	if !${doMove}
 		return TRUE
+		
 
 	;-------------------------------------------
 	; Convert our distance not less than 3m
@@ -38,6 +39,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 	if ${Distance}<300
 		Distance:Set[300]
 
+	;if ${Me.Target(exists)}
+	;	CurrentAction:Set[MoveCloser - (${Distance}) (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]})]
+		
 	;-------------------------------------------
 	; Set our bailout timer to 10 sec "yah, kinda short timer"
 	;-------------------------------------------
@@ -57,6 +61,7 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		{
 			if ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
+				CurrentAction:Set[MoveCloser - ${Me.Target.Name}]
 				while ${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 				{
 					VG:ExecBinding[movebackward,release]
@@ -77,6 +82,7 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 			}
 			if ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
+				CurrentAction:Set[MoveCloser - Backingup]
 				while ${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 				{
 					VG:ExecBinding[moveforward,release]
@@ -107,8 +113,9 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		;-------------------------------------------
 		; Keep moving forward while facing the target
 		;-------------------------------------------
-		if !${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
+		if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 		{
+			CurrentAction:Set[MoveCloser - (${Distance})]
 			while !${Me.Target(exists)} && ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>${Distance} && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
 				VG:ExecBinding[movebackward,release]
@@ -124,6 +131,7 @@ function:bool MoveCloser(float X, float Y, int Distance=300)
 		;-------------------------------------------
 		if ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 		{
+			CurrentAction:Set[MoveCloser - Backingup]
 			while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<150 && ${LavishScript.RunningTime}<=${bailOut} && !${Me.ToPawn.IsStunned} && !${isPaused} && ${doMove}
 			{
 				VG:ExecBinding[moveforward,release]
