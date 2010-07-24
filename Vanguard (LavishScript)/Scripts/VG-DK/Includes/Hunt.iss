@@ -34,7 +34,7 @@ function:bool Hunt()
 	;-------------------------------------------
 	; Return if we don't want to hunt
 	;-------------------------------------------
-	if !${doHunt} || ${Me.InCombat} || ${Me.HealthPct}<90 || ${Me.EnergyPct}<90 || ${Me.EndurancePct}<90 || ${Me.Target(exists)}
+	if !${doHunt} || ${Me.InCombat} || ${Me.HealthPct}<80 || ${Me.EnergyPct}<80 || ${Me.EndurancePct}<80 || ${Me.Target(exists)}
 		return FALSE
 
 	;-------------------------------------------

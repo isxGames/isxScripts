@@ -42,7 +42,7 @@ function LootTargets()
 			EchoIt "---------------------------------"
 
 			;; wait long enough
-			wait 5
+			wait 1
 		}
 	}
 
@@ -50,7 +50,7 @@ function LootTargets()
 	if ${doClearLoot}
 	{
 		LootBlackList:Clear
-		TimedCommand 10 Script[VG-DK].Variable[doClearLoot]:Set[TRUE]
+		TimedCommand 100 Script[VG-DK].Variable[doClearLoot]:Set[TRUE]
 		doClearLoot:Set[FALSE]
 	}
 }
@@ -83,7 +83,7 @@ function LootCurrentTarget()
 	variable int i
 
 	;; Loot routine if target is a corpse
-	if !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5 && ${doLootInCombat}
+	if !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
 	{
 		wait ${LootDelay}
 	
@@ -137,7 +137,7 @@ function LootCurrentTarget()
 					Loot:LootAll
 				}
 			}
-			wait 3
+			wait 1
 		}
 		return
 	}
@@ -192,9 +192,9 @@ function FindLootableTargets()
 			;-------------------------------------------
 			if !${LootBlackList.Element[${Pawn[${i}].ID}](exists)}
 				LootBlackList:Set[${Pawn[${i}].ID}, ${Pawn[${i}].ID}]
-		
+			
 			Pawn[${i}]:Target
-			wait 5 ${Me.Target.ContainsLoot}
+			wait 10 ${Me.Target(exists)} && ${Me.Target.ContainsLoot}
 			return
 		}
 	}	
