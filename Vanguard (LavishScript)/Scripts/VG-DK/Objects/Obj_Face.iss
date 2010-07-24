@@ -23,7 +23,7 @@ objectdef obj_Face
 		{
 			return
 		}
-		This:Point[${Pawn[id,${PawnID}].X}, ${Pawn[id,${PawnID}].Y}, ${Pawn[id,${PawnID}].Z}, ${fastFace}]
+		This:Point[${Pawn[id,${PawnID}].Location},${fastFace}]
 	}
 
 	;-----------------------------------------------
@@ -32,8 +32,7 @@ objectdef obj_Face
 	method Point(float X, float Y, float Z=0, bool fastFace=FALSE)
 	{
 		variable point3f aLoc
-		aLoc:Set[${X}, ${Y}, ${Z}]
-		;echo aLoc=${aLoc}
+		aLoc:Set[${X},${Y},${Z}]
 		This.DestX:Set[${aLoc.X}]
 		This.DestY:Set[${aLoc.Y}]
 		This.DestZ:Set[${aLoc.Z}]
@@ -66,7 +65,6 @@ objectdef obj_Face
 	method FaceSlow()
 	{
 		This:CalcHeadingToPoint
-		This:CalcRelativeAngle
 		if ${This.ImmediateFace}
 		{
 			;; face this angle now
@@ -78,7 +76,6 @@ objectdef obj_Face
 			This.Facing:Set[TRUE]
 		}
 	}
-	
 	method GradualFace()
 	{
 		if !${This.Facing}
@@ -88,9 +85,9 @@ objectdef obj_Face
 
 		;; When we are "close enough" to facing the point while at the point.
 		;; This grows the further away you are, and shrinks as you get closer.
-		;variable int Precision = ${Math.Rand[3]:Inc[5]}
-		variable int Precision = 15
-		variable float ChangeAmount = 0.175
+		variable int Precision = ${Math.Rand[3]:Inc[5]}
+		;variable int Precision = 1
+		variable float ChangeAmount = 0.1
 
 		;; The amount to turn, in percents.
 		variable int NewHeading
@@ -100,25 +97,38 @@ objectdef obj_Face
 		DistanceToTarget:Set[${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}]
 		This:CalcHeadingToPoint
 		This:CalcRelativeAngle
-		if ${This.AngleDiffAbs} < ${Precision}
+		if ${This.AngleDiffAbs} <= ${Precision}
 		{
 			;; stop facing
 			This.Facing:Set[FALSE]
-			;; This will help on preventing spinning
-			;face ${This.DestX} ${This.DestY}
 			return
 		}
-		
-		;echo [${Time}] DistanceToTarget=${DistanceToTarget}, AngleDiffAbs=${This.AngleDiffAbs}, AngleDiff=${This.AngleDiff}, DestX=${This.DestX}, DestY=${This.DestY}, DestZ=${This.DestZ}
 
-		;; Overide if our fps is way to slow
-		if ${VG.FPS}<16
+		
+		if (${DistanceToTarget} < 1000)
 		{
-			ChangeAmount:Inc[.2]
+			; do 30-100% of the turn
+			ChangeAmount:Set[.3]
+		}
+		elseif (${DistanceToTarget} < 1500)
+		{
+			; do 25-95%
+			ChangeAmount:Set[.25]}]
+		}
+		elseif (${DistanceToTarget} < 2000)
+		{
+			; do 20-90% of the turn
+			ChangeAmount:Set[.2]
+		}
+		elseif (${DistanceToTarget} < 2500)
+		{
+			; do 15-85% of the turn
+			ChangeAmount:Set[.15]
 		}
 		
+
 		;; Overide if our fps is way to slow
-		if ${VG.FPS}<12
+		if ${VG.FPS}<10
 		{
 			ChangeAmount:Inc[.2]
 		}
@@ -135,12 +145,15 @@ objectdef obj_Face
 			ChangeAmount:Inc[.2]
 		}
 		
-		if ${ChangeAmount}>.9
+		;; Overide if our fps is way to slow
+		if ${VG.FPS}<4
 		{
-			ChangeAmount:Set[.9]
+			ChangeAmount:Inc[.1]
 		}
 		
-	
+		
+		
+		
 		
 		
 /*		

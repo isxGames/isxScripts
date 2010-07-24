@@ -5,8 +5,8 @@
 ;===================================================
 ;===              INCLUDES                      ====
 ;===================================================
-;#include ./VG-DK/Objects/Obj_Face.iss
-;#include ./VG-DK/Objects/Obj_Move.iss
+#include ./VG-DK/Objects/Obj_Face.iss
+#include ./VG-DK/Objects/Obj_Move.iss
 
 #include ./VG-DK/Includes/Variables.iss
 #include ./VG-DK/Includes/Abilities.iss
@@ -25,6 +25,7 @@
 #include ./VG-DK/Includes/ShadowStepHeal.iss
 #include ./VG-DK/Includes/UseAbility.iss
 #include ./VG-DK/Includes/UI.iss
+#include ./VG-DK/Includes/Follow.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -81,6 +82,13 @@ function main()
 		{
 			CurrentAction:Set[Waiting]
 		}
+
+		;; Make sure we have nothing that will interfere with the next ability
+		;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		;{
+		;	waitframe
+		;}
+		
 		
 		;; Set the move backward flag
 		if !${Me.InCombat}
@@ -155,6 +163,9 @@ function MainRoutines()
 	variable int x = 0
 	variable int y = 0
 	variable bool doAssistCheck = TRUE
+	
+	;; Follow our Tank
+	call Follow
 
 	;; Be sure to switch into correct form
 	call ChangeForm
@@ -334,10 +345,13 @@ function MainRoutines()
 				EchoIt "UseAbility - ${OminousFate}"
 			}
 
-			;; Blocks incoming attack
-			Me.Ability[${BleakFoeman}]:Use
-			wait 2
-			EchoIt "UseAbility - ${BleakFoeman}"
+			if ${Me.Ability[${BleakFoeman}].IsReady}
+			{
+				;; Blocks incoming attack
+				Me.Ability[${BleakFoeman}]:Use
+				wait 2
+				EchoIt "UseAbility - ${BleakFoeman}"
+			}
 		}
 
 		;; wait to allow attacks to stop after using Bleak Foeman
@@ -360,33 +374,6 @@ function MainRoutines()
 	}
 
 	;-------------------------------------------
-	; Move within Range to attack with a bow
-	;-------------------------------------------
-	if ${doRanged} && ${doMove} && ${Me.Target.Distance}>15 && !${isPaused}
-	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 13
-	}
-	if ${doRanged} && ${Me.Target.Distance}>4
-	{
-		call UseAbility "Ranged Attack"
-		if ${Return}
-		{
-			while !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
-		}
-	}
-
-	;-------------------------------------------
-	; Move within Range for Melee attacks
-	;-------------------------------------------
-	if ${doMove} && !${isPaused}
-	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-	}
-
-	;-------------------------------------------
 	; Target turned their back on us so let's stun them, heal ourselves with harrow, and try to snare them
 	;-------------------------------------------
 	if ${Me.TargetHealth}<80
@@ -406,20 +393,12 @@ function MainRoutines()
 		if ${result}<90 
 		{
 			;; === STUN target ===
-			if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
-			{
-				Me.Ability[${OminousFate}]:Use
-				wait 2
-				EchoIt "UseAbility - ${OminousFate}"
-			}
+			call UseAbility "${OminousFate}"
+			
 			;; === Heal ourselves with Harrow ===
-			if ${Me.Ability[${Harrow}].TimeRemaining}==0 && ${Me.Endurance}>28
-			{
-				Me.Ability[${Harrow}]:Use
-				wait 2
-				EchoIt "UseAbility - ${Harrow}"
+			call UseAbility "${Harrow}"
+			if ${Return}
 				return
-			}
 			;; === SNARE target slowing them down ===
 			if ${doMisc} && ${doAbyssalChains} && ${doSnare}
 			{
@@ -428,7 +407,7 @@ function MainRoutines()
 					call Check4Immunites "${AbyssalChains}"
 					if !${Return}
 					{
-						TimedCommand 10 Script[VG-DK].Variable[doSnare]:Set[TRUE]
+						TimedCommand 30 Script[VG-DK].Variable[doSnare]:Set[TRUE]
 						doSnare:Set[FALSE]
 						Me.Ability[${AbyssalChains}]:Use
 						wait 2
@@ -495,6 +474,15 @@ function MainRoutines()
 				return
 			}
 		}
+		
+		;; Damage and hate
+		if ${Me.IsGrouped}
+		{
+			call UseAbility "${IncantationOfHate}"
+			if ${Return}
+				return
+		}
+		
 		if ${doTorture} && !${Me.TargetMyDebuff[${Torture}](exists)}
 		{
 			;; DOT - Damage and increase hatred
@@ -530,6 +518,16 @@ function MainRoutines()
 	
 	;; === Blocks 25% damage for 4-5 hits -- 1 minute cooldown ===
 	call CastBuff "${DarkWard}"
+
+	;; === Build our Dread ===
+	if ${doDreadfulVisage} && ${GV[int,ProgressiveFormPhase]}<5 &&  ${Me.Target.CombatState}>0
+	{
+		call UseAbility "${DreadfulVisage}"
+		if ${Return}
+		{
+			return
+		}
+	}	
 	
 	;-------------------------------------------
 	; MELEE ROUTINES
@@ -574,22 +572,57 @@ function MainRoutines()
 		}
 	}
 
-	;; === Build our Dread ===
-	if ${GV[int,ProgressiveFormPhase]}<5
-	{
-		call UseAbility "${DreadfulVisage}"
-		if ${Return}
-		{
-			return
-		}
-	}	
-	
 	; === Use our heal if we got it! ===
 	if ${Me.HealthPct}<70 && ${doShadowStep}
 	{
 		call UseAbility "${Cull}"
 		if ${Return}
 			return
+	}
+
+	;-------------------------------------------
+	; Move within Range to attack with a bow
+	;-------------------------------------------
+	if ${doRanged} && ${doMove} && !${isPaused}
+	{
+		i:Set[${Me.Ability[Ranged Attack].Range}]
+		if ${i}<15
+		{
+			;; maximum range to move to
+			i:Set[15]
+		}
+		
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
+	}
+	if ${doRanged} && ${Me.Target.Distance}>4
+	{
+		call UseAbility "Ranged Attack"
+	}
+
+	;; === SNARE target slowing them down ===
+	if !${Me.IsGrouped} && ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.Target.CombatState}>0
+	{
+		if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
+		{
+			call Check4Immunites "${AbyssalChains}"
+			if !${Return}
+			{
+				TimedCommand 30 Script[VG-DK].Variable[doSnare]:Set[TRUE]
+				doSnare:Set[FALSE]
+				Me.Ability[${AbyssalChains}]:Use
+				wait 2
+				EchoIt "UseAbility - ${AbyssalChains}"
+				return
+			}
+		}
+	}
+	
+	;-------------------------------------------
+	; Move within Range for Melee attacks
+	;-------------------------------------------
+	if ${doMove} && !${isPaused}
+	{
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
 	}
 }
 
@@ -1103,6 +1136,10 @@ atom(script) UpdateDisplay()
 	UIElement[Text-Status@VG-DK]:SetText[ Current Action:  ${CurrentAction}]
 	UIElement[Text-Immune@VG-DK]:SetText[ Target's Immunity:  ${TargetImmunity}]
 	UIElement[Text-TOT@VG-DK]:SetText[ Target's Target:  ${TargetsTarget}]
+	
+	;; Misc
+	UIElement[Follow Name@Misc@Tabs@VG-DK]:SetText[Follow:  ${FollowName}]
+
 
 	;; Update our immunity Display
 	call Check4Immunites

@@ -7,8 +7,8 @@
 ;===================================================
 ;===     DEFINE/INITIALIZE OUR OBJECTIVES       ====
 ;===================================================
-;variable obj_Face Face
-;variable obj_Move Move
+variable obj_Face Face
+variable obj_Move Move
 ;
 ;===================================================
 ;===         VARIABLES USED BY UI               ====
@@ -89,6 +89,12 @@ variable int Distance
 variable float HomeX
 variable float HomeY
 variable float HomeZ
+;; MISC
+variable bool doFollow = FALSE
+variable string FollowName = "No name set"
+variable int64 FollowID = 0
+
+
 ;
 ;===================================================
 ;===       VARIABLES USED BY SCRIPT             ====
@@ -104,4 +110,4 @@ variable bool doCycleTargetsReady = TRUE
 variable bool doDisEnchant = FALSE
 variable int TargetBuffs = 0
 variable int64 LastTargetID = 0
-;
+variable bool doDreadfulVisage = TRUE

@@ -1455,6 +1455,46 @@
 							<Text>Show Radar</Text>
 						</Text>
 					</Tab>
+
+					<!-- Tab Name: (Misc) -->
+					<Tab Name="Misc">
+						<checkbox Name='doFollow' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>7%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text> </Text>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doFollow}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doFollow:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Commandbutton Name='Set Follow' Template='VG.GreenCommandButton'>
+							<visible>6</visible>
+							<X>10%</X>
+							<Y>6%</Y>
+							<Text>Set</Text>
+							<Width>40</Width> 
+							<Height>18</Height>
+							<OnLeftClick>
+								Script[VG-DK].Variable[FollowName]:Set[${Me.DTarget.Name}]
+								Script[VG-DK].Variable[FollowID]:Set[${Me.DTarget.ID}]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name="Follow Name" Template="VG.BoldText">
+							<X>25%</X>
+							<Y>7%</Y>
+							<Width>85%</Width>
+							<Height>25</Height>
+							<Text> </Text>
+						</Text>
+					</Tab>
 					
 					<!-- Tab Name: (About) -->
 					<Tab name='About'>
