@@ -295,7 +295,7 @@ function MainRoutines()
 	;; We don't fight dead things or while harvesting or can't see target
 	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
 	{
-		if ${doHunt}
+		if ${doHunt} && ${Me.Target(exists)}
 		{
 			;; clear our target
 			VGExecute "/cleartargets"
@@ -407,7 +407,7 @@ function MainRoutines()
 			if ${Return}
 				return
 			;; === SNARE target slowing them down ===
-			if ${doMisc} && ${doAbyssalChains} && ${doSnare}
+			if ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.HealthPct}>75
 			{
 				if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
 				{
@@ -596,18 +596,28 @@ function MainRoutines()
 		if ${i}<15
 		{
 			;; maximum range to move to
-			i:Set[15]
+			i:Set[14]
 		}
-		i:Dec
+		if ${i}>25
+		{
+			;; maximum range to move to
+			i:Set[24]
+		}
+		i:Set[${Math.Calc[${i}-3]]
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
 	}
 	if ${doRanged} && ${Me.Target.Distance}>4
 	{
 		call UseAbility "Ranged Attack"
+		if !${Return}
+		{
+			i:Set[${Math.Calc[${i}-3]]
+			call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
+		}
 	}
 
 	;; === SNARE target slowing them down ===
-	if !${Me.IsGrouped} && ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.Target.CombatState}>0
+	if !${Me.IsGrouped} && ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.Target.CombatState}>0 && ${Me.HealthPct}>80
 	{
 		if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
 		{
