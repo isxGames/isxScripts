@@ -591,7 +591,7 @@ function MainRoutines()
 			;; maximum range to move to
 			i:Set[15]
 		}
-		
+		i:Dec
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
 	}
 	if ${doRanged} && ${Me.Target.Distance}>4
@@ -620,10 +620,15 @@ function MainRoutines()
 	;-------------------------------------------
 	; Move within Range for Melee attacks
 	;-------------------------------------------
-	if ${doMove} && !${isPaused}
+	if ${doMove} && !${isPaused} && ${Me.TargetHealth}<97
 	{
 		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
 	}
+	if ${doMove} && !${isPaused} && !${doRanged}
+	{
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
+	}
+	
 }
 
 
@@ -1209,6 +1214,13 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		EchoIt "${aText}"
 		PlaySound ALARM
 	}
+	
+	if ${aText.Find[You are missing the ammo needed to use this ability.]}
+	{
+		doRanged:Set[FALSE]
+		UIElement[doRanged@Main@Tabs@VG-DK]:UnsetChecked
+	}
+	
 
 }
 
@@ -1249,6 +1261,7 @@ atom CombatText(string aText, int aType)
 			doDisEnchant:Set[TRUE]
 		}
 	}
+
 	if ${aText.Find[ casts ]} && ${aText.Find[ on ]}
 	{
 		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]}
@@ -1257,4 +1270,5 @@ atom CombatText(string aText, int aType)
 			doDisEnchant:Set[TRUE]
 		}
 	}
+
 }
