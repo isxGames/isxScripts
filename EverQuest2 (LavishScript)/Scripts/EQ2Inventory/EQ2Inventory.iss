@@ -787,23 +787,18 @@ function SellJunk()
 	if (${iter:First(exists)})
 	{
 		do
-		{
-			Debug:Echo["${iter.Key}"] 
-			Debug:Echo["${Me.CustomInventory[ExactName,${iter.Key}]}"]  
-			Debug:Echo["${iter.Key} ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]}"] 
-			
-			if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]}
+		{			
+			if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${Me.Merchandise[${iter.Key}].IsForSale}
 			{
-				echo In Loop
 				do
 				{
 					Debug:Echo["${iter.Key}"]
-					Debug:Echo["${Me.Merchandise[${iter.Key}]}"]
+					Debug:Echo["Selling ${Me.Merchandise[${iter.Key}]}"]
 					call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.Merchandise[${iter.Key}]}" FF11CCFF
 					Me.Merchandise[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
 					wait 15
 				}
-				while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
+				while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0 
 			}
 		}
 		while ${iter:Next(exists)} && ${RunJunk}
@@ -1150,6 +1145,8 @@ function EQ2Hirelings()
 function AddJunk()
 {
 	noop ${Junk.FindSet[Junk].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
+	Settings:SaveSettings[${Junk}]
+	Junk.FindSet[Junk]:Sort
 	Settings:SaveSettings[${Junk}]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
