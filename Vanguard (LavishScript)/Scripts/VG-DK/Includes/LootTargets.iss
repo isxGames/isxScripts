@@ -25,7 +25,7 @@ function LootTargets()
 
 			;; Loot everything
 			call LootCurrentTarget
-
+			
 			;; Return if we are still looting
 			while ${Me.IsLooting}
 			{
@@ -139,6 +139,14 @@ function LootCurrentTarget()
 			}
 			wait 1
 		}
+		
+		;; End Looting
+		if ${Me.IsLooting}
+		{
+			Loot:EndLooting
+			wait 3
+		}
+
 		return
 	}
 }
