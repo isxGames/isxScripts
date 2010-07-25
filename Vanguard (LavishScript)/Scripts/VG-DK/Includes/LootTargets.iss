@@ -143,6 +143,9 @@ function LootCurrentTarget()
 		;; End Looting
 		if ${Me.IsLooting}
 		{
+			;; Unlootable item, try to loot the last item
+			Loot.Item[${Loot.NumItems}]:Loot
+			wait 1
 			Loot:EndLooting
 			wait 3
 		}
