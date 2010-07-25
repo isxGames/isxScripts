@@ -69,7 +69,7 @@ function AttackTarget()
 	;-------------------------------------------
 	; Check #6 - Cast a HOT and return if target is FURIOUS
 	;-------------------------------------------
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${FURIOUS}
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
 	{
 		call UseAbility "${TransfusionOfSerak}"
 		return
