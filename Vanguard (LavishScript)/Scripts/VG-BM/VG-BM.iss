@@ -294,6 +294,7 @@ function main()
 		}
 		else
 		{
+			Move:Stop
 			wait 2
 		}
 	}

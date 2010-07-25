@@ -14,6 +14,10 @@ function Follow()
 					Face:Pawn[${Pawn[id,${FollowID}].ID},FALSE]
 					Move:Pawn[${Pawn[id,${FollowID}].ID},5]
 				}
+				else
+				{
+					Move:Stop
+				}
 			}
 		}
 
