@@ -1359,6 +1359,8 @@
 					{
 						Script[VG-BM].Variable[isPaused]:Set[TRUE]
 						This:SetText[This script is Paused]
+						Move:Stop
+						VG:ExecBinding[moveforward,release]
 					}
 				</OnLeftClick>
 			</Commandbutton>
