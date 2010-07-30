@@ -179,7 +179,6 @@ function main(string goscan, string goscan2)
 	Event[EQ2_onInventoryUpdate]:AttachAtom[EQ2_onInventoryUpdate]
 	Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
-	; Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 	
 	call AddLog "${Version}" FF11FFCC
 	call echolog "${Version}"
@@ -3458,6 +3457,7 @@ function placeshinies()
 	call echolog "<start> placeshinies"
 	
 	Declare PSxvar int local 1
+	Declare windowopentimer int local
 	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 
 	call refreshbags
@@ -3484,26 +3484,37 @@ function placeshinies()
 					; is item a collectible ?
 					if ${Me.CustomInventory[${PSxvar}].IsCollectible} && ${Shinies}
 					{
+					
+						NewCollection:Set[FALSE]
+						windowopentimer:Set[1]
 						Me.CustomInventory[${PSxvar}]:Examine
-	
+						
+						
 						; Wait till the examine window is open
 						do
 						{
 							waitframe
 						}
-						while !${ExamineOpen}
+						while !${ExamineOpen} && ${windowopentimer:Inc} < 100
 								
-						wait 5
-						ExamineOpen:Set[FALSE]
-	
-						if !${NewCollection}
+						if ${windowopentimer:Inc} < 100
 						{
-							NewCollection:Set[FALSE]
-							call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${ShiniesBox}
+							wait 5
+							ExamineOpen:Set[FALSE]
 	
-							PSxvar:Set[1]
-							Me:CreateCustomInventoryArray[nonbankonly]
-							waitframe
+							if !${NewCollection}
+							{
+								NewCollection:Set[FALSE]
+								call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${ShiniesBox}
+	
+								PSxvar:Set[1]
+								Me:CreateCustomInventoryArray[nonbankonly]
+								waitframe
+							}
+						}
+						else
+						{
+							EQ2Execute /close_top_window
 						}
 					}
 					elseif ${PlaceRaws} && ${Raws.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
