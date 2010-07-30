@@ -70,7 +70,7 @@
               UIElement[Diplo]:SetHeight[80]
               break
             Case Options
-              UIElement[Diplo]:SetWidth[340]
+              UIElement[Diplo]:SetWidth[380]
               UIElement[Diplo]:SetHeight[300]
               break
           }
@@ -298,9 +298,9 @@
               </OnLeftClick>
             </checkbox>
             <listbox Name="NPCList" Template="VG.ListBox">
-              <X>110</X>
+              <X>95</X>
               <Y>15</Y>
-              <Width>200</Width>
+              <Width>265</Width>
               <Height>120</Height>
               <sort>None</sort>
               <SelectMultiple>0</SelectMultiple>
