@@ -285,12 +285,12 @@ function main()
 						variable string returnvalue = "GOOD"
 						
 						;; Move to last known XYZ location if we can't find via pawn
-						if !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)} && ${Math.Distance[${Me.X},${Me.Y},${${dipNPCs[${curNPC}].X}},${${dipNPCs[${curNPC}].Y}}]}>500
+						if !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)} && ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}>500
 						{
 							;vgecho [${curNPC}]  ${dipNPCs[${curNPC}].Name}
 							if ${debug}
 							{
-								Redirect -append "${Output}" echo "${Time}: Starting movement routine via last known XYZ location with distance of ${Math.Distance[${Me.X},${Me.Y},${${dipNPCs[${curNPC}].X}},${${dipNPCs[${curNPC}].Y}}]}"
+								Redirect -append "${Output}" echo "${Time}: Starting movement routine via last known XYZ location with distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
 							}
 							call dipnav.MovetoXYZ ${dipNPCs[${curNPC}].X} ${dipNPCs[${curNPC}].Y} ${dipNPCs[${curNPC}].Z}
 							returnvalue:Set[${Return}]
@@ -345,9 +345,8 @@ function main()
 						{
 							Redirect -append "${Output}" echo "${Time}: New Target is ${dipNPCs[${curNPC}].NameID}"
 						}
-						
 						;; Target NPC when we are within range
-						if ${Math.Distance[${Me.X},${Me.Y},${${dipNPCs[${curNPC}].X}},${${dipNPCs[${curNPC}].Y}}]}<=500
+						if ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}<=800
 						{
 							Pawn[id,${dipNPCs[${curNPC}].ID}]:Target
 							wait 5
@@ -573,7 +572,9 @@ function SelectParlay()
 			echo Presence Needed : ${Dialog[Civic Diplomacy,1].PresenceRequiredType}
 			call PresenceNeeded
 			echo Equipping Gear: ${Return}
+			wait 5
 			obj_diplogear:Load[${Return}]
+			wait 5
 			Dialog[${genorciv},${selectedConv}]:Select
 
 			if ${debug}
@@ -1085,6 +1086,14 @@ atom(script) OnParlayLost()
 
 atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
+	if (${Text.Find["You need at least a diplomacy level of"]})
+	{
+		if ${debug}
+		{
+			Redirect -append "${Output}" echo "${Time}: Too low a level, next NPC"
+		}
+		needNewNPC:Set[TRUE]
+	}
 	if (${Text.Find["Your turn is already in progress."]})
 	{
 		if ${debug}
