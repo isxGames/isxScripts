@@ -278,7 +278,7 @@
 				<OnLoad>
 					declarevariable TEBoxEQ2OgreTransmuteMaxLevelID int global
 					TEBoxEQ2OgreTransmuteMaxLevelID:Set[${This.ID}]
-					This:SetText[80]
+					This:SetText[90]
 				</OnLoad>
 				<OnUnLoad>
 					deletevariable TEBoxEQ2OgreTransmuteMaxLevelID
