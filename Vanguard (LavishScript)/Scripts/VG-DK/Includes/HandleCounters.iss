@@ -16,7 +16,7 @@ function HandleCounters()
 	;; This goes first since it has a cooldown timer
 	if ${doVengeance}
 	{
-		if ${Me.Ability[${Vengeance}].IsReady}
+		if ${Me.Ability[${Vengeance}].IsReady} && ${Me.EndurancePct}>=10
 		{
 			if ${Me.Ability[${Vengeance}].TimeRemaining}==0 && ${Me.Ability[${Vengeance}].TriggeredCountdown}>0
 			{

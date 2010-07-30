@@ -1,7 +1,7 @@
 ;===================================================
 ;===            RESCUES                         ====
 ;===================================================
-function Rescues()
+function HandleRescues()
 {
 	;if !${doRescues} || !${Me.InCombat} || ${TargetsTarget.Equal[No Target]}
 	if !${doRescues} || !${Me.InCombat} || !${Me.Target(exists)}

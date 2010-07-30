@@ -5,19 +5,19 @@
 function HandleChains()
 {
 	;; return if we do not want to do chains
-	if !${doChains}
+	if !${doChains} 
 	{
 		return
 	}
 
-	; Return if target is Furious, Furious Rage, or Aura of Death
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
-	{ 
-		return
+	;; Chains/Finishers are up so lets wait till their ready and use them
+	while !${Me.Ability["Torch"].IsReady} && (${Me.Ability[${Ruin}].TriggeredCountdown}>0 || ${Me.Ability[${Wrack}].TriggeredCountdown}>0 || ${Me.Ability[${SoulWrack}].TriggeredCountdown}>0)
+	{
+		waitframe
 	}
 	
 	;; 1st - we want to increase hatred
-	if ${doIncite} && ${Me.IsGrouped}
+	if ${doIncite} && ${Me.IsGrouped} && ${Me.HealthPct}>40 && ${Me.EndurancePct}>=10
 	{
 		call ExecuteChain "${Incite}"
 		call ExecuteChain "${Inflame}"
@@ -25,25 +25,28 @@ function HandleChains()
 	}
 	
 	;; 2nd - make sure we restore some energy
-	if ${doVileStrike} && !${Me.Effect[${Anguish}](exists)} 
+	if ${doVileStrike} && !${Me.Effect[${Anguish}](exists)} && ${Me.EndurancePct}>=10
 	{
+		while !${Me.Ability["Torch"].IsReady} && ${Me.Ability[${RavagingDarkness}].TimeRemaining}==0
+		{
+			waitframe
+		}
 		if ${Me.EnergyPct}<80
 		{
 			call ExecuteChain "${VileStrike}"
 		}
-			call ExecuteChain "${Anguish}"
+		call ExecuteChain "${Anguish}"
 	}
 	
 	;; 3rd - increase our block, damage, and AC
-	if ${doShieldOfFear} && !${Me.Effect[${DarkBastion}](exists)} 
+	if ${doShieldOfFear} && !${Me.Effect[${DarkBastion}](exists)} && ${Me.HealthPct}>40
 	{
 		call ExecuteChain "${ShieldOfFear}"
 		call ExecuteChain "${DarkBastion}"
 	}
 	
 	;; 4th - decrease target's damage and increases your damage
-	;if ${doHexOfIllOmen} && !${Me.Effect[${HexOfImpendingDoom}](exists)}
-	if ${doHexOfIllOmen}
+	if ${doHexOfIllOmen} && ${Me.HealthPct}>40
 	{
 		if ${Me.Ability[${HexOfIllOmen}].IsReady}
 		{
@@ -74,7 +77,7 @@ function HandleChains()
 	}
 
 	;; 5th - +400% weapon damage
-	if ${doWrack}
+	if ${doWrack} && ${Me.EndurancePct}>=10 && ${Me.HealthPct}>40
 	{
 		call ExecuteChain "${SoulWrack}"
 		call ExecuteChain "${Wrack}"
@@ -86,6 +89,11 @@ function HandleChains()
 ;===================================================
 function ExecuteChain(string ChainFinisher)
 {
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
+	{
+		return
+	}
+	
 	if ${Me.Ability[${ChainFinisher}].IsReady}
 	{
 		if ${Me.Ability[${ChainFinisher}].TimeRemaining}==0 && ${Me.Ability[${ChainFinisher}].TriggeredCountdown}>0

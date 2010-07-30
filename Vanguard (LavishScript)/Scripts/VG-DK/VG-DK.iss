@@ -19,13 +19,15 @@
 #include ./VG-DK/Includes/FindTarget.iss
 #include ./VG-DK/Includes/MoveCloser.iss
 #include ./VG-DK/Includes/FaceSlow.iss
-#include ./VG-DK/Includes/Rescues.iss
+#include ./VG-DK/Includes/HandleRescues.iss
 #include ./VG-DK/Includes/HandleCounters.iss
 #include ./VG-DK/Includes/HandleChains.iss
+#include ./VG-DK/Includes/HandleEncounters.iss
 #include ./VG-DK/Includes/ShadowStepHeal.iss
 #include ./VG-DK/Includes/UseAbility.iss
 #include ./VG-DK/Includes/UI.iss
 #include ./VG-DK/Includes/Follow.iss
+#include ./VG-DK/Includes/Harvest.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -83,19 +85,6 @@ function main()
 			CurrentAction:Set[Waiting]
 		}
 
-		;; Make sure we have nothing that will interfere with the next ability
-		;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		;{
-		;	waitframe
-		;}
-		
-		
-		;; Set the move backward flag
-		if !${Me.InCombat}
-		{
-			doBackup:Set[TRUE]
-		}
-		
 		;; Execute any queued commands
 		if ${QueuedCommands}
 		{
@@ -103,174 +92,218 @@ function main()
 			FlushQueued
 		}
 		
-		;; Take down that pesky POTA barrier
-		call OpenPotaBarrier
-
-		;; execute main routine
+		;; execute routines
 		if !${isPaused} 
 		{
-			;; Reset TargetBuff counter
-			if !${Me.Target(exists)}
-			{
-				TargetBuffs:Set[0]
-			}
-			
-			;; Targetbuff counter increased so set the doDisEnchant flag
-			if ${Me.TargetBuff}>${TargetBuffs}
-			{
-				doDisEnchant:Set[TRUE]
-			}
-			
-			;; Update our Targetbuff counter
-			TargetBuffs:Set[${Me.TargetBuff}]
-
-			;; Call our routines
-			call CriticalRoutines
-			call MainRoutines
+			call NotInCombat
+			call InCombat
+			call AlwaysCheck
 		}
 	}
 }
 
-;===================================================
-;===           CRITICAL ROUTINES                ====
-;===================================================
-function CriticalRoutines()
+function AlwaysCheck()
 {
-	if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsDead}
-	{
-		;; Chains/Finishers are up so lets wait and use them
-		while ${Me.Target(exists)} && !${Me.Ability["Torch"].IsReady} && (${Me.Ability[${Ruin}].TriggeredCountdown}>0 || ${Me.Ability[${Wrack}].TriggeredCountdown}>0 || ${Me.Ability[${SoulWrack}].TriggeredCountdown}>0)
-		{
-			if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
-			{
-				return
-			}
-			waitframe
-		}
-		
-		call Rescues
-		call HandleChains
-		call HandleCounters
-	}
-}
-
-;===================================================
-;=== Heart of the script so we must prioritize  ====
-;===================================================
-function MainRoutines()
-{
-	variable int i
-	variable int x = 0
-	variable int y = 0
-	variable bool doAssistCheck = TRUE
-	
-	;; Follow our Tank
-	call Follow
+	;; Loot and clear dead targets that are within 5 meters
+	call LootTargets
 
 	;; Be sure to switch into correct form
 	call ChangeForm
 
+	;; Use any consumables in our inventory
+	call Consumables
+	
+	;; Follow our Tank
+	call Follow
+
+	;; Reset TargetBuff counter
+	if !${Me.Target(exists)}
+		TargetBuffs:Set[0]
+	
+	;; Sometimes, we are not the main tank
+	call AssistTank
+}
+
+function NotInCombat()
+{
+	;; Return if we are not in combat
+	if ${Me.InCombat} 
+		return
+
+	;; Stop all Melee Attacks
+	call StopMeleeAttacks		
+
+	;; Figure out what we going to do with our Encounters
+	call HandleEncounters
+	if ${Return}
+		return
+	
 	;; Repair our Equipment
 	call AutoRepair
 
 	;; Ensure buffs are up
 	call BuffUp
 
-	;; Ensure we remove certain buffs
+	;; Ensure we remove certain buffs like those that reduce our Hatred
 	call CancelBuffs
 	
-	;; Loot and clear dead targets that are within 5 meters
-	call LootTargets
-	
-	;; This will cycle targets in your encounter list
-	call CycleTargets
+	;; Assist with harvesting
+	call Harvest
 	
 	;; Hunt for a target
 	call Hunt
-	
-	if !${Me.IsGrouped}
+
+	;; Take down that pesky POTA barrier
+	call OpenPotaBarrier
+}
+
+function InCombat()
+{
+	waitframe
+
+	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
+		return
+
+	;; wait 1 second if health is 0 -- this will help prevent accidental attacking
+	if ${Me.TargetHealth}==0
 	{
-		if ${Me.Target(exists)}
+		wait 10 ${Me.TargetHealth}
+	}
+
+	;; Return if target is not in Combat unless we are hunting
+	if !${doHunt} && ${Me.Target.CombatState}==0
+	{
+		return
+	}
+
+	;; Handle any emergencies that come up
+	call HandleEmergencies
+	if ${Return}
+		return
+
+	;; Routine to handle Furious, Furious Rage, Aura of Death, and Frightful Aura
+	call HandleFurious
+	if ${Return}
+		return
+
+	;; Figure out what we going to do with our Encounters
+	call HandleEncounters
+		
+	;; Rescue any group members
+	call HandleRescues
+
+	;; Use ShadowStep to heal if health is below 70%
+	call ShadowStepHeal
+	if ${Return}
+		return
+	
+	;; Process any Chains/Finishers and combos
+	call HandleChains
+	
+	;; Process any counters
+	call HandleCounters
+	
+	;; Let's face the target
+	call FaceTarget
+	
+	;; Target turned their back on us so let's stun them, heal ourselves with harrow, and try to snare them
+	call HandleBehindTarget
+	if ${Return}
+		return
+
+	;; Drain target's endurance and returns it to us -- 40 second cooldown
+	if ${Me.Endurance}>=10 && ${Me.Endurance}<30 && !${Me.TargetMyDebuff[${RavagingDarkness}](exists)} && ${Me.Ability[${RavagingDarkness}].TimeRemaining}==0
+	{
+		;; wait to use next ability
+		while !${Me.Ability["Torch"].IsReady}
 		{
-			;; find a closer Encounter if my target moved 10 meters away
-			if ${Me.Target.Distance}>10 && ${Me.Encounter}
-			{
-				x:Set[${Me.Target.Distance}]
-				y:Set[1]
-				for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
-				{
-					if ${Me.Encounter[${i}].Distance}<${x}
-					{
-						x:Set[${Me.Encounter[${i}].Distance}]
-						y:Set[${i}]
-					}
-				}
-				Pawn[ID,${Me.Encounter[${y}].ID}]:Target
-				wait 5
-			}
+			waitframe
+		}
+			;vgecho RavagingDarkness=${Me.Ability[${RavagingDarkness}].IsReady}
+	
+		call UseAbility "${RavagingDarkness}"
+		if ${Return}
+			return
+	}
+
+	;; Process all routines that deal primarily with Hatred
+	call BuildHatred
+	if ${Return}
+		return
+
+	if ${Me.HealthPct}<40
+		return
+
+	;; Blocks 25% damage for 4-5 hits -- 1 minute cooldown
+	call CastBuff "${DarkWard}"
+
+	;; Build our Dread to level 5
+	call BuildDread
+	if ${Return}
+		return
+
+	;; Attempt to remove new Enchantments
+	call RemoveEnchantments
+	if ${Return}
+		return
+
+	;; Process all routines that deal with Melee Attacks
+	call HandleMeleeAttacks
+	if ${Return}
+		return
+		
+	;; Move within Range to attack with a bow
+	call RangedAttack
+	if ${Return}
+		return
+		
+	;; SNARE target -- slow them down		
+	call SnareTarget
+	if ${Return}
+		return
+
+	;; Move within Range for Melee attacks
+	call MoveToMeleeRange
+}
+
+;=========================================================================================
+;=========================================================================================
+;=========================================================================================
+
+function StopMeleeAttacks()
+{
+	if !${GV[bool,bHarvesting]}
+	{
+		;; Method #1 - Turn off attacks!
+		if ${GV[bool,bIsAutoAttacking]}
+		{
+			Me.Ability[Auto Attack]:Use
+			wait 10 !${GV[bool,bIsAutoAttacking]}
+		}
+		;; Method #2 - Turn off attacks!
+		if ${Me.Ability[Auto Attack].Toggled} 
+		{
+			Me.Ability[Auto Attack]:Use
+			wait 10 !${Me.Ability[Auto Attack].Toggled} 
 		}
 	}
-	
-	if ${Me.IsGrouped}
+}
+
+function AssistTank()
+{
+	;; We are going to assist the tank and target whatever he's targeting
+	if !${Tank.Equal[${Me.FName}]}
 	{
-		;; AutoAssist anyone in combat when I am not in combat
-		if !${Me.InCombat} && ${doAutoAssist}
-		{
-			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
-			{
-				if ${Pawn[id,${Group[${i}].ID}].CombatState}
-				{
-					CurrentAction:Set[Assisting ${Group[${i}].Name}]
-					;vgecho Assisting ${Group[${i}].Name}
-					VGExecute "/cleartargets"
-					VGExecute "/assist ${Group[${i}].Name}"
-					VGExecute "/assistoffensive"
-					doAssistCheck:Set[FALSE]
-					
-					;; Must wait a tad bit!
-					wait 5
-				}
-			}
-			
-			;; Target nearest encounter
-			if !${Me.Target(exists)} && ${Me.Encounter}
-			{
-				x:Set[1000]
-				y:Set[1]
-				for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
-				{
-					if ${Me.Encounter[${i}].Distance}<${x}
-					{
-						x:Set[${Me.Encounter[${i}].Distance}]
-						y:Set[${i}]
-					}
-				}
-				Pawn[ID,${Me.Encounter[${y}].ID}]:Target
-				doAssistCheck:Set[FALSE]
-				wait 5
-				;vgecho Target Nearest mob 
-			}
-		}
-	}
-	
-	if ${doAssistCheck}
-	{
-		;-------------------------------------------
-		; Always make sure we are targeting the tank's target
-		;-------------------------------------------
 		if ${Pawn[name,${Tank}](exists)}
 		{
 			;; Do not assist Tank if Tank is not in combat
-			if ${Pawn[name,${Tank}].CombatState}==0 && !${doHunt}
-			{
+			if ${Pawn[name,${Tank}].CombatState}==0
 				return
-			}
 			if ${Pawn[name,${Tank}].Distance}<40
 			{
-				;; Assist the Tank
 				VGExecute "/assist ${Tank}"
-				;; Always assist offensive target
 				VGExecute /assistoffensive
+				
 				;; Pause... health sometimes reports NULL or 0
 				if ${Me.Target(exists)} && ${Me.TargetHealth}<1
 				{
@@ -279,96 +312,28 @@ function MainRoutines()
 			}
 		}
 	}
-	
-	;; Return if target is not in Combat unless we are hunting
-	if ${Me.Target.CombatState}==0 && !${doHunt}
-	{
-		return
-	}
-	
-	;; Return if target is not in Combat unless we are hunting
-	if ${Me.Target.CombatState}==0 && !${doHunt}
-	{
-		return
-	}
-	
-	;; We don't fight dead things or while harvesting or can't see target
-	if !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead} || ${GV[bool,bHarvesting]} || !${Me.Target.HaveLineOfSightTo}
-	{
-		if ${doHunt} && ${Me.Target(exists)}
-		{
-			;; clear our target
-			VGExecute "/cleartargets"
-			wait 5 !${Me.Target(exists)}
-		}
-	
-		;; Turn off attacks!
-		if ${GV[bool,bIsAutoAttacking]} && !${GV[bool,bHarvesting]}
-		{
-			Me.Ability[Auto Attack]:Use
-			wait 5
-		}
-		return
-	}
-	
-	;-------------------------------------------
-	; EMERGENCY - SAVE OUR BACON ROUTINE
-	;-------------------------------------------
-	if ${Me.HealthPct}<30
-	{
-		
-		;; Get our Immunity shield up if we are severely wounded
-		call UseAbility "${AphoticShield}"
-		if ${Return}
-		{
-			vgecho "10 second immunity buff is up"
-			return
-		}
-	}
+}
 
-	;-------------------------------------------
-	; Use any consumables in our inventory
-	;-------------------------------------------
-	call Consumables
 
-	;-------------------------------------------
-	; Let's face the target
-	;-------------------------------------------
-	call FaceTarget
-	
-	;-------------------------------------------
-	; === Return if target is FURIOUS ===
-	;-------------------------------------------
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.Effect[Aura of Death](exists)} || ${FURIOUS}
+function:bool HandleFurious()
+{		
+	;; Routine to handle Furious, Furious Rage, Aura of Death, and Frightful Aura
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
 	{
 		if ${Me.Target.HaveLineOfSightTo}
 		{
-			;; STUN target
-			if ${Me.Ability[${OminousFate}].TimeRemaining}==0 && ${Me.Ability[${OminousFate}].EnergyCost}<${Me.Energy}
-			{
-				;; Stuns target for 4 seconds
-				Me.Ability[${OminousFate}]:Use
-				wait 2
-				EchoIt "UseAbility - ${OminousFate}"
-			}
-
-			if ${Me.Ability[${BleakFoeman}].IsReady}
-			{
-				;; Blocks incoming attack
-				Me.Ability[${BleakFoeman}]:Use
-				wait 2
-				EchoIt "UseAbility - ${BleakFoeman}"
-			}
+			;; STUN target up to 25 meters away
+			call UseAbility "${OminousFate}"
+			
+			;; STOP ATTACK & Block incoming attack
+			call UseAbility "${BleakFoeman}"
 		}
 
 		;; wait to allow attacks to stop after using Bleak Foeman
 		wait 3
 		
 		;; Stop attacks
-		if ${Me.Ability[Auto Attack].Toggled}
-		{
-			Me.Ability[Auto Attack]:Use
-		}
+		call StopMeleeAttacks	
 		
 		;; Keep increasing hate for those that like plowing furious
 		if ${doHatred} && ${doProvoke} && ${Me.IsGrouped}
@@ -376,13 +341,32 @@ function MainRoutines()
 			;; Increase Hatred
 			call UseAbility "${Provoke}"
 		}
-		
-		return
+		return TRUE
 	}
+	return FALSE
+}
 
+function:bool HandleEmergencies()
+{
 	;-------------------------------------------
-	; Target turned their back on us so let's stun them, heal ourselves with harrow, and try to snare them
+	; SAVE OUR BACON ROUTINE - 10 second immunity
 	;-------------------------------------------
+	if ${Me.HealthPct}<30
+	{
+		;; Get our Immunity shield up if we are severely wounded
+		call UseAbility "${AphoticShield}"
+		if ${Return}
+		{
+			vgecho "10 second immunity is up"
+			return TRUE
+		}
+	}
+	return FALSE
+}
+
+function:bool HandleBehindTarget()
+{
+	;; Target turned their back on us so let's stun them, heal ourselves with harrow, and try to snare them
 	if ${Me.TargetHealth}<80
 	{
 		variable float result
@@ -396,6 +380,7 @@ function MainRoutines()
 			result:Set[${Math.Calc[${result} + 360]}]
 		}
 		result:Set[${Math.Abs[${result}]}]
+
 		;; anything within 90 degrees is fair play
 		if ${result}<90 
 		{
@@ -405,89 +390,73 @@ function MainRoutines()
 			;; === Heal ourselves with Harrow ===
 			call UseAbility "${Harrow}"
 			if ${Return}
-				return
-			;; === SNARE target slowing them down ===
+				return TRUE
+
+				;; === SNARE target slowing them down ===
 			if ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.HealthPct}>75
 			{
 				if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
 				{
-					call Check4Immunites "${AbyssalChains}"
-					if !${Return}
+					call UseAbility "${AbyssalChains}"
+					if ${Return}
 					{
 						TimedCommand 30 Script[VG-DK].Variable[doSnare]:Set[TRUE]
 						doSnare:Set[FALSE]
-						Me.Ability[${AbyssalChains}]:Use
-						wait 2
-						EchoIt "UseAbility - ${AbyssalChains}"
-						return
+						return TRUE
 					}
 				}
 			}
 		}
 	}
+	return FALSE
+}
 
-	;-------------------------------------------
-	; Drain target's endurance and returns it to us -- 40 second cooldown
-	;-------------------------------------------
-	if ${Me.Endurance}>=10 && ${Me.Endurance}<30 && !${Me.TargetMyDebuff[${RavagingDarkness}](exists)}
-	{
-		call UseAbility "${RavagingDarkness}"
-		if ${Return}
-			return
-	}
-
-	;-------------------------------------------
-	; Use ShadowStep to heal
-	;-------------------------------------------
-	if ${Me.HealthPct}<70 && ${doShadowStep}
-	{
-		call ShadowStepHeal
-		if ${Return}
-			return
-	}
-
+function:bool BuildHatred()
+{
 	;-------------------------------------------
 	; BUILD HATRED ROUTINES
 	;-------------------------------------------
 	if ${doHatred}
 	{
+		variable int i = 0
+		variable int TotalPawnsNearby = 0
+		
 		for ( i:Set[1] ; ${i}<=${VG.PawnCount} && ${Pawn[${i}].Distance}<10 ; i:Inc )
 		{
 			;; Find out how many pawns near me that is in combat
 			if ${Pawn[${i}].CombatState}>0 && ${Pawn[${i}].Type.Equal[AggroNPC]}
 			{
-				x:Inc
+				TotalPawnsNearby:Inc
 			}
 		}
-		if ${doScytheOfDoom} && ${Me.HealthPct}<70 && ${Me.EndurancePct}>48 && ${x}>1
+
+		if ${doScytheOfDoom} && ${Me.HealthPct}<70 && ${Me.EndurancePct}>48 && ${TotalPawnsNearby}>1 && ${Me.Ability[${ScytheOfDoom}].TimeRemaining}==0
 		{
+			;; wait to use next ability
+			while !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			;vgecho ScytheOfDoom=${Me.Ability[${ScytheOfDoom}].IsReady}
+			
 			;; frontal AE that heals (NICE)
 			if ${Me.Ability[${ScytheOfDoom}].IsReady}
 			{
 				CurrentAction:Set[${ScytheOfDoom}]
-				if ${doBackup}
-				{
-					doBackup:Set[FALSE]
-					VG:ExecBinding[moveforward,release]
-					VG:ExecBinding[movebackward]
-					wait 5
-					VG:ExecBinding[movebackward,release]
-					wait 5
-				}
 				EchoIt "UseAbility - ${ScytheOfDoom} - Total Targets=${x}"
 				CurrentAction:Set[${ScytheOfDoom}]
 				Me.Ability[${ScytheOfDoom}]:Use
 				wait 5
-				return
+				return TRUE
 			}
 		}
-		
-		;; Damage and hate
+
 		if ${Me.IsGrouped}
 		{
+			;; Damage and hate
 			call UseAbility "${IncantationOfHate}"
 			if ${Return}
-				return
+				return TRUE
 		}
 		
 		if ${doTorture} && !${Me.TargetMyDebuff[${Torture}](exists)}
@@ -495,50 +464,66 @@ function MainRoutines()
 			;; DOT - Damage and increase hatred
 			call UseAbility "${Torture}"
 			if ${Return}
-				return
+				return TRUE
 		}
+
 		if ${doProvoke} && ${Me.IsGrouped}
 		{
 			;; Increase Hatred
 			call UseAbility "${Provoke}"
 			if ${Return}
-				return
+				return TRUE
 		}
-		if ${doBlackWind} && ${Me.EndurancePct}>50 && ${Me.IsGrouped} && ${x}>1
+
+		if ${doBlackWind} && ${Me.EndurancePct}>50 && ${Me.IsGrouped} && ${TotalPawnsNearby}>1
 		{
 			;; frontal AE that increases hatred
 			call UseAbility "${BlackWind}"
 			if ${Return}
-				return
+				return TRUE
 		}
 	}
+	return FALSE
+}
 
-	;; === Remove an Enchantment
-	if ${doDisEnchant} && ${doMisc} && ${doDespoil}
-	{
-		call UseAbility "${Despoil}"
-		if ${Return}
-		{
-			doDisEnchant:Set[FALSE]
-		}
-	}
-	
-	;; === Blocks 25% damage for 4-5 hits -- 1 minute cooldown ===
-	call CastBuff "${DarkWard}"
-
-	;; === Build our Dread ===
-	if ${doDreadfulVisage} && ${GV[int,ProgressiveFormPhase]}<5 &&  ${Me.Target.CombatState}>0
+function:bool BuildDread()
+{		
+	;; Build our Dread to level 5
+	if ${doDreadfulVisage} && ${GV[int,ProgressiveFormPhase]}<5 && ${Me.Target.CombatState}>0
 	{
 		call UseAbility "${DreadfulVisage}"
 		if ${Return}
 		{
-			return
+			return TRUE
 		}
-	}	
-	
-	;-------------------------------------------
-	; MELEE ROUTINES
-	;-------------------------------------------
+	}
+	return FALSE
+}
+
+function:bool RemoveEnchantments()
+{
+	;; === Remove an Enchantment
+	if (${doDisEnchant} || ${Me.TargetBuff}>${TargetBuffs}) && ${doMisc} && ${doDespoil}
+	{
+		
+		;; Targetbuff counter increased so set the doDisEnchant flag
+		if ${Me.TargetBuff}>${TargetBuffs}
+		{
+			call UseAbility "${Despoil}"
+			if ${Return}
+			{
+				;; Update our Targetbuff counter
+				TargetBuffs:Set[${Me.TargetBuff}]
+				doDisEnchant:Set[FALSE]
+				return TRUE
+			}
+		}
+	}
+	return FALSE
+}
+
+function:bool HandleMeleeAttacks()
+{
 	if ${doMelee}
 	{
 		if ${doSlay} && ${Me.TargetHealth}<20 && ${Me.EndurancePct}>=30
@@ -546,28 +531,28 @@ function MainRoutines()
 			;; Only usable below 20% health
 			call UseAbility "${Slay}"
 			if ${Return}
-				return
+				return TRUE
 		}
 		if ${doBacklash} && ${Me.EndurancePct}>=25
 		{
 			;; 15 Endurance
 			call UseAbility "${Backlash}"
 			if ${Return}
-				return
+				return TRUE
 		}
 		if ${doMutilate} && ${Me.EndurancePct}>=40
 		{
 			;; 40 Endurance
 			call UseAbility "${Mutilate}"
 			if ${Return}
-				return
+				return TRUE
 		}
 		if ${doMalice} && ${Me.EndurancePct}>=40
 		{
 			;; 24 Endurance
 			call UseAbility "${Malice}"
 			if ${Return}
-				return
+				return TRUE
 		}
 		;; This is your crit maker here!!
 		if ${doVexingStrike} && ${Me.EndurancePct}>=50
@@ -575,128 +560,75 @@ function MainRoutines()
 			;; 20 Endurance
 			call UseAbility "${VexingStrike}"
 			if ${Return}
-				return
+				return TRUE
 		}
 	}
+	return FALSE
+}
 
-	; === Use our heal if we got it! ===
-	if ${Me.HealthPct}<70 && ${doShadowStep}
+function:bool RangedAttack()
+{
+	;; Move within Range to attack with a bow
+	if ${doRanged} && !${isPaused}
 	{
-		call UseAbility "${Cull}"
-		if ${Return}
-			return
-	}
-
-	;-------------------------------------------
-	; Move within Range to attack with a bow
-	;-------------------------------------------
-	if ${doRanged} && ${doMove} && !${isPaused}
-	{
-		i:Set[${Me.Ability[Ranged Attack].Range}]
-		if ${i}<15
+		variable int i
+		
+		if ${doMove}
 		{
-			;; maximum range to move to
-			i:Set[14]
-		}
-		if ${i}>25
-		{
-			;; maximum range to move to
-			i:Set[24]
-		}
-		i:Set[${Math.Calc[${i}-3]]
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
-	}
-	if ${doRanged} && ${Me.Target.Distance}>4
-	{
-		call UseAbility "Ranged Attack"
-		if !${Return}
-		{
+			i:Set[${Me.Ability[Ranged Attack].Range}]
+			if ${i}<15
+			{
+				;; maximum range to move to
+				i:Set[14]
+			}
+			if ${i}>25
+			{
+				;; maximum range to move to
+				i:Set[24]
+			}
 			i:Set[${Math.Calc[${i}-3]]
 			call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
 		}
-	}
-
-	;; === SNARE target slowing them down ===
-	if !${Me.IsGrouped} && ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.Target.CombatState}>0 && ${Me.HealthPct}>80
-	{
-		if ${Me.Ability[${AbyssalChains}].TimeRemaining}==0 && ${Me.Ability[${AbyssalChains}].EnergyCost}<${Me.Energy} && !${Me.TargetMyDebuff[${AbyssalChains}](exists)}
+		if ${Me.Target.Distance}>4
 		{
-			call Check4Immunites "${AbyssalChains}"
+			call UseAbility "Ranged Attack"
 			if !${Return}
 			{
-				TimedCommand 30 Script[VG-DK].Variable[doSnare]:Set[TRUE]
-				doSnare:Set[FALSE]
-				Me.Ability[${AbyssalChains}]:Use
-				wait 2
-				EchoIt "UseAbility - ${AbyssalChains}"
-				return
-			}
-		}
-	}
-	
-	;-------------------------------------------
-	; Move within Range for Melee attacks
-	;-------------------------------------------
-	if ${doMove} && !${isPaused} && ${Me.TargetHealth}<97
-	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-	}
-	if ${doMove} && !${isPaused} && !${doRanged}
-	{
-		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-	}
-	
-}
-
-
-
-;===================================================
-;=== CYCLE THROUGH OUR TARGETS ONCE EVERY 10sec ====
-;===================================================
-function CycleTargets()
-{
-	if !${doAutoAssist} || !${doAutoAssistReady}
-	{
-		return
-	}
-
-	;; set our variable
-	variable int i
-	
-	;; Use this once Me.Encounter reports correctly
-	if ${Me.Encounter}>0
-	{
-		for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
-		{
-			;; Hit target's that are not targetting me
-			if ${Me.Encounter[${i}].Distance}<5 && !${Me.FName.Equal[${Me.Encounter[${i}].Target}]} && ${Me.Encounter[${i}].Health}>10
-			{
-				EchoIt "CycleTargets - Switching to ${Me.Encounter[${i}].Name} who's on ${Me.Encounter[${i}].Target}"
-			
-				;; change targets to target not targeting me
-				Pawn[ID,${Me.Encounter[${i}].ID}]:Target
-				wait 5
-
-				;; face our target
-				face ${Pawn[ID,${Me.Target.ID}].X} ${Pawn[ID,${Me.Target.ID}].Y}
-
-				;; Make sure we have nothing that will interfere with the next ability
-				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+				if ${doMove}
 				{
-					waitframe
+					i:Set[${Math.Calc[${i}-3]]
+					call MoveCloser ${Me.Target.X} ${Me.Target.Y} ${i}
 				}
-
-				;; Push Hatred onto target -- if this doesn't pull the mob then our Rescue will
-				call UseAbility "${Provoke}"
-				call UseAbility "${VexingStrike}"
-				
-				doAutoAssistReady:Set[FALSE]
-				TimedCommand 100 Script[VG-DK].Variable[doAutoAssistReady]:Set[TRUE]
+				return FALSE
 			}
+			return TRUE
 		}
 	}
+	return FALSE
 }
 
+function:bool SnareTarget()
+{
+	;; SNARE target -- slow them down
+	if !${Me.IsGrouped} && ${doMisc} && ${doAbyssalChains} && ${doSnare} && ${Me.Target.CombatState}>0 && ${Me.HealthPct}>80
+	{
+		TimedCommand 30 Script[VG-DK].Variable[doSnare]:Set[TRUE]
+		doSnare:Set[FALSE]
+		call UseAbility "${AbyssalChains}"
+		if ${Return}
+			return TRUE
+	}
+	return FALSE
+}
+
+function MoveToMeleeRange()
+{
+	;; Move within Range for Melee attacks
+	if ${doMove} && !${isPaused} && (${Me.TargetHealth}<99 || !${doRanged})
+	{
+		call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
+	}
+}
 
 ;===================================================
 ;===     DPS - BUST OUT OUR MAXIMUM DPS         ====
@@ -712,15 +644,15 @@ function DPS()
 		Me.Ability[Auto Attack]:Use
 	}
 
-	;; Ensure we are in combat form
-	if !${Me.CurrentForm.Name.Equal[Ebon Blade]}
-	{
-		Me.Form[Ebon Blade]:ChangeTo
-		TimedCommand 40 Script[VG-DK].Variable[doForm]:Set[TRUE]
-		doForm:Set[FALSE]
-		wait 10 ${Me.CurrentForm.Name.Equal[Ebon Blade]}
-		EchoIt "** New Form = ${Me.CurrentForm.Name}"
-	}
+	; Ensure we are in combat form
+	;if !${Me.CurrentForm.Name.Equal[Ebon Blade]}
+	;{
+	;	Me.Form[Ebon Blade]:ChangeTo
+	;	TimedCommand 40 Script[VG-DK].Variable[doForm]:Set[TRUE]
+	;	doForm:Set[FALSE]
+	;	wait 10 ${Me.CurrentForm.Name.Equal[Ebon Blade]}
+	;	EchoIt "** New Form = ${Me.CurrentForm.Name}"
+	;}
 	
 	if ${Me.Target.Distance}>=5
 	{
@@ -968,6 +900,7 @@ function OpenDoor()
 ;===================================================
 function OpenPotaBarrier()
 {
+	return
 	;;  - drop that Pota barrier!
 	if ${Pawn[Kheolim's Barrier].Distance}<3
 	{
@@ -1196,6 +1129,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<25
 		{
 			vgecho "FURIOUS - RESUME ATTACKING"
+			EchoIt "FURIOUS - RESUME ATTACKING"
 			FURIOUS:Set[FALSE]
 		}
 	}
@@ -1203,10 +1137,11 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	; Check if target went into FURIOUS - Has delays for notification
 	if ${ChannelNumber}==7 && ${aText.Find[becomes FURIOUS]}
 	{
-		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<25
+		if ${Me.Target(exists)} && ${aText.Find[${Me.Target.Name}]} && ${Me.TargetHealth}<=20
 		{
 			;; Turn on FURIOUS flag and stop attack
 			vgecho "FURIOUS -- STOP ATTACKS"
+			EchoIt "FURIOUS -- STOP ATTACKS"
 			FURIOUS:Set[TRUE]
 
 			;; Turn off attacks!

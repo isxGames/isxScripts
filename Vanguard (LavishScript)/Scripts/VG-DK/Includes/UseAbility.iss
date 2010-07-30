@@ -3,6 +3,12 @@
 ;===================================================
 function:bool UseAbility(string ABILITY, TEXT=" ")
 {
+	;; We definitely do not want to use abilities if we are paused
+	if ${isPaused}
+	{
+		return
+	}
+
 	;; does ability exist?
 	if !${Me.Ability[${ABILITY}](exists)}
 	{

@@ -32,6 +32,16 @@ variable string Status				"Use this in your routines to echo what is happening"
 function:bool Hunt()
 {
 	;-------------------------------------------
+	; Clear our target if we can't see it
+	;-------------------------------------------
+	if ${doHunt} && ${Me.Target(exists)} && !${Me.Target.HaveLineOfSightTo}
+	{
+		;; clear our target
+		VGExecute "/cleartargets"
+		wait 5 !${Me.Target(exists)}
+	}
+
+	;-------------------------------------------
 	; Return if we don't want to hunt
 	;-------------------------------------------
 	if !${doHunt} || ${Me.InCombat} || ${Me.HealthPct}<80 || ${Me.EnergyPct}<80 || ${Me.EndurancePct}<80 || ${Me.Target(exists)}

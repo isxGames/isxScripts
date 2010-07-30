@@ -68,6 +68,7 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 		Immune2Physical:Set["Spawn of Infineum","Spawn of Infineum"]
 		Immune2Physical:Set["Myconid Fungal Ravager","Myconid Fungal Ravager"]
 		Immune2Physical:Set["Xakrin Sage","Xakrin Sage"]
+		Immune2Physical:Set["Xakrin Razorclaw","Xakrin Razorclaw"]
 		Immune2Physical:Set["Hound of Rahz","Hound of Rahz"]
 		Immune2Physical:Set["Ancient Juggernaut","Ancient Juggernaut"]
 		Immune2Physical:Set["Mechanized Pyromaniac","Mechanized Pyromaniac"]
@@ -76,6 +77,7 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 		Immune2Physical:Set["Blood-crazed Ettercap","Blood-crazed Ettercap"]
 		Immune2Physical:Set["Earth Elemental","Earth Elemental"]
 		Immune2Physical:Set["Untrenz","Untrenz"]
+		Immune2Physical:Set["Xakrin Mindripper","Xakrin Mindripper"]
 	}
 
 	;; Return FALSE if no target

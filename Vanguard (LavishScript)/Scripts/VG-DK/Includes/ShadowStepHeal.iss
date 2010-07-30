@@ -3,43 +3,44 @@
 ;===================================================
 function:bool ShadowStepHeal()
 {
-	;-------------------------------------------
-	;Return if target is FURIOUS or not valid target - don't want to get killed!
-	;-------------------------------------------
-	if !${Me.Target.HaveLineOfSightTo} || !${Me.Target(exists)}
-		return
-
-	; check if we have enough energy/endurance
-	if ${Me.Ability[${ShadowStep}].EnergyCost}>${Me.Energy} || ${Me.Ability[${Harrow}].EnduranceCost}>${Me.Endurance}
-	return
+	;; Return if we do not want to use ShadowStep
+	if !${doShadowStep} || ${Me.HealthPct}>70
+		return FALSE
 
 	;; Return if these abilities do not exist
 	if !${Me.Ability[${ShadowStep}](exists)} || !${Me.Ability[${Harrow}](exists)}
 	{
-		return
+		return FALSE
 	}
 
-	if !${Me.Ability[${ShadowStep}].IsReady} || ${Me.Ability[${Harrow}].TimeRemaining}>0
+	; check if we have enough energy/endurance
+	if ${Me.Ability[${ShadowStep}].EnergyCost}>${Me.Energy} || ${Me.Ability[${Harrow}].EnduranceCost}>${Me.Endurance}
+		return FALSE
+
+	;; Return if neither of these abilities are ready
+	if ${Me.Ability[${ShadowStep}].TimeRemaining}>0 || ${Me.Ability[${Harrow}].TimeRemaining}>0
 	{
-		return
+		return FALSE
 	}
-	
+
 	; turn off auto attack
-	if ${GV[bool,bIsAutoAttacking]}
+	call StopMeleeAttacks
+	
+	;; wait
+	while !${Me.Ability["Torch"].IsReady}
 	{
-		Me.Ability[Auto Attack]:Use
 		waitframe
 	}
-	wait 10 !${GV[bool,bIsAutoAttacking]}
+	;vgecho ShadowStep=${Me.Ability[${ShadowStep}].IsReady}, Harrow=${Me.Ability[${Harrow}].IsReady}
 
 	;; Let's move closer so that we can ShadowStep our target
 	call MoveCloser ${Me.Target.X} ${Me.Target.Y} 30
 	
 	if ${Me.Target.Distance}>30
-		return
+		return FALSE
 
 	;; lets combo cast these
-	if ${Me.Ability[${ShadowStep}].IsReady} && ${Me.Ability[${Harrow}].TimeRemaining}==0 && ${Me.Target.HaveLineOfSightTo}
+	if ${Me.Target.HaveLineOfSightTo}
 	{
 		Me.Ability[${ShadowStep}]:Use
 		wait 2
