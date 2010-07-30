@@ -5,12 +5,12 @@
 objectdef  bnav
 {
 
-;variable string  CurrentRegion
-;variable string  LastRegion
-;variable int bpathindex
-;variable lnavpath mypath
-;variable astarpathfinder PathFinder
-;variable lnavconnection CurrentConnection
+	;variable string  CurrentRegion
+	;variable string  LastRegion
+	;variable int bpathindex
+	;variable lnavpath mypath
+	;variable astarpathfinder PathFinder
+	;variable lnavconnection CurrentConnection
 
 	function:bool Initialize()
 	{
@@ -32,7 +32,7 @@ objectdef  bnav
 		}
 		return TRUE
 	}
-	
+
 	method SavePaths()
 	{
 		LNavRegion[${Me.Chunk}]:Export[${VGPathsDir}/${Me.Chunk}.xml]
@@ -92,7 +92,7 @@ objectdef  bnav
 		call DebugOut "bNav: Added DOOR to ${LNavRegion[${This.CurrentRegionID}].Name}"
 		LNavRegion[${This.CurrentRegionID}]:SetCustom[DOOR,${custom}]
 	}
-		
+
 	method AutoBox()
 	{
 		variable string Region
@@ -153,19 +153,19 @@ objectdef  bnav
 	{
 		variable point3f From
 		From:Set[${FromX},${FromY},${FromZ}]
-		
+
 		variable point3f To
 		To:Set[${ToX},${ToY},${ToZ}]
-		
+
 		;call DebugOut "bNav:CollisionTest: From ${FromX},${FromY},${FromZ} to ${ToX},${ToY},${ToZ}"
-		
+
 		if ${VG.CheckCollision[${From}, ${To}](exists)} || ${VG.CheckCollision[${To}, ${From}](exists)}
 		{
 			call DebugOut "VG: CheckCollision ${VG.CheckCollision[${To}, ${From}].Location} = TRUE"
 			return TRUE
 		}
 		return FALSE
-	}	
+	}
 
 	function FindClosestPoint(int myx, int myy, int myz)
 	{
@@ -183,7 +183,7 @@ objectdef  bnav
 	{
 		variable point3f Location
 		Location:Set[${X},${Y},${Z}]
-		
+
 		variable lnavregionref Container
 
 		Container:SetRegion[${LNavRegion[${This.CurrentRegionID}].BestContainer[${Location}].ID}]
@@ -207,35 +207,35 @@ objectdef  bnav
 		return ${LNavRegion[${Region}].ID}
 	}
 
-/*
+	/*
 	function:bool FindPath(string destination)
 	{
-		bpathindex:Set[1]
-		variable string CPname
-		variable float WPX
-		variable float WPY
-
-		mypath:Clear
-
-		;call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
-
-		CPname:Set[${This.CurrentRegionID}]
-
-		PathFinder:SelectPath[${LNavRegion[${CPname}]},${LNavRegion[${Me.Chunk}].FindRegion[${destination}]},mypath]
-
-		call DebugOut "bNav: Found Path to ${destination} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].Name}"
-
-		if ${mypath.Hops} > 0
-		{
-			return TRUE
-		}
-		return FALSE
-		
+	bpathindex:Set[1]
+	variable string CPname
+	variable float WPX
+	variable float WPY
+	
+	mypath:Clear
+	
+	;call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+	
+	CPname:Set[${This.CurrentRegionID}]
+	
+	PathFinder:SelectPath[${LNavRegion[${CPname}]},${LNavRegion[${Me.Chunk}].FindRegion[${destination}]},mypath]
+	
+	call DebugOut "bNav: Found Path to ${destination} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].Name}"
+	
+	if ${mypath.Hops} > 0
+	{
+	return TRUE
 	}
-*/
+	return FALSE
+	
+	}
+	*/
 
 	function FindPath(string startRegion, string endRegion)
-	{	
+	{
 		variable astarpathfinder aPathFinder
 		variable dijkstrapathfinder dPathFinder
 		variable index:lnavregionref endRegions
@@ -322,7 +322,7 @@ objectdef  bnav
 		mypath:Clear
 		return FALSE
 	}
-	
+
 	function:bool TakeNextHop()
 	{
 		variable float WPX
@@ -330,13 +330,13 @@ objectdef  bnav
 
 		call DebugOut "bNav: ${bpathindex}"
 
-;		if ${bpathindex} >= ${mypath.Hops}
-;		{
-;			echo "WE R THERE"
-;			VG:ExecBinding[moveforward,release]
-;			TravelState:Set[${PathStateEnd}]
-;			return TRUE
-;		}
+		;		if ${bpathindex} >= ${mypath.Hops}
+		;		{
+		;			echo "WE R THERE"
+		;			VG:ExecBinding[moveforward,release]
+		;			TravelState:Set[${PathStateEnd}]
+		;			return TRUE
+		;		}
 
 		WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
 		WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
@@ -353,7 +353,7 @@ objectdef  bnav
 			if ${debug}
 			{
 				echo "bNav: ${Return}"
-			}		
+			}
 
 			return FALSE
 		}
@@ -362,17 +362,17 @@ objectdef  bnav
 			bpathindex:Inc
 		}
 		return TRUE
-		
+
 	}
 
 
-/******************************************************************************************
-	              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;     
-	          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            ;                ||   ||       ||   ||                   ;
-	          ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	                 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;       
-******************************************************************************************/
+	/******************************************************************************************
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;                ||   ||       ||   ||                   ;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	******************************************************************************************/
 
 	function MoveWithCD(int iX, int iY, int iZ)
 	{
@@ -388,7 +388,7 @@ objectdef  bnav
 		do
 		{
 			if ${Me.Heading} != ${lastHeading}
-				lastHeading:Set[${Me.Heading}
+			lastHeading:Set[${Me.Heading}
 
 			; First check to see if there is a collision in front of us
 			call FindCollisionFreeSpot
@@ -412,7 +412,7 @@ objectdef  bnav
 		while (${Math.Distance[${Me.X},${Me.Y},${iX},${iY}]} > ${range}) && ${isMoving}
 
 		VG:ExecBinding[moveforward,release]
-		
+
 		if (${Math.Distance[${Me.X},${Me.Y},${iX},${iY}]} <= ${range})
 		{
 			call DebugOut "bNav: MoveWithCD succeeded"
@@ -433,10 +433,10 @@ objectdef  bnav
 		; Heading 180-269 == +X,-Y
 		; heading 270-360 == +X,+Y
 		/*
-			North = 0, east = 90, south = 180, west = 270
-			just 360 degree compass headings w/ north as cardinal 0
-			absolute north should be 0.000000, 
-			east should be 90.000000 etc
+		North = 0, east = 90, south = 180, west = 270
+		just 360 degree compass headings w/ north as cardinal 0
+		absolute north should be 0.000000,
+		east should be 90.000000 etc
 		*/
 
 		variable float iX
@@ -448,17 +448,17 @@ objectdef  bnav
 		if ${Me.Heading} >= 0 && ${Me.Heading} <= 90
 		{
 
-			if !${VG.CheckCollision[${Math.Calc[${iX} - 2]}, ${Math.Calc[${iY} + 2]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} - 2]}, ${Math.Calc[${iY} + 2]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} - 2]}, ${Math.Calc[${iY} + 2]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} - 0]}, ${Math.Calc[${iY} + 4]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} - 0]}, ${Math.Calc[${iY} + 4]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} - 0]}, ${Math.Calc[${iY} + 4]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} - 4]}, ${Math.Calc[${iY} + 0]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} - 4]}, ${Math.Calc[${iY} + 0]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} - 4]}, ${Math.Calc[${iY} + 0]}
 				return TRUE
@@ -468,17 +468,17 @@ objectdef  bnav
 		elseif ${Me.Heading} > 90 && ${Me.Heading} <= 180
 		{
 
-			if !${VG.CheckCollision[${Math.Calc[${iX} - 2]}, ${Math.Calc[${iY} - 2]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} - 2]}, ${Math.Calc[${iY} - 2]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} - 2]}, ${Math.Calc[${iY} - 2]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} - 0]}, ${Math.Calc[${iY} - 4]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} - 0]}, ${Math.Calc[${iY} - 4]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} - 0]}, ${Math.Calc[${iY} - 4]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} - 4]}, ${Math.Calc[${iY} - 0]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} - 4]}, ${Math.Calc[${iY} - 0]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} - 4]}, ${Math.Calc[${iY} - 0]}
 				return TRUE
@@ -488,17 +488,17 @@ objectdef  bnav
 		elseif ${Me.Heading} > 180 && ${Me.Heading} <= 270
 		{
 
-			if !${VG.CheckCollision[${Math.Calc[${iX} + 2]}, ${Math.Calc[${iY} - 2]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} + 2]}, ${Math.Calc[${iY} - 2]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} + 2]}, ${Math.Calc[${iY} - 2]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} + 0]}, ${Math.Calc[${iY} - 4]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} + 0]}, ${Math.Calc[${iY} - 4]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} + 0]}, ${Math.Calc[${iY} - 4]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} + 4]}, ${Math.Calc[${iY} - 0]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} + 4]}, ${Math.Calc[${iY} - 0]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} + 4]}, ${Math.Calc[${iY} - 0]}
 				return TRUE
@@ -508,17 +508,17 @@ objectdef  bnav
 		elseif ${Me.Heading} > 270 && ${Me.Heading} <= 360
 		{
 
-			if !${VG.CheckCollision[${Math.Calc[${iX} + 2]}, ${Math.Calc[${iY} + 2]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} + 2]}, ${Math.Calc[${iY} + 2]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} + 2]}, ${Math.Calc[${iY} + 2]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} + 0]}, ${Math.Calc[${iY} + 4]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} + 0]}, ${Math.Calc[${iY} + 4]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} + 0]}, ${Math.Calc[${iY} + 4]}
 				return TRUE
 			}
-			if !${VG.CheckCollision[${Math.Calc[${iX} + 4]}, ${Math.Calc[${iY} + 0]}, ${Me.Z}](exists)} 
+			if !${VG.CheckCollision[${Math.Calc[${iX} + 4]}, ${Math.Calc[${iY} + 0]}, ${Me.Z}](exists)}
 			{
 				face ${Math.Calc[${iX} + 4]}, ${Math.Calc[${iY} + 0]}
 				return TRUE
@@ -528,9 +528,9 @@ objectdef  bnav
 		; ok, doesn't look good, lets turn 20 degrees to the left
 		; and see if it'll pickup next iteration
 		if ${Me.Heading} > 340
-			face 10.0
+		face 10.0
 		else
-			face ${Math.Calc[${Me.Heading} + 20]}
+		face ${Math.Calc[${Me.Heading} + 20]}
 		return FALSE
 	}
 
@@ -612,16 +612,16 @@ objectdef  bnav
 		call FindPath "${CPname}" "${tName}"
 
 		if !${Return}
-			return "NO PATH"
+		return "NO PATH"
 
 		/*
 		aPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
 		if ${mypath.Hops} <= 0
 		{
-			mypath:Clear
-			call DebugOut "bNav:MovetoTargetName: ZERO length path from  ${LNavRegion[${CPname}].FQN} to ${LNavRegion[${tName}].FQN}"
-			; try the dijkstrapathfinder version
-			dPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
+		mypath:Clear
+		call DebugOut "bNav:MovetoTargetName: ZERO length path from  ${LNavRegion[${CPname}].FQN} to ${LNavRegion[${tName}].FQN}"
+		; try the dijkstrapathfinder version
+		dPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
 		}
 		*/
 
@@ -629,11 +629,11 @@ objectdef  bnav
 
 		call DebugOut "bNav:MovetoTargetName: Found Path to ${LNavRegion[${tName}].FQN} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].FQN}"
 
-;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
-;		{
-;			call DebugOut "bNav:MovetoTargetName: Short path, just end it!"
-;			return "END"
-;		}
+		;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
+		;		{
+		;			call DebugOut "bNav:MovetoTargetName: Short path, just end it!"
+		;			return "END"
+		;		}
 
 		if ${mypath.Hops} > 0
 		{
@@ -642,9 +642,9 @@ objectdef  bnav
 
 			;Turn to face the desired loc
 			if ${doSlowTurn}
-				call faceloc ${WPX} ${WPY} 15 1
+			call faceloc ${WPX} ${WPY} 15 1
 			else
-				Face ${WPX} ${WPY}
+			Face ${WPX} ${WPY}
 
 			do
 			{
@@ -719,7 +719,7 @@ objectdef  bnav
 						call FindPath "${CPname}" "${newName}"
 
 						if !${Return}
-							return "NO PATH"
+						return "NO PATH"
 
 						;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${newName}].FQN},mypath]
 
@@ -752,6 +752,188 @@ objectdef  bnav
 			return "NO PATH"
 		}
 
+	}
+
+	function:string MovetoTargetID(int64 aTarget, bool checkMoved)
+	{
+		variable string CPname
+		variable float WPX
+		variable float WPY
+		variable int iCheck
+		variable string tName
+		variable astarpathfinder aPathFinder
+		variable dijkstrapathfinder dPathFinder
+
+		bpathindex:Set[1]
+
+		call DebugOut "bNav: X: ${Pawn[id,${aTarget}].X} Y: ${Pawn[id,${aTarget}].Y} Z: ${Pawn[id,${aTarget}].Z}"
+
+		call This.FindClosestPoint ${Pawn[id,${aTarget}].X} ${Pawn[id,${aTarget}].Y} ${Pawn[id,${aTarget}].Z}
+		tName:Set[${Return}]
+
+		call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+		CPname:Set[${Return}]
+
+		call DebugOut "bNav: Names: ${CPname} :: ${tName}"
+
+		;if ${This.CurrentRegionID.Equal[${LNavRegion[${Me.Chunk}].BestContainer[${Pawn[id,${aTarget}].X}, ${Pawn[id,${aTarget}].Y}, ${Pawn[id,${aTarget}].Z}]}]}
+		;{
+		;	;call FastMove ${Pawn[id,${aTarget}].X} ${Pawn[id,${aTarget}].Y}	${movePrecision}
+		;	call DebugOut "bNav:MovetoTargetName In region quick hop"
+		;	return "END"
+		;}
+
+		; Check to see if we are NOT in a mapped area
+		if !${This.IsMapped[${Me.Location}]}
+		{
+			; Hmm, we need to get back on the map first
+			return "NO MAP"
+		}
+
+		mypath:Clear
+
+		call FindPath "${CPname}" "${tName}"
+
+		if !${Return}
+		return "NO PATH"
+
+		/*
+		aPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
+		if ${mypath.Hops} <= 0
+		{
+		mypath:Clear
+		call DebugOut "bNav:MovetoTargetName: ZERO length path from  ${LNavRegion[${CPname}].FQN} to ${LNavRegion[${tName}].FQN}"
+		; try the dijkstrapathfinder version
+		dPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
+		}
+		*/
+
+		iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
+
+		call DebugOut "bNav:MovetoTargetName: Found Path to ${LNavRegion[${tName}].FQN} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].FQN}"
+
+		;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
+		;		{
+		;			call DebugOut "bNav:MovetoTargetName: Short path, just end it!"
+		;			return "END"
+		;		}
+
+		if ${mypath.Hops} > 0
+		{
+			WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
+			WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
+
+			;Turn to face the desired loc
+			if ${doSlowTurn}
+			call faceloc ${WPX} ${WPY} 15 1
+			else
+			Face ${WPX} ${WPY}
+
+			do
+			{
+				; Move to next Waypoint
+				WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
+				WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
+
+				; See if this box has a DOOR tag
+				;if ${mypath.Region[${bpathindex}].ChildCount} > 0 || ${mypath.Region[${bpathindex}].Custom.Find[DOOR]}
+				if ${mypath.Region[${bpathindex}].Custom[DOOR](exists)}
+				{
+					call DebugOut "bNav: Found a Door in ${mypath.Region[${bpathindex}].Name}"
+					VG:ExecBinding[UseDoorEtc]
+				}
+
+				call FastMove ${WPX} ${WPY} ${movePrecision}
+
+				if ${Return.Equal["STUCK"]}
+				{
+					;CurrentConnection:SetConnection[${mypath.Connection[${bpathindex}]}]
+					;call DebugOut "bNav: Removing Connection ${mypath.Connection[${bpathindex}]}"
+					;CurrentConnection:Remove
+
+					call FastMove ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.X} ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.Y} 100
+					call DebugOut "bNav: FastMove return: ${Return}"
+
+					mypath:Clear
+					;CurrentConnection:Clear
+
+					call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+					CPname:Set[${Return}]
+
+					call FindPath "${CPname}" "${tName}"
+
+					;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
+
+					call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
+
+					if ${mypath.Hops} > 0
+					{
+						call DebugOut "bNav: Found new path to ${tName} with ${mypath.Hops} hops."
+						bpathindex:Set[1]
+					}
+					else
+					{
+						VG:ExecBinding[moveforward,release]
+						LastRegion:Set[${CurrentRegion}]
+						CurrentRegion:Set[${LNavRegion[${This.CurrentRegionID}].Name}]
+
+						return "STUCK"
+					}
+				}
+				elseif ${checkMoved} && (${bpathindex} > ${iCheck}) && (${bpathindex} > 10)
+				{
+					; if most of the way through path, then check to see if the Target has moved
+					; This is for Moving NPC's and slow running Toons
+
+					variable string newName
+
+					call This.FindClosestPoint ${Pawn[id,${aTarget}].X} ${Pawn[id,${aTarget}].Y} ${Pawn[id,${aTarget}].Z}
+					newName:Set[${Return}]
+
+					if !${newName.Equal[${tName}]}
+					{
+						call DebugOut "bNav: Target Moved! Recomputing path :: ${newName} :: ${tName}"
+
+						call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
+						CPname:Set[${Return}]
+
+						mypath:Clear
+
+						call FindPath "${CPname}" "${newName}"
+
+						if !${Return}
+						return "NO PATH"
+
+						;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${newName}].FQN},mypath]
+
+						call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
+
+						if ${mypath.Hops} > 0
+						{
+							call DebugOut "bNav: Found new path to ${newName} with ${mypath.Hops} hops."
+							bpathindex:Set[1]
+							iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
+						}
+						else
+						{
+							VG:ExecBinding[moveforward,release]
+
+							return "NO PATH"
+						}
+
+					}
+				}
+			}
+			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving}
+
+			VG:ExecBinding[moveforward,release]
+
+			return "END"
+		}
+		else
+		{
+			return "NO PATH"
+		}
 	}
 
 	function:string MovetoXYZ(int iX, int iY, int iZ)
@@ -798,7 +980,7 @@ objectdef  bnav
 		call FindPath "${CPname}" "${destination}"
 
 		if !${Return}
-			return "NO PATH"
+		return "NO PATH"
 
 		;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${destination}].FQN},mypath]
 
@@ -806,11 +988,11 @@ objectdef  bnav
 
 		call DebugOut "bNav:MovetoWP: Found Path to ${LNavRegion[${destination}].FQN} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].FQN}"
 
-;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
-;		{
-;			call DebugOut "bNav:MovetoWP Short path, just end it!"
-;			return "END"
-;		}
+		;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
+		;		{
+		;			call DebugOut "bNav:MovetoWP Short path, just end it!"
+		;			return "END"
+		;		}
 
 		if ${mypath.Hops} > 0
 		{
@@ -819,9 +1001,9 @@ objectdef  bnav
 
 			;Turn to face the desired loc
 			if ${doSlowTurn}
-				call faceloc ${WPX} ${WPY} 15 1
+			call faceloc ${WPX} ${WPY} 15 1
 			else
-				Face ${WPX} ${WPY}
+			Face ${WPX} ${WPY}
 
 			do
 			{
@@ -931,7 +1113,7 @@ objectdef  bnav
 
 		}
 		while (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} > ${range}) && (${Math.Calc[${Time.Timestamp}-${FullTimer}]} < 3) && ${isMoving}
-		
+
 		if (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} < ${range})
 		{
 			return "SUCCESS"
@@ -942,7 +1124,7 @@ objectdef  bnav
 			return "MOVING"
 		}
 	}
-	
+
 	member:string getlvl()
 	{
 		variable int lp = 2
@@ -959,31 +1141,31 @@ objectdef  bnav
 		lvl:Set[${Math.Calc[${lvl}/${lp}]}]
 		Return ${lvl}
 	}
-	
+
 	method AddHuntPoint()
 	{
-;			variable string tmp
-;			tmp:Set[${LNavRegion[${This.CurrentRegionID}].AddChild[point,"auto",-unique,${Me.X},${Me.Y},${Me.Z}]}]
-;			LNavRegion[${tmp}]:SetCustom["level", ${This.getlvl}]
-;			LNavRegionGroup["hunt"]:Add[${tmp}]
-;			if !${LNavRegion[${pointname}].Parent.Type.Equal[Universe]}
-;			{
-;				LNavRegion[${LNavRegion[${tmp}].Parent}]:Connect[${tmp}]
-;			}
-;			if ${debug}
-;			{
-;				echo added ${LNavRegion[${tmp}]} to hunt region group.
-;			}
+		;			variable string tmp
+		;			tmp:Set[${LNavRegion[${This.CurrentRegionID}].AddChild[point,"auto",-unique,${Me.X},${Me.Y},${Me.Z}]}]
+		;			LNavRegion[${tmp}]:SetCustom["level", ${This.getlvl}]
+		;			LNavRegionGroup["hunt"]:Add[${tmp}]
+		;			if !${LNavRegion[${pointname}].Parent.Type.Equal[Universe]}
+		;			{
+		;				LNavRegion[${LNavRegion[${tmp}].Parent}]:Connect[${tmp}]
+		;			}
+		;			if ${debug}
+		;			{
+		;				echo added ${LNavRegion[${tmp}]} to hunt region group.
+		;			}
 
-			variable string Region=${This.CurrentRegionID}
-			if !${LNavRegion[${Region}].Type.Equal[Universe]}
-			{
-				LNavRegion[${Region}]:SetCustom["level", ${This.getlvl}]
-				LNavRegionGroup["hunt"]:Add[${Region}]
-			}
-			
+		variable string Region=${This.CurrentRegionID}
+		if !${LNavRegion[${Region}].Type.Equal[Universe]}
+		{
+			LNavRegion[${Region}]:SetCustom["level", ${This.getlvl}]
+			LNavRegionGroup["hunt"]:Add[${Region}]
+		}
+
 	}
-	
+
 }
 
 
@@ -993,7 +1175,7 @@ objectdef  bnav
 
 atom Bump(string aObstacleActorName, float fX_Offset, float fY_Offset, float fZ_Offset)
 {
-;	call DebugOut "bNav: Bump'ed ${aObstacleActorName}"
+	;	call DebugOut "bNav: Bump'ed ${aObstacleActorName}"
 
 	if (${aObstacleActorName.Find[Mover]})
 	{
@@ -1019,3 +1201,5 @@ atom Bump(string aObstacleActorName, float fX_Offset, float fY_Offset, float fZ_
 		}
 	}
 }
+
+
