@@ -2,9 +2,9 @@
   <Project>
     <Name>Test Project</Name>
     <Author>Kannkor</Author>
-    <Event_FileUpdated>testproject_OnFileUpdated</Event_FileUpdated>
-    <Event_UpdateError>testproject_OnUpdateError</Event_UpdateError>
-    <Event_UpdateComplete>testproject_OnUpdateComplete</Event_UpdateComplete>
+    <Event_FileUpdated>EQ2OgreUpdater_OnFileUpdated</Event_FileUpdated>
+    <Event_UpdateError>EQ2OgreUpdater_OnUpdateError</Event_UpdateError>
+    <Event_UpdateComplete>EQ2OgreUpdater_OnUpdateComplete</Event_UpdateComplete>
   </Project>
 
   <FileInfo>
