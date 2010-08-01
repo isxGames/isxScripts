@@ -15,11 +15,13 @@ function LootTargets()
 		;; execute only if target is a corpse
 		if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead}
 		{
+			;; No longer FURIOUS
+			FURIOUS:Set[FALSE]
+
 			;; Return if we are harvesting
-			while ${GV[bool,bHarvesting]}
+			if ${GV[bool,bHarvesting]}
 			{
 				CurrentAction:Set[Harvesting]
-				FURIOUS:Set[FALSE]
 				return
 			}
 
@@ -27,7 +29,7 @@ function LootTargets()
 			call LootCurrentTarget
 			
 			;; Return if we are still looting
-			while ${Me.IsLooting}
+			if ${Me.IsLooting}
 			{
 				CurrentAction:Set[Looting]
 				FURIOUS:Set[FALSE]
@@ -46,11 +48,11 @@ function LootTargets()
 		}
 	}
 
-	;; Clear our collections every 10 seconds
+	;; Clear our collections every 15 seconds
 	if ${doClearLoot}
 	{
 		LootBlackList:Clear
-		TimedCommand 100 Script[VG-DK].Variable[doClearLoot]:Set[TRUE]
+		TimedCommand 150 Script[VG-DK].Variable[doClearLoot]:Set[TRUE]
 		doClearLoot:Set[FALSE]
 	}
 }
@@ -58,6 +60,8 @@ function LootTargets()
 ;; These are collection variables for looting
 variable collection:int64 LootBlackList
 variable bool doClearLoot=TRUE
+variable int LootCheckTimer = ${Script.RunningTime}
+
 
 function LootCurrentTarget()
 {
@@ -70,7 +74,7 @@ function LootCurrentTarget()
 	;; return if we do not want to loot while in combat
 	if !${doLootInCombat} && ${Me.InCombat}
 	{
-		return
+		;return
 	}
 
 	;; return if we do not want to loot whil in a raid
@@ -82,6 +86,16 @@ function LootCurrentTarget()
 	;; Declare our variables
 	variable int i
 
+	;; Reset Loot Check Timer
+	LootCheckTimer:Set[${Script.RunningTime}]
+	
+	;; Wait up to 1 second to ensure there's loot - nice lag controller
+	while ${Math.Calc[${Math.Calc[${Script.RunningTime}-${LootCheckTimer}]}/1000]}<1
+	{
+		if !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
+			break
+	}
+	
 	;; Loot routine if target is a corpse
 	if !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
 	{
@@ -124,10 +138,12 @@ function LootCurrentTarget()
 						if ${i}<${Loot.NumItems}
 						{
 							Loot.Item[${i}]:Loot
+							waitframe
 						}
 						else
 						{
 							Loot:LootAll
+							waitframe
 						}
 					}
 				}
@@ -175,7 +191,7 @@ function FindLootableTargets()
 	}
 
 	;; Return if there are no corpses
-	if !${Pawn[Corpse](exists)}
+	if !${Pawn[Corpse,radius,5](exists)}
 	{
 		return
 	}
