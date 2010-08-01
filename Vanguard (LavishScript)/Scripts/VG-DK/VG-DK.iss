@@ -59,7 +59,7 @@ function main()
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
 	Event[VG_OnIncomingCombatText]:AttachAtom[CombatText]
 	Event[VG_onHitObstacle]:AttachAtom[Bump]
-
+	
 	;-------------------------------------------
 	; LOOP THIS INDEFINITELY
 	;-------------------------------------------
@@ -129,6 +129,9 @@ function NotInCombat()
 	;; Return if we are not in combat
 	if ${Me.InCombat} 
 		return
+		
+	;; Ensure Furious is reset
+	FURIOUS:Set[FALSE]
 
 	;; Stop all Melee Attacks
 	call StopMeleeAttacks		
@@ -186,9 +189,21 @@ function InCombat()
 	if ${Return}
 		return
 
+	if ${Me.HavePet}
+		VGExecute "/pet Attack"
+		
+	;; We are assisting, not Tanking so let's wait
+	if !${Tank.Find[${Me.FName}]}
+	{
+		if ${Me.TargetHealth}>=98
+		{
+			return
+		}
+	}
+
 	;; Figure out what we going to do with our Encounters
 	call HandleEncounters
-		
+
 	;; Rescue any group members
 	call HandleRescues
 
@@ -320,6 +335,21 @@ function:bool HandleFurious()
 	;; Routine to handle Furious, Furious Rage, Aura of Death, and Frightful Aura
 	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
 	{
+		if ${Me.TargetHealth}>20
+		{
+			FURIOUS:Set[FALSE]
+			return FALSE
+		}
+		
+		if ${Me.TargetHealth}<10 && !${Me.TargetBuff[Furious](exists)} && !${Me.TargetBuff[Furious Rage](exists)} && !${Me.TargetBuff[Aura of Death](exists)} && !${Me.TargetBuff[Frightful Aura](exists)}
+		{
+			FURIOUS:Set[FALSE]
+			return FALSE
+		}
+
+		if ${Me.HavePet}
+			VGExecute "/pet backoff"
+		
 		if ${Me.Target.HaveLineOfSightTo}
 		{
 			;; STUN target up to 25 meters away
@@ -914,8 +944,15 @@ function OpenPotaBarrier()
 ;===================================================
 function ChangeForm()
 {
+
 	if ${doForm}
 	{
+		if !${Me.Form[${CombatForm}](exists)} || !${Me.Form[${NonCombatForm}](exists)}
+		{
+			doForm:Set[FALSE]
+			return
+		}
+	
 		;; Ensure we are not in combat form
 		if !${Me.InCombat} && !${Me.CurrentForm.Name.Equal[${NonCombatForm}]}
 		{
