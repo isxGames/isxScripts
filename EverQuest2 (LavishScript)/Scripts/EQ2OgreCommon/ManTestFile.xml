@@ -1,0 +1,15 @@
+<Manifest>
+  <Project>
+    <Name>Test Project</Name>
+    <Author>Kannkor</Author>
+    <Event_FileUpdated>testproject_OnFileUpdated</Event_FileUpdated>
+    <Event_UpdateError>testproject_OnUpdateError</Event_UpdateError>
+    <Event_UpdateComplete>testproject_OnUpdateComplete</Event_UpdateComplete>
+  </Project>
+
+  <FileInfo>
+    <filename>Scripts/EQ2OgreCommon/TestFile.iss</filename>
+    <url>http://www.isxgames.com/isxScripts/EverQuest2%20(LavishScript)/Scripts/EQ2OgreCommon/TestFile.iss</url>
+    <version>1.0</version>
+  </FileInfo>
+</Manifest>
