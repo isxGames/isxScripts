@@ -4819,8 +4819,7 @@ function StartBot()
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
-	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
-	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show	
 	UIElement[EQ2 Bot].FindUsableChild[Set KillTarget,commandbutton]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Reacquire KillTarget,commandbutton]:Show
 
@@ -4865,8 +4864,16 @@ function StartBot()
 	OriginalMT:Set[${MainTankPC}]
 
 	UIElement[EQ2 Bot].FindUsableChild[Stop EQ2Bot,commandbutton]:Show
-	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
-	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	if ${PauseBot}
+	{
+		UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Show
+		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Hide
+	}
+	else
+	{
+		UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
+		UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
+	}
 	UIElement[EQ2 Bot].FindUsableChild[Combat Frame,frame]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Pathing Frame,frame]:Hide
 	UIElement[EQ2 Bot].FindUsableChild[Start EQ2Bot,commandbutton]:Hide
