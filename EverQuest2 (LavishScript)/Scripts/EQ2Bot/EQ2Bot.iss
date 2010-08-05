@@ -3571,8 +3571,11 @@ function Pull(string npcclass)
 			;;;; Otherwise, Using "PullSpell" ;;;;;;;;;;;;;
 			CurrentAction:Set["Pulling ${Target.Name} with ${PullSpell}"]
 			Me.Ability[${PullSpell}]:Use
-			CurrentAction:Set["Waiting ${Math.Calc64[${Me.Ability[${PullSpell}].CastingTime}*10]} for spell to cast"]
-			wait ${Math.Calc64[${Me.Ability[${PullSpell}].CastingTime}*10]}
+
+			; Round up the wait time to ensure we're only sending an int to 'wait'
+			;Debug:Echo["Waiting ${Math.Calc[${Me.Ability[${PullSpell}].CastingTime}*10].Ceil}ms for spell to cast"]
+			CurrentAction:Set["Waiting ${Math.Calc[${Me.Ability[${PullSpell}].CastingTime}*10].Ceil}ms for spell to cast"]
+			wait ${Math.Calc[${Me.Ability[${PullSpell}].CastingTime}*10].Ceil}
 
 			while ${Me.CastingSpell}
 			{
