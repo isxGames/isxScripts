@@ -272,7 +272,7 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-	echo ${Start_HO}
+	;echo ${Start_HO}
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${Start_HO}
 		call CastSpellRange 303
 
