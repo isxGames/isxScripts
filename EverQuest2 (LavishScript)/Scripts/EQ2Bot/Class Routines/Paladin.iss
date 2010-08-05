@@ -56,9 +56,11 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	if ${Me.Ability[${SpellType[155]}].IsReady} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]}) && \
+		${Me.Ability[${SpellType[155]}].IsReady} && \
+		(!${Me.Maintained[${SpellType[155]}](exists)} || ${Me.Maintained[${SpellType[155]}].Duration} < ${Me.Ability[${SpellType[155]}].CastingTime})
 	{
-		Debug:Echo["Casting PreWard"]
+		;Debug:Echo["Casting PreWard"]
 		call CastSpellRange 155 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
