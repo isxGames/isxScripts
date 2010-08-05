@@ -249,7 +249,7 @@
 		<Width>145</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
-		<Text>ARm 2</Text>
+		<Text>Arm 2</Text>
 	</Text>
 	<combobox name='cbFighterArm2'>
 		<x>150</x>
