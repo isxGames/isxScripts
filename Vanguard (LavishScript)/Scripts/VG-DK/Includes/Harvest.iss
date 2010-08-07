@@ -7,7 +7,7 @@ function Harvest()
 	}
 
 	variable int i = 0
-
+/*
 	if ${Me.IsGrouped}
 	{
 		;; Let's go find someone who is harvesting nearby
@@ -31,7 +31,7 @@ function Harvest()
 			}
 		}
 	}
-	
+*/	
 	
 	
 	variable string leftofname

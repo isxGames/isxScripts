@@ -42,6 +42,8 @@ atom(script) LoadXMLSettings()
 	doMisc:Set[${VG-DK_SSR.FindSetting[doMisc,TRUE]}]
 	doDespoil:Set[${VG-DK_SSR.FindSetting[doDespoil,TRUE]}]
 	doAbyssalChains:Set[${VG-DK_SSR.FindSetting[doAbyssalChains,TRUE]}]
+	doDeBuff:Set[${VG-DK_SSR.FindSetting[doDeBuff,TRUE]}]
+
 	doRetaliate:Set[${VG-DK_SSR.FindSetting[doRetaliate,TRUE]}]
 	doVengeance:Set[${VG-DK_SSR.FindSetting[doVengeance,TRUE]}]
 	doSeethingHatred:Set[${VG-DK_SSR.FindSetting[doSeethingHatred,TRUE]}]
@@ -116,7 +118,7 @@ atom(script) SaveXMLSettings()
 	VG-DK_SSR:AddSetting[doChains,${doChains}]
 	VG-DK_SSR:AddSetting[doMisc,${doMisc}]
 	VG-DK_SSR:AddSetting[doDespoil,${doDespoil}]
-	VG-DK_SSR:AddSetting[doAbyssalChains,${doAbyssalChains}]
+	VG-DK_SSR:AddSetting[doDeBuff,${doDeBuff}]
 	VG-DK_SSR:AddSetting[doHatred,${doHatred}]
 	VG-DK_SSR:AddSetting[doRetaliate,${doRetaliate}]
 	VG-DK_SSR:AddSetting[doVengeance,${doVengeance}]

@@ -1,12 +1,47 @@
 
 function:bool HandleEncounters()
 {
-	if ${Me.Encounter}>0
+	if ${Me.Encounter}>0 && ${doClosestEncounter}
 	{
-		variable int i
-		variable int j = 0
+		variable int i = 0
+		variable int j = 50
 		variable int k = 0
-
+		
+		;; set j to target distance
+		if ${Me.Target(exists)}
+			j:Set[${Me.Target.Distance}]
+		
+		;; loop through encounters
+		for (i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+		{
+			;; set k to closest encounter
+			if ${Me.Encounter[${i}].Distance}<${j}
+			{
+				j:Set[${Me.Encounter[${i}].Distance}]
+				k:Set[${i}]
+			}
+		}
+		
+		;; target closest encounter
+		if ${k}>0
+		{
+			EchoIt "Changing target to ${Me.Encounter[${k}].Name} at a distance of ${Me.Encounter[${k}].Distance}"
+			Pawn[id,${Me.Encounter[${k}].ID}]:Target
+			wait 5
+			return TRUE
+		}
+	}
+	if !${Me.IsGrouped} && ${Me.Encounter}>0 && ( !${Me.Target(exists)} || ${Me.Target.IsDead} )
+	{
+		Pawn[id,${Me.Encounter[1].ID}]:Target
+		wait 5
+		return TRUE
+	}
+	
+	
+	return FALSE
+		
+/*
 		;; Switch targets if an Encounter is not targeting self
 		if ${Me.IsGrouped}
 		{
@@ -51,7 +86,6 @@ function:bool HandleEncounters()
 				return TRUE
 			}
 		}
-	
 		;; Target nearest encounter
 		if !${Me.Target(exists)}
 		{
@@ -70,6 +104,6 @@ function:bool HandleEncounters()
 			return TRUE
 		}
 	}
-	return FALSE
+*/
 }
 

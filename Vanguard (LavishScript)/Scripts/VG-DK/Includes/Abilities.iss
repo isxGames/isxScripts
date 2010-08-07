@@ -101,6 +101,7 @@ function SetupAbilities()
 	SetHighestAbility "AbyssalChains" "Abyssal Chains"
 	SetHighestAbility "DevourMind" "Devour Mind"
 	SetHighestAbility "DevourStrength" "Devour Strength"
+	SetHighestAbility "SoulConsumption" "Soul Consumption"
 	
 	;; === IMMUNITY for 10 seconds ===
 	SetHighestAbility "AphoticShield" "Aphotic Shield"

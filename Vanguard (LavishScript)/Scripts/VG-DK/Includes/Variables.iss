@@ -72,6 +72,8 @@ variable bool doBacklash
 ;; Misc
 variable bool doDespoil
 variable bool doAbyssalChains
+variable bool doDeBuff
+
 ;; Loot
 variable bool doLoot
 variable bool doRaidLoot
@@ -111,4 +113,4 @@ variable bool doCycleTargetsReady = TRUE
 variable bool doDisEnchant = FALSE
 variable int TargetBuffs = 0
 variable int64 LastTargetID = 0
-variable bool doDreadfulVisage = FALSE
+variable bool doDreadfulVisage = TRUE

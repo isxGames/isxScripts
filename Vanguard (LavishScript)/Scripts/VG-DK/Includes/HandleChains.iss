@@ -15,6 +15,12 @@ function HandleChains()
 	{
 		waitframe
 	}
+
+	;; If health is low then Soul Wrack is 1st due to its healing
+	if ${doWrack} && ${Me.EndurancePct}>=10 && ${Me.HealthPct}<50
+	{
+		call ExecuteChain "${SoulWrack}"
+	}
 	
 	;; 1st - we want to increase hatred
 	if ${doIncite} && ${Me.IsGrouped} && ${Me.HealthPct}>40 && ${Me.EndurancePct}>=10
