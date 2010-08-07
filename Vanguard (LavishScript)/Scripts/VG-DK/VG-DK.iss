@@ -119,7 +119,12 @@ function AlwaysCheck()
 	;; Reset TargetBuff counter
 	if !${Me.Target(exists)}
 		TargetBuffs:Set[0]
-	
+
+	;; Figure out what we going to do with our Encounters
+	call HandleEncounters
+	if ${Return}
+		return
+		
 	;; Sometimes, we are not the main tank
 	call AssistTank
 }
@@ -136,11 +141,6 @@ function NotInCombat()
 	;; Stop all Melee Attacks
 	call StopMeleeAttacks		
 
-	;; Figure out what we going to do with our Encounters
-	call HandleEncounters
-	if ${Return}
-		return
-	
 	;; Repair our Equipment
 	call AutoRepair
 
@@ -201,9 +201,6 @@ function InCombat()
 		}
 	}
 
-	;; Figure out what we going to do with our Encounters
-	call HandleEncounters
-
 	;; Rescue any group members
 	call HandleRescues
 
@@ -241,17 +238,17 @@ function InCombat()
 			return
 	}
 
+	;; Blocks 25% damage for 4-5 hits -- 1 minute cooldown
+	call CastBuff "${DarkWard}"
+
+	if ${Me.HealthPct}<40
+		return
+	
 	;; Process all routines that deal primarily with Hatred
 	call BuildHatred
 	if ${Return}
 		return
-
-	if ${Me.HealthPct}<40
-		return
-
-	;; Blocks 25% damage for 4-5 hits -- 1 minute cooldown
-	call CastBuff "${DarkWard}"
-
+	
 	;; Build our Dread to level 5
 	call BuildDread
 	if ${Return}
@@ -259,6 +256,11 @@ function InCombat()
 
 	;; Attempt to remove new Enchantments
 	call RemoveEnchantments
+	if ${Return}
+		return
+		
+	;; Debuff the target with Soul Consumption or Devour Mind/Strength
+	call DeBuff
 	if ${Return}
 		return
 
@@ -375,6 +377,50 @@ function:bool HandleFurious()
 	}
 	return FALSE
 }
+
+function:bool DeBuff()
+{
+	;; Debuffs the target with Soul Consumption or Devour Mind/Strength
+	if ${doDeBuff}
+	{
+		if ${Me.Ability[${SoulConsumption}](exists)}
+		{
+			if !${Me.Effect[${SoulConsumption}](exists)}
+			{
+				call UseAbility "${SoulConsumption}"
+				if ${Return}
+				{
+					return TRUE
+				}
+			}
+			return FALSE
+		}
+		if ${Me.Ability[${DevourStrength}](exists)}
+		{
+			if !${Me.Effect[${DevourStrength}](exists)}
+			{
+				call UseAbility "${DevourStrength}"
+				if ${Return}
+				{
+					return TRUE
+				}
+			}
+		}
+		if ${Me.Ability[${DevourMind}](exists)}
+		{
+			if !${Me.Effect[${DevourMind}](exists)}
+			{
+				call UseAbility "${DevourMind}"
+				if ${Return}
+				{
+					return TRUE
+				}
+			}
+		}
+	}
+	return FALSE
+}
+
 
 function:bool HandleEmergencies()
 {

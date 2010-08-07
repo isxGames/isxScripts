@@ -391,7 +391,7 @@
 							<Width>15</Width>
 							<Height>15</Height>
 							<Text>MISC</Text>
-							<AutoTooltip>  Misc abilities as Despoil and Abyssal Chains </AutoTooltip>
+							<AutoTooltip>  Misc abilities as Despoil, Abyssal Chains, and Soul Consumption </AutoTooltip>
 							<OnLoad>
 								if ${Script[VG-DK].VariableScope.doMisc}
 								{
@@ -1016,6 +1016,24 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[VG-DK].VariableScope.doAbyssalChains:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doDeBuff" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>35%</X>
+							<Y>91%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>DeBuff</Text>
+							<AutoTooltip>  Soul Consumption or Devour Mind and Strength </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doDeBuff}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doDeBuff:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 
