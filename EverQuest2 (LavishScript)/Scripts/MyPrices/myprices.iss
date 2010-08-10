@@ -141,7 +141,7 @@ variable bool LowerNumber
 variable int LowerItemNumber
 variable collection:string BadItems
 
-
+; Strings holding all the various file paths
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
 variable filepath NewCraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Queues/"
 variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/XML/"
@@ -244,8 +244,10 @@ function main(string goscan, string goscan2)
 			
 			; if the scan paramater hasn't been set then don't do anything else
 			if !${runautoscan}
+			{
 				exitmyprices:Set[TRUE]
 				break
+			}
 		}
 		
 		; Start scanning the broker
@@ -290,15 +292,12 @@ function main(string goscan, string goscan2)
 				; If item was found in the container still
 				if ${j} != -1
 				{
+
+					ItemUnlisted:Set[TRUE]
+
 					; is the item listed for sale ?
 					if ${Me.Vending[${i}].Consignment[${j}].IsListed}
-					{
 						ItemUnlisted:Set[FALSE]
-					}
-					else
-					{
-						ItemUnlisted:Set[TRUE]
-					}
 					
 					if (${ItemUnlisted} && ${SetUnlistedPrices}) ||  !${SetUnlistedPrices}
 					{
@@ -3477,12 +3476,12 @@ function placeshinies()
 		{
 			call InventoryContainer ${Me.CustomInventory[${PSxvar}].InContainerID}
 
-			if ${Me.CustomInventory[${PSxvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${PSxvar}].IsInventoryContainer}
+			if ${Me.CustomInventory[${PSxvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${PSxvar}].IsInventoryContainer} && !${BadItems.Element["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
 			{
 				if !${Me.CustomInventory[${PSxvar}].Attuned} && !${Me.CustomInventory[${PSxvar}].NoTrade} && !${Me.CustomInventory[${PSxvar}].Heirloom} 
 				{
 					; is item a collectible ?
-					if ${Me.CustomInventory[${PSxvar}].IsCollectible} && ${Shinies}
+					if ${Me.CustomInventory[${PSxvar}].IsCollectible} && ${Shinies} 
 					{
 					
 						NewCollection:Set[FALSE]
@@ -3514,6 +3513,8 @@ function placeshinies()
 						}
 						else
 						{
+							BadItems:Set["${Me.CustomInventory[${PSxvar}].Name}"]
+							echo BadItems now has ${BadItems.Used} items in it.
 							EQ2Execute /close_top_window
 						}
 					}
