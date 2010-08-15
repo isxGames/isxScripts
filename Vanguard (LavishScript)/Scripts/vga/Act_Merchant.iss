@@ -112,6 +112,7 @@ function Sell()
 			{
 			echo Selling ${Iterator.Key}
 			Me.Inventory[exactname,${Iterator.Key}]:Sell[${Me.Inventory[ExactName,${Iterator.Value}].Quantity}]
+			waitframe
 			}
 			}
 		Iterator:Next

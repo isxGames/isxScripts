@@ -271,7 +271,12 @@ function main()
 		; TODO:  Possibly pause the script (if we are grouped) until the player sets a tank/assist?
 		tankpawn:Set[${Me.FName}]
 		assistpawn:Set[${Me.FName}]
-	}	
+	}
+
+	;===================================================
+	;===           Key Bindings                     ====
+	;===================================================
+	bind -press ResetWindow CTRL+SHIFT+R "Script[vga]:QueueCommand[call ResetWindow]"
 		
 	;===================================================
 	;===               Main Loop                    ====
@@ -355,6 +360,14 @@ function downtimefunction()
 ;===================================================
 function combatfunction()
 {
+	;-------------------------------------------
+	;**********FIX THE NULL or 0 HP*************
+	;-------------------------------------------
+	if ${Me.Target(exists)} && ${Me.TargetHealth}<1
+	{
+		wait 2
+	}
+
 	;-------------------------------------------
 	;**********Fighting PreLoopCall*************
 	;-------------------------------------------
@@ -550,4 +563,10 @@ atom atexit()
         Event[VG_OnParlayOppTurnEnd]:DetachAtom[OnParlayOppTurnEnd]
 	ui -unload "${Script.CurrentDirectory}/vga_gui.xml"
 	endscript vga
+}
+
+function ResetWindow()
+{
+	UIElement[vga_gui]:Reset
+	echo "VGA window has been reset"
 }
