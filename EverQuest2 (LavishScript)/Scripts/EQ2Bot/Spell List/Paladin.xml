@@ -187,5 +187,33 @@
 		<Setting name="80,525">Holy Ground</Setting>
 		<Setting name="80,90">Ancient Wrath VI</Setting>
 		<Setting name="80,150">Holy Strike V</Setting>
+		<Setting name="81,245">Power Cleave VI</Setting>
+		<Setting name="81,151">Faith Strike VII</Setting>
+		<Setting name="81,522">Doom Judgement IV</Setting>
+		<Setting name="82,10">Prayer of Healing VII</Setting>
+		<Setting name="82,295">Knight\'s Stance VII</Setting>
+		<Setting name="82,160">Clarion VIII</Setting>
+		<Setting name="83,290">Wrath Stance VII</Setting>
+		<Setting name="83,386">Pledge of Armament VI</Setting>
+		<Setting name="84,21">Crusade VI</Setting>
+		<Setting name="84,190">Penitent Kick VII</Setting>
+		<Setting name="84,95">Consecrate III</Setting>
+		<Setting name="84,387">Lay on Hands VI</Setting>
+		<Setting name="85,91">Holy Circle VII</Setting>
+		<Setting name="85,20">Divine Inspiration VII</Setting>
+		<Setting name="86,4">Holy Aid VII</Setting>
+		<Setting name="86,170">Righteousness VII</Setting>
+		<Setting name="87,25">Blessed Weapon VII</Setting>
+		<Setting name="87,152">Divine Vengeance VII</Setting>
+		<Setting name="87,26">Blessing of the Paladin VI</Setting>
+		<Setting name="88,60">Refusal of Atonement V</Setting>
+		<Setting name="88,523">Castigate III</Setting>
+		<Setting name="88,1">Devout Sacrament VI</Setting>
+		<Setting name="89,155">Demonstration of Faith VII</Setting>
+		<Setting name="89,191">Heroic Dash VII</Setting>
+		<Setting name="89,61">Judgement VIII</Setting>
+		<Setting name="90,92">Decree IV</Setting>
+		<Setting name="90,90">Ancient Wrath VII</Setting>
+		<Setting name="90,150">Holy Strike VI</Setting>
 	</Set>
 </InnerSpaceSettings>
