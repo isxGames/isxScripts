@@ -1,0 +1,1288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Window Name='VGShaman' Template='VG.Window'>
+		<X>55%</X>
+		<Y>40%</Y>
+		<Width>320</Width>
+		<Height>330</Height>
+		<Client Template="VG.Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>VGShaman - TANK: ${Script[VGShaman].Variable[Tank]} STATUS: ${Script[VGShaman].Variable[PausedText]}</Title>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>18</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title" />
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						Script[VGShaman].Variable[isRunning]:Set[FALSE]
+	<!--					endscript VGShaman -->
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		<Children>
+			<Tabcontrol Name='VGShaman Main' Template='VG.Tabcontrol'>
+				<X>5</X>
+				<Y>5</Y>
+				<Font>
+					<Name>Times New Roman</Name>
+					<Size>14</Size>
+				</Font>
+				<OnSelect>
+					switch ${This.SelectedTab}
+					{
+						Case Sliders
+							UIElement[VGShaman]:SetWidth[320]
+							UIElement[VGShaman]:SetHeight[380]
+							break
+						Case About
+							UIElement[VGShaman]:SetWidth[320]
+							UIElement[VGShaman]:SetHeight[310]
+							break
+						Default
+							UIElement[VGShaman]:SetWidth[320]
+							UIElement[VGShaman]:SetHeight[330]
+							break
+					}
+				</OnSelect>
+				<TabHeight>27</TabHeight>
+				<TabBorder>3</TabBorder>
+				<Height>85%</Height>
+				<Width>97%</Width>
+				<Tabs>
+					<Tab Name='Main'>
+						<Text Name='OptionText' Template='VG.BoldText'>
+							<X>20</X>
+							<Y>15</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<Text>Options:</Text>
+						</Text>
+						<checkbox Name='DoSlow' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>30</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Slow</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doSlow]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doSlow]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoDebuff' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>120</X>
+							<Y>30</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Debuffs</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doDebuff]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doDebuff]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoLoot' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>210</X>
+							<Y>30</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Loot</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doLoot]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doLoot]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+<!--						<checkbox Name='DoMelee' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>210</X>
+							<Y>50</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Melee</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doMelee]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doMelee]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox> -->
+						<checkbox Name='DoDots' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>50</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>DoT</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doDots]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doDots]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoNuke' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>120</X>
+							<Y>50</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Nuke</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doNuke]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doNuke]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name='DoFace' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>70</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Face</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doFace]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doFace]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoHarvest' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>120</X>
+							<Y>70</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Harvest</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doAutoHarvest]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doAutoHarvest]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoFollow' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>210</X>
+							<Y>70</Y>
+							<Width>90</Width>
+							<Height>20</Height>
+							<Text>Follow</Text>
+							<OnLoad>
+								if ${Script[VGShaman].Variable[doFollow]}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doFollow]:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Text Name="btMeleeMode" Template="VG.BoldText">
+							<X>20</X>
+							<Y>100</Y>
+							<Width>40%</Width>
+							<Height>20</Height>
+							<Text>Melee Mode:</Text>
+						</Text>
+						<ComboBox name="MeleeCombo" template="VG.ComboBox">
+							<X>110</X>
+							<Y>98</Y>
+							<Width>50%</Width>
+							<Height>20</Height>
+							<Items>
+								<Item value='1'>No Melee</Item>
+								<Item value='2' default='1'>Melee dont Move</Item>
+								<Item value='3'>Melee and Move</Item>
+							</Items>
+							<OnSelect>
+								if ${This.Selection}==1
+								{
+									Script[VGShaman].Variable[doMelee]:Set[FALSE]
+									Script[VGShaman].Variable[doMeleeMove]:Set[FALSE]
+								}
+								if ${This.Selection}==2
+								{
+									Script[VGShaman].Variable[doMelee]:Set[TRUE]
+									Script[VGShaman].Variable[doMeleeMove]:Set[FALSE]
+								}
+								if ${This.Selection}==3
+								{
+									Script[VGShaman].Variable[doMelee]:Set[TRUE]
+									Script[VGShaman].Variable[doMeleeMove]:Set[TRUE]
+								}
+							</OnSelect>
+							<Sort>None</Sort>
+						</ComboBox>
+
+						<Text Name="QuickSets" Template="VG.BoldText">
+							<X>20</X>
+							<Y>125</Y>
+							<Width>90%</Width>
+							<Height>20</Height>
+							<Text>We are fighting (QuickSets):</Text>
+						</Text>
+						<Commandbutton Name='Quick1' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>140</Y>
+							<Width>80</Width> 
+							<Height>25</Height>
+							<Text>Little Girls</Text>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doSlow]:Set[FALSE]
+								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDots]:Set[FALSE]
+								UIElement[DoDots@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDebuff]:Set[FALSE]
+								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doNuke]:Set[FALSE]
+								UIElement[DoNuke@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doMelee]:Set[FALSE]
+								UIElement[DoMelee@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[MeHealPct]:Set[50]
+								Script[VGShaman].Variable[HealEmgPct]:Set[20]
+								Script[VGShaman].Variable[HealSmallPct]:Set[40]
+								Script[VGShaman].Variable[HealBigPct]:Set[50]
+								Script[VGShaman].Variable[RestHealPct]:Set[55]
+								Script[VGShaman].Variable[EngagePct]:Set[95]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Quick2' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>110</X>
+							<Y>140</Y>
+							<Width>80</Width> 
+							<Height>25</Height>
+							<Text>Hippies</Text>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doSlow]:Set[FALSE]
+								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDots]:Set[FALSE]
+								UIElement[DoDots@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDebuff]:Set[FALSE]
+								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doNuke]:Set[FALSE]
+								UIElement[DoNuke@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doMelee]:Set[TRUE]
+								UIElement[DoMelee@Main@VGShaman Main@VGShaman]:SetChecked
+								Script[VGShaman].Variable[MeHealPct]:Set[60]
+								Script[VGShaman].Variable[HealEmgPct]:Set[30]
+								Script[VGShaman].Variable[HealSmallPct]:Set[40]
+								Script[VGShaman].Variable[HealBigPct]:Set[50]
+								Script[VGShaman].Variable[RestHealPct]:Set[60]
+								Script[VGShaman].Variable[EngagePct]:Set[90]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Quick3' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>200</X>
+							<Y>140</Y>
+							<Width>80</Width> 
+							<Height>25</Height>
+							<Text>Mean SOBs</Text>
+							<OnLeftClick>
+								Script[VGShaman].Variable[doSlow]:Set[TRUE]
+								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:SetChecked
+								Script[VGShaman].Variable[doDots]:Set[FALSE]
+								UIElement[DoDots@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDebuff]:Set[TRUE]
+								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:SetChecked
+								Script[VGShaman].Variable[doNuke]:Set[FALSE]
+								UIElement[DoNuke@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doMelee]:Set[TRUE]
+								UIElement[DoMelee@Main@VGShaman Main@VGShaman]:SetChecked
+								Script[VGShaman].Variable[MeHealPct]:Set[65]
+								Script[VGShaman].Variable[HealEmgPct]:Set[35]
+								Script[VGShaman].Variable[HealSmallPct]:Set[50]
+								Script[VGShaman].Variable[HealBigPct]:Set[60]
+								Script[VGShaman].Variable[RestHealPct]:Set[70]
+								Script[VGShaman].Variable[EngagePct]:Set[95]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name="TankName" Template="VG.BoldText">
+							<X>20</X>
+							<Y>178</Y>
+							<Width>40%</Width>
+							<Height>20</Height>
+							<Text>Tank:</Text>
+						</Text>
+						<Text Name="TankEntry" Template="VG.BoldText">
+							<X>75</X>
+							<Y>178</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[Tank]}]
+							</OnRender>
+						</Text>
+						<Commandbutton Name='SetTank' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>170</X>
+							<Y>175</Y>
+							<Width>60</Width> 
+							<Height>25</Height>
+							<Text>Set</Text>
+							<OnLeftClick>
+								Script[VGShaman].Variable[Tank]:Set[${Me.DTarget.Name}]
+								Script[VGShaman].Variable[TankID]:Set[${Me.DTarget.ID}]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name="FollowName" Template="VG.BoldText">
+							<X>20</X>
+							<Y>203</Y>
+							<Width>40%</Width>
+							<Height>20</Height>
+							<Text>Follow:</Text>
+						</Text>
+						<Text Name="FollowEntry" Template="VG.BoldText">
+							<X>75</X>
+							<Y>203</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[FollowT]}]
+							</OnRender>
+						</Text>
+						<Commandbutton Name='SetFollow' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>170</X>
+							<Y>200</Y>
+							<Width>60</Width> 
+							<Height>25</Height>
+							<Text>Set</Text>
+							<OnLeftClick>
+								Script[VGShaman].Variable[FollowT]:Set[${Me.DTarget.Name}]
+								Script[VGShaman].Variable[FollowID]:Set[${Me.DTarget.ID}]
+							</OnLeftClick>
+						</Commandbutton>
+					</Tab>
+					<Tab name='Sliders'>
+						<Text name='MeHealSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>15</Y>
+							<Width>140</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>My HP %:
+							</Text>
+						</Text>
+						<Text name='MeHealSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>15</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[MeHealPct]}]
+							</OnRender>
+						</Text>
+						<Slider Name='MeHealSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>30</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[MeHealPct]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[MeHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+						<Text name='EmgHealSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>50</Y>
+							<Width>140</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Emergency HP %:
+							</Text>
+						</Text>
+						<Text name='EmgHealSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>50</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[HealEmgPct]}]
+							</OnRender>
+						</Text>
+						<Slider Name='EmgHealSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>65</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[HealEmgPct]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[HealEmgPct]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+						<Text name='FastHealSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>85</Y>
+							<Width>140</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Fast HP %:
+							</Text>
+						</Text>
+						<Text name='FastHealSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>85</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[HealSmallPct]}]
+							</OnRender>
+						</Text>
+						<Slider Name='FastHealSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>100</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[HealSmallPct]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[HealSmallPct]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+						<Text name='HealSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>120</Y>
+							<Width>140</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Big Heal HP %:
+							</Text>
+						</Text>
+						<Text name='HealSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>120</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[HealBigPct]}]
+							</OnRender>
+						</Text>
+						<Slider name='HealSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>135</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[HealBigPct]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[HealBigPct]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+						<Text name='RestHealSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>155</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Rest of Group Heal HP %:
+							</Text>
+						</Text>
+						<Text name='RestHealSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>155</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[RestHealPct]}]
+							</OnRender>
+						</Text>
+						<Slider name='RestHealSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>170</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[RestHealPct]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[RestHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+						<Text name='EngageSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>190</Y>
+							<Width>140</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Engage Fight %:
+							</Text>
+						</Text>
+						<Text name='EngageSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>190</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[EngagePct]}]
+							</OnRender>
+						</Text>
+						<Slider Name='EngageSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>205</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[EngagePct]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[EngagePct]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+						<Text name='FollowSliderName' Template='VG.BoldText'>
+							<X>35</X>
+							<Y>225</Y>
+							<Width>140</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Follow Distance:
+							</Text>
+						</Text>
+						<Text name='FollowSliderValue' Template='VG.BoldText'>
+							<X>225</X>
+							<Y>225</Y>
+							<Width>50</Width>
+							<Height>15</Height>
+							<Alignment>Right</Alignment>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[FollowDist]}]
+							</OnRender>
+						</Text>
+						<Slider Name='FollowSlider' Template='VG.Slider'>
+							<X>35</X>
+							<Y>240</Y>
+							<Width>240</Width>
+							<Height>15</Height>
+							<Range>30</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGShaman].Variable[FollowDist]}]
+							</OnLoad>
+							<OnChange>
+								Script[VGShaman].Variable[FollowDist]:Set[${Math.Calc[${This.Value}].Int}]
+							</OnChange>
+						</Slider>
+					</Tab>
+					<Tab name='Buffs'>
+						<Commandbutton Name='BG0' Template='VG.GreenCommandButton'>
+							<X>20</X>
+							<Y>15</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff Self</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Me.FName}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BT' Template='VG.GreenCommandButton'>
+							<X>20</X>
+							<Y>40</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff ${Script[VGShaman].Variable[Tank]}</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BG1' Template='VG.GreenCommandButton'>
+							<X>20</X>
+							<Y>40</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff ${Group[1].Name}</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Group[1].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BG2' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>65</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff ${Group[2].Name}</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Group[2].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BG3' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>90</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff ${Group[3].Name}</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Group[3].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BG4' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>115</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff ${Group[4].Name}</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Group[4].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BG5' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>140</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff ${Group[5].Name}</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffPlayer "${Group[5].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BG' Template='VG.GreenCommandButton'>
+							<X>20</X>
+							<Y>165</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff Group</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffGroup]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='BST' Template='VG.GreenCommandButton'>
+							<X>20</X>
+							<Y>165</Y>
+							<Width>120</Width> 
+							<Height>25</Height>
+							<Text>Buff Self + Tank</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call buffGroup]
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Commandbutton Name='RunS' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>140</X>
+							<Y>15</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Me.FName}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RunT' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Run1' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Group[1].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Run2' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>65</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Group[2].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Run3' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>90</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Group[3].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Run4' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>115</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Group[4].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Run5' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>140</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Run</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[RunSpeed1]}" "${Group[5].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RunG' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>165</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>RunG</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffGroup "${Script[VGShaman].Variable[RunSpeed1]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RunST' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>165</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>RunST</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffGroup "${Script[VGShaman].Variable[RunSpeed1]}"]
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Commandbutton Name='EBS' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>190</X>
+							<Y>15</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Me.FName}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EBT' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EB1' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Group[1].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EB2' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>65</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Group[2].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EB3' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>90</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Group[3].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EB4' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>115</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Group[4].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EB5' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>140</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EB</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[EB]}" "${Group[5].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EBG' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>165</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EBG</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffGroup "${Script[VGShaman].Variable[EB]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='EBST' Template='VG.GreenCommandButton'>
+							<X>190</X>
+							<Y>165</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>EBST</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffGroup "${Script[VGShaman].Variable[EB]}"]
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Commandbutton Name='LevS' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>240</X>
+							<Y>15</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Me.FName}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='LevT' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Lev1' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Group[1].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Lev2' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>65</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Group[2].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Lev3' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>90</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Group[3].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Lev4' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>115</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Group[4].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Lev5' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>140</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Lev</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffPlayer "${Script[VGShaman].Variable[Lev]}" "${Group[5].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='LevG' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>165</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>LevG</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffGroup "${Script[VGShaman].Variable[Lev]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='LevST' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>165</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>LevST</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call shortbuffGroup "${Script[VGShaman].Variable[Lev]}"]
+							</OnLeftClick>
+						</Commandbutton>
+					</Tab>
+
+					<Tab name='Rez'>
+						<Text Name="RezTextT" Template="VG.BoldText">
+							<X>30</X>
+							<Y>43</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Script[VGShaman].Variable[Tank]}]
+							</OnRender>
+						</Text>
+						<Text Name="RezText1" Template="VG.BoldText">
+							<X>30</X>
+							<Y>43</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Group[1].Name}]
+							</OnRender>
+						</Text>
+						<Text Name="RezText2" Template="VG.BoldText">
+							<X>30</X>
+							<Y>68</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Group[2].Name}]
+							</OnRender>
+						</Text>
+						<Text Name="RezText3" Template="VG.BoldText">
+							<X>30</X>
+							<Y>93</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Group[3].Name}]
+							</OnRender>
+						</Text>
+						<Text Name="RezText4" Template="VG.BoldText">
+							<X>30</X>
+							<Y>118</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Group[4].Name}]
+							</OnRender>
+						</Text>
+						<Text Name="RezText5" Template="VG.BoldText">
+							<X>30</X>
+							<Y>143</Y>
+							<Width>40%</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnRender>
+								This:SetText[${Group[5].Name}]
+							</OnRender>
+						</Text>
+						<Commandbutton Name='RST' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>40</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RS1' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>40</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Group[1].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RS2' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>65</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Group[2].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RS3' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>90</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Group[3].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RS4' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>115</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Group[4].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RS5' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>140</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Group[5].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RSG' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>165</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone Group</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stoneGroup]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RSST' Template='VG.GreenCommandButton'>
+							<X>140</X>
+							<Y>165</Y>
+							<Width>100</Width> 
+							<Height>25</Height>
+							<Text>Stone Tank</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call stonePlayer "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='RezT' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Rez</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call rezPlayer "${Script[VGShaman].Variable[Tank]}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Rez1' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>40</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Rez</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call rezPlayer "${Group[1].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Rez2' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>65</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Rez</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call rezPlayer "${Group[2].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Rez3' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>90</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Rez</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call rezPlayer "${Group[3].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Rez4' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>115</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Rez</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call rezPlayer "${Group[4].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+						<Commandbutton Name='Rez5' Template='VG.GreenCommandButton'>
+							<X>240</X>
+							<Y>140</Y>
+							<Width>50</Width> 
+							<Height>25</Height>
+							<Text>Rez</Text>
+							<OnLeftClick>
+								Script[VGShaman]:QueueCommand[call rezPlayer "${Group[5].Name}"]
+							</OnLeftClick>
+						</Commandbutton>
+					</Tab>
+
+					<Tab name='About'>
+						<Text Name='VGShaman About Title'>
+							<X>0</X>
+							<Y>50</Y>
+							<Width>100%</Width>
+							<Height>80%</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>12</Size>
+							</Font>
+							<Text>VGShaman ${Script[VGShaman].Variable[version]}</Text>
+						</Text>
+						<Text Name='VGShaman About Text'>
+							<X>0</X>
+							<Y>62</Y>
+							<Width>100%</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>12</Size>
+							</Font>
+							<Text>by Zeek and don'tdoit</Text>
+						</Text>
+						<Text Name='About 2'>
+							<X>5</X>
+							<Y>74</Y>
+							<Width>100%</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>12</Size>
+							</Font>
+							<Text>http://www.isxgames.com</Text>
+						</Text>
+					</Tab>
+				</Tabs>
+			</TabControl>
+			<Commandbutton Name='Run Button' Template='VG.GreenCommandButton'>
+				<visible>1</visible>
+				<X>20%</X>
+				<Y>88%</Y>
+				<Width>80</Width> 
+				<Height>30</Height>
+				<Text>Resume</Text>
+				<OnLeftClick>
+					if ${This.Text.Equal[Pause]}
+					{
+						This:SetText[Resume]
+						Script[VGShaman].Variable[Paused]:Set[TRUE]
+						Script[VGShaman].Variable[PausedText]:Set["Paused"]
+					}
+					elseif ${This.Text.Equal[Resume]}
+					{
+						This:SetText[Pause]
+						Script[VGShaman].Variable[Paused]:Set[FALSE]
+						Script[VGShaman].Variable[PausedText]:Set["Running"]
+					}
+				</OnLeftClick>
+			</Commandbutton>
+
+			<Commandbutton Name='Quit Button' Template='VG.RedCommandButton'>
+				<visible>1</visible>
+				<X>60%</X> 
+				<Y>88%</Y> 
+				<Width>65</Width> 
+				<Height>30</Height>
+				<BackgroundColor>FFCC0000</BackgroundColor>
+				<Text>Quit</Text>
+				<OnLeftClick>
+					Script[VGShaman].Variable[isRunning]:Set[FALSE]
+<!--					endscript VGShaman -->
+				</OnLeftClick>
+			</Commandbutton>
+
+		</Children>
+	</Window>
+</ISUI>
