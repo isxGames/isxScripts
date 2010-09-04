@@ -190,10 +190,9 @@ function main()
 	;;Load Lavish Settings
 	LavishSettings[diplo]:Clear
 	LavishSettings:AddSet[diplo]
-	LavishSettings[diplo]:AddSet[NPCs]
-	LavishSettings[diplo]:AddSet[ConvTypes]
-	LavishSettings[diplo]:AddSet[General]
-	
+	LavishSettings[diplo]:AddSet[NPCs-${Me.FName}]
+	LavishSettings[diplo]:AddSet[ConvTypes-${Me.FName}]
+	LavishSettings[diplo]:AddSet[General-${Me.FName}]
 	
 	if ${Script.CurrentDirectory.FileExists[Dip-Settings.xml]}
 	{
@@ -205,9 +204,9 @@ function main()
 		LavishSettings[diplo]:Import[${savePath}Dip-Settings.xml]
 	}
 
-	setDipNPC:Set[${LavishSettings[diplo].FindSet[NPCs].GUID}]
-	setDipTypes:Set[${LavishSettings[diplo].FindSet[ConvTypes].GUID}]
-	setDipGeneral:Set[${LavishSettings[diplo].FindSet[General].GUID}]
+	setDipNPC:Set[${LavishSettings[diplo].FindSet[NPCs-${Me.FName}].GUID}]
+	setDipTypes:Set[${LavishSettings[diplo].FindSet[ConvTypes-${Me.FName}].GUID}]
+	setDipGeneral:Set[${LavishSettings[diplo].FindSet[General-${Me.FName}].GUID}]
 
 	;; Start our event monitors
 	Event[VG_OnParlayOppTurnEnd]:AttachAtom[OnParlayOppTurnEnd]
@@ -878,22 +877,26 @@ function SaveSettings()
 {
 	setDipNPC:Clear
 	setDipTypes:Clear
+	
+	setDipNPC:AddSet[${Me.Chunk}]
+	setDipNPC.FindSet[${Me.Chunk}]:AddSet[NPCs]
+	
 	variable int i = 1
 	do
 	{
 		if (!${dipNPCs[${i}].NameID.Equal["Empty"]})
 		{
-			setDipNPC:AddSetting[${i}, "${dipNPCs[${i}].NameID}"]
-			setDipNPC:AddSet[${dipNPCs[${i}].NameID}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Name, ${dipNPCs[${i}].Name}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[ID, ${dipNPCs[${i}].ID}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[X, ${dipNPCs[${i}].X}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Y, ${dipNPCs[${i}].Y}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Z, ${dipNPCs[${i}].Z}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[red, ${dipNPCs[${i}].red}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[green, ${dipNPCs[${i}].green}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[blue, ${dipNPCs[${i}].blue}]
-			setDipNPC.FindSet[${dipNPCs[${i}].NameID}]:AddSetting[yellow, ${dipNPCs[${i}].yellow}]
+			setDipNPC[${Me.Chunk}]:AddSetting[${i}, "${dipNPCs[${i}].NameID}"]
+			setDipNPC[${Me.Chunk}]:AddSet[${dipNPCs[${i}].NameID}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Name, ${dipNPCs[${i}].Name}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[ID, ${dipNPCs[${i}].ID}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[X, ${dipNPCs[${i}].X}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Y, ${dipNPCs[${i}].Y}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Z, ${dipNPCs[${i}].Z}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[red, ${dipNPCs[${i}].red}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[green, ${dipNPCs[${i}].green}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[blue, ${dipNPCs[${i}].blue}]
+			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[yellow, ${dipNPCs[${i}].yellow}]
 		}
 		i:Inc
 	}
@@ -921,7 +924,7 @@ function SaveSettings()
 function LoadSettings()
 {
 	dipClearNPCs
-	setDipNPC:GetSettingIterator[itDipNPC]
+	setDipNPC[${Me.Chunk}]:GetSettingIterator[itDipNPC]
 	if ${itDipNPC:First(exists)}
 	{
 		do
@@ -930,15 +933,15 @@ function LoadSettings()
 			if ${Return}
 			{
 				dipNPCs[${Return}].NameID:Set[${itDipNPC.Value}]
-				dipNPCs[${Return}].Name:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[Name].String}]
-				dipNPCs[${Return}].ID:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[ID].String}]
-				dipNPCs[${Return}].X:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[X].String}]
-				dipNPCs[${Return}].Y:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[Y].String}]
-				dipNPCs[${Return}].Z:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[Z].String}]
-				dipNPCs[${Return}].red:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[red].String}]
-				dipNPCs[${Return}].green:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[green].String}]
-				dipNPCs[${Return}].blue:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[blue].String}]
-				dipNPCs[${Return}].yellow:Set[${setDipNPC.FindSet[${itDipNPC.Value}].FindSetting[yellow].String}]
+				dipNPCs[${Return}].Name:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[Name].String}]
+				dipNPCs[${Return}].ID:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[ID].String}]
+				dipNPCs[${Return}].X:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[X].String}]
+				dipNPCs[${Return}].Y:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[Y].String}]
+				dipNPCs[${Return}].Z:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[Z].String}]
+				dipNPCs[${Return}].red:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[red].String}]
+				dipNPCs[${Return}].green:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[green].String}]
+				dipNPCs[${Return}].blue:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[blue].String}]
+				dipNPCs[${Return}].yellow:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[yellow].String}]
 			}
 		}
 		while ${itDipNPC:Next(exists)}
