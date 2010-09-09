@@ -1,10 +1,15 @@
-;***Verison 1.02a***
+;***Verison 1.03***
 /**
+Version 1.03 - Kannkor
+	* Because of scripts starting/stopping on the same frame, it was causing issues when you would reload the bot because this script 
+	tried to delete itself and start iself with global variables on the same frame causing issues. Now, when CCAA thinks it's empty, 
+	it waits 10 seconds to check again, if it is indeed empty, it then ends itself. This should take care of all these issues. 
 Version 1.02(a) - Kannkor
-Updated information on how to use
+	* Updated information on how to use
 Version 1.01 - Kannkor
-Made this script end when no scripts are using this script. The check is on the Unload event incase you load it without using it for a few frames.
-Note: If you unload your script, ensure you have a check before you try to load it again.
+	* Made this script end when no scripts are using this script. The check is on the Unload event incase you load it without using it 
+	for a few frames.
+	* Note: If you unload your script, ensure you have a check before you try to load it again.
 
 *********How to call this script in your other script********
 	if !${Script[OgreCustomArrayControllerScript](exists)}
@@ -50,6 +55,7 @@ objectdef OgreCustomArrayControllerObect
 	{
 		if ${DistanceToUse} > 0 && !${CACTimerOb.TimeLeft}
 		{
+			;echo ${Time} Command: EQ2 - CreateCustomActorArray[byDist,${DistanceToUse}]
 			EQ2:CreateCustomActorArray[byDist,${DistanceToUse}]
 			CACTimerOb:Set[${UpdateInterval}]
 		}
@@ -89,10 +95,19 @@ objectdef OgreCustomArrayControllerObect
 		else
 		{
 			;If there are no scripts using this object, we can close down the script.
+			timedcommand 100 OgreCustomArrayControllerOb:CleanUp
+			;echo No more scripts using ${Script.Filename}.
+			;Script:End
+		}
+		echo Debug: CustomArrayController: Distance updated ( ${DistanceToUse} )
+	}
+	method CleanUp()
+	{
+		if !${ScriptsUsingCustomArrayController.FirstKey(exists)}
+		{
 			echo No more scripts using ${Script.Filename}.
 			Script:End
 		}
-		echo Debug: CustomArrayController: Distance updated ( ${DistanceToUse} )
 	}
 }
 objectdef CustomArrayControllerTimerObject
