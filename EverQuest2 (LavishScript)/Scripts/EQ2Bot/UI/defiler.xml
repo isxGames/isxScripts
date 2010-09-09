@@ -161,7 +161,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	
 	<Text name='lblCureCurse'>
 	  <x>5%</x>
-	  <y>160</y>
+	  <y>150</y>
 	  <Height>20</Height>
 		<Width>110</Width>
 		<Alignment>Left</Alignment>
@@ -170,7 +170,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 
 	<combobox name='cbCureCurseGroupMember'>
 		<x>5%</x>
-		<y>180</y>
+		<y>170</y>
 		<Width>120</width>
 		<Height>20</height>
 		<AutoTooltip>Select the OTHER character to cure, select No One to disable curing others.</AutoTooltip>
@@ -189,6 +189,30 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		  	Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},CureCurseGroupMember,0,0,1]
 		</OnLeftClick>
 	</combobox>
+
+	<Commandcheckbox Name='AnnounceMode'>
+		<X>5%</X>
+		<Y>190</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Announce Group Cures</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[AnnounceMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["AnnounceMode",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[AnnounceMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["AnnounceMode",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[AnnounceMode]}</Data>
+	</Commandcheckbox>
+	
 		
 	<Text name='lblStance'>
 	  <x>5%</x>
