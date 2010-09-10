@@ -201,5 +201,43 @@
 		</OnChange>
 	</Textentry>
 
+	<Text Name='lblGravitas'>
+		<X>10</X>
+		<Y>155</Y>
+		<Width>110</Width>
+		<Height>15</Height>
+		<Alignment>Left</Alignment>
+		<Text>Gravitas Announce:</Text>
+	</Text>
+	<Textentry Name='txtGravitas'>
+		<X>115</X>
+		<Y>155</Y>
+		<Width>325</Width>
+		<Height>15</Height>
+		<MaxLength>200</MaxLength>
+		<OnLoad>
+			declare tText string
+			tText:Set[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[GravitasAnnounceText]}]
+			
+		
+			if ${tText.Equal[NULL]} ||${tText.Length} &lt;=0
+			{
+				This:SetText[${Script[EQ2Bot].Variable[GravitasAnnounceText]}]
+				Script[EQ2Bot].Variable[GravitasAnnounceText]:Set[${Script[EQ2Bot].Variable[GravitasAnnounceText]}]
+			}
+			else
+			{
+				This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[GravitasAnnounceText]}]
+				Script[EQ2Bot].Variable[GravitasAnnounceText]:Set[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[GravitasAnnounceText]}]
+			}
+			Script[EQ2Bot].Variable[GravitasAnnounceText]:Set[${This.Text}]
+			</OnLoad>
+		<OnChange>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[GravitasAnnounceText,${This.Text}]
+			Script[EQ2Bot].Variable[GravitasAnnounceText]:Set[${This.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnChange>
+	</Textentry>
+	
 
 </ISUI>
