@@ -1,5 +1,0 @@
- * Uniqiue Spells/Skills for the Templar *
-
-320 - Single Target Instant Reactive.
-321 - Group AoE Instant Reactive.
-322 - Mark (Cast on opponent that will Heal over Time an ally when the opponent is attacked).

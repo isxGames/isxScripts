@@ -1,4 +1,0 @@
- * Uniqiue Spells/Skills for the Dirge *
-
-320 - Increase the Parry skill for the dirge's group (Uses 1 Concentration).
-321 - Increase Noxious Resistance (Uses 1 Concentration).
