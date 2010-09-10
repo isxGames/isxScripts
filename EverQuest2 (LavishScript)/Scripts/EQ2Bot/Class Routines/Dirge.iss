@@ -1,52 +1,7 @@
 ;*****************************************************
-;Dirge.iss 20090711a
-;by CaPilot
-;
-;20090711a
-; Added User Defined Strings Tab
-; Moved DoGravitas check from Pulse to Combat_Routine
-; Added AutoAttack Time Check prior to casting as an option (using code from Kram)
-; Reworked the entire Casting Order
-; Corrected many situations where spells were not casting properly.
-; Corrected Dex Sonata Buff to Maintain Properly.
-; 
-;
-;20090618a
-; Updated for GU52
-; CommonHeals added
-;
-;20081022a
-; Updated for experimental eq2bot spell casting changes
-; Should move to rez targets when needed now
-; Should be smarter about casting while moving
-;
-;20080104a
-; Added support for IsDead member
-; Added a BD trigger /tell mydirge BD Now!
-;
-;20070919d
-;Added Joust Mode - Dirge will move to group or raid healer when it see's the out message in raid chat or
-;	tells and use ranged dps till it see's the in message in raid chat or tells.  Added
-;	intelegent use of BladeDance and TurnSpike in joust mode, allowing the dirge to stay
-;	in on joust calls when these are available. Be sure and edit the dps in and dps out
-;	text in the Class_Declaration to the values you want to use
-;RangeMode Adjusted - No longer uses MasterStrike when in range mode.  No longer moves to range 6 to use
-;	Bow attacks providing the bow attack is already in range.  So you can position the
-;	dirge at safe distance prior to fight and it will remain there
-;AnnounceMode Added - Due to popular demand, added announcing Cacophony of Blades to group chat.
-;Changed Rhythm Blade and Cacophony of Blades to be used whenever they are up.
-;Fixed Selo's to be used all the time
-;Fixed Heroic Storytelling to be used all the time
-;Fixed Luck of the Dirge to be used all the time
-;
-;20070822a
-;Removed Weapon Swapping as no longer required
-;
-;20070404a
-;updated for latest eq2bot
-;updated master strikes
-;
-;fixed a bug with hate buffing
+;Dirge.iss 20100910a
+;by Pygar
+; see SVN logs for revision history
 ;*****************************************************
 
 #ifndef _Eq2Botlib_
@@ -88,9 +43,9 @@ function Class_Declaration()
 	declare BuffGravitasIterator iterator script
 	declare BuffGravitasMember int script 1
 	declare BuffGravitasListCurrent bool script FALSE
-	declare CacophonyAnnounceText string script "Caco of Blades is up!"
-	declare BladeDanceAnnounceText string script "BladeDance is up - 30 Seconds AoE Immunity for my group!"
-
+	declare CacophonyAnnounceText string script 
+	declare BladeDanceAnnounceText string script
+	declare GravitasAnnounceText string script
 	declare JoustMode bool script 0
 
 	call EQ2BotLib_Init
@@ -423,36 +378,24 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	
 	declare StartTime time ${Time.Timestamp}
 	declare strTime string
 	declare DebuffCnt int  0
 	
 	; Do check for Power Building Items
-	; if available use them if not, request them
 	if ${ShardMode}
 		call Shard 10
 
-	
-	; Must be a level 80 to have Gravitas so 
-	; check the level first.
-	if ${Me.Level}==80 
-		call DoGravitas
-
+	call DoGravitas
 
 	; Check if anyone needs the Dirge Heal and if anyone needs rezzed
-	; of so use it.
 	call CheckHeals
-	; Use the common heal items, like potions, signets, etc.
-	call CommonHeals 40
 
 	; If we are specced for MagNote and it is check in the UI
-	; cast magnetic note
 	if ${MagNoteMode}
 		call DoMagneticNote
 
 	; If we are specced for BladeDance and the Criteria has been met for it
-	; use it.
 	if !${JoustMode}
 		call DoBladeDance
 	
@@ -490,8 +433,7 @@ function Combat_Routine(int xAction)
 					waitframe
 				}
 			}
-		}
-	
+		}	
 	}
 
 	; Turn on Melee Autoattack if we are not in forced to use Ranged Attacks, and Autoattack is not already on.
@@ -500,44 +442,8 @@ function Combat_Routine(int xAction)
 	
 	; This section fires only when JoustMode is enabled.
 	if ${JoustMode}
-	{
-		if ${JoustStatus}==0 && ${RangedAttackOnlyMode}==1
-		{
-			;We've changed to in from an out status.
-			RangedAttackOnlyMode:Set[0]
-			EQ2Execute /toggleautoattack
-
-			;if we're too far from killtarget, move in
-			if ${Actor[${KillTarget}].Distance}>10 && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-				call CheckPosition 1 1
-		}
-		elseif ${JoustStatus}==1 && ${RangedAttackOnlyMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
-		{
-			;We've changed to out from an in status.
-			;if aoe avoidance is up, use it
-			if ${Me.Ability[${SpellType[388]}].IsReady}
-			{
-			if ${AnnounceMode}
-				eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
-				call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 0 1 0
-			}
-			elseif ${Me.Ability[${SpellType[387]}].IsReady}
-				call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 0 0 1 0
-			else
-			{
-				RangedAttackOnlyMode:Set[1]
-				EQ2Execute /togglerangedattack
-
-				;if we're not at our healer, lets move to him
-				call FindHealer
-
-				echo Healer - ${return}
-				if ${Actor[${return}].Distance}>2
-					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
-			}
-		}
-	}
-
+		call joust
+		
 	if !${Mob.CheckActor[${KillTarget}]}
 		return
 
@@ -556,7 +462,7 @@ function Combat_Routine(int xAction)
 		;don't CoB if CoB is up
 		if !${Me.Effect[beneficial,${SpellType[155]}](exists)} && (${Actor[${KillTarget}].Health}>=10 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 		{
-			if ${AnnounceMode}
+			if ${CacophonyAnnounceText.Length}
 			{
 				eq2execute /raidsay ${CacophonyAnnounceText}
 				eq2execute /g ${CacophonyAnnounceText}
@@ -947,6 +853,7 @@ function CheckHeals()
 	grpcnt:Set[${Me.GroupCount}]
 
 	call UseCrystallizedSpirit 60
+	call CommonHeals 40
 	;oration of sacrifice heal
 	do
 	{
@@ -1072,7 +979,8 @@ function DoGravitas()
 		
 						if ${Me.Maintained[${SpellType[156]}](exists)}
 						{
-							eq2execute /tell ${BuffGravitasTimers.CurrentKey.Token[1,|]} "You have Gravitas!"
+							if ${GravitasAnnounceText.Length}
+								eq2execute /tell ${BuffGravitasTimers.CurrentKey.Token[1,|]} ${GravitasAnnounceText}
 							BuffGravitasTimers:Set[${BuffGravitasTimers.CurrentKey}, ${Time.Timestamp}]
 		  	  	}
 		    	}
@@ -1100,7 +1008,8 @@ function DoGravitas()
 		
 						if ${Me.Maintained[${SpellType[156]}](exists)}
 						{
-							eq2execute /tell ${BuffGravitasTimers.CurrentKey.Token[1,|]} "You have Gravitas!"
+							if ${GravitasAnnounceText.Length}
+								eq2execute /tell ${BuffGravitasTimers.CurrentKey.Token[1,|]} ${GravitasAnnounceText}
 							BuffGravitasTimers:Set[${BuffGravitasTimers.CurrentKey}, ${Time.Timestamp}]
 		  	  	}
 		    	}
@@ -1128,7 +1037,8 @@ function DoGravitas()
 		
 						if ${Me.Maintained[${SpellType[156]}](exists)}
 						{
-							eq2execute /tell ${BuffGravitasTimers.CurrentKey.Token[1,|]} "You have Gravitas!"
+							if ${GravitasAnnounceText.Length}
+								eq2execute /tell ${BuffGravitasTimers.CurrentKey.Token[1,|]} ${GravitasAnnounceText}
 							BuffGravitasTimers:Set[${BuffGravitasTimers.CurrentKey}, ${Time.Timestamp}]
 		  	  	}
 		    	}
@@ -1156,7 +1066,8 @@ function DoGravitas()
 		
 						if ${Me.Maintained[${SpellType[156]}](exists)}
 						{
-							eq2execute /tell ${${BuffGravitasTimers.CurrentKey}.Token[1,|]} "You have Gravitas!"
+							if ${GravitasAnnounceText.Length}
+								eq2execute /tell ${${BuffGravitasTimers.CurrentKey}.Token[1,|]} ${GravitasAnnounceText}
 							BuffGravitasTimers:Set[${BuffGravitasTimers.CurrentKey}, ${Time.Timestamp}]
 		  	  	}
 		    	}
@@ -1176,14 +1087,53 @@ function StartHO()
 
 function DoBladeDance()
 {
-if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
+	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
 		call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 1 0 1 0
 		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
 		{
-			eq2execute /gsay ${BladeDanceAnnounceText}
+			if ${BladeDanceAnnounceText.Length}
+				eq2execute /gsay ${BladeDanceAnnounceText}
 			BDStatus:Set[0]
+		}
+	}
+}
+function joust()
+{
+	if ${JoustStatus}==0 && ${RangedAttackOnlyMode}==1
+	{
+		;We've changed to in from an out status.
+		RangedAttackOnlyMode:Set[0]
+		EQ2Execute /toggleautoattack
+
+		;if we're too far from killtarget, move in
+		if ${Actor[${KillTarget}].Distance}>10 && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+			call CheckPosition 1 1
+	}
+	elseif ${JoustStatus}==1 && ${RangedAttackOnlyMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
+	{
+		;We've changed to out from an in status.
+		;if aoe avoidance is up, use it
+		if ${Me.Ability[${SpellType[388]}].IsReady}
+		{
+		if ${AnnounceMode}
+			eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
+			call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 0 1 0
+		}
+		elseif ${Me.Ability[${SpellType[387]}].IsReady}
+			call CastSpellRange 387 0 1 0 ${KillTarget} 0 0 0 0 1 0
+		else
+		{
+			RangedAttackOnlyMode:Set[1]
+			EQ2Execute /togglerangedattack
+
+			;if we're not at our healer, lets move to him
+			call FindHealer
+
+			echo Healer - ${return}
+			if ${Actor[${return}].Distance}>2
+				call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
 		}
 	}
 }
