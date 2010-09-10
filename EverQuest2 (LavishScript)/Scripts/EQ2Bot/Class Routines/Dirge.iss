@@ -82,7 +82,7 @@ function Pulse()
 	;; Note:  This function will be called every pulse, so intensive routines may cause lag.  Therefore, the variable 'ClassPulseTimer' is
 	;;        provided to assist with this.  An example is provided.
 	;
-	;			if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]})
+	;			if (${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+2000]})
 	;			{
 	;				Debug:Echo["Anything within this bracket will be called every two seconds.
 	;			}
@@ -92,10 +92,17 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+500]})
 	{
 		
 		call DoBladeDance
+		
+	}
+
+	if (${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+1500]})
+	{
+		
+		ISXEQ2:ClearAbilitiesCache
 		
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
