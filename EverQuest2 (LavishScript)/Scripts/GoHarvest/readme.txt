@@ -21,8 +21,8 @@ Choose the node types to harvest.
 
 press Start.
 
-If you want to only move within a set area , tick  max roam distance , se the scan range to be the distance you
-want to roam and as soon as you hit START it will not go for node beyind that distance from your start point.
+If you want to only move within a set area , tick  max roam distance , set the scan range to be the distance you
+want to roam and as soon as you hit START it will not go for nodes beyind that distance from your start point.
 
 Idea behind this
 ----------------
