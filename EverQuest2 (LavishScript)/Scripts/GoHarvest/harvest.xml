@@ -30,6 +30,7 @@
 		<Setting Name="uncovered stone">uncovered stone</Setting>
 		<Setting Name="excavated ore">excavated ore</Setting>
 		<Setting Name="frosted ore">frosted ore</Setting>
+		<Setting Name="scattered ore">scattered ore</Setting>
 		<Setting Name="pyroclastic cluster">pyroclastic cluster</Setting>
 		<Setting Name="ykeshan dark ore">ykeshan dark ore</Setting>
 		<Setting Name="present">present</Setting>
@@ -65,6 +66,7 @@
 		<Setting Name="rugged stones">rugged stones</Setting>
 		<Setting Name="blackened hermatite">blackened hermatite</Setting>
 		<Setting Name="frost-rimed rock">frost-rimed rock</Setting>
+		<Setting Name="ice-covered stone">ice-covered stone</Setting>
 	</Set>
 	<Set Name="3">
 		<Setting Name="felled elm tree">felled elm tree</Setting>
@@ -97,6 +99,7 @@
 		<Setting Name="bleached timber">bleached timber</Setting>
 		<Setting Name="toxxulia timber">toxxulia timber</Setting>
 		<Setting Name="weathered maple">weathered maple</Setting>
+		<Setting Name="weathered driftwood">weathered driftwood</Setting>
 	</Set>
 	<Set Name="4">
 		<Setting Name="salty roots">salty garden</Setting>
@@ -131,6 +134,7 @@
 		<Setting Name="aerating root cord">aerating root cord</Setting>
 		<Setting Name="swamp foot">swamp foot</Setting>
 		<Setting Name="tenacious roots">tenacious roots</Setting>
+		<Setting Name="stunted roots">stunted roots</Setting>
 		<Setting Name="a toxxulia root culm">a toxxulia root culm</Setting>
 	</Set>
 	<Set Name="5">
@@ -182,6 +186,7 @@
 		<Setting Name="budding natural garden">budding natural garden</Setting>
 		<Setting Name="ykeshan stout shrubbery">ykeshan stout shrubbery</Setting>
 		<Setting Name="frost-stunted garden">frost-stunted garden</Setting>
+		<Setting Name="windblown shrub">windblown shrub</Setting>
 	</Set>
 	<Set Name="7">
 		<Setting Name="brood of fish">brood of fish</Setting>
@@ -211,6 +216,7 @@
 		<Setting Name="southshore school">southshore school</Setting>
 		<Setting Name="spotted whitesurf fish">spotted whitesurf fish</Setting>
 		<Setting Name="freewater fish fleet">freewater fish fleet</Setting>
+		<Setting Name="school of sunfish">school of sunfish</Setting>
 	</Set>
 	<Set Name="8">
 		<Setting Name="?">?</Setting>
