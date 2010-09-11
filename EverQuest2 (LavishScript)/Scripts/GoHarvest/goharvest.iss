@@ -18,10 +18,12 @@ variable bool pauseharvest=TRUE
 variable bool StrictLos=TRUE
 variable bool Mapping=FALSE
 variable bool MaxDistance=FALSE
+variable bool NoSkill=FALSE
 
 variable GoHarvestBot GoHarvest
 variable int scan=150
 variable int HID
+variable int NodeType
 variable bool BadNode=FALSE
 variable collection:string BadNodes
 variable float SX
@@ -175,7 +177,10 @@ function checknodename(int tempvar, string actorname)
 		match:Set[${harvesttype.FindSetting[${actorname}]}]
 
 		if !${match.Equal[NULL]}
+		{
+			NodeType:Set[${tempvar}]
 			Return TRUE
+		}
 	}
 
 	Return FALSE
@@ -270,6 +275,13 @@ function hitnode(float HID)
 		waitframe
 		Target:DoubleClick
 		wait 20
+		
+		if ${NoSkill}
+		{
+			NoSkill:Set[FALSE]
+			HarvestNode[${NodeType}]:Set[FALSE]
+			UIElement[${NodeType}@Harvest@GUITabs@GoHarvest]:UnsetChecked
+		}
 		
 		if ${BadNode}
 			return STUCK
@@ -642,6 +654,7 @@ atom(script) EQ2_onIncomingText(string Text)
 			if ${Actor[id,${HID}].Type.Equal[Resource]} && !${Me.InCombat}
 			{
 				echo "Received 'You do not have enough skill' message..."
+				NoSkill:Set[TRUE]
 				GoHarvest:SetBadNode[${HID}]  
 				BadNode:Set[TRUE]
 			}

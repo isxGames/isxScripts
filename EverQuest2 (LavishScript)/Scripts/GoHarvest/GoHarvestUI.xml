@@ -55,7 +55,7 @@
 							UIElement[ScanArea@Harvest@GUITabs@GoHarvest]:SetText[150]
 						</OnLoad>
 					</Textentry>
-					<checkbox Name='Ore'>
+					<checkbox Name='1'>
 						<X>5%</X>
 						<Y>50</Y>
 						<Width>20%</Width>
@@ -67,15 +67,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[1]}
 							{
-								UIElement[Ore@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[1@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Ore@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[1@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Ore@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[1@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[1]:Set[TRUE]
 							}
@@ -85,7 +85,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Gems'>
+					<checkbox Name='2'>
 						<X>5%</X>
 						<Y>70</Y>
 						<Width>20%</Width>
@@ -97,15 +97,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[2]}
 							{
-								UIElement[Gems@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[2@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Gems@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[2@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Gems@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[2@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[2]:Set[TRUE]
 							}
@@ -115,7 +115,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Wood'>
+					<checkbox Name='3'>
 						<X>5%</X>
 						<Y>90</Y>
 						<Width>20%</Width>
@@ -127,15 +127,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[3]}
 							{
-								UIElement[Wood@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[3@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Wood@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[3@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Wood@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[3@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[3]:Set[TRUE]
 							}
@@ -145,7 +145,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Root'>
+					<checkbox Name='4'>
 						<X>5%</X>
 						<Y>110</Y>
 						<Width>20%</Width>
@@ -157,15 +157,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[4]}
 							{
-								UIElement[Root@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[4@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Root@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[4@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Root@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[4@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[4]:Set[TRUE]
 							}
@@ -175,7 +175,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Den'>
+					<checkbox Name='5'>
 						<X>5%</X>
 						<Y>130</Y>
 						<Width>20%</Width>
@@ -187,15 +187,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[5]}
 							{
-								UIElement[Den@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[5@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Den@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[5@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Den@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[5@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[5]:Set[TRUE]
 							}
@@ -205,7 +205,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Plant'>
+					<checkbox Name='6'>
 						<X>5%</X>
 						<Y>150</Y>
 						<Width>20%</Width>
@@ -217,15 +217,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[6]}
 							{
-								UIElement[Plant@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[6@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Plant@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[6@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Plant@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[6@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[6]:Set[TRUE]
 							}
@@ -235,7 +235,7 @@
 							}
 						</OnLeftClick>
 					</checkbox>
-					<checkbox Name='Fish'>
+					<checkbox Name='7'>
 						<X>5%</X>
 						<Y>170</Y>
 						<Width>20%</Width>
@@ -247,15 +247,15 @@
 						<OnLoad>
 							if ${Script[goharvest].VariableScope.HarvestNode[7]}
 							{
-								UIElement[Fish@Harvest@GUITabs@GoHarvest]:SetChecked
+								UIElement[7@Harvest@GUITabs@GoHarvest]:SetChecked
 							}
 							else
 							{
-								UIElement[Fish@Harvest@GUITabs@GoHarvest]:UnsetChecked
+								UIElement[7@Harvest@GUITabs@GoHarvest]:UnsetChecked
 							}
 						</OnLoad>
 						<OnLeftClick>
-							if ${UIElement[Fish@Harvest@GUITabs@GoHarvest].Checked}
+							if ${UIElement[7@Harvest@GUITabs@GoHarvest].Checked}
 							{
 								Script[goharvest].VariableScope.HarvestNode[7]:Set[TRUE]
 							}
