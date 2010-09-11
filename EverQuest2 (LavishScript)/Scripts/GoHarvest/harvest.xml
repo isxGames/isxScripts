@@ -29,6 +29,7 @@
 		<Setting Name="unearthed ore">unearthed ore</Setting>
 		<Setting Name="uncovered stone">uncovered stone</Setting>
 		<Setting Name="excavated ore">excavated ore</Setting>
+		<Setting Name="frosted ore">frosted ore</Setting>
 		<Setting Name="pyroclastic cluster">pyroclastic cluster</Setting>
 		<Setting Name="ykeshan dark ore">ykeshan dark ore</Setting>
 		<Setting Name="present">present</Setting>
@@ -63,6 +64,7 @@
 		<Setting Name="wind swept rock">wind swept rock</Setting>
 		<Setting Name="rugged stones">rugged stones</Setting>
 		<Setting Name="blackened hermatite">blackened hermatite</Setting>
+		<Setting Name="frost-rimed rock">frost-rimed rock</Setting>
 	</Set>
 	<Set Name="3">
 		<Setting Name="felled elm tree">felled elm tree</Setting>
@@ -93,6 +95,8 @@
 		<Setting Name="fallen palm">fallen palm</Setting>
 		<Setting Name="fallen palm">fallen palm</Setting>
 		<Setting Name="bleached timber">bleached timber</Setting>
+		<Setting Name="toxxulia timber">toxxulia timber</Setting>
+		<Setting Name="weathered maple">weathered maple</Setting>
 	</Set>
 	<Set Name="4">
 		<Setting Name="salty roots">salty garden</Setting>
@@ -126,6 +130,8 @@
 		<Setting Name="tangled roots">tangled roots</Setting>
 		<Setting Name="aerating root cord">aerating root cord</Setting>
 		<Setting Name="swamp foot">swamp foot</Setting>
+		<Setting Name="tenacious roots">tenacious roots</Setting>
+		<Setting Name="a toxxulia root culm">a toxxulia root culm</Setting>
 	</Set>
 	<Set Name="5">
 		<Setting Name="animal den">animal den</Setting>
@@ -145,6 +151,7 @@
 		<Setting Name="unkempt nest">unkempt nest</Setting>
 		<Setting Name="small nest">small nest</Setting>
 		<Setting Name="moor mole den">moor mole den</Setting>
+		<Setting Name="burrowed nest">burrowed nest</Setting>
 	</Set>
 	<Set Name="6">
 		<Setting Name="Breeze Leaf foliage">Breeze Leaf foliage</Setting>
@@ -174,6 +181,7 @@
 		<Setting Name="desert shrubbery">desert shrubbery</Setting>
 		<Setting Name="budding natural garden">budding natural garden</Setting>
 		<Setting Name="ykeshan stout shrubbery">ykeshan stout shrubbery</Setting>
+		<Setting Name="frost-stunted garden">frost-stunted garden</Setting>
 	</Set>
 	<Set Name="7">
 		<Setting Name="brood of fish">brood of fish</Setting>
@@ -202,6 +210,7 @@
 		<Setting Name="Omenfish school">Omenfish school</Setting>
 		<Setting Name="southshore school">southshore school</Setting>
 		<Setting Name="spotted whitesurf fish">spotted whitesurf fish</Setting>
+		<Setting Name="freewater fish fleet">freewater fish fleet</Setting>
 	</Set>
 	<Set Name="8">
 		<Setting Name="?">?</Setting>
