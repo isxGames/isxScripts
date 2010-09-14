@@ -50,6 +50,9 @@ variable bool doEnchantments = TRUE
 variable bool doFaceSlow = TRUE
 variable bool doLootAll = FALSE
 variable bool doFullThrottle = TRUE
+variable bool doSprint = FALSE
+variable int Speed = 100
+
 ;;Attack
 variable bool doDespoil = TRUE
 variable bool doEntwiningVein = TRUE
@@ -241,14 +244,14 @@ function main()
 		if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 		{
 			;; Update our current action
-			if ${Me.IsCasting}
-			{
-				CurrentAction:Set[Casting ${Me.Casting}]
-			}
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-			{
-				waitframe
-			}
+			;if ${Me.IsCasting}
+			;{
+			;	CurrentAction:Set[Casting ${Me.Casting}]
+			;}
+			;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			;{
+			;	waitframe
+			;}
 			;LastDowntimeCall:Set[${Script.RunningTime}]
 		}
 		else
@@ -296,6 +299,13 @@ function main()
 		{
 			Move:Stop
 			wait 2
+		}
+		if ${doSprint}
+		{
+			if !${Me.IsSprinting}
+			{
+				Me:Sprint[${Speed}]
+			}
 		}
 	}
 }
@@ -882,11 +892,20 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 		EchoIt "UseAbility - ${ABILITY} ${TEXT}"
 		CurrentAction:Set[Casting ${ABILITY}]
 		Me.Ability[${ABILITY}]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		wait 3
+		if ${Me.IsCasting}
 		{
-			waitframe
+			CurrentAction:Set[Casting ${Me.Casting}]
+			while ${Me.IsCasting}
+			{
+				waitframe
+			}
 		}
+		while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+		{
+			CurrentAction:Set[Instant ${ABILITY}]
+			wait 2
+		}		
 		return TRUE
 	}
 	return FALSE
@@ -1068,6 +1087,7 @@ atom(script) LoadXMLSettings()
 	doEnchantments:Set[${VG-BM_SSR.FindSetting[doEnchantments,FALSE]}]
 	doVitalHeals:Set[${VG-BM_SSR.FindSetting[doVitalHeals,TRUE]}]
 	doFullThrottle:Set[${VG-BM_SSR.FindSetting[doFullThrottle,TRUE]}]
+	Speed:Set[${VG-BM_SSR.FindSetting[Speed,100]}]
 	
 	doExsanguinate:Set[${VG-BM_SSR.FindSetting[doExsanguinate,TRUE]}]
 	doBloodTribute:Set[${VG-BM_SSR.FindSetting[doBloodTribute,TRUE]}]
@@ -1125,6 +1145,7 @@ atom(script) SaveXMLSettings()
 	VG-BM_SSR:AddSetting[doEnchantments,${doEnchantments}]
 	VG-BM_SSR:AddSetting[doVitalHeals,${doVitalHeals}]
 	VG-BM_SSR:AddSetting[doFullThrottle,${doFullThrottle}]
+	VG-BM_SSR:AddSetting[Speed,${Speed}]
 	
 	VG-BM_SSR:AddSetting[doExsanguinate,${doExsanguinate}]
 	VG-BM_SSR:AddSetting[doBloodTribute,${doBloodTribute}]
