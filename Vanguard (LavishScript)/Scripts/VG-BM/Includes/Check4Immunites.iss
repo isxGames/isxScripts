@@ -59,6 +59,7 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 		Immune2Arcane:Set["Eyelord Seeker","Eyelord Seeker"]
 		Immune2Arcane:Set["Stormsuit","Stormsuit"]
 		Immune2Arcane:Set["Electric Elemental","Electric Elemental"]
+		Immune2Arcane:Set["Summoned Air Elemental","Summoned Air Elemental"]
 	
 		Immune2Physical:Clear
 		Immune2Physical:Set["Enraged Death Hound","Enraged Death Hound"]

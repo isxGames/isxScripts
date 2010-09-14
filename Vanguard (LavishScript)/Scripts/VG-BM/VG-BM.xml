@@ -277,13 +277,15 @@
 								Script[VG-BM].VariableScope.doFullThrottle:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name="DoSprint" Template="VG.GreenCheckbox">
+
+						<checkbox Name="doSprint" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>65%</X>
 							<Y>41%</Y>
 							<Width>15</Width>
-							<Height>15</Height>
+							<Height>14</Height>
 							<Text>Sprint</Text>
+							<AutoTooltip>  adjust speed up to 100% </AutoTooltip>
 							<OnLoad>
 								if ${Me.IsSprinting}
 								{
@@ -291,17 +293,44 @@
 								}
 							</OnLoad>
 							<OnLeftClick>
+								Script[VG-BM].VariableScope.doSprint:Set[${This.Checked}]
 								if ${Me.IsSprinting}
 								{
 									Me:Sprint
 								}
 								else
 								{
-									Me:Sprint[100]
+									Me:Sprint[${Script[VG-BM].VariableScope.Speed}]
 								}
 							</OnLeftClick>
 						</checkbox>
-
+						<Textentry Name="SpeedEntry" Template="VG.TextEntry">
+							<X>80%</X>
+							<Y>41%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[VG-BM].VariableScope.Speed}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-BM].VariableScope.Speed:Set[0]
+								}
+								if ${This.Text.Length} > 0
+								{
+									if ${Math.Calc[${This.Text}].Int} > 100
+									{
+										Script[VG-BM].VariableScope.Speed:Set[100]
+										This:SetText[100]
+									}
+									Script[VG-BM].VariableScope.Speed:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						
+						
 						<Text Name="Text-UseAbility" Template="VG.BoldText">
 							<X>3%</X>
 							<Y>45%</Y>

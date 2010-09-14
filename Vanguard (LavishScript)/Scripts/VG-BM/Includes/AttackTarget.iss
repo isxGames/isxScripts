@@ -33,6 +33,8 @@ function AttackTarget()
 	{
 		return
 	}
+	wait 5 ${Me.Target.ID(exists)}
+
 	
 	;-------------------------------------------
 	; Check #2 - Return if target is dead or we are harvesting
@@ -69,7 +71,7 @@ function AttackTarget()
 	;-------------------------------------------
 	; Check #6 - Cast a HOT and return if target is FURIOUS
 	;-------------------------------------------
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${FURIOUS}
+	if ${FURIOUS} || ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)} || ${Me.TargetBuff[Major Enchantment: Ulvari Flame](exists)} || ${Me.Target.Name.Equal[Ancient Warden]}
 	{
 		call UseAbility "${TransfusionOfSerak}"
 		return
@@ -80,7 +82,7 @@ function AttackTarget()
 	;-------------------------------------------
 	if ${Me.TargetBuff[Weakened].Description.Find[Chaos]}
 	{
-		return
+		;return
 	}
 
 	;; ======== SAFE TO DO OUR ATTACK ROUTINES ========
