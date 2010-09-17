@@ -45,7 +45,7 @@ function FindQuestList(string aName)
 		Dint:Set[1]
 		UIElement[cmbQuestList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
 
-		VGExecute /hail
+		Pawn[${Me.Target}]:DoubleClick
 		wait 10
 		Do
 		{

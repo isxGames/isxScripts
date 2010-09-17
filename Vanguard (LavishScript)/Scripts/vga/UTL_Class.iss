@@ -389,4 +389,59 @@ function Class_DownTime()
 		}
 	return
 }
+;===================================================
+;===    Class Specific Burst Function        ====
+;===================================================
+function Class_Burst()
+{
+		switch ${Me.Class}
+		{
+		case Dread Knight
+			call DreadKnight_Burst
+			break
+		case Warrior
+			call Warrior_Burst
+			break
+		case Paladin
+			call Paladin_Burst
+			break
+		case Bard
+			call Bard_Burst
+			break
+		case Monk
+			call Monk_Burst
+			break
+		case Ranger
+			call Ranger_Burst
+			break
+		case Rogue
+			call Rogue_Burst
+			break
+		case Blood Mage
+			call BloodMage_Burst
+			break
+		case Cleric
+			call Cleric_Burst
+			break
+		case Shaman
+			call Shaman_Burst
+			break
+		case Disciple
+			call Disciple_Burst
+			break
+		case Druid
+			call Druid_Burst
+			break
+		case Necromancer
+			call Necromancer_Burst
+			break
+		case Psionicist
+			call Psionicist_Burst
+			break
+		case Sorcerer
+			call Sorcerer_Burst
+			break
+		}
+	return
+}
 

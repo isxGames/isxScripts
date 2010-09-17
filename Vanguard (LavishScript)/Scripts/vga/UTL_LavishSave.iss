@@ -96,6 +96,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[DoClassPostCombat,${DoClassPostCombat}]
 	UtilitySR:AddSetting[DoClassEmergency,${DoClassEmergency}]
 	UtilitySR:AddSetting[DoClassPostCasting,${DoClassPostCasting}]
+	UtilitySR:AddSetting[DoClassBurst,${DoClassBurst}]
 	UtilitySR:AddSetting[DoChargeFollow,${DoChargeFollow}]
 
 	UtilitySR:AddSetting[DoAttackPositionFront,${DoAttackPositionFront}]
@@ -246,7 +247,8 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	Interactions:AddSetting[Resumetxt,${Resumetxt}]
 	Interactions:AddSetting[DoBuffage,${DoBuffage}]
 	Interactions:AddSetting[Buffagetxt,${Buffagetxt}]
-
+	Interactions:AddSetting[DoBurstCall,${DoBurstCall}]
+	Interactions:AddSetting[BurstCalltxt,${BurstCalltxt}]
 	
 	switch ${Me.Class}
 	{

@@ -43,3 +43,8 @@ function Sorcerer_PostCasting()
 			wait 200
 			}
 }
+;********************************************
+function Sorcerer_Burst()
+{
+
+}

@@ -352,6 +352,8 @@ function downtimefunction()
 		call Harvest
 	if ${DoRemoveLowDiplo}
 		call RemoveLowLevelDiplo
+	if ${DoBurstNow}
+	  DoBurstNow:Set[FALSE]
 	return
 }
 
@@ -464,6 +466,11 @@ function EmergencyActions()
 		call CheckFurious
 	If ${doTurnOffDuringBuff} 
 		call TurnOffDuringBuff
+	;-------------------------------------------
+	;*******When in Doubt BURST************
+	;------------------------------------------
+  if ${DoClassBurst} && ${DoBurstNow}
+		  call Class_Burst
 	;-------------------------------------------
 	;*******Check If I Need to Evade************
 	;-------------------------------------------

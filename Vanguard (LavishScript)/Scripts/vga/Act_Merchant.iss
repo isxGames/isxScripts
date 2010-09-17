@@ -161,7 +161,7 @@ function GetQuests()
 								}
 							if ${Dialog[General].ResponseCount}==0
 								{
-								VGExecute /hail
+								Me.Target:DoubleClick
 								Echo Bringing up Dialog
 								wait 5
 								}

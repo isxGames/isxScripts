@@ -101,6 +101,13 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 				}
 		}
 	}
+	if ${DoBurstCall}
+	{
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${BurstCalltxt}]}
+		{
+      DoBurstNow:Set[TRUE]
+		}
+	}
 	if ${doAutoSell}
 	{
 		if ${ChannelNumber.Equal[0]} &&  ${Text.Find[You sell]}

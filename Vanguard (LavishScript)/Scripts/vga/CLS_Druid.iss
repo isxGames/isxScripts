@@ -33,3 +33,8 @@ function Druid_PostCasting()
 {
 
 }
+;********************************************
+function Druid_Burst()
+{
+
+}

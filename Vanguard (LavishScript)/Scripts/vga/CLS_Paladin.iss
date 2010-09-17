@@ -33,3 +33,8 @@ function Paladin_PostCasting()
 {
 
 }
+;********************************************
+function Paladin_Burst()
+{
+
+}

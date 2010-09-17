@@ -770,7 +770,7 @@
 
                     	<Text Name='combattxt--' Template='VG.BoldText'>
                       	<X>13</X>
-                      	<Y>380</Y>
+                      	<Y>360</Y>
                       	<Width>95%</Width>
                       	<Height>20</Height>
                       	<Alignment>Left</Alignment>
@@ -797,7 +797,7 @@
 			   <checkbox Name='DoClassDownTime' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>400</Y>
+                            <Y>380</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Class Downtime</Text>
@@ -833,7 +833,7 @@
 			   <checkbox Name='DoClassPreCombat' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>420</Y>
+                            <Y>400</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Pre Combat-Loop</Text>
@@ -931,7 +931,7 @@
 			   <checkbox Name='DoClassOpener' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>440</Y>
+                            <Y>420</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Opening Combat Routine</Text>
@@ -949,7 +949,7 @@
                           <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
                             <visible>0</visible>
                             <X>13</X>
-                            <Y>460</Y>
+                            <Y>420</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Counters</Text>
@@ -967,7 +967,7 @@
 			   <checkbox Name='DoClassCombat' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>460</Y>
+                            <Y>440</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Custom Class Combat</Text>
@@ -985,7 +985,7 @@
                           <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
                             <visible>0</visible>
                             <X>13</X>
-                            <Y>480</Y>
+                            <Y>460</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Auto Chains</Text>
@@ -1003,7 +1003,7 @@
 			   <checkbox Name='DoClassPostCombat' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>480</Y>
+                            <Y>460</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Post Combat-Loop</Text>
@@ -1021,7 +1021,7 @@
 			   <checkbox Name='DoClassEmergency' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>500</Y>
+                            <Y>480</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Class Emergency Routine</Text>
@@ -1039,7 +1039,7 @@
 			   <checkbox Name='DoClassPostCasting' Template='VG.BlueCheckbox'>
                             <visible>4</visible>
                             <X>200</X>
-                            <Y>520</Y>
+                            <Y>500</Y>
                             <Width>15</Width>
                             <Height>20</Height>
                             <Text>Post Ability Use</Text>
@@ -1051,6 +1051,24 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassPostCasting:Set[${This.Checked}]
+                              Script[VGA]:QueueCommand[call LavishSave]
+                            </OnLeftClick>
+                          </checkbox>
+			   <checkbox Name='DoClassBurst' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>200</X>
+                            <Y>520</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Burst DPS</Text>
+                            <OnLoad>
+                              if ${Script[vga].VariableScope.DoClassBurst}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vga].VariableScope.DoClassBurst:Set[${This.Checked}]
                               Script[VGA]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
@@ -5546,6 +5564,43 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.DiploToggle:Set[${This.Text}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                        }
+                      </OnChange>
+                    </Textentry>
+					                   <checkbox Name='DoBurstCall' Template='VG.BlueCheckbox'>
+                      <visible>4</visible>
+                      <X>10</X>
+                      <Y>190</Y>
+                      <Width>15</Width>
+                      <Height>20</Height>
+                      <Text>BurstDPS</Text>
+                      <OnLoad>
+                        if ${Script[vga].VariableScope.DoBurstCall}
+                        {
+                        This:SetChecked
+                        }
+                      </OnLoad>
+                      <OnLeftClick>
+                        Script[vga].VariableScope.DoBurstCall:Set[${This.Checked}]
+                        Script[VGA]:QueueCommand[call LavishSave]
+                      </OnLeftClick>
+                    </checkbox>
+                    <Textentry Name='BurstCalltxt' Template='VG.TextEntry'>
+                      <X>140</X>
+                      <Y>190</Y>
+                      <Width>232</Width>
+                      <Height>19</Height>
+                      <Color>FFDDBB00</Color>
+                      <SelectionColor>FF000000</SelectionColor>
+                      <Border>0</Border>
+                      <OnLoad>
+                        This:SetText[${Script[vga].VariableScope.BurstCalltxt}]
+                      </OnLoad>
+                      <OnChange>
+                        if ${This.Text.Length} > 0
+                        {
+                        Script[vga].VariableScope.BurstCalltxt:Set[${This.Text}]
                         Script[VGA]:QueueCommand[call LavishSave]
                         }
                       </OnChange>

@@ -66,3 +66,8 @@ function Shaman_PostCasting()
 			}
 	}
 }
+;********************************************
+function Shaman_Burst()
+{
+
+}

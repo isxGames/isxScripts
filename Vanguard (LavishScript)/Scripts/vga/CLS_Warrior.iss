@@ -33,3 +33,8 @@ function Warrior_PostCasting()
 {
 
 }
+;********************************************
+function Warrior_Burst()
+{
+
+}
