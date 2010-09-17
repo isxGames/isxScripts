@@ -120,3 +120,8 @@ function Psionicist_PostCasting()
 {
 
 }
+;********************************************
+function Psionicist_Burst()
+{
+
+}

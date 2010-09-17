@@ -33,3 +33,8 @@ function Necromancer_PostCasting()
 {
 
 }
+;********************************************
+function Necromancer_Burst()
+{
+
+}

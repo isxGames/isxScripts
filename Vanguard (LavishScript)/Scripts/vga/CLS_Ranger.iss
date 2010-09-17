@@ -33,3 +33,8 @@ function Ranger_PostCasting()
 {
 
 }
+;********************************************
+function Ranger_Burst()
+{
+
+}

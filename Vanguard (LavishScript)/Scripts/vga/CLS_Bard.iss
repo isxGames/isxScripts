@@ -53,3 +53,8 @@ function Bard_PostCasting()
 {
 
 }
+;********************************************
+function Bard_Burst()
+{
+
+}

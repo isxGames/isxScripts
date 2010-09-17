@@ -81,6 +81,11 @@ function Disciple_PostCasting()
 		
   }
 }
+;********************************************
+function Disciple_Burst()
+{
+
+}
 objectdef LifeTimer
 {
 	variable uint EndTime

@@ -294,3 +294,8 @@ function BM_CheckEnergy()
 	}
 
 }
+function BM_Burst()
+{
+
+
+}

@@ -252,6 +252,11 @@ function Monk_PostCasting()
 			}
 	   }
 }
+;********************************************
+function Monk_Burst()
+{
+
+}
 function Monk_Boost()
 {
 	if ${Me.Ability[Three Finger Strike].IsReady}

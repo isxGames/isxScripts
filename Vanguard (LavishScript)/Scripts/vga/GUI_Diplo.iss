@@ -45,7 +45,7 @@ function FindDiploList(string aName)
 		Dint:Set[1]
 		UIElement[cmbDiploList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:ClearItems
 
-		VGExecute /hail
+		Pawn[${Me.Target}]:DoubleClick
 		wait 5
 		if ${Dialog[Civic Diplomacy].ResponseCount} > 0
 		Do

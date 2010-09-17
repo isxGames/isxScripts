@@ -214,6 +214,7 @@ function LavishLoad()
 	DoClassPostCombat:Set[${UtilitySR.FindSetting[DoClassPostCombat,${DoClassPostCombat}]}]
 	DoClassEmergency:Set[${UtilitySR.FindSetting[DoClassEmergency,${DoClassEmergency}]}]	
 	DoClassPostCasting:Set[${UtilitySR.FindSetting[DoClassPostCasting,${DoClassPostCasting}]}]
+	DoClassBurst:Set[${UtilitySR.FindSetting[DoClassBurst,${DoClassBurst}]}]
 
 	DoAttackPositionFront:Set[${UtilitySR.FindSetting[DoAttackPositionFront,${DoAttackPositionFront}]}]
 	DoAttackPositionLeft:Set[${UtilitySR.FindSetting[DoAttackPositionLeft,${DoAttackPositionLeft}]}]
@@ -402,6 +403,8 @@ function LavishLoad()
 	Buffagetxt:Set[${Interactions.FindSetting[Buffagetxt,${Buffagetxt}]}]
 	DoResume:Set[${Interactions.FindSetting[DoResume,${DoResume}]}]
 	Resumetxt:Set[${Interactions.FindSetting[Resumetxt,${Resumetxt}]}]
+	DoBurstCall:Set[${Interactions.FindSetting[DoBurstCall,${DoBurstCall}]}]
+	BurstCalltxt:Set[${Interactions.FindSetting[BurstCalltxt,${BurstCalltxt}]}]
 	
 	Class:Set[${LavishSettings[VGA].FindSet[Class]}]
 	switch ${Me.Class}

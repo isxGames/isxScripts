@@ -194,6 +194,7 @@ variable bool DoClassCombat
 variable bool DoClassPostCombat
 variable bool DoClassEmergency
 variable bool DoClassPostCasting
+variable bool DoClassBurst
 
 variable bool DoChargeFollow
 
@@ -329,6 +330,9 @@ variable bool DoResume
 variable string Resumetxt
 variable bool DoBuffage
 variable string Buffagetxt
+variable bool DoBurstCall
+variable string BurstCalltxt
+variable bool DoBurstNow = FALSE
 variable bool doRequestBuffs[4] 
 variable string RequestBuff[4]
 variable string RequestBuffPlayer[4]

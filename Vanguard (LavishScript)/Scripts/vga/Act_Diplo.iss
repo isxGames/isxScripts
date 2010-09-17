@@ -12,7 +12,7 @@ function AssistDiplo()
 			echo ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal[${Me.Target}]} ${Iterator.Key} ${Me.Target}
 			if ${Dialog[Civic Diplomacy].ResponseCount}==0
 				{
-				VGExecute /hail
+				Pawn[${Me.Target}]:DoubleClick
 				wait 5
 				
 				}

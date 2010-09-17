@@ -407,4 +407,8 @@ function trickem()
 			         }
 			      }
 		}
+;********************************************
+function Rogue_Burst()
+{
 
+}
