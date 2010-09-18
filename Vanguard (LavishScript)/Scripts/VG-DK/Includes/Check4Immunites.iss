@@ -78,6 +78,12 @@ function:bool Check4Immunites(string ABILITY="SKIP")
 		Immune2Physical:Set["Earth Elemental","Earth Elemental"]
 		Immune2Physical:Set["Untrenz","Untrenz"]
 		Immune2Physical:Set["Xakrin Mindripper","Xakrin Mindripper"]
+		;Afrit mobs
+		Immune2Physical:Set["Flarehound","Flarehound"]
+		Immune2Physical:Set["Flarehound Watcher","Flarehound Watcher"]
+		Immune2Physical:Set["Nefarious Titan","Nefarious Titan"]
+		Immune2Physical:Set["Nefarious Elemental","Nefarious Elemental"]
+		Immune2Physical:Set["Enraged Convocation","Enraged Convocation"]
 	}
 
 	;; Return FALSE if no target
