@@ -107,6 +107,8 @@ variable string ResStone
 variable string CombatRes
 variable string NonCombatRes
 variable int Speed
+variable string Endowment
+variable int EndowmentStep
 
 variable bool healrefresh = TRUE
 

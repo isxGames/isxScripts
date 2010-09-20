@@ -45,6 +45,11 @@ objectdef ClassRole
 		if (${MyClass.Equal[Monk]} || ${MyClass.Equal[Disciple]} || ${MyClass.Equal[Ranger]})
 		return TRUE
 		}
+	member:bool JinUser()
+		{
+		if (${MyClass.Equal[Monk]} || ${MyClass.Equal[Disciple]})
+		return TRUE
+		}
 }
 
 variable ClassRole ClassRole
@@ -154,6 +159,7 @@ objectdef GroupStatus
 		while ${icnt:Inc} <= ${Group.Count}
 		return TRUE
 	}
+
 }
 
 variable GroupStatus GroupStatus

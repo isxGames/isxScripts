@@ -123,5 +123,5 @@ function Psionicist_PostCasting()
 ;********************************************
 function Psionicist_Burst()
 {
-
+DoBurstNow:Set[FALSE]
 }

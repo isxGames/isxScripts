@@ -36,5 +36,5 @@ function Warrior_PostCasting()
 ;********************************************
 function Warrior_Burst()
 {
-
+DoBurstNow:Set[FALSE]
 }

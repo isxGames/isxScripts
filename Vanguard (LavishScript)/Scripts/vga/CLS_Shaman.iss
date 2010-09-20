@@ -69,5 +69,5 @@ function Shaman_PostCasting()
 ;********************************************
 function Shaman_Burst()
 {
-
+DoBurstNow:Set[FALSE]
 }

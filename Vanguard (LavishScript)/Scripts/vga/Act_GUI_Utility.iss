@@ -547,12 +547,15 @@ function MeCasting(string CP)
 	{
 		lastattack:Set[None]
 		newattack:Set[TRUE]
+		DoBurstNow:Set[FALSE]
 	}
 	if ${x_type.Equal[Heal]}
 		HealTimer:Set[${SlowHeals}]
 	if ${doSlowAttacks}
 		wait ${SlowAttacks}
 	debuglog "Done Waiting, Continue Fighting"
+	if ${DoBurstNow} && ${DoBurstCall} && ${DoClassBurst}
+		call Class_Burst
 	if ${CP.Equal[Both]} || ${CP.Equal[Post]}
 	{
 		call PostCastingActions

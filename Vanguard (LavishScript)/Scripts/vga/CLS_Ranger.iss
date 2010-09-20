@@ -36,5 +36,5 @@ function Ranger_PostCasting()
 ;********************************************
 function Ranger_Burst()
 {
-
+DoBurstNow:Set[FALSE]
 }
