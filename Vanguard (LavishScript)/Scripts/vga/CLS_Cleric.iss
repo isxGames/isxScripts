@@ -36,5 +36,5 @@ function Cleric_PostCasting()
 ;********************************************
 function Cleric_Burst()
 {
-
+DoBurstNow:Set[FALSE]
 }

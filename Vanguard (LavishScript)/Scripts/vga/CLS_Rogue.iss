@@ -68,16 +68,12 @@ variable Stalking Stalking
 ;********************************************
 function Rogue_DownTime()
 {
-  if ${dopoison} && ${Me.Inventory[${poison}](exists)} && ${Me.Effect[${poison}](exists)}
+  if ${dopoison} && ${Me.Inventory[${poison}](exists)} && !${Me.Effect[${poison}](exists)}
         {
         Me.Inventory[${poison}]:Use
         wait 10
         }
-  if ${LSTimer.TimeRemaining} < 1 && ${Me.Effect[${lethalstrikes}](exists)}
-		{
-		Me.Ability[${lethalstrikes}]:Use
-		LSTimer:Set[3000]
-		}
+
 	return
 }
 ;********************************************
@@ -88,11 +84,11 @@ function Rogue_PreCombat()
 ;********************************************
 function Rogue_Opener()
 {
- if ${dobearscroll} && ${Me.Inventory[${bearscroll}](exists)} && ${Me.Effect[${bearscrollbuff}](exists)}
+ if ${dobearscroll} && ${Me.Inventory[${bearscroll}](exists)} && !${Me.Effect[${bearscrollbuff}](exists)}
     Me.Inventory[${bearscroll}]:Use
- if ${docatscroll} && ${Me.Inventory[${catscroll}](exists)} && ${Me.Effect[${catscrollbuff}](exists)}
+ if ${docatscroll} && ${Me.Inventory[${catscroll}](exists)} && !${Me.Effect[${catscrollbuff}](exists)}
     Me.Inventory[${catscroll}]:Use
- if ${doantihealdart} && ${Me.Inventory[${antihealdart}](exists)} && ${Me.TargetDebuff[${antihealdart}](exists)} && ${Me.Target.Distance} < 11
+ if ${doantihealdart} && ${Me.Inventory[${antihealdart}](exists)} && !${Me.TargetDebuff[${antihealdart}](exists)} && ${Me.Target.Distance} < 11
     Me.Inventory[${antihealdart}]:Use
  if ${dolethalstrikes} && ${LSTimer.TimeRemaining} < 1 && !${Me.Effect[${lethalstrikes}](exists)} && ${Me.EnergyPct} > 30
 		{
@@ -113,20 +109,8 @@ function Rogue_Opener()
       call checkabilitytocast "Smoke Trick"	
 			   if ${Return}
 			   {
-			    if ${Me.Ability[${ravage}].IsReady}
-			       {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "${ravage}"
-				      IsFollowing:Set[FALSE]
-				      return
-				      }
-				  if ${Me.Ability[Eviscerate].IsReady}
-				      {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "Eviscerate"
-				      IsFollowing:Set[FALSE]
-				      return
-			         }
+
+
 				  if ${Me.Ability[Kidney Puncture].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
@@ -152,35 +136,23 @@ function Rogue_Opener()
 			 }
 If ${AttackPosition.TargetAngle} < 45 && ${Me.Target.Distance} < 5
       {
-			    if ${Me.Ability[${ravage}].IsReady}
-			       {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "${ravage}"
-				      IsFollowing:Set[FALSE]
-				      return
-				      }
-				  if ${Me.Ability[Eviscerate].IsReady}
-				      {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "Eviscerate"
-				      IsFollowing:Set[FALSE]
-				      return
-			         }
+
+
 				  if ${Me.Ability[Kidney Puncture].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "Kidney Puncture"
 				      IsFollowing:Set[FALSE]
 				      return
-			         }
+			         	}
 				  if ${Me.Ability[${backstab}].IsReady}
 				      {
 				      call executeability "Smoke Trick" "attack" "Neither"
 				      call executeability "${backstab}"
 				      IsFollowing:Set[FALSE]
 				      return
-			         }               			
-			 }
+			         	}               			
+	}
 			
 
 }
@@ -194,7 +166,7 @@ function Rogue_Combat()
 			   {
 			 	 call executeability "Relentless" "attack" "Both"
 			 	 return
-			   }
+	   }
 			}
   if ${Me.TargetHealth} < 25
         {
@@ -204,44 +176,10 @@ function Rogue_Combat()
 			 	   call executeability "Clout" "attack" "Both"
 			 	   return
 			     }
-			   }
-  call checkabilitytocast "${shiv}"	
-			if ${Return}
-			{
-			call executeability "${shiv}" "attack" "Both"
-			return
-			}
-	call checkabilitytocast "${shank}"	
-			if ${Return}
-			{
-			if ${Me.Ability[Quickblade].IsReady}
-			   {
-			   Me.Ability[Quickblade]:Use
-			   call executeability "${shank}" "attack" "Both"
-			   return
-			   }
-			if ${Me.Ability[${keeneye}].IsReady}
-			   {
-			   Me.Ability[${keeneye}]:Use
-			   call executeability "${shank}" "attack" "Both"
-			   return
-			   }
-			call executeability "${shank}" "attack" "Both"
-			return
-			}
+	 }
+ 
 
-  call checkabilitytocast "Eviscerate"	
-			if ${Return}
-			   {
-			   if ${Me.Ability[Vital Strikes].IsReady} && ${Me.Ability[${viciousstrike}].TimeRemaining} == 0 && ${Me.Ability[${deadlystrike}].TimeRemaining} == 0
-			     {
-			     Me.Ability[Vital Strikes]:Use
-           call executeability "Eviscerate" "attack" "Both"
-           return
-           }
-         call executeability "Eviscerate" "attack" "Both"
-         return
-			   }
+
   call checkabilitytocast "${kneebreak}"	
 			if ${Return}
 			   {			
@@ -300,19 +238,12 @@ function Rogue_Combat()
 ;********************************************
 function Rogue_Emergency()
 {
-      if ${Me.InCombat} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]} && ${Me.Ability[Escape].IsReady} && ${Me.Inventory[Flash Powder](exists)}
-          {
-          Me.Ability[Blinding Flash]:Use
-          Me.Ability[Escape]:Use
-          Me.Ability[Smoke Bomb]:Use
-          Me.Ability[Stalk]:Use
-          call trickem
-          }
-     if ${Me.InCombat} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]} && (!${Me.Ability[Escape].IsReady} || !${Me.Inventory[Flash Powder](exists)}) && ${Me.Inventory[Dazzling Flechette](exists)} && ${Me.Inventory[Dazzling Flechette].IsReady}
+
+     if ${Me.InCombat} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]} && (!${Me.Inventory[Flash Powder](exists)}) && ${Me.Inventory[Dazzling Flechette](exists)} && ${Me.Inventory[Dazzling Flechette].IsReady}
           {
           Me.Inventory[Dazzling Flechette]:Use
           }
-     if ${Me.InCombat} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]} && (!${Me.Ability[Escape].IsReady} || !${Me.Inventory[Flash Powder](exists)} || !${Me.Inventory[Dazzling Flechette](exists)} || !${Me.Inventory[Dazzling Flechette].IsReady})
+     if ${Me.InCombat} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]} && (!${Me.Inventory[Flash Powder](exists)} || !${Me.Inventory[Dazzling Flechette](exists)} || !${Me.Inventory[Dazzling Flechette].IsReady})
           {
           call checkabilitytocast "${elusivemark}"	
 			       if ${Return} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]}
@@ -357,30 +288,6 @@ function trickem()
      call checkabilitytocast "Smoke Trick"	
 			   if ${Return}
 			     {
-			   call checkabilitytocast "${shiv}"	
-			     if ${Return}
-				      {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "${shiv}"
-				      IsFollowing:Set[FALSE]
-				      return
-			         }
-			   call checkabilitytocast "${shank}"	
-			     if ${Return}
-				      {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "${shank}"
-				      IsFollowing:Set[FALSE]
-				      return
-			         }
-			   call checkabilitytocast "Eviscerate"	
-			     if ${Return}
-				      {
-				      call executeability "Smoke Trick" "attack" "Neither"
-				      call executeability "Eviscerate"
-				      IsFollowing:Set[FALSE]
-				      return
-			         }
 			   call checkabilitytocast "Kidney Puncture"	
 			     if ${Return}
 				       {
@@ -388,7 +295,7 @@ function trickem()
 				      call executeability "Kidney Puncture"
 				      IsFollowing:Set[FALSE]
 				      return
-			         }
+			              }
 			   call checkabilitytocast "${backstab}"	
 			     if ${Return}
 				       {
@@ -406,9 +313,54 @@ function trickem()
 				      return
 			         }
 			      }
-		}
+}
 ;********************************************
 function Rogue_Burst()
 {
+	call checkabilitytocast "Quickening Jolt"
+		if ${Return} && ${fight.ShouldIAttack}
+		{ 
+		Me.Ability["Quickening Jolt"]:Use
+		}
+      if ${Me.InCombat} && ${Me.ToPawn.Name.Equal[${Me.TargetOfTarget}]} && ${Me.Ability[Escape].IsReady} && ${Me.Inventory[Flash Powder](exists)}
+          {
+          Me.Ability[Blinding Flash]:Use
+          Me.Ability[Escape]:Use
+          Me.Ability[Smoke Bomb]:Use
+          Me.Ability[Stalk]:Use
+          call trickem
+          }
+	if ${Me.Ability[Vital Strikes].IsReady}
+		Me.Ability[Vital Strikes]:Use
+	if ${Me.Ability[${keeneye}].IsReady}
+   	        Me.Ability[${keeneye}]:Use
+	if ${Me.Ability[Quickblade].IsReady}
+		 Me.Ability[Quickblade]:Use
+  	if !${Me.Effect[${lethalstrikes}](exists)}
+		{
+		Me.Ability[${lethalstrikes}]:Use
+		LSTimer:Set[3000]
+		}
 
+ 	 call checkabilitytocast "Eviscerate"	
+			if ${Return}
+			   {
+
+           		call executeability "Eviscerate" "attack" "Both"
+          		return
+           		}
+        call checkabilitytocast "${shiv}"	
+			if ${Return}
+			{
+			call executeability "${shiv}" "attack" "Both"
+			return
+			}
+	call checkabilitytocast "${shank}"	
+			if ${Return}
+			{
+			call executeability "${shank}" "attack" "Both"
+			return
+			}
+       	
+DoBurstNow:Set[FALSE]
 }

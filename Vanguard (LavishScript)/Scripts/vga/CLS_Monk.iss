@@ -47,71 +47,8 @@ function Monk_Opener()
 ;********************************************
 function Monk_Combat()
 {
-	if ${Me.TargetHealth} < 70
-		call Monk_Boost
-	if ${Me.Ability[Three Finger Strike].IsReady}
-		{
-		call checkabilitytocast "Three Finger Strike"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Three Finger Strike" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Hammer Fist].IsReady}
-		{
-		call checkabilitytocast "Hammer Fist"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Hammer Fist" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Palm Explodes the Heart].IsReady}
-		{
-		call checkabilitytocast "Palm Explodes the Heart"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Palm Explodes the Heart" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Thousand Fists IV].IsReady}
-		{
-		call checkabilitytocast "Thousand Fists IV"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Thousand Fists IV" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Thundering Fists III].IsReady}
-		{
-		call checkabilitytocast "Thousand Fists IV"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Thousand Fists IV" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Legendary Fists].IsReady}
-		{
-		call checkabilitytocast "Legendary Fists"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Legendary Fists" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Fists of Transcendence].IsReady}
-		{
-		call checkabilitytocast "Fists of Transcendence"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Fists of Transcendence" "Attack" "Both"
-			return
-			}
-		}
+
+
 	if ${Me.Ability[Impossible Drunken Palm II].IsReady}
 		{
 		call checkabilitytocast "Impossible Drunken Palm II"
@@ -127,6 +64,24 @@ function Monk_Combat()
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
 			call executeability "Drunken Arms of the Cyclone II" "Attack" "Both"
+			return
+			}
+		}
+	if ${Me.Ability[Divine Typhone IV].IsReady}
+		{
+		call checkabilitytocast "Divine Typhone IV"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Divine Typhone IV" "Attack" "Both"
+			return
+			}
+		}
+	if ${Me.Ability[Divine Avalanche III].IsReady}
+		{
+		call checkabilitytocast "Divine Avalanche III"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Divine Avalanche III" "Attack" "Both"
 			return
 			}
 		}
@@ -163,24 +118,6 @@ function Monk_Combat()
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
 			call executeability "Superior Crescent Kick" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Staggering Punch V].IsReady}
-		{
-		call checkabilitytocast "Staggering Punch V"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Staggering Punch V" "Attack" "Both"
-			return
-			}
-		}
-	if ${Me.Ability[Ashen Hand VII].IsReady} && ${Me.Stat[Adventuring,Jin]} > 16
-		{
-		call checkabilitytocast "Ashen Hand VII"
-			if ${Return} && ${fight.ShouldIAttack}
-			{ 
-			call executeability "Ashen Hand VII" "Attack" "Both"
 			return
 			}
 		}
@@ -240,7 +177,6 @@ function Monk_PostCombat()
 ;********************************************
 function Monk_PostCasting()
 {
-	call Monk_Boost
  	if (${AttackPosition.TargetAngle} > 45 || ${Me.Target.Distance} > 4) && ${Me.InCombat}
      	   {
 	   call checkabilitytocast "Storm Stride"
@@ -255,12 +191,11 @@ function Monk_PostCasting()
 ;********************************************
 function Monk_Burst()
 {
-
-}
-function Monk_Boost()
-{
-	if ${Me.Ability[Three Finger Strike].IsReady}
-		{
+		call checkabilitytocast "Withering Palm"
+			if ${Return} && ${fight.ShouldIAttack} && !${Me.TargetDebuff[Withering Palm](exists)}
+			{ 
+			call executeability "Withering Palm" "Attack" "Neither"
+			}	
 		call checkabilitytocast "Jin Surge V"
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
@@ -281,30 +216,88 @@ function Monk_Boost()
 			{ 
 			call executeability "Quickening Jolt" "Buff" "Neither"
 			}
+		if ${Me.Ability[Palm Explodes the Heart].IsReady}
+		{
+		call checkabilitytocast "Palm Explodes the Heart"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Palm Explodes the Heart" "Attack" "Neither"
+			return
+			}
 
+		}
+		if ${Me.Ability[Hammer Fist].IsReady}
+		{
+		call checkabilitytocast "Hammer Fist"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Hammer Fist" "Attack" "Neither"
+			return
+			}
+		}
+		if ${Me.Ability[Three Finger Strike].IsReady}
+		{
+		call checkabilitytocast "Three Finger Strike"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Three Finger Strike" "Attack" "Neither"
+			return
+			}
 		}
 	if ${Me.Ability[Thousand Fists IV].IsReady}
 		{
-		call checkabilitytocast "Jin Surge V"
+		call checkabilitytocast "Thousand Fists IV"
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
-			call executeability "Jin Surge V" "Buff" "Neither"
+			call executeability "Thousand Fists IV" "Attack" "Both"
+			return
 			}
 		}
-	if ${Me.Ability[Impossible Drunken Palm II].IsReady}
+	if ${Me.Ability[Thundering Blows].IsReady}
 		{
-		call checkabilitytocast "Jin Surge V"
+		call checkabilitytocast "Thundering Blows"
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
-			call executeability "Jin Surge V" "Buff" "Neither"
+			call executeability "Thundering Blows" "Attack" "Both"
+			return
 			}
 		}
-	if ${Me.Ability[Flying Kick V].IsReady}
+	if ${Me.Ability[Fists of Mastery].IsReady}
 		{
-		call checkabilitytocast "Jin Surge V"
+		call checkabilitytocast "Fists of Mastery"
 			if ${Return} && ${fight.ShouldIAttack}
 			{ 
-			call executeability "Jin Surge V" "Buff" "Neither"
+			call executeability "Fists of Mastery" "Attack" "Both"
+			return
 			}
 		}
+	if ${Me.Ability[Fists of Transcendence].IsReady}
+		{
+		call checkabilitytocast "Fists of Transcendence"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Fists of Transcendence" "Attack" "Both"
+			return
+			}
+		}
+	if ${Me.Ability[Ashen Hand VII].IsReady}
+		{
+		call checkabilitytocast "Ashen Hand VII"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Ashen Hand VII" "Attack" "Both"
+			return
+			}
+		}
+	if ${Me.Ability[Crescent Kick VI].IsReady}
+		{
+		call checkabilitytocast "Crescent Kick VI"
+			if ${Return} && ${fight.ShouldIAttack}
+			{ 
+			call executeability "Crescent Kick VI" "Attack" "Both"
+			return
+			}
+		}
+
+DoBurstNow:Set[FALSE]
 }

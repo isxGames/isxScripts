@@ -46,5 +46,5 @@ function Sorcerer_PostCasting()
 ;********************************************
 function Sorcerer_Burst()
 {
-
+DoBurstNow:Set[FALSE]
 }
