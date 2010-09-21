@@ -181,5 +181,32 @@
 		<Setting name="80,81">Sever VI</Setting>
 		<Setting name="80,271">Guardian Sphere III</Setting>
 		<Setting name="80,25">Iron Will V</Setting>
+        <Setting name="81,171">Taunting Assault IV</Setting>
+		<Setting name="81,150">Overpower VII</Setting>
+		<Setting name="81,26">Hold the Line VII</Setting>
+		<Setting name="82,160">Provoke VIII</Setting>
+		<Setting name="82,295">Armored VII</Setting>
+		<Setting name="82,290">Forward Charge VII</Setting>
+		<Setting name="83,20">Battle Tactics VI</Setting>
+		<Setting name="83,172">Plant V</Setting>
+		<Setting name="83,152">Concussion VI</Setting>
+		<Setting name="84,151">Gut Kick VII</Setting>
+		<Setting name="85,95">Assault VII</Setting>
+		<Setting name="86,153">Slam VI</Setting>
+		<Setting name="86,170">Shout VII</Setting>
+		<Setting name="86,21">Call to Arms VII</Setting>
+		<Setting name="87,80">Ruin VII</Setting>
+		<Setting name="87,22">Call of Shielding VI</Setting>
+		<Setting name="87,161">Taunting Blow VIII</Setting>
+		<Setting name="88,154">Precise Strike VI</Setting>
+		<Setting name="88,82">Decimate III</Setting>
+		<Setting name="88,157">Retaliate V</Setting>
+		<Setting name="89,240">Shield Bash VIII</Setting>
+		<Setting name="89,156">Battle Cry VII</Setting>
+		<Setting name="89,155">Hunker Down VII</Setting>
+		<Setting name="90,81">Sever VII</Setting>
+		<Setting name="90,271">Guardian Sphere IV</Setting>
+		<Setting name="90,25">Iron Will VI</Setting>
+        
 	</Set>
 </InnerSpaceSettings>
