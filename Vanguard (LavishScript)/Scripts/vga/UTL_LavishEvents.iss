@@ -146,6 +146,11 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 			actionlog "Mob Says Not Furious"
 			mobisfurious:Set[FALSE]
 		}
+		if ${Text.Find[Now I'm FURIOUS!]}
+		{
+			actionlog "Whitewing is Furious"
+			mobisfurious:Set[TRUE]
+		}
 	}
 	if ${DoAcceptRes} && ${ChannelNumber.Equal[32]} && ${Text.Find[is trying to resurrect you with]}
 		{

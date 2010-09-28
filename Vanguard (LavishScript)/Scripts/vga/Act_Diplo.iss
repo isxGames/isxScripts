@@ -10,9 +10,9 @@ function AssistDiplo()
 		if ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal[${Me.Target}]}
 			{
 			echo ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal[${Me.Target}]} ${Iterator.Key} ${Me.Target}
-			if ${Dialog[Civic Diplomacy].ResponseCount}==0
+			if ${Dialog[General].ResponseCount}==0
 				{
-				Pawn[${Me.Target}]:DoubleClick
+				VGExecute /Hail
 				wait 5
 				
 				}
@@ -20,12 +20,12 @@ function AssistDiplo()
 			CivicINT:Set[1]
 			do
 				{
-				if ${Dialog[Civic Diplomacy,${CivicINT}].Text.Find[${Iterator.Value}](exists)}
+				if ${Dialog[General,${CivicINT}].Text.Find[${Iterator.Value}](exists)}
 					{
      					call PresenceNeeded
       					echo Equipping Gear: ${Return}
       					obj_diplogear:Load[${Return}]
-					Dialog[Civic Diplomacy,${CivicINT}]:Select
+					Dialog[General,${CivicINT}]:Select
 					wait 5
 					OurTurn:Set[TRUE]
 					While ${VG.IsInParlay}
@@ -37,16 +37,24 @@ function AssistDiplo()
              						Parlay:Continue
                 					Loot:LootAll
 							OurTurn:Set[TRUE]
-							VGExecute /ClearTargets
+							wait 2400
             						}
 						}
 					wait 3
+							MouseTo 772,653
+		wait 5
+		MouseClick -hold left
+		wait 2
+		MouseClick -release left
 					}
 				CivicINT:Inc
 				}
-				while ${Dialog[Civic Diplomacy, ${CivicINT}](exists)}
+				while ${Dialog[General, ${CivicINT}](exists)}
 			}
+
 		Iterator:Next
+		
+
 		}
 	}
 }
