@@ -15,7 +15,7 @@ function:bool CheckFurious()
 			VGExecute "/pet backoff"
 			}
 		call CheckPosition
-		if ${Me.TargetHealth} > 20
+		if ${Me.TargetHealth} > 20 && ${Me.Target.Name.NotEqual[Masuke Whitewind]}
 			{
 			actionlog "Furious Down Health too High"
 			mobisfurious:Set[FALSE]
