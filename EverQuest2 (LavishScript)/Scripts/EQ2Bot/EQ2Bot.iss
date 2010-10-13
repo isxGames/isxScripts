@@ -3646,7 +3646,8 @@ function CheckLootNoMove()
 		{
 			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
 			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"]
-			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+			;EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+			CustomActor[${tcount}]:DoubleClick
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 3
 			call ProcessTriggers
@@ -3739,7 +3740,8 @@ function CheckLoot()
 				}
 				while (${IsMoving} || ${Me.IsMoving})
 			}
-			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+			;EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} loot"
+			CustomActor[${tcount}]:DoubleClick
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 3
 			call ProcessTriggers
