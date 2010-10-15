@@ -4994,11 +4994,17 @@ objectdef ActorCheck
 	member:bool ValidActor(uint actorid)
 	{
 		if !${Actor[${actorid}](exists)}
+		{
+			Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} Does Not Exist"]
 			return FALSE
+		}
 
 		if ${Actor[${actorid}].IsDead}
+		{
+			Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} IsDead"]
 			return FALSE
-
+		}
+		
 		switch ${Actor[${actorid}].Type}
 		{
 			case NPC
@@ -5051,6 +5057,7 @@ objectdef ActorCheck
 				break
 
 			Default
+				Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} Type Does not Evaluate"]
 				return FALSE
 		}
 
@@ -5063,8 +5070,11 @@ objectdef ActorCheck
 		;}
 
 		if ${Actor[${actorid}].IsLocked}
+		{	
+			Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} is Locked"]
 			return FALSE
-
+		}
+		
 		if ${Actor[${actorid}].IsHeroic} && ${IgnoreHeroic}
 			return FALSE
 
@@ -5074,7 +5084,7 @@ objectdef ActorCheck
 		;actor is a charmed pet, ignore it
 		if ${This.FriendlyPet[${actorid}]}
 		{
-			;Debug:Echo["Actor (ID: ${actorid} is a friendly pet ...ignoring"]
+			Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} ID: ${actorid} is a friendly pet ...ignoring"]
 			return FALSE
 		}
 
@@ -5082,13 +5092,13 @@ objectdef ActorCheck
 		{
 				if !${Me.TargetLOS}
 				{
-						;Debug:Echo["EQ2Bot-ValidActor():: No line of sight to ${Target}."]
+						Debug:Echo["EQ2Bot-ValidActor():: No line of sight to ${Target}."]
 						return FALSE
 				}
 
 				if ${Target.Distance} > ${MARange}
 				{
-						;Debug:Echo["EQ2Bot-ValidActor():: ${Target} is not within MARange (${MARange})"]
+						Debug:Echo["EQ2Bot-ValidActor():: ${Target} is not within MARange (${MARange})"]
 						return FALSE
 				}
 			}
@@ -5099,7 +5109,10 @@ objectdef ActorCheck
 	member:bool CheckActor(uint actorid)
 	{
 		if ${Actor[${actorid}].IsDead}
+		{
+			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor IsDead."]
 			return FALSE
+		}
 
 		switch ${Actor[${actorid}].Type}
 		{
@@ -5112,15 +5125,19 @@ objectdef ActorCheck
 				break
 
 			case PC
+				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a PC."]
 				return FALSE
 
 			case Pet
-					return FALSE
+				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a PET."]	
+				return FALSE
 
 			case MyPet
-					return FALSE
+				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is MyPet."]
+				return FALSE
 
 			Default
+				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type failed identification."]
 				return FALSE
 		}
 
@@ -5133,12 +5150,13 @@ objectdef ActorCheck
 
 		if ${Actor[${actorid}].IsLocked}
 		{
+			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor IsLocked"]
 			return FALSE
 		}
 
 		if ${This.FriendlyPet[${actorid}]}
 		{
-			;actor is a charmed pet, ignore it
+			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a charmed pet, ignore it"]
 			return FALSE
 		}
 
@@ -5148,6 +5166,7 @@ objectdef ActorCheck
 		}
 		else
 		{
+			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor doesn't exist"]
 			return FALSE
 		}
 	}
@@ -5156,18 +5175,24 @@ objectdef ActorCheck
 	member:bool AggroGroup(uint actorid)
 	{
 		if ${Actor[${actorid}].IsDead}
+		{
+			Debug:Echo["EQ2Bot-AggroGroup(): Return False - Actor IsDead"]
 			return FALSE
-
+		}
+		
 		variable int tempvar
 
 		if ${This.FriendlyPet[${actorid}]}
 		{
-			;actor is a charmed pet, ignore it
+			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a charmed pet, ignore it"]
 			return FALSE
 		}
 
 		if ${Actor[${actorid}].Type.Equal[PC]}
+		{
+			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type is PC"]
 			return FALSE
+		}
 
 		if ${Me.GroupCount}>1 || ${Me.InRaid}
 		{
@@ -5254,12 +5279,12 @@ objectdef ActorCheck
 
 		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
 		{
-			;Debug:Echo["No NPCs within a range of ${iEngageDistance}m"]
+			Debug:Echo["No NPCs within a range of ${iEngageDistance}m"]
 			return FALSE
 		}
 
 		EQ2:CreateCustomActorArray[byDist,${iEngageDistance},npc]
-		;Debug:Echo["Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."]
+		Debug:Echo["Detect() -- ${EQ2.CustomActorArraySize} mobs within ${iEngageDistance} meters."]
 		do
 		{
 			if ${This.CheckActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode} && !${CustomActor[${tcount}].IsDead}
@@ -5274,18 +5299,22 @@ objectdef ActorCheck
 		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 
-		;Debug:Echo["No NPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."]
+		Debug:Echo["No NPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."]
 		return FALSE
 	}
 
 	member:bool Target(int targetid)
 	{
 		if !${Actor[${targetid}].InCombatMode}
+		{
+			Debug:Echo["EQ2Bot-Target(): Return False - Actor Not InCombatMode"]
 			return FALSE
-
+		}
+		
 		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
 			return TRUE
 
+		Debug:Echo["EQ2Bot-Target(): Return False - Actor not AggroGroup"]
 		return FALSE
 	}
 
