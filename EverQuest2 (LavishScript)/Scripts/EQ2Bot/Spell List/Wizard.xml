@@ -176,6 +176,34 @@
 		<Setting name="80,500">Rays of Disintegration</Setting>
 		<Setting name="80,60">Ice Comet III</Setting>
 		<Setting name="80,310">Harvest Mana V</Setting>
-		<Setting name="80,96">Firestorm VI</Setting>
+		<Setting name="81,61">Flames of Velious IV</Setting>
+		<Setting name="81,63">Solar Flare IX</Setting>
+		<Setting name="82,72">Incinerate VIII</Setting>
+		<Setting name="82,181">Magma Chamber VII</Setting>
+		<Setting name="83,40">Converge VI</Setting>
+		<Setting name="83,230">Shackle VII</Setting>
+		<Setting name="83,361">Surge of Ro V </Setting>
+		<Setting name="84,311">Mana Intromission V</Setting>
+		<Setting name="84,324">Protoflame IV</Setting>
+		<Setting name="85,360">Frigid Gift V</Setting>
+		<Setting name="85,21">Fortify Elements VII</Setting>
+		<Setting name="85,91">Glacial Wind VI</Setting>
+		<Setting name="86,70">Storming Tempest III</Setting>
+		<Setting name="86,92">Storm of Lightning VII</Setting>
+		<Setting name="86,355">Iceshield VI</Setting>
+		<Setting name="87,71">Immolation VII</Setting>
+		<Setting name="87,180">Cease VII</Setting>
+		<Setting name="87,62">Ball of Fire VI</Setting>
+		<Setting name="88,365">Aurora VI</Setting>
+		<Setting name="88,94">Fusion III</Setting>
+		<Setting name="88,31">Ro\'s Blade VII</Setting>
+		<Setting name="88,90">Ring of Ice V</Setting>
+		<Setting name="89,309">Vital Transfer VII</Setting>
+		<Setting name="89,73">Ice Spears VIII</Setting>
+		<Setting name="89,20">Tyrant's Pact VII</Setting>
+		<Setting name="90,60">Ice Comet IV</Setting>
+		<Setting name="90,500">Rays of Disintegration II</Setting>
+		<Setting name="90,96">Firestorm VII</Setting>
+		<Setting name="90,310">Harvest Mana VI</Setting>
 	</Set>
 </InnerSpaceSettings>
