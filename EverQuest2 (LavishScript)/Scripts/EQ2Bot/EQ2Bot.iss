@@ -2286,6 +2286,7 @@ function Combat(bool PVP=0)
 				KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 				Actor[${KillTarget}]:DoTarget
 				;Actor[${KillTarget}]:DoFace
+				wait 10 ${Target.ID}==${TargetID}
 				ContinueCombat:Set[TRUE]
 				continue
 			}

@@ -1,28 +1,6 @@
 ;*************************************************************
 ;Inquisitor.iss
-;version 20090622a (Pygar)
-;
-;20090622
-;	Update for TSO AA and GU 52 spell changes
-;
-;20070725a (Pygar)
-; Minor changes for AA adjustments in game
-;
-;20070504a (Pygar)
-; Updated for latest eq2bot
-; Tweaked cure loop to heal in case of emergency
-; Fixed Mastery Spells
-; Misc Healing Tweaks for efficiency
-; Now uses group reactive on MT if in group to prevent stacking issues.
-;
-;20061208a
-; Implemented EoF Mastery Spells
-; Implemented EoF AA Maldroit
-; Implemented EoF AA Battle Cleric Line
-; Implemented Vampire Spell Theft of Vitae
-; Implemented Symbol of Corruption
-; Implemented Crystalize Spirit Healing
-; Fixed a bug with curing uncurable afflictions
+;version 20100921a (Pygar)
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -309,7 +287,17 @@ function Buff_Routine(int xAction)
 		case BuffDPS
 			Counter:Set[1]
 			tempvar:Set[1]
-
+			
+			;First Check if we have red adornment and treat as group buff
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TargetType.Equal[Group]} && ${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}>0
+			{
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
+				
+				return
+			}
+			
+			
 			;loop through all our maintained buffs to first cancel any buffs that shouldnt be buffed
 			do
 			{

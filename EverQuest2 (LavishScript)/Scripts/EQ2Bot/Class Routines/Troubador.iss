@@ -1,39 +1,6 @@
 ;*****************************************************
 ;Troubador.iss 20090619a
-;by Karye
-;updated by Pygar
-;
-;20090619a
-; Updated for TSO aa and GU52
-; Some other misc jcap logic tweaking
-;
-;
-;20080426a (Zeek)
-; Reworked combat code to improve overall DPS
-; Added DebuffMitMode.  Seperated debuffs into 2 categories, Mitigation debuffs (which are good to use
-;  on all mobs) and Mob Offense buffs (which are good to use on epics and named etc).
-; Added FullDebuffNamed.  This will use both Mitigation Debuffs and Offensive Debuffs on named mobs no matter
-;  the state of DebuffMitMode or DebuffMode.
-; Removed the Aria Cancel.
-; Will not try to use JCap if on the move.
-; Added Jcap Notification
-;
-;20070905a
-; Removed Weaponswap as no longer required
-; Moved Aria Cancel in Mez routine.  Now only cancels when a mob is found to be mezed.  Will maintain Aria until mez is required.
-;
-;20070725a
-; Updated for new AA weapon requirements
-;
-;20070524a (Pygar)
-;Charmtarget stickiness removed, wont charm / mez MA's current target anymore
-;OffenseMode is now defaulted true
-;Misc updates for maintanence.
-;
-;20061202a (kayre)
-;Implemented EoF AAs
-;Implemented EQ2Botlib cyrstalized spirit use
-;Added EoF Mastery strikes
+;by Pygar
 ;*****************************************************
 
 #ifndef _Eq2Botlib_
@@ -603,7 +570,7 @@ function Combat_Routine(int xAction)
 			{
 				wait 2
 			}
-			call CastSpellRange 391 0 1 1 ${KillTarget}
+			eq2execute useability Bump
 			call CastSpellRange 130 0 1 1 ${KillTarget}
 			return
 		}
