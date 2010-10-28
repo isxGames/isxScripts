@@ -2112,10 +2112,7 @@ function Combat(bool PVP=0)
 									;echo "Combat()-DEBUG:: TankToTargetDistance: ${TankToTargetDistance}"
 									if (${TankToTargetDistance} <= 7.5)
 									{
-										if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
 											call CheckPosition 1 1 ${KillTarget} 0 0
-										else
-											call CheckPosition 1 0 ${KillTarget} 0 0
 									}
 								}
 							}
