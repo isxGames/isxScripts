@@ -9,7 +9,7 @@ variable(script) index:module Salvagers
 variable(script) index:module Afterburners
 variable(script) index:item MyCargo
 variable(script) index:item CargoToTransfer
-variable(script) index:int  NewCargoToTransfer
+variable(script) index:int64  NewCargoToTransfer
 variable(script) int MaxSalvageRange
 variable(script) int MaxTractorRange
 variable(script) int WrecksCount
@@ -23,8 +23,8 @@ variable(script) index:entity Cans
 variable(script) int CanCount
 variable(script) int EntityCargoCount
 variable(script) index:item EntityCargo
-variable(script) collection:int ProcessedEntities
-variable(script) collection:int CargoholdLoot
+variable(script) collection:int64 ProcessedEntities
+variable(script) collection:int64 CargoholdLoot
 variable(script) bool LibraryInitialized
 
 variable(script) string EVELootingFileName
@@ -331,7 +331,7 @@ function CheckForLoot()
 				echo "--- Stacking cargo..."
 				Me.Ship:StackAllCargo
 				wait 10				
-				Me.ToEntity:CloseCargo
+				Me.ToEntity:CloseCargo				
 				if ${Cans.Get[${i}](exists)}
 				{
 			  	Cans.Get[${i}]:CloseCargo
@@ -702,7 +702,7 @@ function TransferSalvagedItemsToHangar()
 			switch ${GroupID}
 			{
 				case 754
-					NewCargoToTransfer:Insert[${ThisCargo.Value}]
+					NewCargoToTransfer:Insert[${ThisCargo.Value.ID}]
 					break
 				default
 					break
@@ -776,7 +776,7 @@ function TransferLootToHangar()
 		{
 			;echo "DEBUG: TransferLootToHanger: CargoholdLoot.Element[ThisCargo.Value.ID]: ${CargoholdLoot.Element[${ThisCargo.Value.ID}]}"
 			if (${CargoholdLoot.Element[${ThisCargo.Value.ID}](exists)})
-				NewCargoToTransfer:Insert[${ThisCargo.Value}]
+				NewCargoToTransfer:Insert[${ThisCargo.Value.ID}]
 		}
 		while ${ThisCargo:Next(exists)}
 
@@ -1034,7 +1034,7 @@ function LootEntity(int EntityID)
 			; If the entry in the xml is FALSE, then we want to loot it.
 			if (!${CheckLootItemDB})
 			{
-				CargoToTransfer:Insert[${ThisCargo.Value}]
+				CargoToTransfer:Insert[${ThisCargo.Value.ID}]
 				;echo "DEBUG: CargoToTransfer.Used == ${CargoToTransfer.Used}
 			}
 			else
@@ -1050,7 +1050,7 @@ function LootEntity(int EntityID)
 			;	case 15331
 			;		break
 			;	default
-			;	  CargoToTransfer:Insert[${ThisCargo.Value}]
+			;	  CargoToTransfer:Insert[${ThisCargo.Value.ID}]
 			;		break
 			;}			
 		}
