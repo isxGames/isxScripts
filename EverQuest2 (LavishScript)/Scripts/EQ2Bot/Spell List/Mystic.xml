@@ -190,5 +190,31 @@
 		<Setting name="80,10">Transcendence VI</Setting>
 		<Setting name="80,338">Ancestral Savior IV</Setting>
 		<Setting name="80,318">Ancestral Sentry</Setting>
+		<Setting name="81,17">Prophetic Ward V</Setting>
+		<Setting name="81,4">Rejuvenation IX</Setting>
+		<Setting name="82,20">Premonition VII</Setting>
+		<Setting name="82,80">Velium Winds VIII</Setting>
+		<Setting name="82,31">Ancestral Mettle VI</Setting>
+		<Setting name="82,8">Torpor III</Setting>
+		<Setting name="83,32">Spirit of the Mammoth VI</Setting>
+		<Setting name="83,16">Lunar Attendant IV</Setting>
+		<Setting name="83,1">Ritual Healing VIII</Setting>
+		<Setting name="84,90">Wrath of the Ancients V</Setting>
+		<Setting name="84,30">Runic Armor VII</Setting>
+		<Setting name="84,83">Slothful Spirit III</Setting>
+		<Setting name="85,22">Ancestral Avatar IV</Setting>
+		<Setting name="86,25">Ursine Avatar VI</Setting>
+		<Setting name="86,214">Ancestral Balm III</Setting>
+		<Setting name="86,51">Deteriorate VII</Setting>
+		<Setting name="87,81">Glacial Flames VI</Setting>
+		<Setting name="88,7">Ancestral Ward VIII</Setting>
+		<Setting name="88,82">Plague VIII</Setting>
+		<Setting name="89,15">Umbral Warding VII</Setting>
+		<Setting name="89,54">Echoes of the Ancients VI</Setting>
+		<Setting name="89,180">Spirits VII</Setting>
+		<Setting name="90,317">Oberon IV</Setting>
+		<Setting name="90,10">Transcendence VII</Setting>
+		<Setting name="90,338">Ancestral Savior V</Setting>
+		<Setting name="90,318">Ancestral Sentry II</Setting>
 	</Set>
 </InnerSpaceSettings>
