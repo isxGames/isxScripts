@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v9.13 - Added ${ICraft.TotalQueued} method. Returns total number of combines queued.
+
 v9.11 - Updated for GU58 writ npc madness. Will now apply_verb Hail with writ giver instead of :DoubleClick
 
 v9.1  - French Localization
