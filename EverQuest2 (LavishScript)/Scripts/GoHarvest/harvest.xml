@@ -218,6 +218,7 @@
 		<Setting Name="freewater fish fleet">freewater fish fleet</Setting>
 		<Setting Name="school of sunfish">school of sunfish</Setting>
 		<Setting Name="churning school">churning school</Setting>
+		<Setting Name="school of tiny fish">school of tiny fish</Setting>
 	</Set>
 	<Set Name="8">
 		<Setting Name="?">?</Setting>
