@@ -639,6 +639,7 @@
 						<OnLeftClick>
 							if ${Script[myprices].VariableScope.Pausemyprices}
 							{
+								EQ2Execute /close_top_window
 								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
 								craft ${Me.TSSubClass}-_myprices
 								Script[myprices].VariableScope.Exitmyprices:Set[TRUE]
