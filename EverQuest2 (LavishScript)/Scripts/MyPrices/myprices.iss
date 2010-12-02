@@ -3415,6 +3415,7 @@ function refreshbags()
 	Declare xvar int local 1
 	Declare rbxvar int local 1
 	Declare bcheck string local
+	Declare acheck string local
 	Me:CreateCustomInventoryArray[nonbankonly]
 	waitframe
 
@@ -3427,18 +3428,22 @@ function refreshbags()
 
 	; nothing recognised as in bags so return FALSE
 	if ${xvar} == ${Me.CustomInventoryArraySize}
+	{
+		Echo Unable to read inventory data
 		Return FALSE
-		
+	}
+	
 	do
 	{
+		eq2execute /togglebags
+		wait 10
+		eq2execute /togglebags
+		wait 10
+
+		acheck:Set[${Me.CustomInventory[${xvar}].Attuned}]
 		bcheck:Set[${Me.CustomInventory[${xvar}].IsCollectible}]
 
-		eq2execute /togglebags
-		wait 10
-		eq2execute /togglebags
-		wait 10
-
-		if !${bcheck.Equal[NULL]}
+		if !${bcheck.Equal[NULL]} && !${acheck.Equal[NULL]}
 			Return TRUE
 			
 		Me:CreateCustomInventoryArray[nonbankonly]
@@ -3474,8 +3479,7 @@ function placeshinies()
 
 		do
 		{
-			call InventoryContainer ${Me.CustomInventory[${PSxvar}].InContainerID}
-
+			call InventoryContainer ${Me.CustomInventory[${PSxvar}].InContainerID} 
 			if ${Me.CustomInventory[${PSxvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${PSxvar}].IsInventoryContainer} && !${BadItems.Element["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
 			{
 				if !${Me.CustomInventory[${PSxvar}].Attuned} && !${Me.CustomInventory[${PSxvar}].NoTrade} && !${Me.CustomInventory[${PSxvar}].Heirloom} 
