@@ -13,8 +13,8 @@ function Class_Declaration()
 	declare ClassFileVersion int script 20101209
 	;;;;
 
-	declare TauntMode bool script TRUE
 	declare HealerMode bool script FALSE
+	declare HealOthersMode bool script FALSE
 	declare AoEMode bool script FALSE
 	declare Start_HO bool script FALSE
 	declare DefensiveMode bool script FALSE
@@ -27,11 +27,11 @@ function Class_Declaration()
 	call EQ2BotLib_Init
 
 	;XML Setup for clickbox options
-	TauntMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Taunt Mode,TRUE]}]
 	HealerMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[HealerMode,FALSE]}]
+	HealOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[HealOthersMode,FALSE]}]
 	Start_HO:Set{${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start_HO,FALSE]}]
-	Use_Consecrate:Set{${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use_Consecrate,FALSE]}]
 	DefensiveMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Defensive Stance,FALSE]}]
+	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[AoEMode,FALSE]}]
 
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
 	BuffAmendsGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember,]}]
@@ -216,8 +216,11 @@ function Combat_Routine(int xAction)
 		call EmergencyHeal ${Me.ID}
 
 	if ${HealerMode}
-		call CheckHeals
+		call MeHeals
 
+	if ${HealOthersMode}
+		call CheckHeals
+HealOthersMode
 	;group proc buff, always use if avail
 	if ${Me.Ability[${SpellType[387]}].IsReady}
 		call CastSpellRange 387
