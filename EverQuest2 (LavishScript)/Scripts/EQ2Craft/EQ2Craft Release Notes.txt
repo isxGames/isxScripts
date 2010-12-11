@@ -1,12 +1,20 @@
 Revision History ||
 ===================
-v9.13 - Added ${ICraft.TotalQueued} method. Returns total number of combines queued.
+v9.14 - Added code to make primalz quit bitching about writs being overwritten
+        on exit. New cmdline option -sort to enable sorting and saving of writ
+        file.
 
-v9.11 - Updated for GU58 writ npc madness. Will now apply_verb Hail with writ giver instead of :DoubleClick
+v9.13 - Added ${ICraft.TotalQueued} method. Returns total number of combines
+        queued. (may be broken currently)
+
+v9.11 - Updated for GU58 writ npc madness. Will now apply_verb Hail with writ 
+        giver instead of :DoubleClick
 
 v9.1  - French Localization
-        * Should work properly in guildhalls; however, writs in TS Instances may not function perfectly due to lack of data
-        * Wholesaler names (not guild tags) should be added to the appropriate section of /eq2craft/Recipe Data/Common.xml
+        * Should work properly in guildhalls; however, writs in TS Instances 
+          may not function perfectly due to lack of data
+        * Wholesaler names (not guild tags) should be added to the appropriate
+          section of /eq2craft/Recipe Data/Common.xml
         
 v9.00 - Integration of Recipe Search function, thanks to Noob536.
 
