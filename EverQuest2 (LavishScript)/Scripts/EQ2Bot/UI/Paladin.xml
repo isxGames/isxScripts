@@ -93,7 +93,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	</Commandcheckbox>
 	<Commandcheckbox Name='Heal Other Mode'>
 		<X>10</X>
-		<Y>70</Y>
+		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>Enable Heal Others Mode</Text>

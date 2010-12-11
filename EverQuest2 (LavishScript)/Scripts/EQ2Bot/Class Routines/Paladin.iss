@@ -95,7 +95,7 @@ function Buff_Init()
 
 	PreAction[7]:Set[AA_Aura_Leadership]
 	PreSpellRange[7,1]:Set[389]
-	
+
 	PreAction[8]:Set[AA_Fearless]
 	PreSpellRange[8,1]:Set[392]
 
@@ -104,10 +104,10 @@ function Buff_Init()
 
 	PreAction[10]:Set[Amends]
 	PreSpellRange[10,1]:Set[30]
-	
+
 	PreAction[11]:Set[SA_Buff]
 	PreSpellRange[11,1]:Set[31]
-	
+
 	PreAction[12]:Set[SA_Buff]
 	PreSpellRange[12,1]:Set[295]
 	PreSpellRange[12,2]:Set[290]
@@ -160,7 +160,7 @@ function Buff_Routine(int xAction)
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
-			break									
+			break
 		case Amends
 			BuffTarget:Set[${UIElement[cbBuffAmendsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
@@ -181,7 +181,7 @@ function Buff_Routine(int xAction)
 		case AA_Leadership
 		case AA_Aura_Leadership
 		case AA_Raid_Armament
-		case AA_Fearless		
+		case AA_Fearless
 			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
@@ -220,23 +220,23 @@ function Combat_Routine(int xAction)
 
 	if ${HealOthersMode}
 		call CheckHeals
-HealOthersMode
+
 	;group proc buff, always use if avail
 	if ${Me.Ability[${SpellType[387]}].IsReady}
 		call CastSpellRange 387
 
 	if ${Me.Ability[${SpellType[396]}].IsReady}
 		call CastSpellRange 396
-		
+
 	if ${AoEMode} && ${Mob.Count}>1
 	{
 	  ;AoE
-	  
+
 		if ${EpicMode}
 			spellthreshold:Set[1]
 		else
 			spellthreshold:Set[3]
-			
+
 		;Consecrate
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[97]}].IsReady} && !${Me.Maintained[${SpellType[97]}](exists)}
 		{
@@ -320,7 +320,7 @@ HealOthersMode
 		{
 			call CastSpellRange 380 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;;;; Master Strike
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 		{
@@ -332,19 +332,19 @@ HealOthersMode
 				Me.Ability[Master's Strike]:Use
 				spellsused:Inc
 			}
-		}		
+		}
 		;Judgement
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
 		{
 			call CastSpellRange 62 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Swift Attack
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[381]}].IsReady} && !${Me.Maintained[${SpellType[381]}](exists)}
 		{
 			call CastSpellRange 381 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}	
+		}
 		;Clarion
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[160]}].IsReady} && !${Me.Maintained[${SpellType[160]}](exists)}
 		{
@@ -356,7 +356,7 @@ HealOthersMode
 		{
 			call CastSpellRange 154 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Penitent Kick
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady} && !${Me.Maintained[${SpellType[151]}](exists)}
 		{
@@ -374,19 +374,19 @@ HealOthersMode
 		{
 			call CastSpellRange 150 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Righteousness
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[170]}].IsReady} && !${Me.Maintained[${SpellType[170]}](exists)}
 		{
 			call CastSpellRange 170 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Legionaire's Smite(4pt)
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
 		{
 			call CastSpellRange 391 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}			
+		}
 	}
 	elseif ${Mob.Count}==1 || (!${AoEMode} && ${Mob.Count}>1)
 	{
@@ -449,7 +449,7 @@ HealOthersMode
 		{
 			call CastSpellRange 380 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Ancient Wrath
 		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)}
 		{
@@ -467,19 +467,19 @@ HealOthersMode
 				Me.Ability[Master's Strike]:Use
 				spellsused:Inc
 			}
-		}	
+		}
 		;Judgement
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
 		{
 			call CastSpellRange 62 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Swift Attack
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[381]}].IsReady} && !${Me.Maintained[${SpellType[381]}](exists)}
 		{
 			call CastSpellRange 381 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}	
+		}
 		;Clarion
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[160]}].IsReady} && !${Me.Maintained[${SpellType[160]}](exists)}
 		{
@@ -503,7 +503,7 @@ HealOthersMode
 		{
 			call CastSpellRange 154 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Penitent Kick
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady} && !${Me.Maintained[${SpellType[151]}](exists)}
 		{
@@ -515,19 +515,19 @@ HealOthersMode
 		{
 			call CastSpellRange 150 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Righteousness
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[170]}].IsReady} && !${Me.Maintained[${SpellType[170]}](exists)}
 		{
 			call CastSpellRange 170 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}		
+		}
 		;Legionaire's Smite(4pt)
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
 		{
 			call CastSpellRange 391 0 0 0 ${KillTarget}
 			spellsused:Inc
-		}			
+		}
 		;Hammer Ground
 		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[385]}].IsReady} && !${Me.Maintained[${SpellType[385]}](exists)}
 		{
@@ -543,10 +543,10 @@ HealOthersMode
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${Start_HO}
 		call CastSpellRange 303
-		
+
 	if ${Me.IsAfflicted}
 		call CheckCures
-	
+
 	if ${RezMode}
 		call CheckRez
 
@@ -670,7 +670,7 @@ function CheckHeals()
 
 function MeHeals()
 {
-		
+
 	if ${Me.ToActor.Health}<50
 	{
 		if ${Me.ToActor.Health}<25
@@ -693,8 +693,8 @@ function MeHeals()
 		call CastSpellRange 401 0 0 0 ${Me.ID}
 
 	if ${Me.ToActor.Health}<80 && ${Me.Ability[${SpellType[390]}].IsReady}
-		call CastSpellRange 390 0 0 0 ${Me.ID}	
-	
+		call CastSpellRange 390 0 0 0 ${Me.ID}
+
 }
 
 function EmergencyHeal(int healtarget)
@@ -715,11 +715,11 @@ function EmergencyHeal(int healtarget)
 
 function CheckCures()
 {
-	
+
 	;check if we are not in control, and use control cure if needed
 	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
 		call CastSpellRange 399
-	
+
 	;use Castigate or Aura Self Cure
 	if ${Me.IsAfflicted}
 	{
