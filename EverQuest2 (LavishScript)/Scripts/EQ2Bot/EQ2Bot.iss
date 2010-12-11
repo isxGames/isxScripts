@@ -317,7 +317,7 @@ variable int PathType
 
 
 
-function main()
+function main(string Args)
 {
 	variable int tempvar
 	variable int tempvar1
@@ -327,8 +327,17 @@ function main()
 	declare LastWindow string script
 	variable uint AggroMob
 
-	Debug:Enable
-
+	if ${Args.Find[debug]}
+	{
+		echo Enabling Debug
+		Debug:Enable
+	}
+	else
+	{
+		echo Debuging Disabled
+		Debug:Disable
+	}
+	
 	; Added as Part of the AutoAttack Timing Code
 	LastAutoAttack:Set[${Script.RunningTime}/1000]
 
