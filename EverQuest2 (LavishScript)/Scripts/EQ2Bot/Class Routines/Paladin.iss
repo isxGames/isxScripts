@@ -30,7 +30,7 @@ function Class_Declaration()
 	HealerMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[HealerMode,FALSE]}]
 	HealOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[HealOthersMode,FALSE]}]
 	Start_HO:Set{${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start_HO,FALSE]}]
-	DefensiveMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Defensive Stance,FALSE]}]
+	DefensiveMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[DefensiveMode,FALSE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[AoEMode,FALSE]}]
 
 	BuffProcGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember,]}]
@@ -108,7 +108,7 @@ function Buff_Init()
 	PreAction[11]:Set[SA_Buff]
 	PreSpellRange[11,1]:Set[31]
 
-	PreAction[12]:Set[SA_Buff]
+	PreAction[12]:Set[Stances]
 	PreSpellRange[12,1]:Set[295]
 	PreSpellRange[12,2]:Set[290]
 }
@@ -133,7 +133,7 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
-		case Protect_Target
+		case Resolute_Faith
 			BuffTarget:Set[${UIElement[cbBuffProcGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
@@ -186,10 +186,21 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case Stances
-			if ${DefensiveMode} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},1]}](exists)}
+			echo ${DefensiveMode} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			if ${DefensiveMode} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			{
+				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}](exists)}
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}]:Cancel
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
-			elseif ${Me.Ability[${SpellType[${PreSpellRange[${xAction},2]}]}].IsReady} && !${Me.Maintained[${PreSpellRange[${xAction},2]}](exists)}
-			  call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			elseif ${Me.Ability[${SpellType[${PreSpellRange[${xAction},2]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}](exists)}
+			{
+				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				}
+				call CastSpellRange ${PreSpellRange[${xAction},2]}
+			}
 			break
 
 		default
