@@ -186,14 +186,13 @@ function Buff_Routine(int xAction)
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case Stances
-			echo ${DefensiveMode} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			if ${DefensiveMode} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}](exists)}
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}]:Cancel
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
-			elseif ${Me.Ability[${SpellType[${PreSpellRange[${xAction},2]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}](exists)}
+			elseif !${DefensiveMode} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},2]}]}].TimeUntilReady}<.1 && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},2]}]}](exists)}
 			{
 				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
