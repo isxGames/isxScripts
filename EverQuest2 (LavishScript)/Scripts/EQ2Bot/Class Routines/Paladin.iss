@@ -53,13 +53,16 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+2000]}) && \
+	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]}) && \
 		${Me.Ability[${SpellType[7]}].IsReady} && \
 		(!${Me.Maintained[${SpellType[7]}](exists)} || ${Me.Maintained[${SpellType[7]}].Duration} < ${Me.Ability[${SpellType[7]}].CastingTime})
 	{
-		;Debug:Echo["Casting PreWard"]
-		call CastSpellRange 7 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
-		ClassPulseTimer:Set[${Script.RunningTime}]
+		if ${Target.Type.Equal[NPC]}
+		{
+			;Debug:Echo["Casting PreWard"]
+			call CastSpellRange 7 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
+			ClassPulseTimer:Set[${Script.RunningTime}]
+		}
 	}
 
 	;; This has to be set WITHIN any 'if' block that uses the timer.
