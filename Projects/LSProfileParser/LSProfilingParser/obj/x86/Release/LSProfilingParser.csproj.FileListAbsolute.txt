@@ -1,9 +1,0 @@
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\bin\Release\LSProfilingParser.exe
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\bin\Release\LSProfilingParser.pdb
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\ResolveAssemblyReference.cache
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\LSProfilingParser.Form1.resources
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\LSProfilingParser.Properties.Resources.resources
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\GenerateResource.read.1.tlog
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\GenerateResource.write.1.tlog
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\LSProfilingParser.exe
-C:\Documents and Settings\stiff\Мои документы\Visual Studio 2010\Projects\LSProfilingParser\LSProfilingParser\obj\x86\Release\LSProfilingParser.pdb
