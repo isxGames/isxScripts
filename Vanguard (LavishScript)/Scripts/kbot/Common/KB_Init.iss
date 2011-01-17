@@ -1,7 +1,7 @@
 /*
 
 
-          DO NOT CHANGE ANYTHING IN HERE!
+DO NOT CHANGE ANYTHING IN HERE!
 
 
 */
@@ -55,21 +55,21 @@
 function KB_Init()
 {
 
-  	declare SaveDir				filepath			script 	"${Script.CurrentDirectory}/save/"
-  	declare ConfigFile			string				script 	"${Script.CurrentDirectory}/save/${Me.FName}_config.xml"
-  	declare OutputFile			string				script 	"${Script.CurrentDirectory}/save/${Me.FName}_debug.log"
-  	declare VGPathsDir			filepath			script 	"${Script.CurrentDirectory}/vgpaths/"
+	declare SaveDir				filepath			script 	"${Script.CurrentDirectory}/save/"
+	declare ConfigFile			string				script 	"${Script.CurrentDirectory}/save/${Me.FName}_config.xml"
+	declare OutputFile			string				script 	"${Script.CurrentDirectory}/save/${Me.FName}_debug.log"
+	declare VGPathsDir			filepath			script 	"${Script.CurrentDirectory}/vgpaths/"
 
 	declare AutoRespondFile 	string				script 	"${Script.CurrentDirectory}/common/autorespond.xml"
 
-  	declare setConfig			settingsetref 		script
-  	declare setPath				settingsetref 		script
-  	declare setAutoRespond		settingsetref 		script
- 
+	declare setConfig			settingsetref 		script
+	declare setPath				settingsetref 		script
+	declare setAutoRespond		settingsetref 		script
 
-  	declare CurrentWP			int					script 	1
-  	declare LastWP				int					script 	1
-  	declare WPDirection			string				script 	"Forward"
+
+	declare CurrentWP			int					script 	1
+	declare LastWP				int					script 	1
+	declare WPDirection			string				script 	"Forward"
 
 	declare leashToFar			bool				script 	FALSE
 	declare justPorted			bool				script 	FALSE
@@ -92,21 +92,21 @@ function KB_Init()
 	;General declare s
 	declare Tank				string				script
 	declare TankID				int64				script
-	
+
 	declare TotalKills 			int					script
 	declare CurrentXP 			int					script
 	declare StartingXP 			int					script
 	declare GainedXP			int					script
-	
+
 	declare LastCorpseID		int64				script
 	declare isRunning			bool 				script 	FALSE
 	declare isPaused			bool 				script 	FALSE
-	
+
 	;Totally AFK declare s
 	declare  TotallyAFK			bool				script 	FALSE
 	declare  AFKAbility 		string				script
 	declare  AFKMessage 		string				script
-	
+
 	;Combat declare s
 	declare AttackOrder			int 				script 	1
 	declare StuckLoop			int 				script 	0
@@ -114,7 +114,7 @@ function KB_Init()
 	declare MaxLevel			int 				script 	0
 	declare MinLevel			int 				script 	0
 	declare Pulled				bool 				script 	FALSE
-	
+
 	; object defined in bnavobjects.iss
 	;declare navi				bnav				global
 	;declare PathFinder			astarpathfinder 	global
@@ -127,24 +127,22 @@ function KB_Init()
 	declare pointcount			int 				global 	0
 	declare isMapping			bool 				script 	TRUE
 	declare autoMapOn			bool				script	TRUE
-	
+
 	; Other Stuff
 	declare DoWeHaveFD			bool				script
 	declare FeignDeath			string 				script
-	declare FeignDeathAt		int 				script 
-	declare FightOnAt			int 				script 
-	
+	declare FeignDeathAt		int 				script
+	declare FightOnAt			int 				script
+
 	declare DoWeHaveCanni		bool				script
 	declare Canni				string 				script
-	declare CanniHPAt			int 				script 
+	declare CanniHPAt			int 				script
 	declare CanniEgAt			int					script
-	
-	declare RequiredJin 		int 				script 
-	
+
+	declare RequiredJin 		int 				script
+
 	; Blacklisting Variables
 	declare Reset_GUIDBlacklist	bool				script 	TRUE
 	declare GUIDBlacklist		collection:int64	script
 	declare NameBlacklist		collection:int  	script
-
-
 }

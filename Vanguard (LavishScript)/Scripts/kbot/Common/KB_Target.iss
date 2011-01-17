@@ -9,7 +9,7 @@ function:bool FindTarget(int checkDistance)
 	if ${Me.InCombat} || ${Me.Encounter} > 0
 	{
 		; If we are already in combat, just keep the current Target (unless it's dead)
-		if ${Me.Target.IsDead} || ${Me.Target.Type.Equal[CORPSE]} || ${Me.TargetHealth} <= 0 
+		if ${Me.Target.IsDead} || ${Me.Target.Type.Equal[CORPSE]} || ${Me.TargetHealth} <= 0
 		{
 			call DebugIt ".  FindTarget Called -- target IsDead"
 			VGExecute /cleartargets
@@ -26,7 +26,10 @@ function:bool FindTarget(int checkDistance)
 			for (iCount:Set[1] ; ${iCount}<=${Me.Encounter} ; iCount:Inc)
 			{
 				if ${Me.Encounter[${iCount}].ToPawn.IsDead} || ${Me.Encounter[${iCount}].ToPawn.Type.Equal[CORPSE]}
+				{
 					continue
+				}
+				
 				;if ${Me.Encounter[${iCount}].Distance} > ${maxPullRange}
 				;	continue
 
@@ -39,7 +42,7 @@ function:bool FindTarget(int checkDistance)
 			call DebugIt ".  FindTarget Encouter but not able to Target any mobs"
 			return FALSE
 		}
- 	}
+	}
 
 	; If we are in combat, find Targets that are owned by us
 	if ${Me.InCombat}
@@ -47,22 +50,25 @@ function:bool FindTarget(int checkDistance)
 		for (iCount:Set[1] ; ${iCount} <= ${VG.PawnCount} ; iCount:Inc)
 		{
 			if ${Pawn[${iCount}].ID} == ${Me.ToPawn.ID}
+			{
 				continue
+			}
+			
 			if ${Pawn[${iCount}].Owner.Equal[${Me.Name}]}
 			{
-					Pawn[${iCount}]:Target
-					cTargetID:Set[${Pawn[${iCount}].ID}]
-					wait 5
-					return TRUE
+				Pawn[${iCount}]:Target
+				cTargetID:Set[${Pawn[${iCount}].ID}]
+				wait 5
+				return TRUE
 			}
 		}
 	}
 
-
 	; We are not in Combat, so find a good Target
-
 	if ${checkDistance} == 0
+	{
 		checkDistance:Set[${maxRoamingDistance}]
+	}
 
 	MinLevel:Set[${Math.Calc[${Me.Level} - ${modMinLevel}].Int}]
 	MaxLevel:Set[${Math.Calc[${Me.Level} + ${modMaxLevel}].Int}]
@@ -71,9 +77,10 @@ function:bool FindTarget(int checkDistance)
 
 	for (iCount:Set[1] ; ${iCount} <= ${VG.PawnCount} ; iCount:Inc)
 	{
-
 		if ${Pawn[${iCount}].ID} == ${Me.ToPawn.ID}
+		{
 			continue
+		}
 
 		; First check to see if this ID has been blacklisted
 		if ${MobBlackList.Element[${Pawn[${iCount}].ID}](exists)}
@@ -86,11 +93,36 @@ function:bool FindTarget(int checkDistance)
 
 		if ${doNonAgroMobs}
 		{
-			if (${Pawn[${iCount}].Type.Equal[NPC]} || ${Pawn[${iCount}].Type.Equal[AggroNPC]}) && ${Pawn[${iCount}].Distance} < ${checkDistance} && ${Pawn[${iCount}].Level} >= ${MinLevel} && ${Pawn[${iCount}].Level} <= ${MaxLevel} && ${Pawn[${iCount}].HaveLineOfSightTo}
+			if (${Pawn[${iCount}].Type.Equal[NPC]} || ${Pawn[${iCount}].Type.Equal[AggroNPC]}) && ${Pawn[${iCount}].Distance} < ${checkDistance} && ${Pawn[${iCount}].Level} >= ${MinLevel} && ${Pawn[${iCount}].Level} <= ${MaxLevel} && ${Pawn[${iCount}].HaveLineOfSightTo} && !${Pawn[${iCount}].IsDead}
 			{
 				Pawn[${iCount}]:Target
 				wait 3
- 
+
+				; If we are already in combat, just keep the current Target (unless it's dead)
+				if ${Me.Target.IsDead} || ${Me.Target.Type.Equal[CORPSE]} || ${Me.TargetHealth} <= 99
+				{
+					if ${Me.TargetHealth} <= 99
+					{
+						call DebugIt ".  FindTarget Called -- target health is below 100"
+					}
+					else
+					{
+						call DebugIt ".  FindTarget Called -- target IsDead"
+					}
+					call BlackListMobID ${Me.Target.ID}
+					VGExecute /cleartargets
+					wait 5
+				}
+
+				; If we are already in combat, just keep the current Target (unless it's dead)
+				if ${Me.Target.IsDead} || ${Me.Target.Type.Equal[CORPSE]} || ${Me.TargetHealth} <= 99
+				{
+					call DebugIt ".  FindTarget Called -- target IsDead"
+					call BlackListMobID ${Me.Target.ID}
+					VGExecute /cleartargets
+					wait 5
+				}
+
 				if ${Me.TargetAsEncounter.Difficulty} > ${ConCheck}
 				{
 					call DebugIt ".  T_Next: too Difficult: ${Me.TargetAsEncounter.Difficulty} > ${ConCheck}"
@@ -108,20 +140,31 @@ function:bool FindTarget(int checkDistance)
 				}
 			}
 		}
-		else   
+		else
 		{
 			call TargetOnList "${Pawn[${iCount}].Name}"
-			if ${Return} && ${Pawn[${iCount}].Distance} < ${checkDistance} && ${Pawn[${iCount}].Level} >= ${MinLevel} && ${Pawn[${iCount}].Level} <= ${MaxLevel} && ${Pawn[${iCount}].HaveLineOfSightTo}
+			if ${Return} && ${Pawn[${iCount}].Distance} < ${checkDistance} && ${Pawn[${iCount}].Level} >= ${MinLevel} && ${Pawn[${iCount}].Level} <= ${MaxLevel} && ${Pawn[${iCount}].HaveLineOfSightTo} && !${Pawn[${iCount}].IsDead}
 			{
 				Pawn[${iCount}]:Target
 				wait 3
- 
+
+				; If we are already in combat, just keep the current Target (unless it's dead)
+				if ${Me.Target.IsDead} || ${Me.Target.Type.Equal[CORPSE]} || ${Me.TargetHealth} <= 99
+				{
+					call DebugIt ".  FindTarget Called -- target IsDead"
+					call BlackListMobID ${Me.Target.ID}
+					VGExecute /cleartargets
+					wait 5
+					return FALSE
+				}
+
 				if ${Me.TargetAsEncounter.Difficulty} > ${ConCheck}
 				{
 					call DebugIt ".  T_Next: too Difficult: ${Me.TargetAsEncounter.Difficulty} > ${ConCheck}"
 					call BlackListMobID ${Me.Target.ID}
 					echo ".   T_Next ConCheck overLimit: clearTargets"
 					VGExecute /cleartargets
+					wait 5
 					return FALSE
 				}
 				else
@@ -136,7 +179,7 @@ function:bool FindTarget(int checkDistance)
 		}
 	}
 
-  return FALSE
+	return FALSE
 
 }
 
@@ -146,7 +189,9 @@ function:bool FindTarget(int checkDistance)
 function BlackListMobID(int64 anID)
 {
 	if !${MobBlackList.Element[${anID}](exists)}
+	{
 		MobBlackList:Set[${anID},${anID}]
+	}
 }
 
 
@@ -156,7 +201,9 @@ function BlackListMobID(int64 anID)
 function:bool MobIDBlackListed(int64 anID)
 {
 	if ${MobBlackList.Element[${anID}](exists)}
+	{
 		return TRUE
+	}
 	return FALSE
 }
 
@@ -174,7 +221,9 @@ function:bool TargetOnList(string aName)
 	while ${anIter.Key(exists)}
 	{
 		if ${aName.Equal[${anIter.Key}]}
+		{
 			return TRUE
+		}
 		anIter:Next
 	}
 	return FALSE
@@ -215,10 +264,12 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 			call DebugIt ".  TargetinRange Called, but we already have a target inCombat"
 			return "MOB"
 		}
- 	}
+	}
 
 	if ${checkDistance} == 0
+	{
 		checkDistance:Set[${maxRoamingDistance}]
+	}
 
 	MinLevel:Set[${Math.Calc[${Me.Level} - ${modMinLevel}].Int}]
 	MaxLevel:Set[${Math.Calc[${Me.Level} + ${modMaxLevel}].Int}]
@@ -233,7 +284,9 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 	for (iCount:Set[1] ; ${iCount} <= ${iTotal} ; iCount:Inc)
 	{
 		if ${pIndex.Get[${iCount}].ID} == ${Me.ToPawn.ID}
+		{
 			continue
+		}
 
 		; First check to see if this ID has been blacklisted
 		if ${MobBlackList.Element[${pIndex.Get[${iCount}].ID}](exists)}
@@ -247,15 +300,15 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 		{
 			if (${pIndex.Get[${iCount}].Type.Equal[NPC]} || ${pIndex.Get[${iCount}].Type.Equal[AggroNPC]}) && ${pIndex.Get[${iCount}].Distance} < ${checkDistance} && ${pIndex.Get[${iCount}].Level} >= ${MinLevel} && ${pIndex.Get[${iCount}].Level} <= ${MaxLevel} && ${pIndex.Get[${iCount}].HaveLineOfSightTo}
 			{
-					return "MOB"
+				return "MOB"
 			}
 		}
-		else   
+		else
 		{
 			call TargetOnList "${pIndex.Get[${iCount}].Name}"
 			if ${Return} && ${pIndex.Get[${iCount}].Distance} < ${checkDistance} && ${pIndex.Get[${iCount}].Level} >= ${MinLevel} && ${pIndex.Get[${iCount}].Level} <= ${MaxLevel} && ${pIndex.Get[${iCount}].HaveLineOfSightTo}
 			{
-					return "MOB"
+				return "MOB"
 			}
 		}
 	}
@@ -264,17 +317,21 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 	if ${doNonAgroMobs}
 	{
 		if ${Pawn[npc,AgroNPC,levels,${MinLevel},${MaxLevel},from,${inX},${inY},${inZ},radius,${checkDistance}](exists)}
+		{
 			return "MOB"
+		}
 	}
 	else
 	{
 		setPath.FindSet[${Me.Chunk}].FindSet[Mobs]:GetSettingIterator[anIter]
 		anIter:First
-
+		
 		while ${anIter.Key(exists)}
 		{
 			if ${Pawn[exactname,${anIter.Key},levels,${MinLevel},${MaxLevel},from,${inX},${inY},${inZ},radius,${checkDistance}](exists)}
+			{
 				return "MOB"
+			}
 			anIter:Next
 		}
 	}
@@ -284,21 +341,27 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 	if ${doLootCorpses}
 	{
 		pIndex:Clear
-
+		
 		; Now look for corpses we can loot
 		iTotal:Set[${VG.GetPawns[pIndex,corpse,from,${inX},${inY},${inZ},radius,${checkDistance}]}]
-
+		
 		call DebugIt ".  Corpse List: ${iTotal}"
-
+		
 		for (iCount:Set[1] ; ${iCount} <= ${iTotal} ; iCount:Inc)
 		{
 			if ${pIndex.Get[${iCount}].ID} == ${Me.ToPawn.ID}
+			{
 				continue
+			}
 			if ${CorpseBlackList.Element[${pIndex.Get[${iCount}].ID}](exists)}
+			{
 				continue
-
+			}
+			
 			if ${pIndex.Get[${iCount}].ContainsLoot}
+			{
 				return "CORPSE"
+			}
 		}
 	}
 */
@@ -309,7 +372,9 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 		setConfig.FindSet[Harvest]:GetSettingIterator[anIter]
 
 		if !${anIter:First(exists)}
+		{
 			return "NONE"
+		}
 
 		while ${anIter.Key(exists)}
 		{
@@ -322,7 +387,9 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 			for (iCount:Set[1] ; ${iCount} <= ${iTotal} ; iCount:Inc)
 			{
 				if ${pIndex.Get[${iCount}].ID} == ${Me.ToPawn.ID}
+				{
 					continue
+				}
 				if ${pIndex.Get[${iCount}].Name.Find[remains]}
 				{
 					;call DebugIt ".  Resource (${anIter.Key}) remains ${pIndex.Get[${iCount}].Name}"
@@ -333,12 +400,15 @@ function:string TargetInRange(float inX, float inY, float inZ, int checkDistance
 					;call DebugIt ".  Resource (${anIter.Key}) BlackListed: ${pIndex.Get[${iCount}].ID}"
 					continue
 				}
-				call DebugIt ".  Resource (${anIter.Key}) FOUND: ${pIndex.Get[${iCount}].Name}"
-				return "HARVEST"
+				if ${pIndex.Get[${iCount}].Name.Equal[${anIter.Key}]}
+				{
+					;HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+					call DebugIt ".  Resource (${anIter.Key}) FOUND: ${pIndex.Get[${iCount}].Name} at distance of ${pIndex.Get[${iCount}].Distance}"
+					return "HARVEST"
+				}
 			}
 			anIter:Next
 		}
 	}
-
 	return "NONE"
 }

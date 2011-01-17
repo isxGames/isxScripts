@@ -9,15 +9,15 @@ variable string sOutputFile = "${Script.CurrentDirectory}/vgpaths/move_debug.log
 objectdef  bnav
 {
 
-variable string CurrentRegion
-variable string LastRegion
-variable int bpathindex
-variable lnavpath mypath
-variable lnavconnection CurrentConnection
+	variable string CurrentRegion
+	variable string LastRegion
+	variable int bpathindex
+	variable lnavpath mypath
+	variable lnavconnection CurrentConnection
 
-variable bool isMoving
-variable time tTimeOut
-variable int stuckCounter
+	variable bool isMoving
+	variable time tTimeOut
+	variable int stuckCounter
 
 
 	function:bool Initialize()
@@ -65,7 +65,7 @@ variable int stuckCounter
 
 		Event[OnFrame]:DetachAtom[This:Move]
 	}
-	
+
 	method SavePaths()
 	{
 		LNavRegion[${Me.Chunk}]:Export[${sVGPathsDir}/${Me.Chunk}.xml]
@@ -144,7 +144,9 @@ variable int stuckCounter
 	{
 		CurrentRegion:Set[${LNavRegion[${This.CurrentRegionID}].ID}]
 		if !${CurrentRegion(exists)} || ${CurrentRegion.Equal[NULL]} || ${LastRegion.Equal[NULL]}
+		{
 			return
+		}
 		if !${CurrentRegion.Equal[${LastRegion}]} && !${LNavRegion[${CurrentRegion}].Type.Equal[Universe]} && !${LNavRegion[${LastRegion}].Type.Equal[Universe]} && !${LNavRegion[${LastRegion}].Avoid} && !${LNavRegion[${CurrentRegion}].Avoid}
 		{
 			if ${This.ShouldConnect[${LNavRegion[${CurrentRegion}].ID},${LNavRegion[${LastRegion}].ID}]}
@@ -183,19 +185,19 @@ variable int stuckCounter
 	{
 		variable point3f From
 		From:Set[${FromX},${FromY},${FromZ}]
-		
+
 		variable point3f To
 		To:Set[${ToX},${ToY},${ToZ}]
-		
+
 		;call DebugOut "bNav:CollisionTest: From ${FromX},${FromY},${FromZ} to ${ToX},${ToY},${ToZ}"
-		
+
 		if ${VG.CheckCollision[${From}, ${To}](exists)} || ${VG.CheckCollision[${To}, ${From}](exists)}
 		{
 			call DebugOut "VG: CheckCollision ${VG.CheckCollision[${To}, ${From}].Location} = TRUE"
 			return TRUE
 		}
 		return FALSE
-	}	
+	}
 
 	function FindClosestPoint(int myx, int myy, int myz)
 	{
@@ -213,7 +215,7 @@ variable int stuckCounter
 	{
 		variable point3f Location
 		Location:Set[${X},${Y},${Z}]
-		
+
 		variable lnavregionref Container
 
 		Container:SetRegion[${LNavRegion[${This.CurrentRegionID}].BestContainer[${Location}].ID}]
@@ -238,7 +240,7 @@ variable int stuckCounter
 	}
 
 	function FindPath(string startRegion, string endRegion)
-	{	
+	{
 		variable astarpathfinder aPathFinder
 		variable dijkstrapathfinder dPathFinder
 		variable index:lnavregionref endRegionsIndex
@@ -265,7 +267,6 @@ variable int stuckCounter
 		{
 			return TRUE
 		}
-
 
 		; Ok, need to start trying to find paths to different endpoints
 		Region:Set[${LNavRegion[${endRegion}].FQN}]
@@ -349,21 +350,21 @@ variable int stuckCounter
 		return ${isMoving}
 	}
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;
-;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;
-;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;                           ;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;
+	;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;
+	;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;;;;;;;;   ;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;                           ;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	function:bool MoveToMappedArea()
 	{
@@ -627,7 +628,11 @@ variable int stuckCounter
 						VG:ExecBinding[moveforward,release]
 						return "STUCK"
 					}
-
+					if !${CurrentChunk.Equal[${Me.Chunk}]}	
+					{
+						VG:ExecBinding[moveforward,release]
+						return "STUCK"
+					}
 				}
 			}
 			while ${bpathindex:Inc} <= ${mypath.Hops} && !${Me.InCombat}
@@ -644,15 +649,15 @@ variable int stuckCounter
 
 	function:string FastMove(float X, float Y, int range, string Region, bool checkMobs)
 	{
-			call DebugOut "bNav: FastMove ${X} ${Y} ${range} ${Region} ${checkMobs}"
+		call DebugOut "bNav: FastMove ${X} ${Y} ${range} ${Region} ${checkMobs}"
 
-			do
-			{
-				call doFastMove ${X} ${Y} ${range} ${Region} ${checkMobs}
-			}
-			while ${Return.Equal[MOVING]}
+		do
+		{
+			call doFastMove ${X} ${Y} ${range} ${Region} ${checkMobs}
+		}
+		while ${Return.Equal[MOVING]}
 
-			return "${Return}"
+		return "${Return}"
 	}
 
 	function:string doFastMove(float X, float Y, int range, string Region, bool checkMobs)
@@ -699,7 +704,7 @@ variable int stuckCounter
 
 		}
 		while (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} > ${range}) && (${Math.Calc[${Time.Timestamp} - ${FullTimer}]} < 3)
-		
+
 		if (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]} < ${range})
 		{
 			return "SUCCESS"
@@ -711,21 +716,21 @@ variable int stuckCounter
 		}
 	}
 
-/*
- *****************************************************************************************************
-
- *****************************************************************************************************
-
- *****************************************************************************************************
- ***                                ******************************************************************
- ***                                                               ***********************************
- ***********************************                                                         *********
- *****************************************************************************************************
-
- *****************************************************************************************************
-
- *****************************************************************************************************
-*/
+	/*
+	*****************************************************************************************************
+	
+	*****************************************************************************************************
+	
+	*****************************************************************************************************
+	***                                ******************************************************************
+	***                                                               ***********************************
+	***********************************                                                         *********
+	*****************************************************************************************************
+	
+	*****************************************************************************************************
+	
+	*****************************************************************************************************
+	*/
 
 	function:string SetupPathXYZ(int iX, int iY, int iZ)
 	{
@@ -795,15 +800,15 @@ variable int stuckCounter
 			if ${stuckCounter} > 3
 			{
 				; We keep getting stuck here, so let's remove this connection
-					CurrentConnection:SetConnection[${mypath.Connection[${bpathindex}]}]
-					call DebugOut "bNav: Removing Connection ${mypath.Connection[${bpathindex}]}"
-					CurrentConnection:Remove
+				CurrentConnection:SetConnection[${mypath.Connection[${bpathindex}]}]
+				call DebugOut "bNav: Removing Connection ${mypath.Connection[${bpathindex}]}"
+				CurrentConnection:Remove
 				; Now Stop moving and let the calling program deal with it.
-					call This.StopMoving
-					isMoving:Set[FALSE]
-					bpathindex:Set[1]
-					mypath:Clear
-					return
+				call This.StopMoving
+				isMoving:Set[FALSE]
+				bpathindex:Set[1]
+				mypath:Clear
+				return
 			}
 			; Try moving back to the previous path index
 			bpathindex:Dec
@@ -813,14 +818,14 @@ variable int stuckCounter
 
 	}
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	member:string getlvl()
 	{
@@ -838,31 +843,31 @@ variable int stuckCounter
 		lvl:Set[${Math.Calc[${lvl}/${lp}]}]
 		Return ${lvl}
 	}
-	
+
 	method AddHuntPoint()
 	{
-;			variable string tmp
-;			tmp:Set[${LNavRegion[${This.CurrentRegionID}].AddChild[point,"auto",-unique,${Me.X},${Me.Y},${Me.Z}]}]
-;			LNavRegion[${tmp}]:SetCustom["level", ${This.getlvl}]
-;			LNavRegionGroup["hunt"]:Add[${tmp}]
-;			if !${LNavRegion[${pointname}].Parent.Type.Equal[Universe]}
-;			{
-;				LNavRegion[${LNavRegion[${tmp}].Parent}]:Connect[${tmp}]
-;			}
-;			if ${debug}
-;			{
-;				echo added ${LNavRegion[${tmp}]} to hunt region group.
-;			}
+		;			variable string tmp
+		;			tmp:Set[${LNavRegion[${This.CurrentRegionID}].AddChild[point,"auto",-unique,${Me.X},${Me.Y},${Me.Z}]}]
+		;			LNavRegion[${tmp}]:SetCustom["level", ${This.getlvl}]
+		;			LNavRegionGroup["hunt"]:Add[${tmp}]
+		;			if !${LNavRegion[${pointname}].Parent.Type.Equal[Universe]}
+		;			{
+		;				LNavRegion[${LNavRegion[${tmp}].Parent}]:Connect[${tmp}]
+		;			}
+		;			if ${debug}
+		;			{
+		;				echo added ${LNavRegion[${tmp}]} to hunt region group.
+		;			}
 
-			variable string Region = ${This.CurrentRegionID}
-			if !${LNavRegion[${Region}].Type.Equal[Universe]}
-			{
-				LNavRegion[${Region}]:SetCustom["level", ${This.getlvl}]
-				LNavRegionGroup["hunt"]:Add[${Region}]
-			}
-			
+		variable string Region = ${This.CurrentRegionID}
+		if !${LNavRegion[${Region}].Type.Equal[Universe]}
+		{
+			LNavRegion[${Region}]:SetCustom["level", ${This.getlvl}]
+			LNavRegionGroup["hunt"]:Add[${Region}]
+		}
+
 	}
-	
+
 }
 
 
@@ -893,3 +898,5 @@ atom Bump(string Name)
 		}
 	}
 }
+
+

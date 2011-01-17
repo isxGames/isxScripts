@@ -1,18 +1,18 @@
 /* KBot
 
- * Version v4 -- February 2, 2009 
+* Version v4 -- February 2, 2009
 
- * Credits:
- * 	Created by Kram (Melee Mods by Denthan)
- * 	Harvesting code by Abbadon
- *  Massive code re-write by MadHatter and Xeon
- *  In "maintain only" mode as of 2009 by Amadeus
- * 
- * With MUCH help from: Amadeus, dontdoit, Thanatos, Abbadon, Zeek, Xeon, Tsumari, 
- * Xxyn, Neriod, and every helpful person in IRC
- * Thanks to those who helped beta test.
- *
- */
+* Credits:
+*  Created by Kram (Melee Mods by Denthan)
+*  Harvesting code by Abbadon
+*  Massive code re-write by MadHatter and Xeon
+*  In "maintain only" mode as of 2009 by Amadeus
+*
+* With MUCH help from: Amadeus, dontdoit, Thanatos, Abbadon, Zeek, Xeon, Tsumari,
+* Xxyn, Neriod, and every helpful person in IRC
+* Thanks to those who helped beta test.
+*
+*/
 
 ;Including the moveto.iss file from within the common folder (see requirements above)
 #include common/KB_Init.iss
@@ -63,7 +63,7 @@ variable bool doUseCombatForms
 variable string attackFormName
 variable string defenseFormName
 variable string neutralFormName
-variable int changeFormPct 
+variable int changeFormPct
 
 variable bool doForage
 variable bool doArrowAssemble
@@ -120,7 +120,6 @@ variable string SecondaryWeapon
 variable string BardTravelInstrument
 variable string BardRestInstrument
 
-
 variable bool doNecropsy
 variable bool doGetMinions
 variable bool doGetEnergy
@@ -129,6 +128,7 @@ variable string necropsyAbility
 variable int vilePct
 variable string minionAbility1
 variable string minionAbility2
+
 /*  Yes this is suppose to be NONE */
 variable string lastMinion = "NONE"
 
@@ -174,13 +174,11 @@ variable bool doTellAlarm = TRUE
 variable bool doSayAlarm = TRUE
 variable bool doLevelAlarm = TRUE
 
-
 ; ******************
 ; ** Main Routine **
 ; ******************
 function main(string Version)
 {
-
 	;Load ISXVG if its not loaded
 	ext -require isxvg
 
@@ -188,7 +186,7 @@ function main(string Version)
 	{
 		do
 		{
-		   wait 10
+			wait 10
 		}
 		while !${ISXVG.IsReady}
 	}
@@ -206,7 +204,7 @@ function main(string Version)
 
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 	ui -reload "${Script.CurrentDirectory}/XML/KBotUI.xml"
-	
+
 
 	call PopulateLists
 	call SetupAbilities
@@ -223,6 +221,7 @@ function main(string Version)
 	{
 		UIElement[Ranger@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:Show
 	}
+
 	; begin add by cj
 	elseif ${Me.Class.Equal[Necromancer]}
 	{
@@ -244,7 +243,7 @@ function main(string Version)
 	Event[VG_onReceivedTradeInvitation]:AttachAtom[KBot_onReceivedTradeInvitation]
 	Event[VG_onConnectionStateChange]:AttachAtom[KBot_onConnectionStateChange]
 	Event[VG_onPawnIDChange]:AttachAtom[KBot_onPawnIDChange]
-	Event[VG_onPawnStatusChange]:AttachAtom[KBot_onPawnStatusChange]	
+	Event[VG_onPawnStatusChange]:AttachAtom[KBot_onPawnStatusChange]
 
 	isRunning:Set[TRUE]
 	isPaused:Set[FALSE]
@@ -257,12 +256,16 @@ function main(string Version)
 	lastXP:Set[${Me.XP}]
 	startXP:Set[${Me.XP}]
 
-	do 
+	do
 	{
 		if ${QueuedCommands}
+		{
 			ExecuteQueued
+		}
 		else
+		{
 			WaitFrame
+		}
 
 		if ${isPaused} || !${hasStarted}
 		{
@@ -281,7 +284,9 @@ function main(string Version)
 
 		; Check what state we are in
 		if ( ${cState} == KB_PAUSE )
+		{
 			wait 5
+		}
 		else
 		{
 			call SetState
@@ -289,7 +294,7 @@ function main(string Version)
 		}
 
 		if ( ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 120 )
- 		{
+		{
 			call DebugIt "NOTICE: Idle for more than 2 minutes, kickstart!"
 			echo "Timeout: ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]}"
 			cState:Set[KB_MOVE]
@@ -306,7 +311,9 @@ function main(string Version)
 	call bNavi.StopMoving
 
 	if ${Script[ForestRun](exists)}
+	{
 		endscript forestrun
+	}
 
 	VG:ExecBinding[movebackward,release]
 	VG:ExecBinding[moveforward,release]
@@ -328,7 +335,33 @@ function SetState()
 		echo "---------------------------------------"
 		echo "-   Changed Chunks -- Ending Script   -"
 		echo "---------------------------------------"
-		isRunning:Set[FALSE]
+		;isRunning:Set[FALSE]
+		
+		;; Stop all movement
+		VG:ExecBinding[movebackward,release]
+		VG:ExecBinding[moveforward,release]
+
+		;; We do not want this in our future scans
+		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+
+		;; Backup
+		VG:ExecBinding[movebackward]
+		
+		;; Wait until we are back in our chunk
+		while !${CurrentChunk.Equal[${Me.Chunk}]} && ${isRunning}
+			waitframe
+
+		;; backup some more
+		wait 10
+		
+		;; stop moving
+		VG:ExecBinding[movebackward,release]
+
+		;; clear target
+		VGExecute /cleartarget
+
+		;; check for healing and drive on
+		cState:Set[KB_HEAL]
 	}
 
 	if ${usePortSafe} && !${justPorted}
@@ -355,15 +388,15 @@ function SetState()
 
 	while ${Me.ToPawn.IsStunned}
 	{
-      call DebugIt "Stunned: ${Me.ToPawn.IsStunned}"
-      wait 3
+		call DebugIt "Stunned: ${Me.ToPawn.IsStunned}"
+		wait 3
 	}
 
 /*
 	if ${Me.InCombat}
 	{
 		call ValidTarget
- 		if !${Return}
+		if !${Return}
 		{
 			call DebugIt "SetState: ValidTarget is FALSE"
 			VGExecute /cleartarget
@@ -376,11 +409,11 @@ function SetState()
 	; Players Nearby?
 	if ${doTotallyAFK}
 	{
-			call CheckForNearPlayers
-			if ${Return}
-			{
-				call GoAFK
-			}
+		call CheckForNearPlayers
+		if ${Return}
+		{
+			call GoAFK
+		}
 	}
 */
 
@@ -388,9 +421,9 @@ function SetState()
 	; We are Drowning, get the fuck out of here!
 	if ${GV[bool,bIsDrowning]}
 	{
-			; Let's move!
-			leashToFar:Set[TRUE]
-			call Roaming TRUE
+		; Let's move!
+		leashToFar:Set[TRUE]
+		call Roaming TRUE
 	}
 */
 
@@ -416,7 +449,7 @@ function CheckState()
 			; Do we need to heal ourselves out of combat
 			call CombatHeal
 			if !${Return}
-				cState:Set[KB_SAFECHECK]
+			cState:Set[KB_SAFECHECK]
 			break
 
 		case KB_SAFECHECK
@@ -431,28 +464,28 @@ function CheckState()
 			;if ${Return}
 
 			if ${doForage}
-				call ForageCheck
+			call ForageCheck
 
 			cState:Set[KB_FORMS]
 			break
 
 		case KB_FORMS
 			if ${doUseForms}
-				call Forms
+			call Forms
 			cState:Set[KB_BUFF]
 			break
 
 		case KB_BUFF
 			call BuffUp
-				cState:Set[KB_TOGGLEBUFF]
+			cState:Set[KB_TOGGLEBUFF]
 			break
 
 		case KB_TOGGLEBUFF
 			call ToggleBuffs
 			if ${Me.HealthPct} < ${restHealthPct} || ${Me.EndurancePct} < ${restEndurancePct} || ${Me.EnergyPct} < ${restEnergyPct}
-				cState:Set[KB_REST]
+			cState:Set[KB_REST]
 			else
-				cState:Set[KB_CORPSECHECK]
+			cState:Set[KB_CORPSECHECK]
 			break
 
 
@@ -466,82 +499,96 @@ function CheckState()
 			}
 
 			if ${Me.Class.Equal[Bard]}
+			{
 				call PlayBardSong "Rest"
+			}
 
-			;call AreWeSafe
-			;if ${Return}
-			;{
+			call CombatHeal
 
-				call CombatHeal
+			; Rest up for next fight?
+			if ${Me.HealthPct} < ${restHealthPct} || ${Me.EndurancePct} < ${restEndurancePct} || ${Me.EnergyPct} < ${restEnergyPct}
+			{
+				call DebugIt ". Need to rest up, downtime loop started..."
+				isSitting:Set[FALSE]
 
-				; Rest up for next fight?
-				if ${Me.HealthPct} < ${restHealthPct} || ${Me.EndurancePct} < ${restEndurancePct} || ${Me.EnergyPct} < ${restEnergyPct}
+				do
 				{
-					call DebugIt ". Need to rest up, downtime loop started..."
-					isSitting:Set[FALSE]
-
-					do
-					{
-						wait 10
-						call Downtime
-						tTimeOut:Set[${Time.Timestamp}]
-					}
-					while ${Return}
-
-					VGExecute /stand
-
-					; Also check to see if we need to reload Ammo Case
-					if ${doLoadArrows}
-						call LoadArrows
-					justAte:Set[FALSE]
-
-					cState:Set[KB_CORPSECHECK]
+					wait 10
+					call Downtime
+					tTimeOut:Set[${Time.Timestamp}]
 				}
-				else
-					cState:Set[KB_CORPSECHECK]
-			;}
-			;else
-			;{
-			;	cState:Set[KB_MOVESAFE]
-			;}
+				while ${Return}
+
+				VGExecute /stand
+
+				; Also check to see if we need to reload Ammo Case
+				if ${doLoadArrows}
+				{
+					call LoadArrows
+				}
+				justAte:Set[FALSE]
+				cState:Set[KB_CORPSECHECK]
+			}
+			else
+			{
+				cState:Set[KB_CORPSECHECK]
+			}
 			break
 
 		case KB_CORPSECHECK
 			; Check to see if there is a corpse we should loot
 			call CorpseCheck
 			if ${Return.Equal[LOOT]}
+			{
 				cState:Set[KB_LOOT]
+			}
 			elseif ${Return.Equal[SKIN]}
+			{
 				cState:Set[KB_SKIN]
+			}
 			elseif ${Return.Equal[NECROPSY]}
+			{
 				cState:Set[KB_NECROPSY]
+			}
 			elseif ${Return.Equal[GETENERGY]}
+			{
 				cState:Set[KB_GETENERGY]
+			}
 			elseif ${Return.Equal[GETMINIONS]}
+			{
 				cState:Set[KB_GETMINIONS]
+			}
 			else
+			{
 				cState:Set[KB_HARVESTCHECK]
+			}
 			break
-			
+
 		case KB_NECROPSY
 			if ${Me.Class.Equal[Necromancer]}
+			{
 				call Necropsy
+			}
 			cState:Set[KB_CORPSECHECK]
 			break
-		
+
 		case KB_GETENERGY
 			if ${Me.Class.Equal[Necromancer]}
+			{
 				call getEnergy
+			}
 			cState:Set[KB_CORPSECHECK]
 			break
-		
+
 		case KB_GETMINIONS
 			if ${Me.Class.Equal[Necromancer]}
+			{
 				call getMinions
+			}
 			cState:Set[KB_CORPSECHECK]
 			break
-			
-		; end add by cj
+
+			; end add by cj
 		case KB_LOOT
 			if ${doLootCorpses}
 			{
@@ -549,9 +596,13 @@ function CheckState()
 				tTimeOut:Set[${Time.Timestamp}]
 			}
 			if ${doSkinMobs}
+			{
 				cState:Set[KB_CORPSECHECK]
+			}
 			else
+			{
 				cState:Set[KB_HEAL]
+			}
 			break
 
 		case KB_HARVESTCHECK
@@ -572,20 +623,21 @@ function CheckState()
 			{
 				; Ok, found a resource, move in for the kill!
 				call DebugIt ".  Found Harvest Target"
+				
 				call bNavi.MovetoXYZ ${Me.Target.X} ${Me.Target.Y} ${Me.Target.Z} FALSE
 
 				if ${Me.Target.Distance} > 5
 				{
-					call movetoobject ${Me.Target.ID} 5 0
+					call movetoobject ${Me.Target.ID} 4 0
 					if ${Return.Equal[COLLISION]}
 					{
 						call DebugIt " .  Blacklist Harvest target because COLLISION: ${Me.Target.Name}"
 						cState:Set[KB_HEAL]
-						HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+						;HarvestBlackList:Set[${lastTargetID},${lastTargetID}]
 						return
 					}
 				}
-				
+
 				wait 10
 				call Harvest
 				wait 10
@@ -604,8 +656,10 @@ function CheckState()
 
 		case KB_MOVE
 			if ${Me.Class.Equal[Bard]}
+			{
 				call PlayBardSong "Travel"
-				
+			}
+
 			; Not InCombat and nothing close by, let's move!
 			call SprintStayOn
 
@@ -622,11 +676,11 @@ function CheckState()
 		case KB_LEASH
 			call SprintStayOn
 			break
-			
+
 		case KB_MANAGE_ADD
 			call SprintStayOn
 			break
-			
+
 		case KB_MOVESAFE
 			; Move to a safe spot
 			call SprintStayOn
@@ -651,19 +705,26 @@ function CheckState()
 					; See if we need to heal and buff up
 					; else find a new target
 					if ${Me.Encounter} == 0
+					{
 						cState:Set[KB_HEAL]
+					}
 					else
+					{
 						cState:Set[KB_FINDTARGET]
+					}
 					return
 				}
 				elseif !${Me.Target(exists)}
 				{
-						; In Combat, but no Target
+					; In Combat, but no Target
 					if ${Me.Encounter} == 0
+					{
 						wait 10
-					else						
+					}
+					else
+					{
 						cState:Set[KB_FINDTARGET]
-
+					}
 					return
 				}
 				else
@@ -673,33 +734,42 @@ function CheckState()
 					return
 				}
 			}
+			
 			; If we are not in Combat but have other mobs in the Encounter
 			if !${Me.InCombat} && ${Me.Encounter} > 0
 			{
 				call CombatHeal
+				
 				; Target the next mob
 				cState:Set[KB_FINDTARGET]
 				return
 			}
-			; See if we need to heal and buff up
+			
+			; Go heal and buff up
 			cState:Set[KB_HEAL]
-
 			break
 
 		case KB_FINDTARGET
 			; See if we need to heal up
 			call CombatHeal
+			
 			; Check for new Mobs to fight
 			call FindTarget
 			if ${Return}
 			{
 				if ${usePullAttack}
+				{
 					cState:Set[KB_COMBATPULL]
+				}
 				else
+				{
 					cState:Set[KB_COMBATSNARE]
+				}
 			}
 			else
+			{
 				cState:Set[KB_MOVE]
+			}
 			break
 
 		case KB_COMBATPULL
@@ -719,7 +789,9 @@ function CheckState()
 
 		case KB_COMBATBUFF
 			if ${Me.Class.Equal[Bard]}
+			{
 				call PlayBardSong "Combat"
+			}
 			call CombatBuffsUp
 			cState:Set[KB_ATTACK]
 			break
@@ -768,23 +840,35 @@ function CheckState()
 		case KB_CHAIN
 			call CheckForChain
 			if ${Return}
+			{
 				cState:Set[KB_COMBATHEAL]
+			}
 			else
+			{
 				cState:Set[KB_COUNTER]
+			}
 			break
 		case KB_COUNTER
 			call CheckForCounter
 			if ${Return}
+			{
 				cState:Set[KB_COMBATHEAL]
+			}
 			else
+			{
 				cState:Set[KB_RESCUE]
+			}
 			break
 		case KB_RESCUE
 			call CheckForRescue
 			if ${Return}
+			{
 				cState:Set[KB_COMBATHEAL]
+			}
 			else
+			{
 				cState:Set[KB_DOT]
+			}
 			break
 
 		case KB_DOT
@@ -800,14 +884,20 @@ function CheckState()
 			; Apply any DoT's to the target
 			call DoTs
 			if ${Return}
+			{
 				cState:Set[KB_COMBATHEAL]
+			}
 			else
+			{
 				cState:Set[KB_COMBATFORMS]
+			}
 			break
 
 		case KB_COMBATFORMS
 			if ${doUseCombatForms}
+			{
 				call CombatForms
+			}
 			cState:Set[KB_FIGHT]
 			break
 
@@ -824,7 +914,7 @@ function CheckState()
 
 
 
-/* 
+/*
 	; Don't fight dead things :D
 	if ${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.IsDead} && ${Me.Encounter} == 0
 	{
@@ -833,18 +923,19 @@ function CheckState()
 		{
 			call DebugIt ". Target is dead and we are Safe! waiting..."
 			while ${Me.InCombat} && ${Me.Encounter} == 0
+			{
 				wait 1
+			}
 		}
 	}
-
-
+	
 	StuckLoop:Set[${StuckLoop}+1]
-
+	
 	if ${StuckLoop}>5
 	{
-   		call DebugIt "Stuck in Main Loop: Setting Pulled to FALSE"
-   		StuckLoop:Set[0]
-   		Pulled:Set[FALSE]
+		call DebugIt "Stuck in Main Loop: Setting Pulled to FALSE"
+		StuckLoop:Set[0]
+		Pulled:Set[FALSE]
 	}
 */
 
@@ -899,8 +990,8 @@ function:bool Roaming(bool moveNow)
 
 	if ${Me.InCombat} && !${moveNow}
 	{
-			call DebugIt ". Roaming: InCombat is TRUE"
-      return FALSE
+		call DebugIt ". Roaming: InCombat is TRUE"
+		return FALSE
 	}
 
 	; first, check our leash
@@ -909,38 +1000,38 @@ function:bool Roaming(bool moveNow)
 	if ${Math.Distance[${Me.X},${Me.Y},${pathLoc.X},${pathLoc.Y}]} > ${Math.Calc[${maxRoamingDistance} * 100]}
 	{
 		call DebugIt "Leashed to far from Waypoint_${CurrentWP} :: ${Math.Distance[${Me.X},${Me.Y},${pathLoc.X},${pathLoc.Y}]}"
-		leashToFar:Set[TRUE]	
+		leashToFar:Set[TRUE]
 	}
 
 	if !${leashToFar} && !${moveNow}
 	{
 		;Target the nearest attackable pawn
 		;call DebugIt "Searching For Targets while Roaming"
-			call TargetInRange ${pathLoc.X} ${pathLoc.Y} ${Me.Z}
-			if ${Return.Equal[MOB]}
-			{
-				call DebugIt "Found Target While Roaming: PreMove"
-				call bNavi.StopMoving
-				wait 5
-				cState:Set[KB_FINDTARGET]
-				return FALSE
-			}
-			elseif ${Return.Equal[CORPSE]}
-			{
-				call DebugIt "Found Corpse to loot While Roaming: PreMove"
-				call bNavi.StopMoving
-				wait 5
-				cState:Set[KB_CORPSECHECK]
-				return FALSE
-			}
-			elseif ${Return.Equal[HARVEST]}
-			{
-				call DebugIt "Found Harvest resource While Roaming: PreMove"
-				call bNavi.StopMoving
-				wait 5
-				cState:Set[KB_HARVESTCHECK]
-				return FALSE
-			}
+		call TargetInRange ${pathLoc.X} ${pathLoc.Y} ${Me.Z} ${maxRoamingDistance}
+		if ${Return.Equal[MOB]}
+		{
+			call DebugIt "Found Target While Roaming: PreMove"
+			;call bNavi.StopMoving
+			;wait 5
+			cState:Set[KB_FINDTARGET]
+			return FALSE
+		}
+		elseif ${Return.Equal[CORPSE]}
+		{
+			call DebugIt "Found Corpse to loot While Roaming: PreMove"
+			call bNavi.StopMoving
+			wait 5
+			cState:Set[KB_CORPSECHECK]
+			return FALSE
+		}
+		elseif ${Return.Equal[HARVEST]}
+		{
+			call DebugIt "Found Harvest resource While Roaming: PreMove"
+			call bNavi.StopMoving
+			wait 5
+			cState:Set[KB_HARVESTCHECK]
+			return FALSE
+		}
 	}
 
 	if ${leashToFar} || ${moveNow}
@@ -953,31 +1044,35 @@ function:bool Roaming(bool moveNow)
 		call DebugIt ". Roaming:  TotalWP: ${totalWayPoints}  CurrentWP: ${CurrentWP}"
 		if ${WPDirection.Equal[Backward]}
 		{
-				LastWP:Set[${CurrentWP}]
-				iCount:Set[${Math.Calc[${CurrentWP}-1]}]
-				call DebugIt ".   Next WP Chosen: ${iCount} -"
-				if ${iCount} <= 1
-				{
-					WPDirection:Set[Forward]
-				}
+			LastWP:Set[${CurrentWP}]
+			iCount:Set[${Math.Calc[${CurrentWP}-1]}]
+			call DebugIt ".   Next WP Chosen: ${iCount} -"
+			if ${iCount} <= 1
+			{
+				WPDirection:Set[Forward]
+			}
 		}
 		elseif ${WPDirection.Equal[Forward]}
 		{
-				LastWP:Set[${CurrentWP}]
-				iCount:Set[${Math.Calc[${CurrentWP}+1]}]
-				call DebugIt ".   Next WP Chosen: ${iCount} +"
-				if ${iCount} >= ${totalWayPoints}
-				{
-					WPDirection:Set[Backward]
-				}
+			LastWP:Set[${CurrentWP}]
+			iCount:Set[${Math.Calc[${CurrentWP}+1]}]
+			call DebugIt ".   Next WP Chosen: ${iCount} +"
+			if ${iCount} >= ${totalWayPoints}
+			{
+				WPDirection:Set[Backward]
+			}
 		}
 	}
 
 	if ${iCount} <= 0
+	{
 		iCount:Set[1]
+	}
 
 	if ${iCount} > ${totalWayPoints}
+	{
 		iCount:Set[${totalWayPoints}]
+	}
 
 	CurrentWP:Set[${iCount}]
 
@@ -1003,72 +1098,84 @@ function:bool Roaming(bool moveNow)
 
 	do
 	{
-			call DoEvents
-			wait 1
+		call DoEvents
+		wait 1
 
-			if ${Me.InCombat}
+		if ${Me.InCombat}
+		{
+			call DebugIt ". Roaming: InCombat is TRUE"
+			call bNavi.StopMoving
+			cState:Set[KB_FINDTARGET]
+			return FALSE
+		}
+		
+		;call HarvestCheck
+		;if ${Return}
+		;{
+		;	call DebugIt "Found Harvest resource While Roaming"
+		;	call bNavi.StopMoving
+		;	wait 5
+		;	cState:Set[KB_HARVEST]
+		;	return FALSE
+		;}
+
+		call TargetInRange ${Me.X} ${Me.Y} ${Me.Z} ${maxRoamingDistance}
+		if ${Return.Equal[MOB]}
+		{
+			; If we are Leash'ing back, don't find more mobs to fight, just go back!
+			; If we are drowning, get the hell out of the water!
+			if ${leashToFar} || ${GV[bool,bIsDrowning]}
 			{
-				call DebugIt ". Roaming: InCombat is TRUE"
-				call bNavi.StopMoving
-				cState:Set[KB_FINDTARGET]
-				return FALSE
+				continue
 			}
 
-			call TargetInRange ${Me.X} ${Me.Y} ${Me.Z}
-			if ${Return.Equal[MOB]}
-			{
-				; If we are Leash'ing back, don't find more mobs to fight, just go back!
-				; If we are drowning, get the hell out of the water!
-				if ${leashToFar} || ${GV[bool,bIsDrowning]}
-					continue
-
-				call DebugIt "Found Target While Roaming"
-				call bNavi.StopMoving
-				wait 5
-				cState:Set[KB_FINDTARGET]
-				return FALSE
-			}
-			elseif ${Return.Equal[CORPSE]}
-			{
-				call DebugIt "Found Corpse to loot While Roaming"
-				call bNavi.StopMoving
-				wait 5
-				cState:Set[KB_CORPSECHECK]
-				return FALSE
-			}
-			elseif ${Return.Equal[HARVEST]}
-			{
-				call DebugIt "Found Harvest resource While Roaming"
-				call bNavi.StopMoving
-				wait 5
-				cState:Set[KB_HARVESTCHECK]
-				return FALSE
-			}
+			call DebugIt "Found Target While Roaming"
+			call bNavi.StopMoving
+			wait 5
+			cState:Set[KB_FINDTARGET]
+			return FALSE
+		}
+		elseif ${Return.Equal[CORPSE]}
+		{
+			call DebugIt "Found Corpse to loot While Roaming"
+			call bNavi.StopMoving
+			wait 5
+			cState:Set[KB_CORPSECHECK]
+			return FALSE
+		}
+		elseif ${Return.Equal[HARVEST]}
+		{
+			call DebugIt "Found Harvest resource While Roaming"
+			call bNavi.StopMoving
+			wait 5
+			cState:Set[KB_HARVESTCHECK]
+			return FALSE
+		}
 	}
 	while ${bNavi.Moving}
 
-	leashToFar:Set[FALSE]	
+	leashToFar:Set[FALSE]
 
 	if ${Me.Target(exists)}
 	{
-			call DebugIt ". Roaming: Me.Target exists!"
-      return FALSE
+		call DebugIt ". Roaming: Me.Target exists!"
+		return FALSE
 	}
 
 	if !${sTest.Equal[END]}
 	{
-      echo "Roaming: No Paths: Moving to waypoint_${iCount} directly: ${pathLoc.X} ${pathLoc.Y}"
-      call DebugIt ". Roaming: No Paths: Moving to waypoint_${iCount} directly: ${pathLoc.X} ${pathLoc.Y}"
-			if ${pathLoc.X} == 0 || ${pathLoc.Y} == 0
-			{
-				echo ".  Roaming: Error, move to pathLoc.XY is ZERO!"
-				call DebugIt ".  Roaming: Error, move to pathLoc.XY is ZERO!"
-				return FALSE
-			}
-			call moveto ${pathLoc.X} ${pathLoc.Y} 400 TRUE
-			;call bNavi.FastMove ${pathLoc.X} ${pathLoc.Y} 500 NULL TRUE
+		echo "Roaming: No Paths: Moving to waypoint_${iCount} directly: ${pathLoc.X} ${pathLoc.Y}"
+		call DebugIt ". Roaming: No Paths: Moving to waypoint_${iCount} directly: ${pathLoc.X} ${pathLoc.Y}"
+		if ${pathLoc.X} == 0 || ${pathLoc.Y} == 0
+		{
+			echo ".  Roaming: Error, move to pathLoc.XY is ZERO!"
+			call DebugIt ".  Roaming: Error, move to pathLoc.XY is ZERO!"
+			return FALSE
+		}
+		call moveto ${pathLoc.X} ${pathLoc.Y} 400 TRUE
+		;call bNavi.FastMove ${pathLoc.X} ${pathLoc.Y} 500 NULL TRUE
 
-			call DebugIt ". Roaming moveto: Return: ${Return}"
+		call DebugIt ". Roaming moveto: Return: ${Return}"
 
 	}
 
@@ -1084,16 +1191,16 @@ function Downtime()
 {
 	call DebugIt "Starting Downtime Routine"
 
-   	call DoEvents
-
-   	VG:ExecBinding[movebackward,release]
-   	VG:ExecBinding[moveforward,release]
+	call DoEvents
 
 	if ${Me.InCombat}
 	{
 		call DebugIt ". Downtime: InCombat is TRUE"
-      	return FALSE
+		return FALSE
 	}
+
+	VG:ExecBinding[movebackward,release]
+	VG:ExecBinding[moveforward,release]
 
 	call AvoidAdds ${MobAgroRange}
 	if ${Return.Equal[AGGROADD]}
@@ -1105,16 +1212,18 @@ function Downtime()
 
 	if ${DoWeHaveMeddingHeal} && ${Me.HealthPct} < ${restHealthPct} && ${Me.Ability[${MeddingHeal}].IsReady}
 	{
-	  	;Health is low, heal up
-	  	Me.Ability[${MeddingHeal}]:Use
-	  	call AvoidAdds  ${MobAgroRange}
-	  	if ${Return.Equal[AGGROADD]}
-	     	call Manage_Adds
+		;Health is low, heal up
+		Me.Ability[${MeddingHeal}]:Use
+		call AvoidAdds  ${MobAgroRange}
+		if ${Return.Equal[AGGROADD]}
+		{
+			call Manage_Adds
+		}
 		call MeCasting
 	}
 
 	if ${doUseFood}
-		call UseFoodsDrinks
+	call UseFoodsDrinks
 
 	if ${Me.HealthPct} < ${restHealthPct} || ${Me.EndurancePct} < ${restEndurancePct} || ${Me.EnergyPct} < ${restEnergyPct} || ${Me.Stat["Adventuring","Jin"]} < ${RequiredJin}
 	{
@@ -1125,7 +1234,6 @@ function Downtime()
 		}
 		return TRUE
 	}
-
 
 	return FALSE
 }
@@ -1156,34 +1264,38 @@ function:bool Pull()
 
 	call AvoidAdds ${MobAgroRange}
 	if ${Return.Equal[AGGROADD]}
+	{
 		call Manage_Adds
+	}
 
-	VG:ExecBinding[movebackward,release]
-	VG:ExecBinding[moveforward,release]
+	;VG:ExecBinding[movebackward,release]
+	;VG:ExecBinding[moveforward,release]
 
 	if !${Me.Target(exists)}
+	{
 		return FALSE
+	}
 
 	if ${doAddChecking} && ${Me.Target(exists)}
 	{
 		call CheckForAdds ${MobAgroRange}
 		if ${Return}
 		{
-	         call DebugIt ". Pull:  -- Mobs within ${MobAgroRange}m of Target Pull --  Aborting Pull --"
-	         ;GUIDBlacklist:Set[${Me.Target.ID}]
-	         PullAttempts:Inc
-	         VGExecute /cleartarget
-	         return FALSE
+			call DebugIt ". Pull:  -- Mobs within ${MobAgroRange}m of Target Pull --  Aborting Pull --"
+			;GUIDBlacklist:Set[${Me.Target.ID}]
+			PullAttempts:Inc
+			VGExecute /cleartarget
+			return FALSE
 		}
 
 		call CheckForAddsInPath
 		if ${Return}
 		{
-	         call DebugIt ". Pull: --  Mobs to close to Target -- Aborting Pull --"
-	         ;GUIDBlacklist:Set[${Me.Target.ID}]
-	         PullAttempts:Inc
-	         VGExecute /cleartarget
-	         return FALSE
+			call DebugIt ". Pull: --  Mobs to close to Target -- Aborting Pull --"
+			;GUIDBlacklist:Set[${Me.Target.ID}]
+			PullAttempts:Inc
+			VGExecute /cleartarget
+			return FALSE
 		}
 	}
 
@@ -1214,13 +1326,17 @@ function:bool Pull()
 		call DebugIt ". Pull:  Moving to pull range"
 
 		call bNavi.FastMove ${Me.Target.X} ${Me.Target.Y} ${Math.Calc[${maxPullRange}*100]} NULL FALSE
+		wait 3
 
-		while ${bNavi.Moving}
+		if ${bNavi.Moving}
 		{
-			call DoEvents
-			waitframe
+			while ${bNavi.Moving}
+			{
+				call DoEvents
+				waitframe
+			}
+			VG:ExecBinding[moveforward,release]
 		}
-
 		if !${Me.Target.ID(exists)}
 		{
 			echo ". Pull:  Error, move to Target is GONE!"
@@ -1232,7 +1348,6 @@ function:bool Pull()
 			return FALSE
 		}
 
-		VG:ExecBinding[moveforward,release]
 	}
 
 	if  ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxPullRange} && ${Me.Target.HaveLineOfSightTo}
@@ -1252,13 +1367,17 @@ function:bool Pull()
 			return FALSE
 		}
 		else
+		{
 			call DebugIt ". Pull:  Tag done (TRUE)"
+		}
 	}
 	else
+	{
 		call DebugIt ". Pull: No Line of Sight to target"
+	}
 
 	;call ValidTarget
- 	;if !${Return}
+	;if !${Return}
 	;{
 	;	call DebugIt ". Pull: after Tag but ValidTarget is FALSE"
 	;	PullAttempts:Inc
@@ -1290,32 +1409,33 @@ function:bool Pull()
 function:bool Tag()
 {
 	if !${usePullAttack}
+	{
 		return TRUE
+	}
 
 	call DebugIt ".   Tag: Starting Tag Routine"
 
 	call DoEvents
 
-	VG:ExecBinding[movebackward,release]
-	VG:ExecBinding[moveforward,release]
-
 	; Tag Target using Pull Abilites
 	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} <= ${maxPullRange}
-	{	
+	{
 		if ${Me.Ability[${pullAttack}].IsReady}
 		{
-				call DebugIt ".    Tag: Tagging with: ${pullAttack}"
+			call DebugIt ".    Tag: Tagging with: ${pullAttack}"
 
-				Face
-				VGExecute /stand
+			Face
+			VGExecute /stand
 
-				; First, send in the pet
-				if ${Me.HavePet}
-					call CheckForPetAttacks
+			; First, send in the pet
+			if ${Me.HavePet}
+			{
+				call CheckForPetAttacks
+			}
 
-				Me.Ability[${pullAttack}]:Use
-				;call MeCasting
-				return TRUE
+			Me.Ability[${pullAttack}]:Use
+			;call MeCasting
+			return TRUE
 		}
 		else
 		{
@@ -1326,6 +1446,8 @@ function:bool Tag()
 	{
 		call DebugIt ".    Tag: Target is to Far away or does not exists"
 	}
+	;VG:ExecBinding[movebackward,release]
+	;VG:ExecBinding[moveforward,release]
 
 	; Either we are to far away or Pull ability not ready
 	return FALSE
@@ -1365,132 +1487,136 @@ function Fight()
 	}
 
 /*
-		if (${Me.TargetHealth} > 20) && ${doAddChecking}
+	if (${Me.TargetHealth} > 20) && ${doAddChecking}
+	{
+		; AvoidAdds turns to face the new Add, which is really fucked up in this function
+		; Commenting it out for now.. Need to find a better way to handle adds
+		call AvoidAdds ${MobAgroRange}
+		if ${Return.Equal[AGGROADD]}
 		{
-			; AvoidAdds turns to face the new Add, which is really fucked up in this function
-			; Commenting it out for now.. Need to find a better way to handle adds
-			call AvoidAdds ${MobAgroRange}
-			if ${Return.Equal[AGGROADD]}
-			{
-				call Manage_Adds
-			}
-			face ${Me.Target.X} ${Me.Target.Y}
+			call Manage_Adds
 		}
+		face ${Me.Target.X} ${Me.Target.Y}
+	}
 */
 
-		; First, send in the pet
-		if ${Me.HavePet}
-			call CheckForPetAttacks
+	; First, send in the pet
+	if ${Me.HavePet}
+	{
+		call CheckForPetAttacks
+	}
 
 
-		; Now see what we should do based on UI choices and range
-		if ${useRangedAttack} && ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxPullRange}
+	; Now see what we should do based on UI choices and range
+	if ${useRangedAttack} && ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxPullRange}
+	{
+		; Move into Ranged Attack
+		Face
+		call movetoobject ${Me.Target.ID} ${maxPullRange} 1
+	}
+	elseif ${useRangedAttack} && ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${minRangedDistance}
+	{
+		; We are probably in Ranged/Nuke cooldown here, so don't do anything
+		Face
+	}
+	elseif ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxMeleeRange}
+	{
+		; Move into melee range
+		Face
+		call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
+	}
+
+	; We are to Close, step back
+	while ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 1
+	{
+		Face
+		VG:ExecBinding[movebackward]
+		wait 1
+		VG:ExecBinding[movebackward,release]
+	}
+
+	if ${Me.Target.ID(exists)} && !${Me.Target.HaveLineOfSightTo}
+	{
+		Face
+		VG:ExecBinding[movebackward]
+		wait 1
+		VG:ExecBinding[movebackward,release]
+	}
+
+	if !${justNuked} && ${Me.Target.ID(exists)}
+	{
+		Face
+		call Nukes
+		if ${Return}
 		{
-			; Move into Ranged Attack
-			Face
-			call movetoobject ${Me.Target.ID} ${maxPullRange} 1
+			cState:Set[KB_COMBATHEAL]
+			justNuked:Set[TRUE]
+			return
 		}
-		elseif ${useRangedAttack} && ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${minRangedDistance}
-		{
-			; We are probably in Ranged/Nuke cooldown here, so don't do anything
-			Face
-		}
-		elseif ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxMeleeRange}
+	}
+
+	justNuked:Set[FALSE]
+
+	if ${useRangedAttack} && ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${minRangedDistance}
+	{
+		Face
+		call RangedAttack
+		if !${Return} && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance} > ${maxMeleeRange}
 		{
 			; Move into melee range
 			Face
 			call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
 		}
-
-		; We are to Close, step back
-		while ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 1
+	}
+	elseif ${Me.Target.Distance} <= ${maxMeleeRange} && ${Me.Target.ID(exists)}
+	{
+		if ${useDKCombo}
 		{
 			Face
-			VG:ExecBinding[movebackward]
-			wait 1
-			VG:ExecBinding[movebackward,release]
-		}
-
-		if ${Me.Target.ID(exists)} && !${Me.Target.HaveLineOfSightTo}
-		{
-			Face
-			VG:ExecBinding[movebackward]
-			wait 1
-			VG:ExecBinding[movebackward,release]
-		}
-
-		if !${justNuked} && ${Me.Target.ID(exists)}
-		{
-			Face
-			call Nukes
-			if ${Return}
+			call DKComboAttack
+			if !${Return}
 			{
-				cState:Set[KB_COMBATHEAL]
-				justNuked:Set[TRUE]
-				return
-			}
-		}
-
-		justNuked:Set[FALSE]
-
-		if ${useRangedAttack} && ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${minRangedDistance}
-		{
-			Face
-			call RangedAttack
-			if !${Return} && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance} > ${maxMeleeRange}
-			{
-				; Move into melee range
-				Face
-				call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
-			}
-		}
-		elseif ${Me.Target.Distance} <= ${maxMeleeRange} && ${Me.Target.ID(exists)}
-		{
-			if ${useDKCombo}
-			{
-				Face
-				call DKComboAttack
-				if !${Return}
-					call MeleeAttack
-			}
-			else
-			{
-				Face
 				call MeleeAttack
 			}
 		}
-
-		if (${Me.TargetHealth} < 15) && ${Me.Target.ID(exists)}
+		else
 		{
 			Face
-			call Finishers
+			call MeleeAttack
 		}
+	}
 
-		if ${Me.Target.ID(exists)} && !${Me.Target.HaveLineOfSightTo}
-		{
-			VG:ExecBinding[movebackward]
-			wait 1
-			VG:ExecBinding[movebackward,release]
-		}
+	if (${Me.TargetHealth} < 15) && ${Me.Target.ID(exists)}
+	{
+		Face
+		call Finishers
+	}
 
-		call WeAreTheDead
- 
-		;Check to be sure we should even be in combat, don't return right away, only if you're stuck in combat
-		if !${Me.InCombat}
-		{
-			call DebugIt ". Fight: in Fight() but NOT InCombat"
-			cState:Set[KB_HEAL]
-			return
-		}
+	if ${Me.Target.ID(exists)} && !${Me.Target.HaveLineOfSightTo}
+	{
+		VG:ExecBinding[movebackward]
+		wait 1
+		VG:ExecBinding[movebackward,release]
+	}
 
-		if ${Me.InCombat} && (!${Me.Target(exists)} || ${Me.Target.IsDead}) 
-		{
-			call DebugIt ". Fight: Target NULL or IsDead and InCombat TRUE"
-			cState:Set[KB_COMBATCHECK]
-			return
-		}
+	call WeAreTheDead
 
-		cState:Set[KB_COMBATHEAL]
+	;Check to be sure we should even be in combat, don't return right away, only if you're stuck in combat
+	if !${Me.InCombat}
+	{
+		call DebugIt ". Fight: in Fight() but NOT InCombat"
+		cState:Set[KB_HEAL]
+		return
+	}
+
+	if ${Me.InCombat} && (!${Me.Target(exists)} || ${Me.Target.IsDead})
+	{
+		call DebugIt ". Fight: Target NULL or IsDead and InCombat TRUE"
+		cState:Set[KB_COMBATCHECK]
+		return
+	}
+
+	cState:Set[KB_COMBATHEAL]
 }
 
 
@@ -1502,14 +1628,20 @@ function:bool AreWeSafe()
 {
 	; Combat is generaly not safe
 	if ${Me.InCombat} || ${Me.Encounter} > 0
+	{
 		return FALSE
+	}
 
 	if ${Pawn[AggroNPC,radius,10](exists)}
+	{
 		return FALSE
+	}
 
 	; Drowning
 	if ${GV[bool,bIsDrowning]}
+	{
 		return FALSE
+	}
 
 	return TRUE
 }
@@ -1530,7 +1662,6 @@ function:string CorpseCheck()
 
 	call DebugIt ".Starting CorpseCheck Routine"
 
-
 	if ${doLootCorpses}
 	{
 		wait 5
@@ -1544,24 +1675,30 @@ function:string CorpseCheck()
 			{
 				;Be sure you haven't tried looting this corpse already
 				if ${Pawn[${iCount}].ID} == ${LastCorpseID}
+				{
 					continue
+				}
+				
 				if ${CorpseBlackList.Element[${Pawn[${iCount}].ID}](exists)}
+				{
 					continue
+				}
 
 				call DebugIt ". Found a Corpse close by with Loot flag"
 				Pawn[${iCount}]:Target
 				wait 10
+				lastTargetID:Set[${Me.Target.ID}]
 				return "LOOT"
 			}
 		}
 		while ${iCount:Inc} < ${VG.PawnCount}
 	}
 	; begin add by cj
-	/* 
-			check to see if I am a necro, otherwise dont do shit 
-			also, only one blacklist for Energy/Minions, as you are only suppose to be able to do either/or on a corpse.  Not both
-			but it is bugged currently, as to sometimes you can do both to one corpse, however I do not wish to exploit
-	*/
+/*
+	check to see if I am a necro, otherwise dont do shit
+	also, only one blacklist for Energy/Minions, as you are only suppose to be able to do either/or on a corpse.  Not both
+	but it is bugged currently, as to sometimes you can do both to one corpse, however I do not wish to exploit
+*/
 	if ${Me.Class.Equal[Necromancer]}
 	{
 		; check for Necropsy
@@ -1576,19 +1713,25 @@ function:string CorpseCheck()
 				{
 					;Be sure you haven't tried looting this corpse already
 					if ${Pawn[${iCount}].ID} == ${LastCorpseID}
+					{
 						continue
-	
+					}
+
 					if ${NecropsyBlackList.Element[${Pawn[${iCount}].ID}](exists)}
+					{
 						continue
-	
+					}
+
 					call DebugIt ". Found a Corpse close by - CJ in doNecropsy"
 					Pawn[${iCount}]:Target
 					wait 10
+					lastTargetID:Set[${Me.Target.ID}]
 					return "NECROPSY"
 				}
 			}
 			while ${iCount:Inc} < ${VG.PawnCount}
 		}
+		
 		; check energy percent
 		if ${doGetEnergy} && (${Me.EnergyPct} <= ${vilePct})
 		{
@@ -1601,19 +1744,25 @@ function:string CorpseCheck()
 				{
 					;Be sure you haven't tried looting this corpse already
 					if ${Pawn[${iCount}].ID} == ${LastCorpseID}
+					{
 						continue
-	
+					}
+
 					if ${getManaorMinionBlackList.Element[${Pawn[${iCount}].ID}](exists)}
+					{
 						continue
-	
+					}
+
 					call DebugIt ". Found a Corpse close by - CJ in doGetMana"
 					Pawn[${iCount}]:Target
 					wait 10
+					lastTargetID:Set[${Me.Target.ID}]
 					return "GETENERGY"
 				}
 			}
 			while ${iCount:Inc} < ${VG.PawnCount}
 		}
+		
 		; check for Minions
 		if ${doGetMinions}
 		{
@@ -1626,14 +1775,19 @@ function:string CorpseCheck()
 				{
 					;Be sure you haven't tried looting this corpse already
 					if ${Pawn[${iCount}].ID} == ${LastCorpseID}
+					{
 						continue
-	
+					}
+
 					if ${getManaorMinionBlackList.Element[${Me.Target.ID}](exists)}
+					{
 						continue
-	
+					}
+
 					call DebugIt ". Found a Corpse close by - CJ in doGetMinions"
 					Pawn[${iCount}]:Target
 					wait 10
+					lastTargetID:Set[${Me.Target.ID}]
 					return "GETMINIONS"
 				}
 			}
@@ -1655,12 +1809,15 @@ function:string CorpseCheck()
 			{
 				;Be sure you haven't tried looting this corpse already
 				if ${HarvestBlackList.Element[${Me.Target.ID}](exists)}
+				{
 					continue
+				}
 
 				call DebugIt ". Found a Corpse we can Harvest"
 
 				Pawn[${iCount}]:Target
 				wait 10
+				lastTargetID:Set[${Me.Target.ID}]
 				return "SKIN"
 			}
 		}
@@ -1676,10 +1833,10 @@ function:string CorpseCheck()
 ; ***********************************************
 function ValidTarget()
 {
-   ;call DebugIt ".Starting ValidTarget Routine"
+	;call DebugIt ".Starting ValidTarget Routine"
 
-   ;This checks to see if you're targetting a mob that you're not yet fighting while you have an add
-   ;This will stop going for the wrong mob and take on the one that's already agro'd you.
+	;This checks to see if you're targetting a mob that you're not yet fighting while you have an add
+	;This will stop going for the wrong mob and take on the one that's already agro'd you.
 
 	if !${Me.Target(exists)}
 	{
@@ -1689,8 +1846,8 @@ function ValidTarget()
 
 	if ${Me.Target.Type.Equal[Corpse]} || ${Me.Target.IsDead}
 	{
-			call DebugIt ".  ValidTarget: Me.Target is Dead or a Corpse"
-      return FALSE
+		call DebugIt ".  ValidTarget: Me.Target is Dead or a Corpse"
+		return FALSE
 	}
 
 	;if ${Me.TargetHealth} <= 0
@@ -1701,38 +1858,38 @@ function ValidTarget()
 
 	if ${Me.InCombat} || ${Me.Encounter} > 0
 	{
-			; If we are already in combat with it, who cares, FIGHT!
-      return TRUE
+		; If we are already in combat with it, who cares, FIGHT!
+		return TRUE
 	}
 
 	if ${Me.Target.OwnedByMe}
 	{
-			return TRUE
+		return TRUE
 	}
 
 	if ${Me.Target.Owner(exists)} && ${Me.Target.Owner.Equal[${Me}]}
 	{
-      return TRUE
+		return TRUE
 	}
 
 	; Redone by MH
 	if !${Me.Target.OwnedByMe} && ${Me.Target.Owner(exists)}
 	{
-      call DebugIt ".  ValidTarget: Mob already owned: ${Me.Target.Owner}"
-      BadTargetID[1]:Set[${Me.Target.ID}]
-      VGExecute /cleartargets
-      VG:ExecBinding[moveforward,release]
-      VG:ExecBinding[movebackward,release]
-      return FALSE
+		call DebugIt ".  ValidTarget: Mob already owned: ${Me.Target.Owner}"
+		BadTargetID[1]:Set[${Me.Target.ID}]
+		VGExecute /cleartargets
+		VG:ExecBinding[moveforward,release]
+		VG:ExecBinding[movebackward,release]
+		return FALSE
 	}
 
 	if ${Me.Target.ID(exists)}
 	{
-      return TRUE
+		return TRUE
 	}
 
-   ;echo End of CHecking
-   return FALSE
+	;echo End of CHecking
+	return FALSE
 }
 
 ; ***********************************************
@@ -1773,24 +1930,24 @@ function WeAreTheDead()
 ; ***********************************************
 atom(script) AutoMap()
 {
-	; Addition by Xeon 
+	; Addition by Xeon
 	if !${CurrentChunk.Equal[${Me.Chunk}]}
 	{
-			; Check for Current Chuck
-			bNavi:LoadPaths
-			;CurrentRegion:Set[${bNavi.CurrentRegion}]
-			;LastRegion:Set[${CurrentRegion}]
-			CurrentChunk:Set[${Me.Chunk}]
+		; Check for Current Chuck
+		bNavi:LoadPaths
+		;CurrentRegion:Set[${bNavi.CurrentRegion}]
+		;LastRegion:Set[${CurrentRegion}]
+		CurrentChunk:Set[${Me.Chunk}]
 
-			if ${setPath.FindSet[${Me.Chunk}](exists)}
-			{
-				totalWayPoints:Set[${setPath[${Me.Chunk}].FindSetting[totalWayPoints,0]}]
-			}
-			else
-			{
-				setPath:AddSet[${Me.Chunk}]
-				setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
-			}
+		if ${setPath.FindSet[${Me.Chunk}](exists)}
+		{
+			totalWayPoints:Set[${setPath[${Me.Chunk}].FindSetting[totalWayPoints,0]}]
+		}
+		else
+		{
+			setPath:AddSet[${Me.Chunk}]
+			setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
+		}
 	}
 }
 
@@ -1799,7 +1956,7 @@ atom(script) AutoMap()
 ; ***********************************************
 atom ReturnToTombStone()
 {
-		VGLoc[TS]:Port
+	VGLoc[TS]:Port
 }
 
 ; ********************************************************
@@ -1814,25 +1971,37 @@ function:bool CheckAbilCost(string abilString)
 	if ${Me.Ability[${abilString}].EnergyCost} > 0
 	{
 		if ${Me.Energy} > ${Me.Ability[${abilString}].EnergyCost}
+		{
 			haveEnough:Set[TRUE]
+		}
 		else
+		{
 			return FALSE
+		}
 	}
 
 	if ${Me.Ability[${abilString}].EnduranceCost} > 0
 	{
 		if ${Me.Endurance} > ${Me.Ability[${abilString}].EnduranceCost}
+		{
 			haveEnough:Set[TRUE]
+		}
 		else
+		{
 			return FALSE
+		}
 	}
 
 	if ${Me.Ability[${abilString}].JinCost(exists)} && ${Me.Ability[${abilString}].JinCost} > 0
 	{
 		if ${Me.Stat[Adventuring,Jin]} > ${Me.Ability[${abilString}].JinCost}
+		{
 			haveEnough:Set[TRUE]
+		}
 		else
+		{
 			return FALSE
+		}
 	}
 
 	; Sometimes there are ZERO cost abilities! FUCK!
@@ -1868,7 +2037,7 @@ function MeCasting()
 
 
 	if ${doBug}
-		call DebugIt "MeCasting Done"
+	call DebugIt "MeCasting Done"
 }
 
 ; ***********************************************
@@ -1887,7 +2056,7 @@ function DebugIt(string aText)
 ; ** Execute Queued Events **
 ; ***************************
 function DoEvents()
-{	
+{
 	do
 	{
 		ExecuteQueued
@@ -2001,26 +2170,26 @@ atom Stop()
 ; ***********************************************
 function Start()
 {
-		call SaveConfig
+	call SaveConfig
 
-		if ${totalWayPoints} == 0
-		{
-			echo "---------------------"
-			echo "---------------------"
-			echo "---------------------"
-			echo "---------------------"
-			echo " You must first Setup your waypoints!"
-			return
-		}
+	if ${totalWayPoints} == 0
+	{
+		echo "---------------------"
+		echo "---------------------"
+		echo "---------------------"
+		echo "---------------------"
+		echo " You must first Setup your waypoints!"
+		return
+	}
 
-		redirect "${OutputFile}" echo "${Time}: ------------- Started --------------"
+	redirect "${OutputFile}" echo "${Time}: ------------- Started --------------"
 
-		; Check to make sure we arn't to far from our last WayPoint
-		call FindClosestWaypoint
+	; Check to make sure we arn't to far from our last WayPoint
+	call FindClosestWaypoint
 
-		hasStarted:Set[TRUE]
-		isPaused:Set[FALSE]
-		cState:Set[KB_HEAL]
+	hasStarted:Set[TRUE]
+	isPaused:Set[FALSE]
+	cState:Set[KB_HEAL]
 }
 
 ; ***********************************************
@@ -2029,13 +2198,15 @@ function Start()
 function Pause()
 {
 	if !${isPaused}
+	{
 		return
+	}
 
 	call bNavi.StopMoving
 
 	echo KBot isPaused!
 
-	do 
+	do
 	{
 		wait 5
 		call DoEvents
@@ -2061,7 +2232,9 @@ function:bool HarvestCheck()
 	setConfig.FindSet[Harvest]:GetSettingIterator[anIter]
 
 	if !${anIter:First(exists)}
+	{
 		return FALSE
+	}
 
 	while ( ${anIter.Key(exists)} )
 	{
@@ -2076,20 +2249,29 @@ function:bool HarvestCheck()
 
 		for (iCount:Set[1] ; ${iCount} <= ${iTotal} ; iCount:Inc)
 		{
-				if ${pIndex.Get[${iCount}].ID} == ${Me.ToPawn.ID}
-					continue
-				if ${HarvestBlackList.Element[${pIndex.Get[${iCount}].ID}](exists)}
-					continue
-				if ${pIndex.Get[${iCount}].Name.Find[remains]}
-					continue
-
+			if ${pIndex.Get[${iCount}].ID} == ${Me.ToPawn.ID}
+			{
+				continue
+			}
+			if ${HarvestBlackList.Element[${pIndex.Get[${iCount}].ID}](exists)}
+			{
+				continue
+			}
+			if ${pIndex.Get[${iCount}].Name.Find[remains]}
+			{
+				continue
+			}
+			if ${pIndex.Get[${iCount}].Name.Equal[${anIter.Key}]}
+			{
 				pIndex.Get[${iCount}]:Target
 				wait 10
 				if ${Me.Target(exists)}
 				{
+					lastTargetID:Set[${Me.Target.ID}]
 					call DebugIt ". HC: Harvest resource found: ${Me.Target.Name}"
 					return TRUE
 				}
+			}
 		}
 		anIter:Next
 	}
@@ -2103,36 +2285,38 @@ function:bool HarvestCheck()
 ; ***********************************************
 function:bool SafePortCheck()
 {
-		if ${justPorted}
-			return FALSE
+	if ${justPorted}
+	{
+		return FALSE
+	}
 
-		if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
-		{
-			; TO late, we be dead
-			return FALSE
-		}
+	if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
+	{
+		; TO late, we be dead
+		return FALSE
+	}
 
-		;KB - Safe Location
-		if ${usePortSafe}
+	;KB - Safe Location
+	if ${usePortSafe}
+	{
+		if ${Me.HealthPct} <= ${safePortPct}
 		{
-			if ${Me.HealthPct} <= ${safePortPct}
-			{
-				echo " -- Emergency Health Port -- ENERGIZE! "
-				call DebugIt " -- Emergency Health Port -- ENERGIZE! "
-				VGLoc[KB- ${Me.Chunk} -Safe]:Port
-				justPorted:Set[TRUE]
-				cState:Set[KB_HEAL]
-				call CombatHeal
-				call BuffUp
-				call ToggleBuffs
-				wait 100
-				call CombatHeal
-				call BuffUp
-				call ToggleBuffs
-				justPorted:Set[FALSE]
-				return TRUE
-			}
+			echo " -- Emergency Health Port -- ENERGIZE! "
+			call DebugIt " -- Emergency Health Port -- ENERGIZE! "
+			VGLoc[KB- ${Me.Chunk} -Safe]:Port
+			justPorted:Set[TRUE]
+			cState:Set[KB_HEAL]
+			call CombatHeal
+			call BuffUp
+			call ToggleBuffs
+			wait 100
+			call CombatHeal
+			call BuffUp
+			call ToggleBuffs
+			justPorted:Set[FALSE]
+			return TRUE
 		}
+	}
 	return FALSE
 }
 
@@ -2143,53 +2327,55 @@ function:bool SafePortCheck()
 function InitConfig()
 {
 
-   LavishSettings[KB]:Clear
-   setConfig:Clear
-   setPath:Clear
+	LavishSettings[KB]:Clear
+	setConfig:Clear
+	setPath:Clear
 
-   LavishSettings:AddSet[KB]
-   LavishSettings[KB]:AddSet[Config]
-   LavishSettings[KB]:AddSet[Path]
+	LavishSettings:AddSet[KB]
+	LavishSettings[KB]:AddSet[Config]
+	LavishSettings[KB]:AddSet[Path]
 
-   echo Loading Configuration Setting from: ${ConfigFile}
-   LavishSettings[KB]:Import["${ConfigFile}"]
-   wait 10
+	echo Loading Configuration Setting from: ${ConfigFile}
+	LavishSettings[KB]:Import["${ConfigFile}"]
+	wait 10
 
-   setConfig:Set[${LavishSettings[KB].FindSet[Config].GUID}]
-   setPath:Set[${LavishSettings[KB].FindSet[Path].GUID}]
+	setConfig:Set[${LavishSettings[KB].FindSet[Config].GUID}]
+	setPath:Set[${LavishSettings[KB].FindSet[Path].GUID}]
 
 	if !${setPath.FindSet[${Me.Chunk}].FindSet[Mobs](exists)}
-			setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
+	{
+		setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
+	}
 
-   setConfig:AddSet[MeleeAttacks]
-   setConfig:AddSet[NukeAttacks]
-   setConfig:AddSet[DotAttacks]
-   setConfig:AddSet[RangedAttacks]
-   setConfig:AddSet[PetAttacks]
+	setConfig:AddSet[MeleeAttacks]
+	setConfig:AddSet[NukeAttacks]
+	setConfig:AddSet[DotAttacks]
+	setConfig:AddSet[RangedAttacks]
+	setConfig:AddSet[PetAttacks]
 
-   setConfig:AddSet[Chains]
-   setConfig:AddSet[Counters]
-   setConfig:AddSet[Rescues]
+	setConfig:AddSet[Chains]
+	setConfig:AddSet[Counters]
+	setConfig:AddSet[Rescues]
 
-   setConfig:AddSet[Buffs]
-   setConfig:AddSet[CombatBuffs]
-   setConfig:AddSet[ToggleBuffs]
+	setConfig:AddSet[Buffs]
+	setConfig:AddSet[CombatBuffs]
+	setConfig:AddSet[ToggleBuffs]
 
-   setConfig:AddSet[Harvest]
-   setConfig:AddSet[Food]
+	setConfig:AddSet[Harvest]
+	setConfig:AddSet[Food]
 
-   ; Edit by Xeon
-   if !${setPath.FindSet[${Me.Chunk}](exists)}
-     {
-      echo Adding Chunk Region to Config: ${Me.Chunk}
-      setPath:AddSet[${Me.Chunk}]
-			setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
-     }
-   else
-     {
-      totalWayPoints:Set[${setPath[${Me.Chunk}].FindSetting[totalWayPoints,0]}]
-      echo totalWayPoints Found in ${Me.Chunk}: ${totalWayPoints}
-     }
+	; Edit by Xeon
+	if !${setPath.FindSet[${Me.Chunk}](exists)}
+	{
+		echo Adding Chunk Region to Config: ${Me.Chunk}
+		setPath:AddSet[${Me.Chunk}]
+		setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
+	}
+	else
+	{
+		totalWayPoints:Set[${setPath[${Me.Chunk}].FindSetting[totalWayPoints,0]}]
+		echo totalWayPoints Found in ${Me.Chunk}: ${totalWayPoints}
+	}
 
 	doTotallyAFK:Set[${setConfig.FindSetting[doTotallyAFK,FALSE]}]
 	doQuitOnDeath:Set[${setConfig.FindSetting[doQuitOnDeath,FALSE]}]
@@ -2246,9 +2432,9 @@ function InitConfig()
 	minRangedDistance:Set[${setConfig.FindSetting[minRangedDistance,9]}]
 	maxRoamingDistance:Set[${setConfig.FindSetting[maxRoamingDistance,60]}]
 	maxSprintSpeed:Set[${setConfig.FindSetting[maxSprintSpeed,100]}]
-; begin add by cj
+	; begin add by cj
 	maxLootDistance:Set[${setConfig.FindSetting[maxLootDistance,5]}]
-; end add by cj
+	; end add by cj
 	useSmallHeal:Set[${setConfig.FindSetting[useSmallHeal,FALSE]}]
 	smallHealPct:Set[${setConfig.FindSetting[smallHealPct,80]}]
 	smallHeal:Set[${setConfig.FindSetting[smallHeal,NONE]}]
@@ -2280,7 +2466,7 @@ function InitConfig()
 	DKCombo1:Set[${setConfig.FindSetting[DKCombo1,NONE]}]
 	DKCombo2:Set[${setConfig.FindSetting[DKCombo2,NONE]}]
 
-;begin add spud
+	;begin add spud
 	BardCombatSong:Set[${setConfig.FindSetting[BardCombatSong,NONE]}]
 	BardRestSong:Set[${setConfig.FindSetting[BardRestSong,NONE]}]
 	BardTravelSong:Set[${setConfig.FindSetting[BardTravelSong,NONE]}]
@@ -2288,9 +2474,9 @@ function InitConfig()
 	SecondaryWeapon:Set[${setConfig.FindSetting[SecondaryWeapon,NONE]}]
 	BardTravelInstrument:Set[${setConfig.FindSetting[BardTravelInstrument,NONE]}]
 	BardRestInstrument:Set[${setConfig.FindSetting[BardRestInstrument,NONE]}]
-;end add spud
+	;end add spud
 
-; begin add CJ
+	; begin add CJ
 	doNecropsy:Set[${setConfig.FindSetting[doNecropsy,FALSE]}]
 	doGetMinions:Set[${setConfig.FindSetting[doGetMinions,FALSE]}]
 	doGetEnergy:Set[${setConfig.FindSetting[doGetEnergy,FALSE]}]
@@ -2299,7 +2485,7 @@ function InitConfig()
 	vilePct:Set[${setConfig.FindSetting[vilePct,70]}]
 	minionAbility1:Set[${setConfig.FindSetting[minionAbility1,NONE]}]
 	minionAbility2:Set[${setConfig.FindSetting[minionAbility2,NONE]}]
-; end add by CJ
+	; end add by CJ
 }
 
 ; ***********************************************
@@ -2401,7 +2587,7 @@ function SaveConfig()
 	setConfig:AddSetting[DKCombo1, ${DKCombo1}]
 	setConfig:AddSetting[DKCombo2, ${DKCombo2}]
 
-;begin add spud
+	;begin add spud
 	setConfig:AddSetting[BardCombatSong, ${BardCombatSong}]
 	setConfig:AddSetting[BardRestSong, ${BardRestSong}]
 	setConfig:AddSetting[BardTravelSong, ${BardTravelSong}]
@@ -2409,9 +2595,9 @@ function SaveConfig()
 	setConfig:AddSetting[SecondaryWeapon, ${SecondaryWeapon}]
 	setConfig:AddSetting[BardRestInstrument, ${BardRestInstrument}]
 	setConfig:AddSetting[BardTravelInstrument, ${BardTravelInstrument}]
-;end add spud
+	;end add spud
 
-; begin add by cj
+	; begin add by cj
 	setConfig:AddSetting[doNecropsy, ${doNecropsy}]
 	setConfig:AddSetting[doGetMinions, ${doGetMinions}]
 	setConfig:AddSetting[doGetEnergy, ${doGetEnergy}]
@@ -2420,7 +2606,7 @@ function SaveConfig()
 	setConfig:AddSetting[vilePct, ${vilePct}]
 	setConfig:AddSetting[minionAbility1, ${minionAbility1}]
 	setConfig:AddSetting[minionAbility2, ${minionAbility2}]
-; end add by cj
+	; end add by cj
 	setPath.FindSet[${Me.Chunk}]:AddSetting[totalWayPoints, ${totalWayPoints}]
 
 	LavishSettings[KB]:Export["${ConfigFile}"]
@@ -2434,12 +2620,12 @@ function SaveConfig()
 ; ***********************************************
 atom(script) AddWaypoint()
 {
-   totalWayPoints:Inc
+	totalWayPoints:Inc
 
-   ; Edit by Xeon
-   setPath.FindSet[${Me.Chunk}]:AddSetting[waypoint_${totalWayPoints}, "${Me.Location}"]
+	; Edit by Xeon
+	setPath.FindSet[${Me.Chunk}]:AddSetting[waypoint_${totalWayPoints}, "${Me.Location}"]
 
-   echo "Adding waypoint_${totalWayPoints} at ${Me.Location}"
+	echo "Adding waypoint_${totalWayPoints} at ${Me.Location}"
 }
 
 atom(script) ClearWaypoints()
@@ -2450,7 +2636,6 @@ atom(script) ClearWaypoints()
 	totalWayPoints:Set[0]
 
 	echo "Clearing all Waypoints for ${Me.Chunk}"
-
 }
 
 
@@ -2664,7 +2849,7 @@ atom(global) RemoveHarvestList(string aName)
 atom(global) AddMobList(string aName)
 {
 	if !${setPath.FindSet[${Me.Chunk}].FindSet[Mobs](exists)}
-			setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
+	setPath.FindSet[${Me.Chunk}]:AddSet[Mobs]
 
 	if (${aName.Length} > 1) && !${aName.Equal[NONE]}
 	{
@@ -2689,7 +2874,9 @@ atom(global) BuildMobList()
 	do
 	{
 		if (${Pawn[${iCount}].Type.Equal[NPC]} || ${Pawn[${iCount}].Type.Equal[AggroNPC]})
-				UIElement[MobCombo@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:AddItem[${Pawn[${iCount}].Name}]
+		{
+			UIElement[MobCombo@Mobs@MainTabs@MainFrame@Main@KBot@KBot]:AddItem[${Pawn[${iCount}].Name}]
+		}
 	}
 	while ${iCount:Inc} < ${VG.PawnCount}
 }
@@ -2720,7 +2907,9 @@ atom(global) BuildFoodList()
 	{
 		;if ${Me.Inventory[${iCount}].MiscDescription.Find[Small item]}
 		if ${Me.Inventory[${iCount}].Type.Equal[Unknown]} || ${Me.Inventory[${iCount}].Type.Equal[Miscellaneous]}
+		{
 			UIElement[FoodCombo@Rest@SettingTabs@SettingFrame@Setting@KBot@KBot]:AddItem[${Me.Inventory[${iCount}].Name}]
+		}
 	}
 }
 
@@ -2734,7 +2923,7 @@ function PopulateLists()
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
 
-;add spud - added a check for songs, since they shouldn't show in these lists.  They aren't really songs, but melodies that are part of songs.
+		;add spud - added a check for songs, since they shouldn't show in these lists.  They aren't really songs, but melodies that are part of songs.
 		if (${Me.Ability[${i}].TargetType.Equal[Offensive]} || ${Me.Ability[${i}].IsOffensive}) && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
 		{
 			;;; Attack Tab
@@ -2770,15 +2959,15 @@ function PopulateLists()
 		;;; Chains Tab
 		if ${Me.Ability[${i}].IsChain}
 		{
-				UIElement[ChainCombo@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[ChainCombo@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${Me.Ability[${i}].Name}]
 		}
 		if ${Me.Ability[${i}].IsCounter}
 		{
-				UIElement[CounterCombo@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[CounterCombo@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${Me.Ability[${i}].Name}]
 		}
 		if ${Me.Ability[${i}].IsRescue}
 		{
-				UIElement[RescueCombo@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[RescueCombo@Chains@CombatTabs@CombatFrame@Combat@KBot@KBot]:AddItem[${Me.Ability[${i}].Name}]
 		}
 
 		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue}
@@ -2829,7 +3018,7 @@ function PopulateLists()
 		UIElement[NeutralFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:AddItem[${Me.Form[${i}].Name}]
 	}
 
-;begin add spud
+	;begin add spud
 	for (i:Set[1] ; ${i} <= ${Songs} ; i:Inc)
 	{
 		UIElement[BardCombatSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:AddItem[${Songs[${i}].Name}]
@@ -2855,11 +3044,11 @@ function PopulateLists()
 			;add shield/parrying daggers
 			UIElement[SecondaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:AddItem[${Me.Inventory[${i}].Name}]
 		}
-	}	
-;end add spud
+	}
+	;end add spud
 
 /*
-		Load up all the UI info from Saved info
+	Load up all the UI info from Saved info
 */
 
 	variable iterator Iterator
@@ -2970,174 +3159,228 @@ function PopulateLists()
 	while ${rCount:Inc} <= ${UIElement[SmallHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[SmallHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${smallHeal}]}
+		{
 			UIElement[SmallHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[BigHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[BigHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${bigHeal}]}
+		{
 			UIElement[BigHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[FastHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[FastHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${fastHeal}]}
+		{
 			UIElement[FastHealCombo@Heal@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[PullCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot].Items}
 	{
 		if ${UIElement[PullCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot].Item[${rCount}].Text.Equal[${pullAttack}]}
+		{
 			UIElement[PullCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[FinishCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot].Items}
 	{
 		if ${UIElement[FinishCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot].Item[${rCount}].Text.Equal[${finishAttack}]}
+		{
 			UIElement[FinishCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[SnareCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot].Items}
 	{
 		if ${UIElement[SnareCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot].Item[${rCount}].Text.Equal[${snareAttack}]}
+		{
 			UIElement[SnareCombo@Pull@CombatTabs@CombatFrame@Combat@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[MeditationCombo@Rest@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[MeditationCombo@Rest@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${meditationSpell}]}
+		{
 			UIElement[MeditationCombo@Rest@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[ArrowSelectCombo@Harvest@MainTabs@MainFrame@Main@KBot@KBot].Items}
 	{
 		if ${UIElement[ArrowSelectCombo@Harvest@MainTabs@MainFrame@Main@KBot@KBot].Item[${rCount}].Text.Equal[${arrowName}]}
+		{
 			UIElement[ArrowSelectCombo@Harvest@MainTabs@MainFrame@Main@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[FormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[FormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${formName}]}
+		{
 			UIElement[FormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[AttackFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[AttackFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${attackFormName}]}
+		{
 			UIElement[AttackFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[DeffenseFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[DeffenseFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${defenseFormName}]}
+		{
 			UIElement[DeffenseFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[NeutralFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Items}
 	{
 		if ${UIElement[NeutralFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot].Item[${rCount}].Text.Equal[${neutralFormName}]}
+		{
 			UIElement[NeutralFormCombo@Forms@SettingTabs@SettingFrame@Setting@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[PetCombo@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[PetCombo@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${summonPetSpell}]}
+		{
 			UIElement[PetCombo@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[PetHealCombo@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[PetHealCombo@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${petHeal}]}
+		{
 			UIElement[PetHealCombo@Pets@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
-;begin add spud
+	;begin add spud
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[BardCombatSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[BardCombatSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${BardCombatSong}]}
+		{
 			UIElement[BardCombatSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[BardRestSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[BardRestSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${BardRestSong}]}
+		{
 			UIElement[BardRestSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[BardTravelSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[BardTravelSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${BardTravelSong}]}
+		{
 			UIElement[BardTravelSong@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[PrimaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[PrimaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${PrimaryWeapon}]}
+		{
 			UIElement[PrimaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[SecondaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[SecondaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${SecondaryWeapon}]}
+		{
 			UIElement[SecondaryWeapon@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[BardTravelInstrument@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[BardTravelInstrument@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${BardTravelInstrument}]}
+		{
 			UIElement[BardTravelInstrument@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[BardRestInstrument@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[BardRestInstrument@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${BardRestInstrument}]}
+		{
 			UIElement[BardRestInstrument@Bard@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
-;end add spud
+	;end add spud
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[DKCombo1@DK@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[DKCombo1@DK@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${DKCombo1}]}
+		{
 			UIElement[DKCombo1@DK@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[DKCombo2@DK@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[DKCombo2@DK@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${DKCombo2}]}
+		{
 			UIElement[DKCombo2@DK@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
-; begin add by cj
+	; begin add by cj
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[doNecropsyCombo@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[doNecropsyCombo@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${necropsyAbility}]}
+		{
 			UIElement[doNecropsyCombo@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[doGetMinionsCombo1@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[doGetMinionsCombo1@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${minionAbility1}]}
+		{
 			UIElement[doGetMinionsCombo1@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[doGetMinionsCombo2@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[doGetMinionsCombo2@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${minionAbility2}]}
+		{
 			UIElement[doGetMinionsCombo2@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[doGetEnergyCombo@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Items}
 	{
 		if ${UIElement[doGetEnergyCombo@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot].Item[${rCount}].Text.Equal[${vileAbility}]}
+		{
 			UIElement[doGetEnergyCombo@Necro@Class@ExtraTabs@ExtraFrame@Extra@KBot@KBot]:SelectItem[${rCount}]
+		}
 	}
-; end add by cj
+	; end add by cj
 }
 
 ; ***********************************************
@@ -3146,16 +3389,18 @@ function PopulateLists()
 function atexit()
 {
 
-   ;redirect -append "${OutputFile}" echo "${Time.Timestamp}: ${Me.FName} had ${TotalKills} Kills and Total XP gained was ${GainedXP}"
+	;redirect -append "${OutputFile}" echo "${Time.Timestamp}: ${Me.FName} had ${TotalKills} Kills and Total XP gained was ${GainedXP}"
 
 	if ${Script[ForestRun](exists)}
+	{
 		endscript ForestRun
+	}
 
-   ;Script has been ended, release the movement keys incease moveto has them pressed
-   echo "-- Ending KBot --"
-   VG:ExecBinding[moveforward,release]
-   VG:ExecBinding[movebackward,release]
-   ui -unload "${Script.CurrentDirectory}/XML/KBotUI.xml"
+	;Script has been ended, release the movement keys incease moveto has them pressed
+	echo "-- Ending KBot --"
+	VG:ExecBinding[moveforward,release]
+	VG:ExecBinding[movebackward,release]
+	ui -unload "${Script.CurrentDirectory}/XML/KBotUI.xml"
 
 	;Remove the event listeners
 	Event[VG_OnPawnSpawned]:DetachAtom[KBot_onPawnSpawned]
@@ -3194,19 +3439,30 @@ atom(script) KBot_onPawnDespawned(string anID, string aName)
 
 	; if it's on the blacklist, remove it
 	if ${MobBlackList.Element[${oldID}](exists)}
+	{
 		MobBlackList:Erase[${oldID}]
+	}
 
 	if ${CorpseList.Element[${oldID}](exists)}
+	{
 		CorpseList:Erase[${oldID}]
+	}
 
 	if ${HarvestList.Element[${oldID}](exists)}
+	{
 		HarvestList:Erase[${oldID}]
+	}
+	
 	;begin add by cj
 	if ${NecropsyBlackList.Element[${oldID}](exists)}
+	{
 		NecropsyBlackList:Erase[${oldID}]
+	}
 
 	if ${getManaorMinionBlackList.Element[${oldID}](exists)}
+	{
 		getManaorMinionBlackList:Erase[${oldID}]
+	}
 	;end add by cj
 }
 
@@ -3221,19 +3477,30 @@ atom(script) KBot_onPawnIDChange(int64 oldID, int64 newID, string oldName, strin
 
 	; if it's on the blacklist, remove it
 	if ${MobBlackList.Element[${oldID}](exists)}
+	{
 		MobBlackList:Erase[${oldID}]
+	}
 
 	if ${CorpseList.Element[${oldID}](exists)}
+	{
 		CorpseList:Erase[${oldID}]
+	}
 
 	if ${HarvestList.Element[${oldID}](exists)}
+	{
 		HarvestList:Erase[${oldID}]
+	}
+	
 	;begin add by cj
 	if ${NecropsyBlackList.Element[${oldID}](exists)}
+	{
 		NecropsyBlackList:Erase[${oldID}]
+	}
 
 	if ${getManaorMinionBlackList.Element[${oldID}](exists)}
+	{
 		getManaorMinionBlackList:Erase[${oldID}]
+	}
 	;end add by cj
 }
 
@@ -3242,7 +3509,9 @@ atom(script) KBot_onReceivedTradeInvitation(string PCName)
 	call DebugIt "VG: TradeInvitation with ${PCName} :: TS: ${Trade.State}"
 
 	if ${isPaused} || !${isRunning}
+	{
 		return
+	}
 
 	;["TRADING", "INVITE_PENDING", "INVITE_SENT", "NOT_TRADING"]
 	if ${Trade.State.Equal[TRADING]} || ${Trade.State.Equal[INVITE_PENDING]} || ${Trade.State.Equal[INVITE_SENT]}
@@ -3282,17 +3551,23 @@ atom(script) KBot_onIncomingText(string aText, string ChannelNumber, string Chan
 	call AutoRespond "${aText}" "${ChannelNumber}"
 
 	if ${aText.Find[You have slain]}
+	{
 		call DebugIt "OnIncomingText: ${aText}"
+	}
 
 	if ${aText.Find[skill to begin harvesting]} && ${Me.Target(exists)}
+	{
 		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+	}
 
 }
 
 atom(script) KBot_onIncomingCombatText(string aText, int iType)
 {
 	if ${aText.Find[You have slain]}
+	{
 		call DebugIt "CombatText: ${aText}"
+	}
 
 	if ${aText.Find[have no line of sight]}
 	{
