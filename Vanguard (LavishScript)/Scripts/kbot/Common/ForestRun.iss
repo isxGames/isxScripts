@@ -5,7 +5,6 @@ variable(global) bnav bNavi
 
 function main()
 {
-
 	call bNavi.Initialize
 
 	while (1)
@@ -14,5 +13,4 @@ function main()
 		bNavi:ConnectOnMove
 		waitframe
 	}
-
 }

@@ -6,7 +6,7 @@ function BuffUp()
 
 	; Feign Death... don't buff while pretending we are dead
 	if ${DoWeHaveFD} && ${Me.Effect[${FeignDeath}](exists)}
-		return
+	return
 
 	;Make sure pet is up
 	if !${Me.HavePet} && ${doSummonPet}
@@ -43,7 +43,7 @@ function ToggleBuffs()
 
 	; Feign Death... don't buff while pretending we are dead
 	if ${DoWeHaveFD} && ${Me.Effect[${FeignDeath}](exists)}
-		return
+	return
 
 	variable iterator anIter
 
@@ -69,7 +69,7 @@ function ToggleBuffs()
 function:bool CombatBuffsUp()
 {
 	if ${Me.TargetHealth} < 30
-		return FALSE
+	return FALSE
 
 	variable iterator anIter
 
@@ -95,7 +95,7 @@ function:bool CombatBuffsUp()
 function:bool SnareMob()
 {
 	if !${useSnareAttack}
-		return FALSE
+	return FALSE
 
 	call CheckAbilCost "${snareAttack}"
 	if ${Return} && ${Me.Ability[${snareAttack}].IsReady} && !${Me.TargetEffect[${snareAttack}](exists)} && ${Me.TargetHealth} > 30
@@ -116,11 +116,11 @@ function:bool MeleeAttack()
 	variable bool attackUsed = FALSE
 
 	if ${Me.Target.IsDead}
-		return FALSE
+	return FALSE
 
 	; Save at least 10% Endurance for Emergency use
 	if ${Me.EndurancePct} < 10
-		return FALSE
+	return FALSE
 
 	;call DebugIt "D. Check to see if we have Melee attacks"
 
@@ -155,7 +155,7 @@ function:bool RangedAttack()
 	variable bool attackUsed = FALSE
 
 	if ${Me.Target.IsDead}
-		return
+	return
 
 	variable iterator anIter
 
@@ -196,7 +196,7 @@ function:bool DoTs()
 
 	; Save at least 5% Energy for Emergency use
 	if ${Me.EnergyPct} < 5
-		return
+	return
 
 	setConfig.FindSet[DotAttacks]:GetSettingIterator[anIter]
 	anIter:First
@@ -226,7 +226,7 @@ function:bool Nukes()
 
 	; Save at least 5% Energy for Emergency use
 	if ${Me.EnergyPct} < 5
-		return
+	return
 
 	setConfig.FindSet[NukeAttacks]:GetSettingIterator[anIter]
 	anIter:First
@@ -256,11 +256,11 @@ function CheckForPetAttacks()
 
 	;Make sure pet is up
 	if !${Me.HavePet}
-		return
+	return
 
 	;This sub is ran after initiating any combat ability, this will use Pet Attacks if they're up
 	if !${Me.Target.ID(exists)}
-		return
+	return
 
 	VGExecute "/pet attack"
 	VGExecute "/minions attack"
@@ -295,7 +295,7 @@ function:bool CheckForChain()
 
 	;This sub is ran after initiating any combat ability, this will use Chains if they're up
 	if !${Me.Target.ID(exists)}
-		return FALSE
+	return FALSE
 
 	variable iterator anIter
 
@@ -326,7 +326,7 @@ function CheckForCounter()
 
 	;This sub is ran after initiating any combat ability, this will use Counters if they're up
 	if !${Me.Target.ID(exists)}
-		return FALSE
+	return FALSE
 
 	variable iterator anIter
 
@@ -357,7 +357,7 @@ function:bool CheckForRescue()
 
 	;This sub is ran after initiating any combat ability, this will use Rescues if they're up
 	if !${Me.Target.ID(exists)}
-		return FALSE
+	return FALSE
 
 	variable iterator anIter
 
@@ -388,11 +388,11 @@ function DKComboAttack()
 	;First check DKCombo1
 	call CheckAbilCost "${DKCombo1}"
 	if ${Return} && ${Me.Ability[${DKCombo1}].IsReady}
-	{	
+	{
 		; Then check DKCombo2
 		call CheckAbilCost "${DKCombo2}"
 		if ${Return} && ${Me.Ability[${DKCombo2}].IsReady}
-		{	
+		{
 			;call DebugIt "D. Using DK Combo Attack 1"
 			Face ${Me.Target.X} ${Me.Target.Y}
 			Me.Ability[${DKCombo1}]:Use
@@ -417,7 +417,7 @@ function Finishers()
 	;Finishers
 	call CheckAbilCost "${finishAttack}"
 	if ${useFinishAttack} && ${Return} && ${Me.Ability[${finishAttack}].IsReady}
-	{	
+	{
 		;call DebugIt "D. Using Finisher attack"
 		Face ${Me.Target.X} ${Me.Target.Y}
 		Me.Ability[${finishAttack}]:Use
@@ -478,7 +478,7 @@ function:bool CombatHeal()
 	}
 
 	if !${Me.HavePet}
-		return FALSE
+	return FALSE
 
 	if ${Me.Pet.Health} < ${petHealPct} && ${Me.Ability[${petHeal}].IsReady}
 	{
@@ -495,26 +495,26 @@ function:bool CombatHeal()
 ;================================================
 function FeigningDeath()
 {
-   ;call DebugIt "You are in function FeigningDeath"
-   if ${DoWeHaveFD} && ${Me.TargetAsEncounter.Difficulty}>${ConCheck} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.InCombat}
-     {
-      call runaway
-      Me.Ability[${FeignDeath}]:Use
-      wait 15
-      Me.Form[${neutralFormName}]:ChangeTo
-      call DebugIt "D. cleartargets 5 called"
-      VGExecute /cleartargets
-      return
-     }
+	;call DebugIt "You are in function FeigningDeath"
+	if ${DoWeHaveFD} && ${Me.TargetAsEncounter.Difficulty}>${ConCheck} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.InCombat}
+	{
+		call runaway
+		Me.Ability[${FeignDeath}]:Use
+		wait 15
+		Me.Form[${neutralFormName}]:ChangeTo
+		call DebugIt "D. cleartargets 5 called"
+		VGExecute /cleartargets
+		return
+	}
 
-   if ${DoWeHaveFD} && ${Me.HealthPct}<${FeignDeathAt} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.InCombat} && (${Me.TargetHealth}>${FightOnAt}) || ${DoWeHaveFD} && ${Me.TargetAsEncounter.Difficulty}>${ConCheck} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.InCombat} && ${Me.Ability[${FeignDeath}].IsReady} || ${Me.HealthPct}>${FeignDeathAt} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.InCombat} && ${Me.Effect[${FeignDeath}](exists)} || ${Me.Encounter}>0
-     {
-      VGExecute "/cleartargets"
-      Me.Ability[${FeignDeath}]:Use
-      wait 15
-      Me.Form[${neutralFormName}]:ChangeTo
-      return
-     }
+	if ${DoWeHaveFD} && ${Me.HealthPct}<${FeignDeathAt} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.InCombat} && (${Me.TargetHealth}>${FightOnAt}) || ${DoWeHaveFD} && ${Me.TargetAsEncounter.Difficulty}>${ConCheck} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.InCombat} && ${Me.Ability[${FeignDeath}].IsReady} || ${Me.HealthPct}>${FeignDeathAt} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.InCombat} && ${Me.Effect[${FeignDeath}](exists)} || ${Me.Encounter}>0
+	{
+		VGExecute "/cleartargets"
+		Me.Ability[${FeignDeath}]:Use
+		wait 15
+		Me.Form[${neutralFormName}]:ChangeTo
+		return
+	}
 }
 
 ;================================================
@@ -544,7 +544,7 @@ function Forms()
 {
 	if ${doUseForms}
 	{
-		if !${Me.CurrentForm.Name.Equal[${formName}]} && ${Me.Form[${formName}].IsReady} 
+		if !${Me.CurrentForm.Name.Equal[${formName}]} && ${Me.Form[${formName}].IsReady}
 		{
 			Me.Form[${formName}]:ChangeTo
 			call DebugIt " -- D. Forms: ${Me.Form[${formName}]}"
@@ -558,7 +558,7 @@ function CombatForms()
 {
 	if ${doUseCombatForms}
 	{
-		if !${Me.CurrentForm.Name.Equal[${attackFormName}]} && ${Me.Form[${attackFormName}].IsReady} && ${Me.HealthPct} > ${changeFormPct} 
+		if !${Me.CurrentForm.Name.Equal[${attackFormName}]} && ${Me.Form[${attackFormName}].IsReady} && ${Me.HealthPct} > ${changeFormPct}
 		{
 			wait 10
 			call DebugIt ".CombatForm: attackForm: ${attackFormName}"
@@ -566,7 +566,7 @@ function CombatForms()
 			wait 10
 			return
 		}
-		elseif !${Me.CurrentForm.Name.Equal[${defenseFormName}]} && ${Me.Form[${defenseFormName}].IsReady} && ${Me.HealthPct} <= ${changeFormPct} 
+		elseif !${Me.CurrentForm.Name.Equal[${defenseFormName}]} && ${Me.Form[${defenseFormName}].IsReady} && ${Me.HealthPct} <= ${changeFormPct}
 		{
 			wait 10
 			call DebugIt ".CombatForm: defenseForm: ${defenseFormName}"
@@ -593,15 +593,15 @@ function PlayBardSong(string SongType)
 	{
 		Switch "${SongType}"
 		{
-			Case Combat
-				call PlayCombatSong
-				break
-			Case Travel
-				call PlayTravelSong
-				break
-			Case Rest
-				call PlayRestSong
-				break
+		Case Combat
+			call PlayCombatSong
+			break
+		Case Travel
+			call PlayTravelSong
+			break
+		Case Rest
+			call PlayRestSong
+			break
 		}
 	}
 }
@@ -620,13 +620,13 @@ function PlayCombatSong()
 		{
 			;need to loop through and find this item that is 'not' in Primary Hand
 			for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
-				if (${SecondaryWeapon.Equal[${Me.Inventory[${i}].Name}]}) && (${String["Primary Hand"].NotEqual[${Me.Inventory[${i}].CurrentEquipSlot}]})
-				{
-					Me.Inventory[${i}]:Equip
-					wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
-				}
-		} 
-		else 
+			if (${SecondaryWeapon.Equal[${Me.Inventory[${i}].Name}]}) && (${String["Primary Hand"].NotEqual[${Me.Inventory[${i}].CurrentEquipSlot}]})
+			{
+				Me.Inventory[${i}]:Equip
+				wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+			}
+		}
+		else
 		{
 			Me.Inventory[ExactName,"${SecondaryWeapon}"]:Equip
 			wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
@@ -689,3 +689,4 @@ function unequipbarditems()
 }
 
 ;end add spud
+

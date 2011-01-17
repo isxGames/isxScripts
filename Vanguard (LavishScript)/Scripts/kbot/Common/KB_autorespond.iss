@@ -1,7 +1,7 @@
 /*
-	Alarm and Auto-response code
+Alarm and Auto-response code
 */
-	
+
 #define ALARMSOUND	"${Script.CurrentDirectory}/sounds/alarm.wav"
 #define DETECTSOUND	"${Script.CurrentDirectory}/sounds/detect.wav"
 #define TELLSOUND	"${Script.CurrentDirectory}/sounds/tell.wav"
@@ -17,7 +17,7 @@ variable time ChatAlarmTimer
 
 variable bool monName = TRUE			;for say
 variable bool monTell = TRUE			;15
-variable bool monTransport = TRUE		;18 
+variable bool monTransport = TRUE		;18
 variable bool monLevel = TRUE			;19
 variable bool monSay = TRUE				;3
 variable bool monShout = TRUE			;4
@@ -76,9 +76,13 @@ function findAutoResponse(string aText, string aName)
 					{
 						call DebugIt "VG:AR: reply: ${setAutoRespond.FindSet[${anIter.Key}].FindSetting[reply]}"
 						if ${aName.Equal[NONE]}
+						{
 							TimedCommand ${aDelay} "VGExecute /reply ${setAutoRespond.FindSet[${anIter.Key}].FindSetting[reply]}"
+						}
 						else
+						{
 							TimedCommand ${aDelay} "VGExecute /tell ${aName} ${setAutoRespond.FindSet[${anIter.Key}].FindSetting[reply]}"
+						}
 						return
 					}
 					elseif ${setAutoRespond.FindSet[${anIter.Key}].FindSetting[emote](exists)}
@@ -108,7 +112,6 @@ function findAutoResponse(string aText, string aName)
 		}
 	}
 	while ${anIter:Next(exists)}
-
 }
 
 /* Try to detect if this is a GM */
@@ -147,16 +150,16 @@ function testTell(string aText)
 {
 	; Of the form:
 	; From [<pcname>GM-Volson</link>]: Hello, this is GM Volson. Are you there?
-/*
-GM Zodero
-GM Tyathera
-GM Zwee
-GM Tiara
-GM Nethe
-GM Volson
-GM Daegarmo
-GM Kardoras
-*/
+	/*
+	GM Zodero
+	GM Tyathera
+	GM Zwee
+	GM Tiara
+	GM Nethe
+	GM Volson
+	GM Daegarmo
+	GM Kardoras
+	*/
 
 	variable string aName
 	variable string aTell
@@ -200,7 +203,7 @@ GM Kardoras
 	}
 
 	if ${isGMDetected}
-		isGMDetected:Set[FALSE]
+	isGMDetected:Set[FALSE]
 
 }
 
@@ -217,7 +220,9 @@ function testSayEmoteText(string aText)
 	aName:Set[${aText.Token[1," "]}]
 
 	if ${aName.Equal[${Me.FName}]}
+	{
 		return
+	}
 
 	call testNameForGM "${aName}"
 
@@ -239,17 +244,17 @@ function testSayEmoteText(string aText)
 	}
 
 	if ${isGMDetected}
-		isGMDetected:Set[FALSE]
+	isGMDetected:Set[FALSE]
 }
 
 function testPawn(string aName)
 {
-		if ${Pawn[${aName}].Title.Find[Crimson Fellowship]}
-		{
-			call GMDetect
-			TimedCommand 60 "call GMDetect"
-			call DebugIt "VG: ALARM! Crimson Fellowship detected"
-		}
+	if ${Pawn[${aName}].Title.Find[Crimson Fellowship]}
+	{
+		call GMDetect
+		TimedCommand 60 "call GMDetect"
+		call DebugIt "VG: ALARM! Crimson Fellowship detected"
+	}
 }
 
 function EchoAlarm(string aText, int Number)
@@ -319,7 +324,9 @@ function AutoRespond(string aText, int Number)
 		call TellsOut "${aText}"
 
 		if ${doServerDown}
+		{
 			StopBot
+		}
 	}
 
 	if ${aText.Find[From ]} && (${Number} == 15)
@@ -381,7 +388,7 @@ function AutoRespond(string aText, int Number)
 		call TellsOut "${aText}"
 		call EchoAlarm "${aText}" "${Number}"
 	}
-	
+
 }
 
 
@@ -437,8 +444,8 @@ function TellAlarm()
 
 function testTellAlarm()
 {
-		call DebugIt "VG: tellAlarm"
-		call PlaySound TELLSOUND
+	call DebugIt "VG: tellAlarm"
+	call PlaySound TELLSOUND
 }
 
 function WarnAlarm()
@@ -458,7 +465,7 @@ function LevelAlarm()
 
 function testLevelAlarm()
 {
-		call PlaySound LEVELSOUND
+	call PlaySound LEVELSOUND
 }
 
 function PlaySound(string Filename)
@@ -469,7 +476,7 @@ function PlaySound(string Filename)
 function TellsOut(string aText)
 {
 	variable string TellsFile = "${Script.CurrentDirectory}/save/${Me.FName}_tells.log"
-		
+
 	if ${Verbose}
 	{
 		echo ${aText}
