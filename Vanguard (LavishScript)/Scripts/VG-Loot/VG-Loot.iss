@@ -86,7 +86,7 @@ function main()
 			if ${doTrash} && !${Me.InCombat}
 			{
 				;; Delete trash once every 3 seconds
-				if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${TrashLootTimer}]}/1000]}>1
+				if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${TrashLootTimer}]}/1000]}>3
 				{
 					obj_trash:Destroy
 					TrashLootTimer:Set[${Script.RunningTime}]
@@ -117,7 +117,7 @@ function LootTargets()
 	}
 
 	;; Try to loot the target
-	if ${Me.Target(exists)} && ${Me.Target.ID(exists)}
+	if ${Me.Target(exists)}
 	{
 		;; Set our variables
 		variable string leftofname
@@ -156,11 +156,10 @@ function LootCurrentTarget()
 		if !${doLootEcho} && !${doLootOnly}
 		{
 			;; Quickly loot the target, generates no error messages
-			waitframe
 			Loot:LootAll
 			waitframe
 			
-			;; Blacklist corpse if no loot - in other words, we want to try to loot the corpse twice
+			;; Blacklist corpse if no loot - in other words, we don't want to try to loot the corpse twice
 			wait 10 ${Me.Target.ID(exists)}
 
 			if ${Me.Target.ID(exists)}
@@ -173,7 +172,6 @@ function LootCurrentTarget()
 				;; Clear targets
 				if ${doClearTarget}
 				{
-					echo cleared
 					VGExecute "/cleartargets"
 					wait 10 !${Me.Target(exists)}
 				}
@@ -298,6 +296,7 @@ function FindLootableTargets()
 			ClearLootTimer:Set[${Script.RunningTime}]
 			
 			Pawn[${i}]:Target
+			waitframe
 			wait 3
 			return
 		}
