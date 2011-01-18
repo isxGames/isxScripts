@@ -532,7 +532,7 @@ objectdef  bnav
 					}
 				}
 			}
-			while ${bpathindex:Inc} <= ${mypath.Hops} && !${Me.InCombat}
+			while ${bpathindex:Inc} <= ${mypath.Hops}
 
 			VG:ExecBinding[moveforward,release]
 

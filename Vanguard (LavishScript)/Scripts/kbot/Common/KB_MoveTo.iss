@@ -115,16 +115,6 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 		; Ensure we are still facing our target loc
 		Face ${Pawn[id,${ObjectID}].X} ${Pawn[id,${ObjectID}].Y}
 
-/*
-		if ${VG.CheckCollision[${Pawn[id,${ObjectID}].X},${Pawn[id,${ObjectID}].Y},${Me.Z}](exists)}
-		{
-			call AvoidCollision ${Pawn[id,${ObjectID}].X} ${Pawn[id,${ObjectID}].Y} ${Me.Z}
-			if !${Return}
-			{
-				return "COLLISION"
-			}
-		}
-*/
 		;If too far away run forward
 		if ${Pawn[id,${ObjectID}].Distance} > ${MaxDist}
 		{
@@ -143,10 +133,12 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 			;press and hold the backward button
 			VG:ExecBinding[moveforward,release]
 			VG:ExecBinding[movebackward]
+			Face ${Pawn[id,${ObjectID}].X} ${Pawn[id,${ObjectID}].Y}
 		}
 
 		;If we are close enough stop running
-		if ${Pawn[id,${ObjectID}].Distance} > ${MinDist} && ${Pawn[id,${ObjectID}].Distance} < ${MaxDist}
+		;if ${Pawn[id,${ObjectID}].Distance} > ${MinDist} && ${Pawn[id,${ObjectID}].Distance} < ${MaxDist}
+		if ${Pawn[id,${ObjectID}].Distance} < ${MaxDist}
 		{
 			VG:ExecBinding[moveforward,release]
 			VG:ExecBinding[movebackward,release]
@@ -154,7 +146,8 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 		}
 
 		;wait for half a second to give our pc a chance to move
-		wait 5
+		;wait 5
+		
 		;	echo ${Pawn[id,${ObjectID}].Name} ${Pawn[id,${ObjectID}].Distance}
 		; Check to make sure we have moved if not then try and avoid the
 		; obstacle thats in our path
@@ -189,14 +182,14 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 		}
 
 		; If I have moved away from my saved spot reset my stuck toggle
-		if ${StuckCheck}&&${Math.Distance[${Me.X},${Me.Y},${Me.Z},${SavX},${SavY},${SavZ}]} > 3
+		if ${StuckCheck} && ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${SavX},${SavY},${SavZ}]} > 3
 		{
 			;echo I am no longer stuck
 			StuckCheck:Set[FALSE]
 		}
 
 	}
-	while (${Pawn[id,${ObjectID}].Distance} > ${MaxDist} || ${Pawn[id,${ObjectID}].Distance} < ${MinDist}) && ${LavishScript.RunningTime} < ${BailOut} && !${Me.InCombat}
+	while (${Pawn[id,${ObjectID}].Distance} > ${MaxDist} || ${Pawn[id,${ObjectID}].Distance} < ${MinDist}) && ${LavishScript.RunningTime} < ${BailOut}
 
 	if !${CurrentChunk.Equal[${Me.Chunk}]}	
 	{

@@ -628,7 +628,7 @@ function CheckState()
 
 				if ${Me.Target.Distance} > 5
 				{
-					call movetoobject ${Me.Target.ID} 4 0
+					call movetoobject ${Me.Target.ID} 4 1
 					if ${Return.Equal[COLLISION]}
 					{
 						call DebugIt " .  Blacklist Harvest target because COLLISION: ${Me.Target.Name}"
@@ -1349,8 +1349,8 @@ function:bool Pull()
 		}
 
 	}
-
-	if  ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxPullRange} && ${Me.Target.HaveLineOfSightTo}
+	
+	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} > ${maxPullRange} && ${Me.Target.HaveLineOfSightTo}
 	{
 		call DebugIt ". Pull:  Still Too Far: Moving into to pull range"
 		call movetoobject ${Me.Target.ID} ${maxPullRange} 1
@@ -1523,7 +1523,14 @@ function Fight()
 	{
 		; Move into melee range
 		Face
-		call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
+		if ${maxMeleeRange}<4
+		{
+			call movetoobject ${Me.Target.ID} 4 1
+		}
+		else
+		{
+			call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
+		}
 	}
 
 	; We are to Close, step back
@@ -1565,7 +1572,14 @@ function Fight()
 		{
 			; Move into melee range
 			Face
-			call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
+			if ${maxMeleeRange}<4
+			{
+				call movetoobject ${Me.Target.ID} 4 1
+			}
+			else
+			{
+				call movetoobject ${Me.Target.ID} ${maxMeleeRange} 1
+			}
 		}
 	}
 	elseif ${Me.Target.Distance} <= ${maxMeleeRange} && ${Me.Target.ID(exists)}
@@ -1594,6 +1608,7 @@ function Fight()
 
 	if ${Me.Target.ID(exists)} && !${Me.Target.HaveLineOfSightTo}
 	{
+		face
 		VG:ExecBinding[movebackward]
 		wait 1
 		VG:ExecBinding[movebackward,release]
@@ -2108,15 +2123,24 @@ function GoAFK()
 }
 
 ; ***********************************************
-; **  **
+; **            SPRINT  ON/OFF                 **
 ; ***********************************************
 function SprintStayOn()
 {
 	if ${doSprintSpeed}
 	{
+		;; turn sprint on if we are not sprinting
 		if !${Me.IsSprinting}
 		{
 			Me:Sprint[${maxSprintSpeed}]
+		}
+	}
+	else
+	{
+		;; turn sprint off if we are spinting
+		if ${Me.IsSprinting}
+		{
+			Me:Sprint
 		}
 	}
 }
