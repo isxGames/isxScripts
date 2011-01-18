@@ -9,7 +9,11 @@ function lootCorpse()
 	{
 		return
 	}
+	
+	;; This will ensure we have a TargetID before checking blacklist
+	wait 10 ${Me.Target(exists)} && ${Me.Target.ID(exists)}
 
+	;; Return if target is blacklisted
 	if ${CorpseBlackList.Element[${Me.Target.ID}](exists)}
 	{
 		return
@@ -18,50 +22,26 @@ function lootCorpse()
 	;Move to the corpse if you're not close
 	if ${Me.Target.Distance} >= 5
 	{
-		call movetoobject ${Me.Target.ID} 4 0
+		call movetoobject ${Me.Target.ID} 4 1
 	}
 
+	;; Make sure we blacklist so we don't try looting it again
 	CorpseBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 
 	if ${doLootCorpses}
 	{
 		call DebugIt ".  Looting ${Me.Target}"
+
+		;; wait long enough to allow other loot programs to loot
+		wait 10
+	
+		;; go ahead and loot everything
 		Me.Target:LootAll
-		wait 5
+		wait 3
 		
+		;; clear the target
 		VGExecute /cleartargets
-		wait 5
-
-
-/*
-		Me.Target:Loot
-		wait 5
-		
-		call DebugIt ".  Looting (${Loot.NumItems}) ${Me.Target}"
-		
-		if ${Loot.NumItems}
-		{
-			if ${onlyGoodLoot}
-			{
-				variable int iCount
-				for (iCount:Set[${Loot.NumItems}] ; ${iCount} > 0 ; iCount:Dec)
-				{
-					call DebugIt ".   Item ${Loot.Item[${iCount}].Name}: ${Loot.Item[${iCount}].Type}"
-					if ${Loot.Item[${iCount}].Type.Find[Weapon]} || ${Loot.Item[${iCount}].Type.Find[Armor]} || ${Loot.Item[${iCount}].Type.Find[Shield]} || ${Loot.Item[${iCount}].Rarity.Find[Rare]} || ${Loot.Item[${iCount}].Rarity.Find[Heroic]}
-					{
-						Loot.Item[${iCount}]:Loot
-					}
-				}
-				wait 5
-				Loot:EndLooting
-			}
-			else
-			{
-				Loot:LootAll
-				wait 5
-			}
-		}
-*/
+		wait 3
 	}
 }
 
@@ -70,54 +50,73 @@ function lootCorpse()
 ; ***********************************************
 function skinCorpse()
 {
-	if !${Me.Target(exists)}
+	if !${Me.Target(exists)} || !${doSkinMobs}
 	{
 		return
 	}
 
+	;; This will ensure we have a TargetID before checking blacklist
+	wait 10 ${Me.Target(exists)} && ${Me.Target.ID(exists)}
+
+	;; Return if target is blacklisted
 	if ${HarvestBlackList.Element[${Me.Target.ID}](exists)}
 	{
 		return
 	}
 
-	if ${doSkinMobs} && ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsHarvestable} && ${Me.Target.Distance} < 10 && !${Me.Target.Name.Find[remains]}
+	if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsHarvestable} && ${Me.Target.Distance} < 10 && !${Me.Target.Name.Find[remains]}
 	{
-
-		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
-
-		;Move to the corpse if you're not close
-		if ${Me.Target.Distance} > 5
-		{
-			call movetoobject ${Me.Target.ID} 5 0
-		}
-
 		call DebugIt ".   Harvesting Corpse"
 		VGExecute /autoattack
-
 		wait 20
 
+		isHarvesting:Set[TRUE]
+
 		; Now wait for the Harvesting to finish
-		while ${GV[bool,bHarvesting]} && (${Me.HealthPct} > 80)
+		while ${GV[bool,bHarvesting]} && ${Me.HealthPct} > 80 && ${Me.Encounter}==0 && !${Me.Target.ContainsLoot} && ${Me.Target(exists)}
 		{
-			wait 5
+			wait 1
 		}
+		
+		isHarvesting:Set[FALSE]
 
-		wait 10
+		;; Only loot if we have no adds
+		if ${Me.Encounter}==0
+		{
+			;; blacklist the target
+			HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+			
+			;; this delay is so that other loot programs can loot
+			wait 15
 
-		; Then loot!
-		if ${doLootCorpses}
-		Me.Target:LootAll
-
-		LastCorpseID:Set[${Me.Target.ID}]
-
-		VGExecute /cleartargets
-
+			; Then loot!
+			Me.Target:LootAll
+			wait 3
+		}
+		
 	}
+	
+	;; set LastCorpseID to current target ID
+	LastCorpseID:Set[${Me.Target.ID}]
+
+	;; clear the target
+	VGExecute /cleartargets
+	wait 3
 }
+
 ; begin add by cj
 function:bool Necropsy()
 {
-	if !${doNecropsy} || ${NecropsyBlackList.Element[${Me.Target.ID}](exists)}
+	if !${Me.Target(exists)} || !${doNecropsy}
+	{
+		return
+	}
+
+	;; This will ensure we have a TargetID before checking blacklist
+	wait 10 ${Me.Target(exists)} && ${Me.Target.ID(exists)}
+	
+	;; Return if target is blacklisted
+	if ${NecropsyBlackList.Element[${Me.Target.ID}](exists)}
 	{
 		return TRUE
 	}
@@ -165,7 +164,16 @@ function:bool Necropsy()
 
 function:bool getEnergy()
 {
-	if !${doGetEnergy} || ${getManaorMinionBlackList.Element[${Me.Target.ID}](exists)}
+	if !${Me.Target(exists)} || !${doGetEnergy}
+	{
+		return
+	}
+
+	;; This will ensure we have a TargetID before checking blacklist
+	wait 10 ${Me.Target(exists)} && ${Me.Target.ID(exists)}
+	
+	;; Return if target is blacklisted
+	if ${getManaorMinionBlackList.Element[${Me.Target.ID}](exists)}
 	{
 		return TRUE
 	}
@@ -185,7 +193,16 @@ function:bool getEnergy()
 
 function:bool getMinions()
 {
-	if (!${doGetMinions}) || ${getManaorMinionBlackList.Element[${Me.Target.ID}](exists)}
+	if !${Me.Target(exists)} || !${doGetMinions}
+	{
+		return
+	}
+
+	;; This will ensure we have a TargetID before checking blacklist
+	wait 10 ${Me.Target(exists)} && ${Me.Target.ID(exists)}
+	
+	;; Return if target is blacklisted
+	if ${getManaorMinionBlackList.Element[${Me.Target.ID}](exists)}
 	{
 		return TRUE
 	}
@@ -218,23 +235,22 @@ function:bool getMinions()
 ; ***********************************************
 function Harvest()
 {
-
-	if ${Me.Target.ID(exists)} && ${doHarvest} && ${Me.Target.Type.Equal[Resource]}
+	if !${Me.Target(exists)} || !${doHarvest}
 	{
-		if ${HarvestBlackList.Element[${Me.Target.ID}](exists)}
-		{
-			return
-		}
+		return
+	}
 
-		; Check for Agro Mobs or other dangers
-		;call AreWeSafe
-		;if !${Return}
-		;{
-		;	call DebugIt ". Harvest:  Harvesting area NOT safe"
-		;	HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
-		;	return
-		;}
+	;; This will ensure we have a TargetID before checking blacklist
+	wait 10 ${Me.Target(exists)} && ${Me.Target.ID(exists)}
 
+	;; Return if target is blacklisted
+	if ${HarvestBlackList.Element[${Me.Target.ID}](exists)}
+	{
+		return
+	}
+
+	if ${Me.Target.Type.Equal[Resource]}
+	{
 		call DebugIt ". Harvest:   Harvesting Resource: ${Me.Target.Name}"
 		VGExecute /autoattack
 		wait 20
@@ -242,21 +258,30 @@ function Harvest()
 		isHarvesting:Set[TRUE]
 
 		; Now wait for the Harvesting to finish
-		while ${GV[bool,bHarvesting]} && ${Me.HealthPct} > 80 && ${Me.Encounter}==0 && !${Me.Target.ContainsLoot}
+		while ${GV[bool,bHarvesting]} && ${Me.HealthPct} > 80 && ${Me.Encounter}==0 && !${Me.Target.ContainsLoot} && ${Me.Target(exists)}
 		{
-			wait 5
+			wait 1
 		}
+		
 		isHarvesting:Set[FALSE]
 
+		;; Only loot if we have no adds
 		if ${Me.Encounter}==0
 		{
+			;; blacklist the target
 			HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
-			wait 10
+			
+			;; this delay is so that other loot programs can loot
+			wait 15
 
 			; Then loot!
 			Me.Target:LootAll
+			wait 3
 		}
+		
+		;; clear the target
 		VGExecute /cleartargets
+		wait 3
 	}
 }
 

@@ -98,7 +98,7 @@ function:bool SnareMob()
 	return FALSE
 
 	call CheckAbilCost "${snareAttack}"
-	if ${Return} && ${Me.Ability[${snareAttack}].IsReady} && !${Me.TargetEffect[${snareAttack}](exists)} && ${Me.TargetHealth} > 30
+	if ${Return} && ${Me.Ability[${snareAttack}].IsReady} && !${Me.TargetMyDebuff[${snareAttack}](exists)} && ${Me.TargetHealth} > 30
 	{
 		Face ${Me.Target.X} ${Me.Target.Y}
 		;cast snare
@@ -203,9 +203,9 @@ function:bool DoTs()
 
 	while ( ${anIter.Key(exists)} )
 	{
-		;call DebugIt "D. DoT Sub ${anIter.Key}, rdy ${Me.Ability[${anIter.Key}].IsReady}, Already dotted ${Me.TargetEffect[${anIter.Key}](exists)}"
+		;call DebugIt "D. DoT Sub ${anIter.Key}, rdy ${Me.Ability[${anIter.Key}].IsReady}, Already dotted ${Me.TargetMyDebuff[${anIter.Key}](exists)}"
 		call CheckAbilCost "${anIter.Key}"
-		if ${Return} && ${Me.Ability[${anIter.Key}].IsReady} && !${Me.TargetEffect[${anIter.Key}](exists)}
+		if ${Return} && ${Me.Ability[${anIter.Key}].IsReady} && !${Me.TargetMyDebuff[${anIter.Key}](exists)}
 		{
 			call DebugIt " -- D. Using DoTs: ${Me.Ability[${anIter.Key}]}"
 			Face ${Me.Target.X} ${Me.Target.Y}
@@ -233,7 +233,7 @@ function:bool Nukes()
 
 	while ( ${anIter.Key(exists)} )
 	{
-		;call DebugIt "D. Nuke Sub ${anIter.Key}, rdy ${Me.Ability[${anIter.Key}].IsReady}, Already Nuketed ${Me.TargetEffect[${CurrentNukeName}](exists)}"
+		;call DebugIt "D. Nuke Sub ${anIter.Key}, rdy ${Me.Ability[${anIter.Key}].IsReady}, Already Nuketed ${Me.TargetMyDebuff[${CurrentNukeName}](exists)}"
 		call CheckAbilCost "${anIter.Key}"
 		if ${Return} && ${Me.Ability[${anIter.Key}].IsReady}
 		{
@@ -544,7 +544,8 @@ function Forms()
 {
 	if ${doUseForms}
 	{
-		if !${Me.CurrentForm.Name.Equal[${formName}]} && ${Me.Form[${formName}].IsReady}
+		;if !${Me.CurrentForm.Name.Equal[${formName}]} && ${Me.Form[${formName}].IsReady}
+		if !${Me.CurrentForm.Name.Equal[${formName}]}
 		{
 			Me.Form[${formName}]:ChangeTo
 			call DebugIt " -- D. Forms: ${Me.Form[${formName}]}"
@@ -558,7 +559,8 @@ function CombatForms()
 {
 	if ${doUseCombatForms}
 	{
-		if !${Me.CurrentForm.Name.Equal[${attackFormName}]} && ${Me.Form[${attackFormName}].IsReady} && ${Me.HealthPct} > ${changeFormPct}
+		;if !${Me.CurrentForm.Name.Equal[${attackFormName}]} && ${Me.Form[${attackFormName}].IsReady} && ${Me.HealthPct} > ${changeFormPct}
+		if !${Me.CurrentForm.Name.Equal[${attackFormName}]} && ${Me.HealthPct} > ${changeFormPct}
 		{
 			wait 10
 			call DebugIt ".CombatForm: attackForm: ${attackFormName}"
@@ -566,7 +568,8 @@ function CombatForms()
 			wait 10
 			return
 		}
-		elseif !${Me.CurrentForm.Name.Equal[${defenseFormName}]} && ${Me.Form[${defenseFormName}].IsReady} && ${Me.HealthPct} <= ${changeFormPct}
+		;elseif !${Me.CurrentForm.Name.Equal[${defenseFormName}]} && ${Me.Form[${defenseFormName}].IsReady} && ${Me.HealthPct} <= ${changeFormPct}
+		elseif !${Me.CurrentForm.Name.Equal[${defenseFormName}]} && ${Me.HealthPct} <= ${changeFormPct}
 		{
 			wait 10
 			call DebugIt ".CombatForm: defenseForm: ${defenseFormName}"

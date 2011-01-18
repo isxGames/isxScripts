@@ -150,7 +150,7 @@ function SnareMob()
 	if "!${DoWeWantToSnare}"
 	Return
 
-	if "${Me.TargetHealth}<${SnareAt} && ${Me.Ability[${Snare}].IsReady} && ${Me.Energy}>${Me.Ability[${Snare}].EnergyCost} && !${Me.TargetEffect[${Snare}](exists)} && ${Me.TargetHealth}>3"
+	if "${Me.TargetHealth}<${SnareAt} && ${Me.Ability[${Snare}].IsReady} && ${Me.Energy}>${Me.Ability[${Snare}].EnergyCost} && !${Me.TargetMyDebuff[${Snare}](exists)} && ${Me.TargetHealth}>3"
 	{
 		;cast snare
 		Me.Ability[${Snare}]:Use
@@ -262,9 +262,9 @@ function DoTs()
 	if "${Me.Ability[${CurrentDoTName}].EnergyCost}>${Me.Energy}"
 	Return
 
-	call DebugIt "D. DoT Sub ${CurrentDoTName}, rdy ${Me.Ability[${CurrentDoTName}].IsReady}, Already dotted ${Me.TargetEffect[${CurrentDoTName}](exists)}"
+	call DebugIt "D. DoT Sub ${CurrentDoTName}, rdy ${Me.Ability[${CurrentDoTName}].IsReady}, Already dotted ${Me.TargetMyDebuff[${CurrentDoTName}](exists)}"
 
-	if "${Me.Ability[${CurrentDoTName}].IsReady} && ${Me.Target.ID(exists)} && !${Me.TargetEffect[${CurrentDoTName}](exists)}"
+	if "${Me.Ability[${CurrentDoTName}].IsReady} && ${Me.Target.ID(exists)} && !${Me.TargetMyDebuff[${CurrentDoTName}](exists)}"
 	{
 		face
 		Me.Ability[${CurrentDoTName}]:Use
@@ -322,8 +322,8 @@ function Nukes()
 	if "${Me.Ability[${CurrentNukeName}].EnergyCost}>${Me.Energy}"
 	Return
 
-	call DebugIt "D. Nuke Sub ${CurrentNukeName}, rdy ${Me.Ability[${CurrentNukeName}].IsReady}, Already Nuketed ${Me.TargetEffect[${CurrentNukeName}](exists)}"
-	if "${Me.Ability[${CurrentNukeName}].IsReady} && ${Me.Target.ID(exists)} && !${Me.TargetEffect[${CurrentNukeName}](exists)}"
+	call DebugIt "D. Nuke Sub ${CurrentNukeName}, rdy ${Me.Ability[${CurrentNukeName}].IsReady}, Already Nuketed ${Me.TargetMyDebuff[${CurrentNukeName}](exists)}"
+	if "${Me.Ability[${CurrentNukeName}].IsReady} && ${Me.Target.ID(exists)} && !${Me.TargetMyDebuff[${CurrentNukeName}](exists)}"
 	{
 		face
 		Me.Ability[${CurrentNukeName}]:Use
@@ -859,19 +859,21 @@ function Forms()
 {
 	if ${DoWeHaveForms}
 	{
-		if !${Me.CurrentForm.Name.Equal[${AttackForm}]} && ${Me.Form[${AttackForm}].IsReady} && !${Me.Effect[${WeMeditate}](exists)} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.HealthPct}>${ChangeFormAt}
+		;if !${Me.CurrentForm.Name.Equal[${AttackForm}]} && ${Me.Form[${AttackForm}].IsReady} && !${Me.Effect[${WeMeditate}](exists)} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.HealthPct}>${ChangeFormAt}
+		if !${Me.CurrentForm.Name.Equal[${AttackForm}]} && !${Me.Effect[${WeMeditate}](exists)} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.HealthPct}>${ChangeFormAt}
 		{
 			Me.Form[${AttackForm}]:ChangeTo
 			Return
 		}
 
-		if !${Me.CurrentForm.Name.Equal[${DefForm}]} && ${Me.Form[${DefForm}].IsReady} && !${Me.Effect[${WeMeditate}](exists)} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.HealthPct}<${ChangeFormAt}
+		;if !${Me.CurrentForm.Name.Equal[${DefForm}]} && ${Me.Form[${DefForm}].IsReady} && !${Me.Effect[${WeMeditate}](exists)} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.HealthPct}<${ChangeFormAt}
+		if !${Me.CurrentForm.Name.Equal[${DefForm}]} && !${Me.Effect[${WeMeditate}](exists)} && !${Me.Effect[${FeignDeath}](exists)} && ${Me.HealthPct}<${ChangeFormAt}
 		{
 			Me.Form[${DefForm}]:ChangeTo
 			Return
 		}
-
-		elseif !${Me.CurrentForm.Name.Equal[${NeutralForm}]} && ${Me.Form[${NeutralForm}].IsReady} && ${Me.Effect[${WeMeditate}](exists)}
+		;elseif !${Me.CurrentForm.Name.Equal[${NeutralForm}]} && ${Me.Form[${NeutralForm}].IsReady} && ${Me.Effect[${WeMeditate}](exists)}
+		elseif !${Me.CurrentForm.Name.Equal[${NeutralForm}]} && ${Me.Effect[${WeMeditate}](exists)}
 		{
 			Me.Form[${NeutralForm}]:ChangeTo
 
