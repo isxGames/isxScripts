@@ -72,6 +72,9 @@ variable bool autoCloseWindow = FALSE
 variable int HarvX = 975
 variable int HarvY = 825
 variable settingsetref setSettings
+
+variable int StopHarvestTimer = ${Script.RunningTime}
+
 ;
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -232,8 +235,10 @@ function Harvest()
 	;; Let's wait here while we are harvesting
 	if ${GV[bool,bHarvesting]}
 	{
+		StopHarvestTimer:Set[${Script.RunningTime}]
+
 		EchoIt "Harvesting: ${Me.Target.Name} - ${Me.Target.ID}"
-		while ${GV[bool,bHarvesting]} && !${Me.Target.ContainsLoot}
+		while ${GV[bool,bHarvesting]} && !${Me.Target.ContainsLoot} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
 		{
 			waitframe
 			if !${isRunning}
@@ -244,8 +249,9 @@ function Harvest()
 			{
 				;; Clear Target
 				VGExecute /endharvesting
-				VGExecute "/cleartargets"
+				;VGExecute "/cleartargets"
 				waitframe
+				return
 			}
 		}
 		VGExecute /endharvesting
@@ -256,7 +262,8 @@ function Harvest()
 function Loot()
 {
 	;; Return if we don't have a target or we do not want to loot
-	if !${autoLoot} || !${Me.Target(exists)} || ${GV[bool,bHarvesting]}
+	;if !${autoLoot} || !${Me.Target(exists)} || ${GV[bool,bHarvesting]}
+	if !${autoLoot} || !${Me.Target(exists)}
 	{
 		return
 	}
