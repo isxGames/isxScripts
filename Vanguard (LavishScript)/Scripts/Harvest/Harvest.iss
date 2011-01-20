@@ -245,16 +245,22 @@ function Harvest()
 			{
 				return
 			}
-			if ${Pawn[id,${HarvesterID}].CombatState}==0
+			if ${Pawn[id,${HarvesterID}].CombatState}==0  || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)}
 			{
-				;; Clear Target
 				VGExecute /endharvesting
-				;VGExecute "/cleartargets"
 				waitframe
 				return
 			}
 		}
+		
 		VGExecute /endharvesting
+		waitframe
+		
+		if ${autoLoot}
+		{
+			Me.Target:LootAll
+		}
+
 		wait 10
 	}
 }
