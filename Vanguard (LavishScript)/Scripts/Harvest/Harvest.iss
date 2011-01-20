@@ -179,7 +179,7 @@ function Dist_Check()
 
 function Assist()
 {
-	if ${autoAssist} && ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40
+	if ${autoAssist} && ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40 && ${Pawn[id,${HarvesterID}].CombatState}>0
 	{
 		;; Always set our target to Harvester's target
 		VGExecute /assist ${Harvester}
@@ -204,12 +204,12 @@ function Harvest()
 		if ${Distance}<300
 		Distance:Set[300]
 
-		;; Turn slowly toward the target
-		call faceloc ${Me.Target.X} ${Me.Target.Y} 20
 		
 		;; Begin moving to the target
 		while ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]} > ${Distance}
 		{
+			;; Turn slowly toward the target
+			call faceloc ${Me.Target.X} ${Me.Target.Y} 20
 			face ${Me.Target.X} ${Me.Target.Y}
 			isMoving:Set[TRUE]
 			VG:ExecBinding[moveforward]
@@ -225,7 +225,7 @@ function Harvest()
 		}
 
 		;; Harvest target if in range
-		if ${Me.Target.Distance} <= ${FollowDist} && !${GV[bool,bHarvesting]}
+		if ${Me.Target.Distance} <= ${FollowDist}
 		{
 			VGExecute /autoattack
 			wait 50 ${GV[bool,bHarvesting]}
@@ -235,9 +235,12 @@ function Harvest()
 	;; Let's wait here while we are harvesting
 	if ${GV[bool,bHarvesting]}
 	{
+		;; Turn slowly toward the target
+		call faceloc ${Me.Target.X} ${Me.Target.Y} 20
+	
 		StopHarvestTimer:Set[${Script.RunningTime}]
 
-		EchoIt "Harvesting: ${Me.Target.Name} - ${Me.Target.ID}"
+		;EchoIt "Harvesting: ${Me.Target.Name} - ${Me.Target.ID}"
 		while ${GV[bool,bHarvesting]} && !${Me.Target.ContainsLoot} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
 		{
 			waitframe
@@ -245,7 +248,7 @@ function Harvest()
 			{
 				return
 			}
-			if ${Pawn[id,${HarvesterID}].CombatState}==0  || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)}
+			if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)}
 			{
 				VGExecute /endharvesting
 				waitframe
@@ -306,26 +309,17 @@ function corpse_drag()
 function Close_HarvestingWindow()
 {
 	;; Harvesting variables never lie -- yeah right!
-	if ${autoCloseWindow} && ${GV[bool,bHarvesting]} && ${GV[bool,IsHarvestingDone]}
+	if ${autoCloseWindow} && ${GV[bool,bHarvesting]}
 	{
 		waitframe
-		vgecho closing window
-	
 		;; End harvesting and show Harvesting window
 		VGExecute /endharvesting
 		VGExecute /showwindow Harvesting
 
-		vgecho "trying to close the harvesting window"
-		MouseClick -hold left
-		wait 3
-		;MouseTo ${HarvX},${HarvY}
-		;wait 3
-		MouseClick -release left
-		wait 3
 		Mouse:LeftClick
 		Mouse:LeftClick
-		wait 5
-		
+		return
+
 		;; Is Harvesting Window still open?
 		if ${GV[bool,bHarvesting]} && ${GV[bool,IsHarvestingDone]}
 		{
@@ -357,7 +351,7 @@ function Close_HarvestingWindow()
 		}
 
 		;; Notify that we closed the pesky Harvesting Window
-		EchoIt "Closed that pesky Harvesting window at X:{HarvX Y:${HarvY}"
+		EchoIt "Closed that pesky Harvesting window at X:${HarvX} Y:${HarvY}"
 	}
 
 	;; Hide the Harvesting Window
