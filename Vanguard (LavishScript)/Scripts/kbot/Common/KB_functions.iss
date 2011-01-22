@@ -256,12 +256,31 @@ function Harvest()
 		wait 20
 
 		isHarvesting:Set[TRUE]
+		
+		variable int StopHarvestTimer = ${Script.RunningTime}
 
+		while ${GV[bool,bHarvesting]} && !${Me.Target.ContainsLoot} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
+		{
+			waitframe
+			if !${isRunning}
+			{
+				return
+			}
+			if !${Me.InCombat} || ${Me.Encounter}>0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Me.HealthPct}<95
+			{
+				VGExecute /endharvesting
+				waitframe
+				break
+			}
+		}
+		
+/*
 		; Now wait for the Harvesting to finish
-		while ${GV[bool,bHarvesting]} && ${Me.HealthPct} > 80 && ${Me.Encounter}==0 && !${Me.Target.ContainsLoot} && ${Me.Target(exists)}
+		while ${GV[bool,bHarvesting]} && ${Me.HealthPct}>95 && ${Me.Encounter}==0 && !${Me.Target.ContainsLoot} && ${Me.Target(exists)}
 		{
 			wait 1
 		}
+*/
 		
 		isHarvesting:Set[FALSE]
 
