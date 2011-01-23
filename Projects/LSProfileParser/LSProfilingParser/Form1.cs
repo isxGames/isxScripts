@@ -32,9 +32,9 @@ namespace LSProfilingParser
             string[] strAllLines = System.IO.File.ReadAllLines(openFileDialog1.FileName);
             string curatom = "";
             int j = 0;
-            int callCnt = 0;
-            float cpuTime = 0;
-            int memCnt = 0;
+            long callCnt = 0;
+            long cpuTime = 0;
+            long memCnt = 0;
             dataGridView1.Rows.Clear();
 
             for (int i = 0; i < strAllLines.Length; i++)
@@ -63,10 +63,10 @@ namespace LSProfilingParser
                     atomBody.Append("\r\n");
 
                     string[] split = strAllLines[i].Split(new Char[] { '[', ']', ':', '/'});
-                    callCnt += Convert.ToInt32(split[1]);
+                    callCnt += Convert.ToInt64(split[1]);
                     //cpuTime += Convert.ToInt64(split[5].Replace("ms", "").Replace(".", ","));
-                    cpuTime += Convert.ToInt32(split[4]);
-                    memCnt += Convert.ToInt32(split[8].Replace("k", ""));
+                    cpuTime += Convert.ToInt64(split[4]);
+                    memCnt += Convert.ToInt64(split[8].Replace("k", ""));
                 }
 
             }
