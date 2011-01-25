@@ -11,7 +11,7 @@ namespace LSProfilingParser
 {
     public partial class Form1 : Form
     {
-        string[] AllAtoms = new string[1000];
+        string[] AllAtoms = new string[10000];
         
         public Form1()
         {
@@ -45,7 +45,7 @@ namespace LSProfilingParser
                     if (curatom.Length > 0)
                     { 
                         AllAtoms[j] = atomBody.ToString();
-                        dataGridView1.Rows.Add(j, curatom, callCnt, cpuTime, memCnt);
+                        dataGridView1.Rows.Add(j, curatom, addDots(callCnt), addDots(cpuTime), addDots(memCnt));
                         j++;
                     }
 
@@ -70,39 +70,107 @@ namespace LSProfilingParser
                 }
 
             }
-            textBox1.Text = sb.ToString();
+            //textBox1.Text = sb.ToString();
             //Lines
             //textBox1.Text = strAllLines[1];
+            //textBox1.Text = "Select Atom";
+            ShowAtom(0);
+        }
+
+        private string addDots(long value)
+        {
+            string sval = value.ToString();
+            string retval = "";
+            int j = 0;
+            for (int i = sval.Length-1; i >= 0 ; i--)
+            {
+                if (j % 3 == 0 && i < sval.Length-1)
+                {
+                    retval = "." + retval;
+                }
+                retval = sval[i]+retval;
+                j++;
+            }
+            return retval;
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+
+        }
+
+        private void dataGridView1_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
+        {
+            if (e.Cell.RowIndex >= 0 && dataGridView1.RowCount > 1)
             {
-                int indx = (int)dataGridView1.Rows[e.RowIndex].Cells["id"].Value;
-                //textBox1.Text = AllAtoms[e.RowIndex];
-                textBox1.Text = AllAtoms[indx];
+                ShowAtom((int)dataGridView1.Rows[e.Cell.RowIndex].Cells["id"].Value);
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ShowAtom(int indx)
         {
-
-        }
-
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
+            if (AllAtoms[indx].Length > 0)
             {
-                int indx = (int)dataGridView1.Rows[e.RowIndex].Cells["id"].Value;
-                //textBox1.Text = AllAtoms[e.RowIndex];
                 textBox1.Text = AllAtoms[indx];
+                tabControl1.SelectedIndex = 1;
+                dataGridView2.Rows.Clear();
+                string[] lines = AllAtoms[indx].Replace("\r", "").Split(new Char[] { '\n' });
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string[] cmdsplit = lines[i].Split(new string[] { "k]  " }, StringSplitOptions.None);
+                    string[] split = cmdsplit[0].Split(new string[] { "[", "]", ":", "/" }, StringSplitOptions.None);
+                    if (split.Length>=10)
+                    {
+                        dataGridView2.Rows.Add(i, split[1], split[4], split[5], split[8], split[9], cmdsplit[1]);
+                    }
+                }
+            }
+            else
+            {
+                if (dataGridView1.RowCount > 1)
+                {
+                    textBox1.Text = "Empty atom";
+                }
+                else
+                {
+                    textBox1.Text = "Please load dump first";
+                }
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void dataGridView1_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
         {
+            e.SortResult = sortDots(e.CellValue1.ToString(), e.CellValue2.ToString());
+            e.Handled = true;
+        }
 
+        private int sortDots(string s1, string s2)
+        {
+            if (s1.Length > s2.Length)
+            {
+                return 1;
+            }
+            else if (s1.Length < s2.Length)
+            {
+                return -1;
+            }
+            else
+            {
+                long i1 = Convert.ToInt64(s1.Replace(".", ""));
+                long i2 = Convert.ToInt64(s2.Replace(".", ""));
+                if (i1 > i2)
+                {
+                    return 1;
+                }
+                else if (i1 < i2)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
     }
 }
