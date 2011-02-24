@@ -594,7 +594,8 @@ function main(string Args)
 						}
 	
 						; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
-						if !${Me.TargetLOS} && ${Target.Distance}>10
+						;if !${Me.TargetLOS} && ${Target.Distance}>10
+						if ${Target.Distance}>10
 							call MovetoMaster
 						elseif ${Target.Distance}>10
 							call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
@@ -815,7 +816,8 @@ function main(string Args)
 				}
 
 				; Need to make sure we are close to the puller. Assume Puller is Main Tank for Dungeon Crawl.
-				if !${Me.TargetLOS} && ${Target.Distance}>10
+				;if !${Me.TargetLOS} && ${Target.Distance}>10
+				if ${Target.Distance}>10
 					call MovetoMaster
 				elseif ${Target.Distance}>10
 					call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
@@ -3358,14 +3360,14 @@ function Pull(string npcclass)
 				;Debug:Echo["Checking LOS/Collision"]
 				if ${Target.CheckCollision}
 				{
-					if !${Me.TargetLOS} && ${Target.CheckCollision}
-					{
+					;if !${Me.TargetLOS} && ${Target.CheckCollision}
+					;{
 						Debug:Echo["Adding (${Target.ID},${Target.Name}) to the TempDoNotPullList (unabled to attack it - No LOS or Collision Detected)"]
 						TempDoNotPullList:Set[${Target.ID},${Target.Name}]
 
 						Debug:Echo["TempDoNotPullList now has ${TempDoNotPullList.Used} actors in it."]
 						continue
-					}
+					;}
 				}
 			}
 
@@ -3560,7 +3562,8 @@ function Pull(string npcclass)
 							}
 						}
 					}
-					while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})) || !${Me.TargetLOS})
+					while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})))
+					;while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})) || !${Me.TargetLOS})
 
 					if ${Target(exists)}
 					{
@@ -5097,11 +5100,11 @@ objectdef ActorCheck
 
 		if ${Target.ID} == ${actorid}
 		{
-				if !${Me.TargetLOS}
-				{
-						Debug:Echo["EQ2Bot-ValidActor():: No line of sight to ${Target}."]
-						return FALSE
-				}
+				;if !${Me.TargetLOS}
+				;{
+				;		Debug:Echo["EQ2Bot-ValidActor():: No line of sight to ${Target}."]
+				;		return FALSE
+				;}
 
 				if ${Target.Distance} > ${MARange}
 				{
