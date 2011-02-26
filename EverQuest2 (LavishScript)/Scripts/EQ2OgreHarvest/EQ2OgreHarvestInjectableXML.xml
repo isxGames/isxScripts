@@ -438,7 +438,7 @@
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			EQ2OgreHarvestStartingLocation:Set[${Me.ToActor.Loc}]
-			execute run "\"${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestMain\""
+			runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestMain"
 			This:Hide
 			UIElement[${CmdOHEndID}]:Show
 		</OnLeftClick>
@@ -461,7 +461,7 @@
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			if ${Script[EQ2OgreHarvestMain]}
-				execute endscript EQ2OgreHarvestMain
+				endscript EQ2OgreHarvestMain
 			This:Hide
 			UIElement[${CmdOHStartID}]:Show
 		</OnLeftClick>
