@@ -1,5 +1,7 @@
-;Version BETA 1.007a
+;Version BETA 1.008
 /**
+Version 1.008 - Kannkor
+Updated to work with latest Innerspace.
 Version 1.007 - Kannkor
 Updated a few routines to help with NULLS / CAA changing
 
@@ -74,11 +76,11 @@ function main()
 
 	;Load the other 2 threads. Putting in a check to make sure they aren't loaded.. shouldn't be needed since they shouldn't run without this running.
 	if !${Script[eq2ogreharvestmovethread](exists)}
-		execute run "\"${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/eq2ogreharvestmovethread\""
+		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/eq2ogreharvestmovethread"
 	if !${Script[EQ2OgreHarvestCheckThread](exists)}
-		execute run "\"${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestCheckThread\""
+		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestCheckThread"
 	if !${Script[EQ2OgreHarvestPathThread](exists)}
-		execute run "\"${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestPathThread\""
+		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestPathThread"
 
 	;Load OgreCustomActorArray
 
