@@ -131,15 +131,6 @@ function moveto(float X,float Z, float Precision, int keepmoving, int Attempts, 
 		maxattempts:Set[${Attempts}]
 	}
 
-	; Check Weight in case we are moving to slow
-	if ${Math.Calc[${Me.Weight}/${Me.MaxWeight}*100]}>150
-	{
-		checklag:Set[10]
-		BackupTime:Set[2]
-		StrafeTime:Set[2]
-		Precision:Set[2]
-	}
-
 	; Check that we are not already there!
 	if ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${Precision}
 	{
