@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISXEVEDotNet", "ISXEVEDotNet.csproj", "{8A670200-5670-4929-B848-5534FC90700B}"
 EndProject
 Global
