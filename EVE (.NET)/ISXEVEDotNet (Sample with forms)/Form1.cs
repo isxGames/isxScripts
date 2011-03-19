@@ -12,15 +12,6 @@ using LavishScriptAPI;
 
 namespace ISXEVEDotNet
 {
-    public sealed class Globals
-    {
-        public static readonly Globals Instance = new Globals();
-        
-        public EVE.ISXEVE.Extension Ext = new EVE.ISXEVE.Extension();
-        
-        private Globals() {}
-    }
-    
     public partial class Form1 : System.Windows.Forms.Form
     {
         Globals Globals = Globals.Instance;
@@ -30,7 +21,7 @@ namespace ISXEVEDotNet
             InitializeComponent();
             using (new FrameLock(true))
             {
-                NameLabel.Text = "Your character's name is " + Globals.Ext.Me().Name;
+                NameLabel.Text = "Your character's name is " + Globals.Ext.Me.Name;
             }
         }
 
@@ -38,7 +29,7 @@ namespace ISXEVEDotNet
         {
             using (new FrameLock(true))
             {
-                NameLabel.Text = "Your active ship has " + Globals.Ext.Me().Ship().HighSlots + " high slots.";
+                NameLabel.Text = "Your active ship has " + Globals.Ext.Me.Ship.HighSlots + " high slots.";
             }
             button1.Visible = false;
             button2.Visible = true;
@@ -48,7 +39,7 @@ namespace ISXEVEDotNet
         {
             using (new FrameLock(true))
             {
-                NameLabel.Text = "Your active ship has " + Globals.Ext.Me().Ship().MediumSlots + " medium slots.";
+                NameLabel.Text = "Your active ship has " + Globals.Ext.Me.Ship.MediumSlots + " medium slots.";
             }
             button2.Visible = false;
             button3.Visible = true;
@@ -58,7 +49,7 @@ namespace ISXEVEDotNet
         {
             using (new FrameLock(true))
             {
-                NameLabel.Text = "Your active ship has " + Globals.Ext.Me().Ship().LowSlots + " low slots.";
+                NameLabel.Text = "Your active ship has " + Globals.Ext.Me.Ship.LowSlots + " low slots.";
             }
             button3.Visible = false;
             button4.Visible = true;
@@ -68,10 +59,9 @@ namespace ISXEVEDotNet
         {
             using (new FrameLock(true))
             {
-                if (Globals.Ext.Me().InStation)
+                if (Globals.Ext.Me.InStation)
                 {
-                    NameLabel.Text = "Undocking...";
-                    Globals.Ext.EVE().Execute(ExecuteCommand.CmdExitStation);
+					NameLabel.Text = "You are in station";
                 }
                 else
                 {
@@ -83,4 +73,13 @@ namespace ISXEVEDotNet
             button1.Visible = true;
         }
     }
+
+	public sealed class Globals
+	{
+		public static readonly Globals Instance = new Globals();
+
+		public EVE.ISXEVE.Extension Ext = new EVE.ISXEVE.Extension();
+
+		private Globals() { }
+	}
 }
