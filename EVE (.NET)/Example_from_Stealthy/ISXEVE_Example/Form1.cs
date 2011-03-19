@@ -30,7 +30,7 @@ namespace ISXEVE_Example
         /* Attach our OnFrame event handler to the LavishScript OnFrame event, in order to power our Pulse */
         private void button_attachEvent_Click(object sender, EventArgs e)
         {
-            LavishScript.Events.AttachEventTarget("OnFrame", OnFrame);
+            LavishScript.Events.AttachEventTarget("ISXEVE_OnFrame", OnFrame);
         }
 
         /* Pulse method that will execute on our OnFrame, which in turn executes on the lavishscript OnFrame */
@@ -43,15 +43,14 @@ namespace ISXEVE_Example
                 _me = new EVE.ISXEVE.Me();
 
                 /* Do whatever the hell we wanted to do here */
-                InnerSpaceAPI.InnerSpace.Echo(String.Format("Im in ur innrspacez, echoin ur consolez! I am {0}",
-                    _me.Name));
+                InnerSpaceAPI.InnerSpace.Echo(String.Format("Im in ur innrspacez, echoin ur consolez! You  are {0}", _me.Name));
             }
         }
 
         /* Detach from the LS Event */
         private void button_detachEvent_Click(object sender, EventArgs e)
         {
-            LavishScript.Events.DetachEventTarget("OnFrame", OnFrame);
+            LavishScript.Events.DetachEventTarget("ISXEVE_OnFrame", OnFrame);
         }
     }
 
