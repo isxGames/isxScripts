@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ISXEVE_Example", "ISXEVE_Example\ISXEVE_Example.csproj", "{73997E63-7826-4F5C-9147-4971005DB7D3}"
 EndProject
 Global

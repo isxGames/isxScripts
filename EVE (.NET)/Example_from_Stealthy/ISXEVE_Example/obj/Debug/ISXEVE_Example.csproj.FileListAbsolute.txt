@@ -1,9 +1,0 @@
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\obj\Debug\ISXEVE_Example.Form1.resources
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\obj\Debug\ISXEVE_Example.Properties.Resources.resources
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\obj\Debug\ISXEVE_Example.csproj.GenerateResource.Cache
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\bin\Debug\ISXEVE_Example.exe
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\bin\Debug\ISXEVE_Example.pdb
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\bin\Debug\ISXEVEWrapper.dll
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\obj\Debug\ISXEVE_Example.exe
-C:\Users\Administrator\Documents\Visual Studio 2008\Projects\ISXEVE_Example\ISXEVE_Example\obj\Debug\ISXEVE_Example.pdb
