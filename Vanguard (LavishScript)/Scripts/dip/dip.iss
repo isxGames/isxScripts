@@ -1067,7 +1067,7 @@ atom(script) OnParlaySuccess()
 	{
 		Redirect -append "${Output}" echo "${Time}: Event for parleysuccess fired"
 	}
-	wins:Inc
+	;wins:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Wins:Inc
 	${currentParleyType}wins:Inc
 	UpdateStats
@@ -1080,7 +1080,7 @@ atom(script) OnParlayLost()
 	{
 		Redirect -append "${Output}" echo "${Time}: Event for parley lost fired"
 	}
-	losses:Inc
+	;losses:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Losses:Inc
 	${currentParleyType}losses:Inc
 	UpdateStats
