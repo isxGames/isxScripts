@@ -9,19 +9,19 @@
 
 		Queries are created and stored in obj_LSQuery, which will call FreeQuery on the query during shutdown
 
-		obj_LSQueryCollection stores a collection of obj_LSQuery, indexed by the query string.
+		obj_LSQueryCache stores a collection of obj_LSQuery, indexed by the query string.
 
 		obj_LSQuery may be used directly, for specialized cases.
 
 		Example:
 
-			variable obj_LSQueryCollection LSQueryCollection
+			variable obj_LSQueryCache LSQueryCache
 			variable uint Loop = 20
 
 			while ${Loop:Dec}
 			{
-				echo ${LSQueryCollection["Name = Fred"]}
-				echo ${LSQueryCollection["Name = Fred1"]}
+				echo ${LSQueryCache["Name = Fred"]}
+				echo ${LSQueryCache["Name = Fred1"]}
 			}
 
 	-- CyberTech (cybertech@gmail.com
@@ -47,7 +47,7 @@ objectdef obj_LSQuery
 	}
 }
 
-objectdef obj_LSQueryCollection
+objectdef obj_LSQueryCache
 {
 	variable collection:obj_LSQuery Queries
 
@@ -68,11 +68,11 @@ objectdef obj_LSQueryCollection
 		{
 			if ${Logger(exists)}
 			{
-				Logger:Log["obj_LSQueryCollection: Failed LavishScript.CreateQuery[${QueryStr}]", LOG_DEBUG]
+				Logger:Log["obj_LSQueryCache: Failed LavishScript.CreateQuery[${QueryStr}]", LOG_DEBUG]
 			}
 			else
 			{
-				echo "obj_LSQueryCollection: Failed LavishScript.CreateQuery[${QueryStr}]"
+				echo "obj_LSQueryCache: Failed LavishScript.CreateQuery[${QueryStr}]"
 			}
 			return 0
 		}
