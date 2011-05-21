@@ -605,7 +605,7 @@ function Combat_Routine(int xAction)
 		{
 			CurrentAction:Set[Piece of Mind]
 			call CastSpellRange 501
-			eq2execute /p "Piece of Mind is active!"
+			;eq2execute /p "Piece of Mind is active!"
 		}
 	}
 }
