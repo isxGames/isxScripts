@@ -184,5 +184,32 @@
 		<Setting name="80,72">Destructive Mind V</Setting>
 		<Setting name="80,95">Shock Wave III</Setting>
 		<Setting name="80,80">Asylum VI</Setting>
+		<Setting name="81,354">Mana Cloak VI</Setting>
+		<Setting name="81,60">Hemorrhage IX</Setting>
+		<Setting name="82,260">Silence VI</Setting>
+		<Setting name="82,70">Brainshock VIII</Setting>
+		<Setting name="83,22">Breeze VI</Setting>
+		<Setting name="83,230">Forced Hesitation VII</Setting>
+		<Setting name="83,51">Cannibalize Thoughts V</Setting>
+		<Setting name="84,42">Mind\'s Eye IV</Setting>
+		<Setting name="84,193">Amnesia III</Setting>
+		<Setting name="84,351">Charm VIII</Setting>
+		<Setting name="85,41">Peaceful Link V</Setting>
+		<Setting name="85,20">Power of Mind VII</Setting>
+		<Setting name="86,90">Simple Minds VII</Setting>
+		<Setting name="86,310">Channel III</Setting>
+		<Setting name="86,50">Obliterated Psyche VI</Setting>
+		<Setting name="87,71">Hostage VI</Setting>
+		<Setting name="87,352">Mesmerize VIII</Setting>
+		<Setting name="88,92">Spell Curse V</Setting>
+		<Setting name="88,91">Ego Shock VII</Setting>
+		<Setting name="88,353">Pure Awe VI</Setting>
+		<Setting name="89,21">Signet of Intellect VII</Setting>
+		<Setting name="89,190">Medusa Gaze VIII</Setting>
+		<Setting name="89,309">Shift Mana VII</Setting>
+		<Setting name="90,391">Puppetmaster II</Setting>
+		<Setting name="90,72">Destructive Mind VI</Setting>
+		<Setting name="90,95">Shock Wave IV</Setting>
+		<Setting name="90,80">Asylum VII</Setting>
 	</Set>
 </InnerSpaceSettings>
