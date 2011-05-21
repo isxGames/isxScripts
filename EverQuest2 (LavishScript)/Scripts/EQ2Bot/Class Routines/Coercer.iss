@@ -159,17 +159,6 @@ if !${InitialBuffsDone}
 {
 	echo Starting eq2bot and starting one time initilization
 
-	UIElement[EQ2 Bot]:SetAlpha[0.3]
-		
-	Me.Inventory[ExactName,Crispy Fried King Prawn Heads]:Equip 
-	Me.Inventory[ExactName,Di'Zok Tranquil Tipple]:Equip
-	wait 22
-	Me.Equipment[ExactName,Crispy Fried King Prawn Heads]:UnEquip 					
-	Me.Equipment[ExactName,Di'Zok Tranquil Tipple]:UnEquip 	
-
-	if !${Me.Maintained[Hover](exists)} && !${Me.Maintained[Call Ykeshan Spellbear](exists)}
-		Me.Ability[Hover]:Use	
-		
 	if !${Me.Maintained[${SpellType[42]}](exists)}
 		call CastSpellRange 42
 
@@ -404,7 +393,7 @@ function Combat_Routine(int xAction)
 	if ${Me.Ability[${SpellType[509]}].IsReady} && ${Mob.Count}>1 || ${Actor[${MainTankID}].Health}<40
 	{
 		call CastSpellRange 509 0 0 0 ${MainTank}	
-		eq2execute /p "Shout at the Devil!"
+		eq2execute /p "Coersive Shout!"
 	}
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
@@ -601,11 +590,11 @@ function Combat_Routine(int xAction)
 			wait 2
 
 		;don't PoM if PoM is up
-		if !${Me.Effect[beneficial,${SpellType[501]}](exists)}
+		if !${Me.Effect[beneficial,${SpellType[501]}](exists)} && ${Me.Ability[${SpellType[501]}].IsReady}
 		{
 			CurrentAction:Set[Piece of Mind]
 			call CastSpellRange 501
-			;eq2execute /p "Piece of Mind is active!"
+			;eq2execute /p "PoM is active!"
 		}
 	}
 }
@@ -663,11 +652,11 @@ function RefreshPower()
 	declare tempvar int local
 	declare MemberLowestPower int local
 
-	if ${Me.Power}<40 && ${Me.ToActor.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<10 && ${Me.ToActor.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use
 
 	if ${ShardMode}
-		call Shard 45
+		call Shard 10
 
 	;Transference line out of Combat
 	if ${Me.ToActor.Health}>60 && ${Me.ToActor.Power}<50 && !${Me.InCombat}
@@ -710,7 +699,7 @@ function RefreshPower()
 }
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<80 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power}<50 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 		call CastSpellRange 354
 
 }
