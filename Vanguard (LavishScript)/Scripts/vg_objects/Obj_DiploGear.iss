@@ -299,27 +299,60 @@ function(global):int ConvertPresence(string Presence)
 }
 function(global):string PresenceNeeded()
 {
-	switch ${Dialog[Civic Diplomacy,1].PresenceRequiredType}
-			{
-			case Academic Presence
-				Return Academics
-			case Merchant Presence
-				Return Merchants
-			case Outsider Presence
-				Return Outsiders
-			case Domestic Presence
-				Return Domestics
-			case Soldier Presence
-				Return Soldiers
-			case Noble Presence
-				Return Nobles
-			case Craftsmen Presence
-				Return Craftsmen
-			case Clergy Presence
-				Return Clergy			
-			default
-				Return PresenceNotFound
-			}
+	; Sometimes this does not exist
+	if ${Dialog[Civic Diplomacy,1].PresenceRequiredType(exists)}
+	{
+		switch ${Dialog[Civic Diplomacy,1].PresenceRequiredType}
+				{
+				case Academic Presence
+					Return Academics
+				case Merchant Presence
+					Return Merchants
+				case Outsider Presence
+					Return Outsiders
+				case Domestic Presence
+					Return Domestics
+				case Soldier Presence
+					Return Soldiers
+				case Noble Presence
+					Return Nobles
+				case Craftsmen Presence
+					Return Craftsmen
+				case Crafter Presence
+					Return Craftsmen
+				case Clergy Presence
+					Return Clergy			
+				default
+					Return PresenceNotFound
+				}
+	}
+	;; check for this such as in POTA
+	elseif ${Dialog[General,2].PresenceRequiredType(exists)}
+	{
+		switch ${Dialog[General,2].PresenceRequiredType}
+				{
+				case Academic Presence
+					Return Academics
+				case Merchant Presence
+					Return Merchants
+				case Outsider Presence
+					Return Outsiders
+				case Domestic Presence
+					Return Domestics
+				case Soldier Presence
+					Return Soldiers
+				case Noble Presence
+					Return Nobles
+				case Craftsmen Presence
+					Return Craftsmen
+				case Crafter Presence
+					Return Craftsmen
+				case Clergy Presence
+					Return Clergy			
+				default
+					Return PresenceNotFound
+				}
+	}
 }
 
 variable(global) obj_diplogear obj_diplogear
