@@ -82,6 +82,19 @@ variable int StopHarvestTimer = ${Script.RunningTime}
 ;
 function main()
 {
+	;-------------------------------------------
+	; Load ISXVG or exit script
+	;-------------------------------------------
+	ext -require isxvg
+	wait 100 ${ISXVG.IsReady}
+	if !${ISXVG.IsReady}
+	{
+		cho "Unable to load ISXVG, exiting script"
+		endscript Harvest
+	}
+	wait 30 ${Me.Chunk(exists)}
+
+
 	EchoIt "Started Harvest Assist Bot"
 	call LoadSettings
 	
@@ -142,9 +155,14 @@ function Dist_Check()
 		while ${Math.Distance[${Me.X},${Me.Y},${Pawn[name,${Harvester}].X},${Pawn[name,${Harvester}].Y}]} > ${Distance} && ${isRunning} && ${autoFollow}
 		{
 			call faceloc ${Pawn[name,${Harvester}].X} ${Pawn[name,${Harvester}].Y} 5
+			if ${Math.Distance[${Me.X},${Me.Y},${Pawn[name,${Harvester}].X},${Pawn[name,${Harvester}].Y}]} < 1000
+			{
+				face ${Pawn[name,${Harvester}].X} ${Pawn[name,${Harvester}].Y}
+			}
+				
 			;face ${Pawn[name,${Harvester}].X} ${Pawn[name,${Harvester}].Y}
 			isMoving:Set[TRUE]
-			waitframe
+			;waitframe
 			VG:ExecBinding[moveforward]
 			if ${Math.Distance[${Me.X},${Me.Y},${Pawn[name,${Harvester}].X},${Pawn[name,${Harvester}].Y}]} > 5500
 			{
@@ -183,6 +201,7 @@ function Assist()
 	{
 		;; Always set our target to Harvester's target
 		VGExecute /assist ${Harvester}
+		waitframe
 	}
 }
 
@@ -195,7 +214,6 @@ function Harvest()
 	}
 	
 	;; Routine to initiate harvesting if Harvester began harvesting
-	;;if (${Pawn[id,${HarvesterID}].CombatState}>0 || ${Me.ToPawn.CombatState}==0) && ${Me.Target.IsHarvestable}
 	if ${Pawn[id,${HarvesterID}].CombatState}>0 && ${Me.ToPawn.CombatState}==0 && ${Me.Target.IsHarvestable}
 	{
 		;; Convert Distance and setting minimum no less than 3 meters
@@ -203,7 +221,6 @@ function Harvest()
 		Distance:Set[${Math.Calc[${FollowDist}*100].Int}]
 		if ${Distance}<300
 		Distance:Set[300]
-
 		
 		;; Begin moving to the target
 		while ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]} > ${Distance}
@@ -241,15 +258,17 @@ function Harvest()
 		StopHarvestTimer:Set[${Script.RunningTime}]
 
 		;EchoIt "Harvesting: ${Me.Target.Name} - ${Me.Target.ID}"
-		while ${GV[bool,bHarvesting]} && !${Me.Target.ContainsLoot} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
+		;while ${GV[bool,bHarvesting]} && !${Me.Target.ContainsLoot} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
+		while ${GV[bool,bHarvesting]} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
 		{
 			waitframe
 			if !${isRunning}
 			{
 				return
 			}
-			if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)}
+			if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${HarvesterID}].Distance}>7
 			{
+				break
 				VGExecute /endharvesting
 				waitframe
 				return
@@ -264,20 +283,36 @@ function Harvest()
 			Me.Target:LootAll
 		}
 
-		wait 10
+		wait 5
 	}
 }
 
 function Loot()
 {
 	;; Return if we don't have a target or we do not want to loot
-	;if !${autoLoot} || !${Me.Target(exists)} || ${GV[bool,bHarvesting]}
-	if !${autoLoot} || !${Me.Target(exists)}
+	if !${Me.Target(exists)}
 	{
 		return
 	}
+	
+	;; No looting then clear target if already harvested
+	if !${autoLoot} && ${Me.Target.Name.Find[remains of]}
+	{
+		;; Stop attacking if you are still attacking
+		if ${GV[bool,bIsAutoAttacking]}
+		{
+			Me.Ability[Auto Attack]:Use
+			wait 5
+		}
 
-	if ${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot}
+		;; Clear Target
+		VGExecute "/cleartargets"
+		waitframe
+		return
+	}
+
+	;if ${autoLoot} && ${Me.Target.Type.Equal[Corpse]} && !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot}
+	if ${autoLoot} && ${Me.Target.ContainsLoot}
 	{
 		;; Start Loot Window
 		Me.Target:LootAll
@@ -287,14 +322,14 @@ function Loot()
 		if ${GV[bool,bIsAutoAttacking]}
 		{
 			Me.Ability[Auto Attack]:Use
-			wait 10
+			wait 5
 		}
 
 		;; Clear Target
 		VGExecute "/cleartargets"
 		waitframe
 	}
-
+	
 	call ConsolidateResources
 }
 
