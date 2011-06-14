@@ -568,14 +568,13 @@ function SelectParlay()
 		}
 		else
 		{
-			echo Presence Needed : ${Dialog[Civic Diplomacy,1].PresenceRequiredType}
 			call PresenceNeeded
 			echo Equipping Gear: ${Return}
 			wait 5
 			obj_diplogear:Load[${Return}]
 			wait 5
 			Dialog[${genorciv},${selectedConv}]:Select
-
+			echo "Selecting ${genorciv}: ${selectedConv} ${currentParleyType}"
 			if ${debug}
 			{
 				Redirect -append "${Output}" echo "${Time}: Selecting ${genorciv}: ${selectedConv} ${currentParleyType}"
@@ -607,10 +606,17 @@ function:bool IsPlayable(int card)
 		return "FALSE"
 	}
 
+	;; we do not want 1st card laid down to be Id Personified
+	if ${starting} && ${Strategy[${card}].Name.Equal[Id Personified]}
+	{
+		return "FALSE"
+	}
+
 	if ${Strategy[${card}].ReasonCost} <= ${reason} && ${Strategy[${card}].InspireCost} <= ${inspire} && ${Strategy[${card}].FlatterCost} <= ${flatter} && ${Strategy[${card}].DemandCost} <= ${demand}
 	{
 		return "TRUE"
 	}
+	
 	return "FALSE"
 }
 
@@ -667,7 +673,7 @@ function:int RateCard(int card)
 
 	}
 	;echo bleh!
-	;echo ${dipNPCs[${curNPC}].red} ${dipNPCs[${curNPC}].green} ${dipNPCs[${curNPC}].blue} ${dipNPCs[${curNPC}].yellow}
+	
 	;echo ${iter}
 	; ##########################If using a rebutal, calculate how much it really takes away.
 	if ${dm} < 0 && ${Math.Calc[${dm} + ${Parlay.OpponentDemand}/10]} < 0
@@ -779,8 +785,8 @@ function DoParleyCard()
 		}
 		card:Inc
 	}
-
-	if ${cardplay} > 0
+	
+	if ${cardplay}>0 && ${Parlay.Status}<10
 	{
 		;echo "Play:  ${Strategy[${cardplay}].Name}"
 		Strategy[${cardplay}]:Play
@@ -1067,7 +1073,7 @@ atom(script) OnParlaySuccess()
 	{
 		Redirect -append "${Output}" echo "${Time}: Event for parleysuccess fired"
 	}
-	;wins:Inc
+	wins:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Wins:Inc
 	${currentParleyType}wins:Inc
 	UpdateStats
