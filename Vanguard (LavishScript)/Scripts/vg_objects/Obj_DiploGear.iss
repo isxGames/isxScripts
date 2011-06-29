@@ -100,7 +100,10 @@ objectdef obj_diplogear
 	;============================
 	method EquipGear(int di, bool debug)
 	{
-	This:XMLLoad[${di}]
+		; Slow it down, we are crashing
+		Turbo 20
+	
+		This:XMLLoad[${di}]
 	
 		;Unequip Gear On
 		;------------------
@@ -132,6 +135,7 @@ objectdef obj_diplogear
 						}
 				}
 			}
+			
 		if ${DiploLeftEar.NotEqual[${DiploRightEar}]}
 			{
 			Me.Inventory[${DiploLeftEar}]:Equip
@@ -157,6 +161,7 @@ objectdef obj_diplogear
 						}
 				}
 			}
+			
 		if ${DiploLeftRing.NotEqual[${DiploRightRing}]}
 			{
 			Me.Inventory[${DiploLeftRing}]:Equip
@@ -177,6 +182,9 @@ objectdef obj_diplogear
 		Me.Inventory[${DiploBelt}]:Equip
 		Me.Inventory[${DiploBoots}]:Equip
 		Me.Inventory[${DiploLegs}]:Equip
+		
+		;; Back to normal speed
+		Turbo 75
 	}
 
 	;============================
