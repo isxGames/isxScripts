@@ -61,7 +61,18 @@ variable collection:int64 PermanentBlackList
 ;
 function main()
 {
+	;-------------------------------------------
+	; Load ISXVG or exit script
+	;-------------------------------------------
+	ext -require isxvg
+	wait 100 ${ISXVG.IsReady}
+	if !${ISXVG.IsReady}
+	{
+		echo "Unable to load ISXVG, exiting script"
+		endscript VG-Loot
+	}
 	EchoIt "Started VG-Loot Script"
+	wait 30 ${Me.Chunk(exists)}
 
 	;; Load our Settings
 	LoadXMLSettings	
