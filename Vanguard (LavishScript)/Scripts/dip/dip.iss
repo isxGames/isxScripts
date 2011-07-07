@@ -281,6 +281,7 @@ function GoDiploSomething()
 						EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
 						call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
 						returnvalue:Set[${Return}]
+						vgecho 1
 					}
 					
 					;; Try to move closer if we can't see the target such as behind a wall or pillar
@@ -289,6 +290,7 @@ function GoDiploSomething()
 						EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
 						call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
 						returnvalue:Set[${Return}]
+						vgecho 2
 					}
 					
 					;; Move to last known XYZ location if we can't find via pawn and last known XYZ is greater than 30 meters
@@ -297,6 +299,7 @@ function GoDiploSomething()
 						EchoIt "Starting movement routine via last known XYZ location with distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
 						call dipnav.MovetoXYZ ${dipNPCs[${curNPC}].X} ${dipNPCs[${curNPC}].Y} ${dipNPCs[${curNPC}].Z}
 						returnvalue:Set[${Return}]
+						vgecho 3
 					}
 									
 					;; We reached our destination
@@ -322,7 +325,7 @@ function GoDiploSomething()
 				;; Attempt to retarget our NPC before doing any parlay
 				if !${dipisPaused} && !${Me.Target(exists)} && ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
 				{
-					if ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}<9000
+					if ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}<5000
 					{
 						EchoIt "Targeting ${dipNPCs[${curNPC}].NameID}"
 						Pawn[id,${dipNPCs[${curNPC}].ID}]:Target
@@ -380,20 +383,23 @@ function GoDiploSomething()
 						{
 							curNPC:Inc
 							if ${curNPC} >= 21
-							curNPC:Set[1]
+							{
+								curNPC:Set[1]
+							}
 							if !${dipNPCs[${curNPC}].Name.Equal["Empty"]}
 							{
+								;vgecho "${dipNPCs[${curNPC}].Name} at distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
+								;; move to last know NPC location if greater than 30 meters away
+								if ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}>3500
+								{
+									EchoIt "NPC Selected: ${dipNPCs[${curNPC}].Name}"
+									break
+								}
 								;; target the NPC if we can
 								if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
 								{
 									Pawn[id,${dipNPCs[${curNPC}].ID}]:Target
 									wait 5
-									EchoIt "NPC Selected: ${dipNPCs[${curNPC}].Name}"
-									break
-								}
-								;; move to last know NPC location if greater than 45 meters away
-								if ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}>45000
-								{
 									EchoIt "NPC Selected: ${dipNPCs[${curNPC}].Name}"
 									break
 								}
