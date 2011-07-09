@@ -40,6 +40,7 @@ objectdef npclist
 		GossipWins:Set[0]
 		GossipLosses:Set[0]
 		EntertainWins:Set[0]
+		EntertainLosses:Set[0]
 	}
 
 	method Clear()
@@ -65,6 +66,7 @@ objectdef npclist
 		GossipWins:Set[0]
 		GossipLosses:Set[0]
 		EntertainWins:Set[0]
+		EntertainLosses:Set[0]
 	}
 
 	variable string Name
@@ -135,7 +137,7 @@ variable(script) int brokeCount = 0
 variable(script) int maxWait
 variable(script) int minWait
 variable(script) bool ourTurn = FALSE
-variable(script) bool cardDelay
+variable(script) bool cardDelay = TRUE
 variable(script) npclist dipNPCs[20]
 variable(script) string currentParleyType
 variable(script) int presDomestic = 0
@@ -148,6 +150,8 @@ variable(script) int presNoble = 0
 variable(script) int presOutsider = 0
 variable int AngleDiff = 0
 variable int AngleDiffAbs = 0
+variable int LowestDipLevel = 0
+variable int HighestDipLevel = 100
 
 ;Paths
 variable filepath scriptPath = "${Script.CurrentDirectory}/"
@@ -491,17 +495,23 @@ function SelectParlay()
 	variable int convOptions = 1
 	variable int i = 1
 	variable string genorciv
+	variable int diplevel
 	while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
 	{
+		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 		i:Set[1]
 		do
 		{
-			if ${Dialog[General,${convOptions}].Text.Find[>${convTypes[${i}]}]}
+			if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
 			{
-				genorciv:Set[General]
-				selectedConv:Set[${convOptions}]
-				currentParleyType:Set[${convTypes[${i}]}]
-				break
+				echo diplevel:Set[${Dialog[General,${convOptions}].Text}
+				if ${Dialog[General,${convOptions}].Text.Find[>${convTypes[${i}]}]}
+				{
+					genorciv:Set[General]
+					selectedConv:Set[${convOptions}]
+					currentParleyType:Set[${convTypes[${i}]}]
+					break
+				}
 			}
 			i:Inc
 		}
@@ -513,15 +523,19 @@ function SelectParlay()
 		convOptions:Set[1]
 		while ${convOptions} <= ${Dialog[Civic Diplomacy].ResponseCount} && !${selectedConv}
 		{
+			diplevel:Set[${Dialog[Civic Diplomacy,${convOptions}].Text.Mid[${Dialog[Civic Diplomacy,${convOptions}].Text.Find[dkblue>]},${Dialog[Civic Diplomacy,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 			i:Set[1]
 			do
 			{
 				if ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>${convTypes[${i}]}]}
 				{
-					genorciv:Set[Civic Diplomacy]
-					selectedConv:Set[${convOptions}]
-					currentParleyType:Set[${convTypes[${i}]}]
-					break
+					if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
+					{
+						genorciv:Set[Civic Diplomacy]
+						selectedConv:Set[${convOptions}]
+						currentParleyType:Set[${convTypes[${i}]}]
+						break
+					}
 				}
 				i:Inc
 			}
@@ -913,6 +927,8 @@ function SaveSettings()
 	setDipGeneral:AddSetting[cardDelay, ${cardDelay}]
 	setDipGeneral:AddSetting[minWait, ${minWait}]
 	setDipGeneral:AddSetting[maxWait, ${maxWait}]
+	setDipGeneral:AddSetting[LowestDipLevel, ${LowestDipLevel}]
+	setDipGeneral:AddSetting[HighestDipLevel, ${HighestDipLevel}]
 	LavishSettings[diplo]:Export[${savePath}Dip-Settings.xml]
 }
 
@@ -974,6 +990,14 @@ function LoadSettings()
 			if (${itDipGen.Key.Equal[maxWait]})
 			{
 				maxWait:Set[${itDipGen.Value}]
+			}
+			if (${itDipGen.Key.Equal[LowestDipLevel]})
+			{
+				LowestDipLevel:Set[${itDipGen.Value}]
+			}
+			if (${itDipGen.Key.Equal[HighestDipLevel]})
+			{
+				HighestDipLevel:Set[${itDipGen.Value}]
 			}
 		}
 		while ${itDipGen:Next(exists)}
