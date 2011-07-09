@@ -7,11 +7,11 @@ atom(global) AddOpeningMeleeSequence(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		If ${LavishSettings[VGA].FindSet[OpeningMeleeSequence].FindSetting[${aName} (3)](exists)}
-			LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName} (4), ${aName}]
+		LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName} (4), ${aName}]
 		If ${LavishSettings[VGA].FindSet[OpeningMeleeSequence].FindSetting[${aName} (2)](exists)}
-			LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName} (3), ${aName}]
+		LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName} (3), ${aName}]
 		If ${LavishSettings[VGA].FindSet[OpeningMeleeSequence].FindSetting[${aName}](exists)}
-			LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName} (2), ${aName}]
+		LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName} (2), ${aName}]
 		LavishSettings[VGA].FindSet[OpeningMeleeSequence]:AddSetting[${aName}, ${aName}]
 
 	}
@@ -41,7 +41,7 @@ atom(global) BuildOpeningMeleeSequence()
 		UIElement[OpeningMeleeSequenceList@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the CombatSeqMelee list */
 ;********************************************
@@ -50,11 +50,11 @@ atom(global) AddCombatMeleeSequence(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		If ${LavishSettings[VGA].FindSet[CombatMeleeSequence].FindSetting[${aName} (3)](exists)}
-			LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName} (4), ${aName}]
+		LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName} (4), ${aName}]
 		If ${LavishSettings[VGA].FindSet[CombatMeleeSequence].FindSetting[${aName} (2)](exists)}
-			LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName} (3), ${aName}]
+		LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName} (3), ${aName}]
 		If ${LavishSettings[VGA].FindSet[CombatMeleeSequence].FindSetting[${aName}](exists)}
-			LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName} (2), ${aName}]
+		LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName} (2), ${aName}]
 		LavishSettings[VGA].FindSet[CombatMeleeSequence]:AddSetting[${aName}, ${aName}]
 	}
 	else
@@ -83,7 +83,7 @@ atom(global) BuildCombatMeleeSequence()
 		UIElement[CombatMeleeSequenceList@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the AOEMelee list */
 ;********************************************
@@ -119,7 +119,7 @@ atom(global) BuildAOEMelee()
 		UIElement[AOEMeleeList@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the DotMelee list */
 ;********************************************
@@ -155,7 +155,7 @@ atom(global) BuildDotMelee()
 		UIElement[DotMeleeList@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the DebuffMelee list */
 ;********************************************
@@ -191,7 +191,7 @@ atom(global) BuildDebuffMelee()
 		UIElement[DebuffMeleeList@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;******************************CombatLists***********************
 function PopulateMeleeLists()
 {
@@ -199,12 +199,12 @@ function PopulateMeleeLists()
 
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-			UIElement[OpeningMeleeSequenceCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[CombatMeleeSequenceCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[AOEMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[DotMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[DebuffMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[OpeningMeleeSequenceCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[CombatMeleeSequenceCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[AOEMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[DotMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[DebuffMeleeCombo@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 	variable iterator Iterator
 	OpeningMeleeSequence:GetSettingIterator[Iterator]
@@ -247,7 +247,9 @@ function PopulateMeleeLists()
 	while ${rCount:Inc} <= ${UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
 		if ${UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${KillingBlow}]}
-			UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[cmbKillingBlow@MeleeCFrm@Melee@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 }
+
+
 

@@ -34,7 +34,7 @@ atom(global) BuildFire()
 		UIElement[FireList@MobsCFrm@Mobs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the Ice list */
 ;********************************************
@@ -70,7 +70,7 @@ atom(global) BuildIce()
 		UIElement[IceList@MobsCFrm@Mobs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the Spiritual list */
 ;********************************************
@@ -106,7 +106,7 @@ atom(global) BuildSpiritual()
 		UIElement[SpiritualList@MobsCFrm@Mobs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the Physical list */
 ;********************************************
@@ -142,7 +142,7 @@ atom(global) BuildPhysical()
 		UIElement[PhysicalList@MobsCFrm@Mobs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the Arcane list */
 ;********************************************
@@ -178,7 +178,7 @@ atom(global) BuildArcane()
 		UIElement[ArcaneList@MobsCFrm@Mobs@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;******************************CombatLists***********************
 function PopulateMobLists()
 {
@@ -220,4 +220,6 @@ function PopulateMobLists()
 		Iterator:Next
 	}
 }
+
+
 

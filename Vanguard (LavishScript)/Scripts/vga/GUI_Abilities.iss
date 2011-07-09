@@ -34,7 +34,7 @@ atom(global) BuildFireA()
 		UIElement[FireAList@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the IceA list */
 ;********************************************
@@ -70,7 +70,7 @@ atom(global) BuildIceA()
 		UIElement[IceAList@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the SpiritualA list */
 ;********************************************
@@ -106,7 +106,7 @@ atom(global) BuildSpiritualA()
 		UIElement[SpiritualAList@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the PhysicalA list */
 ;********************************************
@@ -142,7 +142,7 @@ atom(global) BuildPhysicalA()
 		UIElement[PhysicalAList@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the ArcaneA list */
 ;********************************************
@@ -178,7 +178,7 @@ atom(global) BuildArcaneA()
 		UIElement[ArcaneAList@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;******************************CombatLists***********************
 function PopulateAbilitiesLists()
 {
@@ -186,11 +186,11 @@ function PopulateAbilitiesLists()
 
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-			UIElement[FireACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[IceACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[SpiritualACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[PhysicalACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[ArcaneACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[FireACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[IceACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[SpiritualACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[PhysicalACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[ArcaneACombo@AbilitiesCFrm@Abilities@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 	variable iterator Iterator
 	FireA:GetSettingIterator[Iterator]
@@ -229,4 +229,6 @@ function PopulateAbilitiesLists()
 		Iterator:Next
 	}
 }
+
+
 

@@ -32,19 +32,21 @@ function Sorcerer_PostCombat()
 function Sorcerer_PostCasting()
 {
 	If ${Me.Ability[Gather Energy].IsReady} && ${Me.InCombat} && ${Me.Endurance}<60 && ${Me.EnergyPct} < 10
-			{
-			Me.Ability[Gather Energy]:Use
-			wait 200
-			}
-	
+	{
+		Me.Ability[Gather Energy]:Use
+		wait 200
+	}
+
 	If ${Me.Ability[Gather Energy].IsReady} && ${Me.InCombat} && ${Me.Endurance}>60 && ${Me.EnergyPct} < 10
-			{
-			Me.Ability[Gather Energy]:Use
-			wait 200
-			}
+	{
+		Me.Ability[Gather Energy]:Use
+		wait 200
+	}
 }
 ;********************************************
 function Sorcerer_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 }
+
+

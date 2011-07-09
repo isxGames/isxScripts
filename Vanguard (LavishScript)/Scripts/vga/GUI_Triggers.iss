@@ -34,7 +34,7 @@ atom(global) BuildUseAbilT1()
 		UIElement[UseAbilT1List@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the UseItemsT11 list */
 ;********************************************
@@ -71,7 +71,7 @@ atom(global) BuildUseItemsT1()
 		UIElement[UseItemsT1List@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the MobDeBuffT1 list */
 ;********************************************
@@ -108,7 +108,7 @@ atom(global) BuildMobDeBuffT1()
 		UIElement[MobDeBuffT1List@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;********************************************
 /* Add item to the BuffT1 list */
 ;********************************************
@@ -145,7 +145,7 @@ atom(global) BuildBuffT1()
 		UIElement[BuffT1List@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;********************************************
 /* Add item to the AbilReadyT1 list */
 ;********************************************
@@ -182,7 +182,7 @@ atom(global) BuildAbilReadyT1()
 		UIElement[AbilReadyT1List@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;******************************CombatLists***********************
 function PopulateTriggersLists()
 {
@@ -190,33 +190,33 @@ function PopulateTriggersLists()
 	for (i:Set[1] ; ${i}<=${Me.Effect.Count} ; i:Inc)
 	{
 		if ${Me.Effect[${i}].IsVisibleOnUI}
-			{
+		{
 			UIElement[BuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
-			}
+		}
 	}
 	for (i:Set[1] ; ${i}<=${Me.TargetBuff} ; i:Inc)
 	{
-			UIElement[cmbMobBuffT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.TargetBuff[${i}].Name}]
+		UIElement[cmbMobBuffT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.TargetBuff[${i}].Name}]
 	}
 	for (i:Set[1] ; ${i}<=${Me.TargetDebuff} ; i:Inc)
 	{
-			UIElement[MobDeBuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.TargetDebuff[${i}].Name}]
+		UIElement[MobDeBuffT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.TargetDebuff[${i}].Name}]
 	}
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-			UIElement[cmbCritT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[AbilReadyT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[MobUseAbilT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]			
+		UIElement[cmbCritT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[AbilReadyT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[MobUseAbilT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
 	{
-	     UIElement[cmbSwapStanceT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]	
+		UIElement[cmbSwapStanceT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Form[${i}].Name}]
 	}
 	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 	{
-    UIElement[cmbSWPrimaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
-    UIElement[cmbSWSecondaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
-    UIElement[UseItemsT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[cmbSWPrimaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[cmbSWSecondaryT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[UseItemsT1cmb@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
 
 	}
 	for (i:Set[1] ; ${i} <= ${Songs} ; i:Inc)
@@ -239,6 +239,8 @@ function PopulateTriggersLists()
 	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Shaken]
 	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Soul Wracked]
 	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Staggered]
-	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Vulnerable]				
+	UIElement[cmbWeaknessT1@1Frm@1@TriggersSubTab@TriggersFrm@Triggers@ABot@vga_gui]:AddItem[Vulnerable]
 }
+
+
 

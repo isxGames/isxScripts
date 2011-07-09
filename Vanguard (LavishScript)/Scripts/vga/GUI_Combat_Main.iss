@@ -33,7 +33,7 @@ atom(global) BuildCounter()
 		UIElement[CounterList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;********************************************
 /* Add item to the TurnOffAttack list */
 ;********************************************
@@ -70,7 +70,7 @@ atom(global) BuildTurnOffAttack()
 		UIElement[TurnOffAttackList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the TurnOffDuringBuff list */
 ;********************************************
@@ -107,7 +107,7 @@ atom(global) BuildTurnOffDuringBuff()
 		UIElement[TurnOffDuringBuffList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the Dispell list */
 ;********************************************
@@ -143,7 +143,7 @@ atom(global) BuildDispell()
 		UIElement[DispellList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the StancePush list */
 ;********************************************
@@ -179,7 +179,7 @@ atom(global) BuildStancePush()
 		UIElement[StancePushList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the Clickies list */
 ;********************************************
@@ -215,7 +215,7 @@ atom(global) BuildClickies()
 		UIElement[ClickiesList@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;******************************CombatLists***********************
 function PopulateCombatMainLists()
 {
@@ -223,10 +223,10 @@ function PopulateCombatMainLists()
 
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-			UIElement[DispellCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[PushStanceCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[CounterSpell1Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[CounterSpell2Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[DispellCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[PushStanceCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[CounterSpell1Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[CounterSpell2Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 
 	variable iterator Iterator
@@ -263,25 +263,25 @@ function PopulateCombatMainLists()
 	while ${rCount:Inc} <= ${UIElement[DispellCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
 		if ${UIElement[DispellCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${DispellSpell}]}
-			UIElement[DispellCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[DispellCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[PushStanceCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
 		if ${UIElement[PushStanceCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${PushStanceSpell}]}
-			UIElement[PushStanceCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[PushStanceCombo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[CounterSpell1Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
 		if ${UIElement[CounterSpell1Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${CounterSpell1}]}
-			UIElement[CounterSpell1Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[CounterSpell1Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[CounterSpell2Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Items}
 	{
 		if ${UIElement[CounterSpell2Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Item[${rCount}].Text.Equal[${CounterSpell2}]}
-			UIElement[CounterSpell2Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[CounterSpell2Combo@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 
 	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
@@ -292,4 +292,6 @@ function PopulateCombatMainLists()
 		}
 	}
 }
+
+
 

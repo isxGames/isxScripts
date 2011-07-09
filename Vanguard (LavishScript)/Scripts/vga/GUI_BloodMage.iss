@@ -51,3 +51,5 @@ function BloodMage_GUI()
 		UIElement[cmbBMBloodUnionSingleTargetHOT@bloodmagefrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 }
+
+

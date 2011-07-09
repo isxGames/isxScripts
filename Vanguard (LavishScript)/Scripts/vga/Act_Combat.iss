@@ -69,9 +69,9 @@ function OpeningSpellSequence()
 				Iterator:Next
 				continue
 			}
-			if !${fight.ShouldIAttack} 
-				return
-			call checkabilitytocast "${Iterator.Value}"	
+			if !${fight.ShouldIAttack}
+			return
+			call checkabilitytocast "${Iterator.Value}"
 			if ${Return}
 			{
 				call executeability "${Iterator.Value}" "attack" "While"
@@ -113,25 +113,25 @@ function CombatSpellSequence()
 	variable iterator Iterator
 	debuglog "Running Combat Spell Sequence"
 	CombatSpellSequence:GetSettingIterator[Iterator]
-		Iterator:First
-		while ( ${Iterator.Key(exists)} )
+	Iterator:First
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
 		{
-			if (!${Me.Ability[${Iterator.Value}].IsReady})
-			{
-				Iterator:Next
-				continue
-			}
-			if !${fight.ShouldIAttack} 
-				return
-			
-			
-			call checkabilitytocast "${Iterator.Value}"	
-			if ${Return}
-			{
-				call executeability "${Iterator.Value}" "attack" "Both"
-			}
 			Iterator:Next
+			continue
 		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return}
+		{
+			call executeability "${Iterator.Value}" "attack" "Both"
+		}
+		Iterator:Next
+	}
 	return
 }
 
@@ -141,27 +141,27 @@ function AOESpell()
 	variable iterator Iterator
 	debuglog "Running AOESpell"
 	AOESpell:GetSettingIterator[Iterator]
-		Iterator:First
-		while ( ${Iterator.Key(exists)} )
+	Iterator:First
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
 		{
-			if (!${Me.Ability[${Iterator.Value}].IsReady})
-			{
-				Iterator:Next
-				continue
-			}
-			if !${fight.ShouldIAttack} 
-				return
-			
-
-			call checkabilitytocast "${Iterator.Value}"	
-			if ${Return}
-			{
-				call executeability "${Iterator.Value}" "attack" "Both"
-
-				return
-			}
 			Iterator:Next
+			continue
 		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return}
+		{
+			call executeability "${Iterator.Value}" "attack" "Both"
+
+			return
+		}
+		Iterator:Next
+	}
 	return
 }
 ;*************************************************************
@@ -169,26 +169,26 @@ function DebuffSpells()
 {
 	variable iterator Iterator
 	debuglog "Running Debuff Spell Sequence"
-		DebuffSpell:GetSettingIterator[Iterator]
-			Iterator:First
-			while ( ${Iterator.Key(exists)} )
-			{
-				if (!${Me.Ability[${Iterator.Value}].IsReady})
-				{
-					Iterator:Next
-					continue
-				}
-				if !${fight.ShouldIAttack} 
-					return
-				call checkabilitytocast "${Iterator.Value}"	
-				if ${Return} && !${Me.TargetDebuff[${Iterator.Value}](exists)}
-				{
-					call executeability "${Iterator.Value}" "attack" "Both"
-	
-					return
-				}
-				Iterator:Next
-			}
+	DebuffSpell:GetSettingIterator[Iterator]
+	Iterator:First
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
+		{
+			Iterator:Next
+			continue
+		}
+		if !${fight.ShouldIAttack}
+		return
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return} && !${Me.TargetDebuff[${Iterator.Value}](exists)}
+		{
+			call executeability "${Iterator.Value}" "attack" "Both"
+
+			return
+		}
+		Iterator:Next
+	}
 	return
 }
 ;*************************************************************
@@ -196,30 +196,30 @@ function DotSpells()
 {
 	variable iterator Iterator
 	debuglog "Running Dot Spell Sequence"
-		DotSpell:GetSettingIterator[Iterator]
-			Iterator:First
-			while ( ${Iterator.Key(exists)} )
-			{
-				if (!${Me.Ability[${Iterator.Value}].IsReady})
-				{
-					Iterator:Next
-					continue
-				}
-				if !${fight.ShouldIAttack} 
-					return			
-				
-				
-				debuglog "Checking ${Iterator.Value}"
-				call checkabilitytocast "${Iterator.Value}"	
-				if ${Return} && !${Me.Effect[${Iterator.Value}](exists)}
-				{
-					debuglog "Should Cast ${Iterator.Value}"
-					call executeability "${Iterator.Value}" "attack" "Both"
-	
-					return
-				}
-				Iterator:Next
-			}
+	DotSpell:GetSettingIterator[Iterator]
+	Iterator:First
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
+		{
+			Iterator:Next
+			continue
+		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		debuglog "Checking ${Iterator.Value}"
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return} && !${Me.Effect[${Iterator.Value}](exists)}
+		{
+			debuglog "Should Cast ${Iterator.Value}"
+			call executeability "${Iterator.Value}" "attack" "Both"
+
+			return
+		}
+		Iterator:Next
+	}
 	return
 }
 ;*************************************************************
@@ -227,12 +227,12 @@ function KillingBlowAbility()
 {
 	if ${Me.TargetHealth} < 15
 	{
-	call checkabilitytocast "${KillingBlow}"	
+		call checkabilitytocast "${KillingBlow}"
 		if ${Return}
-			{
+		{
 			debuglog "Should Cast ${KillingBlow}"
 			call executeability "${KillingBlow}" "attack" "Both"
-			}
+		}
 	}
 	Return
 }
@@ -244,24 +244,24 @@ function OpeningMeleeSequence()
 	actionlog "Attacking ${Me.Target} (Melee)"
 	OpeningMeleeSequence:GetSettingIterator[Iterator]
 	Iterator:First
-		while ( ${Iterator.Key(exists)} )
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
 		{
-			if (!${Me.Ability[${Iterator.Value}].IsReady})
-			{
-				Iterator:Next
-				continue
-			}
-			if !${fight.ShouldIAttack} 
-				return
-			
-			
-			call checkabilitytocast "${Iterator.Value}"	
-			if ${Return}
-			{
-				call executeability "${Iterator.Value}" "attack" "While"
-			}
-			Iterator:Next	
+			Iterator:Next
+			continue
 		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return}
+		{
+			call executeability "${Iterator.Value}" "attack" "While"
+		}
+		Iterator:Next
+	}
 	newattack:Set[FALSE]
 	actionlog "Entering Main Combat"
 	return
@@ -274,24 +274,24 @@ function CombatMeleeSequence()
 	debuglog "Running Combat Melee Sequence"
 	CombatMeleeSequence:GetSettingIterator[Iterator]
 	Iterator:First
-		while ( ${Iterator.Key(exists)} )
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
 		{
-			if (!${Me.Ability[${Iterator.Value}].IsReady})
-			{
-				Iterator:Next
-				continue
-			}
-			if !${fight.ShouldIAttack} 
-				return
-			
-			
-			call checkabilitytocast "${Iterator.Value}"	
-			if ${Return}
-			{
-				call executeability "${Iterator.Value}" "attack" "Both"
-			}
 			Iterator:Next
+			continue
 		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return}
+		{
+			call executeability "${Iterator.Value}" "attack" "Both"
+		}
+		Iterator:Next
+	}
 	return
 }
 
@@ -302,55 +302,55 @@ function AOEMelee()
 	debuglog "Running AOEMelee"
 	AOEMelee:GetSettingIterator[Iterator]
 	Iterator:First
-		while ( ${Iterator.Key(exists)} )
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
 		{
-			if (!${Me.Ability[${Iterator.Value}].IsReady})
-			{
-				Iterator:Next
-				continue
-			}
-			if !${fight.ShouldIAttack} 
-				return			
-			
-			
-			call checkabilitytocast "${Iterator.Value}"	
-			if ${Return}
-			{
-				call executeability "${Iterator.Value}" "attack" "Both"
-
-				return
-			}
 			Iterator:Next
+			continue
 		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return}
+		{
+			call executeability "${Iterator.Value}" "attack" "Both"
+
+			return
+		}
+		Iterator:Next
+	}
 	return
 }
 ;*************************************************************
 function DebuffMelee()
 {
 	variable iterator Iterator
-	
+
 	debuglog "Running Debuff Spell Sequence"
 	DebuffMelee:GetSettingIterator[Iterator]
 	Iterator:First
-		while ( ${Iterator.Key(exists)} )
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
 		{
-			if (!${Me.Ability[${Iterator.Value}].IsReady})
-			{
-				Iterator:Next
-				continue
-			}
-			if !${fight.ShouldIAttack} 
-				return			
-				
-				
-			call checkabilitytocast "${Iterator.Value}"	
-			if ${Return} && !${Me.TargetDebuff[${Iterator.Value}](exists)}
-			{
-				call executeability "${Iterator.Value}" "attack" "Both"
-				return
-			}
 			Iterator:Next
+			continue
 		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return} && !${Me.TargetDebuff[${Iterator.Value}](exists)}
+		{
+			call executeability "${Iterator.Value}" "attack" "Both"
+			return
+		}
+		Iterator:Next
+	}
 	return
 }
 ;*************************************************************
@@ -360,28 +360,28 @@ function DotMelee()
 	debuglog "Running Dot Melee Sequence"
 	DotMelee:GetSettingIterator[Iterator]
 	Iterator:First
-			while ( ${Iterator.Key(exists)} )
-			{
-				if (!${Me.Ability[${Iterator.Value}].IsReady})
-				{
-					Iterator:Next
-					continue
-				}
-				if !${fight.ShouldIAttack} 
-					return				
-				
-				
-				debuglog "Checking ${Iterator.Value}"
-				call checkabilitytocast "${Iterator.Value}"	
-				if ${Return} && !${Me.Effect[${Iterator.Value}](exists)}
-				{
-					debuglog "Should Cast ${Iterator.Value}"
-					call executeability "${Iterator.Value}" "attack" "Both"
-	
-					return
-				}
-				Iterator:Next
-			}
+	while ( ${Iterator.Key(exists)} )
+	{
+		if (!${Me.Ability[${Iterator.Value}].IsReady})
+		{
+			Iterator:Next
+			continue
+		}
+		if !${fight.ShouldIAttack}
+		return
+
+
+		debuglog "Checking ${Iterator.Value}"
+		call checkabilitytocast "${Iterator.Value}"
+		if ${Return} && !${Me.Effect[${Iterator.Value}](exists)}
+		{
+			debuglog "Should Cast ${Iterator.Value}"
+			call executeability "${Iterator.Value}" "attack" "Both"
+
+			return
+		}
+		Iterator:Next
+	}
 	return
 }
 ;*************************************************************
@@ -399,9 +399,11 @@ function ToggleOffCombatBuffSpells()
 			{
 				Me.Ability[${Iterator.Value}]:Use
 			}
-		Iterator:Next
+			Iterator:Next
 		}
 	}
 	return
 }
+
+
 

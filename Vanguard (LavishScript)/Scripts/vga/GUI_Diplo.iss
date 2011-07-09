@@ -6,7 +6,7 @@ atom(global) AddDiploNPCs(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 
-			LavishSettings[VGA_Diplo].FindSet[DiploNPCs]:AddSetting[${aName}, ${aName}]
+		LavishSettings[VGA_Diplo].FindSet[DiploNPCs]:AddSetting[${aName}, ${aName}]
 	}
 	else
 	{
@@ -47,13 +47,31 @@ function FindDiploList(string aName)
 
 		Pawn[${Me.Target}]:DoubleClick
 		wait 5
-		if ${Dialog[Civic Diplomacy].ResponseCount} > 0
-		Do
+
+		for (Dint:Set[1] ; ${Dint}<=${Dialog[Civic Diplomacy].ResponseCount} ; Dint:Inc)
+		{
+			if ${Dialog[Civic Diplomacy,${Dint}].PresenceRequiredType(exists)}
 			{
-			if !${Dialog[Civic Diplomacy,${Dint}].Text.Equal[General Options]}
 				UIElement[cmbDiploList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Dialog[Civic Diplomacy,${Dint}].Text.Left[${Math.Calc[${Dialog[Civic Diplomacy,${Dint}].Text.Find[<nl>]}-2]}]}]
 			}
-		while ${Dint:Inc} <= ${Dialog[Civic Diplomacy].ResponseCount} 
+		}
+
+		for (Dint:Set[1] ; ${Dint}<=${Dialog[General].ResponseCount} ; Dint:Inc)
+		{
+			if ${Dialog[General,${Dint}].PresenceRequiredType(exists)}
+			{
+				UIElement[cmbDiploList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Dialog[General,${Dint}].Text.Left[${Math.Calc[${Dialog[General,${Dint}].Text.Find[<nl>]}-2]}]}]
+			}
+		}
+
+		
+		;if ${Dialog[Civic Diplomacy].ResponseCount} > 0
+		;Do
+		;{
+		;	if !${Dialog[Civic Diplomacy,${Dint}].Text.Equal[General Options]}
+		;	UIElement[cmbDiploList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Dialog[Civic Diplomacy,${Dint}].Text.Left[${Math.Calc[${Dialog[Civic Diplomacy,${Dint}].Text.Find[<nl>]}-2]}]}]
+		;}
+		;while ${Dint:Inc} <= ${Dialog[Civic Diplomacy].ResponseCount}
 	}
 }
 atom(global) AddDiplo(string aNPC, string aName)
@@ -87,9 +105,11 @@ atom(global) BuildDiplo(string aNPC)
 	while ( ${Iterator.Key(exists)} )
 	{
 		if ${LavishSettings[VGA_Diplo].FindSet[Diplo].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal["${aNPC}"]}
-			{
+		{
 			UIElement[DiploList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Value}]
-			}
+		}
 		Iterator:Next
 	}
 }
+
+

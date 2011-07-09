@@ -34,7 +34,7 @@ atom(global) BuildTBW()
 		UIElement[TBWList@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the DBW list */
 ;********************************************
@@ -71,7 +71,7 @@ atom(global) BuildDBW()
 		UIElement[DBWList@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the BW list */
 ;********************************************
@@ -119,17 +119,19 @@ function PopulateBuffLists()
 	for (i:Set[1] ; ${i}<=${Me.Effect.Count} ; i:Inc)
 	{
 		if ${Me.Effect[${i}].IsVisibleOnUI}
-			{
+		{
 			UIElement[TBWCombo@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
-			}
+		}
 		if ${Me.Effect[${i}].IsVisibleOnUI} && !${Me.Effect[${i}].Name.Find[Civic]}
-			{
+		{
 			UIElement[BWCombo@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
-			}
+		}
 		if ${Me.Effect[${i}].IsVisibleOnUI} && ${Me.Effect[${i}].Name.Find[Civic]}
-			{
+		{
 			UIElement[DBWCombo@BuffWatchFrm@BuffWatch@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Effect[${i}].Name}]
-			}
+		}
 	}
 }
+
+
 

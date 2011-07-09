@@ -3,46 +3,46 @@
 function checkFD()
 {
 
-		if ${Me.HealthPct} < ${FDPct} && !${Me.Effect[${FD}](exists)}
-		{
-			if !${Me.Ability[${FD}].IsReady}
-				wait 1
-			call executeability "${FD}" "evade" "Post"
-			IsFollowing:Set[FALSE]
-			while ${Me.HealthPct} < ${FDPct}
-				wait 20
-			if ${Me.HealthPct} > ${FDPct}
-				VGExecute /stand
-		}	
+	if ${Me.HealthPct} < ${FDPct} && !${Me.Effect[${FD}](exists)}
+	{
+		if !${Me.Ability[${FD}].IsReady}
+		wait 1
+		call executeability "${FD}" "evade" "Post"
+		IsFollowing:Set[FALSE]
+		while ${Me.HealthPct} < ${FDPct}
+		wait 20
+		if ${Me.HealthPct} > ${FDPct}
+		VGExecute /stand
+	}
 	return
-}  
+}
 ;********************************************
 function checkinvoln1()
 {
 
-		if ${Me.HealthPct} < ${Involn1Pct} && !${Me.Effect[${Involn1}](exists)} && !${Me.Effect[${Involn2}](exists)} && !${Me.Effect[${FD}](exists)}
-		{
-			if ${Me.IsCasting}
-				vgexecute /stopcasting
-			call checkabilitytocast "${Involn1}"
-			if ${Return}
-				call executeability "${Involn1}" "evade" "Post"
-		}
+	if ${Me.HealthPct} < ${Involn1Pct} && !${Me.Effect[${Involn1}](exists)} && !${Me.Effect[${Involn2}](exists)} && !${Me.Effect[${FD}](exists)}
+	{
+		if ${Me.IsCasting}
+		vgexecute /stopcasting
+		call checkabilitytocast "${Involn1}"
+		if ${Return}
+		call executeability "${Involn1}" "evade" "Post"
+	}
 	return
-} 
+}
 ;********************************************
 function checkinvoln2()
 {
-		if ${Me.HealthPct} < ${Involn2Pct} && !${Me.Effect[${Involn1}](exists)} && !${Me.Effect[${Involn2}](exists)} && !${Me.Effect[${FD}](exists)}
-		{
-			if ${Me.IsCasting}
-				vgexecute /stopcasting
-			call checkabilitytocast "${Involn2}"
-			if ${Return}
-			call executeability "${Involn2}" "evade" "Post"
-		}	
+	if ${Me.HealthPct} < ${Involn2Pct} && !${Me.Effect[${Involn1}](exists)} && !${Me.Effect[${Involn2}](exists)} && !${Me.Effect[${FD}](exists)}
+	{
+		if ${Me.IsCasting}
+		vgexecute /stopcasting
+		call checkabilitytocast "${Involn2}"
+		if ${Return}
+		call executeability "${Involn2}" "evade" "Post"
+	}
 	return
-} 
+}
 ;********************************************
 function pushagrototank()
 {
@@ -56,7 +56,7 @@ function pushagrototank()
 			call executeability "${agropush}" "evade" "Post"
 		}
 	}
-	return	
+	return
 }
 ;********************************************
 function rescue()
@@ -68,9 +68,9 @@ function rescue()
 			;echo "Rescue ${doRescue} Mob on ${Me.TargetOfTarget} I should fight ${fight.ShouldIAttack} "
 			VGExecute "/assistoffensive"
 			if ${Me.DTarget.Distance} > 4
-				{
+			{
 				call CheckPosition
-				}
+			}
 			face ${Me.Target.X} ${Me.Target.Y}
 			waitframe
 			;echo "My DTarget is ${Me.DTarget}"
@@ -82,7 +82,7 @@ function rescue()
 				call checkabilitytocast "${Iterator.Value}"
 				;echo "Ability to cast  ${Iterator.Key} was ${Return} and it isREADY ${Me.Ability[${Iterator.Value}].IsReady}"
 				if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack} && !${tankpawn.Equal[${Me.TargetOfTarget}]}
-				{	
+				{
 					call executeability "${Iterator.Value}" "evade" "Post"
 					;echo "Rescueing ${Me.DTarget} with ${Iterator.Value}"
 				}
@@ -100,14 +100,14 @@ function rescue()
 			}
 			if !${tankpawn.Equal[${Me.TargetOfTarget}]} && ${doClickieForce}
 			{
-			if ${Me.Inventory[${ClickieForce}].IsReady}
-			  {
-				waitframe
-				Me.Inventory[${ClickieForce}]:Use
-				waitframe
-				Me.Inventory[${ClickieForce}]:Use
+				if ${Me.Inventory[${ClickieForce}].IsReady}
+				{
+					waitframe
+					Me.Inventory[${ClickieForce}]:Use
+					waitframe
+					Me.Inventory[${ClickieForce}]:Use
 				}
-      }			
+			}
 			if !${tankpawn.Equal[${Me.TargetOfTarget}]}
 			{
 				;echo "Non Force Abilities didnt work.. doing force target"
@@ -145,7 +145,7 @@ function rescue()
 			}
 		}
 		if (!${Me.FName.Equal[${tankpawn}]} && !${Me.DTarget.Name.Equal[${tankpawn}]})
-			VGExecute /targetauto ${tankpawn}		
+		VGExecute /targetauto ${tankpawn}
 	}
 
 	return
@@ -160,16 +160,16 @@ function checkevade1()
 		while ( ${Iterator.Key(exists)} )
 		{
 			if ${Me.IsCasting}
-				vgexecute /stopcasting
+			vgexecute /stopcasting
 			call checkabilitytocast "${Iterator.Value}"
 			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack}
-			{	
+			{
 				call executeability "${Iterator.Value}" "evade" "Neither"
 			}
 			Iterator:Next
 		}
 	}
-	return	
+	return
 }
 ;********************************************
 function checkevade2()
@@ -186,11 +186,13 @@ function checkevade2()
 			}
 			call checkabilitytocast "${Iterator.Value}"
 			if ${Return} && ${Me.Ability[${Iterator.Value}].IsReady} && ${fight.ShouldIAttack}
-			{	
+			{
 				call executeability "${Iterator.Value}" "evade" "Neither"
 			}
 			Iterator:Next
 		}
 	}
-	return	
+	return
 }
+
+

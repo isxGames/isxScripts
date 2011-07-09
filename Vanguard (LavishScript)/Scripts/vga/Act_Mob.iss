@@ -16,61 +16,63 @@ function:bool mobresist(string x_ability)
 		}
 	}
 
-	If ${MobResists.Ice} 
-		{
+	If ${MobResists.Ice}
+	{
 		IceA:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
 		{
-			if ${x_ability.Equal[${Iterator.Key}]} 
-				{
+			if ${x_ability.Equal[${Iterator.Key}]}
+			{
 				debuglog "No ICE!!!"
 				return FALSE
-				}
-		Iterator:Next
+			}
+			Iterator:Next
 		}
-		}
-	If ${MobResists.Spiritual} 
-		{
+	}
+	If ${MobResists.Spiritual}
+	{
 		SpiritualA:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
 		{
-			if ${x_ability.Equal[${Iterator.Key}]} 
-				{
+			if ${x_ability.Equal[${Iterator.Key}]}
+			{
 				debuglog "No Spiritual!!!"
 				return FALSE
-				}
-		Iterator:Next
+			}
+			Iterator:Next
 		}
-		}
-	If ${MobResists.Physical} 
-		{
+	}
+	If ${MobResists.Physical}
+	{
 		PhysicalA:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
 		{
-			if ${x_ability.Equal[${Iterator.Key}]} 
-				{
+			if ${x_ability.Equal[${Iterator.Key}]}
+			{
 				debuglog "No PHYSICAL!!!"
 				return FALSE
-				}
-		Iterator:Next
+			}
+			Iterator:Next
 		}
-		}
+	}
 	If ${MobResists.Arcane}
-		{
+	{
 		ArcaneA:GetSettingIterator[Iterator]
 		Iterator:First
 		while ( ${Iterator.Key(exists)} )
 		{
-			if ${x_ability.Equal[${Iterator.Key}]} 
-				{
+			if ${x_ability.Equal[${Iterator.Key}]}
+			{
 				debuglog "NO ARCANE!!!"
 				return FALSE
-				}
-		Iterator:Next
+			}
+			Iterator:Next
 		}
-		}
+	}
 	return TRUE
 }
+
+

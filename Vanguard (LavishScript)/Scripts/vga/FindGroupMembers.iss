@@ -41,7 +41,7 @@ function FindGroupMembers()
 	; Clear our collection variable
 	;-------------------------------------------
 	GroupMemberList:Clear
-	
+
 	;-------------------------------------------
 	; Clear VGA gui window
 	;-------------------------------------------
@@ -72,7 +72,7 @@ function FindGroupMembers()
 	; Let's not repeat this until we are ready to do so
 	;-------------------------------------------
 	doCheckForMembers:Set[FALSE]
-	
+
 	;-------------------------------------------
 	; Let's show how quickly we can populate vga with our found group members
 	;-------------------------------------------
@@ -130,116 +130,118 @@ atom(script) OnGroupMemberCountChange()
 	doCheckForMembers:Set[TRUE]
 }
 
-		
+
 
 /*
-	UIElement[GroupMemberList@HealPctCFrm@HealPct@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:ClearItems
-	if ${Group.Count} < 7
-		{
-		Grplog "You are Not In A Raid"
-		return
-		}
-	variable string LastTargetedGrpMember
-	variable int i
-	Grplog "Grp#(Raid#) Name"
-	VGExecute "/targetgroupmember 1"	
-	wait 3
-	RaidGroupCount:Set[1]
-	LastTargetedGrpMember:Set[${Me.DTarget.Name}]
-	for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
-	{
-		if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
-				{
-				RaidGroup[1]:Set[${i}]
-				Grplog " 1    (${RaidGroup[1]})   ${Group[${i}].ToPawn.Name}"
-				}
-	}
+UIElement[GroupMemberList@HealPctCFrm@HealPct@HealerSubTab@HealerFrm@Healer@ABot@vga_gui]:ClearItems
+if ${Group.Count} < 7
+{
+Grplog "You are Not In A Raid"
+return
+}
+variable string LastTargetedGrpMember
+variable int i
+Grplog "Grp#(Raid#) Name"
+VGExecute "/targetgroupmember 1"
+wait 3
+RaidGroupCount:Set[1]
+LastTargetedGrpMember:Set[${Me.DTarget.Name}]
+for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
+{
+if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
+{
+RaidGroup[1]:Set[${i}]
+Grplog " 1    (${RaidGroup[1]})   ${Group[${i}].ToPawn.Name}"
+}
+}
 
-	VGExecute "/targetgroupmember 2"	
-	wait 3
-	if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
-		{
-		Grplog "***${RaidGroupCount} In Your Group***"
-		return
-		}
-	RaidGroupCount:Set[2]
-	LastTargetedGrpMember:Set[${Me.DTarget.Name}]
-	for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
-	{
-		if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
-				{
-				RaidGroup[2]:Set[${i}]
-				Grplog " 2    (${RaidGroup[2]})   ${Group[${i}].ToPawn.Name}"
-				}
-	}
-	VGExecute "/targetgroupmember 3"	
-	wait 3
-	if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
-		{
-		Grplog "***${RaidGroupCount} In Your Group***"
-		return
-		}
-	RaidGroupCount:Set[3]
-	LastTargetedGrpMember:Set[${Me.DTarget.Name}]
-	for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
-	{
-		if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
-				{
-				RaidGroup[3]:Set[${i}]
-				Grplog " 3    (${RaidGroup[3]})   ${Group[${i}].ToPawn.Name}"
-				}
-	}
-	VGExecute "/targetgroupmember 4"	
-	wait 3
-	if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
-		{
-		Grplog "***${RaidGroupCount} In Your Group***"
-		return
-		}
-	RaidGroupCount:Set[4]
-	LastTargetedGrpMember:Set[${Me.DTarget.Name}]
-	for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
-	{
-		if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
-				{
-				RaidGroup[4]:Set[${i}]
-				Grplog " 4    (${RaidGroup[4]})   ${Group[${i}].ToPawn.Name}"
-				}
-	}
-	VGExecute "/targetgroupmember 5"	
-	wait 3
-	if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
-		{
-		Grplog "***${RaidGroupCount} In Your Group***"
-		return
-		}
-	RaidGroupCount:Set[5]
-	LastTargetedGrpMember:Set[${Me.DTarget.Name}]
-	for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
-	{
-		if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
-				{
-				RaidGroup[5]:Set[${i}]
-				Grplog " 5    (${RaidGroup[5]})   ${Group[${i}].ToPawn.Name}"
-				}
-	}
-	VGExecute "/targetgroupmember 6"	
-	wait 3
-	if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
-		{
-		Grplog "***${RaidGroupCount} In Your Group***"
-		return
-		}
-	RaidGroupCount:Set[6]
-	LastTargetedGrpMember:Set[${Me.DTarget.Name}]
-	for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
-	{
-		if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
-				{
-				RaidGroup[6]:Set[${i}]
-				Grplog " 6    (${RaidGroup[6]})   ${Group[${i}].ToPawn.Name}"
-				}
-	}
-	Grplog "***${RaidGroupCount} People In Your Group***"
+VGExecute "/targetgroupmember 2"
+wait 3
+if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
+{
+Grplog "***${RaidGroupCount} In Your Group***"
+return
+}
+RaidGroupCount:Set[2]
+LastTargetedGrpMember:Set[${Me.DTarget.Name}]
+for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
+{
+if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
+{
+RaidGroup[2]:Set[${i}]
+Grplog " 2    (${RaidGroup[2]})   ${Group[${i}].ToPawn.Name}"
+}
+}
+VGExecute "/targetgroupmember 3"
+wait 3
+if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
+{
+Grplog "***${RaidGroupCount} In Your Group***"
+return
+}
+RaidGroupCount:Set[3]
+LastTargetedGrpMember:Set[${Me.DTarget.Name}]
+for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
+{
+if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
+{
+RaidGroup[3]:Set[${i}]
+Grplog " 3    (${RaidGroup[3]})   ${Group[${i}].ToPawn.Name}"
+}
+}
+VGExecute "/targetgroupmember 4"
+wait 3
+if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
+{
+Grplog "***${RaidGroupCount} In Your Group***"
+return
+}
+RaidGroupCount:Set[4]
+LastTargetedGrpMember:Set[${Me.DTarget.Name}]
+for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
+{
+if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
+{
+RaidGroup[4]:Set[${i}]
+Grplog " 4    (${RaidGroup[4]})   ${Group[${i}].ToPawn.Name}"
+}
+}
+VGExecute "/targetgroupmember 5"
+wait 3
+if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
+{
+Grplog "***${RaidGroupCount} In Your Group***"
+return
+}
+RaidGroupCount:Set[5]
+LastTargetedGrpMember:Set[${Me.DTarget.Name}]
+for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
+{
+if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
+{
+RaidGroup[5]:Set[${i}]
+Grplog " 5    (${RaidGroup[5]})   ${Group[${i}].ToPawn.Name}"
+}
+}
+VGExecute "/targetgroupmember 6"
+wait 3
+if ${Me.DTarget.Name.Equal[${LastTargetedGrpMember}]}
+{
+Grplog "***${RaidGroupCount} In Your Group***"
+return
+}
+RaidGroupCount:Set[6]
+LastTargetedGrpMember:Set[${Me.DTarget.Name}]
+for (i:Set[1] ; ${i}<=${Group.Count} ; i:Inc)
+{
+if ${Me.DTarget.Name.Equal[${Group[${i}].ToPawn.Name}]}
+{
+RaidGroup[6]:Set[${i}]
+Grplog " 6    (${RaidGroup[6]})   ${Group[${i}].ToPawn.Name}"
+}
+}
+Grplog "***${RaidGroupCount} People In Your Group***"
 */
+
+
 

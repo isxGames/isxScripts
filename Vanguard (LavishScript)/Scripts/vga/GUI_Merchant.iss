@@ -34,7 +34,7 @@ atom(global) BuildSell()
 		UIElement[SellList@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;******************************CombatLists***********************
 function PopulateSellLists()
 {
@@ -51,7 +51,7 @@ function PopulateSellLists()
 		}
 		else
 		{
-		UIElement[SellCombo@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
+			UIElement[SellCombo@SellFrm@Sell@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Me.Inventory[${i}].Name}]
 		}
 	}
 }
@@ -93,3 +93,5 @@ atom(global) BuildTrash()
 		Iterator:Next
 	}
 }
+
+

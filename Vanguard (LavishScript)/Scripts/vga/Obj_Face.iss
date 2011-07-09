@@ -10,9 +10,9 @@ objectdef obj_Face
 	variable int AngleDiff
 	variable int AngleDiffAbs
 
-;===================================================
-;===             User Routines                  ====
-;===================================================
+	;===================================================
+	;===             User Routines                  ====
+	;===================================================
 
 	;-----------------------------------------------
 	; Example:  Face:FacePawn[${Me.DTarget.ID},FALSE]
@@ -47,11 +47,11 @@ objectdef obj_Face
 	{
 		This.Facing:Set[FALSE]
 	}
-	
-	
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+
+
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 	method Initialize()
 	{
 		Event[OnFrame]:AttachAtom[This:GradualFace]
@@ -104,7 +104,7 @@ objectdef obj_Face
 			return
 		}
 
-		
+
 		if (${DistanceToTarget} < 1000)
 		{
 			; do 30-100% of the turn
@@ -125,68 +125,68 @@ objectdef obj_Face
 			; do 15-85% of the turn
 			ChangeAmount:Set[.15]
 		}
-		
+
 
 		;; Overide if our fps is way to slow
 		if ${VG.FPS}<10
 		{
 			ChangeAmount:Inc[.2]
 		}
-		
+
 		;; Overide if our fps is way to slow
 		if ${VG.FPS}<8
 		{
 			ChangeAmount:Inc[.2]
 		}
-		
+
 		;; Overide if our fps is way to slow
 		if ${VG.FPS}<6
 		{
 			ChangeAmount:Inc[.2]
 		}
-		
+
 		;; Overide if our fps is way to slow
 		if ${VG.FPS}<4
 		{
 			ChangeAmount:Inc[.1]
 		}
-		
-		
-		
-		
-		
-		
-/*		
+
+
+
+
+
+
+		/*
 		if (${DistanceToTarget} < 8) && (${This.AngleDiff} < 30)
 		{
-			; If we're really close to the location, and our angle isn't excessive, do between 90 and 100% of it
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[10]:Inc[90]} / 100.0]}]
-			echo 1-ChangeAmount=${ChangeAmount}
+		; If we're really close to the location, and our angle isn't excessive, do between 90 and 100% of it
+		Precision:Set[${Math.Rand[3]:Inc[4]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[10]:Inc[90]} / 100.0]}]
+		echo 1-ChangeAmount=${ChangeAmount}
 		}
 		elseif (${DistanceToTarget} < 10)
 		{
-			; If we're really close to the location, do 50-65% of it.  This avoids endlessly circling the target.
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[16]:Inc[50]} / 100.0]}]
-			echo 2-ChangeAmount=${ChangeAmount}
+		; If we're really close to the location, do 50-65% of it.  This avoids endlessly circling the target.
+		Precision:Set[${Math.Rand[3]:Inc[4]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[16]:Inc[50]} / 100.0]}]
+		echo 2-ChangeAmount=${ChangeAmount}
 		}
 		elseif (${DistanceToTarget} < 25) && (${This.AngleDiff} < 40)
 		{
-			; If we're really close to the location, and our angle isn't excessive, do 60-70% of it
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[60]} / 100.0]}]
-			echo 3-ChangeAmount=${ChangeAmount}
+		; If we're really close to the location, and our angle isn't excessive, do 60-70% of it
+		Precision:Set[${Math.Rand[3]:Inc[4]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[60]} / 100.0]}]
+		echo 3-ChangeAmount=${ChangeAmount}
 		}
 		elseif (${DistanceToTarget} > 40) && (${This.AngleDiff} > 100)
 		{
-			; If we're farther away, and we have a large angle, do 30-40% of it
-			Precision:Set[${Math.Rand[10]:Inc[10]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[30]} / 100.0]}]
-			echo 4-ChangeAmount=${ChangeAmount}
+		; If we're farther away, and we have a large angle, do 30-40% of it
+		Precision:Set[${Math.Rand[10]:Inc[10]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[30]} / 100.0]}]
+		echo 4-ChangeAmount=${ChangeAmount}
 		}
-*/
-		
+		*/
+
 		;echo DistanceToTarget=${DistanceToTarget}, AngleDiff=${This.AngleDiff}, Precision=${Precision}, ChangeAmount=${ChangeAmount}
 		NewHeading:Set[${Math.Calc[${This.AngleDiff} * ${ChangeAmount}].Round}]
 
@@ -240,3 +240,4 @@ objectdef obj_Face
 
 
 variable obj_Face obj_Face
+

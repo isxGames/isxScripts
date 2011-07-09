@@ -71,9 +71,9 @@ function loadxmls()
 	LavishSettings[VGA_General]:AddSet[BW]
 	LavishSettings[VGA_General]:AddSet[DBW]
 	LavishSettings[VGA_General]:AddSet[TBW]
-	LavishSettings[VGA_General]:AddSet[Sell]	
+	LavishSettings[VGA_General]:AddSet[Sell]
 	LavishSettings[VGA_General]:AddSet[Trash]
-	LavishSettings[VGA_General]:AddSet[Interactions]	
+	LavishSettings[VGA_General]:AddSet[Interactions]
 	LavishSettings[VGA_General]:AddSet[Friends]
 
 	LavishSettings[VGA_Quests]:AddSet[QuestNPCs]
@@ -111,7 +111,7 @@ function LavishLoad()
 
 	variable int i
 	for (i:Set[1] ; ${i}<=24 ; i:Inc)
-		{
+	{
 		hgrp[${i}]:Set[${HealerSR.FindSetting[hgrp${i}]}]
 		ghpctgrp[${i}]:Set[${HealerSR.FindSetting[ghpctgrp${i}]}]
 		ighpctgrp[${i}]:Set[${HealerSR.FindSetting[ighpctgrp${i}]}]
@@ -119,18 +119,18 @@ function LavishLoad()
 		fhpctgrp[${i}]:Set[${HealerSR.FindSetting[fhpctgrp${i}]}]
 		hpctgrp[${i}]:Set[${HealerSR.FindSetting[hpctgrp${i}]}]
 		bhpctgrp[${i}]:Set[${HealerSR.FindSetting[bhpctgrp${i}]}]
-		}
+	}
 
 	doCombatStance:Set[${HealerSR.FindSetting[doCombatStance]}]
 	doNonCombatStance:Set[${HealerSR.FindSetting[doNonCombatStance]}]
 	CombatStance:Set[${HealerSR.FindSetting[CombatStance]}]
 	NonCombatStance:Set[${HealerSR.FindSetting[NonCombatStance]}]
-	ClickieForce:Set[${HealerSR.FindSetting[ClickieForce]}]	
- 	 doClickieForce:Set[${HealerSR.FindSetting[doClickieForce]}]	
-  	doRestoreSpecial:Set[${HealerSR.FindSetting[doRestoreSpecial]}]	
-  	RestoreSpecialint:Set[${HealerSR.FindSetting[RestoreSpecialint]}]	
-  	RestoreSpecial:Set[${HealerSR.FindSetting[RestoreSpecial]}]	
-	DoByPassVGAHeals:Set[${HealerSR.FindSetting[DoByPassVGAHeals]}]	
+	ClickieForce:Set[${HealerSR.FindSetting[ClickieForce]}]
+	doClickieForce:Set[${HealerSR.FindSetting[doClickieForce]}]
+	doRestoreSpecial:Set[${HealerSR.FindSetting[doRestoreSpecial]}]
+	RestoreSpecialint:Set[${HealerSR.FindSetting[RestoreSpecialint]}]
+	RestoreSpecial:Set[${HealerSR.FindSetting[RestoreSpecial]}]
+	DoByPassVGAHeals:Set[${HealerSR.FindSetting[DoByPassVGAHeals]}]
 	TankHealPct:Set[${HealerSR.FindSetting[TankHealPct,${TankHealPct}]}]
 	TankEmerHealPct:Set[${HealerSR.FindSetting[TankEmerHealPct,${TankEmerHealPct}]}]
 	MedHealPct:Set[${HealerSR.FindSetting[MedHealPct,${MedHealPct}]}]
@@ -154,7 +154,7 @@ function LavishLoad()
 	DiploEquipmentSR:Set[${LavishSettings[VGA].FindSet[DiploEquipment]}]
 	variable int di
 	for (di:Set[1] ; ${di}<=8 ; di:Inc)
-		{
+	{
 		DiploLeftEar[${di}]:Set[${DiploEquipmentSR.FindSetting[DiploLeftEar${di}]}]
 		DiploRightEar[${di}]:Set[${DiploEquipmentSR.FindSetting[DiploRightEar${di}]}]
 		DiploFace[${di}]:Set[${DiploEquipmentSR.FindSetting[DiploFace${di}]}]
@@ -170,7 +170,7 @@ function LavishLoad()
 		DiploLeftRing[${di}]:Set[${DiploEquipmentSR.FindSetting[DiploLeftRing${di}]}]
 		DiploRightRing[${di}]:Set[${DiploEquipmentSR.FindSetting[DiploRightRing${di}]}]
 		DiploLegs[${di}]:Set[${DiploEquipmentSR.FindSetting[DiploLegs${di}]}]
-		}
+	}
 	;===================================================
 	;===                  Utility Load              ====
 	;===================================================
@@ -205,14 +205,14 @@ function LavishLoad()
 	DoLootOnly:Set[${UtilitySR.FindSetting[DoLootOnly,${DoLootOnly}]}]
 	LootOnly:Set[${UtilitySR.FindSetting[LootOnly,${LootOnly}]}]
 	LootDelay:Set[${UtilitySR.FindSetting[LootDelay,${LootDelay}]}]
-	DoNaturalFollow:Set[${UtilitySR.FindSetting[DoNaturalFollow,${DoNaturalFollow}]}]	
+	DoNaturalFollow:Set[${UtilitySR.FindSetting[DoNaturalFollow,${DoNaturalFollow}]}]
 
 	DoClassDownTime:Set[${UtilitySR.FindSetting[DoClassDownTime,${DoClassDownTime}]}]
-	DoClassPreCombat:Set[${UtilitySR.FindSetting[DoClassPreCombat,${DoClassPreCombat}]}]	
+	DoClassPreCombat:Set[${UtilitySR.FindSetting[DoClassPreCombat,${DoClassPreCombat}]}]
 	DoClassOpener:Set[${UtilitySR.FindSetting[DoClassOpener,${DoClassOpener}]}]
-	DoClassCombat:Set[${UtilitySR.FindSetting[DoClassCombat,${DoClassCombat}]}]	
+	DoClassCombat:Set[${UtilitySR.FindSetting[DoClassCombat,${DoClassCombat}]}]
 	DoClassPostCombat:Set[${UtilitySR.FindSetting[DoClassPostCombat,${DoClassPostCombat}]}]
-	DoClassEmergency:Set[${UtilitySR.FindSetting[DoClassEmergency,${DoClassEmergency}]}]	
+	DoClassEmergency:Set[${UtilitySR.FindSetting[DoClassEmergency,${DoClassEmergency}]}]
 	DoClassPostCasting:Set[${UtilitySR.FindSetting[DoClassPostCasting,${DoClassPostCasting}]}]
 	DoClassBurst:Set[${UtilitySR.FindSetting[DoClassBurst,${DoClassBurst}]}]
 
@@ -245,7 +245,7 @@ function LavishLoad()
 	DotSpell:Set[${LavishSettings[VGA].FindSet[DotSpell]}]
 	DebuffSpell:Set[${LavishSettings[VGA].FindSet[DebuffSpell]}]
 	SpellSR:Set[${LavishSettings[VGA].FindSet[Spell]}]
-	
+
 	doOpeningSeqSpell:Set[${SpellSR.FindSetting[doOpeningSeqSpell]}]
 	doCritsDuringOpeningSeqSpell:Set[${SpellSR.FindSetting[doCritsDuringOpeningSeqSpell]}]
 	doCombatSeqSpell:Set[${SpellSR.FindSetting[doCombatSeqSpell]}]
@@ -258,7 +258,7 @@ function LavishLoad()
 	CounterSpell2:Set[${SpellSR.FindSetting[CounterSpell2]}]
 	doSlowAttacks:Set[${SpellSR.FindSetting[doSlowAttacks]}]
 	SlowAttacks:Set[${SpellSR.FindSetting[SlowAttacks]}]
-	
+
 	;===================================================
 	;===                  Mobs Load                 ====
 	;===================================================
@@ -267,7 +267,7 @@ function LavishLoad()
 	Spiritual:Set[${LavishSettings[VGA_Mobs].FindSet[Spiritual]}]
 	Physical:Set[${LavishSettings[VGA_Mobs].FindSet[Physical]}]
 	Arcane:Set[${LavishSettings[VGA_Mobs].FindSet[Arcane]}]
-	
+
 	;===================================================
 	;===                  Melee Load                ====
 	;===================================================
@@ -277,7 +277,7 @@ function LavishLoad()
 	DotMelee:Set[${LavishSettings[VGA].FindSet[DotMelee]}]
 	DebuffMelee:Set[${LavishSettings[VGA].FindSet[DebuffMelee]}]
 	Melee:Set[${LavishSettings[VGA].FindSet[Melee]}]
-	
+
 	doOpeningSeqMelee:Set[${Melee.FindSetting[doOpeningSeqMelee]}]
 	doCritsDuringOpeningSeqMelee:Set[${Melee.FindSetting[doCritsDuringOpeningSeqMelee]}]
 	doCombatSeqMelee:Set[${Melee.FindSetting[doCombatSeqMelee]}]
@@ -285,7 +285,7 @@ function LavishLoad()
 	doDotMelee:Set[${Melee.FindSetting[doDotMelee]}]
 	doDebuffMelee:Set[${Melee.FindSetting[doDebuffMelee]}]
 	doKillingBlow:Set[${Melee.FindSetting[doKillingBlow]}]
-	KillingBlow:Set[${Melee.FindSetting[KillingBlow]}]	
+	KillingBlow:Set[${Melee.FindSetting[KillingBlow]}]
 	;===================================================
 	;===                  Evade Load                ====
 	;===================================================
@@ -294,7 +294,7 @@ function LavishLoad()
 	Evade:Set[${LavishSettings[VGA].FindSet[Evade]}]
 	Rescue:Set[${LavishSettings[VGA].FindSet[Rescue]}]
 	ForceRescue:Set[${LavishSettings[VGA].FindSet[ForceRescue]}]
-	
+
 	agropush:Set[${Evade.FindSetting[agropush]}]
 	doPushAgro:Set[${Evade.FindSetting[doPushAgro]}]
 	doRescue:Set[${Evade.FindSetting[doRescue]}]
@@ -310,7 +310,7 @@ function LavishLoad()
 	Involn1:Set[${Evade.FindSetting[Involn1]}]
 	Involn2:Set[${Evade.FindSetting[Involn2]}]
 	HealerSR:Set[${LavishSettings[VGA].FindSet[Healers]}]
-	
+
 	;===================================================
 	;===                  Crits Load                ====
 	;===================================================
@@ -320,13 +320,13 @@ function LavishLoad()
 	CombatCrits:Set[${LavishSettings[VGA].FindSet[CombatCrits]}]
 	CounterAttack:Set[${LavishSettings[VGA].FindSet[CounterAttack]}]
 	Crits:Set[${LavishSettings[VGA].FindSet[Crits]}]
-	
+
 	doCombatCrits:Set[${Crits.FindSetting[doCombatCrits]}]
 	doBuffCrits:Set[${Crits.FindSetting[doBuffCrits]}]
 	doDotCrits:Set[${Crits.FindSetting[doDotCrits]}]
 	doAOECrits:Set[${Crits.FindSetting[doAOECrits]}]
 	doCounterAttack:Set[${Crits.FindSetting[doCounterAttack]}]
-	
+
 	;===================================================
 	;===            Combat Main Load                ====
 	;===================================================
@@ -336,14 +336,14 @@ function LavishLoad()
 	TurnOffAttack:Set[${LavishSettings[VGA].FindSet[TurnOffAttack]}]
 	TurnOffDuringBuff:Set[${LavishSettings[VGA].FindSet[TurnOffDuringBuff]}]
 	Counter:Set[${LavishSettings[VGA].FindSet[Counter]}]
-	
+
 	doClickies:Set[${SpellSR.FindSetting[doClickies]}]
 	doDispell:Set[${SpellSR.FindSetting[doDispell]}]
 	doStancePush:Set[${SpellSR.FindSetting[doStancePush]}]
 	doTurnOffAttack:Set[${SpellSR.FindSetting[doTurnOffAttack]}]
 	doCounter:Set[${SpellSR.FindSetting[doCounter]}]
 	doFurious:Set[${SpellSR.FindSetting[doFurious]}]
-	
+
 	;===================================================
 	;===              Abilities Load                ====
 	;===================================================
@@ -352,15 +352,15 @@ function LavishLoad()
 	SpiritualA:Set[${LavishSettings[VGA].FindSet[SpiritualA]}]
 	PhysicalA:Set[${LavishSettings[VGA].FindSet[PhysicalA]}]
 	ArcaneA:Set[${LavishSettings[VGA].FindSet[ArcaneA]}]
-	
-	
+
+
 	;===================================================
 	;===              BuffWatch Load                ====
 	;===================================================
 	TBW:Set[${LavishSettings[VGA_General].FindSet[TBW]}]
 	DBW:Set[${LavishSettings[VGA_General].FindSet[DBW]}]
 	BW:Set[${LavishSettings[VGA_General].FindSet[BW]}]
-	
+
 	;===================================================
 	;===            Interactions   Load             ====
 	;===================================================
@@ -405,36 +405,38 @@ function LavishLoad()
 	Resumetxt:Set[${Interactions.FindSetting[Resumetxt,${Resumetxt}]}]
 	DoBurstCall:Set[${Interactions.FindSetting[DoBurstCall,${DoBurstCall}]}]
 	BurstCalltxt:Set[${Interactions.FindSetting[BurstCalltxt,${BurstCalltxt}]}]
-	
+
 	Class:Set[${LavishSettings[VGA].FindSet[Class]}]
 	switch ${Me.Class}
 	{
-		case Bard
-			PrimaryWeapon:Set[${Class.FindSetting[PrimaryWeapon,${PrimaryWeapon}]}]
-			SecondaryWeapon:Set[${Class.FindSetting[SecondaryWeapon,${SecondaryWeapon}]}]
-			FightSong:Set[${Class.FindSetting[FightSong,${FightSong}]}]
-			RunSong:Set[${Class.FindSetting[RunSong,${RunSong}]}]
-			Drum:Set[${Class.FindSetting[Drum,${Drum}]}]
-			break
-			
-		case Blood Mage
-			BMHealthToEnergySpell:Set[${Class.FindSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]}]
-			BMBloodUnionDumpDPSSpell:Set[${Class.FindSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]}]
-			BMSingleTargetLifeTap1:Set[${Class.FindSetting[BMSingleTargetLifeTap1,${BMSingleTargetLifeTap1}]}]
-			BMSingleTargetLifeTap2:Set[${Class.FindSetting[BMSingleTargetLifeTap2,${BMSingleTargetLifeTap2}]}]
-			BMBloodUnionSingleTargetHOT:Set[${Class.FindSetting[BMBloodUnionSingleTargetHOT,${BMBloodUnionSingleTargetHOT}]}]
-			break
+	case Bard
+		PrimaryWeapon:Set[${Class.FindSetting[PrimaryWeapon,${PrimaryWeapon}]}]
+		SecondaryWeapon:Set[${Class.FindSetting[SecondaryWeapon,${SecondaryWeapon}]}]
+		FightSong:Set[${Class.FindSetting[FightSong,${FightSong}]}]
+		RunSong:Set[${Class.FindSetting[RunSong,${RunSong}]}]
+		Drum:Set[${Class.FindSetting[Drum,${Drum}]}]
+		break
+
+	case Blood Mage
+		BMHealthToEnergySpell:Set[${Class.FindSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]}]
+		BMBloodUnionDumpDPSSpell:Set[${Class.FindSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]}]
+		BMSingleTargetLifeTap1:Set[${Class.FindSetting[BMSingleTargetLifeTap1,${BMSingleTargetLifeTap1}]}]
+		BMSingleTargetLifeTap2:Set[${Class.FindSetting[BMSingleTargetLifeTap2,${BMSingleTargetLifeTap2}]}]
+		BMBloodUnionSingleTargetHOT:Set[${Class.FindSetting[BMBloodUnionSingleTargetHOT,${BMBloodUnionSingleTargetHOT}]}]
+		break
 	}
 	;===================================================
 	;===                 Quests   Load              ====
 	;===================================================
-	
+
 	QuestNPCs:Set[${LavishSettings[VGA_Quests].FindSet[QuestNPCs]}]
 	Quests:Set[${LavishSettings[VGA_Quests].FindSet[Quests]}]
 	;===================================================
 	;===                 Diplo   Load               ====
 	;===================================================
-	
+
 	DiploNPCs:Set[${LavishSettings[VGA_Diplo].FindSet[DiploNPCs]}]
 	Diplo:Set[${LavishSettings[VGA_Diplo].FindSet[Diplo]}]
 }
+
+
