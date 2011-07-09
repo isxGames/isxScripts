@@ -307,11 +307,13 @@ function(global):int ConvertPresence(string Presence)
 }
 function(global):string PresenceNeeded()
 {
-	; Sometimes this does not exist
-	if ${Dialog[Civic Diplomacy,1].PresenceRequiredType(exists)}
+	variable int i
+	for (i:Set[1] ; ${i}<=${Dialog[Civic Diplomacy].ResponseCount} ; i:Inc)
 	{
-		switch ${Dialog[Civic Diplomacy,1].PresenceRequiredType}
-				{
+		if ${Dialog[Civic Diplomacy,${i}].PresenceRequiredType(exists)}
+		{
+			switch ${Dialog[Civic Diplomacy,${i}].PresenceRequiredType}
+			{
 				case Academic Presence
 					Return Academics
 				case Merchant Presence
@@ -330,15 +332,17 @@ function(global):string PresenceNeeded()
 					Return Craftsmen
 				case Clergy Presence
 					Return Clergy			
-				default
+				Default
 					Return PresenceNotFound
-				}
+			}
+		}
 	}
-	;; check for this such as in POTA
-	elseif ${Dialog[General,2].PresenceRequiredType(exists)}
+	for (i:Set[1] ; ${i}<=${Dialog[General].ResponseCount} ; i:Inc)
 	{
-		switch ${Dialog[General,2].PresenceRequiredType}
-				{
+		if ${Dialog[General,${i}].PresenceRequiredType(exists)}
+		{
+			switch ${Dialog[General,${i}].PresenceRequiredType}
+			{
 				case Academic Presence
 					Return Academics
 				case Merchant Presence
@@ -357,9 +361,10 @@ function(global):string PresenceNeeded()
 					Return Craftsmen
 				case Clergy Presence
 					Return Clergy			
-				default
+				Default
 					Return PresenceNotFound
-				}
+			}
+		}
 	}
 }
 
