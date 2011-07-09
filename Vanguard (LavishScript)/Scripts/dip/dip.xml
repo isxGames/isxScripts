@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
-  <!--Slider Template Definition, Shamelessly Stolen from VGCraftBot -->
-  <template name='VG.slider.Texture' filename='commonelements.dds'>
+	<!--Slider Template Definition, Shamelessly Stolen from VGCraftBot -->
+	<template name='VG.slider.Texture' filename='commonelements.dds'>
 		<left>102</left>
 		<top>150</top>
 		<Right>179</Right>
@@ -21,23 +21,23 @@
 		<Texture Template='VG.slider.Texture' />
 		<HandleTexture Template='VG.slider.HandleTexture' />
 	</template>
-  
-  <Window Name='Diplo' Template='VG.Window'>
-    <StorePosition>1</StorePosition>
-    <X>14</X>
-    <Y>226</Y>
-    <Height>80</Height>
-    <Width>160</Width>
-    <Client Template="VG.Window.Client" />
-    <Title>Diplomacy Bot</Title>
-    <TitleBar Template="VG.Window.TitleBar">
+
+	<Window Name='Diplo' Template='VG.Window'>
+		<StorePosition>1</StorePosition>
+		<X>14</X>
+		<Y>226</Y>
+		<Height>80</Height>
+		<Width>190</Width>
+		<Client Template="VG.Window.Client" />
+		<Title>Diplomacy Bot</Title>
+		<TitleBar Template="VG.Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
 			<Width>100%</Width>
 			<Height>18</Height>
 			<Children>
-        <Text Name="Title" Template="VG.Window.TitleBar.Title" />
-        <Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+				<Text Name="Title" Template="VG.Window.TitleBar.Title" />
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
 					<X>1</X>
 					<Width>12</Width>
 					<Height>12</Height>
@@ -50,479 +50,565 @@
 				</CommandButton>
 			</Children>
 		</TitleBar>
-    <Children>
-      <TabControl Name='DipTabs' Template='VG.TabControl'>
-        <X>2</X>
-        <Y>2</Y>
-        <Font>
-          <Name>Times New Roman</Name>
-          <Size>12</Size>
-        </font>
-        <TabHeight>13</TabHeight>
-        <TabBorder>2</TabBorder>
-        <Height>r2</Height>
-        <Width>r2</Width>
-        <OnSelect>
-          switch ${This.SelectedTab}
-          {
-            Case HUD
-              UIElement[Diplo]:SetWidth[160]
-              UIElement[Diplo]:SetHeight[80]
-              break
-            Case Options
-              UIElement[Diplo]:SetWidth[380]
-              UIElement[Diplo]:SetHeight[300]
-              break
-          }
-        </OnSelect>
-        <Tabs>
-          <Tab Name='HUD'>
-            <Text Name='Wins' Template="VG.Text">
-              <X>10</X>
-              <Y>5</Y>
-              <Width>63</Width>
-              <Height>14</Height>
-              <Alignment>Left</Alignment>
-              <Font Template="VG.Text.Font">
-                <Size>11</Size>
-                <Color>FF005500</Color>
-              </Font>
-              <Text>Wins: ${Script[dip].VariableScope.wins}</text>
-            </Text>
-            <Text Name='Losses' Template="VG.Text">
-              <X>80</X>
-              <Y>5</Y>
-              <Width>73</Width>
-              <Height>14</Height>
-              <Alignment>Left</Alignment>
-              <Font Template="VG.Text.Font">
-                <Size>11</Size>
-                <Color>FFAA0000</Color>
-              </Font>
-              <Text>Losses: ${Script[dip].VariableScope.losses}</Text>
-            </Text>
-            <CommandButton Name='Pause' Template='VG.RedCommandButton'>
-              <visible>0</visible>
-              <X>45</X>
-              <Y>19</Y>
-              <Width>65</Width>
-              <Height>22</Height>
-              <Text>Pause</Text>
-              <OnLeftClick>
-                This:Hide
-                dippause
-                UIElement[UnPause@HUD@DipTabs@Diplo]:Show
-              </OnLeftClick>
-            </CommandButton>
-            <CommandButton Name='UnPause' Template='VG.GreenCommandButton'>
-              <visible>0</visible>
-              <X>45</X>
-              <Y>19</Y>
-              <Width>65</Width>
-              <Height>22</Height>
-              <Text>UnPause</Text>
-              <OnLeftClick>
-                This:Hide
-                dipunpause
-                UIElement[Pause@HUD@DipTabs@Diplo]:Show
-              </OnLeftClick>
-            </CommandButton>
-            <CommandButton Name='Start' Template='VG.GreenCommandButton'>
-              <visible>1</visible>
-              <X>45</X>
-              <Y>19</Y>
-              <Width>65</Width>
-              <Height>22</Height>
-              <Text>Start</Text>
-              <OnLeftClick>
-                This:Hide
-                dipstart
-                UIElement[Pause@HUD@DipTabs@Diplo]:Show
-              </OnLeftClick>
-            </CommandButton>
-          </Tab>
-          <Tab Name='Options'>
-            <checkbox Name='Incite' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>15</Y>
-              <Width>20</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Incite</Text>
-              <OnLeftClick>
-                if !${This.Checked}
-                {
-                  variable int i = 1
-                  do
-                  {
-                    if (${convTypes[${i}].Find[Incite]})
-                    {
-                      convTypes:Remove[${i}]
-                      convTypes:Collapse
-                      break
-                    }
-                    i:Inc
-                  }
-                  while ${convTypes[${i}](exists)}
-                }
-                else
-                {
-                  convTypes:Insert[Incite]
-                }
-              </OnLeftClick>
-            </checkbox>      
-            <checkbox Name='Interview' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>35</Y>
-              <Width>20</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Interview</Text>
-              <OnLeftClick>
-                if !${This.Checked}
-                {
-                  variable int i = 1
-                  do
-                  {
-                    if (${convTypes[${i}].Find[Interview]})
-                    {
-                      convTypes:Remove[${i}]
-                      convTypes:Collapse
-                      break
-                    }
-                    i:Inc
-                  }
-                  while ${convTypes[${i}](exists)}
-                }
-                else
-                {
-                  convTypes:Insert[Interview]
-                }
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='Convince' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>55</Y>
-              <Width>20</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Convince</Text>
-              <OnLeftClick>
-                if !${This.Checked}
-                {
-                  variable int i = 1
-                  do
-                  {
-                    if (${convTypes[${i}].Find[Convince]})
-                    {
-                      convTypes:Remove[${i}]
-                      convTypes:Collapse
-                      break
-                    }
-                    i:Inc
-                  }
-                  while ${convTypes[${i}](exists)}
-                }
-                else
-                {
-                  convTypes:Insert[Convince]
-                }
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='Gossip' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>75</Y>
-              <Width>20</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Gossip</Text>
-              <OnLeftClick>
-                if !${This.Checked}
-                {
-                  variable int i = 1
-                  do
-                  {
-                    if (${convTypes[${i}].Find[Gossip]})
-                    {
-                      convTypes:Remove[${i}]
-                      convTypes:Collapse
-                      break
-                    }
-                    i:Inc
-                  }
-                  while ${convTypes[${i}](exists)}
-                }
-                else
-                {
-                  convTypes:Insert[Gossip]
-                }
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='Entertain' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>95</Y>
-              <Width>20</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Entertain</Text>
-              <OnLeftClick>
-                if !${This.Checked}
-                {
-                  variable int i = 1
-                  do
-                  {
-                    if (${convTypes[${i}].Find[Entertain]})
-                    {
-                      convTypes:Remove[${i}]
-                      convTypes:Collapse
-                      break
-                    }
-                    i:Inc
-                  }
-                  while ${convTypes[${i}](exists)}
-                }
-                else
-                {
-                  convTypes:Insert[Entertain]
-                }
-              </OnLeftClick>
-            </checkbox>
-            <listbox Name="NPCList" Template="VG.ListBox">
-              <X>95</X>
-              <Y>15</Y>
-              <Width>265</Width>
-              <Height>120</Height>
-              <sort>None</sort>
-              <SelectMultiple>0</SelectMultiple>
-              <OnRightClick>
-                dipRemoveFromList
-              </OnRightClick>
-              <OnSelect>
-              	UIElement[red@Options@DipTabs@Diplo]:Show
-              	UIElement[green@Options@DipTabs@Diplo]:Show
-              	UIElement[blue@Options@DipTabs@Diplo]:Show
-              	UIElement[yellow@Options@DipTabs@Diplo]:Show
-              	colorBoxesSet
-              	UIElement[SelectedNPCOverallWins@DiploStats]:Show
-              	UIElement[SelectedNPCOverallLosses@DiploStats]:Show
-              	UIElement[SelectedNPCInciteWins@DiploStats]:Show
-                UIElement[SelectedNPCInciteLosses@DiploStats]:Show
-                UIElement[SelectedNPCInterviewWins@DiploStats]:Show
-                UIElement[SelectedNPCInterviewLosses@DiploStats]:Show
-                UIElement[SelectedNPCConvinceWins@DiploStats]:Show
-                UIElement[SelectedNPCConvinceLosses@DiploStats]:Show
-                UIElement[SelectedNPCGossipWins@DiploStats]:Show
-                UIElement[SelectedNPCGossipLosses@DiploStats]:Show
-                UIElement[SelectedNPCEntertainWins@DiploStats]:Show
+		<Children>
+			<TabControl Name='DipTabs' Template='VG.TabControl'>
+				<X>2</X>
+				<Y>2</Y>
+				<Font>
+					<Name>Times New Roman</Name>
+					<Size>12</Size>
+				</font>
+				<TabHeight>13</TabHeight>
+				<TabBorder>2</TabBorder>
+				<Height>r2</Height>
+				<Width>r2</Width>
+				<OnSelect>
+					switch ${This.SelectedTab}
+					{
+					Case HUD
+						UIElement[Diplo]:SetWidth[160]
+						UIElement[Diplo]:SetHeight[80]
+						break
+					Case Options
+						UIElement[Diplo]:SetWidth[380]
+						UIElement[Diplo]:SetHeight[300]
+						break
+					}
+				</OnSelect>
+				<Tabs>
+					<Tab Name='HUD'>
+						<Text Name='Wins' Template="VG.Text">
+							<X>10</X>
+							<Y>5</Y>
+							<Width>63</Width>
+							<Height>14</Height>
+							<Alignment>Left</Alignment>
+							<Font Template="VG.Text.Font">
+								<Size>11</Size>
+								<Color>FF005500</Color>
+							</Font>
+							<Text>Wins: ${Script[dip].VariableScope.wins}</text>
+						</Text>
+						<Text Name='Losses' Template="VG.Text">
+							<X>80</X>
+							<Y>5</Y>
+							<Width>73</Width>
+							<Height>14</Height>
+							<Alignment>Left</Alignment>
+							<Font Template="VG.Text.Font">
+								<Size>11</Size>
+								<Color>FFAA0000</Color>
+							</Font>
+							<Text>Losses: ${Script[dip].VariableScope.losses}</Text>
+						</Text>
+						<CommandButton Name='Pause' Template='VG.RedCommandButton'>
+							<visible>0</visible>
+							<X>45</X>
+							<Y>19</Y>
+							<Width>65</Width>
+							<Height>22</Height>
+							<Text>Pause</Text>
+							<OnLeftClick>
+								This:Hide
+								dippause
+								UIElement[UnPause@HUD@DipTabs@Diplo]:Show
+							</OnLeftClick>
+						</CommandButton>
+						<CommandButton Name='UnPause' Template='VG.GreenCommandButton'>
+							<visible>0</visible>
+							<X>45</X>
+							<Y>19</Y>
+							<Width>65</Width>
+							<Height>22</Height>
+							<Text>UnPause</Text>
+							<OnLeftClick>
+								This:Hide
+								dipunpause
+								UIElement[Pause@HUD@DipTabs@Diplo]:Show
+						</OnLeftClick>
+						</CommandButton>
+						<CommandButton Name='Start' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>45</X>
+							<Y>19</Y>
+							<Width>65</Width>
+							<Height>22</Height>
+							<Text>Start</Text>
+							<OnLeftClick>
+								This:Hide
+								dipstart
+								UIElement[Pause@HUD@DipTabs@Diplo]:Show
+							</OnLeftClick>
+						</CommandButton>
+					</Tab>
+					<Tab Name='Options'>
+						<checkbox Name='Incite' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>15</Y>
+							<Width>20</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Incite</Text>
+							<OnLeftClick>
+								if !${This.Checked}
+								{
+									variable int i = 1
+									do
+									{
+										if (${convTypes[${i}].Find[Incite]})
+										{
+											convTypes:Remove[${i}]
+											convTypes:Collapse
+											break
+										}
+										i:Inc
+									}
+									while ${convTypes[${i}](exists)}
+								}
+								else
+								{
+									convTypes:Insert[Incite]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Interview' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>35</Y>
+							<Width>20</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Interview</Text>
+							<OnLeftClick>
+								if !${This.Checked}
+								{
+									variable int i = 1
+									do
+									{
+										if (${convTypes[${i}].Find[Interview]})
+										{
+											convTypes:Remove[${i}]
+											convTypes:Collapse
+											break
+										}
+										i:Inc
+									}
+									while ${convTypes[${i}](exists)}
+								}
+								else
+								{
+									convTypes:Insert[Interview]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Convince' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>55</Y>
+							<Width>20</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Convince</Text>
+							<OnLeftClick>
+								if !${This.Checked}
+								{
+									variable int i = 1
+									do
+									{
+										if (${convTypes[${i}].Find[Convince]})
+										{
+											convTypes:Remove[${i}]
+											convTypes:Collapse
+											break
+										}
+										i:Inc
+									}
+									while ${convTypes[${i}](exists)}
+								}
+								else
+								{
+									convTypes:Insert[Convince]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Gossip' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>75</Y>
+							<Width>20</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Gossip</Text>
+							<OnLeftClick>
+								if !${This.Checked}
+								{
+									variable int i = 1
+									do
+									{
+										if (${convTypes[${i}].Find[Gossip]})
+										{
+											convTypes:Remove[${i}]
+											convTypes:Collapse
+											break
+										}
+										i:Inc
+									}
+									while ${convTypes[${i}](exists)}
+								}
+								else
+								{
+									convTypes:Insert[Gossip]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Entertain' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>95</Y>
+							<Width>20</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Entertain</Text>
+							<OnLeftClick>
+								if !${This.Checked}
+								{
+									variable int i = 1
+									do
+									{
+										if (${convTypes[${i}].Find[Entertain]})
+										{
+											convTypes:Remove[${i}]
+											convTypes:Collapse
+											break
+										}
+										i:Inc
+									}
+									while ${convTypes[${i}](exists)}
+								}
+								else
+								{
+									convTypes:Insert[Entertain]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<listbox Name="NPCList" Template="VG.ListBox">
+							<X>95</X>
+							<Y>15</Y>
+							<Width>265</Width>
+							<Height>120</Height>
+							<sort>None</sort>
+							<SelectMultiple>0</SelectMultiple>
+							<OnRightClick>
+								dipRemoveFromList
+							</OnRightClick>
+							<OnSelect>
+								UIElement[red@Options@DipTabs@Diplo]:Show
+								UIElement[green@Options@DipTabs@Diplo]:Show
+								UIElement[blue@Options@DipTabs@Diplo]:Show
+								UIElement[yellow@Options@DipTabs@Diplo]:Show
+								colorBoxesSet
+								UIElement[SelectedNPCOverallWins@DiploStats]:Show
+								UIElement[SelectedNPCOverallLosses@DiploStats]:Show
+								UIElement[SelectedNPCInciteWins@DiploStats]:Show
+								UIElement[SelectedNPCInciteLosses@DiploStats]:Show
+								UIElement[SelectedNPCInterviewWins@DiploStats]:Show
+								UIElement[SelectedNPCInterviewLosses@DiploStats]:Show
+								UIElement[SelectedNPCConvinceWins@DiploStats]:Show
+								UIElement[SelectedNPCConvinceLosses@DiploStats]:Show
+								UIElement[SelectedNPCGossipWins@DiploStats]:Show
+								UIElement[SelectedNPCGossipLosses@DiploStats]:Show
+								UIElement[SelectedNPCEntertainWins@DiploStats]:Show
 								UIElement[SelectedNPCEntertainLosses@DiploStats]:Show
-              	UpdateStats
-              </OnSelect>
-              <OnDeselect>
-              	UIElement[red@Options@DipTabs@Diplo]:Hide
-              	UIElement[green@Options@DipTabs@Diplo]:Hide
-              	UIElement[blue@Options@DipTabs@Diplo]:Hide
-              	UIElement[yellow@Options@DipTabs@Diplo]:Hide
-              	UIElement[SelectedNPCOverallWins@DiploStats]:Hide
-              	UIElement[SelectedNPCOverallLosses@DiploStats]:Hide
-              	UIElement[SelectedNPCInciteWins@DiploStats]:Hide
-                UIElement[SelectedNPCInciteLosses@DiploStats]:Hide
-                UIElement[SelectedNPCInterviewWins@DiploStats]:Hide
-                UIElement[SelectedNPCInterviewLosses@DiploStats]:Hide
-                UIElement[SelectedNPCConvinceWins@DiploStats]:Hide
-                UIElement[SelectedNPCConvinceLosses@DiploStats]:Hide
-                UIElement[SelectedNPCGossipWins@DiploStats]:Hide
-                UIElement[SelectedNPCGossipLosses@DiploStats]:Hide
-                UIElement[SelectedNPCEntertainWins@DiploStats]:Hide
+								UpdateStats
+							</OnSelect>
+							<OnDeselect>
+								UIElement[red@Options@DipTabs@Diplo]:Hide
+								UIElement[green@Options@DipTabs@Diplo]:Hide
+								UIElement[blue@Options@DipTabs@Diplo]:Hide
+								UIElement[yellow@Options@DipTabs@Diplo]:Hide
+								UIElement[SelectedNPCOverallWins@DiploStats]:Hide
+								UIElement[SelectedNPCOverallLosses@DiploStats]:Hide
+								UIElement[SelectedNPCInciteWins@DiploStats]:Hide
+								UIElement[SelectedNPCInciteLosses@DiploStats]:Hide
+								UIElement[SelectedNPCInterviewWins@DiploStats]:Hide
+								UIElement[SelectedNPCInterviewLosses@DiploStats]:Hide
+								UIElement[SelectedNPCConvinceWins@DiploStats]:Hide
+								UIElement[SelectedNPCConvinceLosses@DiploStats]:Hide
+								UIElement[SelectedNPCGossipWins@DiploStats]:Hide
+								UIElement[SelectedNPCGossipLosses@DiploStats]:Hide
+								UIElement[SelectedNPCEntertainWins@DiploStats]:Hide
 								UIElement[SelectedNPCEntertainLosses@DiploStats]:Hide
-              </OnDeselect>
-            </listbox>
-            <CommandButton Name="AddTargetButton" Template="VG.GreenCommandButton">
-              <X>110</X>
-              <Y>140</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <Text>Add Target</Text>
-              <OnLeftClick>
-                dipAddTarget
-              </OnLeftClick>
-            </CommandButton>
-            <CommandButton Name="ClearList" Template="VG.RedCommandButton">
-              <X>200</X>
-              <Y>140</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <text>Clear List</Text>
-              <OnLeftClick>
-                dipClearNPCs
-              </OnLeftClick>
-            </CommandButton>
-            <checkbox Name='Mapping' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>140</Y>
-              <Width>30</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </font>
-              <Text>Start Mapping</Text>
-              <OnLeftClick>
-                dipMap
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='Face' Template='VG.Checkbox'>
-              <X>15</X>
-              <Y>155</Y>
-              <Width>30</Width>
-              <Height>12</Height>
-              <Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </font>
-              <Text>Face Target</Text>
-              <OnLeftClick>
-                toggleFace
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='red' Template='VG.Checkbox'>
-            	<Visible>0</Visible>
-            	<X>110</X>
-            	<Y>165</Y>
-            	<Width>15</Width>
-            	<Height>12</Height>
-            	<Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Red</Text>
-              <OnLeftClick>
-              	colorToggle red
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='green' Template='VG.Checkbox'>
-            	<Visible>0</Visible>
-            	<X>150</X>
-            	<Y>165</Y>
-            	<Width>15</Width>
-            	<Height>12</Height>
-            	<Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Green</Text>
-              <OnLeftClick>
-              	colorToggle green
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='blue' Template='VG.Checkbox'>
-            	<Visible>0</Visible>
-            	<X>200</X>
-            	<Y>165</Y>
-            	<Width>15</Width>
-            	<Height>12</Height>
-            	<Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Blue</Text>
-              <OnLeftClick>
-              	colorToggle blue
-              </OnLeftClick>
-            </checkbox>
-            <checkbox Name='yellow' Template='VG.Checkbox'>
-            	<Visible>0</Visible>
-            	<X>240</X>
-            	<Y>165</Y>
-            	<Width>15</Width>
-            	<Height>12</Height>
-            	<Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Yellow</Text>
-              <OnLeftClick>
-              	colorToggle yellow
-              </OnLeftClick>
-            </checkbox>
-            <CommandButton Name='FullAuto' Template='VG.GreenCommandButton'>
-              <visible>1</visible>
-              <X>110</X>
-              <Y>183</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <Text>Full Auto</Text>
-              <OnLeftClick>
-                This:Hide
-                dipAuto
-              </OnLeftClick>
-            </CommandButton>
-            <CommandButton Name='SemiAuto' Template='VG.RedCommandButton'>
-              <visible>0</visible>
-              <X>110</X>
-              <Y>183</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <Text>Semi Auto</Text>
-              <OnLeftClick>
-                This:Hide
-                dipAuto
-              </OnLeftClick>
-            </CommandButton>
-            <CheckBox Name='CardDelay' Template='VG.Checkbox'>
-            	<X>15</X>
-            	<Y>210</Y>
-            	<Width>15</Width>
-            	<Height>12</Height>
-            	<Font Template="VG.Text.Font">
-                <Size>12</Size>
-              </Font>
-              <Text>Card Delay</Text>
-              <OnLeftClick>
-              	carddelayToggle
-              </OnLeftClick>
-            </checkbox>
-            <CommandButton Name='SpitVariables' Template='VG.RedCommandButton'>
-              <visable>0</visable>
-              <X>15</X>
-              <Y>208</Y>
-              <Height>18</Height>
-              <Width>100</Width>
-              <Text>Dump Variables</Text>
-              <OnLeftClick>SpitVariables</OnLeftClick>
-            </CommandButton>
-            <Text Name='MinDelayL' Template="VG.Text">
-              <Visible>0</Visible>
-              <X>110</X>
-              <Y>210</Y>
-              <Width>70</Width>
-              <Height>14</Height>
-              <Alignment>Left</Alignment>
-              <Font Template="VG.Text.Font">
-                <Size>11</Size>
-              </Font>
-              <Text>Min Delay</Text>
-            </text>
-            <Text Name='MaxDelayL' Template="VG.Text">
-              <Visible>0</Visible>
-              <X>110</X>
-              <Y>230</Y>
-              <Width>70</Width>
-              <Height>14</Height>
-              <Alignment>Left</Alignment>
-              <Font Template="VG.Text.Font">
-                <Size>11</Size>
-              </Font>
-              <Text>Max Delay</Text>
-            </text>
-            <Slider Name='MinDelay' Template='VG.Slider'>
-            	<Visible>0</Visible>
-            	<X>170</X>
-            	<Y>204</Y>
-            	<Width>50</Width>
+							</OnDeselect>
+						</listbox>
+						<CommandButton Name="AddTargetButton" Template="VG.GreenCommandButton">
+							<X>110</X>
+							<Y>140</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<Text>Add Target</Text>
+							<OnLeftClick>
+								dipAddTarget
+							</OnLeftClick>
+						</CommandButton>
+						<CommandButton Name="ClearList" Template="VG.RedCommandButton">
+							<X>200</X>
+							<Y>140</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<text>Clear List</Text>
+							<OnLeftClick>
+								dipClearNPCs
+							</OnLeftClick>
+						</CommandButton>
+						<checkbox Name='Mapping' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>140</Y>
+							<Width>30</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</font>
+							<Text>Start Mapping</Text>
+							<OnLeftClick>
+								dipMap
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Face' Template='VG.Checkbox'>
+							<X>15</X>
+							<Y>155</Y>
+							<Width>30</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</font>
+							<Text>Face Target</Text>
+							<OnLeftClick>
+								toggleFace
+							</OnLeftClick>
+						</checkbox>
+						
+						<Textentry Name="LowLevelEntry" Template="VG.TextEntry">
+							<X>1%</X>
+							<Y>66%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[Dip].VariableScope.LowestDipLevel}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Dip].VariableScope.LowestDipLevel:Set[0]
+								}
+								if ${This.Text.Length}>0
+								{
+									if ${Math.Calc[${This.Text}].Int} > 100
+									{
+										Script[Dip].VariableScope.LowestDipLevel:Set[100]
+										This:SetText[100]
+									}
+									Script[Dip].VariableScope.LowestDipLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+								if ${This.Text.Length}>3
+								{
+									Script[Dip].VariableScope.LowestDipLevel:Set[100]
+									This:SetText[100]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="LowLevelText" Template="VG.BoldText">
+							<X>10%</X>
+							<Y>66%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</font>
+							<Alignment>Left</Alignment>
+							<Text>Low Dip Level</Text>
+						</Text>
+						
+						<Textentry Name="HiLevelEntry" Template="VG.TextEntry">
+							<X>1%</X>
+							<Y>71%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[Dip].VariableScope.HighestDipLevel}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Dip].VariableScope.HighestDipLevel:Set[0]
+								}
+								if ${This.Text.Length}>0
+								{
+									if ${Math.Calc[${This.Text}].Int} > 100
+									{
+										Script[Dip].VariableScope.HighestDipLevel:Set[100]
+										This:SetText[100]
+									}
+									Script[Dip].VariableScope.HighestDipLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+								if ${This.Text.Length}>3
+								{
+									Script[Dip].VariableScope.HighestDipLevel:Set[100]
+									This:SetText[100]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="HiLevelText" Template="VG.BoldText">
+							<X>10%</X>
+							<Y>71%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</font>
+							<Alignment>Left</Alignment>
+							<Text>Hi Dip Level</Text>
+						</Text>
+						
+						<checkbox Name='red' Template='VG.Checkbox'>
+							<Visible>0</Visible>
+							<X>110</X>
+							<Y>165</Y>
+							<Width>15</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Red</Text>
+							<OnLeftClick>
+								colorToggle red
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='green' Template='VG.Checkbox'>
+							<Visible>0</Visible>
+							<X>150</X>
+							<Y>165</Y>
+							<Width>15</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Green</Text>
+							<OnLeftClick>
+								colorToggle green
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='blue' Template='VG.Checkbox'>
+							<Visible>0</Visible>
+							<X>200</X>
+							<Y>165</Y>
+							<Width>15</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Blue</Text>
+							<OnLeftClick>
+								colorToggle blue
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='yellow' Template='VG.Checkbox'>
+							<Visible>0</Visible>
+							<X>240</X>
+							<Y>165</Y>
+							<Width>15</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Yellow</Text>
+							<OnLeftClick>
+								colorToggle yellow
+							</OnLeftClick>
+						</checkbox>
+						<CommandButton Name='FullAuto' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>110</X>
+							<Y>183</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<Text>Full Auto</Text>
+							<OnLeftClick>
+								This:Hide
+								dipAuto
+							</OnLeftClick>
+						</CommandButton>
+						<CommandButton Name='SemiAuto' Template='VG.RedCommandButton'>
+							<visible>0</visible>
+							<X>110</X>
+							<Y>183</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<Text>Semi Auto</Text>
+							<OnLeftClick>
+								This:Hide
+								dipAuto
+							</OnLeftClick>
+						</CommandButton>
+						<CheckBox Name='CardDelay' Template='VG.Checkbox'>
+							<visable>1</visable>
+							<X>15</X>
+							<Y>210</Y>
+							<Width>15</Width>
+							<Height>12</Height>
+							<Font Template="VG.Text.Font">
+								<Size>12</Size>
+							</Font>
+							<Text>Card Delay</Text>
+							<OnLeftClick>
+								carddelayToggle
+							</OnLeftClick>
+						</checkbox>
+						<CommandButton Name='SpitVariables' Template='VG.RedCommandButton'>
+							<visable>0</visable>
+							<X>15</X>
+							<Y>208</Y>
+							<Height>18</Height>
+							<Width>100</Width>
+							<Text>Dump Variables</Text>
+							<OnLeftClick>SpitVariables</OnLeftClick>
+						</CommandButton>
+						<Text Name='MinDelayL' Template="VG.Text">
+							<Visible>0</Visible>
+							<X>110</X>
+							<Y>210</Y>
+							<Width>70</Width>
+							<Height>14</Height>
+							<Alignment>Left</Alignment>
+							<Font Template="VG.Text.Font">
+								<Size>11</Size>
+							</Font>
+							<Text>Min Delay</Text>
+						</text>
+						<Text Name='MaxDelayL' Template="VG.Text">
+							<Visible>0</Visible>
+							<X>110</X>
+							<Y>230</Y>
+							<Width>70</Width>
+							<Height>14</Height>
+							<Alignment>Left</Alignment>
+							<Font Template="VG.Text.Font">
+							<Size>11</Size>
+								</Font>
+							<Text>Max Delay</Text>
+						</text>
+						<Slider Name='MinDelay' Template='VG.Slider'>
+							<Visible>0</Visible>
+							<X>170</X>
+							<Y>204</Y>
+							<Width>50</Width>
 							<Height>20</Height>
 							<Range>20</Range>
 							<OnChange>
@@ -530,11 +616,11 @@
 							</OnChange>
 						</Slider>
 						<Slider Name='MaxDelay' Template='VG.Slider'>
-            	<Visible>0</Visible>
-            	<X>170</X>
-            	<Y>227</Y>
-            	<Value>1</Value>
-            	<Width>50</Width>
+							<Visible>0</Visible>
+							<X>170</X>
+							<Y>227</Y>
+							<Value>1</Value>
+							<Width>50</Width>
 							<Height>20</Height>
 							<Range>20</Range>
 							<OnChange>
@@ -542,503 +628,505 @@
 							</OnChange>
 						</Slider>
 						<Text Name='MaxDelayV' Template="VG.Text">
-              <Visible>0</Visible>
-              <X>230</X>
-              <Y>230</Y>
-              <Width>20</Width>
-              <Height>14</Height>
-              <Alignment>Left</Alignment>
-              <Font Template="VG.Text.Font">
-                <Size>11</Size>
-              </Font>
-              <text>${UIElement[MaxDelay@Options@DipTabs@Diplo].Value}</Text>
-            </text>
-            <Text Name='MinDelayV' Template="VG.Text">
-              <Visible>0</Visible>
-              <X>230</X>
-              <Y>210</Y>
-              <Width>20</Width>
-              <Height>14</Height>
-              <Alignment>Left</Alignment>
-              <Font Template="VG.Text.Font">
-                <Size>11</Size>
-              </Font>
-              <text>${UIElement[MinDelay@Options@DipTabs@Diplo].Value}</Text>
-            </text>
-            <CommandButton Name='ShowStats' Template='VG.GreenCommandButton'>
-              <visible>1</visible>
-              <X>200</X>
-              <Y>183</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <Text>Show Stats</Text>
-              <OnLeftClick>
-                This:Hide
-                UIElement[HideStats@Options@DipTabs@Diplo]:Show
-                UIElement[DiploStats]:Show
-              </OnLeftClick>
-            </CommandButton>
-            <CommandButton Name="HideStats" Template="VG.RedCommandButton">
-              <visible>0</visible>
-              <X>200</X>
-              <Y>183</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <text>Hide Stats</Text>
-              <OnLeftClick>
-                This:Hide
-                UIElement[ShowStats@Options@DipTabs@Diplo]:Show
-                UIElement[DiploStats]:Hide
-              </OnLeftClick>
-            </CommandButton>
-            <ComboBox Name="diplogearCombo" Template="VG.ComboBox">
-                  <X>13</X>
-                  <Y>230</Y>
-                  <Width>110</Width>
-                  <Height>20</Height>
-		  <Items>
-		   <Item Value='1' Default='1'>Merchants</Item>
-		   <Item Value='2'>Academics</Item>
-		   <Item Value='3'>Outsiders</Item>
-		   <Item Value='4'>Domestics</Item>
-		   <Item Value='5'>Soldiers</Item>
-		   <Item Value='6'>Nobles</Item>
-		   <Item Value='5'>Craftsmen</Item>
-		   <Item Value='6'>Clergy</Item>
-		  </Items>
-                  <OnSelect>
-                  </OnSelect>
-                </ComboBox>
-            <CommandButton Name="diplogearSave" Template="VG.RedCommandButton">
-              <visible>4</visible>
-              <X>130</X>
-              <Y>230</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <text>Save Gear</Text>
-              <OnLeftClick>
-		   obj_diplogear:Save[${UIElement[diplogearCombo@Options@DipTabs@Diplo].Selection}]
-              </OnLeftClick>
-            </CommandButton>
-            <CommandButton Name="diplogearLoad" Template="VG.RedCommandButton">
-              <visible>0</visible>
-              <X>220</X>
-              <Y>230</Y>
-              <Height>18</Height>
-              <Width>80</Width>
-              <text>Load Gear</Text>
-              <OnLeftClick>
-		   obj_diplogear:Load[${UIElement[diplogearCombo@Options@DipTabs@Diplo].Selection}]
-              </OnLeftClick>
-            </CommandButton>
-          </Tab>
-        </Tabs>
-      </TabControl>
-    </Children>
-  </Window>
-  <Window Name='DiploStats' Template='VG.Window'>
-  	<Visible>0</Visible>
-  	<StorePosition>1</StorePosition>
-  	<X>300</X>
-  	<Y>226</Y>
-  	<Height>290</Height>
-  	<Width>468</Width>
-  	<Title>Diplomacy Extended Stats</Title>
-  	<Client Template="VG.Window.Client">
+							<Visible>0</Visible>
+							<X>230</X>
+							<Y>230</Y>
+							<Width>20</Width>
+							<Height>14</Height>
+							<Alignment>Left</Alignment>
+							<Font Template="VG.Text.Font">
+								<Size>11</Size>
+							</Font>
+							<text>${UIElement[MaxDelay@Options@DipTabs@Diplo].Value}</Text>
+						</text>
+						<Text Name='MinDelayV' Template="VG.Text">
+							<Visible>0</Visible>
+							<X>230</X>
+							<Y>210</Y>
+							<Width>20</Width>
+							<Height>14</Height>
+							<Alignment>Left</Alignment>
+							<Font Template="VG.Text.Font">
+								<Size>11</Size>
+							</Font>
+							<text>${UIElement[MinDelay@Options@DipTabs@Diplo].Value}</Text>
+						</text>
+						<CommandButton Name='ShowStats' Template='VG.GreenCommandButton'>
+							<visible>1</visible>
+							<X>200</X>
+							<Y>183</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<Text>Show Stats</Text>
+							<OnLeftClick>
+								This:Hide
+								UIElement[HideStats@Options@DipTabs@Diplo]:Show
+								UIElement[DiploStats]:Show
+							</OnLeftClick>
+						</CommandButton>
+						<CommandButton Name="HideStats" Template="VG.RedCommandButton">
+							<visible>0</visible>
+							<X>200</X>
+							<Y>183</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<text>Hide Stats</Text>
+							<OnLeftClick>
+								This:Hide
+								UIElement[ShowStats@Options@DipTabs@Diplo]:Show
+								UIElement[DiploStats]:Hide
+							</OnLeftClick>
+						</CommandButton>
+						<ComboBox Name="diplogearCombo" Template="VG.ComboBox">
+							<visible>1</visible>
+							<X>13</X>
+							<Y>230</Y>
+							<Width>110</Width>
+							<Height>20</Height>
+							<Items>
+								<Item Value='1' Default='1'>Merchants</Item>
+								<Item Value='2'>Academics</Item>
+								<Item Value='3'>Outsiders</Item>
+								<Item Value='4'>Domestics</Item>
+								<Item Value='5'>Soldiers</Item>
+								<Item Value='6'>Nobles</Item>
+								<Item Value='5'>Craftsmen</Item>
+								<Item Value='6'>Clergy</Item>
+							</Items>
+							<OnSelect>
+							</OnSelect>
+						</ComboBox>
+						<CommandButton Name="diplogearSave" Template="VG.RedCommandButton">
+							<visible>1</visible>
+							<X>130</X>
+							<Y>230</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<text>Save Gear</Text>
+							<OnLeftClick>
+								obj_diplogear:Save[${UIElement[diplogearCombo@Options@DipTabs@Diplo].Selection}]
+							</OnLeftClick>
+						</CommandButton>
+						<CommandButton Name="diplogearLoad" Template="VG.RedCommandButton">
+							<visible>0</visible>
+							<X>220</X>
+							<Y>230</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<text>Load Gear</Text>
+							<OnLeftClick>
+								obj_diplogear:Load[${UIElement[diplogearCombo@Options@DipTabs@Diplo].Selection}]
+							</OnLeftClick>
+						</CommandButton>
+					</Tab>
+				</Tabs>
+			</TabControl>
+		</Children>
+	</Window>
+	<Window Name='DiploStats' Template='VG.Window'>
+		<Visible>0</Visible>
+		<StorePosition>1</StorePosition>
+		<X>300</X>
+		<Y>226</Y>
+		<Height>290</Height>
+		<Width>468</Width>
+		<Title>Diplomacy Extended Stats</Title>
+		<Client Template="VG.Window.Client">
 			<Y>18</Y>
 			<Height>r18</Height>
 			<Texture Template="VG.TabControl.FrameTexture" />
 		</Client>
-  	<Children>
-  		<Text name='OverallWins' Template="VG.Text">
-  	 		<X>30</X>
-    		<Y>20</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Overall Wins: ${Script[dip].VariableScope.wins}</text>
-  		</Text>
-  		<Text name='OverallLosses' Template="VG.Text">
-    		<X>245</X>
-    		<Y>20</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Overall Losses: ${Script[dip].VariableScope.losses}</text>
-  		</Text>
-  		<Text name='OverallInciteWins' Template="VG.Text">
-  	 		<X>30</X>
-    		<Y>35</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Overall Incite Wins: ${Script[dip].VariableScope.Incitewins}</text>
-  		</Text>
-  		<Text name='OverallInciteLosses' Template="VG.Text">
-    		<X>245</X>
-    		<Y>35</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Overall Incite Losses: ${Script[dip].VariableScope.Incitelosses}</text>
-  		</Text>
+		<Children>
+			<Text name='OverallWins' Template="VG.Text">
+				<X>30</X>
+				<Y>20</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Overall Wins: ${Script[dip].VariableScope.wins}</text>
+			</Text>
+			<Text name='OverallLosses' Template="VG.Text">
+				<X>245</X>
+				<Y>20</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Overall Losses: ${Script[dip].VariableScope.losses}</text>
+			</Text>
+			<Text name='OverallInciteWins' Template="VG.Text">
+				<X>30</X>
+				<Y>35</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Overall Incite Wins: ${Script[dip].VariableScope.Incitewins}</text>
+			</Text>
+			<Text name='OverallInciteLosses' Template="VG.Text">
+				<X>245</X>
+				<Y>35</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+				<Size>11</Size>
+				<Color>FFAA0000</Color>
+				</Font>
+				<Text>Overall Incite Losses: ${Script[dip].VariableScope.Incitelosses}</text>
+			</Text>
 			<Text name='OverallInterviewWins' Template="VG.Text">
-  	 		<X>30</X>
-    		<Y>50</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Overall Interview Wins: ${Script[dip].VariableScope.Interviewwins}</text>
-  		</Text>
-  		<Text name='OverallInterviewLosses' Template="VG.Text">
-    		<X>245</X>
-    		<Y>50</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Overall Interview Losses: ${Script[dip].VariableScope.Interviewlosses}</text>
-  		</Text>
+				<X>30</X>
+				<Y>50</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Overall Interview Wins: ${Script[dip].VariableScope.Interviewwins}</text>
+			</Text>
+			<Text name='OverallInterviewLosses' Template="VG.Text">
+				<X>245</X>
+				<Y>50</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Overall Interview Losses: ${Script[dip].VariableScope.Interviewlosses}</text>
+			</Text>
 			<Text name='OverallConvinceWins' Template="VG.Text">
-  	 		<X>30</X>
-    		<Y>65</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Overall Convince Wins: ${Script[dip].VariableScope.Convincewins}</text>
-  		</Text>
-  		<Text name='OverallConvinceLosses' Template="VG.Text">
-    		<X>245</X>
-    		<Y>65</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Overall Convince Losses: ${Script[dip].VariableScope.Convincelosses}</text>
-  		</Text>
+				<X>30</X>
+				<Y>65</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Overall Convince Wins: ${Script[dip].VariableScope.Convincewins}</text>
+			</Text>
+			<Text name='OverallConvinceLosses' Template="VG.Text">
+				<X>245</X>
+				<Y>65</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Overall Convince Losses: ${Script[dip].VariableScope.Convincelosses}</text>
+			</Text>
 			<Text name='OverallGossipWins' Template="VG.Text">
-  	 		<X>30</X>
-    		<Y>80</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Overall Gossip Wins: ${Script[dip].VariableScope.Gossipwins}</text>
-  		</Text>
-  		<Text name='OverallGossipLosses' Template="VG.Text">
-    		<X>245</X>
-    		<Y>80</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Overall Gossip Losses: ${Script[dip].VariableScope.Gossiplosses}</text>
-  		</Text>
+				<X>30</X>
+				<Y>80</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Overall Gossip Wins: ${Script[dip].VariableScope.Gossipwins}</text>
+			</Text>
+			<Text name='OverallGossipLosses' Template="VG.Text">
+				<X>245</X>
+				<Y>80</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Overall Gossip Losses: ${Script[dip].VariableScope.Gossiplosses}</text>
+			</Text>
 			<Text name='OverallEntertainWins' Template="VG.Text">
-  	 		<X>30</X>
-    		<Y>95</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Overall Entertain Wins: ${Script[dip].VariableScope.Entertainwins}</text>
-  		</Text>
-  		<Text name='OverallEntertainLosses' Template="VG.Text">
-    		<X>245</X>
-    		<Y>95</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Overall Entertain Losses: ${Script[dip].VariableScope.Entertainlosses}</text>
-  		</Text>
-  		<!-- NPC Specific stats below -->
-  		<Text name='SelectedNPCOverallWins' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>30</X>
-    		<Y>110</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Selected NPC Overall Wins: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCOverallLosses' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>245</X>
-    		<Y>110</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Selected NPC Overall Losses: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCInciteWins' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>30</X>
-    		<Y>125</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Selected NPC Incite Wins: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCInciteLosses' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>245</X>
-    		<Y>125</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Selected NPC Incite Losses: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCInterviewWins' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>30</X>
-    		<Y>140</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Selected NPC Interview Wins: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCInterviewLosses' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>245</X>
-    		<Y>140</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Selected NPC Interview Losses: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCConvinceWins' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>30</X>
-    		<Y>155</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Selected NPC Convince Wins: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCConvinceLosses' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>245</X>
-    		<Y>155</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Selected NPC Convince Losses: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCGossipWins' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>30</X>
-    		<Y>170</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Selected NPC Gossip Wins: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCGossipLosses' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>245</X>
-    		<Y>170</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Selected NPC Gossip Losses: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCEntertainWins' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>30</X>
-    		<Y>185</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FF005500</Color>
-  			</Font>
-  			<Text>Selected NPC Entertain Wins: 0</text>
-  		</Text>
-  		<Text name='SelectedNPCEntertainLosses' Template="VG.Text">
-  	 		<Visible>0</Visible>
-  	 		<X>245</X>
-    		<Y>185</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-        	<Color>FFAA0000</Color>
-  			</Font>
-  			<Text>Selected NPC Entertain Losses: 0</text>
-  		</Text>
-  		<Text name='DomesticGain' Template='VG.Text'>
-  			<X>30</X>
-    		<Y>200</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Domestic Presence Gains: ${Script[dip].VariableScope.presDomestic}</text>
-  		</Text>
-  		<Text name='SoldierGain' Template='VG.Text'>
-  			<X>245</X>
-    		<Y>200</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Soldier Presence Gains: ${Script[dip].VariableScope.presSoldier}</text>
-  		</Text>
-  		<Text name='CrafterGain' Template='VG.Text'>
-  			<X>30</X>
-    		<Y>215</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Crafter Presence Gains: ${Script[dip].VariableScope.presCrafter}</text>
-  		</Text>
-  		<Text name='ClergyGain' Template='VG.Text'>
-  			<X>245</X>
-    		<Y>215</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Clergy Presence Gains: ${Script[dip].VariableScope.presClergy}</text>
-  		</Text>
-  		<Text name='AcademicGain' Template='VG.Text'>
-  			<X>30</X>
-    		<Y>230</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Academic Presence Gains: ${Script[dip].VariableScope.presAcademic}</text>
-  		</Text>
-  		<Text name='MerchantGain' Template='VG.Text'>
-  			<X>245</X>
-    		<Y>230</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Merchant Presence Gains: ${Script[dip].VariableScope.presMerchant}</text>
-  		</Text>
-  		<Text name='NobleGain' Template='VG.Text'>
-  			<X>30</X>
-    		<Y>245</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Noble Presence Gains: ${Script[dip].VariableScope.presNoble}</text>
-  		</Text>
-  		<Text name='OutsiderGain' Template='VG.Text'>
-  			<X>245</X>
-    		<Y>245</Y>
-    		<Height>14</Height>
-    		<Width>203</Width>
-    		<Alignment>Left</Alignment>
-    		<Font Template="VG.Text.Font">
-        	<Size>11</Size>
-  			</Font>
-  			<Text>Outsider Presence Gains: ${Script[dip].VariableScope.presOutsider}</text>
-  		</Text>
+				<X>30</X>
+				<Y>95</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Overall Entertain Wins: ${Script[dip].VariableScope.Entertainwins}</text>
+			</Text>
+			<Text name='OverallEntertainLosses' Template="VG.Text">
+				<X>245</X>
+				<Y>95</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Overall Entertain Losses: ${Script[dip].VariableScope.Entertainlosses}</text>
+			</Text>
+			<!-- NPC Specific stats below -->
+			<Text name='SelectedNPCOverallWins' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>30</X>
+				<Y>110</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Selected NPC Overall Wins: 0</text>
+			</Text>
+			<Text name='SelectedNPCOverallLosses' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>245</X>
+				<Y>110</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Selected NPC Overall Losses: 0</text>
+			</Text>
+			<Text name='SelectedNPCInciteWins' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>30</X>
+				<Y>125</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Selected NPC Incite Wins: 0</text>
+			</Text>
+			<Text name='SelectedNPCInciteLosses' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>245</X>
+				<Y>125</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Selected NPC Incite Losses: 0</text>
+			</Text>
+			<Text name='SelectedNPCInterviewWins' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>30</X>
+				<Y>140</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Selected NPC Interview Wins: 0</text>
+			</Text>
+			<Text name='SelectedNPCInterviewLosses' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>245</X>
+				<Y>140</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Selected NPC Interview Losses: 0</text>
+			</Text>
+			<Text name='SelectedNPCConvinceWins' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>30</X>
+				<Y>155</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Selected NPC Convince Wins: 0</text>
+			</Text>
+			<Text name='SelectedNPCConvinceLosses' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>245</X>
+				<Y>155</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Selected NPC Convince Losses: 0</text>
+			</Text>
+			<Text name='SelectedNPCGossipWins' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>30</X>
+				<Y>170</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Selected NPC Gossip Wins: 0</text>
+			</Text>
+			<Text name='SelectedNPCGossipLosses' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>245</X>
+				<Y>170</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Selected NPC Gossip Losses: 0</text>
+			</Text>
+			<Text name='SelectedNPCEntertainWins' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>30</X>
+				<Y>185</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FF005500</Color>
+				</Font>
+				<Text>Selected NPC Entertain Wins: 0</text>
+			</Text>
+			<Text name='SelectedNPCEntertainLosses' Template="VG.Text">
+				<Visible>0</Visible>
+				<X>245</X>
+				<Y>185</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+					<Color>FFAA0000</Color>
+				</Font>
+				<Text>Selected NPC Entertain Losses: 0</text>
+			</Text>
+			<Text name='DomesticGain' Template='VG.Text'>
+				<X>30</X>
+				<Y>200</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+					<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Domestic Presence Gains: ${Script[dip].VariableScope.presDomestic}</text>
+			</Text>
+			<Text name='SoldierGain' Template='VG.Text'>
+				<X>245</X>
+				<Y>200</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+					<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Soldier Presence Gains: ${Script[dip].VariableScope.presSoldier}</text>
+			</Text>
+			<Text name='CrafterGain' Template='VG.Text'>
+				<X>30</X>
+				<Y>215</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+					<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Crafter Presence Gains: ${Script[dip].VariableScope.presCrafter}</text>
+			</Text>
+			<Text name='ClergyGain' Template='VG.Text'>
+				<X>245</X>
+				<Y>215</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+					<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Clergy Presence Gains: ${Script[dip].VariableScope.presClergy}</text>
+			</Text>
+			<Text name='AcademicGain' Template='VG.Text'>
+				<X>30</X>
+				<Y>230</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+					<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Academic Presence Gains: ${Script[dip].VariableScope.presAcademic}</text>
+			</Text>
+			<Text name='MerchantGain' Template='VG.Text'>
+				<X>245</X>
+				<Y>230</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Merchant Presence Gains: ${Script[dip].VariableScope.presMerchant}</text>
+			</Text>
+			<Text name='NobleGain' Template='VG.Text'>
+				<X>30</X>
+				<Y>245</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Noble Presence Gains: ${Script[dip].VariableScope.presNoble}</text>
+			</Text>
+			<Text name='OutsiderGain' Template='VG.Text'>
+				<X>245</X>
+				<Y>245</Y>
+				<Height>14</Height>
+				<Width>203</Width>
+				<Alignment>Left</Alignment>
+				<Font Template="VG.Text.Font">
+					<Size>11</Size>
+				</Font>
+				<Text>Outsider Presence Gains: ${Script[dip].VariableScope.presOutsider}</text>
+			</Text>
 		</Children>
-  </Window>
+	</Window>
 </ISUI>
+
