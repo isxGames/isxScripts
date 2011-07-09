@@ -137,7 +137,7 @@ variable(script) int brokeCount = 0
 variable(script) int maxWait
 variable(script) int minWait
 variable(script) bool ourTurn = FALSE
-variable(script) bool cardDelay = TRUE
+variable(script) bool cardDelay = FALSE
 variable(script) npclist dipNPCs[20]
 variable(script) string currentParleyType
 variable(script) int presDomestic = 0
