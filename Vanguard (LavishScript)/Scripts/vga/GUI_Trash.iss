@@ -35,3 +35,4 @@ atom(global) BuildTrash()
 		Iterator:Next
 	}
 }
+

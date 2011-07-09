@@ -79,7 +79,7 @@ function BM_PreHealRoutine()
 	;; This function is called before the primary Healcheck() routine.   The primary Healcheck() routine will be called immediatley after
 	;; this.
 
-/* ==================================================================================== */
+	/* ==================================================================================== */
 	;-------------------------------------------
 	;Set our variables
 	;-------------------------------------------
@@ -185,7 +185,7 @@ function BM_PreHealRoutine()
 		}
 	}
 	return CONTINUE
-/* ==================================================================================== */
+	/* ==================================================================================== */
 
 	;; Solo play
 	if !${Group(exists)}
@@ -296,6 +296,8 @@ function BM_CheckEnergy()
 }
 function BM_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 
 }
+
+

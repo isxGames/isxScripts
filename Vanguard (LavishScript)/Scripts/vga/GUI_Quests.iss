@@ -6,7 +6,7 @@ atom(global) AddQuestNPCs(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 
-			LavishSettings[VGA_Quests].FindSet[QuestNPCs]:AddSetting[${aName}, ${aName}]
+		LavishSettings[VGA_Quests].FindSet[QuestNPCs]:AddSetting[${aName}, ${aName}]
 	}
 	else
 	{
@@ -49,9 +49,9 @@ function FindQuestList(string aName)
 		wait 10
 		Do
 		{
-		UIElement[cmbQuestList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Dialog[General,${Dint}]}]
+			UIElement[cmbQuestList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Dialog[General,${Dint}]}]
 		}
-		while ${Dint:Inc} <= ${Dialog[General].ResponseCount} 
+		while ${Dint:Inc} <= ${Dialog[General].ResponseCount}
 	}
 }
 atom(global) AddQuests(string aNPC, string aName)
@@ -60,13 +60,13 @@ atom(global) AddQuests(string aNPC, string aName)
 	{
 		LavishSettings[VGA_Quests].FindSet[Quests]:AddSetting[${aName}, ${aName}]
 		if ${aName.Right[${Math.Calc[6]}].Equal["group)"]}
-			{
+		{
 			LavishSettings[VGA_Quests].FindSet[Quests]:AddSetting[${aName}, ${aName.Left[${Math.Calc[${aName.Length}-8]}]}]
-			}
+		}
 		if ${aName.Right[${Math.Calc[6]}].Equal["(solo)"]}
-			{
+		{
 			LavishSettings[VGA_Quests].FindSet[Quests]:AddSetting[${aName}, ${aName.Left[${Math.Calc[${aName.Length}-6]}]}]
-			}
+		}
 		LavishSettings[VGA_Quests].FindSet[Quests].FindSetting[${aName}]:AddAttribute["NPC",${aNPC}]
 	}
 	else
@@ -93,9 +93,11 @@ atom(global) BuildQuests(string aNPC)
 	while ( ${Iterator.Key(exists)} )
 	{
 		if ${LavishSettings[VGA_Quests].FindSet[Quests].FindSetting[${Iterator.Key}].FindAttribute[NPC].String.Equal["${aNPC}"]}
-			{
+		{
 			UIElement[QuestsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui]:AddItem[${Iterator.Key}]
-			}
+		}
 		Iterator:Next
 	}
 }
+
+

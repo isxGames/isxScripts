@@ -8,9 +8,9 @@ objectdef obj_Move
 	variable bool doMove = FALSE
 	variable bool isMoving = FALSE
 
-;===================================================
-;===             User Routines                  ====
-;===================================================
+	;===================================================
+	;===             User Routines                  ====
+	;===================================================
 
 	;-----------------------------------------------
 	; Example:  Move:MovePawn[${Me.DTarget.ID},FALSE]
@@ -42,7 +42,7 @@ objectdef obj_Move
 		This.Distance:Set[${Distance}]
 		This:Start
 	}
-	
+
 	;-----------------------------------------------
 	; Example:  Move:Start
 	;-----------------------------------------------
@@ -50,7 +50,7 @@ objectdef obj_Move
 	{
 		This.doMove:Set[TRUE]
 	}
-	
+
 	;-----------------------------------------------
 	; Example:  Move:Stop
 	;-----------------------------------------------
@@ -63,11 +63,11 @@ objectdef obj_Move
 			This.isMoving:Set[FALSE]
 		}
 	}
-	
 
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 	method Initialize()
 	{
 		Event[OnFrame]:AttachAtom[This:MoveNow]
@@ -95,17 +95,19 @@ objectdef obj_Move
 
 		variable float DistanceToTarget
 		DistanceToTarget:Set[${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}]
-		
+
 		;; Stop if we reached our destination
 		if ${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}<${This.Distance}
 		{
 			This:Stop
 			return
 		}
-		
+
 		;; Let's say we are moving!
 		This.isMoving:Set[TRUE]
 		VG:ExecBinding[moveforward]
 	}
 }
 variable obj_Move obj_Move
+
+

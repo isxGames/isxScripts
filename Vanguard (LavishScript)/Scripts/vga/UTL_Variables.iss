@@ -78,7 +78,7 @@ variable int RaidGroupCount
 ;===               Heal Variables               ====
 ;===================================================
 
-variable bool hgrp[24] 
+variable bool hgrp[24]
 variable int fhpctgrp[24] = 30
 variable int hpctgrp[24] = 50
 variable int bhpctgrp[24] = 75
@@ -137,7 +137,7 @@ variable bool DoResRaid
 ;===================================================
 
 variable string tankpawn
-variable string assistpawn 
+variable string assistpawn
 variable string followpawn
 variable bool doassistpawn
 variable bool DoHideShowLog
@@ -284,8 +284,8 @@ variable int SlowAttacks
 ;===================================================
 ;===             Combat Reaction Variables     ====
 ;===================================================
-variable bool DoCountersASAP 
-variable bool DoChainsASAP 
+variable bool DoCountersASAP
+variable bool DoChainsASAP
 
 variable bool CounterReactionReady = FALSE
 variable float64 CounterReactionTimer
@@ -335,7 +335,7 @@ variable string Buffagetxt
 variable bool DoBurstCall
 variable string BurstCalltxt
 variable bool DoBurstNow = FALSE
-variable bool doRequestBuffs[4] 
+variable bool doRequestBuffs[4]
 variable string RequestBuff[4]
 variable string RequestBuffPlayer[4]
 variable string TellRequestBuffPlayer[4]
@@ -359,5 +359,7 @@ variable string DiploBoots[8]
 variable string DiploLeftRing[8]
 variable string DiploRightRing[8]
 variable string DiploLegs[8]
+
+
 
 

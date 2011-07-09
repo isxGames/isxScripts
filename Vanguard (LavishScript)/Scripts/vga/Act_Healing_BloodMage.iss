@@ -84,3 +84,5 @@ function InjuryHeal_BloodMage(int GN, int EN, int IN)
 		return
 	}
 }
+
+

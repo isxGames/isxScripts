@@ -36,7 +36,7 @@ atom(global) BuildCombatCrits()
 		UIElement[CombatCritsList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the DotCrits list */
 ;********************************************
@@ -72,7 +72,7 @@ atom(global) BuildDotCrits()
 		UIElement[DotCritsList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the BuffCrits list */
 ;********************************************
@@ -108,7 +108,7 @@ atom(global) BuildBuffCrits()
 		UIElement[BuffCritsList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the AOECrits list */
 ;********************************************
@@ -144,7 +144,7 @@ atom(global) BuildAOECrits()
 		UIElement[AOECritsList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the CounterAttack list */
 ;********************************************
@@ -180,7 +180,7 @@ atom(global) BuildCounterAttack()
 		UIElement[CounterAttackList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-} 
+}
 ;******************************CombatLists***********************
 function PopulateCritsLists()
 {
@@ -188,11 +188,11 @@ function PopulateCritsLists()
 
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-			UIElement[CombatCritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[DotCritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[BuffCritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[AOECritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[CounterAttackCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[CombatCritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[DotCritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[BuffCritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[AOECritsCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[CounterAttackCombo@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 	}
 	variable iterator Iterator
 	CombatCrits:GetSettingIterator[Iterator]
@@ -231,3 +231,5 @@ function PopulateCritsLists()
 		Iterator:Next
 	}
 }
+
+

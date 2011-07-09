@@ -16,7 +16,7 @@ function LavishSave()
 	HealerSR:AddSetting[GroupHeal,${GroupHeal}]
 	variable int i
 	for (i:Set[1] ; ${i}<=24 ; i:Inc)
-		{
+	{
 		HealerSR:AddSetting[hgrp${i},${hgrp[${i}]}]
 		HealerSR:AddSetting[fhpctgrp${i},${fhpctgrp[${i}]}]
 		HealerSR:AddSetting[hhpctgrp${i},${hhpctgrp[${i}]}]
@@ -25,37 +25,37 @@ function LavishSave()
 		HealerSR:AddSetting[ighpctgrp${i},${ighpctgrp[${i}]}]
 		HealerSR:AddSetting[hpctgrp${i},${hpctgrp[${i}]}]
 		HealerSR:AddSetting[bhpctgrp${i},${bhpctgrp[${i}]}]
-		}
+	}
 
 
 
-	HealerSR:AddSetting[doCombatStance,${doCombatStance}]	
-	HealerSR:AddSetting[doNonCombatStance,${doNonCombatStance}]	
-	HealerSR:AddSetting[CombatStance,${CombatStance}]	
-	HealerSR:AddSetting[NonCombatStance,${NonCombatStance}]	
-  HealerSR:AddSetting[ClickieForce,${ClickieForce}]	
-  HealerSR:AddSetting[doRestoreSpecial,${doRestoreSpecial}]	
-  HealerSR:AddSetting[RestoreSpecial,${RestoreSpecial}]	
-  HealerSR:AddSetting[RestoreSpecialint,${RestoreSpecialint}]	
-  HealerSR:AddSetting[doClickieForce,${doClickieForce}]	
-  HealerSR:AddSetting[DoByPassVGAHeals,${DoByPassVGAHeals}]	
-HealerSR:AddSetting[TankHealPct,${TankHealPct}]
-HealerSR:AddSetting[TankEmerHealPct,${TankEmerHealPct}]
-HealerSR:AddSetting[MedHealPct,${MedHealPct}]
-HealerSR:AddSetting[MedEmerHealPct,${MedEmerHealPct}]
-HealerSR:AddSetting[SquishyHealPct,${SquishyHealPct}]
-HealerSR:AddSetting[SquishyEmerHealPct,${SquishyEmerHealPct}]
+	HealerSR:AddSetting[doCombatStance,${doCombatStance}]
+	HealerSR:AddSetting[doNonCombatStance,${doNonCombatStance}]
+	HealerSR:AddSetting[CombatStance,${CombatStance}]
+	HealerSR:AddSetting[NonCombatStance,${NonCombatStance}]
+	HealerSR:AddSetting[ClickieForce,${ClickieForce}]
+	HealerSR:AddSetting[doRestoreSpecial,${doRestoreSpecial}]
+	HealerSR:AddSetting[RestoreSpecial,${RestoreSpecial}]
+	HealerSR:AddSetting[RestoreSpecialint,${RestoreSpecialint}]
+	HealerSR:AddSetting[doClickieForce,${doClickieForce}]
+	HealerSR:AddSetting[DoByPassVGAHeals,${DoByPassVGAHeals}]
+	HealerSR:AddSetting[TankHealPct,${TankHealPct}]
+	HealerSR:AddSetting[TankEmerHealPct,${TankEmerHealPct}]
+	HealerSR:AddSetting[MedHealPct,${MedHealPct}]
+	HealerSR:AddSetting[MedEmerHealPct,${MedEmerHealPct}]
+	HealerSR:AddSetting[SquishyHealPct,${SquishyHealPct}]
+	HealerSR:AddSetting[SquishyEmerHealPct,${SquishyEmerHealPct}]
 
-HealerSR:AddSetting[kiss,${kiss}]
-HealerSR:AddSetting[HealCrit1,${HealCrit1}]
-HealerSR:AddSetting[HealCrit2,${HealCrit2}]
-HealerSR:AddSetting[InstantHotHeal1,${InstantHotHeal1}]
-HealerSR:AddSetting[InstantHotHeal2,${InstantHotHeal2}]
-HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
+	HealerSR:AddSetting[kiss,${kiss}]
+	HealerSR:AddSetting[HealCrit1,${HealCrit1}]
+	HealerSR:AddSetting[HealCrit2,${HealCrit2}]
+	HealerSR:AddSetting[InstantHotHeal1,${InstantHotHeal1}]
+	HealerSR:AddSetting[InstantHotHeal2,${InstantHotHeal2}]
+	HealerSR:AddSetting[TapSoloHeal,${TapSoloHeal}]
 
-HealerSR:AddSetting[DoResInCombat,${DoResInCombat}]
-HealerSR:AddSetting[DoResNotInCombat,${DoResNotInCombat}]
-HealerSR:AddSetting[DoResRaid,${DoResRaid}]
+	HealerSR:AddSetting[DoResInCombat,${DoResInCombat}]
+	HealerSR:AddSetting[DoResNotInCombat,${DoResNotInCombat}]
+	HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 
 	;===================================================
 	;===                  Utility Save              ====
@@ -78,11 +78,11 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	UtilitySR:AddSetting[DoChainsASAP,${DoChainsASAP}]
 	UtilitySR:AddSetting[DoMount,${DoMount}]
 	UtilitySR:AddSetting[DoShiftingImage,${DoShiftingImage}]
-	UtilitySR:AddSetting[ShiftingImage,${ShiftingImage}]	
+	UtilitySR:AddSetting[ShiftingImage,${ShiftingImage}]
 	UtilitySR:AddSetting[DoAutoAcceptGroupInvite,${DoAutoAcceptGroupInvite}]
 	UtilitySR:AddSetting[DoLooseTarget,${DoLooseTarget}]
-	UtilitySR:AddSetting[AssistEncounter,${AssistEncounter}]	
-	UtilitySR:AddSetting[DoFollowInCombat,${DoFollowInCombat}]	
+	UtilitySR:AddSetting[AssistEncounter,${AssistEncounter}]
+	UtilitySR:AddSetting[DoFollowInCombat,${DoFollowInCombat}]
 	UtilitySR:AddSetting[doAutoSell,${doAutoSell}]
 	UtilitySR:AddSetting[doHarvest,${doHarvest}]
 	UtilitySR:AddSetting[DoLootOnly,${DoLootOnly}]
@@ -139,7 +139,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	;===================================================
 	variable int di
 	for (di:Set[1] ; ${di}<=8 ; di:Inc)
-		{
+	{
 		DiploEquipmentSR:AddSetting[DiploLeftEar${di},${DiploLeftEar${di}}]
 		DiploEquipmentSR:AddSetting[DiploRightEar${di},${DiploRightEar${di}}]
 		DiploEquipmentSR:AddSetting[DiploFace${di},${DiploFace${di}}]
@@ -155,7 +155,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 		DiploEquipmentSR:AddSetting[DiploLeftRing${di},${DiploLeftRing${di}}]
 		DiploEquipmentSR:AddSetting[DiploRightRing${di},${DiploRightRing${di}}]
 		DiploEquipmentSR:AddSetting[DiploLegs${di},${DiploLegs${di}}]
-		}
+	}
 
 	;===================================================
 	;===                  Melee Save                ====
@@ -167,7 +167,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	Melee:AddSetting[doDotMelee,${doDotMelee}]
 	Melee:AddSetting[doDebuffMelee,${doDebuffMelee}]
 	Melee:AddSetting[doKillingBlow,${doKillingBlow}]
-	Melee:AddSetting[KillingBlow,${KillingBlow}]	
+	Melee:AddSetting[KillingBlow,${KillingBlow}]
 	;===================================================
 	;===                  Evade Save                ====
 	;===================================================
@@ -185,7 +185,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	Evade:AddSetting[doRescue,${doRescue}]
 	Evade:AddSetting[doPushAgro,${doPushAgro}]
 	Evade:AddSetting[agropush,${agropush}]
-	
+
 	;===================================================
 	;===                  Crits Save                ====
 	;===================================================
@@ -194,7 +194,7 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	Crits:AddSetting[doDotCrits,${doDotCrits}]
 	Crits:AddSetting[doAOECrits,${doAOECrits}]
 	Crits:AddSetting[doCounterAttack,${doCounterAttack}]
-	
+
 	;===================================================
 	;===            Combat Main Save                ====
 	;===================================================
@@ -249,26 +249,26 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	Interactions:AddSetting[Buffagetxt,${Buffagetxt}]
 	Interactions:AddSetting[DoBurstCall,${DoBurstCall}]
 	Interactions:AddSetting[BurstCalltxt,${BurstCalltxt}]
-	
+
 	switch ${Me.Class}
 	{
-		case Bard
-			Class:AddSetting[PrimaryWeapon,${PrimaryWeapon}]
-			Class:AddSetting[SecondaryWeapon,${SecondaryWeapon}]
-			Class:AddSetting[FightSong,${FightSong}]
-			Class:AddSetting[RunSong,${RunSong}]
-			Class:AddSetting[Drum,${Drum}]
-			break
-			
-		case Blood Mage
-			Class:AddSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]	
-			Class:AddSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]	
-			Class:AddSetting[BMSingleTargetLifeTap1,${BMSingleTargetLifeTap1}]	
-			Class:AddSetting[BMSingleTargetLifeTap2,${BMSingleTargetLifeTap2}]	
-			Class:AddSetting[BMBloodUnionSingleTargetHOT,${BMBloodUnionSingleTargetHOT}]	
-			break
+	case Bard
+		Class:AddSetting[PrimaryWeapon,${PrimaryWeapon}]
+		Class:AddSetting[SecondaryWeapon,${SecondaryWeapon}]
+		Class:AddSetting[FightSong,${FightSong}]
+		Class:AddSetting[RunSong,${RunSong}]
+		Class:AddSetting[Drum,${Drum}]
+		break
+
+	case Blood Mage
+		Class:AddSetting[BMHealthToEnergySpell,${BMHealthToEnergySpell}]
+		Class:AddSetting[BMBloodUnionDumpDPSSpell,${BMBloodUnionDumpDPSSpell}]
+		Class:AddSetting[BMSingleTargetLifeTap1,${BMSingleTargetLifeTap1}]
+		Class:AddSetting[BMSingleTargetLifeTap2,${BMSingleTargetLifeTap2}]
+		Class:AddSetting[BMBloodUnionSingleTargetHOT,${BMBloodUnionSingleTargetHOT}]
+		break
 	}
-	
+
 	;; Now, save it to file(s)
 	LavishSettings[VGA]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/${Me.FName}.xml]
 	LavishSettings[VGA_Mobs]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/VGA_Mobs.xml]
@@ -278,3 +278,5 @@ HealerSR:AddSetting[DoResRaid,${DoResRaid}]
 	LavishSettings[Interactions]:Export[${LavishScript.CurrentDirectory}/scripts/VGA/Save/Interact.xml]
 
 }
+
+

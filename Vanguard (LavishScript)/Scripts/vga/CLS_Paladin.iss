@@ -36,5 +36,7 @@ function Paladin_PostCasting()
 ;********************************************
 function Paladin_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 }
+
+

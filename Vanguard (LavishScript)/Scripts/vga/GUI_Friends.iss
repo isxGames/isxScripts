@@ -35,3 +35,4 @@ atom(global) BuildFriends()
 		Iterator:Next
 	}
 }
+

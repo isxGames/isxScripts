@@ -36,5 +36,7 @@ function Necromancer_PostCasting()
 ;********************************************
 function Necromancer_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 }
+
+

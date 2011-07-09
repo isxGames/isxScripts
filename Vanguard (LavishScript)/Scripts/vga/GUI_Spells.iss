@@ -8,11 +8,11 @@ atom(global) AddOpeningSpellSequence(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		If ${LavishSettings[VGA].FindSet[OpeningSpellSequence].FindSetting[${aName} (3)](exists)}
-			LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName} (4), ${aName}]
+		LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName} (4), ${aName}]
 		If ${LavishSettings[VGA].FindSet[OpeningSpellSequence].FindSetting[${aName} (2)](exists)}
-			LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName} (3), ${aName}]
+		LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName} (3), ${aName}]
 		If ${LavishSettings[VGA].FindSet[OpeningSpellSequence].FindSetting[${aName}](exists)}
-			LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName} (2), ${aName}]
+		LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName} (2), ${aName}]
 		LavishSettings[VGA].FindSet[OpeningSpellSequence]:AddSetting[${aName}, ${aName}]
 
 	}
@@ -42,7 +42,7 @@ atom(global) BuildOpeningSpellSequence()
 		UIElement[OpeningSpellSequenceList@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the CombatSeqSpell list */
 ;********************************************
@@ -51,11 +51,11 @@ atom(global) AddCombatSpellSequence(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		If ${LavishSettings[VGA].FindSet[CombatSpellSequence].FindSetting[${aName} (3)](exists)}
-			LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName} (4), ${aName}]
+		LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName} (4), ${aName}]
 		If ${LavishSettings[VGA].FindSet[CombatSpellSequence].FindSetting[${aName} (2)](exists)}
-			LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName} (3), ${aName}]
+		LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName} (3), ${aName}]
 		If ${LavishSettings[VGA].FindSet[CombatSpellSequence].FindSetting[${aName}](exists)}
-			LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName} (2), ${aName}]
+		LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName} (2), ${aName}]
 		LavishSettings[VGA].FindSet[CombatSpellSequence]:AddSetting[${aName}, ${aName}]
 	}
 	else
@@ -84,7 +84,7 @@ atom(global) BuildCombatSpellSequence()
 		UIElement[CombatSpellSequenceList@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the AOESpell list */
 ;********************************************
@@ -120,7 +120,7 @@ atom(global) BuildAOESpell()
 		UIElement[AOESpellList@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the DotSpell list */
 ;********************************************
@@ -156,7 +156,7 @@ atom(global) BuildDotSpell()
 		UIElement[DotSpellList@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;********************************************
 /* Add item to the DebuffSpell list */
 ;********************************************
@@ -192,7 +192,7 @@ atom(global) BuildDebuffSpell()
 		UIElement[DebuffSpellList@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
-}  
+}
 ;******************************CombatLists***********************
 function PopulateSpellLists()
 {
@@ -201,13 +201,13 @@ function PopulateSpellLists()
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
 		if ${Me.Ability[${i}].Type.Equal[Spell]}
-			{
+		{
 			UIElement[OpeningSpellSequenceCombo@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[CombatSpellSequenceCombo@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[AOESpellCombo@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[DotSpellCombo@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
 			UIElement[DebuffSpellCombo@SpellsCFrm@Spells@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Me.Ability[${i}].Name}]
-			}
+		}
 	}
 	variable iterator Iterator
 	OpeningSpellSequence:GetSettingIterator[Iterator]
@@ -246,4 +246,6 @@ function PopulateSpellLists()
 		Iterator:Next
 	}
 }
+
+
 

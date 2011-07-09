@@ -30,14 +30,14 @@ function Psionicist_Combat()
 				Me.Form["Concentration: Thought Thief"]:ChangeTo
 				wait 3
 			}
-		
-			call checkabilitytocast "Compression Sphere VIII"	
+
+			call checkabilitytocast "Compression Sphere VIII"
 			if ${Return}
 			{
 				call executeability "Compression Sphere VIII" "attack" "Both"
 			}
 		}
-		
+
 		;; Manage 2nd Regen Dot
 		if !${Me.TargetMyDebuff[Psychic Schism IV](exists)}
 		{
@@ -46,8 +46,8 @@ function Psionicist_Combat()
 				Me.Form["Concentration: Thought Thief"]:ChangeTo
 				wait 3
 			}
-		
-			call checkabilitytocast "Psychic Schism IV"	
+
+			call checkabilitytocast "Psychic Schism IV"
 			if ${Return}
 			{
 				call executeability "Psychic Schism IV" "attack" "Both"
@@ -74,17 +74,17 @@ function Psionicist_Combat()
 				;; Manage 1st Regen Dot
 				if !${Me.TargetMyDebuff[Compression Sphere VIII](exists)}
 				{
-					call checkabilitytocast "Compression Sphere VIII"	
+					call checkabilitytocast "Compression Sphere VIII"
 					if ${Return}
 					{
 						call executeability "Compression Sphere VIII" "attack" "Both"
 					}
 				}
-				
+
 				;; Manage 2nd Regen Dot
 				if !${Me.TargetMyDebuff[Psychic Schism IV](exists)}
 				{
-					call checkabilitytocast "Psychic Schism IV"	
+					call checkabilitytocast "Psychic Schism IV"
 					if ${Return}
 					{
 						call executeability "Psychic Schism IV" "attack" "Both"
@@ -94,7 +94,7 @@ function Psionicist_Combat()
 				;; Mental Blast for regen
 				call executeability "Mental Blast V" "attack" "Both"
 				call executeability "Mental Blast I" "attack" "Both"
-					
+
 				;; Wait till ability finish casting
 				while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
 				{
@@ -123,5 +123,7 @@ function Psionicist_PostCasting()
 ;********************************************
 function Psionicist_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 }
+
+

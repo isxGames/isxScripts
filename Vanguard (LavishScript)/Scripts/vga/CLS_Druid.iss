@@ -36,5 +36,7 @@ function Druid_PostCasting()
 ;********************************************
 function Druid_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 }
+
+

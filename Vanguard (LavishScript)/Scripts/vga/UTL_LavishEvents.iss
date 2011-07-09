@@ -12,7 +12,7 @@ function LavishEventLoad()
 	Event[VG_onGroupMemberBooted]:AttachAtom[VG_onGroupMemberBooted]
 	Event[VG_onGroupMemberDeath]:AttachAtom[NeedBuffs]
 	Event[VG_onPawnSpawned]:AttachAtom[VG_onPawnSpawned]
-        Event[VG_OnParlayOppTurnEnd]:AttachAtom[OnParlayOppTurnEnd]
+	Event[VG_OnParlayOppTurnEnd]:AttachAtom[OnParlayOppTurnEnd]
 
 	;Event[VG_onItemCanUseUpdated]:AttachAtom[VG_onItemCanUseUpdated]
 }
@@ -22,35 +22,35 @@ function LavishEventLoad()
 atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 {
 	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${LootToggle}]}
-		{
+	{
 		If ${DoLoot}
-			{
+		{
 			DoLoot:Set[FALSE]
 			UIElement[DoLoot@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-			}
+		}
 		Elseif !${DoLoot}
-			{
+		{
 			DoLoot:Set[TRUE]
 			UIElement[DoLoot@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-			}
 		}
+	}
 	if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${DiploToggle}]}
-		{
+	{
 		If ${DoDiplo}
-			{
+		{
 			DoDiplo:Set[FALSE]
 			UIElement[DoDiplo@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
-			}
+		}
 		Elseif !${DoDiplo}
-			{
+		{
 			DoDiplo:Set[TRUE]
 			UIElement[DoDiplo@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
-			}
 		}
+	}
 	if ${DoReassistTank}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${ReassistingTank}]}
-			VGExecute /TargetNe
+		VGExecute /TargetNe
 	}
 	if ${DoKillLevitate}
 	{
@@ -65,48 +65,48 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 	if ${DoBuffage}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${Buffagetxt}]}
-			Script[VGA]:QueueCommand[call BuffButton]
+		Script[VGA]:QueueCommand[call BuffButton]
 	}
 	if ${DoPause}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${Pausetxt}]}
-			doPause:Set[TRUE]
+		doPause:Set[TRUE]
 	}
 	if ${DoResume}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${Resumetxt}]}
-			doPause:Set[FALSE]
-	}		
+		doPause:Set[FALSE]
+	}
 	if ${DoStartFollow}
 	{
-		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]} 
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StartFollowtxt}]}
 		{
-		dofollowpawn:Set[TRUE]
-		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
+			dofollowpawn:Set[TRUE]
+			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:SetChecked
 			if ${DoNaturalFollow}
-				{
+			{
 				obj_Follow:FollowPawn[${Pawn[${followpawn}].ID}]
-				}
+			}
 		}
 	}
 	if ${DoStopFollow}
 	{
-		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]} 
+		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${StopFollowtxt}]}
 		{
-		dofollowpawn:Set[FALSE]
-		UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
+			dofollowpawn:Set[FALSE]
+			UIElement[dofollowcheck@MainCFrm@MainT@MainSubTab@MainFrm@Main@ABot@vga_gui]:UnsetChecked
 			if ${DoNaturalFollow}
-				{
+			{
 				obj_Follow:Stop
-				}
+			}
 		}
 	}
 	if ${DoBurstCall}
 	{
 		if ${ChannelNumber.Equal[8]} &&  ${Text.Find[${BurstCalltxt}]}
 		{
-      		DoBurstNow:Set[TRUE]
-		actionlog "Burst Called"
+			DoBurstNow:Set[TRUE]
+			actionlog "Burst Called"
 		}
 	}
 	if ${doAutoSell}
@@ -153,16 +153,16 @@ atom VG_OnIncomingText(string Text, string ChannelNumber, string ChannelName)
 		}
 	}
 	if ${DoAcceptRes} && ${ChannelNumber.Equal[32]} && ${Text.Find[is trying to resurrect you with]}
-		{
+	{
 		variable string who
 		who:Set[${Text.Mid[1,${Math.Calc[${Text.Length}-${Math.Calc[${Text.Length}-${Text.Find[is ]}+2]}]}]}]
 		obj_friends:IsFriend[${who}]
 		if ${Return}
-			{
+		{
 			VGExecute /reza
 			Script[VGA]:QueueCommand[call TSLoot]
-			}
 		}
+	}
 
 }
 atom VG_onPawnSpawned(string ChangeType, int64 PawnID, string PawnName)
@@ -317,8 +317,8 @@ atom VG_onCombatReaction(string aType, int64 iPawnID, uint iAbilityID, float fTi
 		CounterReactionTimer:Set[${Math.Calc64[${Time.Timestamp}+${fTimer}]}]
 		CounterReactionPawnID:Set[${iPawnID}]
 		CounterReactionAbilities:Insert[${iAbilityID}]
-		
-		
+
+
 		;; Addition by Zandros... Ama has a great idea here but iAbilityID is not reporting the correct ID
 		variable bool doCounterIt = TRUE
 		if !${Me.TargetCasting.Equal[None]}
@@ -388,7 +388,7 @@ function PopulateGroupMemberClassType()
 }
 atom VG_onGroupMemberCountChange()
 {
-	
+
 	call PopulateGroupMemberClassType
 	GroupNeedsBuffs:Set[TRUE]
 }
@@ -412,4 +412,6 @@ atom VG_onGroupMemberBooted()
 {
 	call PopulateGroupMemberClassType
 }
+
+
 

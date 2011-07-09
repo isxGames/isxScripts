@@ -36,5 +36,7 @@ function DreadKnight_PostCasting()
 ;********************************************
 function DreadKnight_Burst()
 {
-DoBurstNow:Set[FALSE]
+	DoBurstNow:Set[FALSE]
 }
+
+

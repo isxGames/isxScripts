@@ -20,31 +20,33 @@ function Bard_GUI()
 	while ${rCount:Inc} <= ${UIElement[cmbSWRunSong@bardfrm@ClassFrm@Class@ABot@vga_gui].Items}
 	{
 		if ${UIElement[cmbSWRunSong@bardfrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${RunSong}]}
-			UIElement[cmbSWRunSong@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[cmbSWRunSong@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[cmbSWFightSong@bardfrm@ClassFrm@Class@ABot@vga_gui].Items}
 	{
 		if ${UIElement[cmbSWFightSong@bardfrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${FightSong}]}
-			UIElement[cmbSWFightSong@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[cmbSWFightSong@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[cmbSWPrimaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui].Items}
 	{
 		if ${UIElement[cmbSWPrimaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${PrimaryWeapon}]}
-			UIElement[cmbSWPrimaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[cmbSWPrimaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[cmbSWSecondaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui].Items}
 	{
 		if ${UIElement[cmbSWSecondaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${SecondaryWeapon}]}
-			UIElement[cmbSWSecondaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[cmbSWSecondaryWeapon@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 	rCount:Set[0]
 	while ${rCount:Inc} <= ${UIElement[cmbSWDrum@bardfrm@ClassFrm@Class@ABot@vga_gui].Items}
 	{
 		if ${UIElement[cmbSWDrum@bardfrm@ClassFrm@Class@ABot@vga_gui].Item[${rCount}].Text.Equal[${Drum}]}
-			UIElement[cmbSWDrum@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
+		UIElement[cmbSWDrum@bardfrm@ClassFrm@Class@ABot@vga_gui]:SelectItem[${rCount}]
 	}
 }
+
+
 

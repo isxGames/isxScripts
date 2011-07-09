@@ -6,13 +6,13 @@ function ClassSpecificPreHealCheck()
 {
 	switch ${Me.Class}
 	{
-		case Blood Mage
-			call BM_PreHealRoutine
-			break
-			
-		default
-			break
-	}	
+	case Blood Mage
+		call BM_PreHealRoutine
+		break
+
+	default
+		break
+	}
 }
 
 function Healcheck()
@@ -21,10 +21,10 @@ function Healcheck()
 	;; you can return "HEALSDONE" to avoid running the rest of this function and further optimize the script.
 	call ClassSpecificPreHealCheck
 	if ${Return.Equal[HEALSDONE]}
-		return
-	
-	
-	
+	return
+
+
+
 	if ${ClassRole.healer}
 	{
 		if ${Group.Count} < 2 && ${HealTimer.TimeLeft} == 0
@@ -32,7 +32,7 @@ function Healcheck()
 			waitframe
 
 			if ${Me.HealthPct} > 90
-				return
+			return
 
 			;; Note:  [1] is always "Me"
 			if ${Me.HealthPct} < ${bhpctgrp[1]} && ${Me.HealthPct} > 0
@@ -73,7 +73,7 @@ function Healcheck()
 				}
 				return
 			}
-			
+
 			if ${Me.HealthPct} < ${hpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
@@ -99,7 +99,7 @@ function Healcheck()
 				}
 				return
 			}
-			
+
 			if ${Me.HealthPct} < ${fhpctgrp[1]} && ${Me.HealthPct} > 0
 			{
 				healrefresh:Set[FALSE]
@@ -126,7 +126,7 @@ function Healcheck()
 				return
 			}
 		}
-		
+
 		if ${Group.Count} > 1 && ${HealTimer.TimeLeft} == 0
 		{
 			waitframe
@@ -202,7 +202,7 @@ function Healcheck()
 					}
 					return
 				}
-			} 
+			}
 			while ${icnt:Inc} <= ${Group.Count}
 
 			;; Heal over Time
@@ -222,7 +222,7 @@ function Healcheck()
 					}
 					return
 				}
-			} 
+			}
 			while ${icnt:Inc} <= ${Group.Count}
 
 			;; Small Heal
@@ -254,9 +254,9 @@ function Healcheck()
 					}
 					return
 				}
-			} 
+			}
 			while ${icnt:Inc} <= ${Group.Count}
-	
+
 			;; Instant Heal ;;
 			icnt:Set[1]
 			do
@@ -286,17 +286,17 @@ function Healcheck()
 					}
 					return
 				}
-			} 
+			}
 			while ${icnt:Inc} <= ${Group.Count}
-			
+
 			;; Why is this here and not in the PostCastingActions() function?  It won't get called when a heal is cast anyway
 			;; since all of the 'executability' calls above are followed by a "return"...
 			if ${MyClass.Equal[Shaman]}
 			{
 				call shamanmana
 			}
-			
-			
+
+
 			return
 		}
 	}
@@ -306,11 +306,11 @@ function Healcheck()
 function checkinstantheal()
 {
 	variable int icnt = 1
-	
+
 	if ${ClassRole.healer}
 	{
 		if ${Group.Count} < 2 && ${Me.HealthPct} < ${fhpctgrp[1]} && ${Me.HealthPct} > 0 && ${HealTimer.TimeLeft} == 0
-		{ 
+		{
 			VGexecute /stopcasting
 			Me.ToPawn:Target
 			waitframe
@@ -331,7 +331,7 @@ function checkinstantheal()
 		elseif ${Group.Count} > 1 && ${HealTimer.TimeLeft} == 0
 		{
 			waitframe
-		
+
 			if ${healneeds.GroupInstantHealNum} > 1 && ${GroupStatus.AOEBuffClose}
 			{
 				VGexecute /stopcasting
@@ -375,7 +375,7 @@ function checkinstantheal()
 					}
 					return
 				}
-			} 
+			}
 			while ${icnt:Inc} <= ${Group.Count}
 		}
 	}
@@ -384,13 +384,13 @@ function checkinstantheal()
 function changeformstance()
 {
 	if ${fight.IShouldAttack} && ${doCombatStance} && !${Me.Effect[{CombatStance}](exists)}
-		{
+	{
 		Me.Form[${CombatStance}]:ChangeTo
-		}
+	}
 	if !${fight.IShouldAttack} && ${doNonCombatStance} && !${Me.Effect[{NonCombatStance}](exists)}
-		{
+	{
 		Me.Form[${NonCombatStance}]:ChangeTo
-		}	
+	}
 }
 ;******************************HealNeeds***********************
 objectdef HealNeeds
@@ -399,17 +399,17 @@ objectdef HealNeeds
 	{
 		variable int icnt = 1
 		variable int needint = 0
-		
+
 		if !${Group(exists)}
-			return 0
-			
+		return 0
+
 		do
 		{
 			if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${gihpctgrp[${icnt}]}
 			{
 				needint:Inc
 			}
-		} 
+		}
 		while ${icnt:Inc} <= ${Group.Count}
 		return ${needint}
 	}
@@ -418,20 +418,22 @@ objectdef HealNeeds
 	{
 		variable int icnt = 1
 		variable int needint = 0
-		
+
 		if !${Group(exists)}
-			return 0
-					
+		return 0
+
 		do
 		{
 			if ${hgrp[${icnt}]} && ${Group[${GrpMemberNames[${icnt}]}].Health} < ${ghpctgrp[${icnt}]}
 			{
 				needint:Inc
 			}
-		} 
+		}
 		while ${icnt:Inc} <= ${Group.Count}
 		return ${needint}
 	}
 }
 variable HealNeeds healneeds
- 
+
+
+

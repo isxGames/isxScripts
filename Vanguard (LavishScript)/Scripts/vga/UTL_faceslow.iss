@@ -1,18 +1,18 @@
 /*
-	Code by don'tdoit
-  Math in function Angle by ${Allen}
+Code by don'tdoit
+Math in function Angle by ${Allen}
 
-	Put into your scripts/common folder.
-	To use add this to the top of your script:
-		#include ./common/faceslow.iss
-	Then:
-		call facemob ${yourMobIDvar} ##
-		or
-		call faceloc ${X} ${Y} ##
-	where ## is the precision of how close you want to face.
-	
-	Version:
-	v1.0 - initial release
+Put into your scripts/common folder.
+To use add this to the top of your script:
+#include ./common/faceslow.iss
+Then:
+call facemob ${yourMobIDvar} ##
+or
+call faceloc ${X} ${Y} ##
+where ## is the precision of how close you want to face.
+
+Version:
+v1.0 - initial release
 
 */
 
@@ -50,30 +50,30 @@ function faceloc(float locX, float locY, float precision)
 function faceslow(float facX, float facY, float Rt, float Lt)
 {
 	face ${facX} ${facY}
-/*
+	/*
 	do
 	{
-		call Angle ${facX} ${facY}
-		if ${AngDebug}
-		{
-			echo Mob Angle -> ${Angle}, AbsAngle -> ${AbsAngle}
-		}
-		if "${AbsAngle} <= 360 && ${AbsAngle} > ${Lt}"
-		{
-			VG:ExecBinding[turnleft]
-			VG:ExecBinding[moveforward,release]
-		}
-		if "${AbsAngle} >= 0 && ${AbsAngle} < ${Rt}"
-		{
-			VG:ExecBinding[turnright]
-			VG:ExecBinding[moveforward,release]
-		}
-		waitframe
+	call Angle ${facX} ${facY}
+	if ${AngDebug}
+	{
+	echo Mob Angle -> ${Angle}, AbsAngle -> ${AbsAngle}
+	}
+	if "${AbsAngle} <= 360 && ${AbsAngle} > ${Lt}"
+	{
+	VG:ExecBinding[turnleft]
+	VG:ExecBinding[moveforward,release]
+	}
+	if "${AbsAngle} >= 0 && ${AbsAngle} < ${Rt}"
+	{
+	VG:ExecBinding[turnright]
+	VG:ExecBinding[moveforward,release]
+	}
+	waitframe
 	}
 	while "${AbsAngle} > ${Lt} || ${AbsAngle} < ${Rt}"
 	VG:ExecBinding[turnleft,release]
 	VG:ExecBinding[turnright,release]
-*/
+	*/
 }
 
 function Angle(float angX,float angY)
@@ -111,3 +111,4 @@ function Angle(float angX,float angY)
 
 	AbsAngle:Set[${Math.Calc[(${Me.Heading} + ${Angle}) % 360]}]
 }
+
