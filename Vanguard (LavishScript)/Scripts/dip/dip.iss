@@ -30,8 +30,8 @@ objectdef npclist
 		green:Set[FALSE]
 		blue:Set[FALSE]
 		yellow:Set[FALSE]
-		TotalWins:Set[0]
-		TotalLosses:Set[0]
+		Wins:Set[0]
+		Losses:Set[0]
 		InciteWins:Set[0]
 		InciteLosses:Set[0]
 		InterviewWins:Set[0]
@@ -56,8 +56,8 @@ objectdef npclist
 		green:Set[FALSE]
 		blue:Set[FALSE]
 		yellow:Set[FALSE]
-		TotalWins:Set[0]
-		TotalLosses:Set[0]
+		Wins:Set[0]
+		Losses:Set[0]
 		InciteWins:Set[0]
 		InciteLosses:Set[0]
 		InterviewWins:Set[0]
@@ -80,8 +80,8 @@ objectdef npclist
 	variable bool green
 	variable bool blue
 	variable bool yellow
-	variable int TotalWins
-	variable int TotalLosses
+	variable int Wins
+	variable int Losses
 	variable int InciteWins
 	variable int InciteLosses
 	variable int InterviewWins
@@ -118,8 +118,10 @@ variable lnavconnection CurrentConnection
 variable int movePrecision = 100
 variable int objPrecision = 3
 variable int maxWorkDist = 3
+
 variable(script) int wins
 variable(script) int losses
+
 variable(script) int Incitewins
 variable(script) int Incitelosses
 variable(script) int Interviewwins
@@ -1003,9 +1005,14 @@ atom(script) OnParlayOppTurnEnd()
 atom(script) OnParlaySuccess()
 {
 	EchoIt "Event for parley success fired"
-	;wins:Inc
+	wins:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Wins:Inc
-	${currentParleyType}wins:Inc
+	if ${currentParleyType.Length} > 0
+	{
+		;; this echo is for testing
+		EchoIt "currentParleyType=${currentParleyType}, currentParleyType Length=${currentParleyType.Length}"
+		${currentParleyType}wins:Inc
+	}
 	UpdateStats
 	parleyDone:Toggle
 	Parlay:Farewell
@@ -1016,7 +1023,12 @@ atom(script) OnParlayLost()
 	EchoIt "Event for parley lost fired"
 	losses:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Losses:Inc
-	${currentParleyType}losses:Inc
+	if ${currentParleyType.Length} > 0
+	{
+		;; this echo is for testing
+		EchoIt "currentParleyType=${currentParleyType}, currentParleyType Length=${currentParleyType.Length}"
+		${currentParleyType}losses:Inc
+	}
 	UpdateStats
 	parleyDone:Toggle
 	Parlay:Farewell
@@ -1024,12 +1036,6 @@ atom(script) OnParlayLost()
 
 atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
-	if ${ChannelNumber}==60 && ${Text.Find["You have won"]}
-	{
-		EchoIt "You have won the parley!"
-		wins:Inc
-		UpdateStats
-	}
 	if ${Text.Find["You need at least a diplomacy level of"]}
 	{
 		EchoIt "Too low a level, next NPC"
