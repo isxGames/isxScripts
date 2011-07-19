@@ -290,8 +290,6 @@ function GoDiploSomething()
 			}
 			Parlay:Continue
 			waitframe
-			;Parlay:Farewell
-			;waitframe
 			VGExecute /cleartargets
 			wait 10
 		}
@@ -422,7 +420,7 @@ atom(script) OnFrame()
 function SelectParlay()
 {
 	call FaceTarget
-	Parlay:AssessTarget[${Target}]
+	Parlay:AssessTarget[${dipNPCs[${curNPC}].NameID}]
 	wait 10
 	variable int selectedConv = 0
 	variable int convOptions = 1
@@ -477,7 +475,7 @@ function SelectParlay()
 	}
 	if (${selectedConv})
 	{
-		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
+		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 9
 		{
 			echo Moving the bad way
 			EchoIt "Backup movement code called."
@@ -492,22 +490,51 @@ function SelectParlay()
 					return
 				}
 			}
-			while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
+			while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 9
 			VG:ExecBinding[moveforward, release]
 		}
 		else
 		{
-			EchoIt "Finding what Presence is needed"
-			call PresenceNeeded
-			returnvalue:Set[${Return}]
-			EchoIt "Equiping gear for:  ${returnvalue}"
-			waitframe
-			obj_diplogear:Load[${returnvalue}]
-			waitframe
-			EchoIt "Equiped gear:  ${returnvalue}"
-			Dialog[${genorciv},${selectedConv}]:Select
-			EchoIt "Selecting ${genorciv}: ${selectedConv} ${currentParleyType}"
-			wait 10 ${VG.IsInParlay}
+			variable string temp
+			temp:Set[${Dialog[${genorciv},${selectedConv}].PresenceRequiredType}]
+			temp:Set[${temp.Left[${Math.Calc[${temp.Find[Presence]}-2]}]}]
+			if !${Me.Stat[Diplomacy,${temp}]}
+			{
+				temp:Set[${temp}s]
+			}
+			EchoIt "Presence Type = ${temp}"
+			EchoIt "Presence Need = ${Dialog[${genorciv},${selectedConv}].PresenceRequired}"
+			EchoIt "Presence Have = ${Me.Stat[Diplomacy,${temp}]}"
+			
+			;; go equip gear to increase your parlay
+			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
+			{
+				call PresenceNeeded
+				returnvalue:Set[${Return}]
+				variable int64 LastTargetID = ${Me.Target.ID}
+				VGExecute /cleartargets
+				waitframe
+				EchoIt "Equiping gear for:  ${returnvalue}"
+				call obj_diplogear.Load2 "${returnvalue}"
+				EchoIt "Equiped gear:  ${returnvalue}"
+				Pawn[id,${LastTargetID}]:Target
+				waitframe
+				EchoIt "ReTargeting ${Me.Target.Name}"
+				Parlay:AssessTarget
+				wait 10
+			}
+			
+			;; start the parlay if we have enough presence
+			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} <= ${Me.Stat[Diplomacy,${temp}]}
+			{
+				Dialog[${genorciv},${selectedConv}]:Select
+				EchoIt "Selecting ${genorciv}: ${selectedConv} ${currentParleyType}"
+				wait 50 ${VG.IsInParlay}
+			}
+			elseif ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
+			{
+				EchoIt "You do not have enough presence to parlay with"
+			}
 		}
 	}
 	else
@@ -1009,8 +1036,6 @@ atom(script) OnParlaySuccess()
 	dipNPCs[${curNPC}].${currentParleyType}Wins:Inc
 	if ${currentParleyType.Length} > 0
 	{
-		;; this echo is for testing
-		EchoIt "currentParleyType=${currentParleyType}, currentParleyType Length=${currentParleyType.Length}"
 		${currentParleyType}wins:Inc
 	}
 	UpdateStats
@@ -1025,8 +1050,6 @@ atom(script) OnParlayLost()
 	dipNPCs[${curNPC}].${currentParleyType}Losses:Inc
 	if ${currentParleyType.Length} > 0
 	{
-		;; this echo is for testing
-		EchoIt "currentParleyType=${currentParleyType}, currentParleyType Length=${currentParleyType.Length}"
 		${currentParleyType}losses:Inc
 	}
 	UpdateStats
@@ -1107,6 +1130,7 @@ atom(global) dipUnpause()
 {
 	ourTurn:Set[TRUE]
 	dipisPaused:Set[FALSE]
+	EchoIt "Resumed"
 }
 
 atom(global) dipStart()
