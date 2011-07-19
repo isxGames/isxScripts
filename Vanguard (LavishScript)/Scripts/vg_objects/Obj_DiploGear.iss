@@ -81,6 +81,15 @@ objectdef obj_diplogear
 			}
 			
 	}
+	function Load2(string Presence, bool debug)
+	{
+		call ConvertPresence "${Presence}"
+		if ${Return} > 0
+			{
+			call This.EquipGear2 "${Return}"
+			}
+			
+	}
 	method Save(string Presence, bool debug)
 	{
 		call ConvertPresence "${Presence}"
@@ -187,6 +196,103 @@ objectdef obj_diplogear
 		Turbo 75
 	}
 
+	;============================
+	/*   Equip Gear Loaded     */
+	;============================
+	function EquipGear2(int di, bool debug)
+	{
+		; Slow it down, we are crashing
+		Turbo 20
+	
+		This:XMLLoad[${di}]
+	
+		;Unequip Gear On
+		;------------------
+
+		Me.Inventory[CurrentEquipSlot, Diplomacy Left Ear]:Unequip
+		Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
+		Me.Inventory[CurrentEquipSlot, Diplomacy Left Finger]:Unequip
+		Me.Inventory[CurrentEquipSlot, Diplomacy Right Finger]:Unequip
+		waitframe
+		
+		;Equip Desired Gear
+		;------------------
+		
+		;Account for Same Name and ID Earrings
+		;-------------------------------------
+
+		if ${DiploLeftEar.Equal[${DiploRightEar}]}
+			{
+			variable int i
+			for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+				{
+					if ${Me.Inventory[${i}].Name.Equal[${DiploLeftEar}]}
+						{
+						Me.Inventory[${i}]:Equip
+						i:Inc
+						}
+					if ${Me.Inventory[${i}].Name.Equal[${DiploRightEar}]} 
+						{
+						Me.Inventory[${i}]:Equip
+						}
+				}
+			}
+			
+		if ${DiploLeftEar.NotEqual[${DiploRightEar}]}
+			{
+			Me.Inventory[${DiploLeftEar}]:Equip
+			Me.Inventory[${DiploRightEar}]:Equip	
+			}	
+			
+		;Account for Same Name and ID Rings
+		;-------------------------------------
+		
+		if ${DiploLeftRing.Equal[${DiploRightRing}]}
+			{
+			variable int ri
+			for (ri:Set[1] ; ${ri}<=${Me.Inventory} ; ri:Inc)
+				{
+					if ${Me.Inventory[${ri}].Name.Equal[${DiploLeftRing}]}
+						{
+						Me.Inventory[${ri}]:Equip
+						i:Inc
+						}
+					if ${Me.Inventory[${ri}].Name.Equal[${DiploRightRing}]} 
+						{
+						Me.Inventory[${ri}]:Equip
+						}
+				}
+			}
+			
+		if ${DiploLeftRing.NotEqual[${DiploRightRing}]}
+			{
+			Me.Inventory[${DiploLeftRing}]:Equip
+			Me.Inventory[${DiploRightRing}]:Equip	
+			}
+			
+
+		;Load All Other Gear
+		;-------------------------------------
+
+		waitframe
+		Me.Inventory[${DiploFace}]:Equip
+		Me.Inventory[${DiploCloak}]:Equip
+		Me.Inventory[${DiploNeck}]:Equip
+		Me.Inventory[${DiploShoulders}]:Equip
+		Me.Inventory[${DiploWrist}]:Equip
+		Me.Inventory[${DiploChest}]:Equip
+		Me.Inventory[${DiploHands}]:Equip
+		Me.Inventory[${DiploHeld}]:Equip
+		Me.Inventory[${DiploBelt}]:Equip
+		Me.Inventory[${DiploBoots}]:Equip
+		Me.Inventory[${DiploLegs}]:Equip
+		waitframe
+		
+		;; Back to normal speed
+		Turbo 75
+	}
+	
+	
 	;============================
 	/* Load Variables From XML */
 	;============================
