@@ -154,6 +154,7 @@ variable int AngleDiff = 0
 variable int AngleDiffAbs = 0
 variable int LowestDipLevel = 0
 variable int HighestDipLevel = 100
+variable bool doChangeEquipment = FALSE
 
 ;Paths
 variable filepath scriptPath = "${Script.CurrentDirectory}/"
@@ -269,6 +270,12 @@ function GoDiploSomething()
 			call TargetNPC
 			call StartParlay
 		}
+	}
+	
+	;; always check to see if we need to change equipment
+	if ${doChangeEquipment}
+	{
+		call ChangeEquipment
 	}
 	
 	;; we are in a parlay so go play a card
@@ -407,6 +414,23 @@ function StartParlay()
 	}
 }
 
+function ChangeEquipment()
+{
+	if ${doChangeEquipment}
+	{
+		call PresenceNeeded
+		returnvalue:Set[${Return}]
+		EchoIt "Equiping gear for: ${returnvalue}"
+		call obj_diplogear.Load2 "${returnvalue}"
+		vgecho "Equiping gear for: ${returnvalue}"
+		EchoIt "Equiped gear: ${returnvalue}"
+		EchoIt "ReAssessing ${Me.Target.Name}"
+		Parlay:AssessTarget
+		wait 15
+		doChangeEquipment:Set[FALSE]
+	}
+}
+
 atom(script) OnFrame()
 {
 	if (${dipisMapping})
@@ -420,6 +444,7 @@ atom(script) OnFrame()
 function SelectParlay()
 {
 	call FaceTarget
+	EchoIt "Assessing: ${Me.Target.Name}"
 	Parlay:AssessTarget[${dipNPCs[${curNPC}].NameID}]
 	wait 10
 	variable int selectedConv = 0
@@ -509,19 +534,8 @@ function SelectParlay()
 			;; go equip gear to increase your parlay
 			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
 			{
-				call PresenceNeeded
-				returnvalue:Set[${Return}]
-				variable int64 LastTargetID = ${Me.Target.ID}
-				VGExecute /cleartargets
-				waitframe
-				EchoIt "Equiping gear for:  ${returnvalue}"
-				call obj_diplogear.Load2 "${returnvalue}"
-				EchoIt "Equiped gear:  ${returnvalue}"
-				Pawn[id,${LastTargetID}]:Target
-				waitframe
-				EchoIt "ReTargeting ${Me.Target.Name}"
-				Parlay:AssessTarget
-				wait 10
+				doChangeEquipment:Set[TRUE]
+				call ChangeEquipment
 			}
 			
 			;; start the parlay if we have enough presence
@@ -628,11 +642,25 @@ function:int RateCard(int card)
 		gainscale:Set[${Math.Calc[${gainscale}*2]}]
 		;echo infmax ${inflmax}
 	}
+	
+	; increase rating if we have a card that equal what we need to be maxed
+	if ${infl} == ${inflmax}
+	{
+		givescalered:Set[${Math.Calc[${givescalered}*2]}]
+		givescaleblue:Set[${Math.Calc[${givescaleblue}*2]}]
+		givescalegreen:Set[${Math.Calc[${givescalegreen}*2]}]
+		givescaleyellow:Set[${Math.Calc[${givescaleyellow}*2]}]
+		gainscale:Set[${Math.Calc[${gainscale}*2]}]
+		;echo infmax ${inflmax}
+	}
 	if ${infl} > ${inflmax}
 	{
 		infl:Set[${inflmax}]
-
 	}
+	
+	
+	
+	
 	;echo bleh!
 	
 	;echo ${iter}
@@ -738,6 +766,7 @@ function DoParleyCard()
 			rate:Set[${Return}]
 
 			;echo "Card ${card} rate is:  ${rate}"
+			echo "Card Rating: ${rate}, Card${card}: ${Strategy[${card}].Name}, InfluenceMax: ${Strategy[${card}].InfluenceMax}, InfluenceNeed: ${Math.Calc[10 - ${Parlay.Status}]}"
 			if ${rate} > ${ratemax}
 			{
 				cardplay:Set[${card}]
@@ -747,9 +776,10 @@ function DoParleyCard()
 		card:Inc
 	}
 	
-	if ${cardplay}>0 && ${Parlay.Status}<10
+	;if ${cardplay}>0 && ${Parlay.Status}<10
+	if ${cardplay}>0
 	{
-		;echo "Play:  ${Strategy[${cardplay}].Name}"
+		echo "Playing Card:  ${Strategy[${cardplay}].Name}"
 		Strategy[${cardplay}]:Play
 	}
 	else
@@ -1059,6 +1089,10 @@ atom(script) OnParlayLost()
 
 atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
+	if ${Text.Find["You don't have enough presence"]}
+	{
+		doChangeEquipment:Set[TRUE]
+	}
 	if ${Text.Find["You need at least a diplomacy level of"]}
 	{
 		EchoIt "Too low a level, next NPC"
