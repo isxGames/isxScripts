@@ -604,7 +604,8 @@ function:int RateCard(int card)
 	variable int givescaleblue = 4
 	variable int givescaleyellow = 4
 	variable int rate
-	variable int infl = ${Strategy[${card}].InfluenceMax}
+	
+	variable int infl = ${Math.Calc[(${Strategy[${card}].InfluenceMin} + ${Strategy[${card}].InfluenceMax})/2]}
 	variable int dp = ${Strategy[${card}].DemandGained}
 	variable int dm = ${Strategy[${card}].DemandGiven}
 	variable int rp = ${Strategy[${card}].ReasonGained}
@@ -646,10 +647,10 @@ function:int RateCard(int card)
 	; increase rating if we have a card that equal what we need to be maxed
 	if ${infl} == ${inflmax}
 	{
-		givescalered:Set[${Math.Calc[${givescalered}*2]}]
-		givescaleblue:Set[${Math.Calc[${givescaleblue}*2]}]
-		givescalegreen:Set[${Math.Calc[${givescalegreen}*2]}]
-		givescaleyellow:Set[${Math.Calc[${givescaleyellow}*2]}]
+		givescalered:Set[${Math.Calc[${givescalered}*4]}]
+		givescaleblue:Set[${Math.Calc[${givescaleblue}*4]}]
+		givescalegreen:Set[${Math.Calc[${givescalegreen}*4]}]
+		givescaleyellow:Set[${Math.Calc[${givescaleyellow}*4]}]
 		gainscale:Set[${Math.Calc[${gainscale}*2]}]
 		;echo infmax ${inflmax}
 	}
@@ -766,7 +767,7 @@ function DoParleyCard()
 			rate:Set[${Return}]
 
 			;echo "Card ${card} rate is:  ${rate}"
-			echo "Card Rating: ${rate}, Card${card}: ${Strategy[${card}].Name}, InfluenceMax: ${Strategy[${card}].InfluenceMax}, InfluenceNeed: ${Math.Calc[10 - ${Parlay.Status}]}"
+			echo "Card Rating: ${rate}, Card${card}: ${Strategy[${card}].Name}, InfluenceMax: ${Strategy[${card}].InfluenceMax}, InfluenceNeed: ${Math.Calc[10 - ${Parlay.Status}].Int}"
 			if ${rate} > ${ratemax}
 			{
 				cardplay:Set[${card}]
