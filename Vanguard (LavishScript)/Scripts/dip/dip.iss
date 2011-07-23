@@ -165,7 +165,7 @@ variable string UISkin = "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 variable string Output = "${Script.CurrentDirectory}/Save/Debug.txt"
 
 ;Debug setup
-variable(script) bool debug = TRUE
+variable(script) bool debug = FALSE
 variable(script) string returnvalue = "GOOD"
 
 function main()
@@ -422,7 +422,6 @@ function ChangeEquipment()
 		returnvalue:Set[${Return}]
 		EchoIt "Equiping gear for: ${returnvalue}"
 		call obj_diplogear.Load2 "${returnvalue}"
-		vgecho "Equiping gear for: ${returnvalue}"
 		EchoIt "Equiped gear: ${returnvalue}"
 		EchoIt "ReAssessing ${Me.Target.Name}"
 		Parlay:AssessTarget
@@ -502,7 +501,6 @@ function SelectParlay()
 	{
 		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 9
 		{
-			echo Moving the bad way
 			EchoIt "Backup movement code called."
 			
 			VG:ExecBinding[moveforward]
@@ -532,11 +530,11 @@ function SelectParlay()
 			EchoIt "Presence Have = ${Me.Stat[Diplomacy,${temp}]}"
 			
 			;; go equip gear to increase your parlay
-			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
-			{
+			;if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
+			;{
 				doChangeEquipment:Set[TRUE]
 				call ChangeEquipment
-			}
+			;}
 			
 			;; start the parlay if we have enough presence
 			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} <= ${Me.Stat[Diplomacy,${temp}]}
@@ -573,7 +571,7 @@ function:bool IsPlayable(int card)
 	{
 		return "FALSE"
 	}
-
+	
 	;; we do not want 1st card laid down to be Id Personified
 	if ${Strategy[${card}].Name.Equal[Id Personified]}
 	{
@@ -582,6 +580,15 @@ function:bool IsPlayable(int card)
 			return "FALSE"
 		}
 		if ${reason}==0 && ${inspire}==0 && ${flatter}==0 && ${demand}==0
+		{
+			return "FALSE"
+		}
+	}
+	
+	;; if we are maxed then don't play any cards that can increase our score
+	if ${Math.Calc[10 - ${Parlay.Status}]}==0
+	{
+		if ${Math.Calc[${Strategy[${card}].InfluenceMin} + ${Strategy[${card}].InfluenceMax}]}
 		{
 			return "FALSE"
 		}
@@ -633,8 +640,19 @@ function:int RateCard(int card)
 	{
 		givescaleyellow:Set[18]
 	}
-	; ############### If winning by 5 or greater worry more about whats given.
-	if ${inflmax} < 6
+	; ############### If already maxed worry more about whats given.
+	if ${inflmax} == 0
+	{
+		givescalered:Set[${Math.Calc[${givescalered}*2]}]
+		givescaleblue:Set[${Math.Calc[${givescaleblue}*2]}]
+		givescalegreen:Set[${Math.Calc[${givescalegreen}*2]}]
+		givescaleyellow:Set[${Math.Calc[${givescaleyellow}*2]}]
+		gainscale:Set[${Math.Calc[${gainscale}*2]}]
+		;echo infmax ${inflmax}
+	}
+
+	; increase rating if we have a card that equal what we need to be maxed
+	if ${infl} == ${inflmax}
 	{
 		givescalered:Set[${Math.Calc[${givescalered}*2]}]
 		givescaleblue:Set[${Math.Calc[${givescaleblue}*2]}]
@@ -644,16 +662,18 @@ function:int RateCard(int card)
 		;echo infmax ${inflmax}
 	}
 	
-	; increase rating if we have a card that equal what we need to be maxed
-	if ${infl} == ${inflmax}
-	{
-		givescalered:Set[${Math.Calc[${givescalered}*4]}]
-		givescaleblue:Set[${Math.Calc[${givescaleblue}*4]}]
-		givescalegreen:Set[${Math.Calc[${givescalegreen}*4]}]
-		givescaleyellow:Set[${Math.Calc[${givescaleyellow}*4]}]
-		gainscale:Set[${Math.Calc[${gainscale}*2]}]
-		;echo infmax ${inflmax}
-	}
+	
+	; ############### If winning by 5 or greater worry more about whats given.
+	;if ${inflmax} < 6
+	;{
+	;	givescalered:Set[${Math.Calc[${givescalered}*2]}]
+	;	givescaleblue:Set[${Math.Calc[${givescaleblue}*2]}]
+	;	givescalegreen:Set[${Math.Calc[${givescalegreen}*2]}]
+	;	givescaleyellow:Set[${Math.Calc[${givescaleyellow}*2]}]
+	;	gainscale:Set[${Math.Calc[${gainscale}*2]}]
+	;	;echo infmax ${inflmax}
+	;}
+	
 	if ${infl} > ${inflmax}
 	{
 		infl:Set[${inflmax}]
@@ -767,7 +787,7 @@ function DoParleyCard()
 			rate:Set[${Return}]
 
 			;echo "Card ${card} rate is:  ${rate}"
-			echo "Card Rating: ${rate}, Card${card}: ${Strategy[${card}].Name}, InfluenceMax: ${Strategy[${card}].InfluenceMax}, InfluenceNeed: ${Math.Calc[10 - ${Parlay.Status}].Int}"
+			EchoIt "Card Rating: ${rate}, Card${card}: ${Strategy[${card}].Name}, InfluenceMax: ${Strategy[${card}].InfluenceMax}, InfluenceNeed: ${Math.Calc[10 - ${Parlay.Status}].Int}"
 			if ${rate} > ${ratemax}
 			{
 				cardplay:Set[${card}]
@@ -1426,9 +1446,9 @@ atom(script) EchoIt(string aText)
 {
 	if ${debug}
 	{
-		Redirect -append "${Output}" echo "[${Time}][Dip]: ${aText}"
 		echo "[${Time}][Dip] ${aText}"
 	}
+	Redirect -append "${Output}" echo "[${Time}][Dip]: ${aText}"
 }
 
 function FaceTarget()
