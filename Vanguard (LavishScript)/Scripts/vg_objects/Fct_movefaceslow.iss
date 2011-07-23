@@ -1,18 +1,18 @@
 /*
 	Code by don'tdoit
-  Math in function Angle by ${Allen}
+	Math in function Angle by ${Allen}
 
 	Put into your scripts/common folder.
 	To use add this to the top of your script:
-		#include ./common/faceslow.iss
+	#include ./common/faceslow.iss
 	Then:
 		call facemob ${yourMobIDvar} ##
-		or
+	or
 		call faceloc ${X} ${Y} ##
 	where ## is the precision of how close you want to face.
-	
+
 	Version:
-	v1.0 - initial release
+		v1.0 - initial release
 
 */
 
@@ -90,14 +90,14 @@ function faceslow(float facX, float facY, float Rt, float Lt, int iFacTimeOut)
 	Face ${facX} ${facY}
 
 	if (${Math.Calc[${Time.Timestamp} - ${bailOut.Timestamp}]} > ${iFacTimeOut})
-		call DebugOut "VGCraft:: faceslow timeout!"
+	call DebugOut "VGCraft:: faceslow timeout!"
 }
 
 function Angle(float angX, float angY)
 {
 	Dist:Set[${Math.Distance[${Me.X},${Me.Y},${angX},${angY}]}]
 	if ( ${Dist} <= 0 )
-		Dist:Set[1]
+	Dist:Set[1]
 	Angle:Set[${Math.Acos[(${angY} - ${Me.Y})/${Dist}]}]
 	MobRise:Set[${Math.Calc[${angY} - ${Me.Y}]}]
 	MobRun:Set[${Math.Calc[${angX} - ${Me.X}]}]
@@ -130,3 +130,4 @@ function Angle(float angX, float angY)
 
 	AbsAngle:Set[${Math.Calc[(${Me.Heading} + ${Angle}) % 360]}]
 }
+

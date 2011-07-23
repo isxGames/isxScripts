@@ -9,32 +9,32 @@
 	**  Place the following line at the top of your .iss file
 		#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_Health.iss"
 
-	Health.GroupNumber			Group Member number with lowest health
-	Health.GroupName			Group Member name with lowest health
-	Health.GroupHealth			Lowest health of the Group Member
-	Health.TotalGroupWounded	Total wounded Group Members below 70% health
+		Health.GroupNumber			Group Member number with lowest health
+		Health.GroupName			Group Member name with lowest health
+		Health.GroupHealth			Lowest health of the Group Member
+		Health.TotalGroupWounded	Total wounded Group Members below 70% health
 
-	Health.RaidNumber			Group Member in Raid with lowest health
-	Health.RaidName				Group Member name in Raid with lowest health
-	Health.RaidHealth			Lowest health of the Group Member in Raid
-	Health.TotalRaidWounded		Total wounded Group Members in Raid below 70% health
-	
+		Health.RaidNumber			Group Member in Raid with lowest health
+		Health.RaidName				Group Member name in Raid with lowest health
+		Health.RaidHealth			Lowest health of the Group Member in Raid
+		Health.TotalRaidWounded		Total wounded Group Members in Raid below 70% health
+
 	**  The following example will report true if the first name of player is in your group
-	
-	if ${Health.GroupMemberList.Element["Zandros"](exists)}
+
+		if ${Health.GroupMemberList.Element["Zandros"](exists)}
 		return TRUE
-		
+
 	Notes
 	____________________________________
-	**  You dont need to know how an object works to use it.  
+	**  You dont need to know how an object works to use it.
 	**  Objects are bits of code that perform specific functions.
 	**  This function specifically creates new variables for you
 
 	Credits
 	____________________________________
- 	**  Created by Zandros
+	**  Created by Zandros
 	**  Special Thanks to Amadeus and Lax for all their work
-	
+
 **/
 ;======================
 
@@ -42,9 +42,9 @@ variable(global) obj_Health Health
 
 objectdef obj_Health
 {
-;===================================================
-;===       User Variables                       ====
-;===================================================
+	;===================================================
+	;===       User Variables                       ====
+	;===================================================
 	variable int GroupNumber
 	variable string GroupName
 	variable int GroupHealth
@@ -54,26 +54,26 @@ objectdef obj_Health
 	variable string RaidName
 	variable int RaidHealth
 	variable int TotalRaidWounded
-	
-	
+
+
 	variable collection:int GroupMemberList
-	
-	
+
+
 	;; System controlled variables
 	variable int NextCalled = ${Script.RunningTime}
 	variable int GroupMemberCount
 	variable int CounterDelay
-	
-;===================================================
-;===             User Routines                  ====
-;===================================================
 
-;; NONE
+	;===================================================
+	;===             User Routines                  ====
+	;===================================================
+
+	;; NONE
 
 
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 	method Initialize()
 	{
 		This.NextCalled:Set[0]
@@ -109,15 +109,15 @@ objectdef obj_Health
 		This.GroupName:Set[]
 		This.GroupHealth:Set[0]
 		This.TotalGroupWounded:Set[0]
-			
+
 		This.RaidNumber:Set[0]
 		This.RaidName:Set[]
 		This.RaidHealth:Set[0]
 		This.TotalRaidWounded:Set[0]
-		
+
 		This.NextCalled:Set[${Script.RunningTime}]
 	}
-	
+
 	;-------------------------------------------
 	; Find lowest member's health
 	;-------------------------------------------
@@ -129,22 +129,22 @@ objectdef obj_Health
 			This:FindGroupMembers
 			return
 		}
-	
+
 		;; Update once per half a second
 		if (${Math.Calc[${Math.Calc[${Script.RunningTime}-${This.NextCalled}]}/1000]} < .5)
 		{
 			return
 		}
-		
+
 		;; Reset our variables
 		This:Reset
-		
+
 		;; NOT IN GROUP
 		if !${Me.IsGrouped}
 		{
 			This.GroupHealth:Set[${Me.HealthPct}]
 			This.GroupName:Set[${Me.FName}]
-		
+
 			if ${Me.HealthPct}<70
 			{
 				This.TotalGroupWounded:Inc
@@ -182,7 +182,7 @@ objectdef obj_Health
 		{
 			return
 		}
-		
+
 		;; RAID MEMBERS
 		low:Set[90]
 		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
@@ -211,7 +211,7 @@ objectdef obj_Health
 		This.GroupMemberCount:Set[0]
 		This.CounterDelay:Set[0]
 	}
-	
+
 	;-------------------------------------------
 	; Find group members and store them in our collection variable
 	;-------------------------------------------
@@ -251,7 +251,7 @@ objectdef obj_Health
 			return
 		}
 		This.CounterDelay:Set[0]
-			
+
 
 		;-------------------------------------------
 		; We found a Group Member "hmmm, I bet you are wondering how"
@@ -266,7 +266,7 @@ objectdef obj_Health
 		{
 			echo "[${Time}][VG:ObjHealth] --> FindGroupMembers: Group Member[${This.GroupMemberCount}]= does not exist"
 		}
-		
+
 		;-------------------------------------------
 		; target groupmember
 		;-------------------------------------------
@@ -274,3 +274,5 @@ objectdef obj_Health
 		VGExecute "/targetgroupmember ${This.GroupMemberCount}"
 	}
 }
+
+

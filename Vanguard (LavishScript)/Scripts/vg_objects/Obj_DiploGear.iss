@@ -18,7 +18,7 @@
 		obj_diplogear:Load[Nobles]
 		obj_diplogear:Load[Craftsmen]
 		obj_diplogear:Load[Clergy]
-	
+
 	Saving Gear(Manually Put the Gear you want to save on your toon)
 		obj_diplogear:Save[Merchants]
 		obj_diplogear:Save[Academics]
@@ -28,20 +28,20 @@
 		obj_diplogear:Save[Nobles]
 		obj_diplogear:Save[Craftsmen]
 		obj_diplogear:Save[Clergy]
-	
+
 	Notes
-	____________________________________
-	**  You dont need to know how an object works to use it.  
-	**  Objects are bits of code that perform specific functions.
-	**  This function specifically loads and saves sets of diplomacy gear 
-	**  You can switch Diplomacy sets quickly either from a script or from the console
-	**  You have to Save a gear set before you can Load it!
+		____________________________________
+		**  You dont need to know how an object works to use it.
+		**  Objects are bits of code that perform specific functions.
+		**  This function specifically loads and saves sets of diplomacy gear
+		**  You can switch Diplomacy sets quickly either from a script or from the console
+		**  You have to Save a gear set before you can Load it!
 
 	Credits
-	____________________________________
- 	*  Created by mmoaddict
-	*  Special Thanks to Amadeus and Lax for all their work
-	
+		____________________________________
+		*  Created by mmoaddict
+		*  Special Thanks to Amadeus and Lax for all their work
+
 */
 ;======================
 
@@ -68,40 +68,40 @@ objectdef obj_diplogear
 
 	variable settingsetref GearSet_ssr
 
-;===================================================
-;===           Methods to be Used               ====
-;===================================================
+	;===================================================
+	;===           Methods to be Used               ====
+	;===================================================
 
 	method Load(string Presence, bool debug)
 	{
 		call ConvertPresence "${Presence}"
 		if ${Return} > 0
-			{
+		{
 			This:EquipGear[${Return}]
-			}
-			
+		}
+
 	}
 	function Load2(string Presence, bool debug)
 	{
 		call ConvertPresence "${Presence}"
 		if ${Return} > 0
-			{
+		{
 			call This.EquipGear2 "${Return}"
-			}
-			
+		}
+
 	}
 	method Save(string Presence, bool debug)
 	{
 		call ConvertPresence "${Presence}"
 		if ${Return} > 0
-			{ 
+		{
 			This:XMLSave[${Return}]
-			}
+		}
 	}
 
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 
 
 	;============================
@@ -111,9 +111,9 @@ objectdef obj_diplogear
 	{
 		; Slow it down, we are crashing
 		Turbo 20
-	
+
 		This:XMLLoad[${di}]
-	
+
 		;Unequip Gear On
 		;------------------
 
@@ -124,58 +124,58 @@ objectdef obj_diplogear
 
 		;Equip Desired Gear
 		;------------------
-		
+
 		;Account for Same Name and ID Earrings
 		;-------------------------------------
 
 		if ${DiploLeftEar.Equal[${DiploRightEar}]}
-			{
+		{
 			variable int i
 			for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+			{
+				if ${Me.Inventory[${i}].Name.Equal[${DiploLeftEar}]}
 				{
-					if ${Me.Inventory[${i}].Name.Equal[${DiploLeftEar}]}
-						{
-						Me.Inventory[${i}]:Equip
-						i:Inc
-						}
-					if ${Me.Inventory[${i}].Name.Equal[${DiploRightEar}]} 
-						{
-						Me.Inventory[${i}]:Equip
-						}
+					Me.Inventory[${i}]:Equip
+					i:Inc
+				}
+				if ${Me.Inventory[${i}].Name.Equal[${DiploRightEar}]}
+				{
+					Me.Inventory[${i}]:Equip
 				}
 			}
-			
+		}
+
 		if ${DiploLeftEar.NotEqual[${DiploRightEar}]}
-			{
+		{
 			Me.Inventory[${DiploLeftEar}]:Equip
-			Me.Inventory[${DiploRightEar}]:Equip	
-			}	
+			Me.Inventory[${DiploRightEar}]:Equip
+		}
 
 		;Account for Same Name and ID Rings
 		;-------------------------------------
-		
+
 		if ${DiploLeftRing.Equal[${DiploRightRing}]}
-			{
+		{
 			variable int ri
 			for (ri:Set[1] ; ${ri}<=${Me.Inventory} ; ri:Inc)
+			{
+				if ${Me.Inventory[${ri}].Name.Equal[${DiploLeftRing}]}
 				{
-					if ${Me.Inventory[${ri}].Name.Equal[${DiploLeftRing}]}
-						{
-						Me.Inventory[${ri}]:Equip
-						i:Inc
-						}
-					if ${Me.Inventory[${ri}].Name.Equal[${DiploRightRing}]} 
-						{
-						Me.Inventory[${ri}]:Equip
-						}
+					Me.Inventory[${ri}]:Equip
+					i:Inc
+				}
+				if ${Me.Inventory[${ri}].Name.Equal[${DiploRightRing}]}
+				{
+					Me.Inventory[${ri}]:Equip
 				}
 			}
-			
+		}
+
 		if ${DiploLeftRing.NotEqual[${DiploRightRing}]}
-			{
+		{
 			Me.Inventory[${DiploLeftRing}]:Equip
-			Me.Inventory[${DiploRightRing}]:Equip	
-			}
+			Me.Inventory[${DiploRightRing}]:Equip
+		}
 
 		;Load All Other Gear
 		;-------------------------------------
@@ -191,7 +191,7 @@ objectdef obj_diplogear
 		Me.Inventory[${DiploBelt}]:Equip
 		Me.Inventory[${DiploBoots}]:Equip
 		Me.Inventory[${DiploLegs}]:Equip
-		
+
 		;; Back to normal speed
 		Turbo 75
 	}
@@ -201,104 +201,184 @@ objectdef obj_diplogear
 	;============================
 	function EquipGear2(int di, bool debug)
 	{
-		; Slow it down, we are crashing
-		Turbo 20
-	
 		This:XMLLoad[${di}]
-	
-		;Unequip Gear On
-		;------------------
+		variable int i
 
-		Me.Inventory[CurrentEquipSlot, Diplomacy Left Ear]:Unequip
-		Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
-		Me.Inventory[CurrentEquipSlot, Diplomacy Left Finger]:Unequip
-		Me.Inventory[CurrentEquipSlot, Diplomacy Right Finger]:Unequip
-		waitframe
-		
-		;Equip Desired Gear
-		;------------------
-		
 		;Account for Same Name and ID Earrings
 		;-------------------------------------
 
-		if ${DiploLeftEar.Equal[${DiploRightEar}]}
+		;; We can equip directly if earings are not the same
+		if ${DiploLeftEar.NotEqual[${DiploRightEar}]}
+		{
+			if !${Me.Inventory[${DiploRightEar}].CurrentEquipSlot.Equal[Diplomacy Right Ear]}
 			{
-			variable int i
-			for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+				Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
+				wait 1
+				Me.Inventory[${DiploRightEar}]:Equip
+			}
+			if !${Me.Inventory[${DiploLeftEar}].CurrentEquipSlot.Equal[Diplomacy Left Ear]}
+			{
+				Me.Inventory[CurrentEquipSlot, Diplomacy Left Ear]:Unequip
+				wait 1
+				Me.Inventory[${DiploLeftEar}]:Equip
+			}
+		}
+		else
+		{
+			;; we will have to scan and equip both
+			if !${Me.Inventory[${DiploRightEar}].CurrentEquipSlot.Equal[Diplomacy Right Ear]} || !${Me.Inventory[${DiploLeftEar}].CurrentEquipSlot.Equal[Diplomacy Left Ear]}
+			{
+				Me.Inventory[CurrentEquipSlot, Diplomacy Left Ear]:Unequip
+				Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
+				wait 1
+		
+				for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 				{
 					if ${Me.Inventory[${i}].Name.Equal[${DiploLeftEar}]}
-						{
+					{
 						Me.Inventory[${i}]:Equip
 						i:Inc
-						}
-					if ${Me.Inventory[${i}].Name.Equal[${DiploRightEar}]} 
-						{
+					}
+					if ${Me.Inventory[${i}].Name.Equal[${DiploRightEar}]}
+					{
 						Me.Inventory[${i}]:Equip
-						}
+					}
 				}
 			}
-			
-		if ${DiploLeftEar.NotEqual[${DiploRightEar}]}
-			{
-			Me.Inventory[${DiploLeftEar}]:Equip
-			Me.Inventory[${DiploRightEar}]:Equip	
-			}	
-			
+		}
+		
+
 		;Account for Same Name and ID Rings
 		;-------------------------------------
-		
-		if ${DiploLeftRing.Equal[${DiploRightRing}]}
+
+		;; We can equip directly if earings are not the same
+		if ${DiploLeftRing.NotEqual[${DiploRightRing}]}
+		{
+			if !${Me.Inventory[${DiploRightRing}].CurrentEquipSlot.Equal[Diplomacy Right Finger]}
 			{
-			variable int ri
-			for (ri:Set[1] ; ${ri}<=${Me.Inventory} ; ri:Inc)
+				Me.Inventory[CurrentEquipSlot, Diplomacy Right Finger]:Unequip
+				wait 1
+				Me.Inventory[${DiploRightRing}]:Equip
+			}
+			if !${Me.Inventory[${DiploLeftRing}].CurrentEquipSlot.Equal[Diplomacy Left Finger]}
+			{
+				Me.Inventory[CurrentEquipSlot, Diplomacy Left Finger]:Unequip
+				wait 1
+				Me.Inventory[${DiploLeftRing}]:Equip
+			}
+		}
+		else
+		{
+			;; we will have to scan and equip both
+			if !${Me.Inventory[${DiploRightRing}].CurrentEquipSlot.Equal[Diplomacy Right Finger]} || !${Me.Inventory[${DiploLeftRing}].CurrentEquipSlot.Equal[Diplomacy Left Finger]}
+			{
+				Me.Inventory[CurrentEquipSlot, Diplomacy Left Finger]:Unequip
+				Me.Inventory[CurrentEquipSlot, Diplomacy Right Finger]:Unequip
+				wait 1
+		
+				for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 				{
-					if ${Me.Inventory[${ri}].Name.Equal[${DiploLeftRing}]}
-						{
-						Me.Inventory[${ri}]:Equip
+					if ${Me.Inventory[${i}].Name.Equal[${DiploLeftRing}]}
+					{
+						Me.Inventory[${i}]:Equip
 						i:Inc
-						}
-					if ${Me.Inventory[${ri}].Name.Equal[${DiploRightRing}]} 
-						{
-						Me.Inventory[${ri}]:Equip
-						}
+					}
+					if ${Me.Inventory[${i}].Name.Equal[${DiploRightRing}]}
+					{
+						Me.Inventory[${i}]:Equip
+					}
 				}
 			}
-			
-		if ${DiploLeftRing.NotEqual[${DiploRightRing}]}
-			{
-			Me.Inventory[${DiploLeftRing}]:Equip
-			Me.Inventory[${DiploRightRing}]:Equip	
-			}
-			
+		}
 
 		;Load All Other Gear
 		;-------------------------------------
 
-		waitframe
-		Me.Inventory[${DiploFace}]:Equip
-		Me.Inventory[${DiploCloak}]:Equip
-		Me.Inventory[${DiploNeck}]:Equip
-		Me.Inventory[${DiploShoulders}]:Equip
-		Me.Inventory[${DiploWrist}]:Equip
-		Me.Inventory[${DiploChest}]:Equip
-		Me.Inventory[${DiploHands}]:Equip
-		Me.Inventory[${DiploHeld}]:Equip
-		Me.Inventory[${DiploBelt}]:Equip
-		Me.Inventory[${DiploBoots}]:Equip
-		Me.Inventory[${DiploLegs}]:Equip
-		waitframe
-		
-		;; Back to normal speed
-		Turbo 75
+		if !${Me.Inventory[${DiploFace}].CurrentEquipSlot.Equal[Diplomacy Head]}
+		{
+			if ${Me.Inventory[${DiploFace}](exists)}
+			{
+				Me.Inventory[${DiploFace}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploCloak}].CurrentEquipSlot.Equal[Diplomacy Cloak]}
+		{
+			if ${Me.Inventory[${DiploCloak}](exists)}
+			{
+				Me.Inventory[${DiploCloak}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploNeck}].CurrentEquipSlot.Equal[Diplomacy Neck]}
+		{
+			if ${Me.Inventory[${DiploNeck}](exists)}
+			{
+				Me.Inventory[${DiploNeck}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploShoulders}].CurrentEquipSlot.Equal[Diplomacy Shoulder]}
+		{
+			if ${Me.Inventory[${DiploShoulders}](exists)}
+			{
+				Me.Inventory[${DiploShoulders}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploWrist}].CurrentEquipSlot.Equal[Diplomacy Wrists]}
+		{
+			if ${Me.Inventory[${DiploWrist}](exists)}
+			{
+				Me.Inventory[${DiploWrist}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploChest}].CurrentEquipSlot.Equal[Diplomacy Chest]}
+		{
+			if ${Me.Inventory[${DiploChest}](exists)}
+			{
+				Me.Inventory[${DiploChest}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploHands}].CurrentEquipSlot.Equal[Diplomacy Hands]}
+		{
+			if ${Me.Inventory[${DiploHands}](exists)}
+			{
+				Me.Inventory[${DiploHands}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploHeld}].CurrentEquipSlot.Equal[Diplomacy Held Item]}
+		{
+			if ${Me.Inventory[${DiploHeld}](exists)}
+			{
+				Me.Inventory[${DiploHeld}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploBelt}].CurrentEquipSlot.Equal[Diplomacy Waist]}
+		{
+			if ${Me.Inventory[${DiploBelt}](exists)}
+			{
+				Me.Inventory[${DiploBelt}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploBoots}].CurrentEquipSlot.Equal[Diplomacy Feet]}
+		{
+			if ${Me.Inventory[${DiploBoots}](exists)}
+			{
+				Me.Inventory[${DiploBoots}]:Equip
+			}
+		}
+		if !${Me.Inventory[${DiploLegs}].CurrentEquipSlot.Equal[Diplomacy Legs]}
+		{
+			if ${Me.Inventory[${DiploLegs}](exists)}
+			{
+				Me.Inventory[${DiploLegs}]:Equip
+			}
+		}
 	}
-	
-	
+
 	;============================
 	/* Load Variables From XML */
 	;============================
 	method XMLLoad(int di, bool debug)
 	{
-		;Load Lavish Settings 
+		;Load Lavish Settings
 
 		This:LS
 
@@ -319,7 +399,7 @@ objectdef obj_diplogear
 		DiploLeftRing:Set[${GearSet_ssr.FindSetting[DiploLeftRing_${di}]}]
 		DiploRightRing:Set[${GearSet_ssr.FindSetting[DiploRightRing_${di}]}]
 		DiploLegs:Set[${GearSet_ssr.FindSetting[DiploLegs_${di}]}]
-	
+
 	}
 
 	;============================
@@ -330,12 +410,12 @@ objectdef obj_diplogear
 		LavishSettings[DiploGear]:Clear
 		LavishSettings:AddSet[DiploGear]
 		LavishSettings[DiploGear]:AddSet[GearSet]
-		LavishSettings[DiploGear]:Import[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_DiploGear_${Me.FName}.xml]	
+		LavishSettings[DiploGear]:Import[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_DiploGear_${Me.FName}.xml]
 		GearSet_ssr:Set[${LavishSettings[DiploGear].FindSet[GearSet]}]
 	}
 	method SSR()
 	{
-		
+
 	}
 
 	;============================
@@ -343,7 +423,7 @@ objectdef obj_diplogear
 	;============================
 	method XMLSave(int di, bool debug)
 	{
-		;Load Lavish Settings 
+		;Load Lavish Settings
 
 		This:LS
 
@@ -373,43 +453,43 @@ objectdef obj_diplogear
 
 function(global):int ConvertPresence(string Presence)
 {
-		switch ${Presence}
-			{
-			case 1
-				Return 1
-			case Merchants
-				Return 1
-			case 2
-				Return 2
-			case Academics
-				Return 2
-			case 3
-				Return 3
-			case Outsiders
-				Return 3
-			case 4
-				Return 4
-			case Domestics
-				Return 4
-			case 5
-				Return 5
-			case Soldiers
-				Return 5
-			case 6
-				Return 6
-			case Nobles
-				Return 6
-			case 7
-				Return 7
-			case Craftsmen
-				Return 7
-			case 8
-				Return 8
-			case Clergy
-				Return 8
-			default
-				Return 0
-			}
+	switch ${Presence}
+	{
+	case 1
+		Return 1
+	case Merchants
+		Return 1
+	case 2
+		Return 2
+	case Academics
+		Return 2
+	case 3
+		Return 3
+	case Outsiders
+		Return 3
+	case 4
+		Return 4
+	case Domestics
+		Return 4
+	case 5
+		Return 5
+	case Soldiers
+		Return 5
+	case 6
+		Return 6
+	case Nobles
+		Return 6
+	case 7
+		Return 7
+	case Craftsmen
+		Return 7
+	case 8
+		Return 8
+	case Clergy
+		Return 8
+	default
+		Return 0
+	}
 }
 function(global):string PresenceNeeded()
 {
@@ -420,26 +500,26 @@ function(global):string PresenceNeeded()
 		{
 			switch ${Dialog[Civic Diplomacy,${i}].PresenceRequiredType}
 			{
-				case Academic Presence
-					Return Academics
-				case Merchant Presence
-					Return Merchants
-				case Outsider Presence
-					Return Outsiders
-				case Domestic Presence
-					Return Domestics
-				case Soldier Presence
-					Return Soldiers
-				case Noble Presence
-					Return Nobles
-				case Craftsmen Presence
-					Return Craftsmen
-				case Crafter Presence
-					Return Craftsmen
-				case Clergy Presence
-					Return Clergy			
-				Default
-					Return PresenceNotFound
+			case Academic Presence
+				Return Academics
+			case Merchant Presence
+				Return Merchants
+			case Outsider Presence
+				Return Outsiders
+			case Domestic Presence
+				Return Domestics
+			case Soldier Presence
+				Return Soldiers
+			case Noble Presence
+				Return Nobles
+			case Craftsmen Presence
+				Return Craftsmen
+			case Crafter Presence
+				Return Craftsmen
+			case Clergy Presence
+				Return Clergy
+			Default
+				Return PresenceNotFound
 			}
 		}
 	}
@@ -449,29 +529,32 @@ function(global):string PresenceNeeded()
 		{
 			switch ${Dialog[General,${i}].PresenceRequiredType}
 			{
-				case Academic Presence
-					Return Academics
-				case Merchant Presence
-					Return Merchants
-				case Outsider Presence
-					Return Outsiders
-				case Domestic Presence
-					Return Domestics
-				case Soldier Presence
-					Return Soldiers
-				case Noble Presence
-					Return Nobles
-				case Craftsmen Presence
-					Return Craftsmen
-				case Crafter Presence
-					Return Craftsmen
-				case Clergy Presence
-					Return Clergy			
-				Default
-					Return PresenceNotFound
+			case Academic Presence
+				Return Academics
+			case Merchant Presence
+				Return Merchants
+			case Outsider Presence
+				Return Outsiders
+			case Domestic Presence
+				Return Domestics
+			case Soldier Presence
+				Return Soldiers
+			case Noble Presence
+				Return Nobles
+			case Craftsmen Presence
+				Return Craftsmen
+			case Crafter Presence
+				Return Craftsmen
+			case Clergy Presence
+				Return Clergy
+			Default
+				Return PresenceNotFound
 			}
 		}
 	}
 }
 
 variable(global) obj_diplogear obj_diplogear
+
+
+
