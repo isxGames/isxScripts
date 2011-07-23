@@ -9,24 +9,24 @@
 
 	**In your script call the following object with these commands, or type this in the console
 
-	Friends Methods(Things you can do)
+		Friends Methods(Things you can do)
 		obj_trash:Add[Name of Item]
 		obj_trash:Remove[Name of Item]
 		obj_trash:Populate[fieldName@frameName@TabName@TabControlName@WindowName]
 		obj_trash:Destroy
-	
+
 	Notes
 	____________________________________
-	**  You dont need to know how an object works to use it.  
+	**  You dont need to know how an object works to use it.
 	**  Objects are bits of code that perform specific functions.
 	**  This function specifically Destroys trash items from your inventory
 
 
 	Credits
 	____________________________________
- 	*  Created by mmoaddict
+	*  Created by mmoaddict
 	*  Special Thanks to Amadeus and Lax for all their work
-	
+
 */
 ;======================
 
@@ -38,29 +38,29 @@ objectdef obj_trash
 
 	variable settingsetref Trash_ssr
 
-;===================================================
-;===       Methods/Members to be Used           ====
-;===================================================
+	;===================================================
+	;===       Methods/Members to be Used           ====
+	;===================================================
 
 	method Add(string ItemName)
 	{
 		if ( ${ItemName.Length} > 1 )
-			{
+		{
 			echo adding ${ItemName}
 			This:LS
 			LavishSettings[Trash].FindSet[TrashList]:AddSetting[${ItemName}, ${ItemName}]
 			This:XMLSave
-			}
-			
+		}
+
 	}
 	method Remove(string ItemName)
 	{
 		if ( ${ItemName.Length} > 1 )
-			{
+		{
 			This:LS
 			Trash_ssr.FindSetting[${ItemName}]:Remove
 			This:XMLSave
-			}
+		}
 	}
 
 	method Populate(string UIElementXML)
@@ -71,10 +71,10 @@ objectdef obj_trash
 		Trash_ssr:GetSettingIterator[Iter]
 		UIElement[${UIElementXML}]:ClearItems
 		while ( ${Iter.Key(exists)} )
-			{
+		{
 			UIElement[${UIElementXML}]:AddItem[${Iter.Key}]
 			Iter:Next
-			}
+		}
 
 	}
 	method Destroy()
@@ -84,22 +84,22 @@ objectdef obj_trash
 		variable iterator Itera
 		Trash_ssr:GetSettingIterator[Itera]
 		while ( ${Itera.Key(exists)} )
+		{
+			if ${Me.Inventory[ExactName,${Itera.Key}](exists)}
 			{
-	    if ${Me.Inventory[ExactName,${Itera.Key}](exists)}
-	                {
-              		Me.Inventory[ExactName,${Itera.Key}]:Delete[ExactName,${Itera.Key}.Quantity]
-              		}
-			Itera:Next
+				Me.Inventory[ExactName,${Itera.Key}]:Delete[ExactName,${Itera.Key}.Quantity]
 			}
+			Itera:Next
+		}
 
 	}
 
 
 
 
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 
 
 	;============================
@@ -110,7 +110,7 @@ objectdef obj_trash
 		LavishSettings[Trash]:Clear
 		LavishSettings:AddSet[Trash]
 		LavishSettings[Trash]:AddSet[TrashList]
-		LavishSettings[Trash]:Import[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_Trash.xml]	
+		LavishSettings[Trash]:Import[${LavishScript.CurrentDirectory}/scripts/vg_objects/save/Obj_Trash.xml]
 		Trash_ssr:Set[${LavishSettings[Trash].FindSet[TrashList]}]
 	}
 
@@ -125,3 +125,5 @@ objectdef obj_trash
 }
 
 variable(global) obj_trash obj_trash
+
+

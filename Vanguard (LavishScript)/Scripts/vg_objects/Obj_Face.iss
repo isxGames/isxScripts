@@ -10,9 +10,9 @@ objectdef obj_Face
 	variable int AngleDiff
 	variable int AngleDiffAbs
 
-;===================================================
-;===             User Routines                  ====
-;===================================================
+	;===================================================
+	;===             User Routines                  ====
+	;===================================================
 
 	;-----------------------------------------------
 	; Example:  Face:Pawn[${Me.DTarget.ID},FALSE]
@@ -31,11 +31,11 @@ objectdef obj_Face
 	;-----------------------------------------------
 	method Point(float X, float Y, float Z=0, bool fastFace=FALSE)
 	{
-		
+
 		This.DestX:Set[${X}]
 		This.DestY:Set[${Y}]
 		This.DestZ:Set[${Z}]
-		
+
 		;variable point3f aLoc
 		;aLoc:Set[${X},${Y},${Z}]
 		;This.DestX:Set[${aLoc.X}]
@@ -52,11 +52,11 @@ objectdef obj_Face
 	{
 		This.Facing:Set[FALSE]
 	}
-	
-	
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+
+
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 	method Initialize()
 	{
 		Event[OnFrame]:AttachAtom[This:GradualFace]
@@ -89,8 +89,8 @@ objectdef obj_Face
 		}
 
 		;echo FPS=${VG.FPS} Distance=${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}
-		
-		
+
+
 		;; When we are "close enough" to facing the point while at the point.
 		;; This grows the further away you are, and shrinks as you get closer.
 		;variable int Precision = ${Math.Rand[3]:Inc[5]}
@@ -114,9 +114,9 @@ objectdef obj_Face
 		}
 
 		variable int FPS = ${VG.FPS}
-		
+
 		;echo DistanceToTarget=${DistanceToTarget}
-		
+
 		if (${DistanceToTarget} < 125)
 		{
 			; do 100% of the turn
@@ -159,7 +159,7 @@ objectdef obj_Face
 			; do 10% of the turn
 			ChangeAmount:Set[.10]
 		}
-		
+
 		if ${VG.FPS}>=20 && ${VG.FPS}<=30
 		{
 			ChangeAmount:Inc[.3]
@@ -178,17 +178,17 @@ objectdef obj_Face
 			face ${This.RequiredHeading}
 			return
 		}
-		
+
 		if ${ChangeAmount}>1
 		{
 			;; face this angle now
 			face ${This.RequiredHeading}
 			return
 		}
-		
-		
+
+
 		;vgecho "TargetDistance=${DistanceToTarget}, ChangeAmount=${ChangeAmount}"
-		
+
 		;echo DistanceToTarget=${DistanceToTarget}, AngleDiff=${This.AngleDiff}, Precision=${Precision}, ChangeAmount=${ChangeAmount}
 		NewHeading:Set[${Math.Calc[${This.AngleDiff} * ${ChangeAmount}].Round}]
 
@@ -239,3 +239,5 @@ objectdef obj_Face
 		This.AngleDiffAbs:Set[${Math.Abs[${This.AngleDiff}]}]
 	}
 }
+
+

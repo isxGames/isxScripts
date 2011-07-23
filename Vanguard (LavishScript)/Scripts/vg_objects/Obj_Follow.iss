@@ -12,9 +12,9 @@ objectdef obj_Follow
 	variable bool doFollow = FALSE
 	variable bool isFollowing = FALSE
 
-;===================================================
-;===             User Routines                  ====
-;===================================================
+	;===================================================
+	;===             User Routines                  ====
+	;===================================================
 
 	;-----------------------------------------------
 	; Example:  Follow:FollowPawn[${Me.DTarget.ID},FALSE]
@@ -25,12 +25,12 @@ objectdef obj_Follow
 		{
 			return
 		}
-		
+
 		This.FollowID:Set[${PawnID}]
 		This:Start
 	}
-	
-	
+
+
 	;-----------------------------------------------
 	; Example:  Follow:Stop
 	;-----------------------------------------------
@@ -47,7 +47,7 @@ objectdef obj_Follow
 		}
 		This.doFollow:Set[FALSE]
 	}
-	
+
 	;-----------------------------------------------
 	; Example:  Follow:isFollowing
 	;-----------------------------------------------
@@ -60,10 +60,10 @@ objectdef obj_Follow
 		return FALSE
 	}
 
-	
-;===================================================
-;===     YOU MAY CALL THIS BUT PREFER NOT       ====
-;===================================================
+
+	;===================================================
+	;===     YOU MAY CALL THIS BUT PREFER NOT       ====
+	;===================================================
 	;-----------------------------------------------
 	; Example:  Follow:Start
 	;-----------------------------------------------
@@ -80,19 +80,19 @@ objectdef obj_Follow
 				{
 					return
 				}
-				
+
 				VGExecute /Follow
-				
+
 				;; update our location
 				variable point3f aLoc
 				aLoc:Set[${X},${Y},${Z}]
 				This.DestX:Set[${aLoc.X}]
 				This.DestY:Set[${aLoc.Y}]
 				This.DestZ:Set[${aLoc.Z}]
-				
+
 				;; update our Delay timer
 				This.Delay:Set[${Script.RunningTime}]
-				
+
 				;; say we are following
 				This.isFollowing:Set[TRUE]
 			}
@@ -101,10 +101,10 @@ objectdef obj_Follow
 		This.doFollow:Set[TRUE]
 	}
 
-	
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 	method Initialize()
 	{
 		Event[OnFrame]:AttachAtom[This:CheckFollow]
@@ -137,7 +137,7 @@ objectdef obj_Follow
 			This:Stop
 			return
 		}
-		
+
 		;; Must make sure we are following!
 		if !${This.isFollowing}
 		{
@@ -172,12 +172,13 @@ objectdef obj_Follow
 
 			;; update our delay timer
 			This.Delay:Set[${Script.RunningTime}]
-			
+
 			;echo "FOLLOW:  isFollowing=${This.isFollowing}, doFollow=${This.doFollow}"
 		}
-		
+
 	}
 }
 
 
 variable obj_Follow obj_Follow
+
