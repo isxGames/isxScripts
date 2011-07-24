@@ -289,7 +289,7 @@ function GoDiploSomething()
 		;if !${dipisPaused} && ${Parlay.DialogPoints}==0 && !${Parlay.IsMyTurn} && ${Parlay.IsOpponentTurn} && !${ourTurn}
 		if !${dipisPaused} && ${Parlay.DialogPoints}==0
 		{
-			wait 20 ${Me.IsLooting}
+			wait 20 ${Me.IsLooting} || ${dipisPaused}
 			if ${Loot} && ${Me.IsLooting}
 			{
 				Loot:LootAll
@@ -298,8 +298,13 @@ function GoDiploSomething()
 			Parlay:Continue
 			waitframe
 			VGExecute /cleartargets
-			wait 10
+			wait 10 ${dipisPaused}
 		}
+	}
+	else
+	{
+		;; make sure we set ourTurn on
+		ourTurn:Set[TRUE]
 	}
 }
 
@@ -319,6 +324,8 @@ function SelectNextNPC()
 		if !${dipNPCs[${curNPC}].Name.Equal["Empty"]}
 		{
 			EchoIt "NPC Selected: [${curNPC}] ${dipNPCs[${curNPC}].Name}"
+			;; this is here to allow time for the parlays to reset
+			wait 20 ${dipisPaused}
 			return
 		}
 	}
@@ -342,12 +349,46 @@ function MoveToNPC()
 			returnvalue:Set[GOOD]
 			isMoving:Set[TRUE]
 
+			;; we will manually move closer to target if already in range
+			if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>8 && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}<15
+			{
+				if ${Pawn[id,${dipNPCs[${curNPC}].ID}].HaveLineOfSightTo}
+				{
+					EchoIt "Manually moving to target"
+					call FaceTarget
+					isMoving:Set[FALSE]
+					VG:ExecBinding[moveforward]
+					do
+					{
+						face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
+						if ${endScript}
+						{
+							VG:ExecBinding[moveforward, release]
+							isMoving:Set[FALSE]
+							return
+						}
+					}
+					while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
+					VG:ExecBinding[moveforward, release]
+					EchoIt "Successful move to ${dipNPCs[${curNPC}].Name}"
+					return
+				}
+			}
+			
 			;; move to NPC if we can target
 			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
 			{
 				EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
 				call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
 				returnvalue:Set[${Return}]
+				if ${returnvalue.Equal[NO MAP]}
+				{
+					;; make sure we get on the map
+					call dipnav.MoveToMappedArea
+					VG:ExecBinding[moveforward, release]
+					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
+					returnvalue:Set[${Return}]
+				}
 			}
 			;; move to last known XYZ location if we can not target the NPC
 			elseif !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
@@ -355,6 +396,14 @@ function MoveToNPC()
 				EchoIt "Starting movement routine via last known XYZ location with distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
 				call dipnav.MovetoXYZ ${dipNPCs[${curNPC}].X} ${dipNPCs[${curNPC}].Y} ${dipNPCs[${curNPC}].Z}
 				returnvalue:Set[${Return}]
+				if ${returnvalue.Equal[NO MAP]}
+				{
+					;; make sure we get on the map
+					call dipnav.MoveToMappedArea
+					VG:ExecBinding[moveforward, release]
+					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
+					returnvalue:Set[${Return}]
+				}
 			}
 			
 			;; NPC might have moved so let's try moving closer
@@ -363,6 +412,14 @@ function MoveToNPC()
 				EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
 				call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
 				returnvalue:Set[${Return}]
+				if ${returnvalue.Equal[NO MAP]}
+				{
+					;; make sure we get on the map
+					call dipnav.MoveToMappedArea
+					VG:ExecBinding[moveforward, release]
+					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
+					returnvalue:Set[${Return}]
+				}
 			}
 			
 			;; We reached our destination
@@ -372,6 +429,7 @@ function MoveToNPC()
 			}
 			elseif ${returnvalue.Equal[NO MAP]}
 			{
+				vgecho "Not on map"
 				EchoIt "Not on mapped area, moving back to map"
 				call dipnav.MoveToMappedArea
 				VG:ExecBinding[moveforward, release]
@@ -541,7 +599,7 @@ function SelectParlay()
 			{
 				Dialog[${genorciv},${selectedConv}]:Select
 				EchoIt "Selecting ${genorciv}: ${selectedConv} ${currentParleyType}"
-				wait 50 ${VG.IsInParlay}
+				wait 50 ${VG.IsInParlay} || ${dipisPaused}
 			}
 			elseif ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
 			{
@@ -553,7 +611,8 @@ function SelectParlay()
 	{
 		EchoIt "No Available parleys, setting 'needNewNPC'"
 		needNewNPC:Toggle
-		wait 30
+		;; this is here to reduce the running between two NPCs
+		wait 75 ${dipisPaused}
 	}
 }
 
@@ -800,7 +859,7 @@ function DoParleyCard()
 	;if ${cardplay}>0 && ${Parlay.Status}<10
 	if ${cardplay}>0
 	{
-		echo "Playing Card:  ${Strategy[${cardplay}].Name}"
+		EchoIt "Playing Card: ${Strategy[${cardplay}].Name}"
 		Strategy[${cardplay}]:Play
 	}
 	else
@@ -1210,6 +1269,7 @@ atom(global) dipPause()
 atom(global) DipEnd()
 {
 	EchoIt "DipEnd atom called."
+	dipisPaused:Set[TRUE]
 	endScript:Set[TRUE]
 	isMoving:Set[FALSE]
 	VG:ExecBinding[moveforward,release]	
