@@ -52,6 +52,8 @@ variable bool doLootAll = FALSE
 variable bool doFullThrottle = TRUE
 variable bool doSprint = FALSE
 variable int Speed = 100
+variable string CurrentChunk
+
 
 ;;Attack
 variable bool doDespoil = TRUE
@@ -300,13 +302,100 @@ function main()
 			Move:Stop
 			wait 2
 		}
-		if ${doSprint}
+		call SprintCheck
+	}
+}
+
+;===================================================
+;===           SPRINT SUB-ROUTINE               ====
+;===    always on unless we are on a mount      ====
+;===================================================
+function SprintCheck()
+{
+	if ${doSprint}
+	{
+		;; if we are casting then
+		if ${Me.IsCasting}
+		{
+			if ${Me.Casting.Equal[Summon Mount]} || ${Me.Casting.Equal[Summon Hound]}
+			{
+				;; turn off sprinting
+				if ${Me.IsSprinting}
+				{
+					Me:Sprint[${Speed}]
+					waitframe
+					;vgecho "Sprinting is OFF : ${Me.IsSprinting}"
+				}
+			
+				;; wait until we are done casting
+				while ${Me.Casting.Equal[Summon Mount]} || ${Me.Casting.Equal[Summon Hound]}
+				{
+					waitframe
+				}
+				return
+			}
+		}
+		;; briefly pause if we chunked
+		call WeChunked
+		;; turn off sprinting
+		if ${Pawn[me].IsMounted}
+		{
+			if ${Me.IsSprinting}
+			{
+				Me:Sprint[${Speed}]
+				waitframe
+				;vgecho "Sprinting is OFF : ${Me.IsSprinting}"
+				return
+			}
+		}
+		;; turn on sprinting
+		if !${Pawn[me].IsMounted}
 		{
 			if !${Me.IsSprinting}
 			{
 				Me:Sprint[${Speed}]
+				waitframe
+				;vgecho "Sprinting is ON : ${Me.IsSprinting}"
+				return
 			}
 		}
+	}
+}
+
+;===================================================
+;===          WE CHUNKED SUB-ROUTINE            ====
+;===       Global Cooldown after chunkng        ====
+;===================================================
+function WeChunked()
+{
+	;; have we chunked?  
+	while !${CurrentChunk.Equal[${Me.Chunk}]}
+	{
+		wait 5
+		call GlobalRecovery
+		CurrentChunk:Set[${Me.Chunk}]
+	}
+}
+
+;===================================================
+;===       GLOBAL RECOVERY SUB-ROUTINE          ====
+;===================================================
+function GlobalRecovery()
+{
+	wait 5
+	while ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+	{
+	}
+}
+
+;===================================================
+;===       I AM CASTING SUB-ROUTINE             ====
+;===================================================
+function MeIsCasting()
+{
+	wait 5
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
 	}
 }
 
@@ -335,7 +424,7 @@ function MainRoutines()
 	call GroupInviteAccept
 	
 	;; Follow our Tank
-	call Follow
+	;call Follow
 
 	;; Sweet, repair our equipment whether we need to or not
 	call AutoRepair
@@ -1224,6 +1313,10 @@ atom(script) UpdateDisplay()
 		return
 	}
 	NextUpdateDisplay:Set[${Script.RunningTime}]
+	
+	;; Follow our Tank
+	call Follow
+
 	
 	;; things we want to do during combat
 	if ${Me.InCombat} && !${Me.Target.IsDead}

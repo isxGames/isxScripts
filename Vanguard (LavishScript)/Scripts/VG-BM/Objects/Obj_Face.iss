@@ -31,11 +31,16 @@ objectdef obj_Face
 	;-----------------------------------------------
 	method Point(float X, float Y, float Z=0, bool fastFace=FALSE)
 	{
-		variable point3f aLoc
-		aLoc:Set[${X},${Y},${Z}]
-		This.DestX:Set[${aLoc.X}]
-		This.DestY:Set[${aLoc.Y}]
-		This.DestZ:Set[${aLoc.Z}]
+		
+		This.DestX:Set[${X}]
+		This.DestY:Set[${Y}]
+		This.DestZ:Set[${Z}]
+		
+		;variable point3f aLoc
+		;aLoc:Set[${X},${Y},${Z}]
+		;This.DestX:Set[${aLoc.X}]
+		;This.DestY:Set[${aLoc.Y}]
+		;This.DestZ:Set[${aLoc.Z}]
 		This.ImmediateFace:Set[${fastFace}]
 		This:FaceSlow
 	}
@@ -83,10 +88,13 @@ objectdef obj_Face
 			return
 		}
 
+		;echo FPS=${VG.FPS} Distance=${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}
+		
+		
 		;; When we are "close enough" to facing the point while at the point.
 		;; This grows the further away you are, and shrinks as you get closer.
-		variable int Precision = ${Math.Rand[3]:Inc[5]}
-		;variable int Precision = 1
+		;variable int Precision = ${Math.Rand[3]:Inc[5]}
+		variable int Precision = 5
 		variable float ChangeAmount = 0.1
 
 		;; The amount to turn, in percents.
@@ -94,7 +102,8 @@ objectdef obj_Face
 		variable int MyHeading
 		variable float DistanceToTarget
 		MyHeading:Set[${Me.Heading}]
-		DistanceToTarget:Set[${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}]
+		DistanceToTarget:Set[${Math.Distance[${Me.X}, ${Me.Y}, ${This.DestX}, ${This.DestY}]}]
+		;DistanceToTarget:Set[${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}]
 		This:CalcHeadingToPoint
 		This:CalcRelativeAngle
 		if ${This.AngleDiffAbs} <= ${Precision}
@@ -104,88 +113,81 @@ objectdef obj_Face
 			return
 		}
 
+		variable int FPS = ${VG.FPS}
 		
-		if (${DistanceToTarget} < 1000)
+		;echo DistanceToTarget=${DistanceToTarget}
+		
+		if (${DistanceToTarget} < 125)
 		{
-			; do 30-100% of the turn
+			; do 100% of the turn
+			face ${This.RequiredHeading}
+			echo Facing Directly
+			return
+		}
+		elseif (${DistanceToTarget} < 250)
+		{
+			; do 50% of the turn
+			ChangeAmount:Set[.5]
+		}
+		elseif (${DistanceToTarget} < 500)
+		{
+			; do 35% of the turn
+			ChangeAmount:Set[.35]
+		}
+		elseif (${DistanceToTarget} < 1000)
+		{
+			; do 30% of the turn
 			ChangeAmount:Set[.3]
 		}
 		elseif (${DistanceToTarget} < 1500)
 		{
-			; do 25-95%
+			; do 25% of the turn
 			ChangeAmount:Set[.25]}]
 		}
 		elseif (${DistanceToTarget} < 2000)
 		{
-			; do 20-90% of the turn
+			; do 20% of the turn
 			ChangeAmount:Set[.2]
 		}
 		elseif (${DistanceToTarget} < 2500)
 		{
-			; do 15-85% of the turn
+			; do 15% of the turn
 			ChangeAmount:Set[.15]
 		}
-		
-
-		;; Overide if our fps is way to slow
-		if ${VG.FPS}<10
+		elseif (${DistanceToTarget} < 3000)
 		{
-			ChangeAmount:Inc[.2]
+			; do 10% of the turn
+			ChangeAmount:Set[.10]
 		}
 		
-		;; Overide if our fps is way to slow
-		if ${VG.FPS}<8
+		if ${VG.FPS}>=20 && ${VG.FPS}<=30
 		{
-			ChangeAmount:Inc[.2]
+			ChangeAmount:Inc[.3]
+		}
+		elseif ${VG.FPS}>=15 && ${VG.FPS}<20
+		{
+			ChangeAmount:Inc[.4]
+		}
+		elseif ${VG.FPS}>=10 && ${VG.FPS}<15
+		{
+			ChangeAmount:Inc[.5]
+		}
+		elseif ${VG.FPS}<10
+		{
+			;; face this angle now
+			face ${This.RequiredHeading}
+			return
 		}
 		
-		;; Overide if our fps is way to slow
-		if ${VG.FPS}<6
+		if ${ChangeAmount}>1
 		{
-			ChangeAmount:Inc[.2]
-		}
-		
-		;; Overide if our fps is way to slow
-		if ${VG.FPS}<4
-		{
-			ChangeAmount:Inc[.1]
+			;; face this angle now
+			face ${This.RequiredHeading}
+			return
 		}
 		
 		
-		
-		
-		
-		
-/*		
-		if (${DistanceToTarget} < 8) && (${This.AngleDiff} < 30)
-		{
-			; If we're really close to the location, and our angle isn't excessive, do between 90 and 100% of it
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[10]:Inc[90]} / 100.0]}]
-			echo 1-ChangeAmount=${ChangeAmount}
-		}
-		elseif (${DistanceToTarget} < 10)
-		{
-			; If we're really close to the location, do 50-65% of it.  This avoids endlessly circling the target.
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[16]:Inc[50]} / 100.0]}]
-			echo 2-ChangeAmount=${ChangeAmount}
-		}
-		elseif (${DistanceToTarget} < 25) && (${This.AngleDiff} < 40)
-		{
-			; If we're really close to the location, and our angle isn't excessive, do 60-70% of it
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[60]} / 100.0]}]
-			echo 3-ChangeAmount=${ChangeAmount}
-		}
-		elseif (${DistanceToTarget} > 40) && (${This.AngleDiff} > 100)
-		{
-			; If we're farther away, and we have a large angle, do 30-40% of it
-			Precision:Set[${Math.Rand[10]:Inc[10]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[30]} / 100.0]}]
-			echo 4-ChangeAmount=${ChangeAmount}
-		}
-*/
+		;vgecho "TargetDistance=${DistanceToTarget}, ChangeAmount=${ChangeAmount}"
 		
 		;echo DistanceToTarget=${DistanceToTarget}, AngleDiff=${This.AngleDiff}, Precision=${Precision}, ChangeAmount=${ChangeAmount}
 		NewHeading:Set[${Math.Calc[${This.AngleDiff} * ${ChangeAmount}].Round}]
