@@ -3,56 +3,42 @@
 ;===================================================
 function Follow()
 {
-	if ${doFollow}
+	if ${doFollow} && !${isPaused}
 	{
-		if !${Me.InCombat}
+		if ${Pawn[name,${FollowName}](exists)}
 		{
-			if ${Pawn[name,${FollowName}](exists)}
+			if ${Pawn[name,${FollowName}].Distance}>10
 			{
-				if ${Pawn[name,${FollowName}].Distance}>7 && ${Pawn[name,${FollowName}].Distance}<100
+				variable bool WeAreNotMoving = TRUE
+				while !${isPaused} && ${Pawn[name,${FollowName}](exists)} && ${Pawn[name,${FollowName}].Distance}>=4 && ${Pawn[name,${FollowName}].Distance}<45
 				{
-					Face:Pawn[${Pawn[id,${FollowID}].ID},FALSE]
-					Move:Pawn[${Pawn[id,${FollowID}].ID},5]
+					Pawn[name,${FollowName}]:Face
+					VG:ExecBinding[moveforward]
+					WeAreNotMoving:Set[FALSE]
 				}
-				else
+				;; if we are not moving then start moving
+				if !${WeAreNotMoving}
 				{
-					Move:Stop
+					VG:ExecBinding[moveforward,release]
 				}
 			}
 		}
 
-		;; Call this once, if pawn is moving then call it many times
-		;; To set a distance to stop at... use the following example:  Move:MovePawn[${Pawn[id,${FollowID}].ID},3]
-		
 		if ${Me.InCombat} && ${Me.Target(exists)} && ${Me.TargetHealth}<95
 		{	
-			Face:Pawn[${Me.Target.ID}]
-			if ${Me.Target.Distance}>10
-			{
-				Move:Pawn[${Me.Target.ID},5]
-			}
-			elseif ${Me.Target.Distance.Int}<=1
-			{
-				VGExecute /walk
-				while ${Me.Target(exists)} && ${Me.Target.Distance.Int}<=1
-				{
-					Face:Pawn[${Me.Target.ID}]
-					VG:ExecBinding[movebackward]
-				}
-				VG:ExecBinding[movebackward,release]
-				VGExecute /run
-			}
-			else
-			{
-				;; call this once or as many times you want
-				Move:Stop
-			}
+			;Face:Pawn[${Me.Target.ID}]
+			;if ${Me.Target.Distance.Int}<=1
+			;{
+			;	VGExecute /walk
+			;	while ${Me.Target(exists)} && ${Me.Target.Distance.Int}<=1
+			;	{
+			;		Face:Pawn[${Me.Target.ID}]
+			;		VG:ExecBinding[movebackward]
+			;	}
+			;	VG:ExecBinding[movebackward,release]
+			;	VGExecute /run
+			;}
 		}
-		;elseif !${Me.InCombat} && ${Pawn[id,${FollowID}].Distance}>10
-		;{
-		;	Face:Pawn[${Pawn[id,${FollowID}].ID},FALSE]
-		;	Move:Pawn[${Pawn[id,${FollowID}].ID},5]
-		;}
 	}
 	else
 	{
