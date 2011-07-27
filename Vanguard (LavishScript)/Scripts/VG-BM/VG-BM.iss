@@ -133,6 +133,17 @@ variable bool doTimedDeaggro = TRUE
 ;===================================================
 function main()
 {
+	;-------------------------------------------
+	; Load ISXVG or exit script
+	;-------------------------------------------
+	ext -require isxvg
+	wait 100 ${ISXVG.IsReady}
+	if !${ISXVG.IsReady}
+	{
+		echo "Unable to load ISXVG, exiting script"
+		endscript vg-bm
+	}
+	wait 30 ${Me.Chunk(exists)}
 	EchoIt "Started VG-BM Script"
 
 	;; Set Tank based upon DTarget
@@ -424,7 +435,7 @@ function MainRoutines()
 	call GroupInviteAccept
 	
 	;; Follow our Tank
-	;call Follow
+	call Follow
 
 	;; Sweet, repair our equipment whether we need to or not
 	call AutoRepair
@@ -1315,7 +1326,7 @@ atom(script) UpdateDisplay()
 	NextUpdateDisplay:Set[${Script.RunningTime}]
 	
 	;; Follow our Tank
-	call Follow
+	;call Follow
 
 	
 	;; things we want to do during combat
