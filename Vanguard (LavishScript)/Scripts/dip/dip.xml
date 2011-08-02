@@ -704,7 +704,7 @@
 							<Width>80</Width>
 							<text>Save Gear</Text>
 							<OnLeftClick>
-								obj_diplogear:Save[${UIElement[diplogearCombo@Options@DipTabs@Diplo].Selection}]
+								obj_diplogear:Save[${UIElement[diplogearCombo@Options@DipTabs@Diplo].SelectedItem}]
 							</OnLeftClick>
 						</CommandButton>
 						<CommandButton Name="diplogearLoad" Template="VG.RedCommandButton">
@@ -715,7 +715,7 @@
 							<Width>80</Width>
 							<text>Load Gear</Text>
 							<OnLeftClick>
-								obj_diplogear:Load[${UIElement[diplogearCombo@Options@DipTabs@Diplo].Selection}]
+								obj_diplogear:Load[${UIElement[diplogearCombo@Options@DipTabs@Diplo].SelectedItem}]
 							</OnLeftClick>
 						</CommandButton>
 					</Tab>

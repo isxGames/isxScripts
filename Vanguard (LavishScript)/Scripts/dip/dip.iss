@@ -342,52 +342,54 @@ function MoveToNPC()
 	;; move only to valid NPC
 	if !${dipisPaused} && ${curNPC} && !${dipNPCs[${curNPC}].Name.Equal["Empty"]}
 	{
-		;; move closer if NPC's last location is more than 9 meters away
-		if !${dipisPaused} && ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}>900
+		;; move closer if NPC's last location
+		if !${dipisPaused}
 		{
 			;; set our return value to GOOD and we are moving
 			returnvalue:Set[GOOD]
 			isMoving:Set[TRUE]
-
-			;; we will manually move closer to target if already in range
-			if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>8 && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}<15
-			{
-				if ${Pawn[id,${dipNPCs[${curNPC}].ID}].HaveLineOfSightTo}
-				{
-					EchoIt "Manually moving to target"
-					call FaceTarget
-					isMoving:Set[FALSE]
-					VG:ExecBinding[moveforward]
-					do
-					{
-						face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
-						if ${endScript}
-						{
-							VG:ExecBinding[moveforward, release]
-							isMoving:Set[FALSE]
-							return
-						}
-					}
-					while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
-					VG:ExecBinding[moveforward, release]
-					EchoIt "Successful move to ${dipNPCs[${curNPC}].Name}"
-					return
-				}
-			}
 			
 			;; move to NPC if we can target
 			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
 			{
-				EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
-				call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
-				returnvalue:Set[${Return}]
-				if ${returnvalue.Equal[NO MAP]}
+				if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8
 				{
-					;; make sure we get on the map
-					call dipnav.MoveToMappedArea
-					VG:ExecBinding[moveforward, release]
+					EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
 					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
 					returnvalue:Set[${Return}]
+					if ${returnvalue.Equal[NO MAP]}
+					{
+						;; we will manually move closer to target if already in range
+						if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8 && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}<15
+						{
+							if ${Pawn[id,${dipNPCs[${curNPC}].ID}].HaveLineOfSightTo}
+							{
+								EchoIt "Manually moving to target"
+								call FaceTarget
+								isMoving:Set[FALSE]
+								VG:ExecBinding[moveforward]
+								do
+								{
+									face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
+									if ${endScript}
+									{
+										VG:ExecBinding[moveforward, release]
+										isMoving:Set[FALSE]
+										return
+									}
+								}
+								while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
+								VG:ExecBinding[moveforward, release]
+								EchoIt "Successful move to ${dipNPCs[${curNPC}].Name}"
+								return
+							}
+						}
+						;; make sure we get on the map
+						call dipnav.MoveToMappedArea
+						VG:ExecBinding[moveforward, release]
+						call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
+						returnvalue:Set[${Return}]
+					}
 				}
 			}
 			;; move to last known XYZ location if we can not target the NPC
@@ -407,7 +409,7 @@ function MoveToNPC()
 			}
 			
 			;; NPC might have moved so let's try moving closer
-			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)} && ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}>900
+			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)} && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8
 			{
 				EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
 				call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
@@ -450,7 +452,7 @@ function TargetNPC()
 	{
 		EchoIt "Targeting ${dipNPCs[${curNPC}].NameID}"
 		Pawn[id,${dipNPCs[${curNPC}].ID}]:Target
-		waitframe
+		wait 5
 		call FaceTarget
 	}
 }
@@ -483,7 +485,7 @@ function ChangeEquipment()
 		EchoIt "Equiped gear: ${returnvalue}"
 		EchoIt "ReAssessing ${Me.Target.Name}"
 		Parlay:AssessTarget
-		wait 15
+		wait 7
 		doChangeEquipment:Set[FALSE]
 	}
 }
@@ -503,7 +505,7 @@ function SelectParlay()
 	call FaceTarget
 	EchoIt "Assessing: ${Me.Target.Name}"
 	Parlay:AssessTarget[${dipNPCs[${curNPC}].NameID}]
-	wait 10
+	wait 7
 	variable int selectedConv = 0
 	variable int convOptions = 1
 	variable int i = 1
@@ -511,6 +513,8 @@ function SelectParlay()
 	variable int diplevel
 	while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
 	{
+		;echo General[ ${convOptions}]: ${Dialog[General,${convOptions}].Text}
+		
 		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 		i:Set[1]
 		do
@@ -535,6 +539,8 @@ function SelectParlay()
 		convOptions:Set[1]
 		while ${convOptions} <= ${Dialog[Civic Diplomacy].ResponseCount} && !${selectedConv}
 		{
+			;echo Civic Diplomacy[ ${convOptions}]: ${Dialog[Civic Diplomacy,${convOptions}].Text}
+
 			diplevel:Set[${Dialog[Civic Diplomacy,${convOptions}].Text.Mid[${Dialog[Civic Diplomacy,${convOptions}].Text.Find[dkblue>]},${Dialog[Civic Diplomacy,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 			i:Set[1]
 			do
@@ -583,16 +589,13 @@ function SelectParlay()
 			{
 				temp:Set[${temp}s]
 			}
+			
 			EchoIt "Presence Type = ${temp}"
 			EchoIt "Presence Need = ${Dialog[${genorciv},${selectedConv}].PresenceRequired}"
 			EchoIt "Presence Have = ${Me.Stat[Diplomacy,${temp}]}"
 			
-			;; go equip gear to increase your parlay
-			;if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} > ${Me.Stat[Diplomacy,${temp}]}
-			;{
-				doChangeEquipment:Set[TRUE]
-				call ChangeEquipment
-			;}
+			doChangeEquipment:Set[TRUE]
+			call ChangeEquipment
 			
 			;; start the parlay if we have enough presence
 			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} <= ${Me.Stat[Diplomacy,${temp}]}
@@ -1189,7 +1192,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 	}
 	if ${Text.Find["Presence has increased"]}
 	{
-		EchoIt "Presence increase"
+		EchoIt "${Text}"
 		if ${Text.Find["Domestic"]}
 		{
 			presDomestic:Inc
@@ -1513,12 +1516,12 @@ atom(script) EchoIt(string aText)
 
 function FaceTarget()
 {
-	variable int i = ${Math.Calc[20+${Math.Rand[8]}-${Math.Rand[16]}]}
+	variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
 	;; face only if target exists
 	if ${boolFace} && ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
 	{
 		CalculateAngles
-		if ${AngleDiffAbs} >= 90
+		if ${AngleDiffAbs} > 90
 		{
 			EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
 			VG:ExecBinding[turnright,release]
@@ -1526,18 +1529,25 @@ function FaceTarget()
 			if ${AngleDiff}>0
 			{
 				VG:ExecBinding[turnright]
+				while ${AngleDiff} > ${i}
+				{
+					CalculateAngles
+				}
+				VG:ExecBinding[turnright,release]
+				return
 			}
 			if ${AngleDiff}<0
 			{
 				VG:ExecBinding[turnleft]
-			}
-			while ${AngleDiffAbs} > ${i}
-			{
-				CalculateAngles
+				while ${AngleDiff} < ${i}
+				{
+					CalculateAngles
+				}
+				VG:ExecBinding[turnleft,release]
+				return
 			}
 			VG:ExecBinding[turnright,release]
 			VG:ExecBinding[turnleft,release]
-			;face ${Math.Calc[${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
 		}
 	}
 }
