@@ -927,7 +927,8 @@ objectdef  bnav
 				}
 				;vgecho [${bpathindex}] Distance to target is ${Math.Distance[${Me.X},${Me.Y},${Pawn[id,${aTarget}].X},${Pawn[id,${aTarget}].Y}]}
 			}
-			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Math.Distance[${Me.X},${Me.Y},${Pawn[id,${aTarget}].X},${Pawn[id,${aTarget}].Y}]}>400
+			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Pawn[id,${aTarget}].Distance}>=8
+			;while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Math.Distance[${Me.X},${Me.Y},${Pawn[id,${aTarget}].X},${Pawn[id,${aTarget}].Y}]}>400
 
 			VG:ExecBinding[moveforward,release]
 
