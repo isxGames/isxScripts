@@ -69,8 +69,8 @@ variable string straferight=e
 ;===================================================
 ;===           Constant Declarations            ====
 ;===================================================
-#define RANGE_CLOSE 1
-#define RANGE_MAX 2
+#define RANGE_CLOSE 3
+#define RANGE_MAX 6
 #define RANGE_RANGED 3
 #define QUADRANT_ANY 0
 #define QUADRANT_BEHIND 1
@@ -2102,7 +2102,7 @@ function Combat(bool PVP=0)
 							elseif ${Actor[${KillTarget}].Target.ID}==${Me.ID}
 							{
 								;we have aggro, move to the maintank
-								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 1
+								call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 8
 								wait 2
 								do
 								{
@@ -2337,6 +2337,8 @@ function Combat(bool PVP=0)
 	avoidhate:Set[FALSE]
 	checkadds:Set[FALSE]
 
+	ISXEQ2:ClearAbilitiesCache
+	
 	gRtnCtr:Set[1]
 	do
 	{
@@ -2548,16 +2550,10 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			Debug:Echo["CheckPosition() :: NoAutoMovementInCombat ON"]
 			return
 		}
-		;Bad idea, what if we are checking position to cast in combat rez?
-		;if (!${Actor[${TID}](exists)} || ${Actor[${TID}].IsDead})
-		;{
-		;	Debug:Echo["CheckPosition() :: In combat, but current Target does not exist and/or is dead."]
-		;	return
-		;}
 	}
 
 	;lets wait if we're currently casting and we don't want to interupt
-	if ${Me.CastingSpell} && !${MainTank} && !${castwhilemoving}
+	if ${Me.CastingSpell} && !${castwhilemoving}
 	{
 		while ${Me.CastingSpell}
 		{
@@ -2651,7 +2647,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 				while ${Me.CastingSpell}
 			}
 
-			call FastMove ${HomeX} ${HomeZ} 3
+			call FastMove ${HomeX} ${HomeZ} 5
 			return
 		}
 	}
@@ -2690,16 +2686,6 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	}
 
 	;
-	;now lets first make sure we're not already there; is this really needed given previous check?!?
-	;
-	;if ${Math.Distance[${Me.ToActor.Loc},${destpoint}]}<3
-	;{
-	;	echo DEBUG::CheckPosition -
-	;	call CheckQuadrant ${TID} ${quadrant}
-	;	return ${Return}
-	;}
-
-	;
 	;if we didn't return already, we're too far away
 	;
 
@@ -2715,11 +2701,11 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	do
 	{
 		;lets check if our destination has changed significantly, if so update it
-		if ${Math.Distance[${destpoint},${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]}>4
+		if ${Math.Distance[${destpoint},${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]}>8
 			destpoint:Set[${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]
 
 		;echo DEBUG::CheckPosition - Currently not stuck, attempting FastMove to destination
-		call FastMove ${destpoint.X} ${destpoint.Z} 2
+		call FastMove ${destpoint.X} ${destpoint.Z} 8
 
 	}
 	while ${MoveCount:Inc}<4 && !${isstuck} && (${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange})
@@ -2728,8 +2714,8 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	;
 	;check quadrant due to fastmove precision
 	;
-	if ${quadrant}
-		call CheckQuadrant ${TID} ${quadrant}
+	;if ${quadrant}
+	;	call CheckQuadrant ${TID} ${quadrant}
 
 	;
 	;Final Positioning Tweaks
@@ -2783,7 +2769,14 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 	press -release ${backward}
 	press -release ${straferight}
 	press -release ${strafeleft}
-	face ${Actor[${TID}].X} ${Actor[${TID}].Z}
+	
+	;if melee is on we'll face the target if its killtarget
+	if ${Actor[${TID}](exists)} && ${KillTarget}==${TID} && ${Me.AutoAttackOn}
+	{
+		;echo DEBUG::CheckPosition - Facing KillTarget
+		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
+	}	
+	
 }
 
 function CheckQuadrant(uint TID, int quadrant)
@@ -2983,7 +2976,7 @@ function StrafeToLeft(uint TID, float destangle)
 		;set stuckstate to off
 		isstuck:Set[FALSE]
 		;attempt move
-		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 4
+		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 8
 		;if move to tank also returned stuck, we really stuck
 		if ${isstuck}
 			return STUCK
@@ -3099,7 +3092,7 @@ function StrafeToRight(uint TID, float destangle)
 		isstuck:Set[FALSE]
 
 		;attempt move to tank
-		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 4
+		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 8
 
 		;if move to tank also returned stuck, we really stuck
 		if ${isstuck}
@@ -3321,7 +3314,7 @@ function Pull(string npcclass)
 					if ${Target.Distance} > ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
 					{
 						;Debug:Echo["Moving within range for your pull spell or combat art..."]
-						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
+						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}]}
 					}
 					;; Check again....stupid moving mobs...
 					if ${Target.Distance} > ${Me.Ability[${PullSpell}].Range}
@@ -3800,10 +3793,10 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 		return "NOAUTOMOVEMENT"
 	}
 
-	if ${ScanRange} > 75
+	if ${ScanRange} > 40
 		MoveToRange:Set[${ScanRange}]
 	else
-		MoveToRange:Set[75]
+		MoveToRange:Set[40]
 
 	IsMoving:Set[TRUE]
 
@@ -3871,13 +3864,14 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 			if (${Script.RunningTime}-${xTimer}) > 500
 			{
 				press -hold ${strafeleft}
-				wait 8
+				wait 4
 				press -release ${strafeleft}
+				xDist:Set[${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}]
 
 				if ${Math.Calc[${SavDist}-${xDist}]} < 0.8
 				{
 					press -hold ${straferight}
-					wait 8
+					wait 4
 					press -release ${straferight}
 				}
 
@@ -4947,7 +4941,7 @@ function CheckBuffsOnce()
 
 	if ${Me.CastingSpell}
 	{
-		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel} to finish casting..."]
+		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel to finish casting..."]
 		do
 		{
 			waitframe
@@ -5551,7 +5545,7 @@ objectdef EQ2BotObj
 		{
 			case scout
 				AutoMelee:Set[${CharacterSet.FindSet[General Settings].FindSetting[Auto Melee,TRUE]}]
-				EngageDistance:Set[9]
+				EngageDistance:Set[12]
 				break
 
 			case fighter
