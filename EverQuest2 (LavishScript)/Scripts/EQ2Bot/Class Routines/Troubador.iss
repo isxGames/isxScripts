@@ -187,8 +187,8 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Bow_Attack]
-	SpellRange[1,1]:Set[250]
+	Action[1]:Set[AARhythm_Blade]
+	SpellRange[1,1]:Set[397]
 
 	Action[2]:Set[Combat_Buff]
 	SpellRange[2,1]:Set[155]
@@ -231,20 +231,22 @@ function Combat_Init()
 	Action[14]:Set[Nuke2]
 	SpellRange[14,1]:Set[61]
 
-	Action[15]:Set[AARhythm_Blade]
-	SpellRange[15,1]:Set[397]
 
-	Action[16]:Set[Stun]
-	SpellRange[16,1]:Set[190]
 
-	Action[17]:Set[Debuff2]
-	SpellRange[17,1]:Set[50]
-
-	Action[18]:Set[AAHarmonizing_Shot]
-	SpellRange[18,1]:Set[386]
-
-	Action[19]:Set[AAMessenger]
-	SpellRange[19,1]:Set[505]
+;	Action[1]:Set[Bow_Attack]
+;	SpellRange[1,1]:Set[250];
+;
+;	Action[16]:Set[Stun]
+;	SpellRange[16,1]:Set[190];
+;
+;	Action[17]:Set[Debuff2]
+;	SpellRange[17,1]:Set[50]
+;
+;	Action[18]:Set[AAHarmonizing_Shot]
+;	SpellRange[18,1]:Set[386]
+;
+;	Action[19]:Set[AAMessenger]
+;	SpellRange[19,1]:Set[505]
 }
 
 
@@ -393,58 +395,6 @@ function Combat_Routine(int xAction)
 	elseif ${BowAttacksMode}
 		range:Set[3]
 
-	if ${Actor[ID,${KillTarget}].Distance2D}>${Position.GetMeleeMaxRange[${TID}]} && !${Me.RangedAutoAttackOn}
-		EQ2Execute /auto 2
-	elseif ${Actor[ID,${KillTarget}].Distance2D}<${Position.GetMeleeMaxRange[${TID}]} && !${Me.AutoAttackOn}
-		EQ2Execute /auto 1
-
-	if ${JoustMode}
-	{
-		if ${JoustStatus}==0 && ${RangedAttackMode}
-		{
-			;We've changed to in from an out status.
-			RangedAttackMode:Set[0]
-			EQ2Execute /toggleautoattack
-
-			;if we're too far from killtarget, move in
-			if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]}
-			{
-				call CheckPosition 1 1
-				wait 15
-			}
-		}
-		elseif ${JoustStatus}==1 && ${RangedAttackMode}==0 && !${Me.Maintained[${SpellType[388]}](exists)} && !${Me.Maintained[${SpellType[387]}](exists)}
-		{
-			;We've changed to out from an in status.
-
-			;if aoe avoidance is up, use it
-			if ${Me.Ability[${SpellType[388]}].IsReady}
-			{
-				call CastSpellRange 388
-				if ${AnnounceMode} && ${Me.Maintained[${SpellType[388]}](exists)}
-				{
-					eq2execute /gsay BladeDance is up - 30 Seconds AoE Immunity for my group!
-				}
-			}
-			elseif ${Me.Ability[${SpellType[387]}].IsReady}
-				call CastSpellRange 387 0 1 0 ${KillTarget}
-			else
-			{
-				RangedAttackMode:Set[1]
-				EQ2Execute /togglerangedattack
-
-				;if we're not at our healer, lets move to him
-				call FindHealer
-
-				;echo Healer - ${return}
-				if ${Actor[${Return}].Distance}>2
-				{
-					call FastMove ${Actor[${return}].X} ${Actor[${return}].Z} 1
-					wait 15
-				}
-			}
-		}
-	}
 
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
@@ -472,12 +422,7 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 
-	if ${Actor[ID,${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${TID}]} && !${RangedAttackMode} && ${Actor[${MainAssist}].Distance}<=${MARange} &&  ${Math.Distance[MA.X, MA.Z, Target.X, Target.Z]}<=8  && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-	{
-		call CheckPosition 1 1 ${KillTarget}
-		if !${Me.AutoAttackOn}
-			EQ2Execute /auto 1
-	}
+
 	if ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
 	{
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
@@ -550,7 +495,7 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
 			call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 1
-			;return
+			return
 		}
 
 		; Long casting AoE - Good for setting off proc gear

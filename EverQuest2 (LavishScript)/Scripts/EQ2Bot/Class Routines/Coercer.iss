@@ -717,7 +717,7 @@ function RefreshPower()
 		}
 		while ${tempvar:Inc}<=24
 
-		if ${Me.Raid[${MemberLowestPower}].ToActor(exists) && ${Me.Raid[${MemberLowestPower}].ToActor.Distance}<30
+		if ${Me.Raid[${MemberLowestPower}].ToActor(exists)} && ${Me.Raid[${MemberLowestPower}].ToActor.Distance}<30
 		{	
 			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
 			eq2execute em Flow to ${Me.Raid[${tempvar}].Name}

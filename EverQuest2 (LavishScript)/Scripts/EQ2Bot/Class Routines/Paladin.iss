@@ -250,6 +250,13 @@ function Combat_Routine(int xAction)
 		else
 			spellthreshold:Set[3]
 
+		;Zealous Smite
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady} && !${Me.Maintained[${SpellType[505]}](exists)}
+		{
+			call CastSpellRange 505 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
 		;Consecrate
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[97]}].IsReady} && !${Me.Maintained[${SpellType[97]}](exists)}
 		{
@@ -445,6 +452,12 @@ function Combat_Routine(int xAction)
 			call CastSpellRange 152 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
+		;Zealous Smite
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady} && !${Me.Maintained[${SpellType[505]}](exists)}
+		{
+			call CastSpellRange 505 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
 		;Doom Judgement
 		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Me.Ability[${SpellType[94]}].IsReady} && !${Me.Maintained[${SpellType[94]}](exists)}
 		{
@@ -570,6 +583,7 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
+	
 	switch ${PostAction[${xAction}]}
 	{
 		default

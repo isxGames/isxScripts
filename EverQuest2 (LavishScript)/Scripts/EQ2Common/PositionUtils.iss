@@ -110,7 +110,7 @@ objectdef EQ2Position
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale}]}
 	}
 
-	member:float GetMeleeMaxRange(uint ActorID, float PercentMod = 0, float MeleeRange = 2)
+	member:float GetMeleeMaxRange(uint ActorID, float PercentMod = 0, float MeleeRange = 6)
 	{
 		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
 		MeleeRange:Set[${Math.Calc[${MeleeRange}*${PercentMod}]}]
@@ -121,13 +121,17 @@ objectdef EQ2Position
 	{
 		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
 		SpellRange:Set[${Math.Calc[${SpellRange}*${PercentMod}]}]
+		if ${SpellRange}<5
+			SpellRange:Set[5]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${SpellRange}]}
 	}
 
-	member:float GetCAMaxRange(uint ActorID, float PercentMod = 0, float CARange = 5)
+	member:float GetCAMaxRange(uint ActorID, float PercentMod = 0, float CARange = 6)
 	{
 		PercentMod:Set[${Math.Calc[(100+${PercentMod})/100]}]
 		CARange:Set[${Math.Calc[${CARange}*${PercentMod}]}]
+		if ${CARange}<5
+			CARange:Set[5]
 		return ${Math.Calc[${Actor[${ActorID}].CollisionRadius} * ${Actor[${ActorID}].CollisionScale} + ${CARange}]}
 	}
 

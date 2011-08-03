@@ -172,5 +172,28 @@
 		<Setting name="80,153">Flurry of Blades V</Setting>
 		<Setting name="80,0">Sleight of Hand</Setting>
 		<Setting name="80,95">Lucky Gambit VII</Setting>
+		<Setting name="81,250">Arctic Blast VI</Setting>
+		<Setting name="81,150">Flash of Steel VIII</Setting>
+		<Setting name="81,111">Razor Edge VI</Setting>
+		<Setting name="82,27">Avoid Blame VI</Setting>
+		<Setting name="82,154">Devious Blade V</Setting>
+		<Setting name="82,149">Flamboyant Strike IV</Setting>
+		<Setting name="83,181">Evade III</Setting>
+		<Setting name="83,292">Fancy Footwork VI</Setting>
+		<Setting name="84,96">Dashing Swathe VI</Setting>
+		<Setting name="84,110">Kidney Stab VII</Setting>
+		<Setting name="84,251">Storm of Steel III</Setting>
+		<Setting name="85,191">Double-Cross VII</Setting>
+		<Setting name="85,152">Hamstring VI</Setting>
+		<Setting name="85,130">Shanghai VIII</Setting>
+		<Setting name="86,235">Hangman's Noose VII</Setting>
+		<Setting name="86,101">Lung Puncture III</Setting>
+		<Setting name="87,161">Tease VI</Setting>
+		<Setting name="87,100">Viscerate VII</Setting>
+		<Setting name="88,354">Disarming Grin VI</Setting>
+		<Setting name="88,158">En Garde III</Setting>
+		<Setting name="88,151">Snap of the Wrist VII</Setting>
+		<Setting name="89,25">Bladeweaver VII</Setting>
+		<Setting name="89,291">Daring Advance VII</Setting>
 	</Set>
 </InnerSpaceSettings>

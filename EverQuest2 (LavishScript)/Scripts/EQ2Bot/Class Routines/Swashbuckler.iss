@@ -125,81 +125,82 @@ function Buff_Init()
 
 function Combat_Init()
 {
+	Action[1]:Set[AoE1]
+	SpellRange[1,1]:Set[95]
 
-	Action[1]:Set[Melee_Attack1]
-	SpellRange[1,1]:Set[150]
+	Action[2]:Set[AoE2]
+	SpellRange[2,1]:Set[96]
 
-	Action[2]:Set[Debuff1]
-	Power[2,1]:Set[20]
-	Power[2,2]:Set[100]
-	SpellRange[2,1]:Set[191]
+	Action[3]:Set[Melee_Attack1]
+	SpellRange[3,1]:Set[150]
 
-	Action[3]:Set[AoE1]
-	SpellRange[3,1]:Set[95]
+;	Action[2]:Set[Debuff1]
+;	Power[2,1]:Set[20]
+;	Power[2,2]:Set[100]
+;	SpellRange[2,1]:Set[191]
 
-	Action[4]:Set[AoE2]
-	SpellRange[4,1]:Set[96]
+	Action[4]:Set[Front_Attack]
+	SpellRange[4,1]:Set[120]
 
-	Action[5]:Set[AA_WalkthePlank]
-	SpellRange[5,1]:Set[385]
+	Action[5]:Set[Melee_Attack2]
+	SpellRange[5,1]:Set[151]
 
-	Action[6]:Set[Rear_Attack1]
-	SpellRange[6,1]:Set[101]
+	Action[6]:Set[Melee_Attack3]
+	SpellRange[6,1]:Set[152]
 
-	Action[7]:Set[Rear_Attack2]
-	SpellRange[7,1]:Set[100]
+	Action[7]:Set[Melee_Attack4]
+	SpellRange[7,1]:Set[153]
 
-	Action[8]:Set[Debuff2]
-	Power[8,1]:Set[20]
-	Power[8,2]:Set[100]
-	SpellRange[8,1]:Set[190]
+	Action[8]:Set[Melee_Attack5]
+	SpellRange[8,1]:Set[154]
 
-	Action[9]:Set[Mastery]
+	Action[9]:Set[Melee_Attack6]
+	SpellRange[9,1]:Set[149]
 
-	Action[10]:Set[Flank_Attack1]
-	SpellRange[10,1]:Set[110]
+	Action[10]:Set[AA_WalkthePlank]
+	SpellRange[10,1]:Set[385]
 
-	Action[11]:Set[Flank_Attack2]
-	SpellRange[11,1]:Set[111]
+	Action[11]:Set[Rear_Attack1]
+	SpellRange[11,1]:Set[101]
 
-	Action[12]:Set[Taunt]
-	Power[12,1]:Set[20]
-	Power[12,2]:Set[100]
-	MobHealth[12,1]:Set[10]
-	MobHealth[12,2]:Set[100]
-	SpellRange[12,1]:Set[160]
+	Action[12]:Set[Rear_Attack2]
+	SpellRange[12,1]:Set[100]
 
-	Action[13]:Set[Front_Attack]
-	SpellRange[13,1]:Set[120]
+;	Action[8]:Set[Debuff2]
+;	Power[8,1]:Set[20]
+;	Power[8,2]:Set[100]
+;	SpellRange[8,1]:Set[190]
 
-	Action[14]:Set[Melee_Attack2]
-	SpellRange[14,1]:Set[151]
+	Action[13]:Set[Mastery]
 
-	Action[15]:Set[Melee_Attack3]
-	SpellRange[15,1]:Set[152]
+	Action[14]:Set[Flank_Attack1]
+	SpellRange[14,1]:Set[110]
 
-	Action[16]:Set[Melee_Attack4]
-	SpellRange[16,1]:Set[153]
+	Action[15]:Set[Flank_Attack2]
+	SpellRange[15,1]:Set[111]
 
-	Action[17]:Set[Melee_Attack5]
-	SpellRange[17,1]:Set[154]
+;	Action[12]:Set[Taunt]
+;	Power[12,1]:Set[20]
+;	Power[12,2]:Set[100]
+;	MobHealth[12,1]:Set[10]
+;	MobHealth[12,2]:Set[100]
+;	SpellRange[12,1]:Set[160]
 
-	Action[18]:Set[Melee_Attack6]
-	SpellRange[18,1]:Set[149]
 
-	Action[19]:Set[Snare]
-	Power[19,1]:Set[60]
-	Power[19,2]:Set[100]
-	SpellRange[19,1]:Set[235]
 
-	Action[20]:Set[AA_Torporous]
-	SpellRange[20,1]:Set[381]
+;	Action[19]:Set[Snare]
+;	Power[19,1]:Set[60]
+;	Power[19,2]:Set[100]
+;	SpellRange[19,1]:Set[235]
 
-	Action[21]:Set[AA_Traumatic]
-	SpellRange[21,1]:Set[382]
+;	Action[20]:Set[AA_Torporous]
+;	SpellRange[20,1]:Set[381]
 
-	Action[22]:Set[AA_BootDagger]
-	SpellRange[22,1]:Set[386]
+;	Action[21]:Set[AA_Traumatic]
+;	SpellRange[21,1]:Set[382]
+
+;	Action[22]:Set[AA_BootDagger]
+;	SpellRange[22,1]:Set[386]
 }
 
 
@@ -284,6 +285,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
+	
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
@@ -301,7 +303,7 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-	call ActionChecks
+	;call ActionChecks
 
 	;if stealthed, use ambush
 	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
@@ -353,27 +355,29 @@ function Combat_Routine(int xAction)
 		case Melee_Attack4
 		case Melee_Attack5
 		case Melee_Attack6
-			call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
+			;echo call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 
+			call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+			;echo Melee Attack
 			break
 		case AoE1
 		case AoE2
 			if ${AoEMode} && ${Mob.Count}>=2
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			break
 		case Snare
 			if ${SnareMode}
 			{
 				call CheckCondition Power ${Power[${xAction},1]} ${Power[${xAction},2]}
 				if ${Return.Equal[OK]}
-					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 0 1
+					call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			}
 			break
 		case Rear_Attack1
 		case Rear_Attack2
 			if (${Math.Calc[${Target.Heading}-${Me.Heading}]}>-25 && ${Math.Calc[${Target.Heading}-${Me.Heading}]}<25) || (${Math.Calc[${Target.Heading}-${Me.Heading}]}>335 || ${Math.Calc[${Target.Heading}-${Me.Heading}]}<-335
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 
 			elseif ${Target.Target.ID}!=${Me.ID}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 0 0 1
+				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 
 			break
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
@@ -442,6 +446,9 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
+	eq2loc port yimhome
+
+	
 	if ${Me.Maintained[Stealth](exists)}
 		Me.Maintained[Stealth]:Cancel
 
