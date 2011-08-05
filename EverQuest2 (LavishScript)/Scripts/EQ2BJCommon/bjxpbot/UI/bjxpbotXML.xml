@@ -1,0 +1,396 @@
+<ISUI>
+	<!-- Main UI Window -->
+	<Window Name='bjxpbot' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>375</Width>
+		<Height>220</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>BJ XP Bot        Version 2.00</Title> 
+		<OnLoad>
+		declarevariable statusvar string global
+		declarevariable lastpotion string global
+		declarevariable lastpotiontime string global
+		echo ${Time}: Loading BJ XP Bot
+		lastpotion:Set["N/A"]
+		lastpotiontime:Set["N/A"]
+		statusvar:Set["Idle..."]
+		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
+		</OnLoad>
+		<OnUnLoad>
+		echo ${Time}: Unloading BJ XP Bot
+		echo .
+		echo .
+		</OnUnLoad>
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>10%</Height>
+			<Children>
+				<Text Name="Title" Template="Window.TitleBar.Title">
+					<Alignment>Left</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
+					<X>85%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
+					<X>92%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						if ${Script[bjxpbot](exists)}
+							endscript bjxpbot
+						if ${Script[xpcalclevel](exists)}	
+							endscript xpcalclevel
+						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotXML.xml"
+						ui -reload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		
+	<!-- Start of layout -->
+	<Children>
+				<Text name='Status' template='Text'>
+				<X>30</X>
+				<Y>20</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Status:</Text>
+				</Text>
+				<Text name='StatusVariable' template='Text'>
+				<X>80</X>
+				<Y>20</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${statusvar}]
+				</OnRender>
+				</Text>
+				<Text name='LastPotionConsumed' template='Text'>
+				<X>30</X>
+				<Y>40</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Last Potion Consumed:</Text>
+				</Text>	
+				<Text name='LastPotionConsumedVariable' template='Text'>
+				<X>170</X>
+				<Y>40</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+					This:SetText[${lastpotion}]
+				</OnRender>
+				</Text>
+				<Text name='LastPotionConsumedTime' template='Text'>
+				<X>30</X>
+				<Y>60</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Time of Last Potion Consumption:</Text>
+				</Text>	
+				<Text name='LastPotionConsumedTimeVariable' template='Text'>
+				<X>240</X>
+				<Y>60</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+					This:SetText[${lastpotiontime}]
+				</OnRender>
+				</Text>				
+				<Text name='TextTimeUntilNextMinute1' template='Text'>
+				<X>30</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Timeleft until next attempt:</Text>
+				</Text>				
+				<Text name='TextTimeUntilNextMinuteVariable' template='Text'>
+				<X>200</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${Math.Calc[(${timeuntilnextmilli.TimeLeft}/1000)/60].Centi}]
+				</OnRender>
+				</Text>
+				<Text name='TextTimeUntilNextMinute2' template='Text'>
+				<X>250</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Minutes</Text>
+				</Text>	
+
+				<Text name='TimeRunning1' template='Text'>
+				<X>30</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Time Running:</Text>
+				</Text>
+				<Text name='TimeRunningVar' template='Text'>
+				<X>130</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${Math.Calc[(${Script[xpcalclevel].RunningTime}/1000)/60].Centi}]
+				</OnRender>
+				</Text>
+				<Text name='TimeRunning2' template='Text'>
+				<X>170</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Minutes</Text>
+				</Text>
+				<Text name='XPCalcText' template='Text'>
+				<X>30</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>XP Gained (%) :</Text>
+				</Text>				
+				<Text name='XpCalc' template='Text'>
+				<X>180</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+					This:SetText[${totalxp1.Centi}]
+				</OnRender>
+				<OnLoad>
+					declarevariable XpCalc int global ${This.ID}
+				</OnLoad>
+				</Text>
+				<Text name='XpCalc2' template='Text'>
+				<X>180</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Visible>0</Visible>
+				<OnRender>
+					This:SetText[${totalxp.Centi}]
+				</OnRender>
+				<OnLoad>
+					declarevariable XpCalc2 int global ${This.ID}
+				</OnLoad>				
+				</Text>				
+				<Text name='XPCalcPerHourText' template='Text'>
+				<X>30</X>
+				<Y>140</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>XP Per Hour (%) :</Text>
+				</Text>				
+				<Text name='XpCalcPerHour' template='Text'>
+				<X>200</X>
+				<Y>140</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				if ${timerunninghour} > 0
+				{						
+						This:SetText[${Math.Calc[${totalxp1}/${timerunninghour}]}]
+				}
+				else
+				{
+				This:SetText[0]	
+				}
+				</OnRender>
+				<OnLoad>
+					declarevariable XpCalcPerHour int global ${This.ID}
+				</OnLoad>				
+				</Text>
+				<Text name='XpCalcPerHour2' template='Text'>
+				<X>200</X>
+				<Y>140</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Visible>0</Visible>
+				<OnRender>
+				if ${timerunninghour} > 0
+				{
+				This:SetText[${Math.Calc[${totalxp}/${timerunninghour}]}]
+				}
+				else
+				{
+				This:SetText[0]
+				}
+				</OnRender>
+				<OnLoad>
+						declarevariable XpCalcPerHour2 int global ${This.ID}
+				</OnLoad>				
+				</Text>				
+
+				<CommandButton Name="StartClicker" template='Button'>
+				<X>20</X>
+				<Y>170</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Start</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbot"
+					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/xpcalclevel"
+					This.Parent.FindChild[StopClicker]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable startclickervar int global ${This.ID}
+				</OnLoad>
+				</CommandButton>
+				<CommandButton Name="StopClicker" template='Button'>
+					<X>20</X>
+					<Y>170</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Stop</Text>
+					<Alignment>Center</Alignment>
+					<visible>0</visible>
+					<OnLeftClick>
+						if ${Script[bjxpbot](exists)}
+						{	
+							statusvar:Set["Idle..."]
+							timeuntilnextmilli:Set[0]
+							endscript bjxpbot
+						}	
+						if ${Script[xpcalclevel](exists)}
+						{	
+							statusvar:Set["Idle..."]
+							endscript xpcalclevel
+						}	
+						This.Parent.FindChild[StartClicker]:Show
+						This:Hide
+					</OnLeftClick>
+				<OnLoad>
+					declarevariable stopclickervar int global ${This.ID}
+				</OnLoad>
+				</CommandButton>
+				<CommandButton Name="ShowSettings" template='Button'>
+					<X>240</X>
+					<Y>170</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Show Settings</Text>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						UIElement[${settingsvar}]:Show
+						This.Parent.FindChild[HideSettings]:Show
+						This:Hide
+					</OnLeftClick>
+				</CommandButton>
+				<CommandButton Name="HideSettings" template='Button'>
+					<X>240</X>
+					<Y>170</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Hide Settings</Text>
+					<Alignment>Center</Alignment>
+					<visible>0</visible>
+					<OnLeftClick>
+						UIElement[${settingsvar}]:Hide
+						This.Parent.FindChild[ShowSettings]:Show
+						This:Hide
+					</OnLeftClick>
+				</CommandButton>
+	
+	</Children>			
+  </Window>
+</ISUI>
