@@ -1,0 +1,95 @@
+BJ XP Bot - Changelog
+
+First Created:  June 22, 2011
+Written By: bjcasey
+Many thanks to Kannkor for a TON of coding help.
+
+INSTRUCTIONS
+
+run bj bjxpbot
+
+Main Page
+- Start/Stop script button
+- Settings button
+- Information is displayed
+- XP Calculations are always run
+
+Settings Page
+- Enable auto consumption of xp potions
+	- Will check your inventory for xp potions and attempt to use them every 10-15 mins
+	- Consumes vitality potions or Orb of Concentrated Memories when your vitality is zero
+- Choose a type of XP to track
+	- Toggles which type of XP to run the calculations on
+- Set an end time for the script
+	- This is the time on a 24-hour clock that the bot will end.  Will occur on it's next loop through.
+
+COMING SOON...
+
+- Exported log of potion consumption times and the name of the potion.  Sent to character files.
+		- Enabled via checkbox
+		- Can also be sent to an IRC channel.
+- Calculate levels gained per time in minutes or hours via checkbox
+- Display the amount of looted coin
+- Add a potion selection button
+	- Allow customizable priority list (Like Ogre CA's)
+- Save selected options on exit
+
+		
+KNOWN BUGS
+
+- TSxp does nothing (Future update)
+- Debugging information tab
+		- Experience Potion (Future Update - Does nothing.)
+		- Vitality Potion (Future Update - Does nothing.)
+- XP calculations script doesn't end properly some of the time	
+- All text entry fields seem to require being 1 space larger than is needed for them to display properly	
+
+BJXPBot-2011.08.05, Version 2.00
+
+- Changed the priority of the potions to the following list:
+	- Veteran Rewards 110%
+	- Other Claimable Rewards 110%
+	- Marketplace Purchased 100%
+	- Veteran Rewards Less Than 110%
+- Changed "out of potions" to end only the auto potion script and allow the xp calculation script to continue
+- Separate vitality checks
+	- Checkbox on the settings page to check vitality level and consume a potion to refresh it independently of the xp potion script	
+- User defined level limit to exit auto potion script if enabled by checkbox
+- Added debugging code
+- The following checkboxes/text entries will now save on exit:
+		- Enable Experience Potion Consumption
+		- Enable Vitality Replenishment
+		- Enable Level Limit
+		- AA Limit
+		- ADV Limit
+		- Time Limit
+		- Adv. XP Calculation
+		- TS XP Calculation
+		- AA XP Calculation
+- If the Time.Hour equals the UserEndTime the UI button will not change back from Stop to Start automatically. (FIXED) 	
+- Debugging information tab
+		- Experience Potion (Future Update)
+		- Vitality Potion (Future Update)
+		- Adv. XP Calculation 
+		- AA XP Calculation
+
+BJXPBot-2011.07.29, Version 1.01
+
+- Changed where the CustomInventory check was being made so that it will be updated with available potions each loop instead of just on script start
+
+BJXPBot-2011.07.27, Version 1.00
+
+- Added status field
+	- Shows what the potion script is doing
+- Added time until next attempt field
+	- Shows the time left until the potion script attempts to consume another potion
+- Added time running field
+	- Shows how long the script has been running
+- Added Start/Stop Buttons
+- Added Settings Button
+	- Opens/Closes the settings page
+- Added Settings Page
+	- Added checkbox for potion consumption script
+		- Toggles potion script on/off
+	- Added user defined end time
+		- Allows the user to set a time when the bot will end
