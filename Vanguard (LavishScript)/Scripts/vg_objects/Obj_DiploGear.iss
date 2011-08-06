@@ -218,20 +218,25 @@ objectdef obj_diplogear
 	;============================
 	function EquipGear2(int di, bool debug)
 	{
+		;; update variables of what we should be wearing
 		This:XMLLoad[${di}]
 		variable int i = ${DiploTotalPresence}
+		waitframe
+	
 	
 		;; Do we really need to equip... only if current presence does not match saved presence
 		if ${Me.Stat[Diplomacy,${DiploPresence}]}==${DiploTotalPresence}
 		{
 			return
 		}
+		
+		;; check for skill increases
 		i:Inc
 		if ${Me.Stat[Diplomacy,${DiploPresence}]}==${i}
 		{
-			wait 1
 			EchoIt "Saving Diplo Equipment Settings for ${DiploPresence}"
 			This:XMLSave[${di}]
+			waitframe
 			return
 		}
 		EchoIt "[${DiploPresence}] ${Me.Stat[Diplomacy,${DiploPresence}]} = ${i}"
@@ -244,9 +249,10 @@ objectdef obj_diplogear
 		{
 			if ${Me.Inventory[${DiploRightEar}](exists)}
 			{
+				EchoIt "Checking Ears 1a"
 				if !${Me.Inventory[${DiploRightEar}].CurrentEquipSlot.Equal[Diplomacy Right Ear]}
 				{
-					EchoIt "Checking Ears 1a"
+					EchoIt "Equiping Ears 1a"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
 					Me.Inventory[${DiploRightEar}]:Equip
 					wait 1
@@ -254,6 +260,7 @@ objectdef obj_diplogear
 			}
 			if ${Me.Inventory[${DiploLeftEar}](exists)}
 			{
+				EchoIt "Checking Ears 1b"
 				if !${Me.Inventory[${DiploLeftEar}].CurrentEquipSlot.Equal[Diplomacy Left Ear]}
 				{
 					EchoIt "Checking Ears 1b"
@@ -278,12 +285,14 @@ objectdef obj_diplogear
 					{
 						if ${Me.Inventory[${i}].Name.Equal[${DiploLeftEar}]}
 						{
+							EchoIt "Equiping Ears 2a"
 							Me.Inventory[${i}]:Equip
 							wait 1
 							i:Inc
 						}
 						if ${Me.Inventory[${i}].Name.Equal[${DiploRightEar}]}
 						{
+							EchoIt "Equiping Ears 2b"
 							Me.Inventory[${i}]:Equip
 							wait 1
 						}
