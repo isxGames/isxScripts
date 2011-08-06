@@ -5,6 +5,7 @@
 objectdef  bnav
 {
 
+	;variable string CurrentChunk
 	;variable string  CurrentRegion
 	;variable string  LastRegion
 	;variable int bpathindex
@@ -17,47 +18,28 @@ objectdef  bnav
 		Event[VG_onHitObstacle]:AttachAtom[Bump]
 
 		LavishNav:Clear
-
-		;Look for zone file and load it, else create a new once
-		if ${VGPathsDir.FileExists[${Me.Chunk}.xml]}
-		{
-			LavishNav.Tree:Import[${VGPathsDir}/${Me.Chunk}.xml]
-			call DebugOut "bNav: Loaded ${VGPathsDir}/${Me.Chunk}.xml with ${LNavRegion[${Me.Chunk}].ChildCount} children"
-		}
-		else
-		{
-			call DebugOut "bNav: Creating New Zone :: ${Me.Chunk}"
-			LavishNav.Tree:AddChild[universe,${Me.Chunk},-unique]
-			isMapping:Set[TRUE]
-		}
+		This:LoadPaths
 		return TRUE
 	}
 
 	method SavePaths()
 	{
-		LNavRegion[${Me.Chunk}]:Export[${VGPathsDir}/${Me.Chunk}.xml]
-		;LNavRegion[${Me.Chunk}]:Remove
-
-		;if ${lso}
-		;{
-		;	LNavRegion[${Me.Chunk}]:Export[-lso,${VGPathsDir}/${Me.Chunk}.lso]
-		;	LNavRegion[${Me.Chunk}]:Remove
-		;	echo Exported to LSO
-		;}
+		LNavRegion[${CurrentChunk}]:Export[${VGPathsDir}/${CurrentChunk}.xml]
 	}
 
 	method LoadPaths()
 	{
+		LavishNav:Clear
 		;Look for zone file and load it, else create a new once
-		if ${VGPathsDir.FileExists[${Me.Chunk}.xml]}
+		if ${VGPathsDir.FileExists[${CurrentChunk}.xml]}
 		{
-			LavishNav.Tree:Import[${VGPathsDir}/${Me.Chunk}.xml]
-			call DebugOut "bNav: Loaded ${VGPathsDir}/${Me.Chunk}.xml with ${LNavRegion[${Me.Chunk}].ChildCount} children"
+			LavishNav.Tree:Import[${VGPathsDir}/${CurrentChunk}.xml]
+			call DebugOut "bNav: Loaded ${VGPathsDir}/${CurrentChunk}.xml with ${LNavRegion[${CurrentChunk}].ChildCount} children"
 		}
 		else
 		{
-			call DebugOut "bNav: Creating New Zone :: ${Me.Chunk}"
-			LavishNav.Tree:AddChild[universe,${Me.Chunk},-unique]
+			call DebugOut "bNav: Creating New Zone :: ${CurrentChunk}"
+			LavishNav.Tree:AddChild[universe,${CurrentChunk},-unique]
 			isMapping:Set[TRUE]
 		}
 	}
@@ -79,12 +61,8 @@ objectdef  bnav
 
 	method AddCustomTag(string custom)
 	{
-		;LNavRegion[${LNavRegion[${This.CurrentRegionID}].AddChild[point,${custom},${Me.X},${Me.Y},${Me.Z}].ID}]:SetCustom[${custom}]
-
 		LNavRegion[${This.CurrentRegionID}]:SetCustom[${custom},${custom}]
-
 		call DebugOut "bNav: Added tag ${custom} to ${LNavRegion[${This.CurrentRegionID}].Name}"
-		;call DebugOut "bNav: Added tag ${custom} to ${LNavRegion[${Container}].Name}"
 	}
 
 	method AddDoorTag(string custom)
@@ -98,12 +76,9 @@ objectdef  bnav
 		variable string Region
 		Region:Set[${LNavRegion[${Me.Chunk}].BestContainer[${Me.X},${Me.Y},${Me.Z}].ID}]
 
-		;if ${LNavRegion[${Region}].Name.Equal[${Me.Chunk}]}
 		if ${LNavRegion[${Region}].Type.Equal[Universe]}
 		{
-			;LNavRegion[${Region}]:AddChild[box,"auto",${Math.Calc[${Me.X}-100]},${Math.Calc[${Me.X}+100]}, ${Math.Calc[${Me.Y}-100]}, ${Math.Calc[${Me.Y}+100]}, ${Math.Calc[${Me.Z}-50]},${Math.Calc[${Me.Z}+100]}]
 			LNavRegion[${Region}]:AddChild[sphere,"auto",100,${Me.X},${Me.Y},${Me.Z}]
-			;Region:Set[${LNavRegion[${Me.Chunk}].BestContainer[${Me.X},${Me.Y},${Me.Z}].ID}]
 			CurrentRegion:Set[${LNavRegion[${This.CurrentRegionID}].ID}]
 			LNavRegion[${This.CurrentRegionID}]:SetAllPointsValid[TRUE]
 
@@ -207,33 +182,6 @@ objectdef  bnav
 		return ${LNavRegion[${Region}].ID}
 	}
 
-	/*
-	function:bool FindPath(string destination)
-	{
-	bpathindex:Set[1]
-	variable string CPname
-	variable float WPX
-	variable float WPY
-	
-	mypath:Clear
-	
-	;call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
-	
-	CPname:Set[${This.CurrentRegionID}]
-	
-	PathFinder:SelectPath[${LNavRegion[${CPname}]},${LNavRegion[${Me.Chunk}].FindRegion[${destination}]},mypath]
-	
-	call DebugOut "bNav: Found Path to ${destination} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].Name}"
-	
-	if ${mypath.Hops} > 0
-	{
-	return TRUE
-	}
-	return FALSE
-	
-	}
-	*/
-
 	function FindPath(string startRegion, string endRegion)
 	{
 		variable astarpathfinder aPathFinder
@@ -330,14 +278,6 @@ objectdef  bnav
 
 		call DebugOut "bNav: ${bpathindex}"
 
-		;		if ${bpathindex} >= ${mypath.Hops}
-		;		{
-		;			echo "WE R THERE"
-		;			VG:ExecBinding[moveforward,release]
-		;			TravelState:Set[${PathStateEnd}]
-		;			return TRUE
-		;		}
-
 		WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
 		WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
 
@@ -365,14 +305,7 @@ objectdef  bnav
 
 	}
 
-
-	/******************************************************************************************
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;                ||   ||       ||   ||                   ;
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	******************************************************************************************/
+	/******************************************************************************************/
 
 	function MoveWithCD(int iX, int iY, int iZ)
 	{
@@ -593,13 +526,6 @@ objectdef  bnav
 
 		call DebugOut "bNav: Names: ${CPname} :: ${tName}"
 
-		;if ${This.CurrentRegionID.Equal[${LNavRegion[${Me.Chunk}].BestContainer[${Pawn[${aTarget}].X}, ${Pawn[${aTarget}].Y}, ${Pawn[${aTarget}].Z}]}]}
-		;{
-		;	;call FastMove ${Pawn[${aTarget}].X} ${Pawn[${aTarget}].Y}	${movePrecision}
-		;	call DebugOut "bNav:MovetoTargetName In region quick hop"
-		;	return "END"
-		;}
-
 		; Check to see if we are NOT in a mapped area
 		if !${This.IsMapped[${Me.Location}]}
 		{
@@ -613,17 +539,6 @@ objectdef  bnav
 
 		if !${Return}
 		return "NO PATH"
-
-		/*
-		aPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
-		if ${mypath.Hops} <= 0
-		{
-		mypath:Clear
-		call DebugOut "bNav:MovetoTargetName: ZERO length path from  ${LNavRegion[${CPname}].FQN} to ${LNavRegion[${tName}].FQN}"
-		; try the dijkstrapathfinder version
-		dPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
-		}
-		*/
 
 		iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
 
@@ -680,8 +595,6 @@ objectdef  bnav
 
 					call FindPath "${CPname}" "${tName}"
 
-					;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
-
 					call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
 
 					if ${mypath.Hops} > 0
@@ -721,8 +634,6 @@ objectdef  bnav
 
 						if !${Return}
 						return "NO PATH"
-
-						;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${newName}].FQN},mypath]
 
 						call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
 
@@ -798,17 +709,6 @@ objectdef  bnav
 		if !${Return}
 		return "NO PATH"
 
-		/*
-		aPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
-		if ${mypath.Hops} <= 0
-		{
-		mypath:Clear
-		call DebugOut "bNav:MovetoTargetName: ZERO length path from  ${LNavRegion[${CPname}].FQN} to ${LNavRegion[${tName}].FQN}"
-		; try the dijkstrapathfinder version
-		dPathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
-		}
-		*/
-
 		iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
 
 		call DebugOut "bNav:MovetoTargetName: Found Path to ${LNavRegion[${tName}].FQN} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].FQN}"
@@ -857,14 +757,11 @@ objectdef  bnav
 					call DebugOut "bNav: FastMove return: ${Return}"
 
 					mypath:Clear
-					;CurrentConnection:Clear
 
 					call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
 					CPname:Set[${Return}]
 
 					call FindPath "${CPname}" "${tName}"
-
-					;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${tName}].FQN},mypath]
 
 					call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
 
@@ -906,8 +803,6 @@ objectdef  bnav
 						if !${Return}
 						return "NO PATH"
 
-						;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${newName}].FQN},mypath]
-
 						call DebugOut "bNav: mypath.Hops: ${mypath.Hops}"
 
 						if ${mypath.Hops} > 0
@@ -927,8 +822,8 @@ objectdef  bnav
 				}
 				;vgecho [${bpathindex}] Distance to target is ${Math.Distance[${Me.X},${Me.Y},${Pawn[id,${aTarget}].X},${Pawn[id,${aTarget}].Y}]}
 			}
+			;; we can parlay at a distance of 0-7 meters, this allows parlaying NPC that are Aggro to you
 			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Pawn[id,${aTarget}].Distance}>=8
-			;while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Math.Distance[${Me.X},${Me.Y},${Pawn[id,${aTarget}].X},${Pawn[id,${aTarget}].Y}]}>400
 
 			VG:ExecBinding[moveforward,release]
 
@@ -979,14 +874,10 @@ objectdef  bnav
 		;	return "END"
 		;}
 
-		;PathFinder:SelectPath[${LNavRegion[${CPname}].ID},${LNavRegion[${This.CurrentRegionID}].FindRegion[${destination}].ID},mypath]
-
 		call FindPath "${CPname}" "${destination}"
 
 		if !${Return}
 		return "NO PATH"
-
-		;PathFinder:SelectPath[${LNavRegion[${CPname}].FQN},${LNavRegion[${destination}].FQN},mypath]
 
 		iCheck:Set[${Math.Calc[${mypath.Hops} * 0.8].Int}]
 
@@ -1035,7 +926,6 @@ objectdef  bnav
 					call DebugOut "bNav: FastMove return: ${Return}"
 
 					mypath:Clear
-					;CurrentConnection:Clear
 
 					call This.FindClosestPoint ${Me.X} ${Me.Y} ${Me.Z}
 					CPname:Set[${Return}]
@@ -1090,7 +980,6 @@ objectdef  bnav
 
 			if ${Math.Calc[${SavDist} - ${xDist}]} < 60
 			{
-				;VG:ExecBinding[UseDoorEtc]
 				if ${Math.Calc[${Time.Timestamp} - ${xTimer}]} > 1
 				{
 					VG:ExecBinding[moveforward,release]
@@ -1106,7 +995,6 @@ objectdef  bnav
 
 			if ${This.CurrentRegionID.Equal[${Region}]}
 			{
-				;VG:ExecBinding[UseDoorEtc]
 				return "SUCCESS"
 			}
 

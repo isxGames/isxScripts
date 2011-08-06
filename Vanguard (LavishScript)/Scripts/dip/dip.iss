@@ -30,6 +30,11 @@ objectdef npclist
 		green:Set[FALSE]
 		blue:Set[FALSE]
 		yellow:Set[FALSE]
+		Incite:Set[FALSE]
+		Interview:Set[FALSE]
+		Convince:Set[FALSE]
+		Gossip:Set[FALSE]
+		Entertain:Set[FALSE]
 		Wins:Set[0]
 		Losses:Set[0]
 		InciteWins:Set[0]
@@ -56,6 +61,11 @@ objectdef npclist
 		green:Set[FALSE]
 		blue:Set[FALSE]
 		yellow:Set[FALSE]
+		Incite:Set[FALSE]
+		Interview:Set[FALSE]
+		Convince:Set[FALSE]
+		Gossip:Set[FALSE]
+		Entertain:Set[FALSE]
 		Wins:Set[0]
 		Losses:Set[0]
 		InciteWins:Set[0]
@@ -80,6 +90,11 @@ objectdef npclist
 	variable bool green
 	variable bool blue
 	variable bool yellow
+	variable bool Incite
+	variable bool Interview
+	variable bool Convince
+	variable bool Gossip
+	variable bool Entertain
 	variable int Wins
 	variable int Losses
 	variable int InciteWins
@@ -163,6 +178,7 @@ variable filepath VGPathsDir = "${Script.CurrentDirectory}/Paths/"
 variable string UIFile = "${Script.CurrentDirectory}/dip.xml"
 variable string UISkin = "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 variable string Output = "${Script.CurrentDirectory}/Save/Debug.txt"
+variable string CurrentChunk 
 
 ;Debug setup
 variable(script) bool debug = FALSE
@@ -178,9 +194,12 @@ function main()
 		echo "VG:  Unable to load ISXVG, exiting dip script"
 		endscript dip
 	}
-
+	
+	;; wait until both chunk and self exists
+	wait 50 ${Me.Chunk(exists)} && ${Me.FName(exists)}
+	CurrentChunk:Set[${Me.Chunk}]
+	
 	;; Announce we started
-	wait 30 ${Me.Chunk(exists)}
 	EchoIt "Diplomacy Started..."
 
 	;; Create directories
@@ -224,6 +243,7 @@ function main()
 	Event[OnFrame]:AttachAtom[OnFrame]
 
 	call LoadSettings
+	
 	call dipnav.Initialize
 
 	CurrentRegion:Set[${LNavRegion[${dipnav.CurrentRegionID}].Name}]
@@ -231,21 +251,55 @@ function main()
 
 	ui -reload "${UISkin}"
 	ui -reload -skin VGSkin "${UIFile}"
+	UIElement[HUD@Diplo]:Select
+	UIElement[Diplo]:SetWidth[160]
+	UIElement[Diplo]:SetHeight[80]
 	call setupUI
 	EchoIt "Paused"
 
 	;Begin the never ending loop....
 	while ${isRunning} && !${endScript}
 	{
-		call GoDiploSomething
+		if ${Me.Chunk(exists)} && ${Me.FName(exists)}
+		{
+			call GoDiploSomething
+		}
 	}
 	
-	call SaveSettings
+	if ${Me.Chunk(exists)} && ${Me.FName(exists)}
+	{
+		call SaveSettings
+	}
 	EchoIt "Diplomacy Ended..."
 }	
 	
 function GoDiploSomething()
 {
+	;; have we chunked?  
+	if !${CurrentChunk.Equal[${Me.Chunk}]}
+	{
+		;; we chunked
+		EchoIt "We chunked from ${CurrentChunk} to ${Me.Chunk}"
+
+		;; save our current settings
+		EchoIt "Saving previous chunk data"
+		call SaveSettings
+
+		;; make sure we clear current NPC list
+		dipClearNPCs
+		
+		;; update current chunk
+		CurrentChunk:Set[${Me.Chunk}]
+		
+		;; load our new settings
+		EchoIt "loading current chunk data"
+		dipnav:LoadPaths
+		CurrentRegion:Set[${LNavRegion[${dipnav.CurrentRegionID}].Name}]
+		LastRegion:Set[${LNavRegion[${dipnav.CurrentRegionID}].Name}]
+		call LoadSettings
+		call setupUI
+	}
+
 	;; we do not want to continue if paused
 	if ${dipisPaused}
 	{
@@ -348,6 +402,16 @@ function MoveToNPC()
 			;; set our return value to GOOD and we are moving
 			returnvalue:Set[GOOD]
 			isMoving:Set[TRUE]
+			
+			;; attempt to update ID incase VG reset all IDs
+			if !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
+			{
+				if ${Pawn[exactname,${dipNPCs[${curNPC}].Name}](exists)}
+				{
+					dipNPCs[${curNPC}].ID:Set[${Pawn[exactname,${dipNPCs[${curNPC}].Name}].ID}]
+					dipNPCs[${curNPC}].NameID:Set[${dipNPCs[${curNPC}].Name} - ${dipNPCs[${curNPC}].ID}]
+				}
+			}
 			
 			;; move to NPC if we can target
 			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
@@ -515,17 +579,48 @@ function SelectParlay()
 	{
 		;echo General[ ${convOptions}]: ${Dialog[General,${convOptions}].Text}
 		
+		currentParleyType:Set[Unknown]
+		
 		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 		i:Set[1]
 		do
 		{
 			if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
 			{
-				if ${Dialog[General,${convOptions}].Text.Find[>${convTypes[${i}]}]}
+				;;if ${Dialog[General,${convOptions}].Text.Find[>${convTypes[${i}]}]}
+				if ${dipNPCs[${curNPC}].Incite} && ${Dialog[General,${convOptions}].Text.Find[>Incite]}
 				{
 					genorciv:Set[General]
 					selectedConv:Set[${convOptions}]
-					currentParleyType:Set[${convTypes[${i}]}]
+					currentParleyType:Set[Incite]
+					break
+				}
+				if ${dipNPCs[${curNPC}].Interview} && ${Dialog[General,${convOptions}].Text.Find[>Interview]}
+				{
+					genorciv:Set[General]
+					selectedConv:Set[${convOptions}]
+					currentParleyType:Set[Interview]
+					break
+				}
+				if ${dipNPCs[${curNPC}].Convince} && ${Dialog[General,${convOptions}].Text.Find[>Convince]}
+				{
+					genorciv:Set[General]
+					selectedConv:Set[${convOptions}]
+					currentParleyType:Set[Convince]
+					break
+				}
+				if ${dipNPCs[${curNPC}].Gossip} && ${Dialog[General,${convOptions}].Text.Find[>Gossip]}
+				{
+					genorciv:Set[General]
+					selectedConv:Set[${convOptions}]
+					currentParleyType:Set[Gossip]
+					break
+				}
+				if ${dipNPCs[${curNPC}].Entertain} && ${Dialog[General,${convOptions}].Text.Find[>Entertain]}
+				{
+					genorciv:Set[General]
+					selectedConv:Set[${convOptions}]
+					currentParleyType:Set[Entertain]
 					break
 				}
 			}
@@ -545,13 +640,42 @@ function SelectParlay()
 			i:Set[1]
 			do
 			{
-				if ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>${convTypes[${i}]}]}
+				if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
 				{
-					if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
+					;;if ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>${convTypes[${i}]}]}
+					if ${dipNPCs[${curNPC}].Incite} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Incite]}
 					{
 						genorciv:Set[Civic Diplomacy]
 						selectedConv:Set[${convOptions}]
-						currentParleyType:Set[${convTypes[${i}]}]
+						currentParleyType:Set[Incite]
+						break
+					}
+					if ${dipNPCs[${curNPC}].Interview} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Interview]}
+					{
+						genorciv:Set[Civic Diplomacy]
+						selectedConv:Set[${convOptions}]
+						currentParleyType:Set[Interview]
+						break
+					}
+					if ${dipNPCs[${curNPC}].Convince} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Convince]}
+					{
+						genorciv:Set[Civic Diplomacy]
+						selectedConv:Set[${convOptions}]
+						currentParleyType:Set[Convince]
+						break
+					}
+					if ${dipNPCs[${curNPC}].Gossip} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Gossip]}
+					{
+						genorciv:Set[Civic Diplomacy]
+						selectedConv:Set[${convOptions}]
+						currentParleyType:Set[Gossip]
+						break
+					}
+					if ${dipNPCs[${curNPC}].Entertain} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Entertain]}
+					{
+						genorciv:Set[Civic Diplomacy]
+						selectedConv:Set[${convOptions}]
+						currentParleyType:Set[Entertain]
 						break
 					}
 				}
@@ -590,6 +714,8 @@ function SelectParlay()
 				temp:Set[${temp}s]
 			}
 			
+			EchoIt "Parlay = ${Dialog[${genorciv},${selectedConv}].Text.Left[${Math.Calc[${Dialog[${genorciv},${selectedConv}].Text.Find[<nl>]}-2]}]}"
+			EchoIt "Expression = ${currentParleyType}"
 			EchoIt "Presence Type = ${temp}"
 			EchoIt "Presence Need = ${Dialog[${genorciv},${selectedConv}].PresenceRequired}"
 			EchoIt "Presence Have = ${Me.Stat[Diplomacy,${temp}]}"
@@ -612,7 +738,8 @@ function SelectParlay()
 	}
 	else
 	{
-		EchoIt "No Available parleys, setting 'needNewNPC'"
+		EchoIt "No Available parleys"
+		EchoIt "==============================="
 		needNewNPC:Toggle
 		;; this is here to reduce the running between two NPCs
 		wait 75 ${dipisPaused}
@@ -740,9 +867,6 @@ function:int RateCard(int card)
 	{
 		infl:Set[${inflmax}]
 	}
-	
-	
-	
 	
 	;echo bleh!
 	
@@ -886,9 +1010,9 @@ function atexit()
 
 function setupUI()
 {
-	UIElement[Diplo]:SetWidth[160]
-	UIElement[Diplo]:SetHeight[80]
-	UIElement[HUD@Diplo]:Select
+	;UIElement[Diplo]:SetWidth[160]
+	;UIElement[Diplo]:SetHeight[80]
+	;UIElement[HUD@Diplo]:Select
 	variable int i = 1
 	do
 	{
@@ -956,28 +1080,40 @@ function setupUI()
 
 function SaveSettings()
 {
-	setDipNPC:Clear
+	;; save our map if we are still mapping
+	if ${dipisMapping}
+	{
+		dipnav:SavePaths
+	}
+
+	;setDipNPC:Clear
 	setDipTypes:Clear
 	
-	setDipNPC:AddSet[${Me.Chunk}]
-	setDipNPC.FindSet[${Me.Chunk}]:AddSet[NPCs]
+	setDipNPC[${CurrentChunk}]:Clear	
+	setDipNPC:AddSet[${CurrentChunk}]
+	setDipNPC.FindSet[${CurrentChunk}]:AddSet[NPCs]
 	
 	variable int i = 1
 	do
 	{
 		if !${dipNPCs[${i}].NameID.Equal["Empty"]}
 		{
-			setDipNPC[${Me.Chunk}]:AddSetting[${i}, "${dipNPCs[${i}].NameID}"]
-			setDipNPC[${Me.Chunk}]:AddSet[${dipNPCs[${i}].NameID}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Name, ${dipNPCs[${i}].Name}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[ID, ${dipNPCs[${i}].ID}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[X, ${dipNPCs[${i}].X}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Y, ${dipNPCs[${i}].Y}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Z, ${dipNPCs[${i}].Z}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[red, ${dipNPCs[${i}].red}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[green, ${dipNPCs[${i}].green}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[blue, ${dipNPCs[${i}].blue}]
-			setDipNPC[${Me.Chunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[yellow, ${dipNPCs[${i}].yellow}]
+			setDipNPC[${CurrentChunk}]:AddSetting[${i}, "${dipNPCs[${i}].NameID}"]
+			setDipNPC[${CurrentChunk}]:AddSet[${dipNPCs[${i}].NameID}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Name, ${dipNPCs[${i}].Name}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[ID, ${dipNPCs[${i}].ID}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[X, ${dipNPCs[${i}].X}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Y, ${dipNPCs[${i}].Y}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Z, ${dipNPCs[${i}].Z}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[red, ${dipNPCs[${i}].red}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[green, ${dipNPCs[${i}].green}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[blue, ${dipNPCs[${i}].blue}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[yellow, ${dipNPCs[${i}].yellow}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Incite, ${dipNPCs[${i}].Incite}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Interview, ${dipNPCs[${i}].Interview}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Convince, ${dipNPCs[${i}].Convince}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Gossip, ${dipNPCs[${i}].Gossip}]
+			setDipNPC[${CurrentChunk}].FindSet[${dipNPCs[${i}].NameID}]:AddSetting[Entertain, ${dipNPCs[${i}].Entertain}]
 		}
 		i:Inc
 	}
@@ -1006,29 +1142,38 @@ function SaveSettings()
 
 function LoadSettings()
 {
-	dipClearNPCs
-	setDipNPC[${Me.Chunk}]:GetSettingIterator[itDipNPC]
-	if ${itDipNPC:First(exists)}
+	setDipNPC[${CurrentChunk}]:GetSettingIterator[itDipNPC]
+	
+	if ${setDipNPC[${CurrentChunk}](exists)}
 	{
-		do
+		if ${itDipNPC:First(exists)}
 		{
-			call FindFirstAvailableNPCSlot
-			if ${Return}
+			do
 			{
-				dipNPCs[${Return}].NameID:Set[${itDipNPC.Value}]
-				dipNPCs[${Return}].Name:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[Name].String}]
-				dipNPCs[${Return}].ID:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[ID].String}]
-				dipNPCs[${Return}].X:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[X].String}]
-				dipNPCs[${Return}].Y:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[Y].String}]
-				dipNPCs[${Return}].Z:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[Z].String}]
-				dipNPCs[${Return}].red:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[red].String}]
-				dipNPCs[${Return}].green:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[green].String}]
-				dipNPCs[${Return}].blue:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[blue].String}]
-				dipNPCs[${Return}].yellow:Set[${setDipNPC[${Me.Chunk}].FindSet[${itDipNPC.Value}].FindSetting[yellow].String}]
+				call FindFirstAvailableNPCSlot
+				if ${Return}
+				{
+					dipNPCs[${Return}].NameID:Set[${itDipNPC.Value}]
+					dipNPCs[${Return}].Name:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Name].String}]
+					dipNPCs[${Return}].ID:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[ID].String}]
+					dipNPCs[${Return}].X:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[X].String}]
+					dipNPCs[${Return}].Y:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Y].String}]
+					dipNPCs[${Return}].Z:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Z].String}]
+					dipNPCs[${Return}].red:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[red].String}]
+					dipNPCs[${Return}].green:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[green].String}]
+					dipNPCs[${Return}].blue:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[blue].String}]
+					dipNPCs[${Return}].yellow:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[yellow].String}]
+					dipNPCs[${Return}].Incite:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Incite].String}]
+					dipNPCs[${Return}].Interview:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Interview].String}]
+					dipNPCs[${Return}].Convince:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Convince].String}]
+					dipNPCs[${Return}].Gossip:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Gossip].String}]
+					dipNPCs[${Return}].Entertain:Set[${setDipNPC[${CurrentChunk}].FindSet[${itDipNPC.Value}].FindSetting[Entertain].String}]
+				}
 			}
+			while ${itDipNPC:Next(exists)}
 		}
-		while ${itDipNPC:Next(exists)}
 	}
+
 	setDipTypes:GetSettingIterator[itDipTypes]
 	if ${itDipTypes:First(exists)}
 	{
@@ -1310,6 +1455,7 @@ atom(global) dipAuto()
 
 atom(global) dipClearNPCs()
 {
+	curNPC:Set[0]
 	variable int i = 1
 	do
 	{
@@ -1332,6 +1478,15 @@ atom(global) dipAddTarget()
 		dipNPCs[${Return}].X:Set[${Me.Target.X}]
 		dipNPCs[${Return}].Y:Set[${Me.Target.Y}]
 		dipNPCs[${Return}].Z:Set[${Me.Target.Z}]
+		dipNPCs[${Return}].red:Set[FALSE]
+		dipNPCs[${Return}].green:Set[FALSE]
+		dipNPCs[${Return}].blue:Set[FALSE]
+		dipNPCs[${Return}].yellow:Set[FALSE]
+		dipNPCs[${Return}].Incite:Set[${UIElement[Incite@Options@DipTabs@Diplo].Checked}]
+		dipNPCs[${Return}].Interview:Set[${UIElement[Interview@Options@DipTabs@Diplo].Checked}]
+		dipNPCs[${Return}].Convince:Set[${UIElement[Convince@Options@DipTabs@Diplo].Checked}]
+		dipNPCs[${Return}].Gossip:Set[${UIElement[Gossip@Options@DipTabs@Diplo].Checked}]
+		dipNPCs[${Return}].Entertain:Set[${UIElement[Entertain@Options@DipTabs@Diplo].Checked}]
 		if !${UIElement[NPCList@Options@DipTabs@Diplo].ItemByText[${Me.Target.Name} - ${Me.Target.ID}]}
 		{
 			UIElement[NPCList@Options@DipTabs@Diplo]:AddItem[${Me.Target.Name} - ${Me.Target.ID}]
@@ -1446,6 +1601,108 @@ atom(global) colorBoxesSet()
 	else
 	{
 		UIElement[yellow@Options@DipTabs@Diplo]:UnsetChecked
+	}
+
+	variable int i
+	if ${dipNPCs[${Return}].Incite}
+	{
+		UIElement[Incite@Options@DipTabs@Diplo]:SetChecked
+		convTypes:Insert[Incite]
+	}
+	else
+	{
+		UIElement[Incite@Options@DipTabs@Diplo]:UnsetChecked
+		i:Set[1]
+		do
+		{
+			if (${convTypes[${i}].Find[Incite]})
+			{
+				convTypes:Remove[${i}]
+				convTypes:Collapse
+			}
+			i:Inc
+		}
+		while ${convTypes[${i}](exists)}
+	}
+	if ${dipNPCs[${Return}].Interview}
+	{
+		UIElement[Interview@Options@DipTabs@Diplo]:SetChecked
+		convTypes:Insert[Interview]
+	}
+	else
+	{
+		UIElement[Interview@Options@DipTabs@Diplo]:UnsetChecked
+		i:Set[1]
+		do
+		{
+			if (${convTypes[${i}].Find[Interview]})
+			{
+				convTypes:Remove[${i}]
+				convTypes:Collapse
+			}
+			i:Inc
+		}
+		while ${convTypes[${i}](exists)}
+	}
+	if ${dipNPCs[${Return}].Convince}
+	{
+		UIElement[Convince@Options@DipTabs@Diplo]:SetChecked
+		convTypes:Insert[Convince]
+	}
+	else
+	{
+		UIElement[Convince@Options@DipTabs@Diplo]:UnsetChecked
+		i:Set[1]
+		do
+		{
+			if (${convTypes[${i}].Find[Convince]})
+			{
+				convTypes:Remove[${i}]
+				convTypes:Collapse
+			}
+			i:Inc
+		}
+		while ${convTypes[${i}](exists)}
+	}
+	if ${dipNPCs[${Return}].Gossip}
+	{
+		UIElement[Gossip@Options@DipTabs@Diplo]:SetChecked
+		convTypes:Insert[Gossip]
+	}
+	else
+	{
+		UIElement[Gossip@Options@DipTabs@Diplo]:UnsetChecked
+		i:Set[1]
+		do
+		{
+			if (${convTypes[${i}].Find[Gossip]})
+			{
+				convTypes:Remove[${i}]
+				convTypes:Collapse
+			}
+			i:Inc
+		}
+		while ${convTypes[${i}](exists)}
+	}
+	if ${dipNPCs[${Return}].Entertain}
+	{
+		UIElement[Entertain@Options@DipTabs@Diplo]:SetChecked
+		convTypes:Insert[Entertain]
+	}
+	else
+	{
+		UIElement[Entertain@Options@DipTabs@Diplo]:UnsetChecked
+		i:Set[1]
+		do
+		{
+			if (${convTypes[${i}].Find[Entertain]})
+			{
+				convTypes:Remove[${i}]
+				convTypes:Collapse
+			}
+			i:Inc
+		}
+		while ${convTypes[${i}](exists)}
 	}
 }
 
