@@ -152,6 +152,7 @@
 							</Font>
 							<Text>Incite</Text>
 							<OnLeftClick>
+								colorToggle Incite
 								if !${This.Checked}
 								{
 									variable int i = 1
@@ -161,7 +162,7 @@
 										{
 											convTypes:Remove[${i}]
 											convTypes:Collapse
-											break
+											;break
 										}
 										i:Inc
 									}
@@ -183,6 +184,7 @@
 							</Font>
 							<Text>Interview</Text>
 							<OnLeftClick>
+								colorToggle Interview
 								if !${This.Checked}
 								{
 									variable int i = 1
@@ -192,7 +194,7 @@
 										{
 											convTypes:Remove[${i}]
 											convTypes:Collapse
-											break
+											;break
 										}
 										i:Inc
 									}
@@ -214,6 +216,7 @@
 							</Font>
 							<Text>Convince</Text>
 							<OnLeftClick>
+								colorToggle Convince
 								if !${This.Checked}
 								{
 									variable int i = 1
@@ -223,7 +226,7 @@
 										{
 											convTypes:Remove[${i}]
 											convTypes:Collapse
-											break
+											;break
 										}
 										i:Inc
 									}
@@ -245,6 +248,7 @@
 							</Font>
 							<Text>Gossip</Text>
 							<OnLeftClick>
+								colorToggle Gossip
 								if !${This.Checked}
 								{
 									variable int i = 1
@@ -254,7 +258,7 @@
 										{
 											convTypes:Remove[${i}]
 											convTypes:Collapse
-											break
+											;break
 										}
 										i:Inc
 									}
@@ -276,6 +280,7 @@
 							</Font>
 							<Text>Entertain</Text>
 							<OnLeftClick>
+								colorToggle Entertain
 								if !${This.Checked}
 								{
 									variable int i = 1
@@ -285,7 +290,7 @@
 										{
 											convTypes:Remove[${i}]
 											convTypes:Collapse
-											break
+											;break
 										}
 										i:Inc
 									}
