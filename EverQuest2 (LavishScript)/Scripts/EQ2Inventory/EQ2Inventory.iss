@@ -29,7 +29,6 @@ variable string NameFilter3
 ;Run Variables
 ;=================================
 variable bool RunBroker=TRUE
-variable bool RunDepot=TRUE
 variable bool RunJunk=TRUE
 variable bool RunDestroy=TRUE
 variable bool SlotFull=FALSE
@@ -41,7 +40,7 @@ variable bool DepotItemsPlaced=FALSE
 variable settingsetref Junk
 variable settingsetref Destroy
 variable settingsetref Custom
-variable settingsetref Depot
+variable settingsetref Trade
 variable settingsetref DeleteMeats
 variable settingsetref Fertilizer
 variable settingsetref Harvests
@@ -95,7 +94,7 @@ function InitializeSettings()
 	Root:AddSet[Junk]
 	Root:AddSet[Destroy]
 	Root:AddSet[Custom]
-	Root:AddSet[Depot]
+	Root:AddSet[Trade]
 	Root:AddSet[DeleteMeats]
 	Root:AddSet[Fertilizer]
 	Root:AddSet[Harvests]
@@ -105,7 +104,7 @@ function InitializeSettings()
 	Junk:Set[${Root.FindSet[Junk]}]
 	Destroy:Set[${Root.FindSet[Destroy]}]
 	Custom:Set[${Root.FindSet[Custom]}]
-	Depot:Set[${Root.FindSet[Depot]}]
+	Trade:Set[${Root.FindSet[Trade]}]
 	DeleteMeats:Set[${Root.FindSet[DeleteMeats]}]
 	Fertilizer:Set[${Root.FindSet[Fertilizer]}]
 	Harvests:Set[${Root.FindSet[Harvests]}]
@@ -118,6 +117,7 @@ function InitializeSettings()
 	Fertilizer:Import[./ScriptConfig/Fertilizer.xml]
 	Harvests:Import[./ScriptConfig/Harvests.xml]
 	StatusItems:Import[./ScriptConfig/StatusItems.xml]
+	Custom:Import[./ScriptConfig/CustomItems.xml]
 
 	UserSettings:AddSet[General Settings]
 	genset:Set[${UserSettings.FindSet[General Settings]}]
@@ -126,8 +126,8 @@ function InitializeSettings()
 	Settings:SetFilename[${Junk},./ScriptConfig/Junk.xml]
 	Settings:SetFilename[${Destroy},./ScriptConfig/Destroy.xml]
 	Settings:SetFilename[${Custom},./ScriptConfig/CustomItems.xml]
-	Settings:SetFilename[${Depot},./ScriptConfig/SupplyDepotList.xml]
 	Settings:SetFilename[${UserSettings},./CharConfig/${Me.Name}.xml]
+	Settings:SetFilename[${Trade},./ScriptConfig/TradeItems.xml]
 
 	; this will load all the above settings.
 	Settings:LoadSettings
@@ -194,6 +194,7 @@ function InitializeSettings()
 	Settings:AddSetting[CHarvestT6,${genset},CHarvestT6,1]
 	Settings:AddSetting[CHarvestT7,${genset},CHarvestT7,1]
 	Settings:AddSetting[CHarvestT8,${genset},CHarvestT8,1]
+	Settings:AddSetting[CHarvestT9,${genset},CHarvestT9,1]
 	Settings:AddSetting[CustomItemsBox,${genset},CustomItemsBox,1]
 	Settings:AddSetting[RHarvestBox,${genset},RHarvestBox,1]
 	Settings:AddSetting[RHarvestT1,${genset},RHarvestT1,1]
@@ -204,6 +205,7 @@ function InitializeSettings()
 	Settings:AddSetting[RHarvestT6,${genset},RHarvestT6,1]
 	Settings:AddSetting[RHarvestT7,${genset},RHarvestT7,1]
 	Settings:AddSetting[RHarvestT8,${genset},RHarvestT8,1]
+	Settings:AddSetting[RHarvestT9,${genset},RHarvestT9,1]
 	Settings:AddSetting[StatusItemBox,${genset},StatusItemBox,1]
 	Settings:AddSetting[StatusItemT1,${genset},StatusItemT1,1]
 	Settings:AddSetting[StatusItemT2,${genset},StatusItemT2,1]
@@ -234,14 +236,8 @@ function InitializeSettings()
 	Settings:AddSetting[SellAdeptI,${genset},SellAdeptI,0]
 	Settings:AddSetting[SellHandCrafted,${genset},SellHandCrafted,0]
 	Settings:AddSetting[SellUncommon,${genset},SellUncommon,0]
-	Settings:AddSetting[GathererHireling,${genset},GathererHireling,0]
-	Settings:AddSetting[HunterHireling,${genset},HunterHireling,0]
-	Settings:AddSetting[MinerHireling,${genset},MinerHireling,0]
-	Settings:AddSetting[GathererTierNumber,${genset},GathererTierNumber,1]
-	Settings:AddSetting[HunterTierNumber,${genset},HunterTierNumber,1]
-	Settings:AddSetting[MinerTierNumber,${genset},MinerTierNumber,1]
-	Settings:AddSetting[UseHarvestDepot,${genset},UseHarvestDepot,1]
 	Settings:AddSetting[Examine,${genset},Examine,0]
+	Settings:AddSetting[Trade,${genset},Trade,1]
 	; Settings:AddSetting[,${genset},,0]
 
 	; **Saving Settings**
@@ -338,7 +334,7 @@ function PlaceRare()
 	call AddLog "**Checking Rares List**" FFFF00FF
 	variable int i
 
-	for (i:Set[1];${i}<=8;i:Inc)
+	for (i:Set[1];${i}<=9;i:Inc)
 	{
 		call CheckFocus
 		Me:CreateCustomInventoryArray[nonbankonly]
@@ -368,6 +364,9 @@ function PlaceItemsFromSet(settingsetref SSR, int Container)
 		while (${iter:Next(exists)}) && ${RunBroker}
 	}
 }
+
+
+
 function PlaceHarvest()
 {
 	call CheckFocus
@@ -378,14 +377,14 @@ function PlaceHarvest()
 
 	variable int i
 
-	for (i:Set[1];${i}<=8;i:Inc)
+	for (i:Set[1];${i}<=9;i:Inc)
 	{
 		call CheckFocus
 		Me:CreateCustomInventoryArray[nonbankonly]
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[CHarvestT${i},checkbox].Checked}
 		{
-			call PlaceItemsFromSet ${Harvests.FindSet[SCHarvestT${i}]} ${CHBox}
+			call PlaceItemsFromSet ${Harvests.FindSet[CHarvestT${i}]} ${CHBox}
 		}
 	}
 }
@@ -753,6 +752,7 @@ function VendorType()
 function SellJunk()
 {
 	RunJunk:Set[TRUE]
+	variable int JunkCount=0
 
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00
@@ -779,30 +779,38 @@ function SellJunk()
 	EQ2Execute /togglebags
 	wait 5
 	EQ2Execute /togglebags
+	wait 5
+	EQ2Execute /togglebags
+	wait 15
+	EQ2Execute /togglebags
 	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 10
 	call AddSellLog "**Selling Junk Items**" FFFF00FF
 	variable iterator iter
 	Junk.FindSet[Junk]:GetSettingIterator[iter]
-	if (${iter:First(exists)})
+	do
 	{
-		do
-		{			
-			if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${Me.Merchandise[${iter.Key}].IsForSale}
-			{
-				do
+		if (${iter:First(exists)})
+		{
+			do
+			{			
+				if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${Me.Merchandise[${iter.Key}].IsForSale}
 				{
-					Debug:Echo["${iter.Key}"]
-					Debug:Echo["Selling ${Me.Merchandise[${iter.Key}]}"]
-					call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.Merchandise[${iter.Key}]}" FF11CCFF
-					Me.Merchandise[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
-					wait 15
+					do
+					{
+						Debug:Echo["${iter.Key}"]
+						Debug:Echo["Selling ${Me.Merchandise[${iter.Key}]}"]
+						call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.Merchandise[${iter.Key}]}" FF11CCFF
+						Me.Merchandise[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
+						wait 15
+					}
+					while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0 
 				}
-				while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0 
 			}
+			while ${iter:Next(exists)} && ${RunJunk}
 		}
-		while ${iter:Next(exists)} && ${RunJunk}
-	}
+	}	
+	while ${JunkCount:Inc} >= 5	
 
 	if ${UIElement[SellTreasured@EQ2Junk@GUITabs@EQ2Inventory].Checked} && ${RunJunk}
 	{
@@ -961,86 +969,91 @@ function SellAdeptI()
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
-function AddToDepot()
+function TradeItems()
 {
-	variable string TestString
-	variable int Drop
-	RunDepot:Set[TRUE]
-	SkipItem:Set[FALSE]
-	SlotFull:Set[FALSE]
+	variable int i
+	
+	if !${Target(exists)}
+	{
+		echo ${Time}: You need a target to trade with.
+		return
+	}
+	EQ2Execute "apply_verb ${Target.ID} Trade"
 	wait 5
-	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
+	EQ2Execute /togglebags
+	wait 5
+	EQ2Execute /togglebags
 	Me:CreateCustomInventoryArray[nonbankonly]
-	wait 5
-	call AddDepotLog "**Adding Items to Supply Depot**" FFFF00FF
-	wait 5
+	wait 10
+	UIElement[TradeItemList@Trade Items@GUITabs@EQ2Inventory]:ClearItems
+	wait 10
+	call AddTradeLog "**Starting to Trade Items**" FFFF00FF
+	wait 30
+	
+		call TradeItemsFromSet ${Trade.FindSet[Trade]}
+		
+	wait 10
+	EQ2Execute /accept_trade
+	wait 30
+	relay all EQ2Execute /accept_trade
+	call AddTradeLog "**Finished Trading Items**" FFFF00FF
+	echo ${Time} Trading completed.
+}
+
+function TradeItemsFromSet(settingsetref SSR)
+{
 	variable iterator iter
-	Depot.FindSet[Supplys]:GetSettingIterator[iter]
+	variable int HowMany=12
+	variable int iItemsTraded=0
+	SSR:GetSettingIterator[iter]
 	if (${iter:First(exists)})
 	{
 		do
 		{
-			Drop:Set[1]
-			SkipItem:Set[FALSE]
-			SlotFull:Set[FALSE]
-			while (${Drop}>0) && ${RunDepot} && !${SkipItem} && !${SlotFull}
+			while ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} > ${iItemsTraded}
 			{
-				if (${iter.Key.Length} <= 4)
-					break
-
-				TestString:Set[${Me.CustomInventory[${iter.Key}]}]
-				if ${TestString.Find[{n}]}
+				do
 				{
-					Drop:Set[${Me.CustomInventory[${iter.Key}].Quantity}]
-					TestString:Set[${TestString.Token[2,}].Token[1,{]}]
-					echo Found {n} -- TestString: ${TestString}
+					call AddTradeLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Trade Window" FF11CCFF
+					wait 10
+					EQ2Execute /add_trade_item ${Math.Calc[${Me.CustomInventory[${iter.Key}].Index}-1]} ${iItemsTraded} ${Me.CustomInventory[${iter.Key}].Quantity}
+					wait 5
+					iItemsTraded:Inc
+					wait 5
 				}
-				else
-					Drop:Set[${Me.CustomInventory[ExactName,${iter.Key}].Quantity}]
-
-
-				if (${Drop} < 1)
-					break
-
-				echo DEBUG EQ2Depot Drop: ${Drop} Item Name: ${Me.CustomInventory[${iter.Key}]} Key: ${iter.Key}
-
-				call AddDepotLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity}  ${TestString}"
-				Me.CustomInventory[${iter.Key}]:AddToDepot[${Actor[depot].ID}]
-				wait ${Math.Rand[30]:Inc[20]}
-
-				if ${SlotFull}
-					{
-						call AddDepotLog "---Slot ${TestString} Max QTY!!---" FFFF0000
-					}
-				if ${SkipItem}
-				{
-					call AddDepotLog "---Skipping item will not add to depot properly!!---" FFFF0000
-				}
+				while (${iter:Next(exists)}) && ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} < ${iItemsTraded}
+			}	
+			if ${iItemsTraded} > 0
+			{
+				EQ2Execute /accept_trade
+				wait 10
+				relay all EQ2Execute /accept_trade 
+				wait 20
+				iItemsTraded:Set[0]
+				EQ2Execute "apply_verb ${Target.ID} Trade"
 			}
+			
 		}
-		while ${iter:Next(exists)} && ${RunDepot}
-		DepotItemsPlaced:Set[TRUE]
-	}
-
-	if ${RunDepot}
-	{
-		call AddDepotLog "**Items Added to Supply Depot**" FFFF00FF
-	}
-	else
-	{
-		call AddDepotLog "**EQ2Depot Canceled!**" FFFF00FF
+		while (${iter:Next(exists)})
 	}
 }
 
-
-atom GetText(string DepotItemFull)
+function TradeList()
 {
-	if ${DepotItemFull.Find["This container cannot hold any more of this item."]}
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+	wait 5
+	call AddRemoveList "*******Trade List*******" FFFF00FF
+	variable iterator iter
+	Trade.FindSet[Trade]:GetSettingIterator[iter]
+	if (${iter:First(exists)})
+	{
+		Do
 		{
-				SlotFull:Set[TRUE]
+			call AddRemoveList "${iter.Key}"
 		}
+		while ${iter:Next(exists)}
+	}
 }
-
 
 function JunkList()
 {
@@ -1095,24 +1108,6 @@ function CustomList()
 	}
 }
 
-function DepotList()
-{
-	variable int KeyNum=1
-	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
-	wait 5
-	call AddRemoveList "*******Depot Item List*******" FFFF00FF
-	variable iterator iter
-	Depot.FindSet[Supplys]:GetSettingIterator[iter]
-	if (${iter:First(exists)})
-	{
-		Do
-		{
-			call AddRemoveList "${iter.Key}"
-		}
-		while ${iter:Next(exists)}
-	}
-}
-
 function DeleteMeat()
 {
 	variable int KeyNum=1
@@ -1137,11 +1132,6 @@ function DeleteMeat()
 	}
 }
 
-function EQ2Hirelings()
-{
-	RunScript EQ2Inventory/SubScripts/EQ2Hirelings
-}
-
 function AddJunk()
 {
 	noop ${Junk.FindSet[Junk].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
@@ -1151,7 +1141,15 @@ function AddJunk()
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
-
+function AddTrade()
+{
+	noop ${Trade.FindSet[Trade].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
+	Settings:SaveSettings[${Trade}]
+	Trade.FindSet[Trade]:Sort
+	Settings:SaveSettings[${Trade}]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
+	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+}
 function AddDestroy()
 {
 	noop ${Destroy.FindSet[Destroy].FindSetting[[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Sell]}
@@ -1168,18 +1166,17 @@ function AddCustom()
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
 
-function AddDepot()
-{
-	noop ${Depot.FindSet[Supplys].FindSetting[${UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem},Save]}
-	Settings:SaveSettings[${Depot}]
-	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FF00FF00]
-	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
-}
-
 function RemoveJunk()
 {
 	Junk.FindSet[Junk].FindSetting[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]:Remove
 	Settings:SaveSettings[${Junk}]
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
+	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
+}
+function RemoveTrade()
+{
+	Trade.FindSet[Trade].FindSetting[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]:Remove
+	Settings:SaveSettings[${Trade}]
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
@@ -1195,14 +1192,6 @@ function RemoveCustom()
 {
 	Custom.FindSet[CustomItems].FindSetting[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]:Remove
 	Settings:SaveSettings[${Custom}]
-	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
-	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
-}
-
-function RemoveDepot()
-{
-	Depot.FindSet[Supplys].FindSetting[${UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem}]:Remove
-	Settings:SaveSettings[${Depot}]
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:SetTextColor[FFFF0000]
 	UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory].SelectedItem:Deselect
 }
@@ -1249,16 +1238,12 @@ function AddSellLog(string textline, string colour)
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
 }
 
-function AddDepotLog(string textline, string colour)
+function AddTradeLog(string textline, string colour)
 {
-	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
-	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
+	UIElement[TradeItemList@Trade Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
+	UIElement[TradeItemList@Trade Items@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
 }
-function AddOverDepotLog(string textline, string colour)
-{
-	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
-	UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory].FindUsableChild[Vertical,Scrollbar]:LowerValue[1]
-}
+
 function AddInvList(string textline, string colour)
 {
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:AddItem[${textline},1,${colour}]
