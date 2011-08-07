@@ -1565,6 +1565,29 @@
 								}
 					</OnLeftClick>
 				</checkbox>
+				<checkbox Name='CHarvestT9'>
+				<X>485</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 9</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT9]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT9,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT9,0]
+								}
+					</OnLeftClick>
+				</checkbox>
 				<Text Name='AddRareHarvestText'>
 					<X>5</X>
 					<Y>300</Y>
@@ -1783,6 +1806,29 @@
 								}
 					</OnLeftClick>
 					</checkbox>
+				<checkbox Name='RHarvestT9'>
+					<X>485</X>
+					<Y>320</Y>
+					<Width>50</Width>
+					<Height>20</Height>
+					<Text>Tier 9</Text>
+					<OnLoad>
+						if ${EQ2InvInterface.GetSetting[RHarvestT9]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT9,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT9,0]
+								}
+					</OnLeftClick>
+				</checkbox>
 				<Text Name='AddStatusText'>
 					<X>5</X>
 					<Y>355</Y>
@@ -2359,35 +2405,17 @@
 					</AutoTooltip>
 				</Commandbutton>
 			</Tab>
-			<Tab Name='EQ2Depot'>
-    		<CommandButton Name='PlaceInDepot'>
+			<Tab Name='Trade Items'>
+				<CommandButton Name='TradeItemsCB'>
 					<X>10</X>
 					<Y>25</Y>
 					<Width>110</Width>
 					<Height>55</Height>
-					<Text>Start EQ2Depot</Text>
-					<AutoTooltip>Places Items in Harvest Depot</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call AddToDepot]</Command>
+					<Text>Trade Items</Text>
+					<AutoTooltip>Trades Items in Trade List to Target</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call TradeItems]</Command>
 				</CommandButton>
-				<CommandButton Name='SkipDepot'>
-					<X>10</X>
-					<Y>95</Y>
-					<Width>110</Width>
-					<Height>55</Height>
-					<Text>Skip Depot Item</Text>
-					<AutoTooltip>Skips Placing an Item in Harvest Depot</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[SkipItem]:Set[TRUE]</Command>
-				</CommandButton>
-				<CommandButton Name='StopDepot'>
-					<X>10</X>
-					<Y>165</Y>
-					<Width>110</Width>
-					<Height>55</Height>
-					<Text>Stop EQ2Depot</Text>
-					<AutoTooltip>Stops Placing Items in Harvest Depot</AutoTooltip>
-					<Command>Script[EQ2Inventory].Variable[RunDepot]:Set[FALSE]</Command>
-				</CommandButton>
-    		<listbox Name='DepotItemList'>
+				<listbox Name='TradeItemList'>
 					<X>140</X>
 					<Y>15</Y>
 					<Width>390</Width>
@@ -2397,6 +2425,14 @@
 						<Size>19</Size>
 					</Font>
 					<SelectMultiple>0</SelectMultiple>
+					<OnLeftDown>
+						if ${This.SelectedItems}
+							Me.Inventory[${This.SelectedItem}]:Examine
+					</OnLeftDown>
+					<OnLeftClick>
+						if ${This.SelectedItems}
+							Me.Inventory[${This.SelectedItem}]:Examine
+					</OnLeftClick>
 					<Sort></Sort>
 				</listbox>
 				<Commandbutton name='Clearlog'>
@@ -2406,282 +2442,15 @@
 					<Height>15</Height>
 					<Text>Clear Log</Text>
 					<OnLeftClick>
-						UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
+						UIElement[TradeItemList@Trade Items@GUITabs@EQ2Inventory]:ClearItems
 					</OnLeftClick>
 					<AutoTooltip>
 						Clear Log
 					</AutoTooltip>
 				</Commandbutton>
 			</Tab>
-			<Tab Name='EQ2Hirelings'>
-				<CommandButton Name='StartHirelings'>
-					<X>10</X>
-					<Y>10</Y>
-					<Width>110</Width>
-					<Height>55</Height>
-					<Text>Start Hireling Bot</Text>
-					<AutoTooltip>Starts Hirelings Bot</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call EQ2Hirelings]</Command>
-				</CommandButton>
-				<CommandButton Name='StopHirelings'>
-					<X>130</X>
-					<Y>10</Y>
-					<Width>110</Width>
-					<Height>55</Height>
-					<Text>Stop Hireling Bot</Text>
-					<AutoTooltip>Stops Hirelings Bot</AutoTooltip>
-					<Command>Script[EQ2Hirelings].Variable[RunHirelings]:Set[FALSE]</Command>
-				</CommandButton>
-				<Text Name='Status Text'>
-					<X>10</X>
-					<Y>70</Y>
-					<Width>40</Width>
-					<Height>10</Height>
-					<Alignment>Left</Alignment>
-					<Text>Status:</Text>
-				</Text>
-				<Text Name='StatusText'>
-					<X>55</X>
-					<Y>70</Y>
-					<Width>90%</Width>
-					<Height>10</Height>
-					<Alignment>Left</Alignment>
-					<Text></Text>
-				</Text>
-				<Text Name='Trip Text'>
-					<X>270</X>
-					<Y>70</Y>
-					<Width>80</Width>
-					<Height>10</Height>
-					<Alignment>Left</Alignment>
-					<Text>Trips Made:</Text>
-				</Text>
-				<Text Name='TripText'>
-					<X>345</X>
-					<Y>70</Y>
-					<Width>90%</Width>
-					<Height>10</Height>
-					<Alignment>Left</Alignment>
-					<Text>0</Text>
-				</Text>
-				<checkbox Name='GathererHireling'>
-					<X>10</X>
-  				<Y>95</Y>
-			  	<Width>60</Width>
-					<Height>20</Height>
-  				<Text>Gatherer Hireling</Text>
-  				<OnLoad>
-  					if ${EQ2InvInterface.GetSetting[GathererHireling]}
-								{
-									This:SetChecked
-								}
-					</OnLoad>
-					<OnLeftClick>
-						if ${This.Checked}
-								{
-									EQ2InvInterface:SetSetting[GathererHireling,1]
-								}
-								else
-								{
-									EQ2InvInterface:SetSetting[GathererHireling,0]
-								}
-					</OnLeftClick>
-				</checkbox>
-				<Text Name='GathererTierText'>
-					<X>135</X>
-					<Y>98</Y>
-					<Width>30</Width>
-					<Height>20</Height>
-					<Text>Tier:</Text>
-				</Text>
-    		<combobox name='GathererTierNumber'>
-          <x>165</x>
-          <y>95</y>
-          <width>35</width>
-          <height>20</height>
-          <items>
-               <Item Value='1'>1</Item>
-               <Item Value='2'>2</Item>
-               <Item Value='3'>3</Item>
-               <Item Value='4'>4</Item>
-               <Item Value='5'>5</Item>
-               <Item Value='6'>6</Item>
-               <Item Value='7'>7</Item>
-               <Item Value='8'>8</Item>
-          </items>
-          <OnSelect>
-               	EQ2InvInterface:SetSetting[GathererTierNumber,${This.SelectedItem.ID}]
-          </OnSelect>
-          <OnLoad>
-          			This.Item[${EQ2InvInterface.GetSetting[GathererTierNumber]}]:Select
-          </OnLoad>
-     		</combobox>
-			<checkbox Name='HunterHireling'>
-				<X>10</X>
-  			<Y>117</Y>
-			  <Width>60</Width>
-				<Height>20</Height>
-  			<Text>Hunter Hireling</Text>
-  				<OnLoad>
-  					if ${EQ2InvInterface.GetSetting[HunterHireling]}
-								{
-									This:SetChecked
-								}
-					</OnLoad>
-					<OnLeftClick>
-						if ${This.Checked}
-								{
-									EQ2InvInterface:SetSetting[HunterHireling,1]
-								}
-								else
-								{
-									EQ2InvInterface:SetSetting[HunterHireling,0]
-								}
-					</OnLeftClick>
-				</checkbox>
-				<Text Name='HunterTierText'>
-					<X>135</X>
-					<Y>120</Y>
-					<Width>30</Width>
-					<Height>20</Height>
-					<Text>Tier:</Text>
-				</Text>
-    		<combobox name='HunterTierNumber'>
-          <x>165</x>
-          <y>117</y>
-          <width>35</width>
-          <height>20</height>
-          <items>
-               <Item Value='1'>1</Item>
-               <Item Value='2'>2</Item>
-               <Item Value='3'>3</Item>
-               <Item Value='4'>4</Item>
-               <Item Value='5'>5</Item>
-               <Item Value='6'>6</Item>
-               <Item Value='7'>7</Item>
-               <Item Value='8'>8</Item>
-          </items>
-          <OnSelect>
-               	EQ2InvInterface:SetSetting[HunterTierNumber,${This.SelectedItem.ID}]
-          </OnSelect>
-          <OnLoad>
-          			This.Item[${EQ2InvInterface.GetSetting[HunterTierNumber]}]:Select
-          </OnLoad>
-     		</combobox>
-			<checkbox Name='MinerHireling'>
-				<X>10</X>
-  			<Y>140</Y>
-			  <Width>60</Width>
-				<Height>20</Height>
-  			<Text>Miner Hireling</Text>
-  				<OnLoad>
-  					if ${EQ2InvInterface.GetSetting[MinerHireling]}
-								{
-									This:SetChecked
-								}
-					</OnLoad>
-					<OnLeftClick>
-						if ${This.Checked}
-								{
-									EQ2InvInterface:SetSetting[MinerHireling,1]
-								}
-								else
-								{
-									EQ2InvInterface:SetSetting[MinerHireling,0]
-								}
-					</OnLeftClick>
-				</checkbox>
-				<Text Name='MinerTierText'>
-					<X>135</X>
-					<Y>143</Y>
-					<Width>30</Width>
-					<Height>20</Height>
-					<Text>Tier:</Text>
-				</Text>
-    		<combobox name='MinerTierNumber'>
-          <x>165</x>
-          <y>140</y>
-          <width>35</width>
-          <height>20</height>
-          <items>
-               <Item Value='1'>1</Item>
-               <Item Value='2'>2</Item>
-               <Item Value='3'>3</Item>
-               <Item Value='4'>4</Item>
-               <Item Value='5'>5</Item>
-               <Item Value='6'>6</Item>
-               <Item Value='7'>7</Item>
-               <Item Value='8'>8</Item>
-          </items>
-          <OnSelect>
-               	EQ2InvInterface:SetSetting[MinerTierNumber,${This.SelectedItem.ID}]
-          </OnSelect>
-          <OnLoad>
-          			This.Item[${EQ2InvInterface.GetSetting[MinerTierNumber]}]:Select
-          </OnLoad>
-     		</combobox>
-			<Text Name='Waittime'>
-				<X>15</X>
-				<Y>165</Y>
-				<Width>90%</Width>
-				<Height>10</Height>
-				<Alignment>Left</Alignment>
-				<Wrap />
-				<Text>Wait Time:</Text>
-			</Text>
-			<Text Name='WaittimeText'>
-				<X>80</X>
-				<Y>165</Y>
-				<Width>90%</Width>
-				<Height>10</Height>
-				<Alignment>Left</Alignment>
-				<Wrap />
-				<Text></Text>
-			</Text>
-			<Text Name='Runtime'>
-				<X>15</X>
-				<Y>185</Y>
-				<Width>90%</Width>
-				<Height>10</Height>
-				<Alignment>Left</Alignment>
-				<Wrap />
-				<Text>Runtime:</Text>
-			</Text>
-			<Text Name='RuntimeText'>
-				<X>70</X>
-				<Y>185</Y>
-				<Width>90%</Width>
-				<Height>10</Height>
-				<Alignment>Left</Alignment>
-				<Wrap />
-				<Text></text>
-			</Text>
-			<checkbox Name='UseHarvestDepot'>
-				<X>10</X>
-  			<Y>205</Y>
-			  <Width>90%</Width>
-				<Height>20</Height>
-  			<Text>Place Items in Supply Depot after Retrevial.</Text>
-  				<OnLoad>
-  					if ${EQ2InvInterface.GetSetting[UseHarvestDepot]}
-								{
-									This:SetChecked
-								}
-					</OnLoad>
-					<OnLeftClick>
-						if ${This.Checked}
-								{
-									EQ2InvInterface:SetSetting[UseHarvestDepot,1]
-								}
-								else
-								{
-									EQ2InvInterface:SetSetting[UseHarvestDepot,0]
-								}
-					</OnLeftClick>
-				</checkbox>
-			</Tab>
 			<Tab Name='Add Items'>
-    		<CommandButton Name='Inventory List'>
+				<CommandButton Name='Inventory List'>
 					<X>10</X>
 					<Y>25</Y>
 					<Width>110</Width>
@@ -2740,14 +2509,14 @@
 					<AutoTooltip>Adds The selected Item to the Custom List</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call AddCustom]</Command>
 				</CommandButton>
-				<CommandButton Name='Depot Items Add'>
+				<CommandButton Name='Trade Items Add'>
 					<X>10</X>
 					<Y>250</Y>
 					<Width>110</Width>
 					<Height>35</Height>
-					<Text>Add Depot Item</Text>
-					<AutoTooltip>Adds The selected Item to the Supply Depot List</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call AddDepot]</Command>
+					<Text>Add Trade Item</Text>
+					<AutoTooltip>Adds The selected Item to the Trade Item List</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddTrade]</Command>
 				</CommandButton>
     		<listbox Name='AddItemList'>
 					<X>140</X>
@@ -2838,23 +2607,23 @@
 					<AutoTooltip>Removes The selected Item from the Custom Item List.</AutoTooltip>
 					<Command>Script[eq2inventory]:QueueCommand[call RemoveCustom]</Command>
 				</CommandButton>
-				<CommandButton Name='Depot Items List'>
+				<CommandButton Name='Trade Items List'>
 					<X>10</X>
 					<Y>325</Y>
 					<Width>115</Width>
 					<Height>35</Height>
-					<Text>Depot List</Text>
-					<AutoTooltip>Outputs the Depot List to Log Window</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call DepotList]</Command>
+					<Text>Trade Item List</Text>
+					<AutoTooltip>Outputs the Trade List to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call TradeList]</Command>
 				</CommandButton>
-				<CommandButton Name='Depot Items Remove'>
+				<CommandButton Name='Trade Items Remove'>
 					<X>10</X>
 					<Y>365</Y>
 					<Width>115</Width>
 					<Height>35</Height>
-					<Text>Remove Depot Item</Text>
-					<AutoTooltip>Removes The selected Item from the Sepot Item List.</AutoTooltip>
-					<Command>Script[eq2inventory]:QueueCommand[call RemoveDepot]</Command>
+					<Text>Remove Trade Item</Text>
+					<AutoTooltip>Removes The selected Item from the Trade Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveTrade]</Command>
 				</CommandButton>
     		<listbox Name='RemoveItemList'>
 					<X>140</X>
