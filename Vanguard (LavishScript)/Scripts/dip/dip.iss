@@ -320,9 +320,12 @@ function GoDiploSomething()
 		if !${VG.IsInParlay}
 		{
 			call SelectNextNPC
-			call MoveToNPC
-			call TargetNPC
-			call StartParlay
+			if ${curNPC}>0
+			{
+				call MoveToNPC
+				call TargetNPC
+				call StartParlay
+			}
 		}
 	}
 	
@@ -383,12 +386,12 @@ function SelectNextNPC()
 			return
 		}
 	}
-
 	;; reset our current NPC counter
 	if ${curNPC}>=20
 	{
 		curNPC:Set[0]
 	}
+
 }
 
 function MoveToNPC()
@@ -577,11 +580,12 @@ function SelectParlay()
 	variable int diplevel
 	while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
 	{
-		;echo General[ ${convOptions}]: ${Dialog[General,${convOptions}].Text}
-		
 		currentParleyType:Set[Unknown]
-		
 		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
+
+		;echo "General[${convOptions}], curNPC=${curNPC}/${dipNPCs[${curNPC}].Name}"
+		;echo "DipLevel=${diplevel}, Incite=${dipNPCs[${curNPC}].Incite}, Interview=${dipNPCs[${curNPC}].Interview}, Convine=${dipNPCs[${curNPC}].Convince}, Gossip=${dipNPCs[${curNPC}].Gossip}, Entertain=${dipNPCs[${curNPC}].Entertain}"
+		
 		i:Set[1]
 		do
 		{
@@ -634,7 +638,11 @@ function SelectParlay()
 		convOptions:Set[1]
 		while ${convOptions} <= ${Dialog[Civic Diplomacy].ResponseCount} && !${selectedConv}
 		{
-			;echo Civic Diplomacy[ ${convOptions}]: ${Dialog[Civic Diplomacy,${convOptions}].Text}
+			currentParleyType:Set[Unknown]
+			diplevel:Set[${Dialog[Civic Diplomacy,${convOptions}].Text.Mid[${Dialog[Civic Diplomacy,${convOptions}].Text.Find[dkblue>]},${Dialog[Civic Diplomacy,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
+
+			;echo "Civic Diplomacy[${convOptions}], curNPC=${curNPC}/${dipNPCs[${curNPC}].Incite}"
+			;echo "DipLevel=${diplevel}, Incite=${dipNPCs[${curNPC}].Incite}, Interview=${dipNPCs[${curNPC}].Interview}, Convine=${dipNPCs[${curNPC}].Convince}, Gossip=${dipNPCs[${curNPC}].Gossip}, Entertain=${dipNPCs[${curNPC}].Entertain}"
 
 			diplevel:Set[${Dialog[Civic Diplomacy,${convOptions}].Text.Mid[${Dialog[Civic Diplomacy,${convOptions}].Text.Find[dkblue>]},${Dialog[Civic Diplomacy,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 			i:Set[1]
