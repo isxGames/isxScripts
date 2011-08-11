@@ -66,16 +66,21 @@
 					switch ${This.SelectedTab}
 					{
 					Case HUD
-						UIElement[Diplo]:SetWidth[160]
+						UIElement[Diplo]:SetWidth[170]
 						UIElement[Diplo]:SetHeight[80]
 						break
 					Case Options
 						UIElement[Diplo]:SetWidth[380]
 						UIElement[Diplo]:SetHeight[300]
 						break
+					Case Items
+						UIElement[Diplo]:SetWidth[380]
+						UIElement[Diplo]:SetHeight[300]
+						break
 					}
 				</OnSelect>
 				<Tabs>
+					<!-- Tab Name: (HUD) -->
 					<Tab Name='HUD'>
 						<Text Name='Wins' Template="VG.Text">
 							<X>10</X>
@@ -709,7 +714,7 @@
 							<Width>80</Width>
 							<text>Save Gear</Text>
 							<OnLeftClick>
-								obj_diplogear:Save[${UIElement[diplogearCombo@Options@DipTabs@Diplo].SelectedItem}]
+								DiploGear:Save[${UIElement[diplogearCombo@Options@DipTabs@Diplo].SelectedItem}]
 							</OnLeftClick>
 						</CommandButton>
 						<CommandButton Name="diplogearLoad" Template="VG.RedCommandButton">
@@ -720,9 +725,101 @@
 							<Width>80</Width>
 							<text>Load Gear</Text>
 							<OnLeftClick>
-								obj_diplogear:Load[${UIElement[diplogearCombo@Options@DipTabs@Diplo].SelectedItem}]
+								DiploGear:Load[${UIElement[diplogearCombo@Options@DipTabs@Diplo].SelectedItem}]
 							</OnLeftClick>
 						</CommandButton>
+					</Tab>
+
+					<!-- Tab Name: (Sell) -->
+					<Tab name='Items'>
+						<checkbox Name='doAutoSell' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3.5%</X>
+							<Y>8%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Auto Sell</Text>
+							<AutoTooltip>  Sell items in list when targetting a Merchant </AutoTooltip>
+							<OnLoad>
+								if ${Script[Dip].VariableScope.doAutoSell}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Dip].VariableScope.doAutoSell:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doAutoDelete' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>30%</X>
+							<Y>8%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Auto Delete</Text>
+							<AutoTooltip>  Delete No Sell, No Trade, No Rent, and Quest items in list </AutoTooltip>
+							<OnLoad>
+								if ${Script[Dip].VariableScope.doAutoDelete}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Dip].VariableScope.doAutoDelete:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doRemoveLowLevelDiplo' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>60%</X>
+							<Y>8%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Delete Low Level Diplo</Text>
+							<AutoTooltip>  Delete Low Level Diplo papers </AutoTooltip>
+							<OnLoad>
+								if ${Script[Dip].VariableScope.doRemoveLowLevelDiplo}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Dip].VariableScope.doRemoveLowLevelDiplo:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="ItemEntry" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>16%</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+						</Textentry>
+						<CommandButton Name="ItemEntryButton" Template="VG.GreenCommandButton">
+							<X>87%</X>
+							<Y>15%</Y>
+							<Width>10%</Width>
+							<Height>20</Height>
+							<Text>Add</Text>
+							<Alignment>Center</Alignment>
+							<OnLeftClick>
+								AddItemList "${UIElement[ItemEntry@Items@DipTabs@Diplo].Text}"
+								PopulateItemList "ItemList@Items@DipTabs@Diplo"
+								UIElement[ItemEntry@Items@DipTabs@Diplo]:SetText[]
+							</OnLeftClick>
+						</CommandButton>
+						<Listbox Name="ItemList" Template="VG.ListBox">
+							<X>3%</X>
+							<Y>25%</Y>
+							<Width>94%</Width>
+							<Height>70%</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>Text</Sort>
+							<OnLoad>
+								PopulateItemList "ItemList@Items@DipTabs@Diplo"
+							</OnLoad>
+							<OnRightClick>
+								RemoveItemList "${This.SelectedItem}"
+								This.SelectedItem:Remove
+							</OnRightClick>
+						</Listbox>
 					</Tab>
 				</Tabs>
 			</TabControl>

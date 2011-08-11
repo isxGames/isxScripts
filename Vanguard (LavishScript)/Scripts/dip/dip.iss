@@ -1,20 +1,38 @@
 /*  An automated diplomacy script.
 
-By: Eris
+	By: Eris
 
-Credits:
-Lax, for the fine product we call innerspace.
-Amadeus, for another fine product, ISXVG.
-Xeon, for the movement code stolen from vgcraftbot.
-Gavkra, for the inspiration, the initial RateCard, DoParleyCard, and IsPlayable functions.
-Chayce, for the rewrite of the RateCard function.
-mmoaddict, continuation of project 4_22_2010
-Zandros, updated to work with targets with same name and cleaned up some coding... 26 July 2010
-Zandros, numerous updates and improvements... 14 July 2011
+	Credits:
+		Lax, for the fine product we call innerspace.
+		Amadeus, for another fine product, ISXVG.
+		Xeon, for the movement code stolen from vgcraftbot.
+		Gavkra, for the inspiration, the initial RateCard, DoParleyCard, and IsPlayable functions.
+		Chayce, for the rewrite of the RateCard function.
+		mmoaddict, continuation of project 4_22_2010
+		Zandros, updated to work with targets with same name and cleaned up some coding... 26 July 2010
+		Zandros, numerous updates and improvements... 14 July 2011
+		
+	Changes by Zandros:
+		-Relocated all code to be dependent of itself - imports saved gear from mmoAddict's vg_objects
+		-Able to move to NPC even if you can't target it:  allows moving from altar to NPC far far away
+		-Save and Load settings everytime you chunk
+		-Set individual settings for each NPC:  allows pushing levers for NPCs with different Presence
+		-Maintain a sell list:  automatically adds, sells, and destroys items in list
+		-Destroy low level informations keeping only unequalled
+		-Equiping gear for appropriate presence shouldn't crash computer anymore
+		-Adjusted RateCard to be more aggressive
+		-Correctly identify all available parlays
+	
+	Future Project:
+		-Save data files to one centralized folder so that all scripts can access it
+		-Build a master NPC list so that you could quickly build your working NPCs
+		-Load and save diffent NPC lists
+		
 */
 
 #include "${Script.CurrentDirectory}/Includes/dip-bnavobjects.iss
-#include "${LavishScript.CurrentDirectory}/Scripts/vg_objects/Obj_DiploGear.iss"
+#include "${Script.CurrentDirectory}/Includes/dip-ItemListTools.iss
+#include "${Script.CurrentDirectory}/Includes/dip-DiploGearTools.iss
 
 objectdef npclist
 {
@@ -123,6 +141,9 @@ variable(global) bool dipisMapping = FALSE
 variable(global) bool dipisPaused = TRUE
 variable(script) bool isMoving = FALSE
 variable(script) bool isRunning = TRUE
+variable(script) bool doAutoDelete = FALSE
+variable(script) bool doAutoSell = FALSE
+variable(script) bool doRemoveLowLevelDiplo = FALSE
 variable(script) int curNPC = 0
 variable(global) string CurrentRegion
 variable(global) string LastRegion
@@ -171,6 +192,9 @@ variable int LowestDipLevel = 0
 variable int HighestDipLevel = 100
 variable bool doChangeEquipment = FALSE
 
+;; Timers
+variable int NextItemListCheck = ${Script.RunningTime}
+
 ;Paths
 variable filepath scriptPath = "${Script.CurrentDirectory}/"
 variable filepath savePath = "${Script.CurrentDirectory}/Save/"
@@ -181,8 +205,11 @@ variable string Output = "${Script.CurrentDirectory}/Save/Debug.txt"
 variable string CurrentChunk 
 
 ;Debug setup
-variable(script) bool debug = FALSE
+variable(script) bool debug = TRUE
 variable(script) string returnvalue = "GOOD"
+
+;; Defines
+#define ALARM "${Script.CurrentDirectory}/Includes/level.wav"
 
 function main()
 {
@@ -252,11 +279,11 @@ function main()
 	ui -reload "${UISkin}"
 	ui -reload -skin VGSkin "${UIFile}"
 	UIElement[HUD@Diplo]:Select
-	UIElement[Diplo]:SetWidth[160]
+	UIElement[Diplo]:SetWidth[170]
 	UIElement[Diplo]:SetHeight[80]
 	call setupUI
 	EchoIt "Paused"
-
+	
 	;Begin the never ending loop....
 	while ${isRunning} && !${endScript}
 	{
@@ -300,6 +327,24 @@ function GoDiploSomething()
 		call setupUI
 	}
 
+	;; check only once every second
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
+	{
+		if ${doAutoSell}
+		{
+			call SellItemList
+		}
+		if ${doRemoveLowLevelDiplo}
+		{
+			call RemoveLowLevelDiplo
+		}
+		if ${doAutoDelete} && !${VG.IsInParlay}
+		{
+			call DeleteItemList	
+		}
+		NextItemListCheck:Set[${Script.RunningTime}]
+	}
+
 	;; we do not want to continue if paused
 	if ${dipisPaused}
 	{
@@ -320,12 +365,9 @@ function GoDiploSomething()
 		if !${VG.IsInParlay}
 		{
 			call SelectNextNPC
-			if ${curNPC}>0
-			{
-				call MoveToNPC
-				call TargetNPC
-				call StartParlay
-			}
+			call MoveToNPC
+			call TargetNPC
+			call StartParlay
 		}
 	}
 	
@@ -352,9 +394,12 @@ function GoDiploSomething()
 				Loot:LootAll
 				waitframe
 			}
-			Parlay:Continue
-			waitframe
-			VGExecute /cleartargets
+			
+			;; clear target if there are plenty of inventory slots
+			if ${Me.InventorySlotsOpen}>=6
+			{
+				VGExecute /cleartargets
+			}
 			wait 10 ${dipisPaused}
 		}
 	}
@@ -382,16 +427,15 @@ function SelectNextNPC()
 		{
 			EchoIt "NPC Selected: [${curNPC}] ${dipNPCs[${curNPC}].Name}"
 			;; this is here to allow time for the parlays to reset
-			wait 20 ${dipisPaused}
 			return
 		}
 	}
+
 	;; reset our current NPC counter
 	if ${curNPC}>=20
 	{
 		curNPC:Set[0]
 	}
-
 }
 
 function MoveToNPC()
@@ -548,7 +592,7 @@ function ChangeEquipment()
 		call PresenceNeeded
 		returnvalue:Set[${Return}]
 		EchoIt "Equiping gear for: ${returnvalue}"
-		call obj_diplogear.Load2 "${returnvalue}"
+		call DiploGear.Load2 "${returnvalue}"
 		EchoIt "Equiped gear: ${returnvalue}"
 		EchoIt "ReAssessing ${Me.Target.Name}"
 		Parlay:AssessTarget
@@ -580,12 +624,11 @@ function SelectParlay()
 	variable int diplevel
 	while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
 	{
-		currentParleyType:Set[Unknown]
-		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
-
-		;echo "General[${convOptions}], curNPC=${curNPC}/${dipNPCs[${curNPC}].Name}"
-		;echo "DipLevel=${diplevel}, Incite=${dipNPCs[${curNPC}].Incite}, Interview=${dipNPCs[${curNPC}].Interview}, Convine=${dipNPCs[${curNPC}].Convince}, Gossip=${dipNPCs[${curNPC}].Gossip}, Entertain=${dipNPCs[${curNPC}].Entertain}"
+		;echo General[ ${convOptions}]: ${Dialog[General,${convOptions}].Text}
 		
+		currentParleyType:Set[Unknown]
+		
+		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 		i:Set[1]
 		do
 		{
@@ -638,11 +681,7 @@ function SelectParlay()
 		convOptions:Set[1]
 		while ${convOptions} <= ${Dialog[Civic Diplomacy].ResponseCount} && !${selectedConv}
 		{
-			currentParleyType:Set[Unknown]
-			diplevel:Set[${Dialog[Civic Diplomacy,${convOptions}].Text.Mid[${Dialog[Civic Diplomacy,${convOptions}].Text.Find[dkblue>]},${Dialog[Civic Diplomacy,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
-
-			;echo "Civic Diplomacy[${convOptions}], curNPC=${curNPC}/${dipNPCs[${curNPC}].Incite}"
-			;echo "DipLevel=${diplevel}, Incite=${dipNPCs[${curNPC}].Incite}, Interview=${dipNPCs[${curNPC}].Interview}, Convine=${dipNPCs[${curNPC}].Convince}, Gossip=${dipNPCs[${curNPC}].Gossip}, Entertain=${dipNPCs[${curNPC}].Entertain}"
+			;echo Civic Diplomacy[ ${convOptions}]: ${Dialog[Civic Diplomacy,${convOptions}].Text}
 
 			diplevel:Set[${Dialog[Civic Diplomacy,${convOptions}].Text.Mid[${Dialog[Civic Diplomacy,${convOptions}].Text.Find[dkblue>]},${Dialog[Civic Diplomacy,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
 			i:Set[1]
@@ -1323,64 +1362,6 @@ atom(script) OnParlayLost()
 	Parlay:Farewell
 }
 
-atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
-{
-	if ${Text.Find["You don't have enough presence"]}
-	{
-		doChangeEquipment:Set[TRUE]
-	}
-	if ${Text.Find["You need at least a diplomacy level of"]}
-	{
-		EchoIt "Too low a level, next NPC"
-		needNewNPC:Set[TRUE]
-	}
-	if ${Text.Find["Your turn is already in progress."]}
-	{
-		EchoIt "Waiting for 'ourturn' timer to expire... "
-	}
-	if ${Text.Find["no line of sight to your target"]}
-	{
-		EchoIt "Face issue chatevent fired, facing target"
-		face ${Math.Calc[${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
-	}
-	if ${Text.Find["Presence has increased"]}
-	{
-		EchoIt "${Text}"
-		if ${Text.Find["Domestic"]}
-		{
-			presDomestic:Inc
-		}
-		if ${Text.Find["Soldier"]}
-		{
-			presSoldier:Inc
-		}
-		if ${Text.Find["Crafter"]}
-		{
-			presCrafter:Inc
-		}
-		if ${Text.Find["Clergy"]}
-		{
-			presClergy:Inc
-		}
-		if ${Text.Find["Academic"]}
-		{
-			presAcademic:Inc
-		}
-		if ${Text.Find["Merchant"]}
-		{
-			presMerchant:Inc
-		}
-		if ${Text.Find["Noble"]}
-		{
-			presNoble:Inc
-		}
-		if ${Text.Find["Outsider"]}
-		{
-			presOutsider:Inc
-		}
-	}
-}
-
 atom(global) dipMap()
 {
 	if !${dipisMapping}
@@ -1424,11 +1405,11 @@ atom(global) dipPause()
 
 atom(global) DipEnd()
 {
-	EchoIt "DipEnd atom called."
-	dipisPaused:Set[TRUE]
 	endScript:Set[TRUE]
+	dipisPaused:Set[TRUE]
 	isMoving:Set[FALSE]
 	VG:ExecBinding[moveforward,release]	
+	EchoIt "DipEnd atom called."
 }
 
 atom(global) toggleFace()
@@ -1845,3 +1826,77 @@ atom(script) CalculateAngles()
 	}
 }
 
+;===================================================
+;===          ATOM - PLAY A SOUND               ====
+;===================================================
+atom(script) PlaySound(string Filename)
+{	
+	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
+}
+
+atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
+{
+	if ${ChannelNumber.Equal[0]} && ${Text.Find[You sell]}
+	{
+		variable string FindSell
+		FindSell:Set[${Text.Mid[9,${Math.Calc[${Text.Length}-9]}]}]
+		if ${FindSell.Length} > 1
+		{
+			AddItemList "${FindSell}"
+		}
+	}	
+	if ${Text.Find["You don't have enough presence"]}
+	{
+		doChangeEquipment:Set[TRUE]
+	}
+	if ${Text.Find["You need at least a diplomacy level of"]}
+	{
+		EchoIt "Too low a level, next NPC"
+		needNewNPC:Set[TRUE]
+	}
+	if ${Text.Find["Your turn is already in progress."]}
+	{
+		EchoIt "Waiting for 'ourturn' timer to expire... "
+	}
+	if ${Text.Find["no line of sight to your target"]}
+	{
+		EchoIt "Face issue chatevent fired, facing target"
+		face ${Math.Calc[${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
+	}
+	if ${Text.Find["Presence has increased"]}
+	{
+		EchoIt "${Text}"
+		if ${Text.Find["Domestic"]}
+		{
+			presDomestic:Inc
+		}
+		if ${Text.Find["Soldier"]}
+		{
+			presSoldier:Inc
+		}
+		if ${Text.Find["Crafter"]}
+		{
+			presCrafter:Inc
+		}
+		if ${Text.Find["Clergy"]}
+		{
+			presClergy:Inc
+		}
+		if ${Text.Find["Academic"]}
+		{
+			presAcademic:Inc
+		}
+		if ${Text.Find["Merchant"]}
+		{
+			presMerchant:Inc
+		}
+		if ${Text.Find["Noble"]}
+		{
+			presNoble:Inc
+		}
+		if ${Text.Find["Outsider"]}
+		{
+			presOutsider:Inc
+		}
+	}
+}
