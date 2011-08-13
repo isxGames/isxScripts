@@ -467,6 +467,7 @@ objectdef obj_diplogear
 		wait 1
 		EchoIt "Saving Diplo Equipment Settings for ${DiploPresence}"
 		This:XMLSave[${di}]
+		wait 5
 	}
 
 	;============================

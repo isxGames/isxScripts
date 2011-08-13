@@ -482,8 +482,8 @@ objectdef  bnav
 
 		Region:Set[${Me.Chunk}]
 
-		; We need to iterate through all the nearby regions and find the closest one that also has connections
-		RegionsFound:Set[${LNavRegion[${Region}].DescendantsWithin[SurroundingRegions,1500,${Me.Location}]}]
+		; We need to iterate through all the nearby regions and find the closest one that also has connections within 30 meters
+		RegionsFound:Set[${LNavRegion[${Region}].DescendantsWithin[SurroundingRegions,3000,${Me.Location}]}]
 
 		call DebugOut "MoveToMap: Looking for regions within 1500: ${RegionsFound} found of ${LNavRegion[${Region}].Name}:${LNavRegion[${Region}].Type}"
 

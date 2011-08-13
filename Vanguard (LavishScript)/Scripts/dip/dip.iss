@@ -334,16 +334,22 @@ function GoDiploSomething()
 		{
 			call SellItemList
 		}
-		if ${doRemoveLowLevelDiplo}
+		if !${VG.IsInParlay}
 		{
-			call RemoveLowLevelDiplo
-		}
-		if ${doAutoDelete} && !${VG.IsInParlay}
-		{
-			call DeleteItemList	
+			if ${doRemoveLowLevelDiplo}
+			{
+				call RemoveLowLevelDiplo
+			}
+			if ${doAutoDelete}
+			{
+				call DeleteItemList	
+			}
 		}
 		NextItemListCheck:Set[${Script.RunningTime}]
 	}
+
+	;; Ready to loot
+	call LootSomething
 
 	;; we do not want to continue if paused
 	if ${dipisPaused}
@@ -388,19 +394,9 @@ function GoDiploSomething()
 		;if !${dipisPaused} && ${Parlay.DialogPoints}==0 && !${Parlay.IsMyTurn} && ${Parlay.IsOpponentTurn} && !${ourTurn}
 		if !${dipisPaused} && ${Parlay.DialogPoints}==0
 		{
-			wait 20 ${Me.IsLooting} || ${dipisPaused}
-			if ${Loot} && ${Me.IsLooting}
-			{
-				Loot:LootAll
-				waitframe
-			}
-			
-			;; clear target if there are plenty of inventory slots
-			if ${Me.InventorySlotsOpen}>=6
-			{
-				VGExecute /cleartargets
-			}
-			wait 10 ${dipisPaused}
+			wait 15 ${Me.IsLooting} || ${dipisPaused}
+			call LootSomething
+			wait 15 ${dipisPaused}
 		}
 	}
 	else
@@ -412,8 +408,8 @@ function GoDiploSomething()
 
 function SelectNextNPC()
 {
-	;; we do not want to continue if paused
-	if ${dipisPaused}
+	;; we do not want to continue if paused or do not need a new NPC
+	if ${dipisPaused} || !${needNewNPC}
 	{
 		return
 	}
@@ -435,6 +431,14 @@ function SelectNextNPC()
 	if ${curNPC}>=20
 	{
 		curNPC:Set[0]
+	}
+	
+	;; only clear target if currentNPC is not our current target
+	if ${Pawn[id,${dipNPCs[${curNPC}].ID}]}!=${Me.Target.ID}
+	{
+		;; clear target
+		VGExecute /cleartargets
+		wait 5
 	}
 }
 
@@ -634,7 +638,6 @@ function SelectParlay()
 		{
 			if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
 			{
-				;;if ${Dialog[General,${convOptions}].Text.Find[>${convTypes[${i}]}]}
 				if ${dipNPCs[${curNPC}].Incite} && ${Dialog[General,${convOptions}].Text.Find[>Incite]}
 				{
 					genorciv:Set[General]
@@ -689,7 +692,6 @@ function SelectParlay()
 			{
 				if ${diplevel}>=${LowestDipLevel} && ${diplevel}<=${HighestDipLevel}
 				{
-					;;if ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>${convTypes[${i}]}]}
 					if ${dipNPCs[${curNPC}].Incite} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Incite]}
 					{
 						genorciv:Set[Civic Diplomacy]
@@ -734,6 +736,7 @@ function SelectParlay()
 	}
 	if (${selectedConv})
 	{
+		needNewNPC:Set[FALSE]
 		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 9
 		{
 			EchoIt "Backup movement code called."
@@ -787,7 +790,7 @@ function SelectParlay()
 	{
 		EchoIt "No Available parleys"
 		EchoIt "==============================="
-		needNewNPC:Toggle
+		needNewNPC:Set[TRUE]
 		;; this is here to reduce the running between two NPCs
 		wait 75 ${dipisPaused}
 	}
@@ -1897,6 +1900,29 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 		if ${Text.Find["Outsider"]}
 		{
 			presOutsider:Inc
+		}
+	}
+}
+
+;===================================================
+;===      FUNCTION - Loot Something             ====
+;=================================================== 
+function LootSomething()
+{
+	if ${Loot.NumItems}
+	{
+		variable int i
+		for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
+		{
+			Loot.Item[${i}]:Loot
+			wait 5
+		}
+		wait 5
+		if ${Loot.NumItems}
+		{
+			Loot:LootAll
+			wait 5
+			Loot:EndLooting
 		}
 	}
 }
