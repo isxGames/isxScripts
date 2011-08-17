@@ -7,7 +7,7 @@ function Follow()
 	{
 		if ${Pawn[name,${FollowName}](exists)}
 		{
-			if ${Pawn[name,${FollowName}].Distance}>10
+			if ${Pawn[name,${FollowName}].Distance}>5
 			{
 				vgecho Following [${FollowName}]
 				wait 1
