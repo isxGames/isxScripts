@@ -1005,37 +1005,41 @@ function TradeItemsFromSet(settingsetref SSR)
 	variable iterator iter
 	variable int HowMany=12
 	variable int iItemsTraded=0
+	variable int TradeLoopCount=0
 	SSR:GetSettingIterator[iter]
-	if (${iter:First(exists)})
+	while ${TradeLoopCount:Inc} <= 10
 	{
-		do
+		if (${iter:First(exists)})
 		{
-			while ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} > ${iItemsTraded}
+			do
 			{
-				do
+				while ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} > ${iItemsTraded}
 				{
-					call AddTradeLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Trade Window" FF11CCFF
+					do
+					{
+						call AddTradeLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Trade Window" FF11CCFF
+						wait 10
+						EQ2Execute /add_trade_item ${Math.Calc[${Me.CustomInventory[${iter.Key}].Index}-1]} ${iItemsTraded} ${Me.CustomInventory[${iter.Key}].Quantity}
+						wait 5
+						iItemsTraded:Inc
+						wait 5
+					}
+					while (${iter:Next(exists)}) && ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} < ${iItemsTraded}
+				}	
+				if ${iItemsTraded} > 0
+				{
+					EQ2Execute /accept_trade
 					wait 10
-					EQ2Execute /add_trade_item ${Math.Calc[${Me.CustomInventory[${iter.Key}].Index}-1]} ${iItemsTraded} ${Me.CustomInventory[${iter.Key}].Quantity}
-					wait 5
-					iItemsTraded:Inc
-					wait 5
+					relay all EQ2Execute /accept_trade 
+					wait 20
+					iItemsTraded:Set[0]
+					EQ2Execute "apply_verb ${Target.ID} Trade"
 				}
-				while (${iter:Next(exists)}) && ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} < ${iItemsTraded}
-			}	
-			if ${iItemsTraded} > 0
-			{
-				EQ2Execute /accept_trade
-				wait 10
-				relay all EQ2Execute /accept_trade 
-				wait 20
-				iItemsTraded:Set[0]
-				EQ2Execute "apply_verb ${Target.ID} Trade"
+				
 			}
-			
+			while (${iter:Next(exists)})
 		}
-		while (${iter:Next(exists)})
-	}
+	}	
 }
 
 function TradeList()
