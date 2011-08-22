@@ -491,10 +491,11 @@ objectdef  bnav
 		{
 			do
 			{
+				EchoIt "#[${Index}] Distance = ${Math.Distance[${Me.Location}, ${SurroundingRegions.Get[${Index}].CenterPoint}]}"
 				if ${SurroundingRegions.Get[${Index}].ConnectionCount} > 0 && !${This.CollisionTest[${Me.Location}, ${SurroundingRegions.Get[${Index}].CenterPoint}]}
 				{
 					; ok, has connections and no collisions, let's MOVE!
-					call FastMove ${SurroundingRegions.Get[${Index}].CenterPoint.X} ${SurroundingRegions.Get[${Index}].CenterPoint.Y} ${movePrecision}
+					call FastMove ${SurroundingRegions.Get[${Index}].CenterPoint.X} ${SurroundingRegions.Get[${Index}].CenterPoint.Y} 100
 					return TRUE
 				}
 			}
@@ -671,6 +672,7 @@ objectdef  bnav
 		variable string CPname
 		variable float WPX
 		variable float WPY
+		variable float WPZ
 		variable int iCheck
 		variable string tName
 		variable astarpathfinder aPathFinder
@@ -732,12 +734,13 @@ objectdef  bnav
 
 			do
 			{
-				; Move to next Waypoint
+				;EchoIt "*[${bpathindex}] Distance = ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}, RegionID=${This.CurrentRegionID}"
+
+				; Set our next Waypoint
 				WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
 				WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
 
 				; See if this box has a DOOR tag
-				;if ${mypath.Region[${bpathindex}].ChildCount} > 0 || ${mypath.Region[${bpathindex}].Custom.Find[DOOR]}
 				if ${mypath.Region[${bpathindex}].Custom[DOOR](exists)}
 				{
 					call DebugOut "bNav: Found a Door in ${mypath.Region[${bpathindex}].Name}"
@@ -745,14 +748,17 @@ objectdef  bnav
 					echo "Opened Door"
 				}
 
+				;; We reached the point so let's set our pointer to the next point on path
+				if ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}<=300
+				{
+					continue
+				}
+
+				; Move to next Waypoint
 				call FastMove ${WPX} ${WPY} ${movePrecision}
 
 				if ${Return.Equal["STUCK"]}
 				{
-					;CurrentConnection:SetConnection[${mypath.Connection[${bpathindex}]}]
-					;call DebugOut "bNav: Removing Connection ${mypath.Connection[${bpathindex}]}"
-					;CurrentConnection:Remove
-
 					call FastMove ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.X} ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.Y} 100
 					call DebugOut "bNav: FastMove return: ${Return}"
 
@@ -823,7 +829,7 @@ objectdef  bnav
 				;vgecho [${bpathindex}] Distance to target is ${Math.Distance[${Me.X},${Me.Y},${Pawn[id,${aTarget}].X},${Pawn[id,${aTarget}].Y}]}
 			}
 			;; we can parlay at a distance of 0-7 meters, this allows parlaying NPC that are Aggro to you
-			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Pawn[id,${aTarget}].Distance}>=8
+			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving} && ${Pawn[id,${aTarget}].Distance}>=6
 
 			VG:ExecBinding[moveforward,release]
 
@@ -867,13 +873,6 @@ objectdef  bnav
 			return "NO MAP"
 		}
 
-		;if ${This.CurrentRegionID.Equal[${LNavRegion[${Me.Chunk}].BestContainer[${Pawn[${aTarget}].X}, ${Pawn[${aTarget}].Y}, ${Pawn[${aTarget}].Z}]}]}
-		;{
-		;	;call FastMove ${Pawn[${aTarget}].X} ${Pawn[${aTarget}].Y}	${movePrecision}
-		;	call DebugOut "bNav:MovetoWP In region quick hop"
-		;	return "END"
-		;}
-
 		call FindPath "${CPname}" "${destination}"
 
 		if !${Return}
@@ -883,26 +882,18 @@ objectdef  bnav
 
 		call DebugOut "bNav:MovetoWP: Found Path to ${LNavRegion[${destination}].FQN} with ${mypath.Hops} hops from ${LNavRegion[${CPname}].FQN}"
 
-		;		if ${mypath.Hops}>0 && ${mypath.Hops}<5
-		;		{
-		;			call DebugOut "bNav:MovetoWP Short path, just end it!"
-		;			return "END"
-		;		}
-
 		if ${mypath.Hops} > 0
 		{
 			WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
 			WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
 
-			;Turn to face the desired loc
-			if ${doSlowTurn}
-			call faceloc ${WPX} ${WPY} 15 1
-			else
 			Face ${WPX} ${WPY}
 
 			do
 			{
-				; Move to next Waypoint
+				;EchoIt "[${bpathindex}] Distance = ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}, RegionID=${This.CurrentRegionID}"
+
+				; Set our next Waypoint
 				WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
 				WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
 
@@ -914,14 +905,22 @@ objectdef  bnav
 					echo "Opened Door"
 				}
 
+				;; We reached the point so let's set our pointer to the next point on path
+				if ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}<=300
+				{
+					continue
+				}
+
+				; Move to next Waypoint
+				call FastMove ${WPX} ${WPY} ${movePrecision}
+
+				; Move to next Waypoint
+				WPX:Set[${mypath.Region[${bpathindex}].CenterPoint.X}]
+				WPY:Set[${mypath.Region[${bpathindex}].CenterPoint.Y}]
 				call FastMove ${WPX} ${WPY} ${movePrecision}
 
 				if ${Return.Equal["STUCK"]}
 				{
-					;CurrentConnection:SetConnection[${mypath.Connection[${bpathindex}]}]
-					;call DebugOut "bNav: Removing Connection ${mypath.Connection[${bpathindex}]}"
-					;CurrentConnection:Remove
-
 					call FastMove ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.X} ${mypath.Region[${Math.Calc[${bpathindex}-2]}].CenterPoint.Y} 100
 					call DebugOut "bNav: FastMove return: ${Return}"
 
@@ -947,7 +946,6 @@ objectdef  bnav
 				}
 			}
 			while ${bpathindex:Inc} <= ${mypath.Hops} && ${isMoving}
-
 			VG:ExecBinding[moveforward,release]
 
 			return "END"
