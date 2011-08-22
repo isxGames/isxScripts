@@ -1,3 +1,7 @@
+;; Defines
+#define ALARM "${Script.CurrentDirectory}/Includes/level.wav"
+
+
 ;===================================================
 ;===          ATOM - Add Item to List           ====
 ;===================================================
@@ -105,15 +109,29 @@ atom(global) PopulateItemList(string UIElementXML)
 ;===================================================
 function SellItemList()
 {
+	;; make sure we are out of bag space
+	if ${Me.InventorySlotsOpen}<=5
+	{
+		if !${Me.Target.Type.Equal[Merchant]}
+		{
+			PlaySound ALARM
+			wait 50
+			dipPause
+			return
+		}
+	}
+	
 	;; Sell items only if Merchant is in BuySell dialog
 	if ${Me.Target.Type.Equal[Merchant]}
 	{
-		;; if not in BuySell dialog then...
-		if !${Merchant.NumItemsForSale}>0
+		;; make sure we are out of bag space
+		if ${Me.InventorySlotsOpen}<=5
 		{
-			;; make sure we are out of bag space
-			if ${Me.InventorySlotsOpen}<=5
+			;; if not in BuySell dialog then...
+			if !${Merchant.NumItemsForSale}>0
 			{
+				MoveCloser:Set[TRUE]
+				call MoveCloser
 				;PlaySound ALARM
 				;; open BuySell dialog with merchant
 				Pawn[${Me.Target.Name}]:DoubleClick
@@ -171,13 +189,6 @@ function SellItemList()
 				Iterator:Next
 			}
 		}
-	}
-	
-	;; make sure we are out of bag space
-	if ${Me.InventorySlotsOpen}<=5
-	{
-		PlaySound ALARM
-		dipPause
 	}
 }
 

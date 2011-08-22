@@ -134,7 +134,7 @@ variable iterator itDipNPC
 variable iterator itDipTypes
 variable iterator itDipGen
 variable bnav dipnav
-variable(script) bool needNewNPC = FALSE
+variable(script) bool needNewNPC = TRUE
 variable(global) index:string convTypes
 variable(script) bool parleyDone = FALSE
 variable(global) bool dipisMapping = FALSE
@@ -152,8 +152,7 @@ variable lnavpath mypath
 variable astarpathfinder PathFinder
 variable lnavconnection CurrentConnection
 variable int movePrecision = 100
-variable int objPrecision = 3
-variable int maxWorkDist = 3
+variable bool MoveCloser = FALSE
 
 variable(script) int wins
 variable(script) int losses
@@ -191,6 +190,7 @@ variable int AngleDiffAbs = 0
 variable int LowestDipLevel = 0
 variable int HighestDipLevel = 100
 variable bool doChangeEquipment = FALSE
+variable bool NoLineOfSight = FALSE
 
 ;; Timers
 variable int NextItemListCheck = ${Script.RunningTime}
@@ -205,7 +205,7 @@ variable string Output = "${Script.CurrentDirectory}/Save/Debug.txt"
 variable string CurrentChunk 
 
 ;Debug setup
-variable(script) bool debug = TRUE
+variable(script) bool debug = FALSE
 variable(script) string returnvalue = "GOOD"
 
 ;; Defines
@@ -221,6 +221,7 @@ function main()
 		echo "VG:  Unable to load ISXVG, exiting dip script"
 		endscript dip
 	}
+	;PlaySound ALARM
 	
 	;; wait until both chunk and self exists
 	wait 50 ${Me.Chunk(exists)} && ${Me.FName(exists)}
@@ -332,6 +333,7 @@ function GoDiploSomething()
 	{
 		if ${doAutoSell}
 		{
+			call MoveCloser
 			call SellItemList
 		}
 		if !${VG.IsInParlay}
@@ -358,7 +360,7 @@ function GoDiploSomething()
 	}
 	
 	;; we got ourselves an AggroNPC
-	if ${Me.HealthPct}<75 || ${Me.Encounter}
+	if ${Me.Encounter}
 	{
 		EchoIt "Health=${Me.HealthPct}, Encounters=${Me.Encounter}, Target=${Me.Target.Name}"
 		dipisPaused:Set[TRUE]
@@ -367,13 +369,29 @@ function GoDiploSomething()
 
 	if ${fullAuto}
 	{
+		if ${VG.IsInParlay}
+		{
+			;; if we have a NPC targeted then set curNPC to it
+			call FindCurrentNPC
+			
+			;; move closer if we do not have line of sight
+			if ${Me.Target(exists)} && (!${Me.Target.HaveLineOfSightTo} || ${NoLineOfSight})
+			{
+				call MoveToNPC
+				NoLineOfSight:Set[FALSE]
+			}
+		}
+		
 		;; go get a NPC to diplo and start a parlay
 		if !${VG.IsInParlay}
 		{
 			call SelectNextNPC
-			call MoveToNPC
-			call TargetNPC
-			call StartParlay
+			if !${dipNPCs[${curNPC}].Name.Equal[Empty]}
+			{
+				call MoveToNPC
+				call TargetNPC
+				call StartParlay
+			}
 		}
 	}
 	
@@ -386,25 +404,62 @@ function GoDiploSomething()
 	;; we are in a parlay so go play a card
 	if ${VG.IsInParlay}
 	{
-		if !${dipisPaused} && ${ourTurn}
+		;; we do not want to find a new NPC
+		needNewNPC:Set[FALSE]
+	
+		;; 'ourTurn' catcher, sometimes event does not set it so we will also do it here
+		if ${Parlay.IsMyTurn} && !${Parlay.IsOpponentTurn} && !${Me.IsLooting}
 		{
-			call DoParleyCard
-			ourTurn:Set[FALSE]
+			wait 100 ${dipisPaused} || ${ourTurn} || ${Me.IsLooting}
+			ourTurn:Set[TRUE]
 		}
-		;if !${dipisPaused} && ${Parlay.DialogPoints}==0 && !${Parlay.IsMyTurn} && ${Parlay.IsOpponentTurn} && !${ourTurn}
-		if !${dipisPaused} && ${Parlay.DialogPoints}==0
+
+		if ${ourTurn} && !${dipisPaused}
 		{
-			wait 15 ${Me.IsLooting} || ${dipisPaused}
-			call LootSomething
-			wait 15 ${dipisPaused}
+			;; go play a card
+			call DoParleyCard
+			
+			;; we are done... go loot something
+			if ${Parlay.DialogPoints}==0
+			{
+				wait 15 ${Me.IsLooting} || ${dipisPaused}
+				call LootSomething
+			}
 		}
 	}
 	else
 	{
 		;; make sure we set ourTurn on
 		ourTurn:Set[TRUE]
+		needNewNPC:Set[TRUE]
 	}
 }
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+function FindCurrentNPC()
+{
+	
+	if !${Me.Target(exists)}
+	{
+		return
+	}
+
+	variable int i = 0
+	;; cycle through until we find a NPC
+	while ${i}<20
+	{
+		i:Inc
+		;; we got found one so return
+		if ${dipNPCs[${i}].Name.Equal[${Me.Target.Name}]}
+		{
+			curNPC:Set[${i}]
+			return
+		}
+	}
+}
+
 
 function SelectNextNPC()
 {
@@ -413,7 +468,13 @@ function SelectNextNPC()
 	{
 		return
 	}
-
+	
+	;; reset our current NPC counter
+	if ${curNPC}>=20
+	{
+		curNPC:Set[0]
+	}
+	
 	;; cycle through until we find a NPC
 	while ${curNPC}<20
 	{
@@ -422,7 +483,14 @@ function SelectNextNPC()
 		if !${dipNPCs[${curNPC}].Name.Equal["Empty"]}
 		{
 			EchoIt "NPC Selected: [${curNPC}] ${dipNPCs[${curNPC}].Name}"
-			;; this is here to allow time for the parlays to reset
+			
+			;; only clear target if currentNPC is not our current target
+			if ${dipNPCs[${curNPC}].ID}!=${Me.Target.ID}
+			{
+				;; clear target
+				VGExecute /cleartargets
+				wait 5
+			}
 			return
 		}
 	}
@@ -433,129 +501,147 @@ function SelectNextNPC()
 		curNPC:Set[0]
 	}
 	
-	;; only clear target if currentNPC is not our current target
-	if ${Pawn[id,${dipNPCs[${curNPC}].ID}]}!=${Me.Target.ID}
+	;; cycle through until we find a NPC
+	while ${curNPC}<20
 	{
-		;; clear target
-		VGExecute /cleartargets
-		wait 5
+		curNPC:Inc
+		;; we got found one so return
+		if !${dipNPCs[${curNPC}].Name.Equal["Empty"]}
+		{
+			EchoIt "NPC Selected: [${curNPC}] ${dipNPCs[${curNPC}].Name}"
+			
+			;; only clear target if currentNPC is not our current target
+			if ${dipNPCs[${curNPC}].ID}!=${Me.Target.ID}
+			{
+				;; clear target
+				VGExecute /cleartargets
+				wait 5
+			}
+			return
+		}
 	}
 }
 
 function MoveToNPC()
 {
-	;; move only to valid NPC
-	if !${dipisPaused} && ${curNPC} && !${dipNPCs[${curNPC}].Name.Equal["Empty"]}
+	if !${dipisPaused}
 	{
-		;; move closer if NPC's last location
-		if !${dipisPaused}
+		EchoIt "MoveToNPC: [${curNPC}] ${dipNPCs[${curNPC}].Name}"
+
+		;; set our return value to GOOD and we are moving
+		returnvalue:Set[GOOD]
+		isMoving:Set[TRUE]
+		variable int i = 0
+
+		;; move to last known XYZ location if we can not target the NPC
+		if !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)} || ${NoLineOfSight}
 		{
-			;; set our return value to GOOD and we are moving
-			returnvalue:Set[GOOD]
-			isMoving:Set[TRUE]
-			
-			;; attempt to update ID incase VG reset all IDs
-			if !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
+			EchoIt "*Moving to last known XYZ location with distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
+			call dipnav.MovetoXYZ ${dipNPCs[${curNPC}].X} ${dipNPCs[${curNPC}].Y} ${dipNPCs[${curNPC}].Z}
+			returnvalue:Set[${Return}]
+			if ${returnvalue.Equal[NO MAP]}
 			{
-				if ${Pawn[exactname,${dipNPCs[${curNPC}].Name}](exists)}
-				{
-					dipNPCs[${curNPC}].ID:Set[${Pawn[exactname,${dipNPCs[${curNPC}].Name}].ID}]
-					dipNPCs[${curNPC}].NameID:Set[${dipNPCs[${curNPC}].Name} - ${dipNPCs[${curNPC}].ID}]
-				}
+				;; make sure we get on the map and try again
+				call dipnav.MoveToMappedArea
+				VG:ExecBinding[moveforward, release]
+				call dipnav.MovetoXYZ ${dipNPCs[${curNPC}].X} ${dipNPCs[${curNPC}].Y} ${dipNPCs[${curNPC}].Z}
+				returnvalue:Set[${Return}]
 			}
-			
-			;; move to NPC if we can target
-			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
+		}
+		
+		;; we are at location of NPC so attempt to update ID incase VG reset all IDs
+		if !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
+		{
+			if ${Pawn[exactname,${dipNPCs[${curNPC}].Name}](exists)}
+			{
+				dipNPCs[${curNPC}].ID:Set[${Pawn[exactname,${dipNPCs[${curNPC}].Name}].ID}]
+				dipNPCs[${curNPC}].NameID:Set[${dipNPCs[${curNPC}].Name} - ${dipNPCs[${curNPC}].ID}]
+			}
+		}
+	
+		;; try to move to the NPC 3 times
+		if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
+		{
+			for (i:Set[0] ; ${i}<4 ; i:Inc)
 			{
 				if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8
 				{
-					EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
+					EchoIt "*Moving to NPC with distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
+					returnvalue:Set[GOOD]
 					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
 					returnvalue:Set[${Return}]
 					if ${returnvalue.Equal[NO MAP]}
 					{
-						;; we will manually move closer to target if already in range
-						if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8 && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}<15
-						{
-							if ${Pawn[id,${dipNPCs[${curNPC}].ID}].HaveLineOfSightTo}
-							{
-								EchoIt "Manually moving to target"
-								call FaceTarget
-								isMoving:Set[FALSE]
-								VG:ExecBinding[moveforward]
-								do
-								{
-									face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
-									if ${endScript}
-									{
-										VG:ExecBinding[moveforward, release]
-										isMoving:Set[FALSE]
-										return
-									}
-								}
-								while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
-								VG:ExecBinding[moveforward, release]
-								EchoIt "Successful move to ${dipNPCs[${curNPC}].Name}"
-								return
-							}
-						}
 						;; make sure we get on the map
 						call dipnav.MoveToMappedArea
 						VG:ExecBinding[moveforward, release]
-						call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
-						returnvalue:Set[${Return}]
 					}
 				}
 			}
-			;; move to last known XYZ location if we can not target the NPC
-			elseif !${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
+		}
+		
+		;; sometimes, the NPC is not on map so let's manually move closer
+		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8 && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}<20
+		{
+			if ${Pawn[id,${dipNPCs[${curNPC}].ID}].HaveLineOfSightTo}
 			{
-				EchoIt "Starting movement routine via last known XYZ location with distance of ${Math.Distance[${Me.X},${Me.Y},${dipNPCs[${curNPC}].X},${dipNPCs[${curNPC}].Y}]}"
-				call dipnav.MovetoXYZ ${dipNPCs[${curNPC}].X} ${dipNPCs[${curNPC}].Y} ${dipNPCs[${curNPC}].Z}
-				returnvalue:Set[${Return}]
-				if ${returnvalue.Equal[NO MAP]}
+				EchoIt "*Moving closer with distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
+				call FaceTarget
+				isMoving:Set[FALSE]
+				VG:ExecBinding[moveforward]
+				do
 				{
-					;; make sure we get on the map
-					call dipnav.MoveToMappedArea
-					VG:ExecBinding[moveforward, release]
-					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
-					returnvalue:Set[${Return}]
+					face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
+					if ${endScript}
+					{
+						VG:ExecBinding[moveforward, release]
+						isMoving:Set[FALSE]
+						return
+					}
 				}
-			}
-			
-			;; NPC might have moved so let's try moving closer
-			if ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)} && ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8
-			{
-				EchoIt "Starting movement routine of current pawn location with a distance of ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}"
-				call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
-				returnvalue:Set[${Return}]
-				if ${returnvalue.Equal[NO MAP]}
-				{
-					;; make sure we get on the map
-					call dipnav.MoveToMappedArea
-					VG:ExecBinding[moveforward, release]
-					call dipnav.MovetoTargetID "${dipNPCs[${curNPC}].ID}" TRUE
-					returnvalue:Set[${Return}]
-				}
-			}
-			
-			;; We reached our destination
-			if ${returnvalue.Equal[END]}
-			{
-				EchoIt "Successful move to ${dipNPCs[${curNPC}].Name}"
-			}
-			elseif ${returnvalue.Equal[NO MAP]}
-			{
-				vgecho "Not on map"
-				EchoIt "Not on mapped area, moving back to map"
-				call dipnav.MoveToMappedArea
+				while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance}>=8
 				VG:ExecBinding[moveforward, release]
 			}
-			else
+		}
+
+		;; We reached our destination
+		if ${returnvalue.Equal[END]}
+		{
+			EchoIt "MoveToNPC: Successful - ${returnvalue}"
+		}
+		elseif ${returnvalue.Equal[NO MAP]}
+		{
+			EchoIt "MoveToNPC:  Not on Map"
+		}
+		else
+		{
+			EchoIt "MoveToNPC: Successful - ${returnvalue}"
+		}
+		isMoving:Set[FALSE]
+	}
+}
+
+function MoveCloser()
+{
+	if ${MoveCloser}
+	{
+		;; moving while in parlay will cause the confirm farewell dialog to pop up
+		if ${Me.Target.Distance}>4
+		{
+			EchoIt "MoveCloser movement code called."
+			VG:ExecBinding[moveforward]
+			do
 			{
-				EchoIt "Movement succeeded - Return Value = ${returnvalue}"
+				face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
+				if ${endScript}
+				{
+					VG:ExecBinding[moveforward, release]
+					return
+				}
 			}
-			isMoving:Set[FALSE]
+			while ${Me.Target.Distance} > 4
+			VG:ExecBinding[moveforward, release]
+			MoveCloser:Set[FALSE]
 		}
 	}
 }
@@ -584,7 +670,6 @@ function StartParlay()
 	if ${Me.Target.HaveLineOfSightTo}
 	{
 		EchoIt "Selecting parley from ${Me.Target.Name}"
-		ourTurn:Set[TRUE]
 		call SelectParlay 
 	}
 }
@@ -599,6 +684,7 @@ function ChangeEquipment()
 		call DiploGear.Load2 "${returnvalue}"
 		EchoIt "Equiped gear: ${returnvalue}"
 		EchoIt "ReAssessing ${Me.Target.Name}"
+		call FaceTarget
 		Parlay:AssessTarget
 		wait 7
 		doChangeEquipment:Set[FALSE]
@@ -613,7 +699,6 @@ atom(script) OnFrame()
 		dipnav:ConnectOnMove
 	}
 }
-
 
 function SelectParlay()
 {
@@ -737,22 +822,11 @@ function SelectParlay()
 	if (${selectedConv})
 	{
 		needNewNPC:Set[FALSE]
-		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 9
+		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
 		{
 			EchoIt "Backup movement code called."
-			
-			VG:ExecBinding[moveforward]
-			do
-			{
-				face ${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}
-				if ${endScript}
-				{
-					VG:ExecBinding[moveforward, release]
-					return
-				}
-			}
-			while ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 9
-			VG:ExecBinding[moveforward, release]
+			MoveCloser:Set[TRUE]
+			call MoveCloser
 		}
 		else
 		{
@@ -792,7 +866,7 @@ function SelectParlay()
 		EchoIt "==============================="
 		needNewNPC:Set[TRUE]
 		;; this is here to reduce the running between two NPCs
-		wait 75 ${dipisPaused}
+		wait 20 ${dipisPaused}
 	}
 }
 
@@ -1012,6 +1086,7 @@ function DoParleyCard()
 	variable int ratemax = 0
 	variable int rate
 	variable int cardplay = 0
+	needNewNPC:Set[FALSE]
 
 	while ${card} <= ${Strategy}
 	{
@@ -1032,17 +1107,20 @@ function DoParleyCard()
 		}
 		card:Inc
 	}
-	
-	;if ${cardplay}>0 && ${Parlay.Status}<10
+
 	if ${cardplay}>0
 	{
+		;; play a card and set 'ourTurn' to FALSE
 		EchoIt "Playing Card: ${Strategy[${cardplay}].Name}"
+		call FaceTarget
+		ourTurn:Set[FALSE]
 		Strategy[${cardplay}]:Play
 	}
 	else
 	{
-		;echo "Listen"
+		EchoIt "Listening - not playing a card"
 		call FaceTarget
+		ourTurn:Set[FALSE]
 		Parlay:Listen
 	}
 }
@@ -1326,20 +1404,20 @@ atom(global) UpdateStats()
 
 atom(script) OnParlayBegin()
 {
-	;echo "Begin"
-	;call DoParleyCard
-	EchoIt "Parley Begin event fired"
+	EchoIt "Event Fired: Parlay Begins"
+	ourTurn:Set[TRUE]
 }
 
 atom(script) OnParlayOppTurnEnd()
 {
-	EchoIt "Event for oppturnend fired"
+	EchoIt "Event Fired: Our Turn"
 	ourTurn:Set[TRUE]
 }
 
 atom(script) OnParlaySuccess()
 {
-	EchoIt "Event for parley success fired"
+	EchoIt "Event Fired: Success"
+	ourTurn:Set[FALSE]
 	wins:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Wins:Inc
 	if ${currentParleyType.Length} > 0
@@ -1353,7 +1431,7 @@ atom(script) OnParlaySuccess()
 
 atom(script) OnParlayLost()
 {
-	EchoIt "Event for parley lost fired"
+	EchoIt "Event Fired: Parlay Lost"
 	losses:Inc
 	dipNPCs[${curNPC}].${currentParleyType}Losses:Inc
 	if ${currentParleyType.Length} > 0
@@ -1511,7 +1589,7 @@ atom(global) dipRemoveFromList()
 	{
 		temp1:Set[${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}]
 		temp2:Set[${dipNPCs[${i}].Name}]
-		EchoIt "Temp2=${temp2}"
+		EchoIt "temp1=${temp1}, temp2=${temp2}"
 		if ${temp1.Find[${temp2}]}
 		;if ${dipNPCs[${i}].Name.Equal[${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}]}
 		{
@@ -1534,6 +1612,8 @@ atom(global) dipRemoveFromList()
 		{
 			temp1:Set[${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}]
 			temp2:Set[${UIElement[NPCList@Options@DipTabs@Diplo].Item[${i}].Text}]
+			EchoIt "**temp1=${temp1}, temp2=${temp2}"
+			
 			if ${temp1.Equal[${temp2}]}
 			{
 				EchoIt "Removed from NPCList: ${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}"
@@ -1562,7 +1642,11 @@ atom(global) colorToggle(string Color)
 atom(global) colorBoxesSet()
 {
 	call FindNameInNPCList "${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}"
-	if ${dipNPCs[${Return}].red}
+
+	variable int temp
+	temp:Set[${Return}]
+	
+	if ${dipNPCs[${temp}].red}
 	{
 		UIElement[red@Options@DipTabs@Diplo]:SetChecked
 	}
@@ -1570,7 +1654,7 @@ atom(global) colorBoxesSet()
 	{
 		UIElement[red@Options@DipTabs@Diplo]:UnsetChecked
 	}
-	if ${dipNPCs[${Return}].green}
+	if ${dipNPCs[${temp}].green}
 	{
 		UIElement[green@Options@DipTabs@Diplo]:SetChecked
 	}
@@ -1578,7 +1662,7 @@ atom(global) colorBoxesSet()
 	{
 		UIElement[green@Options@DipTabs@Diplo]:UnsetChecked
 	}
-	if ${dipNPCs[${Return}].blue}
+	if ${dipNPCs[${temp}].blue}
 	{
 		UIElement[blue@Options@DipTabs@Diplo]:SetChecked
 	}
@@ -1586,7 +1670,7 @@ atom(global) colorBoxesSet()
 	{
 		UIElement[blue@Options@DipTabs@Diplo]:UnsetChecked
 	}
-	if ${dipNPCs[${Return}].yellow}
+	if ${dipNPCs[${temp}].yellow}
 	{
 		UIElement[yellow@Options@DipTabs@Diplo]:SetChecked
 	}
@@ -1596,7 +1680,7 @@ atom(global) colorBoxesSet()
 	}
 
 	variable int i
-	if ${dipNPCs[${Return}].Incite}
+	if ${dipNPCs[${temp}].Incite}
 	{
 		UIElement[Incite@Options@DipTabs@Diplo]:SetChecked
 		convTypes:Insert[Incite]
@@ -1616,7 +1700,7 @@ atom(global) colorBoxesSet()
 		}
 		while ${convTypes[${i}](exists)}
 	}
-	if ${dipNPCs[${Return}].Interview}
+	if ${dipNPCs[${temp}].Interview}
 	{
 		UIElement[Interview@Options@DipTabs@Diplo]:SetChecked
 		convTypes:Insert[Interview]
@@ -1636,7 +1720,7 @@ atom(global) colorBoxesSet()
 		}
 		while ${convTypes[${i}](exists)}
 	}
-	if ${dipNPCs[${Return}].Convince}
+	if ${dipNPCs[${temp}].Convince}
 	{
 		UIElement[Convince@Options@DipTabs@Diplo]:SetChecked
 		convTypes:Insert[Convince]
@@ -1656,7 +1740,7 @@ atom(global) colorBoxesSet()
 		}
 		while ${convTypes[${i}](exists)}
 	}
-	if ${dipNPCs[${Return}].Gossip}
+	if ${dipNPCs[${temp}].Gossip}
 	{
 		UIElement[Gossip@Options@DipTabs@Diplo]:SetChecked
 		convTypes:Insert[Gossip]
@@ -1676,7 +1760,7 @@ atom(global) colorBoxesSet()
 		}
 		while ${convTypes[${i}](exists)}
 	}
-	if ${dipNPCs[${Return}].Entertain}
+	if ${dipNPCs[${temp}].Entertain}
 	{
 		UIElement[Entertain@Options@DipTabs@Diplo]:SetChecked
 		convTypes:Insert[Entertain]
@@ -1724,7 +1808,6 @@ atom(global) carddelayToggle()
 	}
 }
 
-
 atom(global) SpitVariables()
 {
 	EchoIt "Variable Dump"
@@ -1754,6 +1837,9 @@ atom(global) delayChange(string Delay)
 	}
 }
 
+;===================================================
+;===     ATOM - Echo to Console and File        ====
+;===================================================
 atom(script) EchoIt(string aText)
 {
 	if ${debug}
@@ -1763,6 +1849,9 @@ atom(script) EchoIt(string aText)
 	Redirect -append "${Output}" echo "[${Time}][Dip]: ${aText}"
 }
 
+;===================================================
+;===          FUNCTION - Face Target            ====
+;===================================================
 function FaceTarget()
 {
 	variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
@@ -1770,7 +1859,7 @@ function FaceTarget()
 	if ${boolFace} && ${Pawn[id,${dipNPCs[${curNPC}].ID}](exists)}
 	{
 		CalculateAngles
-		if ${AngleDiffAbs} > 90
+		if ${AngleDiffAbs} > 45
 		{
 			EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
 			VG:ExecBinding[turnright,release]
@@ -1833,12 +1922,38 @@ atom(script) CalculateAngles()
 ;===          ATOM - PLAY A SOUND               ====
 ;===================================================
 atom(script) PlaySound(string Filename)
-{	
+{
+	EchoIt "PlaySound ${Filename}"
 	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 }
 
+;===================================================
+;===          ATOM - CHAT EVENT                 ====
+;===================================================
 atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
+	if ${ChannelNumber.Equal[0]} && ${Text.Equal[That statement is not ready yet.]}
+	{
+		EchoIt "[${ChannelNumber}] ${Text}"
+		ourTurn:Set[FALSE]
+	}
+
+	if ${ChannelNumber.Equal[0]} && ${Text.Equal[It isn't your turn.]}
+	{
+		EchoIt "[${ChannelNumber}] ${Text}"
+		ourTurn:Set[FALSE]
+	}
+
+	if ${ChannelNumber.Equal[0]} && ${Text.Equal[You are out of range for buying and selling.]}
+	{
+		MoveCloser:Set[TRUE]
+	}
+
+	if ${ChannelNumber.Equal[0]} && ${Text.Find[Check space limits?]}
+	{
+		MoveCloser:Set[TRUE]
+	}
+
 	if ${ChannelNumber.Equal[0]} && ${Text.Find[You sell]}
 	{
 		variable string FindSell
@@ -1860,11 +1975,13 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 	if ${Text.Find["Your turn is already in progress."]}
 	{
 		EchoIt "Waiting for 'ourturn' timer to expire... "
+		ourTurn:Set[FALSE]
 	}
 	if ${Text.Find["no line of sight to your target"]}
 	{
 		EchoIt "Face issue chatevent fired, facing target"
 		face ${Math.Calc[${Pawn[id,${dipNPCs[${curNPC}].ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
+		NoLineOfSight:Set[TRUE]
 	}
 	if ${Text.Find["Presence has increased"]}
 	{
@@ -1915,7 +2032,7 @@ function LootSomething()
 		for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
 		{
 			Loot.Item[${i}]:Loot
-			wait 5
+			wait 1
 		}
 		wait 5
 		if ${Loot.NumItems}
