@@ -1,4 +1,4 @@
-;EQ2Broker v2
+;EQ2Broker v3 08.26.2011
 ;By Syliac
 #include EQ2Common/SettingManager.iss
 #include EQ2Common/Debug.iss
@@ -34,6 +34,7 @@ variable bool RunDestroy=TRUE
 variable bool SlotFull=FALSE
 variable bool SkipItem=FALSE
 variable bool DepotItemsPlaced=FALSE
+variable bool TradeFinished=FALSE
 ;=================================
 ;Setting references
 ;=================================
@@ -63,7 +64,7 @@ objectdef _EQ2InvInterface
 }
 function main()
 {
-	Debug:Enable
+	;Debug:Enable
 	declare EQ2InvInterface _EQ2InvInterface global
 	call InitializeSettings
 
@@ -71,9 +72,6 @@ function main()
 
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
 	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
-	wait 1
-
-	UIElement[StatusText@EQ2Hirelings@GUITabs@EQ2Inventory]:SetText[EQ2Hirelings Inactive.]
 	wait 5
 
 	while 1
@@ -120,6 +118,7 @@ function InitializeSettings()
 	Custom:Import[./ScriptConfig/CustomItems.xml]
 
 	UserSettings:AddSet[General Settings]
+	Trade:AddSet[Trade]
 	genset:Set[${UserSettings.FindSet[General Settings]}]
 
 	; These are the setting sets we want to save. The script can modify these.
@@ -127,8 +126,11 @@ function InitializeSettings()
 	Settings:SetFilename[${Destroy},./ScriptConfig/Destroy.xml]
 	Settings:SetFilename[${Custom},./ScriptConfig/CustomItems.xml]
 	Settings:SetFilename[${UserSettings},./CharConfig/${Me.Name}.xml]
-	Settings:SetFilename[${Trade},./ScriptConfig/TradeItems.xml]
-
+	;***********************************************************************
+	;Edit this if you dont want individual Trade Files
+	Settings:SetFilename[${Trade},./ScriptConfig/${Me.Name}_TradeItems.xml]
+	;***********************************************************************
+	
 	; this will load all the above settings.
 	Settings:LoadSettings
 
@@ -997,7 +999,7 @@ function TradeItems()
 	wait 30
 	relay all EQ2Execute /accept_trade
 	call AddTradeLog "**Finished Trading Items**" FFFF00FF
-	echo ${Time} Trading completed.
+	TradeFinished:Set[TRUE]
 }
 
 function TradeItemsFromSet(settingsetref SSR)
