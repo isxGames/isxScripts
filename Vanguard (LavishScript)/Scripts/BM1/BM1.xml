@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI><!-- Main UI Window -->
+
+	<!-- Font -->
+	<Template Name="VG.Font">
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+
+	<!-- Text -->
+	<template name="VG.Text.Font" Template="VG.Font" />
+	<template name="VG.Text">
+		<Font Template="VG.Text.Font" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name="VG.BoldText">
+		<Font Template="VG.BoldFont" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+
+	<!-- Green CheckBox -->
+	<Template Name="VG.GreenCheckbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.Checkbox.Texture" />
+		<TextureHover Template="VG.Checkbox.TextureHover" />
+		<TexturePressed Template="VG.Checkbox.TexturePressed" />
+		<TextureChecked Template="VG.Checkbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.Checkbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.Checkbox.TextureCheckedPressed" />
+	</Template>
+	
+	<!-- Grey CommandBox -->
+	<Template Name="VG.GreyCommandButton">
+		<Font Template="vg.button.Font" />
+		<Texture Template="vg.button.Texture" />
+		<TextureHover Template="vg.button.TextureHover" />
+		<TexturePressed Template="vg.button.TexturePressed" />
+	</Template>
+	
+	<!-- Window Name: (BM1) -->
+	<Window Name="BM1" Template="VG.Window">
+		<!-- Basic Window Information -->
+		<StorePosition>1</StorePosition>
+		<X>100</X>
+		<Y>100</Y>
+		<Width>370</Width>
+		<Height>340</Height>
+		<Title>Blood Mage</Title>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>18</Height>
+			<Children>
+				<!-- Centered -->
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<!-- Minimize -->
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<!-- Close -->
+				<CommandButton Name="Custom Quit Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						Script[BM1].Variable[isRunning]:Set[FALSE]
+						endscript BM1 
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		<!-- Nothing fancy for Window Client -->
+		<Client Template="VG.Window.Client" />
+<!--		
+		<Client Template="VG.Window.Client">
+			<Y>18</Y>
+			<Height>r18</Height>
+			<Texture Template="VG.TabControl.FrameTexture" />
+		</Client>
+
+-->		
+		<Children>
+			<!-- Tab: (Tabs) -->
+			<TabControl Name="Tabs" Template="VG.Tabcontrol">
+				<X>5</X>
+				<Y>5</Y>
+				<Font>
+					<Name>Times New Roman</Name>
+					<Size>14</Size>
+				</Font>
+				<OnSelect>
+				</OnSelect>
+				<TabHeight>20</TabHeight>
+				<TabBorder>3</TabBorder>
+				<Height>72%</Height>
+				<Width>97%</Width>
+				<Tabs>
+
+					<!-- Tab Name: (Main) -->
+					<Tab Name="Main">
+						<Text Name="Text-Toggles" Template="VG.BoldText">
+							<X>3%</X>
+							<Y>2%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>TOGGLES:</Text>
+						</Text>
+
+						<checkbox Name="doLifeTaps" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>8%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>LIFETAPS</Text>
+							<AutoTooltip>  Use Bloodthinner,Entwining Vein, and Despoil </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doLifeTaps}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doLifeTaps:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doTankOnly" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>16%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>*Tank Only</Text>
+							<AutoTooltip>  Lifetap only the Tank </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doTankOnly}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doTankOnly:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Text Name="Text-LifeTapCheck" Template="VG.Text">
+							<X>3%</X>
+							<Y>24%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>     *DTarget at</Text>
+							<AutoTooltip>  Set DTarget when someone's health reaches this % </AutoTooltip>
+						</Text>
+						<Textentry Name="LifeTapCheck" Template="VG.TextEntry">
+							<X>27%</X>
+							<Y>23.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.LifeTapCheck}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.LifeTapCheck:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[BM1].VariableScope.LifeTapCheck:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<checkbox Name="doCrits" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>32%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>CRITS</Text>
+							<AutoTooltip>  Crits and Finishers </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doCrits}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doCrits:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doCritHealOnly" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>40%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>*Crit Heal Only</Text>
+							<AutoTooltip>  Use only Blood Tribute </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doCritHealOnly}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doCritHealOnly:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doCritWait" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>48%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>*Crit Heal Wait</Text>
+							<AutoTooltip>  wait during Crit and use when someone gets hurt </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doCritWait}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doCritWait:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doVitalHeals" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>8%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>VITAL HEALS</Text>
+							<AutoTooltip>  Use vital type heals </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doVitalHeals}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doVitalHeals:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Text Name="Text-HealCheck" Template="VG.Text">
+							<X>36%</X>
+							<Y>16%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>     *Heal at</Text>
+							<AutoTooltip>  start healing at this percent </AutoTooltip>
+						</Text>
+						<Textentry Name="HealCheck" Template="VG.TextEntry">
+							<X>56%</X>
+							<Y>15.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.HealCheck}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.HealCheck:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[BM1].VariableScope.HealCheck:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<checkbox Name="doHealGroupOnly" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>24%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Heal Group Only</Text>
+							<AutoTooltip>  Heal only tank and group </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doHealGroupOnly}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doHealGroupOnly:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>32%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Enchantments</Text>
+							<AutoTooltip>  strips Enchantments and Poisons </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doStripEnchantments}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doStripEnchantments:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doFollow" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>40%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Follow Tank:</Text>
+							<AutoTooltip>  be sure to adjust your Turn-Speed Multiplier in  settings </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doFollow}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doFollow:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="FollowDistance1" Template="VG.TextEntry">
+							<X>41%</X>
+							<Y>47.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.FollowDistance1}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.FollowDistance1:Set[3]
+								}
+								if ${This.Text.Length} > 2
+								{
+									This:SetText[45]
+								}
+								if ${This.Text.Length} > 0
+								{
+									if ${This.Text} > 45
+									{
+										This:SetText[45]
+									}
+									if  ${This.Text} > ${Script[BM1].VariableScope.FollowDistance2}
+									{
+										This:SetText[${Script[BM1].VariableScope.FollowDistance2}]
+									}
+									
+									Script[BM1].VariableScope.FollowDistance1:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-Follow" Template="VG.Text">
+							<X>50%</X>
+							<Y>48%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>to</Text>
+						</Text>
+						<Textentry Name="FollowDistance2" Template="VG.TextEntry">
+							<X>55%</X>
+							<Y>47.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.FollowDistance2}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.FollowDistance2:Set[3]
+								}
+								if ${This.Text.Length} > 2
+								{
+									This:SetText[45]
+								}
+								if ${This.Text.Length} > 0
+								{
+									if ${This.Text} > 45
+									{
+										This:SetText[45]
+									}
+									if ${Script[BM1].VariableScope.FollowDistance1} > ${This.Text}
+									{
+										This:SetText[${Script[BM1].VariableScope.FollowDistance1}]
+									}
+									Script[BM1].VariableScope.FollowDistance2:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<checkbox Name="doCounters" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>70%</X>
+							<Y>8%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Counters</Text>
+							<AutoTooltip>  attempt to use Counters </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doCounters}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doCounters:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doFace" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>70%</X>
+							<Y>16%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Face Target</Text>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doFace}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doFace:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doLootAll" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>70%</X>
+							<Y>24%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Loot All</Text>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doLootAll}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doLootAll:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doSprint" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>70%</X>
+							<Y>32%</Y>
+							<Width>10%</Width>
+							<Height>14</Height>
+							<Text>Sprint</Text>
+							<AutoTooltip>  adjust speed up to 100% </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doSprint}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doSprint:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="SpeedEntry" Template="VG.TextEntry">
+							<X>90%</X>
+							<Y>31.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.Speed}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.Speed:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[BM1].VariableScope.Speed:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-StartAttack" Template="VG.Text">
+							<X>70%</X>
+							<Y>40%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Start Attack</Text>
+						</Text>
+						<Textentry Name="StartAttack" Template="VG.TextEntry">
+							<X>90%</X>
+							<Y>39.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.StartAttack}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.StartAttack:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[BM1].VariableScope.StartAttack:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-DelayAttack" Template="VG.Text">
+							<X>70%</X>
+							<Y>48%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Delay Attack</Text>
+						</Text>
+						<Textentry Name="DelayAttack" Template="VG.TextEntry">
+							<X>90%</X>
+							<Y>47.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.DelayAttack}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.DelayAttack:Set[0]
+								}
+								if ${This.Text.Length} >= 4
+								{
+									This:SetText[2.5]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[BM1].VariableScope.DelayAttack:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>10%</X>
+							<Y>68%</Y>
+							<Width>80%</Width>
+							<Height>21</Height>
+							<Text>Assisting:  </Text>
+                            <Onload>
+								if ${Me.DTarget(exists)}
+								{
+									Script[BM1].Variable[Tank]:Set[${Me.DTarget.Name}]
+									This:SetText[Assisting:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[BM1].Variable[Tank]:Set[${Me.FName}]
+									This:SetText[Assisting:  ${Me.FName}]
+								}
+                            </Onload>
+							<OnLeftClick>
+								if ${Me.DTarget(exists)}
+								{
+									Script[BM1].Variable[Tank]:Set[${Me.DTarget.Name}]
+									This:SetText[Assisting:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[BM1].Variable[Tank]:Set[${Me.FName}]
+									This:SetText[Assisting:  ${Me.FName}]
+								}
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Text Name="Text-UseAbility" Template="VG.BoldText">
+							<X>3%</X>
+							<Y>82%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>USE ABILITIES:</Text>
+						</Text>
+						<checkbox Name='doArcane' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>90%</Y>
+							<Width>15%</Width>
+							<Height>15</Height>
+							<Text>Arcane</Text>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doArcane}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doArcane:Set[${This.Checked}]
+								Script[BM1].VariableScope.OkayToAttack:Set[FALSE]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doPhysical' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>27%</X>
+							<Y>90%</Y>
+							<Width>15%</Width>
+							<Height>15</Height>
+							<Text>Physical</Text>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doPhysical}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doPhysical:Set[${This.Checked}]
+								Script[BM1].VariableScope.OkayToAttack:Set[FALSE]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doDots' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>56%</X>
+							<Y>90%</Y>
+							<Width>15%</Width>
+							<Height>15</Height>
+							<Text>Dots</Text>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doDots}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doDots:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doMeleeAttacks' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>76%</X>
+							<Y>90%</Y>
+							<Width>15%</Width>
+							<Height>15</Height>
+							<Text>Melee</Text>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doMeleeAttacks}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doMeleeAttacks:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+					</Tab>
+				</Tabs>
+			</TabControl>
+
+
+			<!-- Outside the tab: (Tabs) -->
+			
+			
+			<Text Name="Text-Status" Template="VG.BoldText">
+				<visible>1</visible>
+				<X>2%</X>
+				<Y>75%</Y>
+				<Width>98%</Width>
+				<Height>20</Height>
+				<Font Template="VG.Text.Font">
+					<Color>FFDDBB00</Color>
+				</Font>
+			<!--	<Text> Current Action:  ${Script[BM1].Variable[CurrentAction]}</Text>  -->
+				<Text></Text>
+			</Text>
+			<Text Name="Text-Immune" Template="VG.BoldText">
+				<visible>1</visible>
+				<X>2%</X>
+				<Y>80%</Y>
+				<Width>275</Width>
+				<Height>20</Height>
+				<Font Template="VG.Text.Font">
+					<Color>FFDDBB00</Color>
+				</Font>
+			<!--	<Text> Target's Immunity:  ${Script[BM1].Variable[TargetImmunity]}</Text>  -->
+				<Text></Text>
+			</Text>
+			<Text Name="Text-TOT" Template="VG.BoldText">
+				<visible>1</visible>
+				<X>2%</X>
+				<Y>85%</Y>
+				<Width>275</Width>
+				<Height>20</Height>
+				<Font Template="VG.Text.Font">
+					<Color>FFDDBB00</Color>
+				</Font>
+			<!--	<Text> Target's Target:  ${Script[BM1].Variable[TargetsTarget]}</Text>  -->
+				<Text></Text>
+			</Text>
+			<Commandbutton Name="Run Button" Template="VG.GreyCommandButton">
+				<visible>1</visible>
+				<X>3%</X>
+				<Y>90.5%</Y>
+				<Width>40%</Width>
+				<Height>23</Height>
+				<Text>This script is PAUSED</Text>
+				<OnLeftClick>
+					if ${Script[BM1].Variable[isPaused]}
+					{
+						Script[BM1].Variable[isPaused]:Set[FALSE]
+						This:SetText[This script is RUNNING]
+					}
+					elseif !${Script[BM1].Variable[isPaused]}
+					{
+						Script[BM1].Variable[isPaused]:Set[TRUE]
+						This:SetText[This script is Paused]
+						VG:ExecBinding[moveforward,release]
+					}
+				</OnLeftClick>
+			</Commandbutton>
+			<Commandbutton Name="FindGroupMembers" Template="VG.GreyCommandButton">
+				<visible>1</visible>
+				<X>45%</X>
+				<Y>90.5%</Y>
+				<Width>25%</Width>
+				<Height>23</Height>
+				<Text> Update Group</Text>
+				<OnLeftClick>
+					Script[BM1]:QueueCommand[call FindGroupMembers]
+					;Script[BM1].Variable[doFindGroupMembers]:Set[TRUE]
+				</OnLeftClick>
+			</Commandbutton>
+			<Commandbutton Name="BuffArea" Template="VG.GreyCommandButton">
+				<visible>1</visible>
+				<X>72%</X>
+				<Y>90.5%</Y>
+				<Width>25%</Width>
+				<Height>23</Height>
+				<Text>Buff Area</Text>
+				<OnLeftClick>
+					Script[BM1]:QueueCommand[call BuffArea]
+					;Script[BM1].Variable[doBuffArea]:Set[TRUE]
+				</OnLeftClick>
+			</Commandbutton>
+		</Children>
+	</Window>
+</ISUI>
