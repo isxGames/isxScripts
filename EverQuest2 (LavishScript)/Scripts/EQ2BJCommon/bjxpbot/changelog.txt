@@ -32,7 +32,6 @@ COMING SOON...
 - Display the amount of looted coin
 - Add a potion selection button
 	- Allow customizable priority list (Like Ogre CA's)
-- Save selected options on exit
 
 		
 KNOWN BUGS
@@ -43,6 +42,13 @@ KNOWN BUGS
 		- Vitality Potion (Future Update - Does nothing.)
 - XP calculations script doesn't end properly some of the time	
 - All text entry fields seem to require being 1 space larger than is needed for them to display properly	
+
+REVISION HISTORY
+
+BJXPBot-2011.09.01, Version 2.01
+
+- Fixed the way OgreBot is paused due to a recent update to OgreBot
+- Fixed the settings UI not unloaded when the script was ended
 
 BJXPBot-2011.08.05, Version 2.00
 
