@@ -7,7 +7,7 @@
 		<Height>220</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>BJ XP Bot        Version 2.00</Title> 
+		<Title>BJ XP Bot        Version 2.01</Title> 
 		<OnLoad>
 		declarevariable statusvar string global
 		declarevariable lastpotion string global
@@ -47,7 +47,7 @@
 						if ${Script[xpcalclevel](exists)}	
 							endscript xpcalclevel
 						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotXML.xml"
-						ui -reload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
+						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
 					</OnLeftClick>
 				</CommandButton>
 			</Children>
