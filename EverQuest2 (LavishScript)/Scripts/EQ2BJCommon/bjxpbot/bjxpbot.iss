@@ -81,8 +81,8 @@ function main()
 							{
 								echo ${Time}: Orb of Concentrated Memories Detected
 								statusvar:Set["Orb of Concentrated Memories Detected"]
-								if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-									UIElement[${CmdBoxPauseBotID}]:LeftClick
+								if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+									Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								wait 30
 								ItemToUse:Set[Orb of Concentrated Memories]
 								Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -95,15 +95,15 @@ function main()
 									lastpotiontime:Set[${Time}]
 								}
 								wait 30
-								if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-									UIElement[${CmdBoxResumeBotID}]:LeftClick
+								if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+									Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 							}		
 							elseif ${Me.CustomInventory[Potion of Vitality](exists)}  && ${Me.Vitality} == 0
 							{
 								echo ${Time}: Potion of Vitality Detected
 								statusvar:Set["Potion of Vitality Detected"]
-								if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-									UIElement[${CmdBoxPauseBotID}]:LeftClick
+								if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+									Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								wait 30
 								ItemToUse:Set[Potion of Vitality]
 								Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -116,8 +116,8 @@ function main()
 									lastpotiontime:Set[${Time}]
 								}
 								wait 30
-								if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-									UIElement[${CmdBoxResumeBotID}]:LeftClick
+								if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+									Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 							}
 						}			
 						if ${UIElement[${enablepotionscheckboxvar}].Checked}
@@ -136,8 +136,8 @@ function main()
 								{
 									echo ${Time}: Draft of the Sage Detected
 									statusvar:Set["Drink of the Sage Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Draft of the Sage]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -150,15 +150,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 								elseif ${Me.CustomInventory[Draft of the Wise](exists)}
 								{
 									echo ${Time}: Draft of the Wise Detected
 									statusvar:Set["Draft of the Wise Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Draft of the Wise]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -171,20 +171,20 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}	
 								elseif ${Me.CustomInventory[Potion of the Prodigal](exists)}
 								{
 									echo ${Time}: Potion of the Prodigal Detected
 									statusvar:Set["Potion of the Prodigal Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Potion of the Prodigal]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
 									wait 10
-									if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Find[Potion of the Prodigal](exists)}
+									if ${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Find[a blessed experience](exists)}
 									{
 										echo ${Time}: Potion of the Prodigal Consumed
 										statusvar:Set["Potion of the Prodigal Consumed"]
@@ -192,15 +192,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 								elseif ${Me.CustomInventory[EQII Fortune League Experience Potion](exists)}
 								{
 									echo ${Time}: EQII Fortune League Experience Potion Detected
 									statusvar:Set["EQII Fortune League Experience Potion Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[EQII Fortune League Experience Potion]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -213,15 +213,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}						
 								elseif ${Me.CustomInventory[Superior Draught of the Brilliant](exists)}
 								{
 									echo ${Time}: Superior Draught of the Brilliant Detected
 									statusvar:Set["Superior Draught of the Brilliant Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Superior Draught of the Brilliant]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -234,15 +234,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 								elseif ${Me.CustomInventory[Superior Potion of the Advanced](exists)}
 								{
 									echo ${Time}: Superior Potion of the Advanced Detected
 									statusvar:Set["Superior Potion of the Advanced Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Superior Potion of the Advanced]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -255,15 +255,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 								elseif ${Me.CustomInventory[Greater Potion of the Advanced](exists)}
 								{
 									echo ${Time}: Greater Potion of the Advanced Detected
 									statusvar:Set["Greater Potion of the Advanced Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Greater Potion of the Advanced]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -276,15 +276,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 								elseif ${Me.CustomInventory[Draught of the Wise](exists)}
 								{
 									echo ${Time}: Draught of the Wise Detected
 									statusvar:Set["Draught of the Wise Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Draught of the Wise]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -297,15 +297,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}						
 								elseif ${Me.CustomInventory[Drink of the Wise](exists)}
 								{
 									echo ${Time}: Drink of the Wise Detected
 									statusvar:Set["Drink of the Wise Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Drink of the Wise]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -318,15 +318,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}		
 								elseif ${Me.CustomInventory[Draft of the Skilled](exists)}
 								{
 									echo ${Time}: Draft of the Skilled Detected
 									statusvar:Set["Draft of the Skilled Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Draft of the Skilled]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -339,15 +339,15 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 								elseif ${Me.CustomInventory[Flask of Advancement I](exists)}
 								{
 									echo ${Time}: Flask of Advancement I Detected
 									statusvar:Set["Flask of Advancement I Detected"]
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxPauseBotID}]:LeftClick
+									if ${Script[${OgreBotScriptName}](exists)} && !${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 									wait 30
 									ItemToUse:Set[Flask of Advancement I]
 									Me.Inventory[exactitem,${ItemToUse}]:Use
@@ -360,8 +360,8 @@ function main()
 										lastpotiontime:Set[${Time}]
 									}
 									wait 30
-									if ${Script[Buffer:OgreBot](exists)} && !${bPaused}
-										UIElement[${CmdBoxResumeBotID}]:LeftClick
+									if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
+										Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 								}
 							} 
 							else
