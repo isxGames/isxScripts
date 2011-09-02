@@ -48,6 +48,40 @@ atom(script) FindAction()
 		PerformAction:Set[Paused]
 		return
 	}
+	
+	;-------------------------------------------
+	; TARGET ON ME - the target is looking cross-eyed at me
+	;-------------------------------------------
+	if ${Me.InCombat} && ${Me.IsGrouped}
+	{
+		if ${Me.Ability[${LifeHusk}].IsReady}
+		{
+			;; check if target is on me
+			if ${Me.ToT.Name.Find[${Me.FName}](exists)}
+			{
+				if ${Me.Inventory[Vial of Blood](exists)}
+				{
+					PerformAction:Set[TargetOnMe]
+					return
+				}
+			}
+			;; scan encounters targeting me
+			if ${Me.Encounter}
+			{
+				for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+				{
+					if ${Me.FName.Find[${Me.Encounter[${i}].Target}]}
+					{
+						if ${Me.Inventory[Vial of Blood](exists)}
+						{
+							PerformAction:Set[TargetOnMe]
+							return
+						}
+					}
+				}
+			}
+		}
+	}
 
 	;-------------------------------------------
 	; FIND GROUP MEMBERS - updates who are group members are
@@ -61,7 +95,7 @@ atom(script) FindAction()
 	;-------------------------------------------
 	; DELAYCHECK - do this every half a second
 	;-------------------------------------------
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
 	{
 		; reset next delay check
 		NextDelayCheck:Set[${Script.RunningTime}]

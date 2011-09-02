@@ -101,13 +101,15 @@ function VitalHeals()
 			;-------------------------------------------
 			if ${Group[${TempNumber}].Health}<${HealCheck}
 			{
+				EchoIt "Healing [${TempNumber}] ${Group[${TempNumber}].Name}, Health = ${Group[${TempNumber}].Health}"
+			
 				;; set DTarget to member with lowest health
 				if ${Group[${TempNumber}].ID}!=${Me.DTarget.ID}
 				{
 					Pawn[id,${Group[${TempNumber}].ID}]:Target
 					wait 5 ${Group[${TempNumber}].ID}==${Me.DTarget.ID}
 				}
-					
+				
 				;-------------------------------------------
 				; Are we healing our self?
 				;-------------------------------------------

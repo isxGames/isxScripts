@@ -20,6 +20,11 @@ function PerformAction()
 			call WeAreDead
 			break
 	
+		;; target on me
+		case TargetOnMe
+			call TargetOnMe
+			break
+	
 		;; go assist the tank
 		case AssistTank
 			call AssistTank

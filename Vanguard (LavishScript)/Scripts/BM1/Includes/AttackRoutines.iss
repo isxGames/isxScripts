@@ -43,6 +43,20 @@ function MeleeAttackOn()
 }
 
 ;===================================================
+;===       TARGET ON ME SUB-ROUTINE             ====
+;===================================================
+function TargetOnMe()
+{
+	;; put up our 9 second immunity buff
+	call UseAbility "${LifeHusk}"
+	if ${Return}
+	{
+		vgecho "IMMUNITY: Target On Me"
+		wait 1
+	}
+}
+
+;===================================================
 ;===       ATTACK TARGET SUB-ROUTINE            ====
 ;===   This handles all damage to the target    ====
 ;===================================================
@@ -350,12 +364,12 @@ function AttackTarget()
 			;; Cold Only - Use this single-handed weapon
 			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
 			{
-				;if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
-				;{
-				;	Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
-				;	wait 5
-				;	return
-				;}
+				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
+				{
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
+					wait 5
+					return
+				}
 				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
 			}
@@ -364,15 +378,15 @@ function AttackTarget()
 
 		case Flaming Soul Devourer
 			;; Fire Only - Use this single-handed weapon
-			if ${Me.Inventory[Flawless Scholar's Rod of the Evoker].IsReady}
+			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
 			{
-				if !${Me.Inventory[Flawless Scholar's Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
+				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
 				{
-					Me.Inventory[Flawless Scholar's Rod of the Evoker]:Equip[Primary Hand]
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
 					wait 5
 					return
 				}
-				Me.Inventory[Flawless Scholar's Rod of the Evoker]:Use
+				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
 			}
 			call VitalHeals
@@ -387,15 +401,15 @@ function AttackTarget()
 		case Ancient Warden
 			call MeleeAttackOff
 			;; Use highest most damaging -clickie-
-			if ${Me.Inventory[Flawless Scholar's Rod of the Evoker].IsReady}
+			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
 			{
-				if !${Me.Inventory[Flawless Scholar's Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
+				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
 				{
-					Me.Inventory[Flawless Scholar's Rod of the Evoker]:Equip[Primary Hand]
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
 					wait 5
 					return
 				}
-				Me.Inventory[Flawless Scholar's Rod of the Evoker]:Use
+				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
 			}
 			call VitalHeals
@@ -482,12 +496,12 @@ function AttackTarget()
 			}
 			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
 			{
-				;if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
-				;{
-				;	Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
-				;	wait 5
-				;	return
-				;}
+				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
+				{
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
+					wait 5
+					return
+				}
 				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
 			}
@@ -617,67 +631,6 @@ function AttackTarget()
 		return
 	}
 	
-	;-------------------------------------------
-	; AGGRO CONTROL - routines to manage aggro
-	;-------------------------------------------
-	if ${doRemoveHate} && ${Me.IsGrouped}
-	{
-		;; wipe my aggro if current target is hitting me
-		if ${Me.ToT.Name.Find[${Me.FName}](exists)}
-		{
-			if ${Me.Ability[${LifeHusk}].IsReady}
-			{
-				Me.Ability[${LifeHusk}]:Use
-				wait 5
-			}
-		
-			if ${Me.Ability[${Numb}].IsReady}
-			{
-				wait 5 ${Me.Ability[${Numb}].IsReady}
-				call UseAbility "${Numb}"
-				if ${Return}
-				{
-					vgecho "DeAggro: ${Me.Target.Name}"
-					wait 1
-				}
-			}
-		}
-		
-		;; scan encounters and wipe my aggro if any encounters targets me
-		if ${Me.Encounter}
-		{
-			for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
-			{
-				if ${Me.FName.Find[${Me.Encounter[${i}].Target}]}
-				{
-					if ${Me.Ability[${Numb}].IsReady}
-					{
-						;; switch to new target
-						Pawn[id,${Me.Encounter[${i}].ID}]:Target
-						wait 5 ${Me.Target.ID}==${Me.Encounter[${i}].ID}
-						if ${doFace}
-						{
-							call CalculateAngles
-							if ${AngleDiffAbs} >= 90
-							{
-								face ${Me.Target.X} ${Me.Target.Y}
-								wait 1
-							}
-						}
-						wait 5 ${Me.Ability[${Numb}].IsReady}
-						call UseAbility "${Numb}"
-						if ${Return}
-						{
-							vgecho "Encounter on Cetok:  ${Me.Encounter[${i}].Target}"
-							wait 1
-						}
-						;; get back onto tank's target
-						call AssistTank
-					}
-				}
-			}
-		}
-	}
 
 	;-------------------------------------------
 	; DO NOT FIGHT IF - health is not within range
@@ -767,6 +720,41 @@ function AttackTarget()
 	; CRIT CHAIN 
 	;-------------------------------------------
 	call CritFinishers
+	
+	;-------------------------------------------
+	; TARGET ON ME?
+	;-------------------------------------------
+	if ${Me.InCombat} && ${Me.IsGrouped}
+	{
+		if ${Me.Ability[${LifeHusk}].IsReady}
+		{
+			;; check if target is on me
+			if ${Me.ToT.Name.Find[${Me.FName}](exists)}
+			{
+				if ${Me.Inventory[Vial of Blood](exists)}
+				{
+					call TargetOnMe
+				}
+			}
+		}
+	}
+	
+	;-------------------------------------------
+	; LOWER HATE
+	;-------------------------------------------
+	if ${doRemoveHate} && ${Me.IsGrouped}
+	{
+		;; lower aggro if current target is hitting me
+		if ${Me.ToT.Name.Find[${Me.FName}](exists)}
+		{
+			call UseAbility "${Numb}"
+			if ${Return}
+			{
+				vgecho "DeAggro: ${Me.Target.Name}"
+				wait 1
+			}
+		}
+	}
 	
 	;-------------------------------------------
 	; USE OUR WAND OF ULVARI
