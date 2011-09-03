@@ -14,7 +14,7 @@ function VitalHeals()
 			;-------------------------------------------
 			; GROUP HEALS
 			;-------------------------------------------
-			if ${Me.Ability[${RecoveringBurst}](exists)} && ${Me.Ability[${RecoveringBurst}].TimeRemaining}==0 
+			if ${Me.Ability[${RecoveringBurst}](exists)} && ${Me.Ability[${RecoveringBurst}].TimeRemaining}==0
 			{
 				if ${TotalWounded}
 				{
@@ -46,7 +46,7 @@ function VitalHeals()
 						}
 					}
 				}
-				
+
 				;; scan the group, 3 or more wounded
 				if ${TotalWounded}>3
 				{
@@ -88,35 +88,35 @@ function VitalHeals()
 					}
 				}
 			}
-		
+
 			;-------------------------------------------
 			; VITAL HEALS
 			;-------------------------------------------
-			
+
 			;; save who needs healing
 			variable int TempNumber = ${GET.HealThisID}
-			
+
 			;-------------------------------------------
 			; SET DTARGET TO PLAYER WITH LOWEST HEALTH
 			;-------------------------------------------
-			if ${Group[${TempNumber}].Health}<${HealCheck}
+			if ${Group[${TempNumber}].Health}<${HealCheck} && ${TempNumber}>0
 			{
 				EchoIt "Healing [${TempNumber}] ${Group[${TempNumber}].Name}, Health = ${Group[${TempNumber}].Health}"
-			
+
 				;; set DTarget to member with lowest health
 				if ${Group[${TempNumber}].ID}!=${Me.DTarget.ID}
 				{
 					Pawn[id,${Group[${TempNumber}].ID}]:Target
 					wait 5 ${Group[${TempNumber}].ID}==${Me.DTarget.ID}
 				}
-				
+
 				;-------------------------------------------
 				; Are we healing our self?
 				;-------------------------------------------
 				if ${Me.FName.Equal[${Me.DTarget.Name}]}
 				{
 					; use Conduct if it is up
-					if ${Me.Ability[${Conduct}](exists)} && ${Me.Ability[${Conduct}].TimeRemaining}==0 
+					if ${Me.Ability[${Conduct}](exists)} && ${Me.Ability[${Conduct}].TimeRemaining}==0
 					{
 						if ${Me.Ability[${Conduct}].IsReady}
 						{
@@ -125,7 +125,7 @@ function VitalHeals()
 							if ${Return}
 							{
 								; attempt to get a HOT up
-								if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0 
+								if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0
 								{
 									EchoIt "Using HOT to heal self"
 									if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -141,7 +141,7 @@ function VitalHeals()
 						}
 					}
 					; 1.5 second small heal... this is for me
-					if ${Me.Ability[${InfuseHealth}].TimeRemaining}==0 
+					if ${Me.Ability[${InfuseHealth}].TimeRemaining}==0
 					{
 						if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
 						{
@@ -153,7 +153,7 @@ function VitalHeals()
 						if ${Return}
 						{
 							; attempt to get a HOT up
-							if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0 
+							if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0
 							{
 								EchoIt "Using HOT to heal self"
 								if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -181,14 +181,14 @@ function VitalHeals()
 					}
 					return
 				}
-				
+
 				;-------------------------------------------
 				;; Are we healing someone other than myself?
 				;-------------------------------------------
 				if !${Me.FName.Equal[${Me.DTarget.Name}]}
 				{
 					; 3 second big heal... do squishies really need it?
-					if ${Me.Ability[${BloodGift}].TimeRemaining}==0 
+					if ${Me.Ability[${BloodGift}].TimeRemaining}==0
 					{
 						if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
 						{
@@ -200,7 +200,7 @@ function VitalHeals()
 						if ${Return}
 						{
 							; attempt to get a HOT up
-							if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0 
+							if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0
 							{
 								EchoIt "Using HOT to heal ${Me.DTarget.Name}"
 								if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -232,12 +232,12 @@ function VitalHeals()
 					Pawn[Me]:Target
 					wait 5
 				}
-				
+
 				;; Are we healing our self?
 				if ${Me.FName.Equal[${Me.DTarget.Name}]}
 				{
 					; use Conduct if it is up
-					if ${Me.Ability[${Conduct}](exists)} && ${Me.Ability[${Conduct}].TimeRemaining}==0 
+					if ${Me.Ability[${Conduct}](exists)} && ${Me.Ability[${Conduct}].TimeRemaining}==0
 					{
 						if ${Me.Ability[${Conduct}].IsReady}
 						{
@@ -246,7 +246,7 @@ function VitalHeals()
 							if ${Return}
 							{
 								; attempt to get a HOT up
-								if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0 
+								if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0
 								{
 									EchoIt "Using HOT to heal self at ${Me.HealthPct}"
 									if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -262,7 +262,7 @@ function VitalHeals()
 						}
 					}
 					; 1.5 second small heal... this is for me
-					if ${Me.Ability[${InfuseHealth}].TimeRemaining}==0 
+					if ${Me.Ability[${InfuseHealth}].TimeRemaining}==0
 					{
 						if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
 						{
@@ -275,7 +275,7 @@ function VitalHeals()
 						if ${Return}
 						{
 							; attempt to get a HOT up
-							if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0 
+							if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0
 							{
 								EchoIt "Using HOT to heal self at ${Me.HealthPct}"
 								if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -306,3 +306,5 @@ function VitalHeals()
 		}
 	}
 }
+
+

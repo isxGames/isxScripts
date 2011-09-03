@@ -14,7 +14,7 @@ function Paused()
 	if ${Me.HealthPct}<20
 	{
 		; 1.5 second small heal... this is for me
-		if ${Me.Ability[${InfuseHealth}].TimeRemaining}==0 
+		if ${Me.Ability[${InfuseHealth}].TimeRemaining}==0
 		{
 			Pawn[Me]:Target
 			if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -27,7 +27,7 @@ function Paused()
 			if ${Return}
 			{
 				; attempt to get a HOT up
-				if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0 
+				if ${Me.Ability[${TransfusionOfSerak}].TimeRemaining}==0
 				{
 					EchoIt "Using HOT to heal self"
 					if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
@@ -93,7 +93,7 @@ function RemovePoisons()
 	{
 		;; make sure the item is on your hot bar else it will not work correctly
 		wait 5 ${Me.Inventory[Great Sageberries].IsReady}
-		
+
 		;; check if you have the item and use it
 		if ${Me.Inventory[Great Sageberries].IsReady}
 		{
@@ -127,10 +127,10 @@ function RemoveEnchantments()
 	;-------------------------------------------
 	;; wait up to half a second for the ability to be ready
 	wait 5 ${Me.Ability[${StripEnchantment}].IsReady}
-		
+
 	;; execute the ability
 	call UseAbility "${StripEnchantment}"
-		
+
 	;; check to see enchantment was removed
 	wait 5 !${Me.TargetBuff[${StripThisEnchantment}](exists)}
 	if !${Me.TargetBuff[${StripThisEnchantment}](exists)}
@@ -146,7 +146,7 @@ function RemoveEnchantments()
 ;===        TARGET IS DEAD SUB-ROUTINE          ====
 ;===================================================
 function TargetIsDead()
-{		
+{
 	;-------------------------------------------
 	; TARGET IS DEAD/CORPSE LOOP
 	;-------------------------------------------
@@ -182,7 +182,7 @@ function TargetIsDead()
 			VGExecute /cleartargets
 		}
 		wait 3
-		
+
 	}
 }
 
@@ -226,7 +226,7 @@ function RegainEnergy()
 ;===================================================
 function WeChunked()
 {
-	;; have we chunked?  
+	;; have we chunked?
 	while !${CurrentChunk.Equal[${Me.Chunk}]}
 	{
 		wait 5
@@ -261,15 +261,15 @@ function SprintCheck()
 				{
 					wait 1
 				}
-				
+
 				;; this wait fixes the speed
 				wait 10
 				return
 			}
-		}	
+		}
 		;; briefly pause if we chunked
 		call WeChunked
-		
+
 		;; checking every other second saves on the FPS due to the Pawn check
 		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextSpeedCheck}]}/1000]}>=1
 		{
@@ -366,7 +366,7 @@ function ResetImmunities()
 		}
 	}
 }
-	
+
 
 ;===================================================
 ;===       GLOBAL RECOVERY SUB-ROUTINE          ====
@@ -402,7 +402,7 @@ function CalculateAngles()
 		variable float temp1 = ${Math.Calc[${Me.Y} - ${Me.Target.Y}]}
 		variable float temp2 = ${Math.Calc[${Me.X} - ${Me.Target.X}]}
 		variable float result = ${Math.Calc[${Math.Atan[${temp1},${temp2}]} - 90]}
-		
+
 		result:Set[${Math.Calc[${result} + (${result} < 0) * 360]}]
 		result:Set[${Math.Calc[${result} - ${Me.Heading}]}]
 		while ${result} > 180
@@ -433,7 +433,7 @@ function CalculateThisAngle(string TARGET)
 		variable float temp1 = ${Math.Calc[${Me.Y} - ${Pawn[name,${TARGET}].Y}]}
 		variable float temp2 = ${Math.Calc[${Me.X} - ${Pawn[name,${TARGET}].X}]}
 		variable float result = ${Math.Calc[${Math.Atan[${temp1},${temp2}]} - 90]}
-		
+
 		result:Set[${Math.Calc[${result} + (${result} < 0) * 360]}]
 		result:Set[${Math.Calc[${result} - ${Me.Heading}]}]
 		while ${result} > 180
@@ -468,7 +468,7 @@ function:bool UseAbility(string ABILITY)
 		;EchoIt "${ABILITY} does not exist"
 		return FALSE
 	}
-	
+
 	;-------------------------------------------
 	; execute ability only if it is ready
 	;-------------------------------------------
@@ -480,21 +480,21 @@ function:bool UseAbility(string ABILITY)
 		;	EchoIt "Not Enough Blood Union for ${ABILITY}, Required=${Me.Ability[${ABILITY}].BloodUnionRequired}, Have=${Me.BloodUnion}"
 		;	return FALSE
 		;}
-		
+
 		;; return if we do not have enough energy
 		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
 		{
 			EchoIt "Not enought Energy for ${ABILITY}"
 			return FALSE
 		}
-		
+
 		;; return if the target is outside our range
 		if !${Me.Ability[${ABILITY}].TargetInRange} && !${Me.Ability[${ABILITY}].TargetType.Equal[Self]}
 		{
 			EchoIt "Target not in range for ${ABILITY}"
 			return FALSE
 		}
-		
+
 		;; now execute the ability
 		EchoIt "Used ${ABILITY}"
 		Me.Ability[${ABILITY}]:Use
@@ -506,10 +506,10 @@ function:bool UseAbility(string ABILITY)
 			call MeleeAttackOn
 		}
 		wait 1
-		
+
 		;; make sure we double-check for any crits
 		;call CritFinishers
-		
+
 		;; say we executed ability successfully
 		return TRUE
 	}
@@ -544,3 +544,5 @@ function FollowTank()
 		}
 	}
 }
+
+

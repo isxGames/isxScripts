@@ -22,7 +22,7 @@ function BuffArea()
 			}
 		}
 	}
-	
+
 	;-------------------------------------------
 	; Cycle through all PC and buff them
 	;-------------------------------------------
@@ -35,9 +35,9 @@ function BuffArea()
 			;PC:Collapse
 			continue
 		}
-		
+
 		EchoIt "[${i}] Checking buffs on ${temp}"
-	
+
 		;; Offensive target our PC
 		VGExecute "/targetoffensive ${temp}"
 		wait 15 ${Me.TargetBuff[${ConstructsAugmentation}](exists)}
@@ -96,7 +96,7 @@ function BuffArea()
 			wait 10 ${Me.Effect[Blood Feast](exists)}
 		}
 	}
-	
+
 	;; Recast this
 	Pawn[Me]:Target
 	wait 1
@@ -116,3 +116,5 @@ function BuffArea()
 	}
 	PC:Clear
 }
+
+

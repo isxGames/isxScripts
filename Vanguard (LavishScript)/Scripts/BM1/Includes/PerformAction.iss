@@ -14,73 +14,78 @@ function PerformAction()
 		case Paused
 			call Paused
 			break
-	
+
 		;; we are dead
 		case WeAreDead
 			call WeAreDead
 			break
-	
+
 		;; target on me
 		case TargetOnMe
 			call TargetOnMe
 			break
-	
+
 		;; go assist the tank
 		case AssistTank
 			call AssistTank
 			break
-			
+
 		;; use berries to remove poison
 		case RemovePoison
 			call RemovePoisons
 			break
-			
+
 		;; strip an Enchantment off the target
 		case RemoveEnchantment
 			call RemoveEnchantments
 			break
-				
+
 		;; stop all attacks if target does not exist
 		case TargetIsDead
 			call TargetIsDead
 			break
-			
+
 		;; get some energy
 		case RegainEnergy
 			call RegainEnergy
 			break
-			
+
 		;; we just chunked
 		case WeChunked
 			call WeChunked
 			break
-		
+
 		;; follow the tank
 		case FollowTank
 			call FollowTank
 			break
-		
+
 		;; use HoTs, heals, berries, or Blood Mage's ${Conduct}
 		case VitalHeals
 			call VitalHeals
 			break
-			
+
 		;; go attack the current target
 		case AttackTarget
 			call AttackTarget
 			NextAttackCheck:Set[${Script.RunningTime}]
 			break
-				
+
+		;; go attack the current target
+		case DoNotAttack
+			call DoNotAttack
+			break
+
 		;; go buff someone that requested
 		case BuffRequests
 			call BuffRequests
 			break
-				
+
 		;; go buff the area
 		case BuffArea
 			call BuffArea
 			break
-				
+
 		;; update our group members
 		case FindGroupMembers
 			call FindGroupMembers
@@ -88,19 +93,22 @@ function PerformAction()
 
 		;; turn on/off attacks, toggle sprinting, execute crits
 		Default
-			call MeleeAttackOn
 			call SprintCheck
-			if ${OkayToAttack}
+			if ${Me.InCombat}
 			{
-				if ${Me.Target(exists)}
+				call MeleeAttackOn
+				if ${OkayToAttack}
 				{
-					if ${Me.TargetHealth}<=${StartAttack}
+					if ${Me.Target(exists)}
 					{
-						if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
+						if ${Me.TargetHealth}<=${StartAttack}
 						{
-							if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
+							if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
 							{
-								call CritFinishers
+								if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
+								{
+									call CritFinishers
+								}
 							}
 						}
 					}
@@ -109,3 +117,5 @@ function PerformAction()
 			break
 	}
 }
+
+

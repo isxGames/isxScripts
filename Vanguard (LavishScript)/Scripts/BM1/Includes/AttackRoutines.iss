@@ -1,4 +1,17 @@
 ;===================================================
+;===       DO NOT ATTACK SUB-ROUTINE            ====
+;===================================================
+function DoNotAttack()
+{
+	variable int i
+	call MeleeAttackOff
+	i:Set[${HealCheck}]
+	HealCheck:Set[90]
+	call VitalHeals
+	HealCheck:Set[${i}]
+}
+
+;===================================================
 ;===       MELEE ATTACKS OFF SUB-ROUTINE        ====
 ;===================================================
 function MeleeAttackOff()
@@ -71,39 +84,23 @@ function AttackTarget()
 	}
 
 	;-------------------------------------------
-	; FURIOUS - we do not want to plow through Furious with melee attacks (melee)
+	; MELEE ATTACKS - start attacking if in range
 	;-------------------------------------------
-	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${isFurious}
-	{
-		call MeleeAttackOff
-		return
-	}
+	call MeleeAttackOn
 
 	;-------------------------------------------
-	; TARGETBUFFS - we do not want to attack during these (melee/spells)
+	; SILENCED - No Spell Casting
 	;-------------------------------------------
-	if ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)}
+	if ${Me.Effect[Silence](exists)}
 	{
-		call MeleeAttackOff
 		return
 	}
-	if ${Me.TargetBuff[Major Enchantment: Ulvari Flame](exists)} || ${Me.Effect[Mark of Verbs](exists)}
+	elseif ${Me.Effect[Mezmerize](exists)}
 	{
-		call MeleeAttackOff
 		return
 	}
-	if ${Me.TargetBuff[Major Disease: Fire Advocate](exists)} || ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+	elseif ${Me.Effect[Muting Darkness](exists)}
 	{
-		call MeleeAttackOff
-		return
-	}
-	
-	;-------------------------------------------
-	;; PETS & GROUP MEMBERS - we do not want to attack group members or pets
-	;-------------------------------------------
-	if ${Me.Target.Type.Equal[Group Member]} || ${Me.Target.Type.Equal[Pet]}
-	{
-		call MeleeAttackOff
 		return
 	}
 
@@ -114,6 +111,42 @@ function AttackTarget()
 	{
 		vgecho "CAUGHT NO TARGET"
 		return
+	}
+
+	;-------------------------------------------
+	; TARGET BEHIND US - Let's face the target!
+	;-------------------------------------------
+	if ${doFace}
+	{
+		call CalculateAngles
+		if ${AngleDiffAbs}>=90
+		{
+			face ${Me.Target.X} ${Me.Target.Y}
+			wait 1
+		}
+	}
+
+	;-------------------------------------------
+	; CRIT CHAIN
+	;-------------------------------------------
+	call CritFinishers
+
+	;-------------------------------------------
+	; TARGET ON ME?
+	;-------------------------------------------
+	if ${Me.InCombat} && ${Me.IsGrouped}
+	{
+		if ${Me.Ability[${LifeHusk}].IsReady}
+		{
+			;; check if target is on me
+			if ${Me.ToT.Name.Find[${Me.FName}](exists)}
+			{
+				if ${Me.Inventory[Vial of Blood](exists)}
+				{
+					call TargetOnMe
+				}
+			}
+		}
 	}
 	
 	;-------------------------------------------
@@ -137,16 +170,17 @@ function AttackTarget()
 	doBloodLettingRitual:Set[TRUE]
 	doScarletRitual:Set[TRUE]
 	doSeveringRitual:Set[TRUE]
-	
+
 	;-------------------------------------------
 	; PREDEFINED SETTINGS FOR EACH TARGET
 	;-------------------------------------------
 	switch "${Me.Target.Name}"
 	{
-		Corrupted Essence
+		case Corrupted Essence
+			;; do not hit this target!
+			call MeleeAttackOff
 			return
-	
-	
+
 		case Zyxil
 			while ${Me.Encounter[1].Name.Find[Abomination]}
 			{
@@ -163,10 +197,10 @@ function AttackTarget()
 				}
 			}
 			break
-	
-	
-		;; Slim-jim "must counter devastation"
+
+
 		case SI'UMR-LI THE HARBRINGER
+			;; Slim-jim "must counter devastation"
 			wait 20 ${Me.TargetCasting.Equal[Devastation]}
 			if ${Me.TargetCasting.Equal[Devastation]}
 			{
@@ -178,70 +212,70 @@ function AttackTarget()
 				}
 			}
 			break
-			
+
 		case Varaduuk the Gatekeeper
 			break
-			
-		Ulvari Transcender
+
+		case Ulvari Transcender
 			doRemoveHate:Set[FALSE]
 			break
-			
-		Ulvari Eclipser
+
+		case Ulvari Eclipser
 			doRemoveHate:Set[FALSE]
 			break
-	
-		;; Chaos Chicken
+
 		case ATARAXIS THE DEVOURER
+			;; Chaos Chicken
 			break
-		
-		;; Spawn of ATARAXIS
+
 		case Pantheon Doomseer
+			;; Spawn of ATARAXIS
 			break
-			
-		;; Spawn of ATARAXIS
+
 		case Corrupted Deathweaver
+			;; Spawn of ATARAXIS
 			break
-		
-		;; Spawn of ATARAXIS
+
 		case Ascenden Arcanist
+			;; Spawn of ATARAXIS
 			break
-			
-		;; Spawn of ATARAXIS
+
 		case Ascended Evoker
+			;; Spawn of ATARAXIS
 			break
-			
-		;; Spawn of ATARAXIS
+
 		case Wicked Xerklin
+			;; Spawn of ATARAXIS
 			break
-			
-		;; Spawn of ATARAXIS
+
 		case Xerklin Servitor
+			;; Spawn of ATARAXIS
 			break
-			
-		;; Order Chicken
+
 		case ZASEH THE WISE
+			;; Order Chicken
 			break
-			
-		;; Spawn of ZASEH
+
 		case Ascended Guardian
+			;; Spawn of ZASEH
 			break
-			
-		;; Spawn of ZASEH
+
 		case Ascended Crusader
+			;; Spawn of ZASEH
 			break
-			
-		;; Spawn of ZASEH
+
 		case Pantheon Radiant Mage
+			;; Spawn of ZASEH
 			break
-			
-		;; Spawn of ZASEH
+
 		case Purified Spellweaver
+			;; Spawn of ZASEH
 			break
-			
-		;; Spawn of ZASEH
+
 		case Purified Lifeweaver
+			;; Spawn of ZASEH
 			break
-	
+
 		case Arch Magus Zodifin
 			;; This stays up for 5 seconds for everyone to use Band of Reflection
 			if ${Me.TargetCasting.Equal[Planar Destruction]}
@@ -270,25 +304,25 @@ function AttackTarget()
 			}
 			call VitalHeals
 			return
-	
+
 		case FENGROT FOULBREATH
 			break
-		
+
 		case Spawn of Krigus
 			break
-		
+
 		case Giant Earth Worm
 			doAE:Set[FALSE]
 			break
-	
+
 		case Terracotta Statue
 			doAE:Set[FALSE]
 			break
-	
+
 		case Rabid Rat
 			doAE:Set[FALSE]
 			break
-	
+
 		case Arch Magus Shendu
 			doAE:Set[TRUE]
 			if ${Me.TargetBuff[Arcane Shield](exists)}
@@ -296,8 +330,8 @@ function AttackTarget()
 				doTemporalShift:Set[FALSE]
 			}
 			break
-			
-	
+
+
 		case Arachnidon Sunshine
 			call MeleeAttackOn
 			if ${Me.TargetHealth}<22
@@ -310,10 +344,10 @@ function AttackTarget()
 				return
 			}
 			break
-	
+
 		case SUMMONER NIMAA
 			break
-	
+
 		case SUMMONER RINIPIN
 			;; use 'Shattering Hammer' to remove 'Stone Encasement'
 			if ${Me.Effect[Stone Encasement](exists)}
@@ -328,7 +362,7 @@ function AttackTarget()
 				wait 20
 			}
 			break
-			
+
 		case SUMMONER PHYSIK
 			;; we do not want to burn Summoner Physik too fast
 			;; so no dots if health is 20% or lower
@@ -341,7 +375,7 @@ function AttackTarget()
 				doDots:Set[TRUE]
 			}
 			break
-			
+
 		case Electric Spark
 			;; we want to burn the spawned Electric Spark
 			doDots:Set[FALSE]
@@ -359,7 +393,7 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Frozen Soul Devourer
 			;; Cold Only - Use this single-handed weapon
 			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
@@ -427,7 +461,7 @@ function AttackTarget()
 			}
 			doAE:Set[FALSE]
 			break
-	
+
 		case Blasphemous Mysticant
 			while !${Me.TargetCasting.Equal[None]}
 			{
@@ -440,14 +474,14 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Decaying Soul Thief
 			break
 
 		case DRESLA
 			doAE:Set[FALSE]
 			break
-			
+
 		case Wyvern Hatchling
 			;; Do not attack if DRESLA exists
 			if ${Pawn[ExactName,DRESLA](exists)}
@@ -463,32 +497,32 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Apprentice Dejre
 			;; bounces you all over the room so keep facing him! (stand east and west)
 			break
-			
+
 		case Apprentice Ednies
 			;; (stand outside)
 			break
-			
-		case Apprentice Amat	
+
+		case Apprentice Amat
 			;; bounces you all over the room so keep facing him
 			break
-			
-		case Apprentice Manai	
+
+		case Apprentice Manai
 			;; bounces you all over the room so keep facing him
 			break
-			
+
 		case KOTASOTH
 			break
-			
+
 		case Officer Masuke Whitewind
 			break
 
 		case VAHSREN THE LIBRARIAN
 			break
-			
+
 		case LORD TALFYN
 			if ${Me.Effect[Petrify](exists)}
 			{
@@ -512,7 +546,7 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Gregoras the Watcher
 			if ${Me.Effect[Petrify](exists)}
 			{
@@ -525,7 +559,7 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Prince Julian
 			if ${Me.Effect[Petrify](exists)}
 			{
@@ -551,7 +585,7 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Servant
 			if ${Me.TargetBuff[Vampiric Embrace](exists)}
 			{
@@ -569,9 +603,7 @@ function AttackTarget()
 				return
 			}
 			break
-			
 
-			
 		case Minion of Darkness
 			if ${Me.Effect[Petrify](exists)}
 			{
@@ -584,7 +616,7 @@ function AttackTarget()
 				return
 			}
 			break
-			
+
 		case Umbral Syndicate Captain
 			doDots:Set[FALSE]
 			break
@@ -596,11 +628,11 @@ function AttackTarget()
 		case Umbral Syndicate Warlock
 			doDots:Set[FALSE]
 			break
-			
+
 		case GUAR
 			doRemoveHate:Set[FALSE]
 			break
-			
+
 		case Arch Magus Teraxes
 			;; he does a lot of damage so stay in this form
 			;; halt all attacks
@@ -613,55 +645,30 @@ function AttackTarget()
 			break
 
 		Default
-			;if !${Me.Inventory[Void Shard].CurrentEquipSlot.Equal[Primary Hand]}
-			;{
-			;	Me.Inventory[Void Shard]:Equip[Primary Hand]
-			;	wait 5
-			;}
 			break
 	}
-	
-	;-------------------------------------------
-	; DO NOT FIGHT IF - target is dead, too far away, or have no line of sight to
-	;-------------------------------------------
-	if ${Me.Target.IsDead} || ${Me.Target.Distance}>=30 || !${Me.Target.HaveLineOfSightTo}
-	{
-		call MeleeAttackOff
-		call VitalHeals
-		return
-	}
-	
 
-	;-------------------------------------------
-	; DO NOT FIGHT IF - health is not within range
-	;-------------------------------------------
-	if ${Me.TargetHealth}>${StartAttack}
-	{
-		call MeleeAttackOff
-		call VitalHeals
-		return
-	}
 	
 	;-------------------------------------------
-	; TARGET BUFFS - Ensure you set toggles for each specific target buff
+	; LOWER HATE
 	;-------------------------------------------
-	if ${Me.TargetBuff[Weakened](exists)}
+	if ${Me.InCombat} && ${Me.IsGrouped}
 	{
-		return
-	}
-
-	;-------------------------------------------
-	; TARGET BEHIND US - Let's face the target!
-	;-------------------------------------------
-	if ${doFace}
-	{
-		call CalculateAngles
-		if ${AngleDiffAbs}>=90
+		if ${doRemoveHate}
 		{
-			face ${Me.Target.X} ${Me.Target.Y}
-			wait 1
+			;; lower aggro if current target is hitting me
+			if ${Me.ToT.Name.Find[${Me.FName}](exists)}
+			{
+				call UseAbility "${Numb}"
+				if ${Return}
+				{
+					vgecho "DeAggro: ${Me.Target.Name}"
+					wait 1
+				}
+			}
 		}
 	}
+
 	
 	;===========================================
 	;===========================================
@@ -669,10 +676,6 @@ function AttackTarget()
 	;===========================================
 	;===========================================
 
-	;-------------------------------------------
-	; MELEE ATTACKS - start attacking if in range
-	;-------------------------------------------
-	call MeleeAttackOn
 
 	;-------------------------------------------
 	; CLICKIES - Use them if we got them
@@ -687,116 +690,30 @@ function AttackTarget()
 		;}
 	}
 
-	;*******************************************
-	; SPELL CASTING ABILITIES
-	;*******************************************
-	
-	;-------------------------------------------
-	; SILENCED - No Spell Casting
-	;-------------------------------------------
-	if ${Me.Effect[Silence](exists)}
+	if ${Me.HealthPct}>80
 	{
-		return
-	}
-	if ${Me.Effect[Mezmerize](exists)}
-	{
-		return
-	}
-	if ${Me.Effect[Muting Darkness](exists)}
-	{
-		return
-	}
-	
-	
-	;-------------------------------------------
-	; loop this while checking for crits and furious
-	;-------------------------------------------
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-	{
-		call MeleeAttackOn
-	}
-	
-	;-------------------------------------------
-	; CRIT CHAIN 
-	;-------------------------------------------
-	call CritFinishers
-	
-	;-------------------------------------------
-	; TARGET ON ME?
-	;-------------------------------------------
-	if ${Me.InCombat} && ${Me.IsGrouped}
-	{
-		if ${Me.Ability[${LifeHusk}].IsReady}
+		;-------------------------------------------
+		; USE OUR WAND OF ULVARI
+		;-------------------------------------------
+		if ${Me.Ability[Ulvari Burst].IsReady}
 		{
-			;; check if target is on me
-			if ${Me.ToT.Name.Find[${Me.FName}](exists)}
-			{
-				if ${Me.Inventory[Vial of Blood](exists)}
-				{
-					call TargetOnMe
-				}
-			}
+			call UseAbility "Ulvari Burst"
+		}
+		;-------------------------------------------
+		; Establish Blood Feast - Get 10% of damage from allies returned back to me as health
+		;-------------------------------------------
+		if ${Me.Ability[${BloodFeast}](exists)} && !${Me.Effect[${BloodFeast}](exists)}
+		{
+			call UseAbility "${BloodFeast}"
+		}
+		;-------------------------------------------
+		; Establish Ritual of Awakening - +20% spell haste
+		;-------------------------------------------
+		if ${Me.BloodUnion}>2 && ${Me.Ability[${RitualOfAwakening}](exists)} && !${Me.Effect[${RitualOfAwakening}](exists)}
+		{
+			call UseAbility "${RitualOfAwakening}"
 		}
 	}
-	
-	;-------------------------------------------
-	; LOWER HATE
-	;-------------------------------------------
-	if ${doRemoveHate} && ${Me.IsGrouped}
-	{
-		;; lower aggro if current target is hitting me
-		if ${Me.ToT.Name.Find[${Me.FName}](exists)}
-		{
-			call UseAbility "${Numb}"
-			if ${Return}
-			{
-				vgecho "DeAggro: ${Me.Target.Name}"
-				wait 1
-			}
-		}
-	}
-	
-	;-------------------------------------------
-	; USE OUR WAND OF ULVARI
-	;-------------------------------------------
-	if ${Me.Ability[Ulvari Burst].IsReady}
-	{
-		call UseAbility "Ulvari Burst"
-	}
-	
-	;-------------------------------------------
-	; Establish Blood Feast - Get 10% of damage from allies returned back to me as health
-	;-------------------------------------------
-	if ${Me.Ability[${BloodFeast}](exists)} && !${Me.Effect[${BloodFeast}](exists)}
-	{
-		call UseAbility "${BloodFeast}"
-	}
-	;-------------------------------------------
-	; Establish Ritual of Awakening - +20% spell haste
-	;-------------------------------------------
-	if ${Me.BloodUnion}>2 && ${Me.Ability[${RitualOfAwakening}](exists)} && !${Me.Effect[${RitualOfAwakening}](exists)}
-	{
-		call UseAbility "${RitualOfAwakening}"
-	}
-
-	;-------------------------------------------
-	; Push our 8 second shield onto tank if his health goes too low
-	;-------------------------------------------
-	;if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<30 && ${Me.DTarget.Name.Find[${Tank}]}
-	;{
-	;	;; Get an immunity buff up if target is tank
-	;	if ${Me.Ability[${ShelteringRune}].IsReady}
-	;	{
-	;		vgecho "SHELTER RUNE on ${Me.DTarget.Name}"
-	;		wait 5 ${Me.Ability[${ShelteringRune}].IsReady}
-	;		call UseAbility "${ShelteringRune}"
-	;	}
-	;}
-	
-	;-------------------------------------------
-	; Regenrate Energy
-	;-------------------------------------------
-	call RegainEnergy
 
 	;-------------------------------------------
 	; DOTS - Physical type damage
@@ -812,15 +729,15 @@ function AttackTarget()
 			}
 		}
 		else
-		{	
+		{
 			;; check if my health is above the CheckHealth level
 			if ${Me.HealthPct}>=${HealCheck}
 			{
 				SafeToDPS:Set[TRUE]
 			}
 		}
-				
-		if ${SafeToDPS} 
+
+		if ${SafeToDPS}
 		{
 			if ${Me.Ability[${UnionOfBlood}].IsReady}
 			{
@@ -1007,7 +924,7 @@ function AttackTarget()
 					}
 				}
 			}
-			
+
 			;-------------------------------------------
 			; THIRD - Use Entwining Vein if DTarget is not me
 			;-------------------------------------------
@@ -1030,7 +947,7 @@ function AttackTarget()
 					}
 				}
 			}
-			
+
 			;-------------------------------------------
 			; FORTH - Use Despoil on myself, no need to set DTarget
 			;-------------------------------------------
@@ -1064,13 +981,13 @@ function CritFinishers()
 	{
 		return
 	}
-	
+
 	;; return if no crits are ready to use
 	if ${Me.Ability[${BloodTribute}].TriggeredCountdown}==0
 	{
 		return
 	}
-	
+
 	;; Echo our crit status
 	EchoIt "Blood Tribute - Reamining=${Me.Ability[${BloodTribute}].TimeRemaining}, CountDown=${Me.Ability[${BloodTribute}].TriggeredCountdown}, Ready=${Me.Ability[${BloodTribute}].IsReady}"
 	EchoIt "Blood Spray   - Reamining=${Me.Ability[${BloodSpray}].TimeRemaining}, CountDown=${Me.Ability[${BloodSpray}].TriggeredCountdown}, Ready=${Me.Ability[${BloodSpray}].IsReady}"
@@ -1084,13 +1001,13 @@ function CritFinishers()
 			Me.Form["Focus of Gelenia"]:ChangeTo
 			wait .5
 		}
-	
+
 		; wait till someone is hurt before using the crit heal
 		if ${doCritWait}
 		{
 			HealNow:Set[FALSE]
-			
-			;; loop this until someone's health drops below the HealCheck 
+
+			;; loop this until someone's health drops below the HealCheck
 			while !${HealNow} && ${Me.Ability[${BloodTribute}].TriggeredCountdown}>2
 			{
 				for (i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc)
@@ -1100,7 +1017,7 @@ function CritFinishers()
 					{
 						h:Set[${i}]
 					}
-					
+
 					;; check only those players within 10 meters of me
 					if ${Group[${i}].Distance}<=10
 					{
@@ -1160,7 +1077,7 @@ function CritFinishers()
 						}
 					}
 				}
-					
+
 				;; if the above finished looping then check the Tank's health... chances are the Tank is not in the group
 				if !${HealNow} && ${Group[${h}].Health}>0 && ${Group[${h}].Health}<${LifeTapCheck} && ${Pawn[name,${Group[${h}].Name}].HaveLineOfSightTo}
 				{
@@ -1174,7 +1091,7 @@ function CritFinishers()
 			return
 		}
 	}
-	
+
 	if ${doPhysical}
 	{
 		if ${doDots} && !${doCritHealOnly} && ${Me.TargetCasting.Equal[None]}
@@ -1188,15 +1105,15 @@ function CritFinishers()
 				}
 			}
 			else
-			{	
+			{
 				;; check if my health is above the CheckHealth level
 				if ${Me.HealthPct}>=${HealCheck}
 				{
 					SafeToDPS:Set[TRUE]
 				}
 			}
-				
-			if ${SafeToDPS} 
+
+			if ${SafeToDPS}
 			{
 				;; change to DPS form
 				if !${Me.CurrentForm.Name.Equal["Focus of Gelenia"]}
@@ -1218,7 +1135,7 @@ function CritFinishers()
 				{
 					return
 				}
-				
+
 				;; crit that deals damage over time
 				call UseAbility "${Exsanguinate}"
 				if ${Return}
@@ -1228,7 +1145,7 @@ function CritFinishers()
 			}
 		}
 	}
-	
+
 	if ${doArcane}
 	{
 		call UseAbility "${BloodTribute}"
@@ -1246,7 +1163,7 @@ function VampireAbilities()
 	{
 		return
 	}
-	
+
 	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 	{
 		return
@@ -1257,7 +1174,7 @@ function VampireAbilities()
 	{
 		useVampireClaws:Set[FALSE]
 	}
-	
+
 	;; go heal someone if their health is low
 	for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
 	{
@@ -1312,4 +1229,6 @@ function VampireAbilities()
 		}
 	}
 }
+
+
 

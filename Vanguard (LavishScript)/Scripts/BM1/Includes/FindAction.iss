@@ -21,7 +21,7 @@ atom(script) FindAction()
 	variable int k
 	variable int l
 	variable int temp
-	
+
 	;-------------------------------------------
 	; WE CHUNKED - handles pausing when we chunked
 	;-------------------------------------------
@@ -39,7 +39,7 @@ atom(script) FindAction()
 		PerformAction:Set[WeAreDead]
 		return
 	}
-		
+
 	;-------------------------------------------
 	; PAUSED - we do not want to do anything or when we are dancing
 	;-------------------------------------------
@@ -48,7 +48,25 @@ atom(script) FindAction()
 		PerformAction:Set[Paused]
 		return
 	}
-	
+
+	;-------------------------------------------
+	; FIND GROUP MEMBERS - updates who are group members are
+	;-------------------------------------------
+	if ${doFindGroupMembers}
+	{
+		PerformAction:Set[FindGroupMembers]
+		return
+	}
+
+	;-------------------------------------------
+	; If we are not ready to do something then do nothing
+	;-------------------------------------------
+	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	{
+		PerformAction:Set[Default]
+		return
+	}
+
 	;-------------------------------------------
 	; TARGET ON ME - the target is looking cross-eyed at me
 	;-------------------------------------------
@@ -84,22 +102,13 @@ atom(script) FindAction()
 	}
 
 	;-------------------------------------------
-	; FIND GROUP MEMBERS - updates who are group members are
-	;-------------------------------------------
-	if ${doFindGroupMembers}
-	{
-		PerformAction:Set[FindGroupMembers]
-		return
-	}
-
-	;-------------------------------------------
 	; DELAYCHECK - do this every half a second
 	;-------------------------------------------
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
 	{
 		; reset next delay check
 		NextDelayCheck:Set[${Script.RunningTime}]
-		
+
 		;-------------------------------------------
 		; FOLLOW TANK - always follow the tank at all times!
 		;-------------------------------------------
@@ -117,7 +126,7 @@ atom(script) FindAction()
 				}
 			}
 		}
-		
+
 		;-------------------------------------------
 		; ASSIST TANK - always assist when tank is in combat
 		;-------------------------------------------
@@ -140,7 +149,7 @@ atom(script) FindAction()
 				}
 			}
 		}
-	
+
 		;-------------------------------------------
 		; TARGET IS DEAD - (turn off autoattack, loot, and clear target)
 		;-------------------------------------------
@@ -153,145 +162,145 @@ atom(script) FindAction()
 			}
 		}
 
-	;-------------------------------------------
-	; SILENCED - No Spell Casting
-	;-------------------------------------------
-	if ${Me.Effect[Silence](exists)}
-	{
-		PerformAction:Set[Default]
-		return
-	}
-	if ${Me.Effect[Mezmerize](exists)}
-	{
-		PerformAction:Set[Default]
-		return
-	}
-
-	;-------------------------------------------
-	; STRIP ENCHANTMENTS - perform once every other second
-	;-------------------------------------------
-	if ${doStripEnchantments}
-	{
-		if ${Me.Target(exists)}
+		;-------------------------------------------
+		; SILENCED - No Spell Casting
+		;-------------------------------------------
+		if ${Me.Effect[Silence](exists)}
 		{
-			if ${Me.Ability[${StripEnchantment}].IsReady} && ${Me.Target.HaveLineOfSightTo}
-			{
-				; loop through all target buffs finding confirmed enchantment we can stip
-				for (l:Set[1] ; ${l}<=${Me.TargetBuff} ; l:Inc)
-				{
-					;; Remove Enchantments
-					if ${Me.TargetBuff[${l}].Name.Find[Enchantment]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Dark Celerity
-					elseif ${Me.TargetBuff[${l}].Name.Find[Dark Celerity]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Vigor
-					elseif ${Me.TargetBuff[${l}].Name.Find[Vigor]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Thick Skin
-					elseif ${Me.TargetBuff[${l}].Name.Find[Thick Skin]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Lightning Barrier
-					elseif ${Me.TargetBuff[${l}].Name.Find[Lightning]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Chaos Shield
-					elseif ${Me.TargetBuff[${l}].Name.Find[Chaos]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Annulment Field
-					elseif ${Me.TargetBuff[${l}].Name.Find[Annulment]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Touch of Fire
-					elseif ${Me.TargetBuff[${l}].Name.Find[Touch of Fire]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Touch of Fire
-					elseif ${Me.TargetBuff[${l}].Name.Find[Holy Armor]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-					;; Remove Touch of Fire
-					elseif ${Me.TargetBuff[${l}].Name.Find[Rust Shield]}
-					{
-						vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
-						StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
-						PerformAction:Set[RemoveEnchantment]
-						return
-					}
-				}
-			}
+			PerformAction:Set[Default]
+			return
+		}
+		if ${Me.Effect[Mezmerize](exists)}
+		{
+			PerformAction:Set[Default]
+			return
+		}
 
-			;-------------------------------------------
-			; REMOVE POISONS
-			;-------------------------------------------
-			if ${Me.Effect[Noxious Bite](exists)}
+		;-------------------------------------------
+		; STRIP ENCHANTMENTS - perform once every other second
+		;-------------------------------------------
+		if ${doStripEnchantments}
+		{
+			if ${Me.Target(exists)}
 			{
-				if ${Me.Inventory[Great Sageberries](exists)} && ${Me.Inventory[Great Sageberries].IsReady}
+				if ${Me.Ability[${StripEnchantment}].IsReady} && ${Me.Target.HaveLineOfSightTo}
 				{
-					vgecho "Noxious Bite - ${Me.Effect[Noxious Bite].Description}"
-					PerformAction:Set[RemovePoison]
-					return
+					; loop through all target buffs finding confirmed enchantment we can stip
+					for (l:Set[1] ; ${l}<=${Me.TargetBuff} ; l:Inc)
+					{
+						;; Remove Enchantments
+						if ${Me.TargetBuff[${l}].Name.Find[Enchantment]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Dark Celerity
+						elseif ${Me.TargetBuff[${l}].Name.Find[Dark Celerity]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Vigor
+						elseif ${Me.TargetBuff[${l}].Name.Find[Vigor]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Thick Skin
+						elseif ${Me.TargetBuff[${l}].Name.Find[Thick Skin]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Lightning Barrier
+						elseif ${Me.TargetBuff[${l}].Name.Find[Lightning]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Chaos Shield
+						elseif ${Me.TargetBuff[${l}].Name.Find[Chaos]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Annulment Field
+						elseif ${Me.TargetBuff[${l}].Name.Find[Annulment]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Touch of Fire
+						elseif ${Me.TargetBuff[${l}].Name.Find[Touch of Fire]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Touch of Fire
+						elseif ${Me.TargetBuff[${l}].Name.Find[Holy Armor]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+						;; Remove Touch of Fire
+						elseif ${Me.TargetBuff[${l}].Name.Find[Rust Shield]}
+						{
+							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
+							PerformAction:Set[RemoveEnchantment]
+							return
+						}
+					}
 				}
-			}
-			;; cycle through all effects searching for those that have key word of "Poison"
-			for (l:Set[1] ; ${l}<=${Me.Effect.Count} ; l:Inc)
-			{
-				if ${Me.Effect[${l}].Name.Find[Poison:]} || ${RemovePoison}
+
+				;-------------------------------------------
+				; REMOVE POISONS
+				;-------------------------------------------
+				if ${Me.Effect[Noxious Bite](exists)}
 				{
-					;; we want to save this 
-					redirect -append "${LavishScript.CurrentDirectory}/Scripts/Parse/Poisoned.txt" echo "[${Time}][${Me.Target.Name}][Beneficial=${Me.Effect[${l}].IsBeneficial}][Detrimental=${Me.Effect[${l}].IsDetrimental}][${Me.Effect[${l}].Name}]"
 					if ${Me.Inventory[Great Sageberries](exists)} && ${Me.Inventory[Great Sageberries].IsReady}
 					{
+						vgecho "Noxious Bite - ${Me.Effect[Noxious Bite].Description}"
 						PerformAction:Set[RemovePoison]
 						return
+					}
+				}
+				;; cycle through all effects searching for those that have key word of "Poison"
+				for (l:Set[1] ; ${l}<=${Me.Effect.Count} ; l:Inc)
+				{
+					if ${Me.Effect[${l}].Name.Find[Poison:]} || ${RemovePoison}
+					{
+						;; we want to save this
+						redirect -append "${LavishScript.CurrentDirectory}/Scripts/Parse/Poisoned.txt" echo "[${Time}][${Me.Target.Name}][Beneficial=${Me.Effect[${l}].IsBeneficial}][Detrimental=${Me.Effect[${l}].IsDetrimental}][${Me.Effect[${l}].Name}]"
+						if ${Me.Inventory[Great Sageberries](exists)} && ${Me.Inventory[Great Sageberries].IsReady}
+						{
+							PerformAction:Set[RemovePoison]
+							return
+						}
 					}
 				}
 			}
 		}
 	}
-	}
-			
+
 	;-------------------------------------------
 	; SILENCED - No Spell Casting
 	;-------------------------------------------
@@ -346,6 +355,7 @@ atom(script) FindAction()
 		}
 	}
 	
+
 	;-------------------------------------------
 	; ATTACK TARGET - we will use Dots and Lifetaps
 	;-------------------------------------------
@@ -353,23 +363,67 @@ atom(script) FindAction()
 	{
 		if ${Me.Target(exists)}
 		{
-			if ${Me.TargetHealth}<=${StartAttack}
+			if ${Me.TargetHealth}>0
 			{
-				if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
+				if ${Me.TargetHealth}<=${StartAttack}
 				{
-					if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
+					if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
 					{
-						if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextAttackCheck}]}/100]}>=${DelayAttack}
+						if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
 						{
-							PerformAction:Set[AttackTarget]
-							return
+							;-------------------------------------------
+							; FURIOUS - we do not want to plow through Furious with melee attacks (melee)
+							;-------------------------------------------
+							if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${isFurious}
+							{
+								PerformAction:Set[DoNotAttack]
+								return
+							}
+
+							;-------------------------------------------
+							; TARGETBUFFS - we do not want to attack during these (melee/spells)
+							;-------------------------------------------
+							if ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)}
+							{
+								PerformAction:Set[DoNotAttack]
+								return
+							}
+							elseif ${Me.TargetBuff[Major Enchantment: Ulvari Flame](exists)} || ${Me.Effect[Mark of Verbs](exists)}
+							{
+								PerformAction:Set[DoNotAttack]
+								return
+							}
+							elseif ${Me.TargetBuff[Major Disease: Fire Advocate](exists)} || ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+							{
+								PerformAction:Set[DoNotAttack]
+								return
+							}
+							elseif ${Me.TargetBuff[Weakened](exists)}
+							{
+								PerformAction:Set[DoNotAttack]
+								return
+							}
+							elseif ${Me.Target.Type.Equal[Group Member]} || ${Me.Target.Type.Equal[Pet]}
+							{
+								PerformAction:Set[DoNotAttack]
+								return
+							}
+
+							;-------------------------------------------
+							; ATTACK TARGET - it is safe to attack our target
+							;-------------------------------------------
+							if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextAttackCheck}]}/100]}>=${DelayAttack}
+							{
+								PerformAction:Set[AttackTarget]
+								return
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	;-------------------------------------------
 	; BUFF REQUESTS - buff anyone that says "buff"
 	;-------------------------------------------
@@ -384,7 +438,7 @@ atom(script) FindAction()
 			}
 		}
 	}
-	
+
 	;-------------------------------------------
 	; BUFF AREA - check everyone's buffs and buff them
 	;-------------------------------------------
@@ -400,4 +454,6 @@ atom(script) FindAction()
 	PerformAction:Set[Default]
 }
 
-	
+
+
+
