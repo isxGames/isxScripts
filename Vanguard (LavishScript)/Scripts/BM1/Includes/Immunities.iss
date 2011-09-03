@@ -21,12 +21,12 @@ atom(script) Immunities()
 				doArcane:Set[FALSE]
 				doPhysical:Set[FALSE]
 				break
-			
+
 			case Corrupted Residue
 				doArcane:Set[FALSE]
 				doPhysical:Set[FALSE]
 				break
-			
+
 			case Descrier Sentry
 				doArcane:Set[FALSE]
 				break
@@ -78,11 +78,11 @@ atom(script) Immunities()
 			case Lesser Electric Elemental
 				doArcane:Set[FALSE]
 				break
-				
+
 			case Greater Electric Elemental
 				doArcane:Set[FALSE]
 				break
-				
+
 			case Energized Elemental
 				doArcane:Set[FALSE]
 				break
@@ -131,131 +131,131 @@ atom(script) Immunities()
 			case Wing Grafted Slasher
 				doPhysical:Set[FALSE]
 				break
-				
+
 			case Enraged Death Hound
 				doPhysical:Set[FALSE]
 				break
 
 			case Lesser Flarehound
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Lirikin
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Nathrix
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Shonaka
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Wisil
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Filtha
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case SILIUSAURUS
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case ARCHON TRAVIX
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Earthen Marauder
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Earthen Resonator
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Cartheon Devourer
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Rock Elemental
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Cartheon Soulslasher
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Cartheon Abomination
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Glowing Infineum
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Living Infineum
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Spawn of Infineum
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Myconid Fungal Ravager
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Xakrin Sage
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Hound of Rahz
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Ancient Juggernaut
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Mechanized Pyromaniac
 				;doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Xakrin Razarclaw
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Assaulting Death Hound
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Blood-crazed Ettercap
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Flarehound
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Lixirikin
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Flarehound Watcher
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Nefarious Titan
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Nefarious Elemental
 				doPhysical:Set[FALSE]
-				break		
-				
+				break
+
 			case Enraged Convocation
 				doPhysical:Set[FALSE]
 				break
@@ -278,7 +278,7 @@ atom(script) Immunities()
 			;; immune to Physical
 			doPhysical:Set[FALSE]
 		}
-		
+
 		;; we have an identified target so announce we can attack
 		OkayToAttack:Set[TRUE]
 	}
@@ -290,3 +290,4 @@ atom(script) Immunities()
 		OkayToAttack:Set[FALSE]
 	}
 }
+

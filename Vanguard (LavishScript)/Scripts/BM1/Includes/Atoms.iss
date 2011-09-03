@@ -15,14 +15,14 @@ atom(script) OnFrame()
 	variable string temp
 	variable bool test
 
-	
+
 	;-------------------------------------------
 	;; Shadow Rain is casted every 61 seconds so let's echo it
 	;-------------------------------------------
 	if ${doEchoShadowRain} && (${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextShadowRain}]}/1000]}>=51)
 	{
 		if ${Pawn[ExactName,LORD TALFYN](exists)}
-		{	
+		{
 			vgecho "---SHADOW RAIN---"
 			NextShadowRain:Set[${Math.Calc[${Script.RunningTime}-10000]}]
 			VGExecute "/raid <Purple=>=== SHADOW RAIN IN 10 SECONDS ==="
@@ -33,7 +33,7 @@ atom(script) OnFrame()
 			doEchoShadowRain:Set[FALSE]
 		}
 	}
-	
+
 	;-------------------------------------------
 	;; Update the UI
 	;-------------------------------------------
@@ -50,7 +50,7 @@ atom(script) OnFrame()
 	{
 		temp:Set[Arcane / Physical]
 	}
-	
+
 	;; Main
 	UIElement[Text-Status@BM1]:SetText[ Current Action:  ${PerformAction}]
 	UIElement[Text-Immune@BM1]:SetText[ Target's Immunity:  ${temp}]
@@ -62,7 +62,7 @@ atom(script) OnFrame()
 	{
 		UIElement[Text-TOT@BM1]:SetText[ Target's Target:  None]
 	}
-	
+
 	;; DPS
 	DisplayDPS
 }
@@ -151,24 +151,24 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 {
 	switch "${aName}"
 	{
-		
-		case Sacrificial Beast
-			if !${Me.InCombat}
-			{
-				SacrificialBeastSpawned:Set[TRUE]
-			}
-			break
-			
-		case Electric Spark
-			Pawn[ExactName,Electric Spark]:Target
-			break
-			
-		case Ulvari Warrior
-			Pawn[ExactName,Ulvari Warrior]:Target
-			break
 
-		Default
-			break
+	case Sacrificial Beast
+		if !${Me.InCombat}
+		{
+			SacrificialBeastSpawned:Set[TRUE]
+		}
+		break
+
+	case Electric Spark
+		Pawn[ExactName,Electric Spark]:Target
+		break
+
+	case Ulvari Warrior
+		Pawn[ExactName,Ulvari Warrior]:Target
+		break
+
+	Default
+		break
 	}
 }
 
@@ -209,7 +209,7 @@ atom(script) CalculateDPS(string aText)
 		ResetParse:Set[TRUE]
 		StartAttackTime:Set[${Script.RunningTime}]
 	}
-	
+
 	;; Calculate and update DPS
 	EndAttackTime:Set[${Script.RunningTime}]
 	TimeFought:Set[${Math.Calc[${EndAttackTime}-${StartAttackTime}]}]
@@ -240,8 +240,8 @@ atom CombatText(string aText, int aType)
 	;{
 	;	redirect -append "${LavishScript.CurrentDirectory}/Scripts/Parse/Hypno-Hit.txt" echo "[${Time}][${aType}][(${Me.TargetHealth})${Me.Target.Name}][${aText}]"
 	;}
-	
-	
+
+
 	;; 81=target attacks group member
 	if ${aType}==81
 	{
@@ -264,7 +264,7 @@ atom CombatText(string aText, int aType)
 		;	vgecho "<Blue=>[${yText}]"
 		;}
 	}
-	
+
 	;; 30=target attacks me
 	if ${aType}==30
 	{
@@ -286,7 +286,7 @@ atom CombatText(string aText, int aType)
 			;; if any damage is done then we want to make sure we reset any immunities
 			;; when the target is no longer the same target
 			call ResetImmunities
-			
+
 			;if ${aText.Find[additional <]}
 			;{
 			;	;; Update our total damage - Critical and Epic
@@ -335,73 +335,73 @@ atom CombatText(string aText, int aType)
 	;-------------------------------------------
 	if ( ${aType}==26 || ${aType}==28 ) && ${aText.Find[absorbs your]} && ${aText.Find[healing for]}
 	{
-			variable string ImmunityType = "UNKNOWN"
+		variable string ImmunityType = "UNKNOWN"
 
-			;; Arcane - Crit
-			if ${aText.Find[Entwining]}
-			{
-				ImmunityType:Set[ARCANE]
-				doArcane:Set[FALSE]
-			}
-			;; Arcane - Lifetap
-			elseif ${aText.Find[Despoil]}
-			{
-				ImmunityType:Set[ARCANE]
-				doArcane:Set[FALSE]
-			}
-			;; Arcane - Lifetap
-			elseif ${aText.Find[Bloodthinner]}
-			{
-				ImmunityType:Set[ARCANE]
-				doArcane:Set[FALSE]
-			}
-			;; Arcane - Heal Crit
-			elseif ${aText.Find[Tribute]}
-			{
-				ImmunityType:Set[ARCANE]
-				doArcane:Set[FALSE]
-			}
-			;; Physical - Crit
-			elseif ${aText.Find[Blood Spray]}
-			{
-				ImmunityType:Set[PHYSICAL]
-				doPhysical:Set[FALSE]
-			}
-			;; Physical - Crit
-			elseif ${aText.Find[Exsanguinate]}
-			{
-				ImmunityType:Set[PHYSICAL]
-				doPhysical:Set[FALSE]
-			}
-			;; Physical - Dot
-			elseif ${aText.Find[Exploding]}
-			{
-				ImmunityType:Set[PHYSICAL]
-				doPhysical:Set[FALSE]
-			}
-			;; Physical - Dot
-			elseif ${aText.Find[Union]}
-			{
-				ImmunityType:Set[PHYSICAL]
-				doPhysical:Set[FALSE]
-			}
-			;; Physical - Dot
-			elseif ${aText.Find[Letting]}
-			{
-				ImmunityType:Set[PHYSICAL]
-				doPhysical:Set[FALSE]
-			}
-			
-			;; Create the Save directory incase it doesn't exist
-			variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/Parse"
-			mkdir "${savePath}"
+		;; Arcane - Crit
+		if ${aText.Find[Entwining]}
+		{
+			ImmunityType:Set[ARCANE]
+			doArcane:Set[FALSE]
+		}
+		;; Arcane - Lifetap
+		elseif ${aText.Find[Despoil]}
+		{
+			ImmunityType:Set[ARCANE]
+			doArcane:Set[FALSE]
+		}
+		;; Arcane - Lifetap
+		elseif ${aText.Find[Bloodthinner]}
+		{
+			ImmunityType:Set[ARCANE]
+			doArcane:Set[FALSE]
+		}
+		;; Arcane - Heal Crit
+		elseif ${aText.Find[Tribute]}
+		{
+			ImmunityType:Set[ARCANE]
+			doArcane:Set[FALSE]
+		}
+		;; Physical - Crit
+		elseif ${aText.Find[Blood Spray]}
+		{
+			ImmunityType:Set[PHYSICAL]
+			doPhysical:Set[FALSE]
+		}
+		;; Physical - Crit
+		elseif ${aText.Find[Exsanguinate]}
+		{
+			ImmunityType:Set[PHYSICAL]
+			doPhysical:Set[FALSE]
+		}
+		;; Physical - Dot
+		elseif ${aText.Find[Exploding]}
+		{
+			ImmunityType:Set[PHYSICAL]
+			doPhysical:Set[FALSE]
+		}
+		;; Physical - Dot
+		elseif ${aText.Find[Union]}
+		{
+			ImmunityType:Set[PHYSICAL]
+			doPhysical:Set[FALSE]
+		}
+		;; Physical - Dot
+		elseif ${aText.Find[Letting]}
+		{
+			ImmunityType:Set[PHYSICAL]
+			doPhysical:Set[FALSE]
+		}
 
-			;; dump to file
-			redirect -append "${savePath}/LearnedImmunities.txt" echo "[${Time}][${aType}][${Me.Target.Name}][${ImmunityType}][${aText.Token[2,">"].Token[1,"<"]}] -- [${aText}]"
+		;; Create the Save directory incase it doesn't exist
+		variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/Parse"
+		mkdir "${savePath}"
 
-			;; display the info
-			echo ${Me.Target.Name} absorbed/healed/immune to ${aText.Token[2,">"].Token[1,"<"]}
-			vgecho "Immune: ${ImmunityType} - ${aText.Token[2,">"].Token[1,"<"]} - ${Me.Target.Name}"
+		;; dump to file
+		redirect -append "${savePath}/LearnedImmunities.txt" echo "[${Time}][${aType}][${Me.Target.Name}][${ImmunityType}][${aText.Token[2,">"].Token[1,"<"]}] -- [${aText}]"
+
+		;; display the info
+		echo ${Me.Target.Name} absorbed/healed/immune to ${aText.Token[2,">"].Token[1,"<"]}
+		vgecho "Immune: ${ImmunityType} - ${aText.Token[2,">"].Token[1,"<"]} - ${Me.Target.Name}"
 	}
 
 	;-------------------------------------------
@@ -434,7 +434,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		UIElement[doMeleeAttacks@Main@Tabs@BM1]:UnsetChecked
 		vgecho "Melee Off - can't attack with that weapon"
 	}
-	
+
 	if !${Me.InCombat}
 	{
 		if ${ChannelNumber}==8 || ${ChannelNumber}==9 || ${ChannelNumber}==11 || ${ChannelNumber}==15
@@ -447,20 +447,20 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 				vgecho [${ChannelNumber}] ${aText}
 				vgecho PCName=${PCName}, PCNameFull=${PCNameFull}
 			}
-			
+
 			;; 11 = guild
 			if ${ChannelNumber}==15 && (${aText.Find[named]} || ${aText.Find[name run]})
 			{
 				EchoIt "[${ChannelNumber}a]${aText}"
 				PlaySound ALARM
 			}
-			
+
 			;; 15 = tells, Ping us on tells or anything with our name in it
 			if ${ChannelNumber}==15 && ${aText.Find[From ]}
 			{
 				EchoIt "[${ChannelNumber}b]${aText}"
 				PlaySound ALARM
-			}	
+			}
 		}
 	}
 
@@ -494,7 +494,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			}
 		}
 	}
-	
+
 	;; Accept Rez
 	if ${ChannelNumber}==32
 	{
@@ -509,9 +509,11 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 ;===          ATOM - PLAY A SOUND               ====
 ;===================================================
 atom(script) PlaySound(string Filename)
-{	
+{
 	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 }
 variable string PerformAction = Default
 variable string LastAction = Default
+
+
 

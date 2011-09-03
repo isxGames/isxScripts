@@ -15,7 +15,7 @@ objectdef GET
 		variable int GN
 		variable int Low = ${HealCheck}
 		HealGroupNumber:Set[0]
-		
+
 		if ${Me.IsGrouped}
 		{
 			if !${doHealGroupOnly}
@@ -27,7 +27,7 @@ objectdef GET
 					{
 						TankGN:Set[${GN}]
 					}
-					
+
 					;; We only want to check players with health > 0
 					if ${Group[${GN}].Health}>0
 					{
@@ -50,7 +50,7 @@ objectdef GET
 				}
 				return ${HealGroupNumber}
 			}
-			
+
 			if ${doHealGroupOnly}
 			{
 				for (GN:Set[1] ; ${Group[${GN}].ID(exists)} ; GN:Inc)
@@ -229,7 +229,7 @@ objectdef GET
 		variable int Low = ${LifeTapCheck}
 		LifeTapGroupNumber:Set[0]
 		variable int distance = 1500
-		
+
 		if ${Me.IsGrouped}
 		{
 			if !${doHealGroupOnly}
@@ -253,7 +253,7 @@ objectdef GET
 				}
 				return ${LifeTapGroupNumber}
 			}
-			
+
 			if ${doHealGroupOnly}
 			{
 				for (GN:Set[1] ; ${Group[${GN}].ID(exists)} ; GN:Inc)
@@ -262,7 +262,7 @@ objectdef GET
 					{
 						;; always set this so we can check the Tanks's health if not in the group
 						TankGN:Set[${GN}]
-						
+
 						;; We only want to check players with health > 0
 						if ${Group[${GN}].Health}>0
 						{
@@ -397,7 +397,7 @@ objectdef GET
 		variable int Low = ${LifeTapCheck}
 		TotalWounded:Set[0]
 		variable int distance = 10
-	
+
 		if ${Me.IsGrouped}
 		{
 			for (GN:Set[1] ; ${Group[${GN}].ID(exists)} ; GN:Inc)
@@ -501,7 +501,7 @@ objectdef GET
 							;; We only want to check we have line of sight to player
 							if ${Pawn[name,${Group[${GN}].Name}].HaveLineOfSightTo}
 							{
-							;; Finally, check only is they are within range
+								;; Finally, check only is they are within range
 								if ${Group[${GN}].Distance}<${distance}
 								{
 									;; update Lowest setting
@@ -541,3 +541,5 @@ objectdef GET
 		return ${TotalWounded}
 	}
 }
+
+
