@@ -159,30 +159,15 @@ function TargetIsDead()
 			Me.Form["Sanguine Focus"]:ChangeTo
 			wait .5
 		}
-		if ${doLootAll}
-		{
-			Loot:BeginLooting
-			wait 10 ${Loot.NumItems}
-
-			if ${Loot.NumItems}
-			{
-				for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
-				{
-					Loot.Item[${i}]:Loot
-				}
-			}
-			else
-			{
-				Loot:LootAll
-			}
-			wait 5 !${Me.IsLooting}
-		}
 		if !${Me.IsLooting}
 		{
-			VGExecute /cleartargets
+			wait 10 ${GV[bool,bHarvesting]}
+			if !${GV[bool,bHarvesting]}
+			{
+				VGExecute /cleartargets
+				wait 3
+			}
 		}
-		wait 3
-
 	}
 }
 

@@ -84,7 +84,7 @@ variable bool doCounters = TRUE
 variable bool doWeakness = TRUE
 variable bool doClickies = TRUE
 variable bool doLootAll = FALSE
-variable bool doRemoveHate = TRUE
+variable bool doRemoveHate = FALSE
 variable bool doVitalHeals = TRUE
 variable bool doStripEnchantments = TRUE
 variable bool doDissolve = TRUE
@@ -178,7 +178,14 @@ function atexit()
 	{
 		endscript Counter
 	}
-		
+
+	;; Unload Loot routine
+	if ${Script[Loot](exists)}
+	{
+		endscript Loot
+	}
+
+	
 	;; Say we are done
 	EchoIt "Stopped PSI Script"
 }
@@ -289,6 +296,13 @@ function Initialize()
 		run ./BM1/Counter.iss
 	}
 
+	;-------------------------------------------
+	; Get our Loot routine running
+	;-------------------------------------------
+	if !${Script[Loot](exists)}
+	{
+		run ./BM1/Loot.iss
+	}
 	
 	;-------------------------------------------
 	; SHOW OUR HUD
