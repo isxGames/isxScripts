@@ -181,9 +181,9 @@ atom(script) FindAction()
 		;-------------------------------------------
 		if ${doStripEnchantments}
 		{
-			if ${Me.Target(exists)}
+			if ${Me.Target(exists)} && ${Me.Target.HaveLineOfSightTo}
 			{
-				if ${Me.Ability[${StripEnchantment}].IsReady} && ${Me.Target.HaveLineOfSightTo}
+				if ${Me.Ability[${StripEnchantment}].IsReady}
 				{
 					; loop through all target buffs finding confirmed enchantment we can stip
 					for (l:Set[1] ; ${l}<=${Me.TargetBuff} ; l:Inc)
@@ -191,7 +191,7 @@ atom(script) FindAction()
 						;; Remove Enchantments
 						if ${Me.TargetBuff[${l}].Name.Find[Enchantment]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -199,7 +199,7 @@ atom(script) FindAction()
 						;; Remove Dark Celerity
 						elseif ${Me.TargetBuff[${l}].Name.Find[Dark Celerity]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -207,7 +207,7 @@ atom(script) FindAction()
 						;; Remove Vigor
 						elseif ${Me.TargetBuff[${l}].Name.Find[Vigor]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -215,7 +215,7 @@ atom(script) FindAction()
 						;; Remove Thick Skin
 						elseif ${Me.TargetBuff[${l}].Name.Find[Thick Skin]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -223,7 +223,7 @@ atom(script) FindAction()
 						;; Remove Lightning Barrier
 						elseif ${Me.TargetBuff[${l}].Name.Find[Lightning]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -231,7 +231,7 @@ atom(script) FindAction()
 						;; Remove Chaos Shield
 						elseif ${Me.TargetBuff[${l}].Name.Find[Chaos]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -239,7 +239,7 @@ atom(script) FindAction()
 						;; Remove Annulment Field
 						elseif ${Me.TargetBuff[${l}].Name.Find[Annulment]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -247,7 +247,7 @@ atom(script) FindAction()
 						;; Remove Touch of Fire
 						elseif ${Me.TargetBuff[${l}].Name.Find[Touch of Fire]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -255,7 +255,7 @@ atom(script) FindAction()
 						;; Remove Touch of Fire
 						elseif ${Me.TargetBuff[${l}].Name.Find[Holy Armor]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -263,7 +263,7 @@ atom(script) FindAction()
 						;; Remove Touch of Fire
 						elseif ${Me.TargetBuff[${l}].Name.Find[Rust Shield]}
 						{
-							vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
+							;vgecho "<Purple=>Stripping: <Yellow=>${Me.TargetBuff[${l}].Name}"
 							StripThisEnchantment:Set[${Me.TargetBuff[${l}].Name}]
 							PerformAction:Set[RemoveEnchantment]
 							return
@@ -367,7 +367,7 @@ atom(script) FindAction()
 			{
 				if ${Me.TargetHealth}<=${StartAttack}
 				{
-					if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
+					if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]} || ${Me.TargetHealth}<95
 					{
 						if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
 						{
@@ -379,7 +379,7 @@ atom(script) FindAction()
 								PerformAction:Set[DoNotAttack]
 								return
 							}
-
+							
 							;-------------------------------------------
 							; TARGETBUFFS - we do not want to attack during these (melee/spells)
 							;-------------------------------------------
@@ -408,7 +408,7 @@ atom(script) FindAction()
 								PerformAction:Set[DoNotAttack]
 								return
 							}
-
+							
 							;-------------------------------------------
 							; ATTACK TARGET - it is safe to attack our target
 							;-------------------------------------------

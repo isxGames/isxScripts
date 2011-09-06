@@ -119,7 +119,7 @@ function AttackTarget()
 	if ${doFace}
 	{
 		call CalculateAngles
-		if ${AngleDiffAbs}>=90
+		if ${AngleDiffAbs}>=45
 		{
 			face ${Me.Target.X} ${Me.Target.Y}
 			wait 1
@@ -500,18 +500,22 @@ function AttackTarget()
 
 		case Apprentice Dejre
 			;; bounces you all over the room so keep facing him! (stand east and west)
+			Me.Target:Face
 			break
 
 		case Apprentice Ednies
 			;; (stand outside)
+			Me.Target:Face
 			break
 
 		case Apprentice Amat
 			;; bounces you all over the room so keep facing him
+			Me.Target:Face
 			break
 
 		case Apprentice Manai
 			;; bounces you all over the room so keep facing him
+			Me.Target:Face
 			break
 
 		case KOTASOTH
