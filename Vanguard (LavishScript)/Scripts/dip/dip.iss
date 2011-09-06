@@ -205,7 +205,7 @@ variable string Output = "${Script.CurrentDirectory}/Save/Debug.txt"
 variable string CurrentChunk 
 
 ;Debug setup
-variable(script) bool debug = FALSE
+variable(script) bool debug = TRUE
 variable(script) string returnvalue = "GOOD"
 
 ;; Defines
@@ -215,13 +215,15 @@ function main()
 {
 	;; Load ISXVG or exit script
 	ext -require isxvg
-	wait 100 ${ISXVG.IsReady}
+	wait 150 ${ISXVG.IsReady}
 	if !${ISXVG.IsReady}
 	{
 		echo "VG:  Unable to load ISXVG, exiting dip script"
 		endscript dip
 	}
-	;PlaySound ALARM
+	
+	;small wait
+	wait 5
 	
 	;; wait until both chunk and self exists
 	wait 50 ${Me.Chunk(exists)} && ${Me.FName(exists)}
@@ -452,7 +454,7 @@ function FindCurrentNPC()
 	{
 		i:Inc
 		;; we got found one so return
-		if ${dipNPCs[${i}].Name.Equal[${Me.Target.Name}]}
+		if ${dipNPCs[${i}].ID.Equal[${Me.Target.ID}]}
 		{
 			curNPC:Set[${i}]
 			return
@@ -707,11 +709,12 @@ function SelectParlay()
 	Parlay:AssessTarget[${dipNPCs[${curNPC}].NameID}]
 	wait 7
 	variable int selectedConv = 0
-	variable int convOptions = 1
+	variable int convOptions = ${Dialog[General].ResponseCount}
 	variable int i = 1
 	variable string genorciv
 	variable int diplevel
-	while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
+	while ${convOptions}>0 && !${selectedConv}
+	;while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
 	{
 		;echo General[ ${convOptions}]: ${Dialog[General,${convOptions}].Text}
 		
@@ -762,12 +765,13 @@ function SelectParlay()
 			i:Inc
 		}
 		while (${convTypes[${i}](exists)})
-		convOptions:Inc
+		convOptions:Dec
 	}
 	if !${selectedConv}
 	{
-		convOptions:Set[1]
-		while ${convOptions} <= ${Dialog[Civic Diplomacy].ResponseCount} && !${selectedConv}
+		convOptions:Set[${Dialog[Civic Diplomacy].ResponseCount}]
+		while ${convOptions}>0 && !${selectedConv}
+		;while ${convOptions} <= ${Dialog[Civic Diplomacy].ResponseCount} && !${selectedConv}
 		{
 			;echo Civic Diplomacy[ ${convOptions}]: ${Dialog[Civic Diplomacy,${convOptions}].Text}
 
@@ -816,7 +820,7 @@ function SelectParlay()
 				i:Inc
 			}
 			while ${convTypes[${i}](exists)}
-			convOptions:Inc
+			convOptions:Dec
 		}
 	}
 	if (${selectedConv})
