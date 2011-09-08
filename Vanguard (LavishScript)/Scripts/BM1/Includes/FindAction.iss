@@ -68,40 +68,6 @@ atom(script) FindAction()
 	}
 
 	;-------------------------------------------
-	; TARGET ON ME - the target is looking cross-eyed at me
-	;-------------------------------------------
-	if ${Me.InCombat} && ${Me.IsGrouped}
-	{
-		if ${Me.Ability[${LifeHusk}].IsReady}
-		{
-			;; check if target is on me
-			if ${Me.ToT.Name.Find[${Me.FName}](exists)}
-			{
-				if ${Me.Inventory[Vial of Blood](exists)}
-				{
-					PerformAction:Set[TargetOnMe]
-					return
-				}
-			}
-			;; scan encounters targeting me
-			if ${Me.Encounter}
-			{
-				for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
-				{
-					if ${Me.FName.Find[${Me.Encounter[${i}].Target}]}
-					{
-						if ${Me.Inventory[Vial of Blood](exists)}
-						{
-							PerformAction:Set[TargetOnMe]
-							return
-						}
-					}
-				}
-			}
-		}
-	}
-
-	;-------------------------------------------
 	; DELAYCHECK - do this every half a second
 	;-------------------------------------------
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
@@ -314,47 +280,83 @@ atom(script) FindAction()
 		PerformAction:Set[Default]
 		return
 	}
-
-	;-------------------------------------------
-	; REGAIN ENERGY - canabalize my health for energy
-	;-------------------------------------------
-	if ${Me.EnergyPct}<80 && ${Me.HealthPct}>80
+	
+	if !${Me.Effect[Muting Darkness](exists)}
 	{
-		if ${Me.Ability[${MentalTransmutation}].IsReady}
+		;-------------------------------------------
+		; TARGET ON ME - the target is looking cross-eyed at me
+		;-------------------------------------------
+		if ${Me.InCombat} && ${Me.IsGrouped}
 		{
-			PerformAction:Set[RegainEnergy]
-			return
+			if ${Me.Ability[${LifeHusk}].IsReady}
+			{
+				;; check if target is on me
+				if ${Me.ToT.Name.Find[${Me.FName}](exists)}
+				{
+					if ${Me.Inventory[Vial of Blood](exists)}
+					{
+						PerformAction:Set[TargetOnMe]
+						return
+					}
+				}
+				;; scan encounters targeting me
+				if ${Me.Encounter}
+				{
+					for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+					{
+						if ${Me.FName.Find[${Me.Encounter[${i}].Target}]}
+						{
+							if ${Me.Inventory[Vial of Blood](exists)}
+							{
+								PerformAction:Set[TargetOnMe]
+								return
+							}
+						}
+					}
+				}
+			}
 		}
-		if ${Me.EnergyPct}<40 && ${Me.Inventory[Large Mottleberries](exists)}
+		
+		;-------------------------------------------
+		; REGAIN ENERGY - canabalize my health for energy
+		;-------------------------------------------
+		if ${Me.EnergyPct}<80 && ${Me.HealthPct}>80
 		{
-			if ${Me.Inventory[Large Mottleberries].IsReady}
+			if ${Me.Ability[${MentalTransmutation}].IsReady}
 			{
 				PerformAction:Set[RegainEnergy]
 				return
 			}
+			if ${Me.EnergyPct}<40 && ${Me.Inventory[Large Mottleberries](exists)}
+			{
+				if ${Me.Inventory[Large Mottleberries].IsReady}
+				{
+					PerformAction:Set[RegainEnergy]
+					return
+				}
+			}
 		}
-	}
 
-	;-------------------------------------------
-	; VITAL HEALS - use our slow heals
-	;-------------------------------------------
-	if ${doVitalHeals}
-	{
-		;; check to see if we need to use our slow heal
-		if ${GET.HealThisID} || ${Me.HealthPct}<${HealCheck}
+		;-------------------------------------------
+		; VITAL HEALS - use our slow heals
+		;-------------------------------------------
+		if ${doVitalHeals}
 		{
-			PerformAction:Set[VitalHeals]
-			return
-		}
-		;; check for group heals
-		TotalWounded:Set[${GET.TotalGroupWounded}]
-		if ${TotalWounded}>=3
-		{
-			PerformAction:Set[VitalHeals]
-			return
+			;; check to see if we need to use our slow heal
+			if ${GET.HealThisID} || ${Me.HealthPct}<${HealCheck}
+			{
+				PerformAction:Set[VitalHeals]
+				return
+			}
+			;; check for group heals
+			TotalWounded:Set[${GET.TotalGroupWounded}]
+			if ${TotalWounded}>=3
+			{
+				PerformAction:Set[VitalHeals]
+				return
+			}
 		}
 	}
-	
 
 	;-------------------------------------------
 	; ATTACK TARGET - we will use Dots and Lifetaps
