@@ -89,22 +89,6 @@ function AttackTarget()
 	call MeleeAttackOn
 
 	;-------------------------------------------
-	; SILENCED - No Spell Casting
-	;-------------------------------------------
-	if ${Me.Effect[Silence](exists)}
-	{
-		return
-	}
-	elseif ${Me.Effect[Mezmerize](exists)}
-	{
-		return
-	}
-	elseif ${Me.Effect[Muting Darkness](exists)}
-	{
-		return
-	}
-
-	;-------------------------------------------
 	; WAIT - Allow time for target to set so we can get the name
 	;-------------------------------------------
 	if !${Me.Target(exists)}
@@ -1165,19 +1149,23 @@ function VampireAbilities()
 	;; return if we are not in vampire form
 	if !${Me.Effect[True Curse of the Vampire](exists)}
 	{
+		echo "Not in Vampire Mode"
 		return
 	}
 
-	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 	{
-		return
+		waitframe
 	}
+	
 
 	;; reset vampire claws
 	if ${Me.Target.Distance}>10
 	{
 		useVampireClaws:Set[FALSE]
 	}
+	
+	echo useVampireClaws=${useVampireClaws}
 
 	;; go heal someone if their health is low
 	for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
