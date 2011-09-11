@@ -8,16 +8,20 @@ function main()
 	;-------------------------------------------
 	while ${Script[BM1].Variable[isRunning]}
 	{
+		;; wait 10 seconds until our target contains loot or we are looting
 		wait 100 ${Me.Target.ContainsLoot} || ${Me.IsLooting}
+		
+		;; let's loot the target!
 		if ${Me.Target.ContainsLoot} || ${Me.IsLooting}
 		{
-			if ${Script[BM1].Variable[doLootAll]}
+			;; only loot if we want to loot
+			if ${Script[BM1].Variable[doLootAll]} && ${Me.Target.Distance}<5
 			{
 				;; if we are not looting then start looting
 				if !${Me.IsLooting}
 				{
 					Loot:BeginLooting
-					wait 10 ${Loot.NumItems}
+					wait 10 ${Me.IsLooting} && ${Loot.NumItems}
 				}
 				
 				;; start looting 1 item at a time, gaurantee to get all items
@@ -26,6 +30,7 @@ function main()
 					if ${Loot.NumItems}
 					{
 						variable int i
+						;; start highest to lowest, last item will close loot
 						for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
 						{
 							vgecho Looting: ${Loot.Item[${i}]}
@@ -35,6 +40,7 @@ function main()
 					}
 					else
 					{
+						;; sometimes, we just have to loot everything if we can't determine how many items to loot
 						Loot:LootAll
 					}
 				}

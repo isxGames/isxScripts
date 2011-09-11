@@ -3,9 +3,8 @@
 ;===================================================
 
 ;; Use these in your scripts
-variable bool doMental = TRUE
-variable bool doPhysical = TRUE
 variable bool doArcane = TRUE
+variable bool doPhysical = TRUE
 variable bool OkayToAttack = FALSE
 
 ;-------------------------------------------
@@ -13,19 +12,36 @@ variable bool OkayToAttack = FALSE
 ;-------------------------------------------
 atom(script) Immunities()
 {
-	if ${Me.Target(exists)}
+	if ${Me.Target(exists)} && ${Me.TargetHealth(exists)}
 	{
+		;-------------------------------------------
+		; TARGET BUFFS - Ensure you set toggles for each specific target buff
+		;-------------------------------------------
+		if ${Me.TargetBuff[Electric Form](exists)}
+		{
+			doArcane:Set[FALSE]
+		}
+		if ${Me.TargetBuff[Earth Form](exists)}
+		{
+			doPhysical:Set[FALSE]
+		}
+
+		;-------------------------------------------
+		; Set IMMUNITY based upon the Target's name
+		;-------------------------------------------
 		switch "${Me.Target.Name}"
 		{
 			case Corrupted Essence
 				doArcane:Set[FALSE]
 				doPhysical:Set[FALSE]
-				break
+				OkayToAttack:Set[FALSE]
+				return
 
 			case Corrupted Residue
 				doArcane:Set[FALSE]
 				doPhysical:Set[FALSE]
-				break
+				OkayToAttack:Set[FALSE]
+				return
 
 			case Descrier Sentry
 				doArcane:Set[FALSE]
@@ -261,30 +277,20 @@ atom(script) Immunities()
 				break
 
 			Default
-				;; set nothing
 				break
 		}
 
 		;-------------------------------------------
-		; TARGET BUFFS - Ensure you set toggles for each specific target buff
+		; We are done setting immunities, now say we are okay to attack
 		;-------------------------------------------
-		if ${Me.TargetBuff[Electric Form](exists)}
-		{
-			;; immune to Arcane
-			doArcane:Set[FALSE]
-		}
-		if ${Me.TargetBuff[Earth Form](exists)}
-		{
-			;; immune to Physical
-			doPhysical:Set[FALSE]
-		}
-
-		;; we have an identified target so announce we can attack
 		OkayToAttack:Set[TRUE]
+		
 	}
 	else
 	{
-		;; set immunities based on what is in checked in our UI
+		;-------------------------------------------
+		; reset immunities based on what is checked in our UI
+		;-------------------------------------------
 		doPhysical:Set[${UIElement[doPhysical@Main@Tabs@BM1].Checked}]
 		doArcane:Set[${UIElement[doArcane@Main@Tabs@BM1].Checked}]
 		OkayToAttack:Set[FALSE]

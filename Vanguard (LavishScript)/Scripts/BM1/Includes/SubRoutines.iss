@@ -503,20 +503,20 @@ function:bool UseAbility(string ABILITY)
 }
 
 ;===================================================
-;===          FOLLOW TANK SUB-ROUTINE           ====
+;===        FOLLOW PLAYER SUB-ROUTINE           ====
 ;===================================================
-function FollowTank()
+function FollowPlayer()
 {
-	if ${Pawn[name,${Tank}](exists)}
+	if ${Pawn[name,${Follow}](exists)}
 	{
 		;; did target move out of rang?
-		if ${Pawn[name,${Tank}].Distance}>=${FollowDistance2}
+		if ${Pawn[name,${Follow}].Distance}>=${FollowDistance2}
 		{
 			variable bool AreWeMoving = FALSE
 			;; start moving until target is within range
-			while !${isPaused} && ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[name,${Tank}].Distance}<45
+			while !${isPaused} && ${Pawn[name,${Follow}](exists)} && ${Pawn[name,${Follow}].Distance}>=${FollowDistance1} && ${Pawn[name,${Follow}].Distance}<45
 			{
-				Pawn[name,${Tank}]:Face
+				Pawn[name,${Follow}]:Face
 				VG:ExecBinding[moveforward]
 				AreWeMoving:Set[TRUE]
 				wait .5
