@@ -24,7 +24,7 @@ function VitalHeals()
 						;-------------------------------------------
 						; USE OUR AE CRIT HEAL IF IT IS UP
 						;-------------------------------------------
-						if ${Me.Ability[${BloodTribute}].TriggeredCountdown}>0
+						while ${Me.Ability[${BloodTribute}].TriggeredCountdown}>0
 						{
 							;; crit that heals group members near me
 							if ${Me.Ability[${BloodTribute}].TimeRemaining}==0
@@ -48,7 +48,7 @@ function VitalHeals()
 				}
 
 				;; scan the group, 3 or more wounded
-				if ${TotalWounded}>3
+				if ${TotalWounded}>=3
 				{
 					;-------------------------------------------
 					; USE BIGGEST GROUP HEAL IF WE GOT IT

@@ -19,6 +19,11 @@ function PerformAction()
 		case WeAreDead
 			call WeAreDead
 			break
+			
+		;; Queued Commands - Find Group Members, Buffs, et cetera
+		case QueuedCommand
+			call QueuedCommand
+			break
 
 		;; target on me
 		case TargetOnMe
@@ -55,9 +60,9 @@ function PerformAction()
 			call WeChunked
 			break
 
-		;; follow the tank
-		case FollowTank
-			call FollowTank
+		;; follow player
+		case FollowPlayer
+			call FollowPlayer
 			break
 
 		;; use HoTs, heals, berries, or Blood Mage's ${Conduct}

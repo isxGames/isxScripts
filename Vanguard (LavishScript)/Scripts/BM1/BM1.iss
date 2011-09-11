@@ -2,8 +2,9 @@
 ;===            VARIABLES                       ====
 ;===================================================
 
-;; Tank / Assist
+;; Assist / Follow
 variable string Tank = Unknown
+variable string Follow = Unknown
 
 ; Healing variables
 variable int HealCheck = 50
@@ -36,13 +37,17 @@ variable int i
 variable int j
 variable int TankGN
 variable int StartAttack = 99
+variable int DelayAttack = 5
+variable int Speed = 100
 variable int AngleDiff = 0
 variable int AngleDiffAbs = 0
+variable int FollowDistance1 = 3
+variable int FollowDistance2 = 7
 variable int64 CurrentTargetID = 0
 variable int64 LastTargetID = 0
 variable bool doEcho = TRUE
-variable bool isRunning = TRUE
 variable bool isPaused = TRUE
+variable bool isRunning = TRUE
 variable bool isFurious = FALSE
 variable bool doAcceptRez = TRUE
 variable bool RemoveCurse = FALSE
@@ -53,10 +58,7 @@ variable bool doFollow = FALSE
 variable bool doBuffArea = FALSE
 variable bool doSprint = TRUE
 variable bool doFace = TRUE
-variable int Speed = 100
-variable int DelayAttack = 5
-variable int FollowDistance1 = 3
-variable int FollowDistance2 = 7
+variable bool UseAbilities = TRUE
 variable string PreviousForm
 variable string CounteredAbility
 variable string CurrentChunk
@@ -102,6 +104,7 @@ variable bool doExplodingCyst = TRUE
 variable bool doBloodLettingRitual = TRUE
 variable bool doScarletRitual = TRUE
 variable bool doSeveringRitual = TRUE
+variable bool doBloodFeast = TRUE
 
 ;; Delay Timers
 variable int NextShadowRain = ${Script.RunningTime}
@@ -109,7 +112,10 @@ variable int NextDelayCheck = ${Script.RunningTime}
 variable int NextSpeedCheck = ${Script.RunningTime}
 variable int NextAttackCheck = ${Script.RunningTime}
 
-;; Includes
+;; Defines - you will need to add this to every Include file if you plan on using it
+#define ALARM "${Script.CurrentDirectory}/ping.wav"
+
+;; Includes - 
 #include ./BM1/Includes/FindAction.iss
 #include ./BM1/Includes/PerformAction.iss
 #include ./BM1/Includes/SubRoutines.iss
@@ -120,34 +126,21 @@ variable int NextAttackCheck = ${Script.RunningTime}
 #include ./BM1/Includes/VitalHeals.iss
 #include ./BM1/Includes/BuffArea.iss
 
-;; Defines
-#define ALARM "${Script.CurrentDirectory}/ping.wav"
-
-
 ;===================================================
 ;===            MAIN SCRIPT                     ====
 ;===================================================
 function main()
 {
-	;PlaySound ALARM
-	;variable string xText
-	;variable string yText
-	;yText:Set[Nexus Portal's <highlight>Planar Curse: Zodiac</color> deals <highlight>1863</color> planar damage to Thundercloud.]
-	;yText:Set[${yText.Mid[${yText.Find[</color> planar damage to]},${yText.Length}].Token[2,>].Token[1,.]}]
-	;yText:Set[${yText.Right[${Math.Calc[${yText.Length}-17]}]}]
-	;echo "[${yText}]"
-
 	;-------------------------------------------
 	; INITIALIZE - setup script
 	;-------------------------------------------
 	call Initialize
 	
 	;-------------------------------------------
-	; LOOP THIS INDEFINITELY
+	; LOOP THIS INDEFINITELY - Find Action and then Perform Action
 	;-------------------------------------------
 	while ${isRunning}
 	{
-		call QueuedCommand
 		FindAction
 		call PerformAction
 	}
@@ -162,9 +155,9 @@ function atexit()
 	; Remove our HUDs
 	;-------------------------------------------
 	;Script:Squelch
-	;HUD -remove NameHUD
-	;HUD -remove CastingHUD
-	;HUD -remove ToTHUD
+	HUD -remove HUD-1
+	HUD -remove HUD-2
+	HUD -remove HUD-3
 	;HUD -remove DPSHUD
 	;HUD -remove EncounterHUD
 	;HUD -remove TypeHUD
@@ -184,7 +177,6 @@ function atexit()
 	{
 		endscript Loot
 	}
-
 	
 	;; Say we are done
 	EchoIt "Stopped PSI Script"
@@ -308,10 +300,10 @@ function Initialize()
 	; SHOW OUR HUD
 	;-------------------------------------------
 	;Script:Squelch
-	;HUD -add ToTHUD 900,855 "ToT: ${Me.ToT.Name}"
-	;HUD -add CastingHUD 900,870 "Casting: ${Me.TargetCasting}"
-	;HUD -add NameHUD 900,885 "Status: ${Script[BM1].Variable[PerformAction]}"
-	;HUD -add DPSHUD 900,900 "DPS=${Script[BM1].Variable[DPS]}, Damage=DPS=${Script[BM1].Variable[DamageDone]} "
+	HUD -add HUD-1 900,455 "Ready    =${Me.Ability[${BloodTribute}].IsReady}"
+	HUD -add HUD-2 900,470 "CountDown=${Me.Ability[${BloodTribute}].TriggeredCountdown}"
+	HUD -add HUD-3 900,485 "Reamining=${Me.Ability[${BloodTribute}].TimeRemaining}"
+	;HUD -add HUD-4 900,900 "DPS=${Script[BM1].Variable[DPS]}, Damage=DPS=${Script[BM1].Variable[DamageDone]} "
 	;HUD -add EncounterHUD 900,915 "Encounters: ${Me.Encounter}"
 	;HUD -add TypeHUD 900,930 "Type: ${Me.Target.Type}"
 	;Script:Unsquelch

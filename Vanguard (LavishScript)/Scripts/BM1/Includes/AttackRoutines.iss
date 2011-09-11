@@ -3,9 +3,8 @@
 ;===================================================
 function DoNotAttack()
 {
-	variable int i
 	call MeleeAttackOff
-	i:Set[${HealCheck}]
+	variable int i = ${HealCheck}
 	HealCheck:Set[90]
 	call VitalHeals
 	HealCheck:Set[${i}]
@@ -84,11 +83,6 @@ function AttackTarget()
 	}
 
 	;-------------------------------------------
-	; MELEE ATTACKS - start attacking if in range
-	;-------------------------------------------
-	call MeleeAttackOn
-
-	;-------------------------------------------
 	; WAIT - Allow time for target to set so we can get the name
 	;-------------------------------------------
 	if !${Me.Target(exists)}
@@ -96,6 +90,11 @@ function AttackTarget()
 		vgecho "CAUGHT NO TARGET"
 		return
 	}
+
+	;-------------------------------------------
+	; MELEE ATTACKS - start attacking if in range
+	;-------------------------------------------
+	;call MeleeAttackOn
 
 	;-------------------------------------------
 	; TARGET BEHIND US - Let's face the target!
@@ -169,7 +168,7 @@ function AttackTarget()
 			while ${Me.Encounter[1].Name.Find[Abomination]}
 			{
 				;; priority to AE all these targets
-				if ${Me.Ability[${BloodThief}].IsReady}
+				while ${Me.Ability[${BloodThief}].IsReady} && ${Me.HealthPct}>0
 				{
 					wait 5 ${Me.Ability[${BloodThief}].IsReady}
 					call UseAbility "${BloodThief}"
@@ -311,7 +310,7 @@ function AttackTarget()
 			doAE:Set[TRUE]
 			if ${Me.TargetBuff[Arcane Shield](exists)}
 			{
-				doTemporalShift:Set[FALSE]
+				doArcane:Set[FALSE]
 			}
 			break
 
@@ -341,7 +340,7 @@ function AttackTarget()
 				{
 					EchoIt "Used Shattering Hammer to remove Stone Encasement"
 					Me.Inventory[Shattering Hammer]:Use
-					wait 1
+					wait 5
 				}
 				wait 20
 			}
@@ -373,6 +372,7 @@ function AttackTarget()
 			}
 			if ${Me.TargetHealth}<=21
 			{
+				;; we do not want to miss a counter so do heals only
 				call VitalHeals
 				return
 			}
@@ -380,34 +380,40 @@ function AttackTarget()
 
 		case Frozen Soul Devourer
 			;; Cold Only - Use this single-handed weapon
-			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
+			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
 			{
-				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
-				{
-					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
-					wait 5
-					return
-				}
 				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
+				return
 			}
-			call VitalHeals
+			else
+			{
+				if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker](exists)}
+				{
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
+					call GlobalRecovery
+					return
+				}
+			}
 			return
 
 		case Flaming Soul Devourer
 			;; Fire Only - Use this single-handed weapon
-			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
+			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
 			{
-				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
-				{
-					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
-					wait 5
-					return
-				}
 				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
+				return
 			}
-			call VitalHeals
+			else
+			{
+				if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker](exists)}
+				{
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
+					call GlobalRecovery
+					return
+				}
+			}
 			return
 
 		case Credulous Cadaver
@@ -419,18 +425,21 @@ function AttackTarget()
 		case Ancient Warden
 			call MeleeAttackOff
 			;; Use highest most damaging -clickie-
-			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
+			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
 			{
-				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
-				{
-					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
-					wait 5
-					return
-				}
 				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
+				return
 			}
-			call VitalHeals
+			else
+			{
+				if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker](exists)}
+				{
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
+					call GlobalRecovery
+					return
+				}
+			}
 			return
 
 		case Undying Arcanist
@@ -440,7 +449,6 @@ function AttackTarget()
 			}
 			if ${Me.TargetBuff[Shielding](exists)}
 			{
-				call VitalHeals
 				return
 			}
 			doAE:Set[FALSE]
@@ -454,7 +462,6 @@ function AttackTarget()
 			if ${Me.TargetBuff[Umbral Barrier](exists)}
 			{
 				call MeleeAttackOn
-				call VitalHeals
 				return
 			}
 			break
@@ -516,16 +523,20 @@ function AttackTarget()
 			{
 				return
 			}
-			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].IsReady}
+			if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
 			{
-				if !${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker].CurrentEquipSlot.Equal[Primary Hand]}
-				{
-					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
-					wait 5
-					return
-				}
 				Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Use
 				call GlobalRecovery
+				return
+			}
+			else
+			{
+				if ${Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker](exists)}
+				{
+					Me.Inventory[Flawless Scholar's Renewed Rod of the Evoker]:Equip[Primary Hand]
+					call GlobalRecovery
+					return
+				}
 			}
 			call MeleeAttackOn
 			if ${Me.Effect[True Curse of the Vampire](exists)}
@@ -636,7 +647,6 @@ function AttackTarget()
 			break
 	}
 
-	
 	;-------------------------------------------
 	; LOWER HATE
 	;-------------------------------------------
@@ -664,6 +674,13 @@ function AttackTarget()
 	;===========================================
 	;===========================================
 
+	;-------------------------------------------
+	; USE ABILITIES
+	;-------------------------------------------
+	if !${UseAbilities}
+	{
+		return
+	}
 
 	;-------------------------------------------
 	; CLICKIES - Use them if we got them
@@ -690,7 +707,11 @@ function AttackTarget()
 		;-------------------------------------------
 		; Establish Blood Feast - Get 10% of damage from allies returned back to me as health
 		;-------------------------------------------
-		if ${Me.Ability[${BloodFeast}](exists)} && !${Me.Effect[${BloodFeast}](exists)}
+		if ${doBloodFeast} && ${Me.Ability[${BloodFeast}](exists)} && !${Me.Effect[${BloodFeast}](exists)}
+		{
+			call UseAbility "${BloodFeast}"
+		}
+		elseif !${doBloodFeast} && ${Me.Ability[${BloodFeast}](exists)} && ${Me.Effect[${BloodFeast}](exists)}
 		{
 			call UseAbility "${BloodFeast}"
 		}
@@ -970,10 +991,16 @@ function CritFinishers()
 		return
 	}
 
-	;; return if no crits are ready to use
+	;; return if no crits
 	if ${Me.Ability[${BloodTribute}].TriggeredCountdown}==0
 	{
 		return
+	}
+	
+	;; wait until our crit is ready - no crit will be missed
+	while ${Me.Ability[${BloodTribute}].TriggeredCountdown}>0 && ${Me.Ability[${BloodTribute}].TimeRemaining}>0
+	{
+		wait .1
 	}
 
 	;; Echo our crit status
@@ -1071,7 +1098,7 @@ function CritFinishers()
 				{
 					EchoIt Aborting Crit Heal Wait because Tank is not in group and is wounded - [${Group[${h}].Health.Int}] ${Group[${h}].Name}
 					HealNow:Set[TRUE]
-					return
+					;return
 				}
 			}
 			;; Use our crit heal

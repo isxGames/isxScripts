@@ -338,7 +338,7 @@
 							<Y>40%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Follow Tank:</Text>
+							<Text>Follow Player:</Text>
 							<AutoTooltip>  be sure to adjust your Turn-Speed Multiplier in  settings </AutoTooltip>
 							<OnLoad>
 								if ${Script[BM1].VariableScope.doFollow}
@@ -586,7 +586,7 @@
 						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
 							<visible>1</visible>
 							<X>10%</X>
-							<Y>68%</Y>
+							<Y>63%</Y>
 							<Width>80%</Width>
 							<Height>21</Height>
 							<Text>Assisting:  </Text>
@@ -594,24 +594,57 @@
 								if ${Me.DTarget(exists)}
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.DTarget.Name}]
-									This:SetText[Assisting:  ${Me.DTarget.Name}]
+									This:SetText[Assist:  ${Me.DTarget.Name}]
 								}
 								else
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.FName}]
-									This:SetText[Assisting:  ${Me.FName}]
+									This:SetText[Assist:  ${Me.FName}]
 								}
                             </Onload>
 							<OnLeftClick>
 								if ${Me.DTarget(exists)}
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.DTarget.Name}]
-									This:SetText[Assisting:  ${Me.DTarget.Name}]
+									This:SetText[Assist:  ${Me.DTarget.Name}]
 								}
 								else
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.FName}]
-									This:SetText[Assisting:  ${Me.FName}]
+									This:SetText[Assist:  ${Me.FName}]
+								}
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Commandbutton Name="Button-Set Follow" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>10%</X>
+							<Y>72%</Y>
+							<Width>80%</Width>
+							<Height>21</Height>
+							<Text>Follow:  </Text>
+                            <Onload>
+								if ${Me.DTarget(exists)}
+								{
+									Script[BM1].Variable[Follow]:Set[${Me.DTarget.Name}]
+									This:SetText[Follow:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[BM1].Variable[Follow]:Set[${Me.FName}]
+									This:SetText[Follow:  ${Me.FName}]
+								}
+                            </Onload>
+							<OnLeftClick>
+								if ${Me.DTarget(exists)}
+								{
+									Script[BM1].Variable[Follow]:Set[${Me.DTarget.Name}]
+									This:SetText[Follow:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[BM1].Variable[Follow]:Set[${Me.FName}]
+									This:SetText[Follow:  ${Me.FName}]
 								}
 							</OnLeftClick>
 						</Commandbutton>

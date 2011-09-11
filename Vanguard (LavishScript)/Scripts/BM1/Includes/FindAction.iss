@@ -21,6 +21,27 @@ atom(script) FindAction()
 	variable int k
 	variable int l
 	variable int temp
+	
+	;-------------------------------------------
+	; SILENCED - No Spell Casting or Using Abilities
+	;-------------------------------------------
+	UseAbilities:Set[TRUE]
+	if ${Me.Effect[Silence](exists)}
+	{
+		UseAbilities:Set[FALSE]
+	}
+	if ${Me.Effect[Mezmerize](exists)}
+	{
+		UseAbilities:Set[FALSE]
+	}
+	if ${Me.Effect[Muting Darkness](exists)}
+	{
+		UseAbilities:Set[FALSE]
+	}
+	if ${Me.Effect[True Curse of the Vampire](exists)}
+	{
+		UseAbilities:Set[FALSE]
+	}
 
 	;-------------------------------------------
 	; WE CHUNKED - handles pausing when we chunked
@@ -41,20 +62,20 @@ atom(script) FindAction()
 	}
 
 	;-------------------------------------------
+	; QUEUED COMMAND - Find Group & Buffs
+	;-------------------------------------------
+	if ${QueuedCommands} && ${Me.Health}
+	{
+		PerformAction:Set[QueuedCommand]
+		return
+	}
+	
+	;-------------------------------------------
 	; PAUSED - we do not want to do anything or when we are dancing
 	;-------------------------------------------
 	if ${isPaused} || ${Me.Effect[Boogey!](exists)} || ${Me.Effect[Invulnerability Login Effect](exists)}
 	{
 		PerformAction:Set[Paused]
-		return
-	}
-
-	;-------------------------------------------
-	; FIND GROUP MEMBERS - updates who are group members are
-	;-------------------------------------------
-	if ${doFindGroupMembers}
-	{
-		PerformAction:Set[FindGroupMembers]
 		return
 	}
 
@@ -76,17 +97,17 @@ atom(script) FindAction()
 		NextDelayCheck:Set[${Script.RunningTime}]
 
 		;-------------------------------------------
-		; FOLLOW TANK - always follow the tank at all times!
+		; FOLLOW PLAYER - always follow the player at all times!
 		;-------------------------------------------
 		if ${doFollow}
 		{
-			if !${Me.FName.Find[${Tank}]}
+			if !${Me.FName.Find[${Follow}]}
 			{
-				if ${Pawn[name,${Tank}](exists)}
+				if ${Pawn[name,${Follow}](exists)}
 				{
-					if ${Pawn[name,${Tank}].Distance}>${FollowDistance2} && ${Pawn[name,${Tank}].Distance}<45
+					if ${Pawn[name,${Follow}].Distance}>${FollowDistance2} && ${Pawn[name,${Follow}].Distance}<45
 					{
-						PerformAction:Set[FollowTank]
+						PerformAction:Set[FollowPlayer]
 						return
 					}
 				}
@@ -129,23 +150,9 @@ atom(script) FindAction()
 		}
 
 		;-------------------------------------------
-		; SILENCED - No Spell Casting
-		;-------------------------------------------
-		if ${Me.Effect[Silence](exists)}
-		{
-			PerformAction:Set[Default]
-			return
-		}
-		if ${Me.Effect[Mezmerize](exists)}
-		{
-			PerformAction:Set[Default]
-			return
-		}
-
-		;-------------------------------------------
 		; STRIP ENCHANTMENTS - perform once every other second
 		;-------------------------------------------
-		if ${doStripEnchantments}
+		if ${doStripEnchantments} && ${UseAbilities}
 		{
 			if ${Me.Target(exists)} && ${Me.Target.HaveLineOfSightTo}
 			{
@@ -267,21 +274,7 @@ atom(script) FindAction()
 		}
 	}
 
-	;-------------------------------------------
-	; SILENCED - No Spell Casting
-	;-------------------------------------------
-	if ${Me.Effect[Silence](exists)}
-	{
-		PerformAction:Set[Default]
-		return
-	}
-	if ${Me.Effect[Mezmerize](exists)}
-	{
-		PerformAction:Set[Default]
-		return
-	}
-	
-	if !${Me.Effect[Muting Darkness](exists)}
+	if ${UseAbilities}
 	{
 		;-------------------------------------------
 		; TARGET ON ME - the target is looking cross-eyed at me
@@ -429,7 +422,7 @@ atom(script) FindAction()
 	;-------------------------------------------
 	; BUFF REQUESTS - buff anyone that says "buff"
 	;-------------------------------------------
-	if ${BuffRequest}
+	if ${BuffRequest} && ${UseAbilities}
 	{
 		if ${Pawn[${PCName}](exists)}
 		{
@@ -444,7 +437,7 @@ atom(script) FindAction()
 	;-------------------------------------------
 	; BUFF AREA - check everyone's buffs and buff them
 	;-------------------------------------------
-	if ${doBuffArea}
+	if ${doBuffArea} && ${UseAbilities}
 	{
 		PerformAction:Set[BuffArea]
 		return
