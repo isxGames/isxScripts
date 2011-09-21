@@ -1,24 +1,28 @@
 ;===================================================
 ;===          BUFF AREA SUBROUTINE              ====
 ;===================================================
-variable index:string PC
 
 function BuffArea()
 {
-	doBuffArea:Set[FALSE]
 	variable string temp
-
+	variable int TotalPawns
+	variable index:pawn CurrentPawns
+	variable index:string PC
+	TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
+	doBuffArea:Set[FALSE]
+	PerformAction:Set[BuffArea]
+	
 	;-------------------------------------------
-	; Cycle through all PC in area and and them to our list to be buffed
+	; Cycle through all PC in area and add them to our list to be buffed
 	;-------------------------------------------
-	for (i:Set[1] ; ${i}<=${VG.PawnCount} && ${Pawn[${i}].Distance}<25 ; i:Inc)
+	for (i:Set[1] ;  ${i}<=${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<25 ; i:Inc)
 	{
-		if ${Pawn[${i}].Type.Equal[pc]} || ${Pawn[${i}].Type.Equal[Group Member]}
+		if ${CurrentPawns.Get[${i}].Type.Equal[pc]} || ${CurrentPawns.Get[${i}].Type.Equal[Group Member]}
 		{
-			if ${Pawn[${i}].HaveLineOfSightTo} && ${Pawn[${i}].Level}>43
+			if ${CurrentPawns.Get[${i}].HaveLineOfSightTo} && ${CurrentPawns.Get[${i}].Level}>43
 			{
-				PC:Insert[${Pawn[${i}].Name}]
-				;EchoIt "*Adding ${Pawn[${i}].Name}"
+				PC:Insert[${CurrentPawns.Get[${i}].Name}]
+				EchoIt "*Adding ${CurrentPawns.Get[${i}].Name}"
 			}
 		}
 	}
@@ -82,19 +86,6 @@ function BuffArea()
 		}
 		;PC:Remove[${i}]
 		;PC:Collapse
-	}
-
-	;-------------------------------------------
-	; Establish Blood Feast - Get 10% of damage from allies returned back to me as health
-	;-------------------------------------------
-	if ${Me.Ability[Blood Feast](exists)} && !${Me.Effect[Blood Feast](exists)}
-	{
-		wait 10 ${Me.Ability[Blood Feast].IsReady}
-		call UseAbility "Blood Feast"
-		if ${Return}
-		{
-			wait 10 ${Me.Effect[Blood Feast](exists)}
-		}
 	}
 
 	;; Recast this

@@ -53,6 +53,17 @@ function WeAreDead()
 }
 
 ;===================================================
+;===     WE ARE HARVESTING SUBROUTINE           ====
+;===================================================
+function WeAreHarvesting()
+{
+	while ${GV[bool,bHarvesting]} && ${Me.Encounter}==0 && !${Me.Target.Name.Find[remains of]}
+	{
+		waitframe
+	}
+}
+
+;===================================================
 ;===        QUEUED COMMANDS SUBROUTINE          ====
 ;===================================================
 function QueuedCommand()
@@ -152,16 +163,29 @@ function TargetIsDead()
 	;-------------------------------------------
 	if ${Me.Target.IsDead} || ${Me.Target.Type.Equal[Corpse]}
 	{
-		call MeleeAttackOff
 		isFurious:Set[FALSE]
+
+		call MeleeAttackOff
+
+		;; turn off Blood Feast
+		if ${Me.Ability[${BloodFeast}](exists)} && ${Me.Effect[${BloodFeast}](exists)}
+		{
+			call UseAbility "${BloodFeast}"
+		}
+		
+		;; change form to healing form
 		if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]}
 		{
 			Me.Form["Sanguine Focus"]:ChangeTo
 			wait .5
 		}
+		
+		;; wait a whole second to allow looting and harvesting
+		wait 10 
+		
+		;; clear target only if we are not looting
 		if !${Me.IsLooting}
 		{
-			wait 10 ${GV[bool,bHarvesting]}
 			if !${GV[bool,bHarvesting]}
 			{
 				VGExecute /cleartargets
@@ -310,6 +334,35 @@ function BuffRequests()
 	{
 		BuffRequest:Set[FALSE]
 		vgecho "Buffed ${PCName}"
+	}
+}
+
+
+;===================================================
+;===    SYMBIOTE REQUEST ABILITY SUBROUTINE     ====
+;===================================================
+function SymbioteRequest()
+{
+	if ${Me.Ability["${ConstructsAugmentation}"].IsReady}
+	{
+		if ${SymbioteRequestList.FirstKey(exists)}
+		{
+			do
+			{
+				if ${Pawn[name,${SymbioteRequestList.CurrentKey}](exists)} && ${Pawn[name,${SymbioteRequestList.CurrentKey}].Distance}<25 && ${Pawn[name,${SymbioteRequestList.CurrentKey}].HaveLineOfSightTo}
+				{
+					Pawn[name,${SymbioteRequestList.CurrentKey}]:Target
+					wait 10 
+					if ${Me.DTarget.Name.Find[${SymbioteRequestList.CurrentKey}]}
+					{
+						call UseAbility "${SymbioteRequestList.CurrentValue}"
+					}
+				}
+			}
+			while ${SymbioteRequestList.NextKey(exists)}
+			SymbioteRequestList:Clear
+		}
+		doSymbioteRequest:Set[FALSE]
 	}
 }
 
@@ -530,4 +583,35 @@ function FollowPlayer()
 	}
 }
 
+;===================================================
+;===           REZ ACCEPT SUB-ROUTINE           ====
+;===================================================
+function RezAccept()
+{
+	;; Accept that rez
+	VGExecute "/rezaccept"
+
+	;; allow time to relocate after accepting rez
+	wait 40
+	
+	;; target our nearest corpse
+	VGExecute "/targetmynearestcorpse"
+	wait 10
+	
+	;; drag it closer if we are still out of range
+	if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<21
+	{
+		VGExecute "/corpsedrag"
+		wait 10 ${Me.Target.Distance}<=5
+	}
+	
+	;; loot our tombstone and clear our target
+	VGExecute "/lootall"
+	waitframe
+	VGExecute "/cleartargets"
+	waitframe
+	
+	EchoIt "Accepted Rez and Looted my tombstone"
+	doAcceptRez:Set[FALSE]
+}
 

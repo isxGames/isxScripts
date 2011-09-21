@@ -26,6 +26,10 @@ atom(script) FindAction()
 	; SILENCED - No Spell Casting or Using Abilities
 	;-------------------------------------------
 	UseAbilities:Set[TRUE]
+	if ${Me.Effect[Supression](exists)}
+	{
+		UseAbilities:Set[FALSE]
+	}
 	if ${Me.Effect[Silence](exists)}
 	{
 		UseAbilities:Set[FALSE]
@@ -61,10 +65,16 @@ atom(script) FindAction()
 		return
 	}
 
+	if ${GV[bool,bHarvesting]}
+	{
+		PerformAction:Set[WeAreHarvesting]
+		return
+	}
+	
 	;-------------------------------------------
 	; QUEUED COMMAND - Find Group & Buffs
 	;-------------------------------------------
-	if ${QueuedCommands} && ${Me.Health}
+	if ${QueuedCommands}
 	{
 		PerformAction:Set[QueuedCommand]
 		return
@@ -364,7 +374,7 @@ atom(script) FindAction()
 				{
 					if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]} || ${Me.TargetHealth}<95
 					{
-						if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
+						if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead} && !${GV[bool,bHarvesting]}
 						{
 							;-------------------------------------------
 							; FURIOUS - we do not want to plow through Furious with melee attacks (melee)
@@ -440,6 +450,24 @@ atom(script) FindAction()
 	if ${doBuffArea} && ${UseAbilities}
 	{
 		PerformAction:Set[BuffArea]
+		return
+	}
+	
+	;-------------------------------------------
+	; BUFF AREA - check everyone's buffs and buff them
+	;-------------------------------------------
+	if ${doSymbioteRequest} && ${UseAbilities}
+	{
+		PerformAction:Set[SymbioteRequest]
+		return
+	}
+	
+	;-------------------------------------------
+	; REZ ACCEPT - check everyone's buffs and buff them
+	;-------------------------------------------
+	if ${doRezAccept}
+	{
+		PerformAction:Set[RezAccept]
 		return
 	}
 

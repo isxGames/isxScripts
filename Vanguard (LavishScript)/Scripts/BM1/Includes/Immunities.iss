@@ -47,6 +47,16 @@ atom(script) Immunities()
 				doArcane:Set[FALSE]
 				break
 
+			;; sister's event
+			case Summoned Air Elemental
+				doArcane:Set[FALSE]
+				break
+
+			;; sister's event
+			case Summoned Earth Elemental
+				doPhysical:Set[FALSE]
+				break
+
 			case Descrier Psionicist
 				doArcane:Set[FALSE]
 				break

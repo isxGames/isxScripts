@@ -417,6 +417,7 @@ atom CombatText(string aText, int aType)
 
 variable string PCName
 variable string PCNameFull
+variable string Symbiote
 variable bool BuffRequest = FALSE
 
 ;===================================================
@@ -424,6 +425,7 @@ variable bool BuffRequest = FALSE
 ;===================================================
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
+	;echo "[${ChannelNumber}] ${aText}"
 	;redirect -append "${LavishScript.CurrentDirectory}/Scripts/Parse/Chat-All.txt" echo "[${Time}][${ChannelNumber}][${aText}]"
 	;redirect -append "${LavishScript.CurrentDirectory}/Scripts/Parse/Chat-${ChannelNumber}.txt" echo "[${Time}][${ChannelNumber}][(${Me.TargetHealth})${Me.Target.Name}][${aText}]"
 
@@ -444,12 +446,12 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 				PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 				PCName:Set[${PCNameFull.Token[1," "]}]
 				BuffRequest:Set[TRUE]
-				vgecho [${ChannelNumber}] ${aText}
-				vgecho PCName=${PCName}, PCNameFull=${PCNameFull}
+				;vgecho [${ChannelNumber}] ${aText}
+				;vgecho PCName=${PCName}, PCNameFull=${PCNameFull}
 			}
 
 			;; 11 = guild
-			if ${ChannelNumber}==15 && (${aText.Find[named]} || ${aText.Find[name run]})
+			if (${ChannelNumber}==11 || ${ChannelNumber}==15) && (${aText.Find[named]} || ${aText.Find[name run]})
 			{
 				EchoIt "[${ChannelNumber}a]${aText}"
 				PlaySound ALARM
@@ -498,9 +500,70 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	;; Accept Rez
 	if ${ChannelNumber}==32
 	{
-		if ${doAcceptRez} && ${aText.Find[is trying to resurrect you with]}
+		if ${aText.Find[is trying to resurrect you with]}
 		{
-			VGExecute "/rezaccept"
+			doAcceptRez:Set[TRUE]
+		}
+	}
+
+	;; Check for any Symbiote Requests
+	if ${ChannelNumber}==8 || ${ChannelNumber}==11 || ${ChannelNumber}==15
+	{
+		if ${aText.Find["conduc"]}
+		{
+			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+			PCName:Set[${PCNameFull.Token[1," "]}]
+			Symbiote:Set[Conducive Symbiote]
+			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
+			doSymbioteRequest:Set[TRUE]
+		}
+
+		if ${aText.Find["frenz"]}
+		{
+			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+			PCName:Set[${PCNameFull.Token[1," "]}]
+			Symbiote:Set[Frenzied Symbiote V]
+			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
+			doSymbioteRequest:Set[TRUE]
+		}
+
+		if ${aText.Find["QJ"]}
+		{
+			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+			PCName:Set[${PCNameFull.Token[1," "]}]
+			Symbiote:Set[Quickening Symbiote]
+			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
+			doSymbioteRequest:Set[TRUE]
+		}
+
+		if ${aText.Find["vitalizing"]} || ${aText.Find["VS"]} || ${aText.Find["VIT"]}
+		{
+			if !${aText.Find["invit"]}
+			{
+				PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+				PCName:Set[${PCNameFull.Token[1," "]}]
+				Symbiote:Set[Vitalizing Symbiote]
+				SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
+				doSymbioteRequest:Set[TRUE]
+			}
+		}
+		
+		if ${aText.Find["plated"]}
+		{
+			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+			PCName:Set[${PCNameFull.Token[1," "]}]
+			Symbiote:Set[Plated Symbiote IV]
+			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
+			doSymbioteRequest:Set[TRUE]
+		}
+
+		if ${aText.Find["renew"]}
+		{
+			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+			PCName:Set[${PCNameFull.Token[1," "]}]
+			Symbiote:Set[Renewing Symbiote III]
+			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
+			doSymbioteRequest:Set[TRUE]
 		}
 	}
 }
@@ -515,5 +578,13 @@ atom(script) PlaySound(string Filename)
 variable string PerformAction = Default
 variable string LastAction = Default
 
-
-
+;-------------------------------------------
+; This happens when we bump into an obstacle
+;-------------------------------------------
+atom Bump(string Object)
+{
+	if (${Object.Find[Mover]})
+	{
+		VG:ExecBinding[UseDoorEtc]
+	}
+}
