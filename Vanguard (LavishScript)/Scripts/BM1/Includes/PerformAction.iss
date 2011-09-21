@@ -20,6 +20,11 @@ function PerformAction()
 			call WeAreDead
 			break
 			
+		;; we are harvesting
+		case WeAreHarvesting
+			call WeAreHarvesting
+			break
+			
 		;; Queued Commands - Find Group Members, Buffs, et cetera
 		case QueuedCommand
 			call QueuedCommand
@@ -91,32 +96,39 @@ function PerformAction()
 			call BuffArea
 			break
 
+		;; pass out a requested symbiote
+		case SymbioteRequest
+			call SymbioteRequest
+			break
+
 		;; update our group members
 		case FindGroupMembers
 			call FindGroupMembers
 			break
 
+		;; Accept a Rez
+		case RezAccept
+			call RezAccept
+			break
+			
 		;; turn on/off attacks, toggle sprinting, execute crits
 		Default
 			call SprintCheck
-			if ${Me.InCombat}
+			if !${Me.InCombat}
 			{
-				call MeleeAttackOn
-				if ${OkayToAttack}
+				isFurious:Set[FALSE]
+
+				;; change form to healing form
+				if !${Me.CurrentForm.Name.Equal["Sanguine Focus"]} && ${Me.Health}<50
 				{
-					if ${Me.Target(exists)}
-					{
-						if ${Me.TargetHealth}<=${StartAttack}
-						{
-							if ${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
-							{
-								if ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
-								{
-									call CritFinishers
-								}
-							}
-						}
-					}
+					Me.Form["Sanguine Focus"]:ChangeTo
+					wait .5
+				}
+
+				;; turn off Blood Feast
+				if ${Me.Ability[${BloodFeast}](exists)} && ${Me.Effect[${BloodFeast}](exists)}
+				{
+					call UseAbility "${BloodFeast}"
 				}
 			}
 			break

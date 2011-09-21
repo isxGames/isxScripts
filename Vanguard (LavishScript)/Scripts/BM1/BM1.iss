@@ -49,11 +49,12 @@ variable bool doEcho = TRUE
 variable bool isPaused = TRUE
 variable bool isRunning = TRUE
 variable bool isFurious = FALSE
-variable bool doAcceptRez = TRUE
+variable bool doAcceptRez = FALSE
 variable bool RemoveCurse = FALSE
 variable bool RemovePoison = FALSE
 variable bool doEchoShadowRain = FALSE
 variable bool doFindGroupMembers = TRUE
+variable bool doSymbioteRequest = FALSE
 variable bool doFollow = FALSE
 variable bool doBuffArea = FALSE
 variable bool doSprint = TRUE
@@ -106,6 +107,9 @@ variable bool doScarletRitual = TRUE
 variable bool doSeveringRitual = TRUE
 variable bool doBloodFeast = TRUE
 
+;; Collection variables
+variable(global) collection:string SymbioteRequestList
+
 ;; Delay Timers
 variable int NextShadowRain = ${Script.RunningTime}
 variable int NextDelayCheck = ${Script.RunningTime}
@@ -155,13 +159,21 @@ function atexit()
 	; Remove our HUDs
 	;-------------------------------------------
 	;Script:Squelch
-	HUD -remove HUD-1
-	HUD -remove HUD-2
-	HUD -remove HUD-3
+	;HUD -remove HUD-1
+	;HUD -remove HUD-2
+	;HUD -remove HUD-3
 	;HUD -remove DPSHUD
 	;HUD -remove EncounterHUD
 	;HUD -remove TypeHUD
 	;Script:Unsquelch
+	
+	Event[VG_onHitObstacle]:DetachAtom[Bump]
+	Event[OnFrame]:DetachAtom[OnFrame]
+	Event[OnFrame]:DetachAtom[Immunities]
+	Event[VG_OnPawnSpawned]:DetachAtom[PawnSpawned]
+	Event[VG_OnIncomingText]:DetachAtom[ChatEvent]
+	Event[VG_OnIncomingCombatText]:DetachAtom[CombatText]
+
 
 	;; Unload our UI
 	ui -unload "${Script.CurrentDirectory}/BM1.xml"
@@ -279,7 +291,13 @@ function Initialize()
 	Event[VG_OnPawnSpawned]:AttachAtom[PawnSpawned]
 	Event[OnFrame]:AttachAtom[Immunities]
 	Event[OnFrame]:AttachAtom[OnFrame]
+	Event[VG_onHitObstacle]:AttachAtom[Bump]
 	
+	;-------------------------------------------
+	; Clear our collection variables
+	;-------------------------------------------
+	SymbioteRequestList:Clear
+
 	;-------------------------------------------
 	; Get our Counter routine running
 	;-------------------------------------------
@@ -300,9 +318,9 @@ function Initialize()
 	; SHOW OUR HUD
 	;-------------------------------------------
 	;Script:Squelch
-	HUD -add HUD-1 900,455 "Ready    =${Me.Ability[${BloodTribute}].IsReady}"
-	HUD -add HUD-2 900,470 "CountDown=${Me.Ability[${BloodTribute}].TriggeredCountdown}"
-	HUD -add HUD-3 900,485 "Reamining=${Me.Ability[${BloodTribute}].TimeRemaining}"
+	;HUD -add HUD-1 900,455 "Ready    =${Me.Ability[${BloodTribute}].IsReady}"
+	;HUD -add HUD-2 900,470 "CountDown=${Me.Ability[${BloodTribute}].TriggeredCountdown}"
+	;HUD -add HUD-3 900,485 "Reamining=${Me.Ability[${BloodTribute}].TimeRemaining}"
 	;HUD -add HUD-4 900,900 "DPS=${Script[BM1].Variable[DPS]}, Damage=DPS=${Script[BM1].Variable[DamageDone]} "
 	;HUD -add EncounterHUD 900,915 "Encounters: ${Me.Encounter}"
 	;HUD -add TypeHUD 900,930 "Type: ${Me.Target.Type}"

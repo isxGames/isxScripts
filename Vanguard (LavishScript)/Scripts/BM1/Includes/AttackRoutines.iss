@@ -998,10 +998,10 @@ function CritFinishers()
 	}
 	
 	;; wait until our crit is ready - no crit will be missed
-	while ${Me.Ability[${BloodTribute}].TriggeredCountdown}>0 && ${Me.Ability[${BloodTribute}].TimeRemaining}>0
-	{
-		wait .1
-	}
+	;while ${Me.Ability[${BloodTribute}].TriggeredCountdown}>0 && ${Me.Ability[${BloodTribute}].TimeRemaining}>0
+	;{
+	;	wait .1
+	;}
 
 	;; Echo our crit status
 	EchoIt "Blood Tribute - Reamining=${Me.Ability[${BloodTribute}].TimeRemaining}, CountDown=${Me.Ability[${BloodTribute}].TriggeredCountdown}, Ready=${Me.Ability[${BloodTribute}].IsReady}"

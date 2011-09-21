@@ -8,11 +8,14 @@ function main()
 	;-------------------------------------------
 	while ${Script[BM1].Variable[isRunning]}
 	{
-		;; wait 10 seconds until our target contains loot or we are looting
-		wait 100 ${Me.Target.ContainsLoot} || ${Me.IsLooting}
+		;; wait 10 seconds until our target is dead
+		wait 100 ${Me.Target.IsDead} && ${Me.Target.Type.Equal[Corpse]} && !${GV[bool,bHarvesting]} && !${Me.IsLooting}
+		
+		;; wait 1/2 second for target to contain loot or we are looting
+		wait 5 ${Me.Target.ContainsLoot} || ${Me.IsLooting}
 		
 		;; let's loot the target!
-		if ${Me.Target.ContainsLoot} || ${Me.IsLooting}
+		if ${Me.Target.IsDead} && ${Me.Target.Type.Equal[Corpse]} && !${GV[bool,bHarvesting]}
 		{
 			;; only loot if we want to loot
 			if ${Script[BM1].Variable[doLootAll]} && ${Me.Target.Distance}<5
@@ -46,11 +49,7 @@ function main()
 				}
 				
 				;; this will actually stop everything until you deal with the loot, need a timer of some form to break out
-				do
-				{
-					waitframe
-				}
-				while ${Me.IsLooting}
+				wait 10 !${Me.IsLooting}
 			}
 		}
 	}

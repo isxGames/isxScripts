@@ -332,10 +332,28 @@
 								Script[BM1].VariableScope.doStripEnchantments:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name="doFollow" Template="VG.GreenCheckbox">
+						<checkbox Name="doRemoveHate" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>36%</X>
 							<Y>40%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Remove Hate</Text>
+							<AutoTooltip>  tries to remove some hate </AutoTooltip>
+							<OnLoad>
+								if ${Script[BM1].VariableScope.doRemoveHate}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[BM1].VariableScope.doRemoveHate:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doFollow" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>48%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text>Follow Player:</Text>
@@ -352,7 +370,7 @@
 						</checkbox>
 						<Textentry Name="FollowDistance1" Template="VG.TextEntry">
 							<X>41%</X>
-							<Y>47.5%</Y>
+							<Y>55.5%</Y>
 							<Width>28</Width>
 							<Height>15</Height>
 							<Color>FFDDBB00</Color>
@@ -385,7 +403,7 @@
 						</Textentry>
 						<Text Name="Text-Follow" Template="VG.Text">
 							<X>50%</X>
-							<Y>48%</Y>
+							<Y>56%</Y>
 							<Width>200</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
@@ -393,7 +411,7 @@
 						</Text>
 						<Textentry Name="FollowDistance2" Template="VG.TextEntry">
 							<X>55%</X>
-							<Y>47.5%</Y>
+							<Y>55.5%</Y>
 							<Width>28</Width>
 							<Height>15</Height>
 							<Color>FFDDBB00</Color>
