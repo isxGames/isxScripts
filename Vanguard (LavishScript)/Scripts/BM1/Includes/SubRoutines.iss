@@ -203,7 +203,7 @@ function RegainEnergy()
 	;-------------------------------------------
 	; REGEN ENERGY - Always try to sustain energy over time
 	;-------------------------------------------
-	if ${Me.EnergyPct}<=80 && ${Me.HealthPct}>=${HealCheck}
+	if ${Me.EnergyPct}<=80 && ${Me.HealthPct}>=80
 	{
 		if ${Me.Ability[${MentalTransmutation}].TimeRemaining}==0
 		{
@@ -216,9 +216,9 @@ function RegainEnergy()
 				return
 			}
 		}
-		if ${Me.EnergyPct}<=40 && ${Me.Inventory[Large Mottleberries](exists)}
+		if ${Me.EnergyPct}<=50
 		{
-			if ${Me.Inventory[Large Mottleberries].IsReady}
+			if ${Me.Inventory[Large Mottleberries].IsReady} && ${Me.Inventory[Large Mottleberries](exists)}
 			{
 				EchoIt "Consumed Large Mottleberries to gain energy"
 				Me.Inventory[Large Mottleberries]:Use
@@ -352,10 +352,15 @@ function SymbioteRequest()
 				if ${Pawn[name,${SymbioteRequestList.CurrentKey}](exists)} && ${Pawn[name,${SymbioteRequestList.CurrentKey}].Distance}<25 && ${Pawn[name,${SymbioteRequestList.CurrentKey}].HaveLineOfSightTo}
 				{
 					Pawn[name,${SymbioteRequestList.CurrentKey}]:Target
-					wait 10 
+					wait 10 ${Me.DTarget.Name.Find[${SymbioteRequestList.CurrentKey}]}
 					if ${Me.DTarget.Name.Find[${SymbioteRequestList.CurrentKey}]}
 					{
+						wait 10 ${Me.Ability[${SymbioteRequestList.CurrentValue}].IsReady}
 						call UseAbility "${SymbioteRequestList.CurrentValue}"
+						if ${Return}
+						{
+							vgecho "Buffed ${SymbioteRequestList.CurrentKey} with ${SymbioteRequestList.CurrentValue}"
+						}
 					}
 				}
 			}
@@ -615,3 +620,20 @@ function RezAccept()
 	doAcceptRez:Set[FALSE]
 }
 
+;===================================================
+;===           SYMBIOTES SUB-ROUTINE            ====
+;===================================================
+function Symbiotes()
+{	
+	;-------------------------------------------
+	; Get our Symbiote routine running
+	;-------------------------------------------
+	if ${Script[Symbiotes](exists)}
+	{
+		endscript Symbiotes
+	}
+	elseif !${Script[Symbiotes](exists)}
+	{
+		run ./BM1/Symbiotes.iss 5
+	}
+}

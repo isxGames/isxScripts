@@ -330,9 +330,9 @@ atom(script) FindAction()
 				PerformAction:Set[RegainEnergy]
 				return
 			}
-			if ${Me.EnergyPct}<40 && ${Me.Inventory[Large Mottleberries](exists)}
+			if ${Me.EnergyPct}<50
 			{
-				if ${Me.Inventory[Large Mottleberries].IsReady}
+				if ${Me.Inventory[Large Mottleberries].IsReady} && ${Me.Inventory[Large Mottleberries](exists)}
 				{
 					PerformAction:Set[RegainEnergy]
 					return
