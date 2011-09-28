@@ -9,8 +9,9 @@ function BuffArea()
 	variable index:pawn CurrentPawns
 	variable index:string PC
 	TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
-	doBuffArea:Set[FALSE]
 	PerformAction:Set[BuffArea]
+	UIElement[BuffArea@BM1]:SetAlpha[0.5]
+	doBuffArea:Set[FALSE]
 	
 	;-------------------------------------------
 	; Cycle through all PC in area and add them to our list to be buffed
@@ -106,6 +107,7 @@ function BuffArea()
 		wait 1
 	}
 	PC:Clear
+	UIElement[BuffArea@BM1]:SetAlpha[1]
 }
 
 

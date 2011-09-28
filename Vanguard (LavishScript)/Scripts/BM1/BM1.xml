@@ -792,7 +792,7 @@
 			<Commandbutton Name="Run Button" Template="VG.GreyCommandButton">
 				<visible>1</visible>
 				<X>3%</X>
-				<Y>90.5%</Y>
+				<Y>91%</Y>
 				<Width>40%</Width>
 				<Height>23</Height>
 				<Text>This script is PAUSED</Text>
@@ -813,7 +813,7 @@
 			<Commandbutton Name="FindGroupMembers" Template="VG.GreyCommandButton">
 				<visible>1</visible>
 				<X>45%</X>
-				<Y>90.5%</Y>
+				<Y>91%</Y>
 				<Width>25%</Width>
 				<Height>23</Height>
 				<Text> Update Group</Text>
@@ -822,16 +822,49 @@
 					;Script[BM1].Variable[doFindGroupMembers]:Set[TRUE]
 				</OnLeftClick>
 			</Commandbutton>
+			<Commandbutton Name="Working" Template="VG.GreyCommandButton">
+				<visible>0</visible>
+				<X>72%</X>
+				<Y>75%</Y>
+				<Width>25%</Width>
+				<Height>23</Height>
+				<Text>Working</Text>
+				<OnLeftClick>
+					Script[BM1]:QueueCommand[call BuffArea]
+					;Script[BM1].Variable[doBuffArea]:Set[TRUE]
+				</OnLeftClick>
+			</Commandbutton>
+			<Commandbutton Name="Symbiotes" Template="VG.GreyCommandButton">
+				<visible>1</visible>
+				<X>72%</X>
+				<Y>83%</Y>
+				<Width>25%</Width>
+				<Height>23</Height>
+				<Text>Symbiotes</Text>
+				<OnRender>
+					if ${Script[Symbiotes](exists)}
+					{
+						This:SetAlpha[0.5]
+					}
+					else
+					{
+						This:SetAlpha[1]
+					}
+				</OnRender>
+				<OnLeftClick>
+					Script[BM1]:QueueCommand[call Symbiotes]
+				</OnLeftClick>
+				<Data>${Script[Symbiotes](exists)}</Data>
+			</Commandbutton>
 			<Commandbutton Name="BuffArea" Template="VG.GreyCommandButton">
 				<visible>1</visible>
 				<X>72%</X>
-				<Y>90.5%</Y>
+				<Y>91%</Y>
 				<Width>25%</Width>
 				<Height>23</Height>
 				<Text>Buff Area</Text>
 				<OnLeftClick>
 					Script[BM1]:QueueCommand[call BuffArea]
-					;Script[BM1].Variable[doBuffArea]:Set[TRUE]
 				</OnLeftClick>
 			</Commandbutton>
 		</Children>

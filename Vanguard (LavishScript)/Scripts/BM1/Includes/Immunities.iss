@@ -31,6 +31,12 @@ atom(script) Immunities()
 		;-------------------------------------------
 		switch "${Me.Target.Name}"
 		{
+			case Sacrificial Beast
+				doArcane:Set[FALSE]
+				doPhysical:Set[FALSE]
+				OkayToAttack:Set[FALSE]
+				return
+
 			case Corrupted Essence
 				doArcane:Set[FALSE]
 				doPhysical:Set[FALSE]
