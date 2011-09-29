@@ -1,3 +1,5 @@
+variable int TotalHarvest = 20
+
 variable int QJ = ${Me.Inventory[Quickening Symbiote].Quantity}
 variable int VIT = ${Me.Inventory[Vitalizing Symbiote].Quantity}
 variable int FRENZY = ${Me.Inventory[Frenzied Symbiote].Quantity}
@@ -6,11 +8,9 @@ variable int TwitchingMuscle = ${Me.Inventory[Twitching Muscle].Quantity}
 variable int QuiveringBrain = ${Me.Inventory[Quivering Brain].Quantity}
 variable int StillBeatingheart = ${Me.Inventory[Still Beating Heart].Quantity}
 
-
-
-function main(int Symbiotes=5)
+function main()
 {
-	call StartRoutine ${Symbiotes}
+	call StartRoutine ${TotalHarvest}
 	
 	vgecho QJ=${QJ}
 	waitframe
@@ -27,7 +27,7 @@ function main(int Symbiotes=5)
 	vgecho StillBeatingheart=${StillBeatingheart}
 	waitframe
 
-	
+/*	
 	;; the following will not assemble correctly.  It will repeat the previous one regardless of added ingredients
 
 	if ${VIT}<=50 && ${VialOfBlood}>2
@@ -101,7 +101,7 @@ function main(int Symbiotes=5)
 		waitframe
 	}
 		
-	
+*/	
 	
 }
 
@@ -110,7 +110,10 @@ function StartRoutine(int Symbiotes=5)
 	Pawn[ExactName,Sacrificial Beast]:Target
 	wait 5
 	
-	if !${Me.Target.Name.Equal[Sacrificial Beast]}
+	Pawn[ExactName,Great Statue of Arakorr]:Target
+	wait 5
+	
+	if !${Me.Target.Name.Equal[Sacrificial Beast]} && !${Me.Target.Name.Equal[Great statue of Arakorr]}
 	{
 		return
 	}
@@ -120,7 +123,7 @@ function StartRoutine(int Symbiotes=5)
 	;; Loop this endef
 	while 1
 	{
-		if !${Me.Target.Name.Equal[Sacrificial Beast]} || ${Me.Target.IsDead} || ${Me.Target.Type.Equal[Corpse]}
+		if (!${Me.Target.Name.Equal[Sacrificial Beast]} && !${Me.Target.Name.Equal[Great statue of Arakorr]}) || ${Me.Target.IsDead} || ${Me.Target.Type.Equal[Corpse]}
 		{
 			return
 		}
@@ -132,7 +135,7 @@ function StartRoutine(int Symbiotes=5)
 		}
 
 		;; Start our harvesting
-		if ${Me.Target.Name.Equal[Sacrificial Beast]} && ${Me.TargetHealth}>0
+		if (${Me.Target.Name.Equal[Sacrificial Beast]} || ${Me.Target.Name.Equal[Great statue of Arakorr]}) && ${Me.TargetHealth}>0
 		{
 			;; Cast appropriate ability
 			call Harvest ${Symbiotes}
