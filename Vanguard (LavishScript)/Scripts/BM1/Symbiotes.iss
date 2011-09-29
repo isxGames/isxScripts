@@ -12,20 +12,6 @@ function main()
 {
 	call StartRoutine ${TotalHarvest}
 	
-	vgecho QJ=${QJ}
-	waitframe
-	vgecho VIT=${VIT}
-	waitframe
-	vgecho FRENZY=${FRENZY}
-	waitframe
-	vgecho VialOfBlood=${VialOfBlood}
-	waitframe
-	vgecho TwitchingMuscle=${TwitchingMuscle}
-	waitframe
-	vgecho QuiveringBrain=${QuiveringBrain}
-	waitframe
-	vgecho StillBeatingheart=${StillBeatingheart}
-	waitframe
 
 /*	
 	;; the following will not assemble correctly.  It will repeat the previous one regardless of added ingredients
@@ -118,7 +104,7 @@ function StartRoutine(int Symbiotes=5)
 		return
 	}
 	
-	face ${Me.Target.Name}
+	face "${Me.Target.Name}"
 
 	;; Loop this endef
 	while 1
@@ -262,6 +248,13 @@ function Harvest(int Symbiotes)
 
 function atexit()
 {
+	vgecho QJ=${QJ}
+	vgecho VIT=${VIT}
+	vgecho FRENZY=${FRENZY}
+	vgecho VialOfBlood=${VialOfBlood}
+	vgecho TwitchingMuscle=${TwitchingMuscle}
+	vgecho QuiveringBrain=${QuiveringBrain}
+	vgecho StillBeatingheart=${StillBeatingheart}
 }
 
 

@@ -189,6 +189,12 @@ function atexit()
 	{
 		endscript Loot
 	}
+
+	;; Unload Symbiote routine
+	if ${Script[Symbiotes](exists)}
+	{
+		endscript Symbiotes
+	}
 	
 	;; Say we are done
 	EchoIt "Stopped PSI Script"
