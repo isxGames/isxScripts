@@ -10,9 +10,9 @@ objectdef obj_Face
 	variable int AngleDiff
 	variable int AngleDiffAbs
 
-;===================================================
-;===             User Routines                  ====
-;===================================================
+	;===================================================
+	;===             User Routines                  ====
+	;===================================================
 
 	;-----------------------------------------------
 	; Example:  Face:Pawn[${Me.DTarget.ID},FALSE]
@@ -47,11 +47,11 @@ objectdef obj_Face
 	{
 		This.Facing:Set[FALSE]
 	}
-	
-	
-;===================================================
-;===          DO NOT USE THESE ROUTINES         ====
-;===================================================
+
+
+	;===================================================
+	;===          DO NOT USE THESE ROUTINES         ====
+	;===================================================
 	method Initialize()
 	{
 		Event[OnFrame]:AttachAtom[This:GradualFace]
@@ -84,8 +84,8 @@ objectdef obj_Face
 		}
 
 		;echo FPS=${VG.FPS} Distance=${Math.Distance[${Me.X}, ${Me.Y}, ${Me.Z}, ${This.DestX}, ${This.DestY}, ${This.DestZ}]}
-		
-		
+
+
 		;; When we are "close enough" to facing the point while at the point.
 		;; This grows the further away you are, and shrinks as you get closer.
 		variable int Precision = ${Math.Rand[3]:Inc[5]}
@@ -108,8 +108,8 @@ objectdef obj_Face
 		}
 
 		variable int FPS = ${VG.FPS}
-		
-		
+
+
 		if (${DistanceToTarget} < 125)
 		{
 			; do 100% of the turn
@@ -151,7 +151,7 @@ objectdef obj_Face
 			; do 10% of the turn
 			ChangeAmount:Set[.10]
 		}
-		
+
 		if ${VG.FPS}>=20 && ${VG.FPS}<=30
 		{
 			ChangeAmount:Inc[.3]
@@ -170,50 +170,50 @@ objectdef obj_Face
 			face ${This.RequiredHeading}
 			return
 		}
-		
+
 		if ${ChangeAmount}>1
 		{
 			;; face this angle now
 			face ${This.RequiredHeading}
 			return
 		}
-		
-		
-		;vgecho "TargetDistance=${DistanceToTarget}, ChangeAmount=${ChangeAmount}"
-		
 
-		
-/*		
+
+		;vgecho "TargetDistance=${DistanceToTarget}, ChangeAmount=${ChangeAmount}"
+
+
+
+		/*
 		if (${DistanceToTarget} < 8) && (${This.AngleDiff} < 30)
 		{
-			; If we're really close to the location, and our angle isn't excessive, do between 90 and 100% of it
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[10]:Inc[90]} / 100.0]}]
-			echo 1-ChangeAmount=${ChangeAmount}
+		; If we're really close to the location, and our angle isn't excessive, do between 90 and 100% of it
+		Precision:Set[${Math.Rand[3]:Inc[4]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[10]:Inc[90]} / 100.0]}]
+		echo 1-ChangeAmount=${ChangeAmount}
 		}
 		elseif (${DistanceToTarget} < 10)
 		{
-			; If we're really close to the location, do 50-65% of it.  This avoids endlessly circling the target.
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[16]:Inc[50]} / 100.0]}]
-			echo 2-ChangeAmount=${ChangeAmount}
+		; If we're really close to the location, do 50-65% of it.  This avoids endlessly circling the target.
+		Precision:Set[${Math.Rand[3]:Inc[4]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[16]:Inc[50]} / 100.0]}]
+		echo 2-ChangeAmount=${ChangeAmount}
 		}
 		elseif (${DistanceToTarget} < 25) && (${This.AngleDiff} < 40)
 		{
-			; If we're really close to the location, and our angle isn't excessive, do 60-70% of it
-			Precision:Set[${Math.Rand[3]:Inc[4]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[60]} / 100.0]}]
-			echo 3-ChangeAmount=${ChangeAmount}
+		; If we're really close to the location, and our angle isn't excessive, do 60-70% of it
+		Precision:Set[${Math.Rand[3]:Inc[4]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[60]} / 100.0]}]
+		echo 3-ChangeAmount=${ChangeAmount}
 		}
 		elseif (${DistanceToTarget} > 40) && (${This.AngleDiff} > 100)
 		{
-			; If we're farther away, and we have a large angle, do 30-40% of it
-			Precision:Set[${Math.Rand[10]:Inc[10]}]
-			ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[30]} / 100.0]}]
-			echo 4-ChangeAmount=${ChangeAmount}
+		; If we're farther away, and we have a large angle, do 30-40% of it
+		Precision:Set[${Math.Rand[10]:Inc[10]}]
+		ChangeAmount:Set[${Math.Calc[${Math.Rand[11]:Inc[30]} / 100.0]}]
+		echo 4-ChangeAmount=${ChangeAmount}
 		}
-*/
-		
+		*/
+
 		;echo DistanceToTarget=${DistanceToTarget}, AngleDiff=${This.AngleDiff}, Precision=${Precision}, ChangeAmount=${ChangeAmount}
 		NewHeading:Set[${Math.Calc[${This.AngleDiff} * ${ChangeAmount}].Round}]
 
@@ -264,3 +264,5 @@ objectdef obj_Face
 		This.AngleDiffAbs:Set[${Math.Abs[${This.AngleDiff}]}]
 	}
 }
+
+
