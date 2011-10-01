@@ -134,7 +134,7 @@ function main()
 				call Harvest
 				call Loot
 				call Check_Health
-				call SelfBuff
+				;call SelfBuff
 				call Cannibalize
 				NextDelayCheck:Set[${Script.RunningTime}]
 			}
@@ -722,8 +722,6 @@ function HealingForm()
 }
 
 
-
-
 ;================================================
 function Cannibalize()
 {
@@ -877,6 +875,7 @@ function SelfBuff()
 		wait 20
 		return
 	}
+	call buffPlayer "${Me.FName}"
 }
 
 ;================================================
@@ -919,11 +918,41 @@ function buffGroup()
 ;================================================
 function buffPlayer(string player2buff)
 {
-	vgecho Buffing: ${player2buff}
-	if ${Pawn[name,${player2buff}](exists)}
+	if ${Pawn[name,${player2buff}](exists)} && ${Pawn[name,${player2buff}].Distance}<25
 	{
+		vgecho Buffing: ${player2buff}
 		Pawn[${player2buff}]:Target
 		wait 5
+		
+		;; if this all-in-one buff exists then we only want to cast these
+		if ${Me.Ability[SpiritBoutifulBlessing](exists)}
+		{
+			;; 1st cast: Spirit Boutiful Blessing
+			while !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			Me.Ability[${SpiritBoutifulBlessing}]:Use
+			call MeCasting
+			
+			;; 2nd cast: Favor of the Flame
+			while !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			Me.Ability[${FavorOfTheFlame}]:Use
+			call MeCasting
+			
+			;; 3rd cast: Acuity
+			while !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			Me.Ability[${Acuity}]:Use
+			call MeCasting
+			return
+		}
+		
 		nextBuff:Set[1]
 		do
 		{
@@ -933,7 +962,7 @@ function buffPlayer(string player2buff)
 				{
 					waitframe
 				}
-				while !${Me.Ability[${Buff[${nextBuff}]}].IsReady}
+				while !${Me.Ability["Torch"].IsReady}
 				Me.Ability[${Buff[${nextBuff}]}]:Use
 				call MeCasting
 			}
@@ -945,9 +974,9 @@ function buffPlayer(string player2buff)
 ;================================================
 function shortbuffGroup(string shortbuff)
 {
-	vgecho Buff: ${shortbuff}
 	if ${Me.Ability[${shortbuff}](exists)}
 	{
+		vgecho Buff: ${shortbuff}
 		call shortbuffPlayer "${shortbuff}" "${Me.FName}"
 		if ${Me.IsGrouped}
 		{
@@ -971,7 +1000,7 @@ function shortbuffPlayer(string shortbuff2, string player2buff)
 	vgecho Buff: ${shortbuff2}, Player=${player2buff}
 	if ${Me.Ability[${shortbuff2}](exists)}
 	{
-		if ${Pawn[name,${player2buff}](exists)}
+		if ${Pawn[name,${player2buff}](exists)} && ${Pawn[name,${player2buff}].Distance}<25
 		{
 			Pawn[${player2buff}]:Target
 			wait 5
@@ -979,7 +1008,7 @@ function shortbuffPlayer(string shortbuff2, string player2buff)
 			{
 				waitframe
 			}
-			while !${Me.Ability[${shortbuff2}].IsReady}
+			while !${Me.Ability["Torch"].IsReady}
 			Me.Ability[${shortbuff2}]:Use
 			call MeCasting
 		}
@@ -1018,7 +1047,7 @@ function stonePlayer(string player2buff)
 			{
 				waitframe
 			}
-			while !${Me.Ability[${RezStone}].IsReady}
+			while !${Me.Ability["Torch"].IsReady}
 			Me.Ability[${RezStone}]:Use
 			call MeCasting
 		}
@@ -1041,7 +1070,7 @@ function rezPlayer(string player2buff)
 				{
 					waitframe
 				}
-				while !${Me.Ability[${CombatRez}].IsReady}
+				while !${Me.Ability["Torch"].IsReady}
 				Me.Ability[${CombatRez}]:Use
 				call MeCasting
 			}
@@ -1052,7 +1081,7 @@ function rezPlayer(string player2buff)
 				{
 					waitframe
 				}
-				while !${Me.Ability[${Rez}].IsReady}
+				while !${Me.Ability["Torch"].IsReady}
 				Me.Ability[${Rez}]:Use
 				call MeCasting
 			}
