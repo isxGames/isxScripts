@@ -1,7 +1,7 @@
 ;=================================================
 function SetVariables()
 {
-	echo "Creating Variables..."
+	EchoIt "Creating Variables..."
 	declare AdvFinisher1 string script
 	declare AdvFinisher2 string script
 	declare AdvFinisher3 string script
@@ -97,12 +97,12 @@ function SetVariables()
 	declare SummonPlayer string script
 	declare Taunt1 string script
 	declare WarpMove string script
-;  Class specific variables
+	;  Class specific variables
 	declare WolfPack string script
 	declare BerryHeal1 string script
 	declare BerryRegen1 string script
 	declare DRKDCMax string script
 	declare DRKDCIncrease string script
 	declare DRKWoD string script
-	echo "Done creating variables."
 }
+

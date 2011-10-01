@@ -7,7 +7,7 @@
 		<Height>330</Height>
 		<Client Template="VG.Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>VGShaman - TANK: ${Script[VGShaman].Variable[Tank]} STATUS: ${Script[VGShaman].Variable[PausedText]}</Title>
+		<Title>   VGShaman - TANK: ${Script[VGShaman].Variable[Tank]} STATUS: ${Script[VGShaman].Variable[PausedText]}</Title>
 		<TitleBar Template="VG.Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
@@ -273,14 +273,14 @@
 							<Y>140</Y>
 							<Width>80</Width> 
 							<Height>25</Height>
-							<Text>Little Girls</Text>
+							<Text>Slow/Debuffs</Text>
 							<OnLeftClick>
-								Script[VGShaman].Variable[doSlow]:Set[FALSE]
-								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doSlow]:Set[TRUE]
+								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:SetChecked
 								Script[VGShaman].Variable[doDots]:Set[FALSE]
 								UIElement[DoDots@Main@VGShaman Main@VGShaman]:UnsetChecked
-								Script[VGShaman].Variable[doDebuff]:Set[FALSE]
-								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDebuff]:Set[TRUE]
+								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:SetChecked
 								Script[VGShaman].Variable[doNuke]:Set[FALSE]
 								UIElement[DoNuke@Main@VGShaman Main@VGShaman]:UnsetChecked
 								Script[VGShaman].Variable[doMelee]:Set[FALSE]
@@ -290,7 +290,7 @@
 								Script[VGShaman].Variable[HealSmallPct]:Set[40]
 								Script[VGShaman].Variable[HealBigPct]:Set[50]
 								Script[VGShaman].Variable[RestHealPct]:Set[55]
-								Script[VGShaman].Variable[EngagePct]:Set[95]
+								Script[VGShaman].Variable[EngagePct]:Set[98]
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton Name='Quick2' Template='VG.GreenCommandButton'>
@@ -299,12 +299,12 @@
 							<Y>140</Y>
 							<Width>80</Width> 
 							<Height>25</Height>
-							<Text>Hippies</Text>
+							<Text>Melee/Dots</Text>
 							<OnLeftClick>
 								Script[VGShaman].Variable[doSlow]:Set[FALSE]
 								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:UnsetChecked
-								Script[VGShaman].Variable[doDots]:Set[FALSE]
-								UIElement[DoDots@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDots]:Set[TRUE]
+								UIElement[DoDots@Main@VGShaman Main@VGShaman]:SetChecked
 								Script[VGShaman].Variable[doDebuff]:Set[FALSE]
 								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:UnsetChecked
 								Script[VGShaman].Variable[doNuke]:Set[FALSE]
@@ -325,16 +325,16 @@
 							<Y>140</Y>
 							<Width>80</Width> 
 							<Height>25</Height>
-							<Text>Mean SOBs</Text>
+							<Text>Burn</Text>
 							<OnLeftClick>
-								Script[VGShaman].Variable[doSlow]:Set[TRUE]
-								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:SetChecked
-								Script[VGShaman].Variable[doDots]:Set[FALSE]
-								UIElement[DoDots@Main@VGShaman Main@VGShaman]:UnsetChecked
-								Script[VGShaman].Variable[doDebuff]:Set[TRUE]
-								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:SetChecked
-								Script[VGShaman].Variable[doNuke]:Set[FALSE]
-								UIElement[DoNuke@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doSlow]:Set[FALSE]
+								UIElement[DoSlow@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doDots]:Set[TRUE]
+								UIElement[DoDots@Main@VGShaman Main@VGShaman]:SetChecked
+								Script[VGShaman].Variable[doDebuff]:Set[FALSE]
+								UIElement[DoDebuff@Main@VGShaman Main@VGShaman]:UnsetChecked
+								Script[VGShaman].Variable[doNuke]:Set[TRUE]
+								UIElement[DoNuke@Main@VGShaman Main@VGShaman]:SetChecked
 								Script[VGShaman].Variable[doMelee]:Set[TRUE]
 								UIElement[DoMelee@Main@VGShaman Main@VGShaman]:SetChecked
 								Script[VGShaman].Variable[MeHealPct]:Set[65]

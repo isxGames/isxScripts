@@ -29,25 +29,25 @@ function:bool MoveCloser(float X, float Y, int Distance=3)
 	; Return if we don't want to move
 	;-------------------------------------------
 	if !${doMove}
-		return TRUE
+	return TRUE
 
 	;-------------------------------------------
 	; Convert our distance not less than 3m
 	;-------------------------------------------
 	Distance:Set[${Math.Calc[${Distance}*100].Int}]
 	if ${Distance}<300
-		Distance:Set[300]
+	Distance:Set[300]
 
 	;if ${Me.Target(exists)}
 	;	CurrentAction:Set[MoveCloser - (${Distance}) (${Math.Distance[${Me.X},${Me.Y},${X},${Y}]})]
-		
+
 	;-------------------------------------------
 	; Set our bailout timer to 10 sec "yah, kinda short timer"
 	;-------------------------------------------
 	variable int bailOut
 	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(10000)]}]
 	doBump:Set[FALSE]
-	
+
 	;-------------------------------------------
 	; Move if we are over our distance "looks natural if we move and turn at the same time"
 	;-------------------------------------------
@@ -184,8 +184,10 @@ atom Bump(string aObstacleActorName, float fX_Offset, float fY_Offset, float fZ_
 		Script[VG-SORC]:QueueCommand[call OpenDoor]
 		return
 	}
-	
+
 	;; Seems to jump alot but it works!
 	doJump:Set[TRUE]
 }
+
+
 

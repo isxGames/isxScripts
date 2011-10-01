@@ -1,15 +1,15 @@
 /*
- * Shaman Heal Bot Script
- * Written By: Zeek
- *
- * Special Thanks To: 
- *	Amadeus & Lax: Withtout which 
- *    this script would Not be possible.
- * 	Dontdoit: Assistance with code/testing and ui.
- *
- * Zandros: Patched to work with with latest ISXVG
- *    with some minor improvements
- */
+* Shaman Heal Bot Script
+* Written By: Zeek
+*
+* Special Thanks To:
+*	Amadeus & Lax: Withtout which
+*    this script would Not be possible.
+* 	Dontdoit: Assistance with code/testing and ui.
+*
+* Zandros: Patched to work with with latest ISXVG
+*    with some minor improvements
+*/
 #include ./VGShaman/ZTG/includeVariables.iss
 #include ./VGShaman/ZTG/includeSHM.iss
 #include ./VGShaman/Includes/moveCloser.iss
@@ -54,16 +54,25 @@ variable int GBCount
 variable int Hurt
 variable int Lowest
 variable int nextBuff
-variable int version = 20100831.01
+variable string CurrentChunk
+variable bool doEcho = TRUE
+variable int NextDelayCheck = ${Script.RunningTime}
+variable int version = 20110903.01
+
 ;------------------------------------------------
 function main()
 {
 	ext -require isxvg
-	do
+	wait 100 ${ISXVG.IsReady}
+	if !${ISXVG.IsReady}
 	{
-		waitframe
+		echo "Unable to load ISXVG, exiting script"
+		endscript VGShaman
 	}
-	while !${ISXVG.IsReady}
+	EchoIt "Started VGShaman Script"
+	wait 30 ${Me.Chunk(exists)}
+	CurrentChunk:Set[${Me.Chunk}]
+	
 	
 	Event[VG_onGroupMemberBooted]:AttachAtom[VG_Group_Change]
 	Event[VG_onGroupMemberAdded]:AttachAtom[VG_Group_Change]
@@ -72,78 +81,161 @@ function main()
 	Event[VG_onGroupDisbanded]:AttachAtom[VG_Group_Change]
 	Event[VG_onGroupBooted]:AttachAtom[VG_Group_Change]
 	Event[VG_onGroupMemberCountChange]:AttachAtom[VG_Group_Change]
-	
+
 	;; This event is added and used by MoveCloser
 	Event[VG_onHitObstacle]:AttachAtom[Bump]
 
 	call SetVariables
 	call SetAbilities
+	
+	EchoIt "Prepping UI..."
+
 	Tank:Set[${Me.DTarget.Name}]
 	TankID:Set[${Me.DTarget.ID}]
 	FollowT:Set[${Tank}]
 	FollowID:Set[${TankID}]
-	wait 10
 
 	; Load up the UI panel
 	ui -reload "${UISkin}"
 	ui -reload -skin VGSkin "${UIFile}"
-	wait 20
+	wait 5
 	call SetBuffButtons
+	
+	EchoIt "Ready"
 
 	do
 	{
-		if "${Paused}"
+		;; we are useless if we are stunned
+		if ${Me.ToPawn.IsStunned}
 		{
 			do
 			{
-				if ${QueuedCommands}
-					ExecuteQueued
-				wait 1
+				waitframe
 			}
-			while "${Paused} && ${isRunning}"
+			while ${Me.ToPawn.IsStunned}
 		}
-		if ${isRunning}
+		
+		;; check if we need to stop all melee attacks
+		call CheckMeleeAttacks
+
+		;; handle all queued commands
+		if ${QueuedCommands}
 		{
-			if ${Me.ToPawn.IsStunned}
+			ExecuteQueued
+		}
+
+		;; perform this if we are not paused
+		if !${Paused}
+		{
+			;; check to see if we need to move once every 1/2 second, saves FPS
+			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
 			{
-				do
-				{
-					waitframe
-				}
-				while ${Me.ToPawn.IsStunned}
-			}
-			if ${doFollow}
-			{
-				doMove:Set[TRUE]
 				call Check_Dist
-			}
-			else
-			{
-				doMove:Set[FALSE]
-			}
-			call SelfBuff
-			call Check_Health
-			call Fight
-			call Harvest
-			call Cannibalize
-			if ${doLoot} && ${Me.Target.Type.Equal[Corpse]}
-			{
+				call Harvest
 				call Loot
+				call Check_Health
+				call SelfBuff
+				call Cannibalize
+				NextDelayCheck:Set[${Script.RunningTime}]
 			}
-			if ${QueuedCommands}
-				ExecuteQueued
+			
+			;; go attack the target if we have one
+			call Fight
 		}
 	}
 	while ${isRunning}
 }
 
 ;================================================
+function:bool CheckMeleeAttacks()
+{
+	variable bool StopAttacks = FALSE
+	if ${Me.Target(exists)} && ${Me.Target.Distance}<30 && ${Me.Target.HaveLineOfSightTo} && !${Me.Target.IsDead}
+	{
+		;-------------------------------------------
+		; FURIOUS - we do not want to plow through Furious with melee attacks (melee)
+		;-------------------------------------------
+		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${isFurious}
+		{
+			StopAttacks:Set[TRUE]
+		}
+		;-------------------------------------------
+		; TARGETBUFFS - we do not want to attack during these (melee/spells)
+		;-------------------------------------------
+		if ${Me.TargetBuff[Aura of Death](exists)} || ${Me.TargetBuff[Frightful Aura](exists)}
+		{
+			StopAttacks:Set[TRUE]
+		}
+		elseif ${Me.TargetBuff[Major Enchantment: Ulvari Flame](exists)} || ${Me.Effect[Mark of Verbs](exists)}
+		{
+			StopAttacks:Set[TRUE]
+		}
+		elseif ${Me.TargetBuff[Major Disease: Fire Advocate](exists)} || ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+		{
+			StopAttacks:Set[TRUE]
+		}
+		elseif ${Me.Target.Type.Equal[Group Member]} || ${Me.Target.Type.Equal[Pet]}
+		{
+			StopAttacks:Set[TRUE]
+		}
+		elseif ${Me.Target.Distance}>5
+		{
+			StopAttacks:Set[TRUE]
+		}
+	}
+	if !${Me.Target(exists)}
+	{
+		StopAttacks:Set[TRUE]
+	}
+	
+	if ${StopAttacks}
+	{
+		call MeleeAttackOff
+		return TRUE
+	}
+	return FALSE
+}
+
+;================================================
+function MeleeAttackOff()
+{
+	if ${GV[bool,bIsAutoAttacking]}
+	{
+		;; Turn off auto-attack if target is not a resource
+		if !${Me.Target.Type.Equal[Resource]}
+		{
+			Me.Ability[Auto Attack]:Use
+			wait 10 !${GV[bool,bIsAutoAttacking]}
+		}
+	}
+}
+
+;================================================
 function Check_Dist()
 {
-	if ${Pawn[${FollowT}].Distance} > ${FollowDist}
+	if ${doFollow}
 	{
-		call MoveCloser ${Pawn[${FollowT}].X} ${Pawn[${FollowT}].Y} ${FollowDist}
-		;call movetoobject ${Pawn[${FollowT}].ID} ${FollowDist} 0
+		if ${Pawn[name,${FollowT}](exists)}
+		{
+			;; did target move out of rang?
+			if ${Pawn[name,${FollowT}].Distance}>=${FollowDist} && !${Paused}
+			{
+				variable bool AreWeMoving = FALSE
+				;; start moving until target is within range
+				while !${Paused} && ${Pawn[name,${FollowT}](exists)} && ${Pawn[name,${FollowT}].Distance}>=${FollowDist} && ${Pawn[name,${FollowT}].Distance}<45
+				{
+					Pawn[name,${FollowT}]:Face
+					VG:ExecBinding[moveforward]
+					AreWeMoving:Set[TRUE]
+					wait .5
+				}
+				;; if we moved then we want to stop moving
+				if ${AreWeMoving}
+				{
+					VG:ExecBinding[moveforward,release]
+				}
+			}
+		}
 	}
 }
 
@@ -154,14 +246,14 @@ function Check_Health()
 	{
 		Pawn[id,${TankID}]:Target
 	}
-	if "${Me.HealthPct}<${MeHealPct}"
+	if "!${Paused} && ${Me.HealthPct}<${MeHealPct}"
 	{
 		Pawn[me]:Target
 		Me.Ability[${HealSmall}]:Use
 		Pawn[id,${TankID}]:Target
 		call MeCasting
 	}
-	if "${Me.DTargetHealth}==0 && !${Pawn[id,${TankID}].IsDead}"
+	if "!${Paused} && ${Me.DTargetHealth}==0 && !${Pawn[id,${TankID}].IsDead}"
 	{
 		Pawn[me]:Target
 		wait 5
@@ -169,25 +261,25 @@ function Check_Health()
 		wait 10
 		return
 	}
-	if "${Me.DTargetHealth}<${HealEmgPct} && !${Me.IsCasting} && ${Me.Ability[${HealEmg}].IsReady} && ${Me.Energy}>${Me.Ability[${HealEmg}].EnergyCost}"
+	if "!${Paused} && ${Me.DTargetHealth}<${HealEmgPct} && !${Me.IsCasting} && ${Me.Ability[${HealEmg}].IsReady} && ${Me.Energy}>${Me.Ability[${HealEmg}].EnergyCost}"
 	{
 		Me.Ability[${HealEmg}]:Use
 		call MeCasting
 		return
 	}
-	if "${Me.DTargetHealth}<${HealSmallPct} && !${Me.IsCasting} && ${Me.Ability[${HealSmall}].IsReady} && ${Me.Energy}>${Me.Ability[${HealSmall}].EnergyCost}"
+	if "!${Paused} && ${Me.DTargetHealth}<${HealSmallPct} && !${Me.IsCasting} && ${Me.Ability[${HealSmall}].IsReady} && ${Me.Energy}>${Me.Ability[${HealSmall}].EnergyCost}"
 	{
 		Me.Ability[${HealSmall}]:Use
 		call MeCasting
 		return
 	}
-	if "${Me.DTargetHealth}<${HealBigPct} && !${Me.IsCasting} && ${Me.Ability[${HealBig}].IsReady} && ${Me.Energy}>${Me.Ability[${HealBig}].EnergyCost}"
+	if "!${Paused} && ${Me.DTargetHealth}<${HealBigPct} && !${Me.IsCasting} && ${Me.Ability[${HealBig}].IsReady} && ${Me.Energy}>${Me.Ability[${HealBig}].EnergyCost}"
 	{
 		Me.Ability[${HealBig}]:Use
 		call MeCasting
 		return
 	}
-	if "${Me.DTargetHealth}<${HealReactPct} && !${Me.IsCasting} && ${Me.Ability[${HealReactive}].IsReady} && !${reactiveInUse}"
+	if "!${Paused} && ${Me.DTargetHealth}<${HealReactPct} && !${Me.IsCasting} && ${Me.Ability[${HealReactive}].IsReady} && !${reactiveInUse}"
 	{
 		reactiveInUse:Set[TRUE]
 		Execute TimedCommand 450 Script[VGShaman].Variable[reactiveInUse]:Set[FALSE]
@@ -199,29 +291,29 @@ function Check_Health()
 	{
 		Lowest:Set[1]
 		Hurt:Set[0]
-	  GMember:Set[1]
-	  do
-	  {
-	    if "${Group[${GMember}].ID(exists)} && ${Group[${GMember}].Distance}<=25 && ${Group[${GMember}].Health}<${RestHealPct} && ${Group[${GMember}].Health}>0"
-	    {
-	    	if "${Group[${GMember}].Health}<=${If["${Group[${Lowest}].Health}",${Group[${Lowest}].Health},100]}"
-	    	{
-	    		Lowest:Set[${GMember}]
-	    		Hurt:Set[1]
-	    	}
-	    }
-	  }
-	  while "${GMember:Inc}<=5"
-	  if "${Hurt}"
-	  {
-	  	Pawn[id,${Group[${Lowest}].ID}]:Target
-	  	wait 5
+		GMember:Set[1]
+		do
+		{
+			if "${Group[${GMember}].ID(exists)} && ${Group[${GMember}].Distance}<=25 && ${Group[${GMember}].Health}<${RestHealPct} && ${Group[${GMember}].Health}>0"
+			{
+				if "${Group[${GMember}].Health}<=${If["${Group[${Lowest}].Health}",${Group[${Lowest}].Health},100]}"
+				{
+					Lowest:Set[${GMember}]
+					Hurt:Set[1]
+				}
+			}
+		}
+		while "${GMember:Inc}<=5"
+		if "!${Paused} && ${Hurt}"
+		{
+			Pawn[id,${Group[${Lowest}].ID}]:Target
+			wait 5
 			Me.Ability[${HealSmall}]:Use
 			call MeCasting
 			return
-	  }
+		}
 	}
-	if "${Me.HavePet} && ${Me.Pet.Health}<=35 && ${Me.Ability[${HealPet1}].IsReady} && ${Me.EnergyPct}>20"
+	if "!${Paused} && ${Me.HavePet} && ${Me.Pet.Health}<=35 && ${Me.Ability[${HealPet1}].IsReady} && ${Me.EnergyPct}>20"
 	{
 		Me.Ability[${HealPet1}]:Use
 		call MeCasting
@@ -231,23 +323,42 @@ function Check_Health()
 ;===========================================================================
 function Loot()
 {
-	if "!${Me.Target(exists)}" 
+	if ${doLoot} && !${Paused} && ${Me.Target(exists)} && ${Me.Target.IsDead} && ${Me.Target.Type.Equal[Corpse]}
 	{
-		return
-	}
-	if "${Me.Target.Type.Equal[Corpse]}"
-	{
-		if "!${Me.IsLooting}"
+		;; if we are not looting then start looting
+		if !${Me.IsLooting}
 		{
-			Me.Target:LootAll
-			do
-			{
-				waitframe
-			}
-			while "${Me.IsLooting}"
-			wait 5
-			VGExecute "/cleartargets"
+			Loot:BeginLooting
+			wait 10 ${Loot.NumItems}
 		}
+		
+		;; start looting 1 item at a time, gaurantee to get all items
+		if ${Me.IsLooting}
+		{
+			if ${Loot.NumItems}
+			{
+				variable int i
+				for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
+				{
+					Loot.Item[${i}]:Loot
+				}
+			}
+			else
+			{
+				Loot:LootAll
+			}
+		}
+		
+		;; this will actually stop everything until you deal with the loot, need a timer of some form to break out
+		do
+		{
+			waitframe
+		}
+		while ${Me.IsLooting}
+		
+		;; clear target
+		VGExecute "/cleartargets"
+		wait 5
 	}
 }
 
@@ -263,12 +374,14 @@ function MeCasting()
 			;face ${Me.Target.X} ${Me.Target.Y}
 		}
 		waitframe
+		call CheckMeleeAttacks
 	}
 	while "${Me.IsCasting}"
 	wait 5
 	do
 	{
 		wait 1
+		call CheckMeleeAttacks
 	}
 	while "${VG.InGlobalRecovery}"
 	waitframe
@@ -277,7 +390,7 @@ function MeCasting()
 ;================================================
 function Harvest()
 {
-	if "${doAutoHarvest} && (${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<5 && ${Me.ToPawn.CombatState}==0"
+	if "!${Paused} && ${doAutoHarvest} && (${Me.Target.Type.Equal[Resource]} || ${Me.Target.IsHarvestable}) && ${Me.Target.Distance}<5 && ${Me.ToPawn.CombatState}==0"
 	{
 		VGExecute /autoattack
 		wait 10
@@ -287,173 +400,338 @@ function Harvest()
 ;================================================
 function Fight()
 {
-	if "${Pawn[${Tank}].Name(exists)} && ${Pawn[${Tank}].Distance}<=40"
+	if "!${Paused} && ${Pawn[${Tank}].Name(exists)} && ${Pawn[${Tank}].Distance}<=40"
 	{
 		VGExecute /assist ${Tank}
 	}
-	if "!${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.TargetHealth}==0 || (${Me.IsGrouped} && ${Me.Target.Owner(exists)} && !${Me.Target.OwnedByMe}) || !${Me.Target.HaveLineOfSightTo}" 
+	if "${Paused} || !${Me.Target(exists)} || ${Me.Target.Type.Equal[Corpse]} || ${Me.TargetHealth}==0 || (${Me.IsGrouped} && ${Me.Target.Owner(exists)} && !${Me.Target.OwnedByMe}) || !${Me.Target.HaveLineOfSightTo}"
 	{
 		return
 	}
-	if "(${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<${EngagePct} && ${Me.DTarget.CombatState}==1"
+	if "!${Paused} && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<${EngagePct} && ${Me.DTarget.CombatState}==1"
 	{
-		if "${doMeleeMove} && ${Me.Target.Distance}>5 && ${Me.Target.Distance}<12 && ${Me.TargetHealth}<${EngagePct}"
+		;-------------------------------------------
+		; MOVE CLOSER
+		;-------------------------------------------
+		if "!${Paused} && ${doFace} && (${doSlow} || ${doDots} || ${doDebuff} || ${doMelee} || ${doNuke}) && ${Me.Target.Distance}<=15"
 		{
+			Face:Pawn[${Me.Target.ID}]
+		}
+		if "!${Paused} && ${doMeleeMove} && ${Me.Target.Distance}>5 && ${Me.Target.Distance}<12 && ${Me.TargetHealth}<${EngagePct}"
+		{
+			echo Moving closer to target
 			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
 			;call movetoobject ${Me.Target.ID} 3 1
 		}
-		if "${Me.HavePet} && ${Me.Pet.ToPawn.CombatState}==0"
+		
+		;-------------------------------------------
+		; SEND PET IN TO ATTACK
+		;-------------------------------------------
+		if !${Paused} && ${Me.HavePet}
 		{
-			VGExecute /pet attack
-		}
-		if "${doFace} && (${doSlow} || ${doDots} || ${doDebuff} || ${doMelee} || ${doNuke}) && ${Me.Target.Distance}<=15"
-		{
-			;face ${Me.Target.X} ${Me.Target.Y}
-			Face:Pawn[${Me.Target.ID}]
-		}
-		if "${Me.Ability[${Finisher1}].IsReady}"
-		{
-			Me.Ability[${Finisher1}]:Use
-			call MeCasting
-			return
-		}
-		if "${Me.Ability[${Finisher2}].IsReady}"
-		{
-			Me.Ability[${Finisher2}]:Use
-			call MeCasting
-			return
-		}
-		if "${Me.Ability[${Finisher3}].IsReady}"
-		{
-			Me.Ability[${Finisher3}]:Use
-			call MeCasting
-			return
-		}
-		if "${doSlow} && !${Me.TargetMyDebuff[${Slow1}](exists)} && ${Me.TargetHealth}>=20 && ${Me.Target.HaveLineOfSightTo} && ${Me.Encounter}<3"
-		{
-			Me.Ability[${Slow1}]:Use
-			call MeCasting
-			return
-		}
-		if "${doDebuff} && !${Me.TargetMyDebuff[${Debuff1}](exists)} && ${Me.TargetHealth}>=20 && ${Me.Target.HaveLineOfSightTo} && ${Me.Encounter}<3"
-		{
-			Me.Ability[${Debuff1}]:Use
-			call MeCasting
-			return
-		}
-		if ${Me.HavePet}
-		{
-			if ${Me.Pet.Ability[${PetAbility1}].IsReady}
+			;; tell pet to start attacking
+			if ${Me.Pet.ToPawn.CombatState}==0
+			{
+				VGExecute /pet attack
+			}
+			if !${Paused} && ${Me.Pet.Ability[${PetAbility1}].IsReady} && ${Me.Pet.Ability[${PetAbility1}](exists)}
 			{
 				Me.Pet.Ability[${PetAbility1}]:Use
 			}
-			if ${Me.Pet.Ability[${PetAbility2}].IsReady}
+			if !${Paused} && ${Me.Pet.Ability[${PetAbility2}].IsReady} && ${Me.Pet.Ability[${PetAbility2}](exists)}
 			{
 				Me.Pet.Ability[${PetAbility2}]:Use
 			}
-			if ${Me.Pet.Ability[${PetAbility3}].IsReady}
+			if !${Paused} && ${Me.Pet.Ability[${PetAbility3}].IsReady} && ${Me.Pet.Ability[${PetAbility3}](exists)}
 			{
 				Me.Pet.Ability[${PetAbility3}]:Use
 			}
 		}
-		if "${doDots} && ${Me.TargetHealth}>=20 && ${Me.EnergyPct}>30"
+		
+		;-------------------------------------------
+		; CRIT/CHAIN/FINISHERS
+		;-------------------------------------------
+		if !${Paused} && ${Me.Ability[${Finisher3}].TriggeredCountdown}>0
 		{
-			if "!${Me.TargetMyDebuff[${Dot1}](exists)}"
+			if ${Me.Ability[${Finisher2}].IsReady}
 			{
-				Me.Ability[${Dot1}]:Use
-				call MeCasting
-				return
+				call SpellForm
+				call UseAbility "${Finisher2}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "!${Me.TargetMyDebuff[${Dot2}](exists)}"
+			if ${Me.Ability[${Finisher1}].IsReady}
 			{
-				Me.Ability[${Dot2}]:Use
-				call MeCasting
+				call MeleeForm
+				call UseAbility "${Finisher1}"
+				if ${Return}
+				{
+					return
+				}
+			}
+			if ${Me.Ability[${Finisher3}].IsReady}
+			{
+				call SpellForm
+				call UseAbility "${Finisher3}"
+				if ${Return}
+				{
+					return
+				}
+			}
+		}
+
+		;-------------------------------------------
+		; SLOW
+		;-------------------------------------------
+		if !${Paused} && ${doSlow} && !${Me.TargetMyDebuff[${Slow1}](exists)} && ${Me.TargetHealth}>=20 && ${Me.Target.HaveLineOfSightTo} && ${Me.Encounter}<3
+		{
+			call SaveEnergyForm
+			call UseAbility "${Slow1}"
+			if ${Return}
+			{
 				return
 			}
 		}
-		if ${doMelee} && ${Me.Target.Distance}<=4
+		
+		;-------------------------------------------
+		; DEBUFF
+		;-------------------------------------------
+		if "!${Paused} && ${doDebuff} && !${Me.TargetMyDebuff[${Debuff1}](exists)} && ${Me.TargetHealth}>=20 && ${Me.Target.HaveLineOfSightTo} && ${Me.Encounter}<3"
 		{
+			call SaveEnergyForm
+			call UseAbility "${Debuff1}"
+			if ${Return}
+			{
+				return
+			}
+		}
+		
+		;-------------------------------------------
+		; DOTS
+		;-------------------------------------------
+		if !${Paused} && ${doDots} && ${Me.TargetHealth}>=20 && ${Me.EnergyPct}>30
+		{
+			if "!${Paused} && !${Me.TargetMyDebuff[${Dot1}](exists)} && ${Me.Ability[${Dot1}].IsReady} && ${Me.Ability[${Dot1}](exists)}"
+			{
+			
+				call SpellForm
+				call UseAbility "${Dot1}"
+				if ${Return}
+				{
+					return
+				}
+			}
+			if "!${Paused} && !${Me.TargetMyDebuff[${Dot2}](exists)} && ${Me.Ability[${Dot2}].IsReady} && ${Me.Ability[${Dot2}](exists)}"
+			{
+				call SpellForm
+				call UseAbility "${Dot2}"
+				if ${Return}
+				{
+					return
+				}
+			}
+		}
+
+		;-------------------------------------------
+		; MELEE
+		;-------------------------------------------
+		if !${Paused} && ${doMelee} && ${Me.Target.Distance}<=4
+		{
+			;; Face the target
 			Me.Target:Face
-			if "${Me.Ability[${Melee1}].IsReady} && ${Me.Endurance}>30"
+			
+			;; Hamstring
+			if "!${Paused} && ${Me.Ability[${Melee6}].IsReady} && ${Me.Ability[${Melee6}](exists)} && ${Me.Endurance}>15"
 			{
 				if ${Me.Target.Distance}>5 && ${doMeleeMove}
+				{
+					EchoIt "Moving Closer to ${Me.Target.Name}"
 					call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-					;call movetoobject ${Me.Target.ID} 4 1
-				Me.Ability[${Melee1}]:Use
-				call MeCasting
-				return
+				}
+				call MeleeForm
+				call UseAbility "${Melee6}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "${Me.Ability[${Melee6}].IsReady} && ${Me.Endurance}>15"
+			
+			;; HammerOfKrigus - 27 Endurance, 60 second DeBuff (STR & CON)
+			if "!${Paused} && !${Me.TargetMyDebuff[${Melee2}](exists)} && ${Me.Ability[${Melee2}].IsReady} && ${Me.Ability[${Melee2}](exists)} && ${Me.Endurance}>30"
 			{
 				if ${Me.Target.Distance}>5 && ${doMeleeMove}
+				{
+					EchoIt "Moving Closer to ${Me.Target.Name}"
 					call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-					;call movetoobject ${Me.Target.ID} 4 1
-				Me.Ability[${Melee6}]:Use
-				call MeCasting
-				return
+				}
+				call MeleeForm
+				call UseAbility "${Melee2}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "!${Me.TargetMyDebuff[${Melee5}](exists)} && ${Me.Ability[${Melee5}].IsReady} && ${Me.Endurance}>30"
+
+			;; BiteOfNagSuul - 27 Endurance, 40 second damage buff
+			if "!${Paused} && !${Me.TargetMyDebuff[${Melee5}](exists)} && ${Me.Ability[${Melee5}].IsReady} && ${Me.Ability[${Melee5}](exists)} && ${Me.Endurance}>30"
 			{
 				if ${Me.Target.Distance}>5 && ${doMeleeMove}
+				{
+					EchoIt "Moving Closer to ${Me.Target.Name}"
 					call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-					;call movetoobject ${Me.Target.ID} 4 1
-				Me.Ability[${Melee5}]:Use
-				call MeCasting
-				return
+				}
+				call MeleeForm
+				call UseAbility "${Melee5}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "!${Me.TargetMyDebuff[${Melee2}](exists)} && ${Me.Ability[${Melee2}].IsReady} && ${Me.Endurance}>30"
+			
+			;; ViciousBite - 28 Endurance (adds weakness:  Bitten)
+			if "!${Paused} && !${Me.TargetMyDebuff[${Melee4}](exists)} && ${Me.Ability[${Melee4}].IsReady} && ${Me.Ability[${Melee4}](exists)} && ${Me.Endurance}>30"
 			{
 				if ${Me.Target.Distance}>5 && ${doMeleeMove}
+				{
+					EchoIt "Moving Closer to ${Me.Target.Name}"
 					call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-					;call movetoobject ${Me.Target.ID} 4 1
-				Me.Ability[${Melee2}]:Use
-				call MeCasting
-				return
+				}
+				call MeleeForm
+				call UseAbility "${Melee4}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "!${Me.TargetMyDebuff[${Melee3}](exists)} && ${Me.Ability[${Melee3}].IsReady} && ${Me.Endurance}>30"
+
+			;; Strike of Skamadiz - 24 Endurance (adds weakness:  Shaken, exploits weakness:  Bleeding"
+			if "!${Paused} && ${Me.Ability[${Melee1}].IsReady} && ${Me.Ability[${Melee1}](exists)} && ${Me.Endurance}>30"
 			{
 				if ${Me.Target.Distance}>5 && ${doMeleeMove}
+				{
+					EchoIt "Moving Closer to ${Me.Target.Name}"
 					call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-					;call movetoobject ${Me.Target.ID} 4 1
-				Me.Ability[${Melee3}]:Use
-				call MeCasting
-				return
+				}
+				call MeleeForm
+				call UseAbility "${Melee1}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "!${Me.TargetMyDebuff[${Melee4}](exists)} && ${Me.Ability[${Melee4}].IsReady} && ${Me.Endurance}>30"
+		
+			;; TearingClaw - 22 Endurance (adds weakness:  Flesh Rend)
+			if "!${Paused} && !${Me.TargetMyDebuff[${Melee3}](exists)} && ${Me.Ability[${Melee3}].IsReady} && ${Me.Ability[${Melee3}](exists)} && ${Me.Endurance}>30"
 			{
 				if ${Me.Target.Distance}>5 && ${doMeleeMove}
+				{
+					EchoIt "Moving Closer to ${Me.Target.Name}"
 					call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
-					;call movetoobject ${Me.Target.ID} 4 1
-				Me.Ability[${Melee4}]:Use
-				call MeCasting
-				return
+				}
+				call MeleeForm
+				call UseAbility "${Melee3}"
+				if ${Return}
+				{
+					return
+				}
 			}
 		}
-		if "${doNuke} && ${Me.EnergyPct}>60"
+			
+		;-------------------------------------------
+		; NUKES - reserve some energy for heals
+		;-------------------------------------------
+		if !${Paused} && ${doNuke} && ${Me.EnergyPct}>60
 		{
-			if "${Me.Ability[${Nuke2}].IsReady}"
+			;; WintersRoar - 250 Energy, 3 second immobilize, 8 second recast
+			if "!${Paused} && ${Me.Ability[${Nuke1}].IsReady} && ${Me.Ability[${Nuke1}](exists)}"
 			{
-				Me.Ability[${Nuke2}]:Use
-				call MeCasting
-				return
+				call SpellForm
+				call UseAbility "${Nuke1}"
+				if ${Return}
+				{
+					return
+				}
 			}
-			if "${Me.Ability[${Nuke1}].IsReady}"
+			
+			;; SpiritStrike - 205 Energy (adds weakness:  Shaken, exploits weakness:  Chilled)
+			if "!${Paused} && ${Me.Ability[${Nuke2}].IsReady} && ${Me.Ability[${Nuke2}](exists)}"
 			{
-				Me.Ability[${Nuke1}]:Use
-				call MeCasting
-				return
+				call SpellForm
+				call UseAbility "${Nuke2}"
+				if ${Return}
+				{
+					return
+				}
 			}
 		}
 	}
 }
 
 ;================================================
+function MeleeForm()
+{
+	if ${Me.Form["Spirit Bond: Skamadiz"](exists)}
+	{
+		if !${Me.CurrentForm.Name.Equal["Spirit Bond: Skamadiz"]}
+		{
+			Me.Form["Spirit Bond: Skamadiz"]:ChangeTo
+			wait .5
+		}
+	}
+}
+
+;================================================
+function SpellForm()
+{
+	if ${Me.Form["Spirit Bond: Nag-Suul"](exists)}
+	{
+		if !${Me.CurrentForm.Name.Equal["Spirit Bond: Nag-Suul"]}
+		{
+			Me.Form["Spirit Bond: Nag-Suul"]:ChangeTo
+			wait .5
+		}
+	}
+}
+
+;================================================
+function SaveEnergyForm()
+{
+	if ${Me.Form["Spirit Bond: Krigus"](exists)}
+	{
+		if !${Me.CurrentForm.Name.Equal["Spirit Bond: Krigus"]}
+		{
+			Me.Form["Spirit Bond: Krigus"]:ChangeTo
+			wait .5
+		}
+	}
+}
+
+;================================================
+function HealingForm()
+{
+	if ${Me.Form["Mien of the Mystic"](exists)}
+	{
+		if !${Me.CurrentForm.Name.Equal["Mien of the Mystic"]}
+		{
+			Me.Form["Mien of the Mystic"]:ChangeTo
+			wait .5
+		}
+	}
+}
+
+
+
+
+;================================================
 function Cannibalize()
 {
-	if "${Me.DTargetHealth}>70"
+	if "!${Paused} && ${Me.DTargetHealth}>70"
 	{
-		if "${Me.EnergyPct}<=85 && ${Me.HealthPct}>=50 && ${Me.InCombat} && ${Me.Ability[${HealthCanni1}].IsReady}"
+		if "${Me.EnergyPct}<=85 && ${Me.HealthPct}>=50 && ${Me.InCombat} && ${Me.Ability[${HealthCanni1}].IsReady} && ${Me.Ability[${HealthCanni1}](exists)}"
 		{
+			echo HealthCanni1 - ${HealthCanni1}
 			Me.Ability["${HealthCanni1}"]:Use
 			do
 			{
@@ -587,7 +865,7 @@ function SetBuffButtons()
 		UIElement[Rez4@Rez@VGShaman Main@VGShaman]:Hide
 		UIElement[Rez5@Rez@VGShaman Main@VGShaman]:Hide
 	}
-;	
+	;
 }
 
 ;================================================
@@ -595,16 +873,16 @@ function SelfBuff()
 {
 	if "${Me.CurrentForm.Name.Equal[Unbound]}"
 	{
-	  Me.Form[${DefaultForm}]:ChangeTo
-	  wait 20
-	  return
+		Me.Form[${DefaultForm}]:ChangeTo
+		wait 20
+		return
 	}
 }
 
 ;================================================
 function buffGroup()
 {
-	call buffPlayer ${Me.FName}
+	call buffPlayer "${Me.FName}"
 	if ${Me.IsGrouped}
 	{
 		bGMember:Set[1]
@@ -623,13 +901,16 @@ function buffGroup()
 	{
 		do
 		{
-			do
+			if ${Me.Ability[${GroupBuff[${nextBuff}]}](exists)}
 			{
-				waitframe
+				do
+				{
+					waitframe
+				}
+				while !${Me.Ability[${GroupBuff[${nextBuff}]}].IsReady}
+				Me.Ability[${GroupBuff[${nextBuff}]}]:Use
+				call MeCasting
 			}
-			while !${Me.Ability[${GroupBuff[${nextBuff}]}].IsReady}
-			Me.Ability[${GroupBuff[${nextBuff}]}]:Use
-			call MeCasting
 		}
 		while ${GroupBuff[${nextBuff:Inc}].Length}>0
 	}
@@ -638,53 +919,71 @@ function buffGroup()
 ;================================================
 function buffPlayer(string player2buff)
 {
-	Pawn[${player2buff}]:Target
-	wait 5
-	nextBuff:Set[1]
-	do
+	vgecho Buffing: ${player2buff}
+	if ${Pawn[name,${player2buff}](exists)}
 	{
+		Pawn[${player2buff}]:Target
+		wait 5
+		nextBuff:Set[1]
 		do
 		{
-			waitframe
+			if ${Me.Ability[${Buff[${nextBuff}]}](exists)}
+			{
+				do
+				{
+					waitframe
+				}
+				while !${Me.Ability[${Buff[${nextBuff}]}].IsReady}
+				Me.Ability[${Buff[${nextBuff}]}]:Use
+				call MeCasting
+			}
 		}
-		while !${Me.Ability[${Buff[${nextBuff}]}].IsReady}
-		Me.Ability[${Buff[${nextBuff}]}]:Use
-		call MeCasting
+		while ${Buff[${nextBuff:Inc}].Length}>0
 	}
-	while ${Buff[${nextBuff:Inc}].Length}>0
 }
 
 ;================================================
 function shortbuffGroup(string shortbuff)
 {
-	call shortbuffPlayer "${shortbuff}" "${Me.FName}"
-	if ${Me.IsGrouped}
+	vgecho Buff: ${shortbuff}
+	if ${Me.Ability[${shortbuff}](exists)}
 	{
-		bGMember:Set[1]
-		do
+		call shortbuffPlayer "${shortbuff}" "${Me.FName}"
+		if ${Me.IsGrouped}
 		{
-			call shortbuffPlayer "${shortbuff}" "${Group[${bGMember}].Name}"
+			bGMember:Set[1]
+			do
+			{
+				call shortbuffPlayer "${shortbuff}" "${Group[${bGMember}].Name}"
+			}
+			while ${Group[${bGMember:Inc}].ID(exists)}
 		}
-		while ${Group[${bGMember:Inc}].ID(exists)}
-	}
-	else
-	{
-		call shortbuffPlayer "${shortbuff}" "${Tank}"
+		else
+		{
+			call shortbuffPlayer "${shortbuff}" "${Tank}"
+		}
 	}
 }
 
 ;================================================
 function shortbuffPlayer(string shortbuff2, string player2buff)
 {
-	Pawn[${player2buff}]:Target
-	wait 5
-	do
+	vgecho Buff: ${shortbuff2}, Player=${player2buff}
+	if ${Me.Ability[${shortbuff2}](exists)}
 	{
-		waitframe
+		if ${Pawn[name,${player2buff}](exists)}
+		{
+			Pawn[${player2buff}]:Target
+			wait 5
+			do
+			{
+				waitframe
+			}
+			while !${Me.Ability[${shortbuff2}].IsReady}
+			Me.Ability[${shortbuff2}]:Use
+			call MeCasting
+		}
 	}
-	while !${Me.Ability[${shortbuff2}].IsReady}
-	Me.Ability[${shortbuff2}]:Use
-	call MeCasting
 }
 
 ;================================================
@@ -708,42 +1007,56 @@ function stoneGroup()
 ;================================================
 function stonePlayer(string player2buff)
 {
-	Pawn[${player2buff}]:Target
-	wait 5
-	do
+	vgecho Stone: ${player2buff}
+	if ${Me.Ability[${RezStone}](exists)}
 	{
-		waitframe
+		if ${Pawn[name,${player2buff}](exists)}
+		{
+			Pawn[${player2buff}]:Target
+			wait 5
+			do
+			{
+				waitframe
+			}
+			while !${Me.Ability[${RezStone}].IsReady}
+			Me.Ability[${RezStone}]:Use
+			call MeCasting
+		}
 	}
-	while !${Me.Ability[${RezStone}].IsReady}
-	Me.Ability[${RezStone}]:Use
-	call MeCasting
 }
 
 ;================================================
 function rezPlayer(string player2buff)
 {
-	Pawn[${player2buff}]:Target
-	if ${Me.InCombat}
+	vgecho CombatRez: ${player2buff}
+	if ${Me.Ability[${CombatRez}](exists)}
 	{
-		wait 5
-		do
+		if ${Pawn[name,${player2buff}](exists)}
 		{
-			waitframe
+			Pawn[${player2buff}]:Target
+			if ${Me.InCombat}
+			{
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while !${Me.Ability[${CombatRez}].IsReady}
+				Me.Ability[${CombatRez}]:Use
+				call MeCasting
+			}
+			else
+			{
+				wait 5
+				do
+				{
+					waitframe
+				}
+				while !${Me.Ability[${Rez}].IsReady}
+				Me.Ability[${Rez}]:Use
+				call MeCasting
+			}
 		}
-		while !${Me.Ability[${CombatRez}].IsReady}
-		Me.Ability[${CombatRez}]:Use
-		call MeCasting
-	}
-	else
-	{
-		wait 5
-		do
-		{
-			waitframe
-		}
-		while !${Me.Ability[${Rez}].IsReady}
-		Me.Ability[${Rez}]:Use
-		call MeCasting
 	}
 }
 
@@ -768,10 +1081,61 @@ function atexit()
 	Event[VG_onGroupFormed]:DetachAtom[VG_Group_Change]
 	Event[VG_onGroupDisbanded]:DetachAtom[VG_Group_Change]
 	Event[VG_onGroupBooted]:DetachAtom[VG_Group_Change]
-; If ISXEVG isn't loaded, then no reason to run this script.
+	; If ISXEVG isn't loaded, then no reason to run this script.
 	echo VGShaman is now ending.
-  if (!${ISXVG(exists)})
-  {
-          return
-  }
+	if (!${ISXVG(exists)})
+	{
+		return
+	}
 }
+;===================================================
+;===              USE AN ABILITY                ====
+;===  called from within AttackTarget routine   ====
+;===================================================
+function:bool UseAbility(string ABILITY)
+{
+	;-------------------------------------------
+	; return if ability does not exist
+	;-------------------------------------------
+	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
+	{
+		return FALSE
+	}
+
+	;-------------------------------------------
+	; execute ability only if it is ready
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		;; return if we do not have enough energy
+		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
+		{
+			EchoIt "Not enought Energy for ${ABILITY}"
+			return FALSE
+		}
+		;; return if we do not have enough endurance
+		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
+		{
+			EchoIt "Not enought Endurance for ${ABILITY}"
+			return FALSE
+		}
+		;; return if the target is outside our range
+		if !${Me.Ability[${ABILITY}].TargetInRange} && !${Me.Ability[${ABILITY}].TargetType.Equal[Self]}
+		{
+			EchoIt "Target not in range for ${ABILITY}"
+			return FALSE
+		}
+
+		;; now execute the ability
+		EchoIt "Used ${ABILITY}"
+		Me.Ability[${ABILITY}]:Use
+
+		call MeCasting
+
+		;; say we executed ability successfully
+		return TRUE
+	}
+	;; say we did not execute the ability
+	return FALSE
+}
+
