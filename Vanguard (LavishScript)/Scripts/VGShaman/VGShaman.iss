@@ -873,17 +873,22 @@ function SelfBuff()
 	{
 		Me.Form[${DefaultForm}]:ChangeTo
 		wait 20
-		return
 	}
+	
+	;; this will buff individual and group buffs
 	call buffPlayer "${Me.FName}"
 }
 
 ;================================================
 function buffGroup()
 {
+	;; Start with self
 	call buffPlayer "${Me.FName}"
+	
+	
 	if ${Me.IsGrouped}
 	{
+		;; this will buff the whole raid (slow, needs serious rewrite)
 		bGMember:Set[1]
 		do
 		{
@@ -893,8 +898,12 @@ function buffGroup()
 	}
 	else
 	{
+		;; buff the Tank if not in group
 		call buffPlayer "${Tank}"
 	}
+	
+/*
+	;; This will run through the Group Buffs
 	nextBuff:Set[1]
 	if ${GroupBuff[1].Length}>0
 	{
@@ -906,29 +915,32 @@ function buffGroup()
 				{
 					waitframe
 				}
-				while !${Me.Ability[${GroupBuff[${nextBuff}]}].IsReady}
+				while !${Me.Ability["Torch"].IsReady}
 				Me.Ability[${GroupBuff[${nextBuff}]}]:Use
 				call MeCasting
 			}
 		}
 		while ${GroupBuff[${nextBuff:Inc}].Length}>0
 	}
+*/
 }
 
 ;================================================
 function buffPlayer(string player2buff)
 {
+	;; buff only if player is in range
 	if ${Pawn[name,${player2buff}](exists)} && ${Pawn[name,${player2buff}].Distance}<25
 	{
-		vgecho Buffing: ${player2buff}
+		vgecho "Buffing:(SUCCESS) ${player2buff}"
 		Pawn[${player2buff}]:Target
 		wait 5
+
 		
-		;; if this all-in-one buff exists then we only want to cast these
+		;; if this GroupBuff exists then we only want to cast these
 		if ${Me.Ability[${SpiritsBoutifulBlessing}](exists)}
 		{
 			;; 1st cast: Spirit Boutiful Blessing
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Torch"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
 			{
 				waitframe
 			}
@@ -936,7 +948,7 @@ function buffPlayer(string player2buff)
 			call MeCasting
 			
 			;; 2nd cast: Favor of the Flame
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Torch"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
 			{
 				waitframe
 			}
@@ -944,30 +956,36 @@ function buffPlayer(string player2buff)
 			call MeCasting
 			
 			;; 3rd cast: Acuity
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Torch"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
 			{
 				waitframe
 			}
 			Me.Ability[${Acuity}]:Use
 			call MeCasting
+			
+			;; done
 			return
 		}
 		
+		;; loop through all the available buffs that doesn't buff a group
 		nextBuff:Set[1]
 		do
 		{
 			if ${Me.Ability[${Buff[${nextBuff}]}](exists)}
 			{
-				do
+				while !${Me.Ability["Torch"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
 				{
 					waitframe
 				}
-				while !${Me.Ability["Torch"].IsReady}
 				Me.Ability[${Buff[${nextBuff}]}]:Use
 				call MeCasting
 			}
 		}
 		while ${Buff[${nextBuff:Inc}].Length}>0
+	}
+	else
+	{
+		vgecho "Buffing: (FAILED) ${player2buff}"
 	}
 }
 
