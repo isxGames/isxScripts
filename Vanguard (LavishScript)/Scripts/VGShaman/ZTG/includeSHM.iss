@@ -46,6 +46,9 @@ function SetAbilities()
 	SetHighestAbility "BiteOfNagSuul" "Bite of Nag-Suul"
 	SetHighestAbility "Hamstring" "Hamstring"
 	SetHighestAbility "Snarl" "Snarl"
+	SetHighestAbility "SpiritBoutifulBlessing" "Spirit Bountiful Blessing"
+	SetHighestAbility "FavorOfTheFlame" "Favor of the Flame"
+	SetHighestAbility "Acuity" "Acuity"
 	
 	;; Once the above has been defined, it is put here
 	Buff[1]:Set[${OraclesSight}]
