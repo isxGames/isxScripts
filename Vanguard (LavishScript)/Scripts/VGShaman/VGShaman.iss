@@ -925,14 +925,14 @@ function buffPlayer(string player2buff)
 		wait 5
 		
 		;; if this all-in-one buff exists then we only want to cast these
-		if ${Me.Ability[SpiritBoutifulBlessing](exists)}
+		if ${Me.Ability[${SpiritsBoutifulBlessing}](exists)}
 		{
 			;; 1st cast: Spirit Boutiful Blessing
 			while !${Me.Ability["Torch"].IsReady}
 			{
 				waitframe
 			}
-			Me.Ability[${SpiritBoutifulBlessing}]:Use
+			Me.Ability[${SpiritsBoutifulBlessing}]:Use
 			call MeCasting
 			
 			;; 2nd cast: Favor of the Flame

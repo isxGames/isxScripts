@@ -46,7 +46,7 @@ function SetAbilities()
 	SetHighestAbility "BiteOfNagSuul" "Bite of Nag-Suul"
 	SetHighestAbility "Hamstring" "Hamstring"
 	SetHighestAbility "Snarl" "Snarl"
-	SetHighestAbility "SpiritBoutifulBlessing" "Spirit Bountiful Blessing"
+	SetHighestAbility "SpiritsBoutifulBlessing" "Spirit's Bountiful Blessing"
 	SetHighestAbility "FavorOfTheFlame" "Favor of the Flame"
 	SetHighestAbility "Acuity" "Acuity"
 	
