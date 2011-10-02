@@ -341,13 +341,115 @@ function SprintCheck()
 ;===================================================
 function BuffRequests()
 {
+	BuffRequest:Set[FALSE]
+
+	variable bool ConstructsAugmentationBuff = FALSE
+	variable bool FavorOfTheLifeGiverBuff = FALSE
+	variable bool SeraksAmplificationBuff = FALSE
+	variable bool InspiritBuff = FALSE
+	variable bool LifeGraftBuff = FALSE
+	variable bool MentalStimulationBuff = FALSE
+	variable bool AcceleratedRegenerationBuff = FALSE
+	variable bool CerebralGraftBuff = FALSE
+	variable bool HealthGraftBuff = FALSE
+	variable bool MentalInfusionBuff = FALSE
+	variable bool SeraksAugmentationBuff = FALSE
+	variable bool SeraksMantleBuff = FALSE
+	variable bool VitalizeBuff = FALSE
+	variable bool RegenerationBuff = FALSE
+	variable bool WeBuffed = FALSE
+
 	VGExecute /cleartargets
+	waitframe
 	Pawn[${PCName}]:Target
-	wait 3
+	wait 5
+	
+	echo PCName=${PCName}, DTarget=${Me.DTarget.Name}
+	
 	call UseAbility "${ConstructsAugmentation}"
-	if ${Return}
+	if !${Return}
 	{
-		BuffRequest:Set[FALSE]
+		call UseAbility "${SeraksMantle}"
+		if ${Me.Ability[${FavorOfTheLifeGiver}](exists)}
+		{
+			call UseAbility "${FavorOfTheLifeGiver}"
+		}
+		else
+		{
+			call UseAbility "${SeraksAmplification}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+				SeraksAugmentationBuff:Set[TRUE]
+			}
+			call UseAbility "${Inspirit}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+				VitalizeBuff:Set[TRUE]
+			}
+			call UseAbility "${LifeGraft}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+				HealthGraftBuff:Set[TRUE]
+			}
+			call UseAbility "${MentalStimulation}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+				MentalInfusionBuff:Set[TRUE]
+			}
+			call UseAbility "${AcceleratedRegeneration}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+			}
+			call UseAbility "${CerebralGraft}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+			}
+			if !${HealthGraftBuff}
+			{
+				call UseAbility "${HealthGraft}"
+				if ${Return}
+				{
+					WeBuffed:Set[TRUE]
+				}
+			}
+			if !${MentalInfusionBuff}
+			{
+				call UseAbility "${MentalInfusion}"
+				if ${Return}
+				{
+					WeBuffed:Set[TRUE]
+				}
+			}
+			if !${SeraksAugmentationBuff}
+			{
+				call UseAbility "${SeraksAugmentation}"
+				if ${Return}
+				{
+					WeBuffed:Set[TRUE]
+				}
+			}
+			if !${VitalizeBuff}
+			{
+				call UseAbility "${Vitalize}"
+				if ${Return}
+				{
+					WeBuffed:Set[TRUE]
+				}
+			}
+		}
+	}
+	else
+	{
+		WeBuffed:Set[TRUE]
+	}
+	if ${WeBuffed}
+	{
 		vgecho "Buffed ${PCName}"
 	}
 }
@@ -358,7 +460,7 @@ function BuffRequests()
 ;===================================================
 function SymbioteRequest()
 {
-	if ${Me.Ability["${ConstructsAugmentation}"].IsReady}
+	if ${Me.Ability["Torch"].IsReady}
 	{
 		if ${SymbioteRequestList.FirstKey(exists)}
 		{
@@ -547,11 +649,11 @@ function:bool UseAbility(string ABILITY)
 		}
 
 		;; return if the target is outside our range
-		if !${Me.Ability[${ABILITY}].TargetInRange} && !${Me.Ability[${ABILITY}].TargetType.Equal[Self]}
-		{
-			EchoIt "Target not in range for ${ABILITY}"
-			return FALSE
-		}
+		;if !${Me.Ability[${ABILITY}].TargetInRange} && !${Me.Ability[${ABILITY}].TargetType.Equal[Self]}
+		;{
+		;	EchoIt "Target not in range for ${ABILITY}"
+		;	return FALSE
+		;}
 
 		;; now execute the ability
 		EchoIt "Used ${ABILITY}"
