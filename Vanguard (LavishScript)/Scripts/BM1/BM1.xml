@@ -603,33 +603,66 @@
 
 						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
 							<visible>1</visible>
-							<X>10%</X>
+							<X>5%</X>
 							<Y>63%</Y>
-							<Width>80%</Width>
+							<Width>45%</Width>
 							<Height>21</Height>
-							<Text>Assisting:  </Text>
+							<Text>Tank:  </Text>
                             <Onload>
 								if ${Me.DTarget(exists)}
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.DTarget.Name}]
-									This:SetText[Assist:  ${Me.DTarget.Name}]
+									This:SetText[Tank:  ${Me.DTarget.Name}]
 								}
 								else
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.FName}]
-									This:SetText[Assist:  ${Me.FName}]
+									This:SetText[Tank:  ${Me.FName}]
 								}
                             </Onload>
 							<OnLeftClick>
 								if ${Me.DTarget(exists)}
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.DTarget.Name}]
-									This:SetText[Assist:  ${Me.DTarget.Name}]
+									This:SetText[Tank:  ${Me.DTarget.Name}]
 								}
 								else
 								{
 									Script[BM1].Variable[Tank]:Set[${Me.FName}]
-									This:SetText[Assist:  ${Me.FName}]
+									This:SetText[Tank:  ${Me.FName}]
+								}
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Commandbutton Name="Button-Set OffTank" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>51%</X>
+							<Y>63%</Y>
+							<Width>45%</Width>
+							<Height>21</Height>
+							<Text>OffTank:  </Text>
+                            <Onload>
+								if ${Me.DTarget(exists)}
+								{
+									Script[BM1].Variable[OffTank]:Set[${Me.DTarget.Name}]
+									This:SetText[OffTank:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[BM1].Variable[OffTank]:Set[${Me.FName}]
+									This:SetText[OffTank:  ${Me.FName}]
+								}
+                            </Onload>
+							<OnLeftClick>
+								if ${Me.DTarget(exists)}
+								{
+									Script[BM1].Variable[OffTank]:Set[${Me.DTarget.Name}]
+									This:SetText[OffTank:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[BM1].Variable[OffTank]:Set[${Me.FName}]
+									This:SetText[OffTank:  ${Me.FName}]
 								}
 							</OnLeftClick>
 						</Commandbutton>
@@ -863,9 +896,20 @@
 				<Width>25%</Width>
 				<Height>23</Height>
 				<Text>Buff Area</Text>
+				<OnRender>
+					if ${Script[BuffArea](exists)}
+					{
+						This:SetAlpha[0.5]
+					}
+					else
+					{
+						This:SetAlpha[1]
+					}
+				</OnRender>
 				<OnLeftClick>
 					Script[BM1]:QueueCommand[call BuffArea]
 				</OnLeftClick>
+				<Data>${Script[BuffArea](exists)}</Data>
 			</Commandbutton>
 		</Children>
 	</Window>

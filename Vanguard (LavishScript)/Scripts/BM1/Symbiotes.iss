@@ -1,4 +1,4 @@
-variable int TotalHarvest = 20
+variable int TotalHarvest = 10
 
 variable int QJ = ${Me.Inventory[Quickening Symbiote].Quantity}
 variable int VIT = ${Me.Inventory[Vitalizing Symbiote].Quantity}
@@ -130,7 +130,6 @@ function StartRoutine(int Symbiotes=5)
 			call Loot
 		}
 	}
-
 }
 
 function Harvest(int Symbiotes)
