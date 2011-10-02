@@ -146,7 +146,7 @@ function Harvest(int Symbiotes)
 	}
 
 	; Blood Vials
-	if ${Me.Inventory[Vial of Blood].Quantity}<${Symbiotes} && ${Me.HealthPct}>=99
+	if ${Me.Inventory[Vial of Blood].Quantity}<${Symbiotes} && ${Me.HealthPct}>=90
 	{
 		Me.Ability[Siphon Blood]:Use
 		wait 5
@@ -156,9 +156,9 @@ function Harvest(int Symbiotes)
 		}
 			
 		Pawn[me]:Target
-		if ${Me.Ability[Transfusion of Serak III].IsReady}
+		if ${Me.Ability[${TransfusionOfSerak}].IsReady}
 		{
-			Me.Ability[Transfusion of Serak III]:Use
+			Me.Ability[${TransfusionOfSerak}]:Use
 			wait 5
 			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 			{
@@ -171,7 +171,7 @@ function Harvest(int Symbiotes)
 	;; Twitching Muscle
 	if ${Me.Inventory[Twitching Muscle].Quantity}<${Symbiotes}
 	{
-		Me.Ability[Constrict III]:Use
+		Me.Ability[${Constrict}]:Use
 		wait 5
 		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 		{
@@ -259,19 +259,16 @@ function atexit()
 
 function Loot()
 {
-	wait 10
+	wait 10 ${Me.IsLooting}
 	;; Quick, loot the target
-	if ${Me.Target(exists)} && ${Me.Target.Distance}<6
+	if ${Me.IsLooting}
 	{
+		Loot:LootAll
+		wait 5
 		if ${Me.IsLooting}
 		{
-			Loot:LootAll
+			Loot:EndLooting
 			wait 5
-			if ${Me.IsLooting}
-			{
-				Loot:EndLooting
-				wait 5
-			}
 		}
 	}
 }

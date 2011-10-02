@@ -452,7 +452,7 @@ atom(script) FindAction()
 	{
 		if ${Pawn[${PCName}](exists)}
 		{
-			if ${Pawn[${PCName}].Distance}<25 && ${Me.Ability[${ConstructsAugmentation}].IsReady}
+			if ${Pawn[${PCName}].Distance}<25
 			{
 				PerformAction:Set[BuffRequests]
 				return

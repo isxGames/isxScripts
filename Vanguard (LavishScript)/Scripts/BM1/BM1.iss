@@ -285,14 +285,16 @@ function Initialize()
 	SetHighestAbility "ShelteringRune" "Sheltering Rune"
 	SetHighestAbility "StripEnchantment" "Strip Enchantment"
 	SetHighestAbility "RitualOfAwakening" "Ritual of Awakening"
+	SetHighestAbility "Constrict" "Constrict"
 	SetHighestAbility "Numb" "Numb"
+	
 	;; === SYMBIOTES ===
 	SetHighestAbility "ConduciveSymbiote" "Conducive Symbiote"
-	SetHighestAbility "FrenziedSymbiote" "Frenzied Symbiote V"
+	SetHighestAbility "FrenziedSymbiote" "Frenzied Symbiote"
 	SetHighestAbility "QuickeningSymbiote" "Quickening Symbiote"
 	SetHighestAbility "VitalizingSymbiote" "Vitalizing Symbiote"
-	SetHighestAbility "PlatedSymbiote" "Plated Symbiote IV"
-	SetHighestAbility "RenewingSymbiote" "Renewing Symbiote III"
+	SetHighestAbility "PlatedSymbiote" "Plated Symbiote"
+	SetHighestAbility "RenewingSymbiote" "Renewing Symbiote"
 
 	;; Set Tank based upon DTarget
 	if !${Me.DTarget.ID(exists)}
