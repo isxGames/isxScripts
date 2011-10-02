@@ -93,6 +93,11 @@ function main()
 
 function StartRoutine(int Symbiotes=5)
 {
+	if !${Me.Ability[Grim Harvest](exists)}
+	{
+		return
+	}
+
 	Pawn[ExactName,Sacrificial Beast]:Target
 	wait 5
 	
@@ -148,100 +153,115 @@ function Harvest(int Symbiotes)
 	; Blood Vials
 	if ${Me.Inventory[Vial of Blood].Quantity}<${Symbiotes} && ${Me.HealthPct}>=90
 	{
-		Me.Ability[Siphon Blood]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		if ${Me.Ability[Siphon Blood](exists)}
 		{
-			waitframe
-		}
-			
-		Pawn[me]:Target
-		if ${Me.Ability[${TransfusionOfSerak}].IsReady}
-		{
-			Me.Ability[${TransfusionOfSerak}]:Use
+			Me.Ability[Siphon Blood]:Use
 			wait 5
 			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
 			{
 				waitframe
 			}
+				
+			Pawn[me]:Target
+			if ${Me.Ability[${TransfusionOfSerak}].IsReady}
+			{
+				Me.Ability[${TransfusionOfSerak}]:Use
+				wait 5
+				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+				{
+					waitframe
+				}
+			}
+			return
 		}
-		return
 	}
 	
 	;; Twitching Muscle
 	if ${Me.Inventory[Twitching Muscle].Quantity}<${Symbiotes}
 	{
-		Me.Ability[${Constrict}]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		if ${Me.Ability[${Constrict}](exists)}
 		{
-			waitframe
+			Me.Ability[${Constrict}]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+				
+			Me.Ability[Grim Harvest]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			return
 		}
-			
-		Me.Ability[Grim Harvest]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-		return
 	}
 	
 	;; Quivering Brain
 	if ${Me.Inventory[Quivering Brain].Quantity}<${Symbiotes}
 	{
-		Me.Ability[Bursting Cyst I]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		if ${Me.Ability[Bursting Cyst I](exists)}
 		{
-			waitframe
+			Me.Ability[Bursting Cyst I]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+				
+			Me.Ability[Grim Harvest]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			return
 		}
-			
-		Me.Ability[Grim Harvest]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-		return
 	}
 	
 	;; Still Beating Heart
 	if ${Me.Inventory[Still Beating Heart].Quantity}<${Symbiotes}
 	{
-		Me.Ability[Union of Blood I]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		if ${Me.Ability[Union of Blood I](exists)}
 		{
-			waitframe
+			Me.Ability[Union of Blood I]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+				
+			Me.Ability[Grim Harvest]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			return
 		}
-			
-		Me.Ability[Grim Harvest]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-		return
 	}
 	
 	;; Pulsating Stomach
 	if ${Me.Inventory[Pulsating Stomach].Quantity}<${Symbiotes}
 	{
-		Me.Ability[Blood Letting Ritual I]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		if ${Me.Ability[Blood Letting Ritual I](exists)}
 		{
-			waitframe
+			Me.Ability[Blood Letting Ritual I]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+				
+			Me.Ability[Grim Harvest]:Use
+			wait 5
+			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			{
+				waitframe
+			}
+			return
 		}
-			
-		Me.Ability[Grim Harvest]:Use
-		wait 5
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
-		{
-			waitframe
-		}
-		return
 	}
 }
 
