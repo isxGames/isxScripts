@@ -159,6 +159,18 @@ function AttackTarget()
 	;-------------------------------------------
 	switch "${Me.Target.Name}"
 	{
+		case Belzane
+			if !${doPhysical} || (${Me.TargetMyDebuff[${UnionOfBlood}](exists)} && ${Me.TargetMyDebuff[${UnionOfBlood}](exists)} && ${Me.TargetMyDebuff[${BloodLettingRitual}](exists)})
+			{
+				;; totally experimental - I plowed through Arcane but damaged it and healed self
+				call UseAbility "${Despoil}"
+				if ${Return}
+				{
+					return
+				}
+			}
+			break
+	
 		case Corrupted Essence
 			;; do not hit this target!
 			call MeleeAttackOff
@@ -748,41 +760,6 @@ function AttackTarget()
 
 		if ${SafeToDPS}
 		{
-			if ${Me.Ability[${UnionOfBlood}].IsReady}
-			{
-				if !${Me.TargetMyDebuff[${UnionOfBlood}](exists)}
-				{
-					if !${Me.CurrentForm.Name.Equal["Focus of Gelenia"]}
-					{
-						Me.Form["Focus of Gelenia"]:ChangeTo
-						wait .5
-					}
-					call UseAbility "${UnionOfBlood}"
-					if ${Return}
-					{
-						return
-					}
-				}
-			}
-			if ${Me.Ability[${BloodLettingRitual}].IsReady}
-			{
-				if !${Me.TargetMyDebuff[${BloodLettingRitual}](exists)}
-				{
-					if ${Me.Ability[${BloodLettingRitual}].BloodUnionRequired} <= ${Me.BloodUnion}
-					{
-						if !${Me.CurrentForm.Name.Equal["Focus of Gelenia"]}
-						{
-							Me.Form["Focus of Gelenia"]:ChangeTo
-							wait .5
-						}
-						call UseAbility "${BloodLettingRitual}"
-						if ${Return}
-						{
-							return
-						}
-					}
-				}
-			}
 			if ${Me.Ability[${ExplodingCyst}].IsReady}
 			{
 				if !${Me.TargetMyDebuff[${ExplodingCyst}](exists)}
@@ -811,6 +788,41 @@ function AttackTarget()
 							wait .5
 						}
 						call UseAbility "${BurstingCyst}"
+						if ${Return}
+						{
+							return
+						}
+					}
+				}
+			}
+			if ${Me.Ability[${UnionOfBlood}].IsReady}
+			{
+				if !${Me.TargetMyDebuff[${UnionOfBlood}](exists)}
+				{
+					if !${Me.CurrentForm.Name.Equal["Focus of Gelenia"]}
+					{
+						Me.Form["Focus of Gelenia"]:ChangeTo
+						wait .5
+					}
+					call UseAbility "${UnionOfBlood}"
+					if ${Return}
+					{
+						return
+					}
+				}
+			}
+			if ${Me.Ability[${BloodLettingRitual}].IsReady}
+			{
+				if !${Me.TargetMyDebuff[${BloodLettingRitual}](exists)}
+				{
+					if ${Me.Ability[${BloodLettingRitual}].BloodUnionRequired} <= ${Me.BloodUnion}
+					{
+						if !${Me.CurrentForm.Name.Equal["Focus of Gelenia"]}
+						{
+							Me.Form["Focus of Gelenia"]:ChangeTo
+							wait .5
+						}
+						call UseAbility "${BloodLettingRitual}"
 						if ${Return}
 						{
 							return

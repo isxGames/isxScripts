@@ -3,13 +3,15 @@
 ;===================================================
 function main()
 {
+	PerformAction:Set[BuffArea]
+	UIElement[BuffArea@BM1]:SetAlpha[0.5]
+
+	variable int i
 	variable string temp
 	variable int TotalPawns
 	variable index:pawn CurrentPawns
 	variable index:string PC
-	PerformAction:Set[BuffArea]
-	UIElement[BuffArea@BM1]:SetAlpha[0.5]
-	doBuffArea:Set[FALSE]
+	
 	variable bool ConstructsAugmentationBuff = FALSE
 	variable bool FavorOfTheLifeGiverBuff = FALSE
 	variable bool SeraksAmplificationBuff = FALSE
@@ -39,7 +41,6 @@ function main()
 	SetHighestAbility2 "SeraksMantle" "Serak's Mantle"
 	SetHighestAbility2 "Vitalize" "Vitalize"
 	SetHighestAbility2 "Regeneration" "Regeneration"
-	
 
 	;-------------------------------------------
 	; Buffing self will buff my group (less buffing to do)
@@ -373,10 +374,7 @@ atom(script) SetHighestAbility2(string AbilityVariable, string AbilityName)
 ;===================================================
 atom(script) EchoIt2(string aText)
 {
-	if ${doEcho}
-	{
-		echo "[${Time}][BM1]: ${aText}"
-	}
+	echo "[${Time}][BM1]: ${aText}"
 }
 
 ;===================================================
@@ -430,4 +428,3 @@ function:bool UseAbility2(string ABILITY)
 	;; say we did not execute the ability
 	return FALSE
 }
-

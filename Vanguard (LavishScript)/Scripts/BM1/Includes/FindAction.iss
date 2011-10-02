@@ -145,6 +145,22 @@ atom(script) FindAction()
 					}
 				}
 			}
+			if !${Me.FName.Find[${OffTank}]}
+			{
+				if ${Pawn[name,${OffTank}](exists)}
+				{
+					;; assist the OffTank only if the OffTank is in combat and less than 50 meters away
+					if ${Pawn[name,${OffTank}].CombatState}>0 && ${Pawn[name,${OffTank}].Distance}<=50
+					{
+						;; assist OffTank only if we are not in combat, target is dead, or we do not have a target
+						if !${Me.Target(exists)}
+						{
+							PerformAction:Set[AssistOffTank]
+							return
+						}
+					}
+				}
+			}
 		}
 
 		;-------------------------------------------

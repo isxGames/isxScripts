@@ -513,7 +513,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		{
 			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 			PCName:Set[${PCNameFull.Token[1," "]}]
-			Symbiote:Set[Conducive Symbiote]
+			Symbiote:Set[${ConduciveSymbiote}]
 			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
 			doSymbioteRequest:Set[TRUE]
 		}
@@ -522,7 +522,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		{
 			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 			PCName:Set[${PCNameFull.Token[1," "]}]
-			Symbiote:Set[Frenzied Symbiote V]
+			Symbiote:Set[${FrenziedSymbiote}]
 			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
 			doSymbioteRequest:Set[TRUE]
 		}
@@ -531,7 +531,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		{
 			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 			PCName:Set[${PCNameFull.Token[1," "]}]
-			Symbiote:Set[Quickening Symbiote]
+			Symbiote:Set[${QuickeningSymbiote}]
 			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
 			doSymbioteRequest:Set[TRUE]
 		}
@@ -542,7 +542,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			{
 				PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 				PCName:Set[${PCNameFull.Token[1," "]}]
-				Symbiote:Set[Vitalizing Symbiote]
+				Symbiote:Set[${VitalizingSymbiote}]
 				SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
 				doSymbioteRequest:Set[TRUE]
 			}
@@ -552,7 +552,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		{
 			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 			PCName:Set[${PCNameFull.Token[1," "]}]
-			Symbiote:Set[Plated Symbiote IV]
+			Symbiote:Set[${PlatedSymbiote}]
 			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
 			doSymbioteRequest:Set[TRUE]
 		}
@@ -561,7 +561,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		{
 			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 			PCName:Set[${PCNameFull.Token[1," "]}]
-			Symbiote:Set[Renewing Symbiote III]
+			Symbiote:Set[${RenewingSymbiote}]
 			SymbioteRequestList:Set["${PCName}", "${Symbiote}"]
 			doSymbioteRequest:Set[TRUE]
 		}

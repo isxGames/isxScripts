@@ -92,6 +92,21 @@ function AssistTank()
 }
 
 ;===================================================
+;===        ASSIST OFFTANK SUBROUTINE           ====
+;===================================================
+function AssistOffTank()
+{
+	;; try to target the tank's target
+	if ${Pawn[name,${OffTank}](exists)}
+	{
+		EchoIt "Assisting ${OffTank}"
+		VGExecute /cleartargets
+		VGExecute "/assist ${OffTank}"
+		wait 10
+	}
+}
+
+;===================================================
 ;===       REMOVE POISONS SUB-ROUTINE           ====
 ;===================================================
 function RemovePoisons()
@@ -254,7 +269,7 @@ function SprintCheck()
 	if ${doSprint}
 	{
 		;; if we are casting then
-		if ${Me.IsCasting}
+		if ${Me.IsCasting} 
 		{
 			if ${Me.Casting.Equal[Summon Mount]} || ${Me.Casting.Equal[Summon Hound]} || ${Me.Casting.Equal[Summon Unicorn]}
 			{
@@ -626,7 +641,7 @@ function RezAccept()
 function Symbiotes()
 {	
 	;-------------------------------------------
-	; Get our Symbiote routine running
+	; Start/Stop our Symbiote script
 	;-------------------------------------------
 	if ${Script[Symbiotes](exists)}
 	{
@@ -634,6 +649,24 @@ function Symbiotes()
 	}
 	elseif !${Script[Symbiotes](exists)}
 	{
-		run ./BM1/Symbiotes.iss 5
+		run ./BM1/Symbiotes.iss
+	}
+}
+
+;===================================================
+;===           BUFFAREA SUB-ROUTINE             ====
+;===================================================
+function BuffArea()
+{	
+	;-------------------------------------------
+	; Start/Stop our BuffArea script
+	;-------------------------------------------
+	if ${Script[BuffArea](exists)}
+	{
+		endscript BuffArea
+	}
+	elseif !${Script[BuffArea](exists)}
+	{
+		run ./BM1/BuffArea.iss
 	}
 }

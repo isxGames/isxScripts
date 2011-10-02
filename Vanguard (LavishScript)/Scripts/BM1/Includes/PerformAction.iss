@@ -40,6 +40,11 @@ function PerformAction()
 			call AssistTank
 			break
 
+		;; go assist the OffTank
+		case AssistOffTank
+			call AssistOffTank
+			break
+
 		;; use berries to remove poison
 		case RemovePoison
 			call RemovePoisons

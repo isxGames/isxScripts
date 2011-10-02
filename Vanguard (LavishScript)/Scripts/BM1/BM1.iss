@@ -4,6 +4,7 @@
 
 ;; Assist / Follow
 variable string Tank = Unknown
+variable string OffTank = Unknown
 variable string Follow = Unknown
 
 ; Healing variables
@@ -128,7 +129,7 @@ variable int NextAttackCheck = ${Script.RunningTime}
 #include ./BM1/Includes/Objects.iss
 #include ./BM1/Includes/Immunities.iss
 #include ./BM1/Includes/VitalHeals.iss
-#include ./BM1/Includes/BuffArea.iss
+;#include ./BM1/Includes/BuffArea.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -190,6 +191,12 @@ function atexit()
 		endscript Loot
 	}
 
+	;; Unload BuffArea routine
+	if ${Script[BuffArea](exists)}
+	{
+		endscript BuffArea
+	}
+
 	;; Unload Symbiote routine
 	if ${Script[Symbiotes](exists)}
 	{
@@ -197,7 +204,7 @@ function atexit()
 	}
 	
 	;; Say we are done
-	EchoIt "Stopped PSI Script"
+	echo "Stopped BM1 Script"
 }
 
 
@@ -254,26 +261,39 @@ function Initialize()
 	SetHighestAbility "FleshMendersRitual" "Flesh Mender's Ritual"
 	SetHighestAbility "TransfusionOfSerak" "Transfusion of Serak"
 	;; === BUFFS ===
-	SetHighestAbility "BloodFeast" "Blood Feast"
-	SetHighestAbility "SeraksMantle" "Serak's Mantle"
-	SetHighestAbility "HealthGraft" "Health Graft"
-	SetHighestAbility "SeraksAugmentation" "Serak's Augmentation"
-	SetHighestAbility "Vitalize" "Vitalize"
-	SetHighestAbility "MentalInfusion" "Mental Infusion"
-	SetHighestAbility "CerebralGraft" "Cerebral Graft"
+	SetHighestAbility "ConstructsAugmentation" "Construct's Augmentation"
+	SetHighestAbility "FavorOfTheLifeGiver" "Favor of the Life Giver"
+
+	SetHighestAbility "SeraksAmplification" "Serak's Amplification"
+	SetHighestAbility "Inspirit" "Inspirit"
 	SetHighestAbility "LifeGraft" "Life Graft"
 	SetHighestAbility "MentalStimulation" "Mental Stimulation"
+	SetHighestAbility "AcceleratedRegeneration" "Accelerated Regeneration"
+	SetHighestAbility "CerebralGraft" "Cerebral Graft"
+
+	SetHighestAbility "HealthGraft" "Health Graft"
+	SetHighestAbility "MentalInfusion" "Mental Infusion"
+	SetHighestAbility "SeraksAugmentation" "Serak's Augmentation"
+	SetHighestAbility "SeraksMantle" "Serak's Mantle"
+	SetHighestAbility "Vitalize" "Vitalize"
+
 	SetHighestAbility "Regeneration" "Regeneration"
-	SetHighestAbility "FavorOfTheLifeGiver" "Favor of the Life Giver"
-	SetHighestAbility "ConstructsAugmentation" "Construct's Augmentation"
 	;; === MISC ===
+	SetHighestAbility "BloodFeast" "Blood Feast"
 	SetHighestAbility "MentalTransmutation" "Mental Transmutation"
 	SetHighestAbility "LifeHusk" "Life Husk"
 	SetHighestAbility "ShelteringRune" "Sheltering Rune"
 	SetHighestAbility "StripEnchantment" "Strip Enchantment"
 	SetHighestAbility "RitualOfAwakening" "Ritual of Awakening"
 	SetHighestAbility "Numb" "Numb"
-	
+	;; === SYMBIOTES ===
+	SetHighestAbility "ConduciveSymbiote" "Conducive Symbiote"
+	SetHighestAbility "FrenziedSymbiote" "Frenzied Symbiote V"
+	SetHighestAbility "QuickeningSymbiote" "Quickening Symbiote"
+	SetHighestAbility "VitalizingSymbiote" "Vitalizing Symbiote"
+	SetHighestAbility "PlatedSymbiote" "Plated Symbiote IV"
+	SetHighestAbility "RenewingSymbiote" "Renewing Symbiote III"
+
 	;; Set Tank based upon DTarget
 	if !${Me.DTarget.ID(exists)}
 	{
@@ -305,7 +325,7 @@ function Initialize()
 	SymbioteRequestList:Clear
 
 	;-------------------------------------------
-	; Get our Counter routine running
+	; Start our Counter routine running
 	;-------------------------------------------
 	if !${Script[Counter](exists)}
 	{
@@ -313,7 +333,7 @@ function Initialize()
 	}
 
 	;-------------------------------------------
-	; Get our Loot routine running
+	; Start our Loot routine running
 	;-------------------------------------------
 	if !${Script[Loot](exists)}
 	{
