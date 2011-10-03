@@ -120,21 +120,21 @@ function Initialize()
 			StancePush1:Set[Stance Wheel]
 			break
 			
-		Druid
+		case Druid
 			Counter1:Set[Dissipate]
 			Counter2:Set[Healing Turn]
 			StripEnchantment1:Set[None]
 			StancePush1:Set[None]
 			break
 
-		Bard
+		case Bard
 			Counter1:Set[None]
 			Counter2:Set[None]
 			StripEnchantment1:Set[Asilam's Disenchanting Cry]
 			StancePush1:Set[None]
 			break
 
-		Necromancer 
+		case Necromancer 
 			Counter1:Set[Annul Magic]
 			Counter2:Set[None]
 			StripEnchantment1:Set[None]
