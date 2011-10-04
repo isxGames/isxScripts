@@ -25,6 +25,12 @@ atom(script) Immunities()
 		{
 			doPhysical:Set[FALSE]
 		}
+		if ${Me.Effect[Marshmallow Madness](exists)}
+		{
+			OkayToAttack:Set[FALSE]
+			return
+		}
+		
 
 		;-------------------------------------------
 		; Set IMMUNITY based upon the Target's name

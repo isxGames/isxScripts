@@ -536,6 +536,14 @@ objectdef GET
 				}
 			}
 		}
+		else
+		{
+			;; we are not in a group
+			if ${Me.HealthPct}<=${LifeTapCheck}
+			{
+				TotalWounded:Inc
+			}
+		}
 
 		;; return the value of TotalWounded
 		return ${TotalWounded}

@@ -38,11 +38,13 @@ function PerformAction()
 		;; go assist the tank
 		case AssistTank
 			call AssistTank
+			NextDelayCheck:Set[${Script.RunningTime}]
 			break
 
 		;; go assist the OffTank
 		case AssistOffTank
 			call AssistOffTank
+			NextDelayCheck:Set[${Script.RunningTime}]
 			break
 
 		;; use berries to remove poison
@@ -53,6 +55,7 @@ function PerformAction()
 		;; strip an Enchantment off the target
 		case RemoveEnchantment
 			call RemoveEnchantments
+			NextDelayCheck:Set[${Script.RunningTime}]
 			break
 
 		;; stop all attacks if target does not exist
@@ -73,6 +76,7 @@ function PerformAction()
 		;; follow player
 		case FollowPlayer
 			call FollowPlayer
+			NextDelayCheck:Set[${Script.RunningTime}]
 			break
 
 		;; use HoTs, heals, berries, or Blood Mage's ${Conduct}

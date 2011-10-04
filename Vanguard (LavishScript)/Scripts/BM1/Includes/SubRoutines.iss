@@ -362,17 +362,37 @@ function BuffRequests()
 	VGExecute /cleartargets
 	waitframe
 	Pawn[${PCName}]:Target
-	wait 5
+	do
+	{
+		waitframe
+	}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
 	
-	echo PCName=${PCName}, DTarget=${Me.DTarget.Name}
-	
-	call UseAbility "${ConstructsAugmentation}"
-	if !${Return}
+	if ${Me.Ability[${ConstructsAugmentation}](exists)}
+	{
+		wait 5 ${Me.Ability[${ConstructsAugmentation}].IsReady}
+		call UseAbility "${ConstructsAugmentation}"
+		if ${Return}
+		{
+			WeBuffed:Set[TRUE]
+		}
+	}
+	else
 	{
 		call UseAbility "${SeraksMantle}"
+		if ${Return}
+		{
+			WeBuffed:Set[TRUE]
+		}
+		
 		if ${Me.Ability[${FavorOfTheLifeGiver}](exists)}
 		{
+			wait 5 ${Me.Ability[${FavorOfTheLifeGiver}].IsReady}
 			call UseAbility "${FavorOfTheLifeGiver}"
+			if ${Return}
+			{
+				WeBuffed:Set[TRUE]
+			}
 		}
 		else
 		{
@@ -443,10 +463,6 @@ function BuffRequests()
 				}
 			}
 		}
-	}
-	else
-	{
-		WeBuffed:Set[TRUE]
 	}
 	if ${WeBuffed}
 	{
