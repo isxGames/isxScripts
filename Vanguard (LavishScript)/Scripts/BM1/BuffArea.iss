@@ -46,11 +46,20 @@ function main()
 	; Buffing self will buff my group (less buffing to do)
 	;-------------------------------------------
 	Pawn[Me]:Target
-	wait 1
-	call UseAbility2 "${ConstructsAugmentation}"
-	if !${Return}
+	do
+	{
+		waitframe
+	}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+	
+	if ${Me.Ability[${ConstructsAugmentation}](exists)}
+	{
+		call UseAbility2 "${ConstructsAugmentation}"
+	}
+	else
 	{
 		call UseAbility2 "${SeraksMantle}"
+		
 		if ${Me.Ability[${FavorOfTheLifeGiver}](exists)}
 		{
 			call UseAbility2 "${FavorOfTheLifeGiver}"
@@ -404,17 +413,13 @@ function:bool UseAbility2(string ABILITY)
 			return FALSE
 		}
 
-		;; return if the target is outside our range
-		if !${Me.Ability[${ABILITY}].TargetInRange} && !${Me.Ability[${ABILITY}].TargetType.Equal[Self]}
-		{
-			EchoIt2 "Target not in range for ${ABILITY}"
-			return FALSE
-		}
-
+		;; allow time for the ability to become ready
+		wait 5 ${Me.Ability[${ABILITY}].IsReady}
+		
 		;; now execute the ability
 		EchoIt2 "Used ${ABILITY}"
 		Me.Ability[${ABILITY}]:Use
-		wait 3
+		wait 5
 
 		;; loop this while checking for crits and furious
 		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}

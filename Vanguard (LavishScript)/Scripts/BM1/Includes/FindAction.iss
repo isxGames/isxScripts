@@ -180,9 +180,9 @@ atom(script) FindAction()
 		;-------------------------------------------
 		if ${doStripEnchantments} && ${UseAbilities}
 		{
-			if ${Me.Target(exists)} && ${Me.Target.HaveLineOfSightTo}
+			if ${Me.Target(exists)} && ${Me.Target.HaveLineOfSightTo} && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]})
 			{
-				if ${Me.Ability[${StripEnchantment}].IsReady}
+				if ${Me.Ability[${StripEnchantment}].IsReady} && ${GET.TotalGroupWounded}==0
 				{
 					; loop through all target buffs finding confirmed enchantment we can stip
 					for (l:Set[1] ; ${l}<=${Me.TargetBuff} ; l:Inc)
