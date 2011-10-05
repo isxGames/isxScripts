@@ -96,7 +96,7 @@
 			<checkbox Name="doCounter1" Template="VG.GreenCheckbox">
 				<visible>1</visible>
 				<X>3%</X>
-				<Y>20%</Y>
+				<Y>15%</Y>
 				<Width>25%</Width>
 				<Height>15</Height>
 				<Text>Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
@@ -115,7 +115,7 @@
 			<checkbox Name="doCounter2" Template="VG.GreenCheckbox">
 				<visible>1</visible>
 				<X>3%</X>
-				<Y>45%</Y>
+				<Y>35%</Y>
 				<Width>25%</Width>
 				<Height>15</Height>
 				<Text>Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
@@ -134,7 +134,7 @@
 			<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
 				<visible>1</visible>
 				<X>3%</X>
-				<Y>70%</Y>
+				<Y>55%</Y>
 				<Width>25%</Width>
 				<Height>15</Height>
 				<Text>Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
@@ -147,6 +147,25 @@
 				</OnLoad>
 				<OnLeftClick>
 					Script[Tools].VariableScope.doStripEnchantments:Set[${This.Checked}]
+				</OnLeftClick>
+			</checkbox>
+			
+			<checkbox Name="doAutoAttack" Template="VG.GreenCheckbox">
+				<visible>1</visible>
+				<X>3%</X>
+				<Y>75%</Y>
+				<Width>25%</Width>
+				<Height>15</Height>
+				<Text>AutoAttack On/Off</Text>
+				<AutoTooltip>  AutoAttack - also stops if FURIOUS  </AutoTooltip>
+				<OnLoad>
+					if ${Script[Tools].VariableScope.doAutoAttack}
+					{
+						This:SetChecked
+					}
+				</OnLoad>
+				<OnLeftClick>
+					Script[Tools].VariableScope.doAutoAttack:Set[${This.Checked}]
 				</OnLeftClick>
 			</checkbox>
 			

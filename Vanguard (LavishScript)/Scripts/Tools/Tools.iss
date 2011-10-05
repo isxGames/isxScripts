@@ -9,6 +9,7 @@ variable bool doStripEnchantments = TRUE
 variable bool doCounter1 = TRUE
 variable bool doCounter2 = TRUE
 variable bool doPushStance = TRUE
+variable bool doAutoAttack = TRUE
 variable string StripThisEnchantment
 variable string StripEnchantment1
 variable string Counter1
@@ -32,6 +33,7 @@ function main()
 	while ${isRunning}
 	{
 		call CounterIt
+		call AutoAttack
 		
 		;-------------------------------------------
 		; 1/2 Second Delay creates
@@ -183,7 +185,14 @@ atom(script) EchoIt(string aText)
 ;===================================================
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
-	redirect -append "${LavishScript.CurrentDirectory}/Scripts/Parse/Chat-${ChannelNumber}.txt" echo "[${Time}][${ChannelNumber}][(${Me.TargetHealth})${Me.Target.Name}][${aText}]"
+	if ${ChannelNumber}==0 && ${aText.Find[You can't attack with that type of weapon.]}
+	{
+		EchoIt "[${ChannelNumber}a]${aText}"
+		doMeleeAttacks:Set[FALSE]
+		UIElement[doAutoAttack@Tools]:UnsetChecked
+		vgecho "Melee Off - can't attack with that weapon"
+	}
+
 	if ${ChannelNumber}==26
 	{
 		;; this may be different for each class
@@ -319,7 +328,7 @@ function StripIt()
 {
 	if ${doStripEnchantments}
 	{
-		if ${Me.Target(exists)} && ${Me.Target.HaveLineOfSightTo}
+		if ${Me.Target(exists)} && ${Me.Target.HaveLineOfSightTo} && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]})
 		{
 			if ${Me.Ability[${StripEnchantment}].IsReady}
 			{
@@ -431,3 +440,57 @@ function PushStance()
 	{
 	}
 }
+
+;===================================================
+;===   AUTO ATTACK - this will turn On/Off  ====
+;===================================================
+function AutoAttack()
+{
+	if ${doAutoAttack}
+	{
+		call MeleeAttackOn
+	}
+	else
+	{
+		call MeleeAttackOff
+	}
+}
+
+;===================================================
+;===       MELEE ATTACKS ON SUB-ROUTINE        ====
+;===================================================
+function MeleeAttackOn()
+{
+	if ${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<5 && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && !${Me.Target.IsDead} && ${Me.TargetHealth}<100
+	{
+		if !${Me.TargetBuff[Furious](exists)} && !${Me.TargetBuff[Major Disease: Fire Advocate](exists)} && !${Me.Effect[Devout Foeman I](exists)} && !${Me.Effect[Devout Foeman II](exists)} && !${Me.Effect[Devout Foeman III](exists)} && !${Me.TargetBuff[Furious Rage](exists)} && !${Me.TargetBuff[Rust Shield](exists)} && !${Me.Effect[Mark of Verbs](exists)}
+		{
+			;; Turn on auto-attack
+			if !${GV[bool,bIsAutoAttacking]}
+			{
+				Me.Ability[Auto Attack]:Use
+				wait 10 ${GV[bool,bIsAutoAttacking]}
+			}
+			return
+		}
+	}
+	;; otherwise, turn off auto-attack
+	call MeleeAttackOff
+}
+
+;===================================================
+;===       MELEE ATTACKS OFF SUB-ROUTINE        ====
+;===================================================
+function MeleeAttackOff()
+{
+	if ${GV[bool,bIsAutoAttacking]}
+	{
+		;; Turn off auto-attack if target is not a resource
+		if !${Me.Target.Type.Equal[Resource]}
+		{
+			Me.Ability[Auto Attack]:Use
+			wait 10 !${GV[bool,bIsAutoAttacking]}
+		}
+	}
+}
+
