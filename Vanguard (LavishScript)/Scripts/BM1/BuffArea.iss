@@ -54,6 +54,7 @@ function main()
 	
 	if ${Me.Ability[${ConstructsAugmentation}](exists)}
 	{
+		vgecho ${ConstructsAugmentation}
 		call UseAbility2 "${ConstructsAugmentation}"
 	}
 	else
@@ -119,7 +120,8 @@ function main()
 	{
 		if ${CurrentPawns.Get[${i}].Type.Equal[Me]} || ${CurrentPawns.Get[${i}].Type.Equal[PC]} || ${CurrentPawns.Get[${i}].Type.Equal[Group Member]}
 		{
-			if ${CurrentPawns.Get[${i}].HaveLineOfSightTo} && ${CurrentPawns.Get[${i}].Level}>43
+			;if ${CurrentPawns.Get[${i}].HaveLineOfSightTo} && ${CurrentPawns.Get[${i}].Level}>43
+			if ${CurrentPawns.Get[${i}].HaveLineOfSightTo}
 			{
 				PC:Insert[${CurrentPawns.Get[${i}].Name}]
 				EchoIt2 "*Adding ${CurrentPawns.Get[${i}].Name}"
@@ -210,12 +212,12 @@ function main()
 		; SET DTARGET TO THE ONE WHO WE WANT TO BUFF
 		;-------------------------------------------
 		Pawn[exactname,${temp}]:Target
-		wait 5 ${Me.DTarget.Name.Find[${temp}]}
+		wait 10 ${Me.DTarget.Name.Find[${temp}]} && ${Me.DTarget.Level}>0
 		
 		;-------------------------------------------
 		;; CAST CONSTRUCT BUFF
 		;-------------------------------------------
-		if ${Me.Target.Level}>=44 || (${temp.Find[${Me.FName}]} && ${Me.Level}>=44)
+		if ${Me.DTarget.Level}>=44 || (${temp.Find[${Me.FName}]} && ${Me.Level}>=44)
 		{
 			if ${Me.Ability[${ConstructsAugmentation}](exists)}
 			{
@@ -235,7 +237,7 @@ function main()
 		;-------------------------------------------
 		;; CAST ALL-IN-ONE BUFF
 		;-------------------------------------------
-		if ${Me.Target.Level}>=35 || (${temp.Find[${Me.FName}]} && ${Me.Level}>=35)
+		if ${Me.DTarget.Level}>=35 || (${temp.Find[${Me.FName}]} && ${Me.Level}>=35)
 		{
 			if ${Me.Ability[${FavorOfTheLifeGiver}](exists)}
 			{

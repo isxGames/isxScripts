@@ -15,13 +15,13 @@ function DoNotAttack()
 ;===================================================
 function MeleeAttackOff()
 {
-	if ${GV[bool,bIsAutoAttacking]}
+	if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
 	{
 		;; Turn off auto-attack if target is not a resource
 		if !${Me.Target.Type.Equal[Resource]}
 		{
 			Me.Ability[Auto Attack]:Use
-			wait 10 !${GV[bool,bIsAutoAttacking]}
+			wait 10 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 		}
 	}
 }
@@ -34,24 +34,41 @@ function MeleeAttackOn()
 	;; Make sure target is within range
 	if ${doMeleeAttacks}
 	{
-		if ${Me.Target(exists)} && ${Me.Target.Distance}<5 && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && !${Me.TargetBuff[Furious](exists)} && !${isFurious} && !${Me.TargetBuff[Major Disease: Fire Advocate](exists)} && !${Me.Effect[Devout Foeman I](exists)} && !${Me.Effect[Devout Foeman II](exists)} && !${Me.Effect[Devout Foeman III](exists)} && !${Me.TargetBuff[Furious Rage](exists)} && !${Me.TargetBuff[Rust Shield](exists)} && !${Me.Effect[Mark of Verbs](exists)} && !${Me.Target.IsDead} && ${Me.InCombat}
+		if ${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<5 && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 		{
-			;; Turn on auto-attack
-			if !${GV[bool,bIsAutoAttacking]}
+			if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${isFurious}
 			{
-				Me.Ability[Auto Attack]:Use
-				wait 10 ${GV[bool,bIsAutoAttacking]}
+				call MeleeAttackOff
+				if !${Me.TargetBuff[Furious](exists)}
+				{
+					isFurious:Set[FALSE]
+				}
 			}
-			return
+			elseif ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+			{
+				call MeleeAttackOff
+			}
+			elseif ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
+			{
+				call MeleeAttackOff
+			}
+			elseif ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
+			{
+				call MeleeAttackOff
+			}
+			else
+			{
+				;; Turn on auto-attack
+				if !${GV[bool,bIsAutoAttacking]} || !${Me.Ability[Auto Attack].Toggled}
+				{
+					Me.Ability[Auto Attack]:Use
+					wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+				}
+				return
+			}
 		}
 	}
-	;; otherwise, turn off auto-attack
 	call MeleeAttackOff
-	;; reset the Furious flag if FURIOUS was detected
-	if !${Me.TargetBuff[Furious](exists)}
-	{
-		isFurious:Set[FALSE]
-	}
 }
 
 ;===================================================
@@ -94,7 +111,7 @@ function AttackTarget()
 	;-------------------------------------------
 	; MELEE ATTACKS - start attacking if in range
 	;-------------------------------------------
-	;call MeleeAttackOn
+	call MeleeAttackOn
 
 	;-------------------------------------------
 	; TARGET BEHIND US - Let's face the target!
@@ -180,7 +197,7 @@ function AttackTarget()
 			while ${Me.Encounter[1].Name.Find[Abomination]}
 			{
 				;; priority to AE all these targets
-				while ${Me.Ability[${BloodThief}].IsReady} && ${Me.HealthPct}>0
+				if ${Me.Ability[${BloodThief}].IsReady} && ${Me.HealthPct}>0
 				{
 					wait 5 ${Me.Ability[${BloodThief}].IsReady}
 					call UseAbility "${BloodThief}"
