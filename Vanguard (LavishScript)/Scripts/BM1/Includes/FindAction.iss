@@ -492,7 +492,3 @@ atom(script) FindAction()
 	;-------------------------------------------
 	PerformAction:Set[Default]
 }
-
-
-
-

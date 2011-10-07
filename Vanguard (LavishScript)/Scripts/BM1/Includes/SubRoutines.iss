@@ -493,6 +493,9 @@ function SymbioteRequest()
 						if ${Return}
 						{
 							vgecho "Buffed ${SymbioteRequestList.CurrentKey} with ${SymbioteRequestList.CurrentValue}"
+							SymbioteRequestList:Erase["${SymbioteRequestList.CurrentKey}"]
+							return
+
 						}
 					}
 				}
