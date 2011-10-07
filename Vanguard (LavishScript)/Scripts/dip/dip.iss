@@ -169,7 +169,7 @@ variable(script) int Entertainwins
 variable(script) int Entertainlosses
 variable(script) bool endScript = FALSE
 variable(script) bool fullAuto = TRUE
-variable(script) bool boolFace = TRUE
+variable(script) bool boolFace = FALSE
 variable(script) int brokeCount = 0
 variable(script) int maxWait
 variable(script) int minWait
@@ -412,7 +412,7 @@ function GoDiploSomething()
 		;; 'ourTurn' catcher, sometimes event does not set it so we will also do it here
 		if ${Parlay.IsMyTurn} && !${Parlay.IsOpponentTurn} && !${Me.IsLooting}
 		{
-			wait 100 ${dipisPaused} || ${ourTurn} || ${Me.IsLooting}
+			wait 50 ${dipisPaused} || ${ourTurn} || ${Me.IsLooting}
 			ourTurn:Set[TRUE]
 		}
 
@@ -708,16 +708,21 @@ function SelectParlay()
 	EchoIt "Assessing: ${Me.Target.Name}"
 	Parlay:AssessTarget[${dipNPCs[${curNPC}].NameID}]
 	wait 7
+	
 	variable int selectedConv = 0
-	variable int convOptions = ${Dialog[General].ResponseCount}
+	variable int convOptions
 	variable int i = 1
 	variable string genorciv
 	variable int diplevel
+	
+	convOptions:Set[${Dialog[General].ResponseCount}]
+	
+	;EchoIt "General Response Count = ${convOptions}"
+	
 	while ${convOptions}>0 && !${selectedConv}
-	;while ${convOptions} <= ${Dialog[General].ResponseCount} && !${selectedConv}
 	{
-		;echo General[ ${convOptions}]: ${Dialog[General,${convOptions}].Text}
-		
+		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
+		;EchoIt "General[${convOptions}]: LVL=${diplevel}, ${Dialog[General,${convOptions}].Text}"
 		currentParleyType:Set[Unknown]
 		
 		diplevel:Set[${Dialog[General,${convOptions}].Text.Mid[${Dialog[General,${convOptions}].Text.Find[dkblue>]},${Dialog[General,${convOptions}].Text.Length}].Token[2,>].Token[1,<]}]
@@ -728,9 +733,11 @@ function SelectParlay()
 			{
 				if ${dipNPCs[${curNPC}].Incite} && ${Dialog[General,${convOptions}].Text.Find[>Incite]}
 				{
+					EchoIt "${genorciv} / ${selectedConv}"
 					genorciv:Set[General]
 					selectedConv:Set[${convOptions}]
 					currentParleyType:Set[Incite]
+					EchoIt "${genorciv} / ${selectedConv}"
 					break
 				}
 				if ${dipNPCs[${curNPC}].Interview} && ${Dialog[General,${convOptions}].Text.Find[>Interview]}
@@ -738,6 +745,7 @@ function SelectParlay()
 					genorciv:Set[General]
 					selectedConv:Set[${convOptions}]
 					currentParleyType:Set[Interview]
+					EchoIt "${genorciv} / ${selectedConv}"
 					break
 				}
 				if ${dipNPCs[${curNPC}].Convince} && ${Dialog[General,${convOptions}].Text.Find[>Convince]}
@@ -745,6 +753,7 @@ function SelectParlay()
 					genorciv:Set[General]
 					selectedConv:Set[${convOptions}]
 					currentParleyType:Set[Convince]
+					EchoIt "${genorciv} / ${selectedConv}"
 					break
 				}
 				if ${dipNPCs[${curNPC}].Gossip} && ${Dialog[General,${convOptions}].Text.Find[>Gossip]}
@@ -752,6 +761,7 @@ function SelectParlay()
 					genorciv:Set[General]
 					selectedConv:Set[${convOptions}]
 					currentParleyType:Set[Gossip]
+					EchoIt "${genorciv} / ${selectedConv}"
 					break
 				}
 				if ${dipNPCs[${curNPC}].Entertain} && ${Dialog[General,${convOptions}].Text.Find[>Entertain]}
@@ -759,6 +769,7 @@ function SelectParlay()
 					genorciv:Set[General]
 					selectedConv:Set[${convOptions}]
 					currentParleyType:Set[Entertain]
+					EchoIt "${genorciv} / ${selectedConv}"
 					break
 				}
 			}
@@ -786,6 +797,7 @@ function SelectParlay()
 						genorciv:Set[Civic Diplomacy]
 						selectedConv:Set[${convOptions}]
 						currentParleyType:Set[Incite]
+						EchoIt "${genorciv} / ${selectedConv}"
 						break
 					}
 					if ${dipNPCs[${curNPC}].Interview} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Interview]}
@@ -793,6 +805,7 @@ function SelectParlay()
 						genorciv:Set[Civic Diplomacy]
 						selectedConv:Set[${convOptions}]
 						currentParleyType:Set[Interview]
+						EchoIt "${genorciv} / ${selectedConv}"
 						break
 					}
 					if ${dipNPCs[${curNPC}].Convince} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Convince]}
@@ -800,6 +813,7 @@ function SelectParlay()
 						genorciv:Set[Civic Diplomacy]
 						selectedConv:Set[${convOptions}]
 						currentParleyType:Set[Convince]
+						EchoIt "${genorciv} / ${selectedConv}"
 						break
 					}
 					if ${dipNPCs[${curNPC}].Gossip} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Gossip]}
@@ -807,6 +821,7 @@ function SelectParlay()
 						genorciv:Set[Civic Diplomacy]
 						selectedConv:Set[${convOptions}]
 						currentParleyType:Set[Gossip]
+						EchoIt "${genorciv} / ${selectedConv}"
 						break
 					}
 					if ${dipNPCs[${curNPC}].Entertain} && ${Dialog[Civic Diplomacy,${convOptions}].Text.Find[>Entertain]}
@@ -814,6 +829,7 @@ function SelectParlay()
 						genorciv:Set[Civic Diplomacy]
 						selectedConv:Set[${convOptions}]
 						currentParleyType:Set[Entertain]
+						EchoIt "${genorciv} / ${selectedConv}"
 						break
 					}
 				}
@@ -841,7 +857,10 @@ function SelectParlay()
 			{
 				temp:Set[${temp}s]
 			}
-			
+			if ${temp.Equal[Crafters]}
+			{
+				temp:Set[Craftsmen]
+			}
 			EchoIt "Parlay = ${Dialog[${genorciv},${selectedConv}].Text.Left[${Math.Calc[${Dialog[${genorciv},${selectedConv}].Text.Find[<nl>]}-2]}]}"
 			EchoIt "Expression = ${currentParleyType}"
 			EchoIt "Presence Type = ${temp}"
@@ -854,6 +873,10 @@ function SelectParlay()
 			;; start the parlay if we have enough presence
 			if ${Dialog[${genorciv},${selectedConv}].PresenceRequired} <= ${Me.Stat[Diplomacy,${temp}]}
 			{
+				wait 5
+				Pawn[name,Rithain Ciledil]:Target
+				wait 5
+		
 				Dialog[${genorciv},${selectedConv}]:Select
 				EchoIt "Selecting ${genorciv}: ${selectedConv} ${currentParleyType}"
 				wait 50 ${VG.IsInParlay} || ${dipisPaused}
@@ -870,7 +893,7 @@ function SelectParlay()
 		EchoIt "==============================="
 		needNewNPC:Set[TRUE]
 		;; this is here to reduce the running between two NPCs
-		wait 20 ${dipisPaused}
+		wait 10 ${dipisPaused}
 	}
 }
 
@@ -1309,9 +1332,15 @@ function LoadSettings()
 	setDipTypes:GetSettingIterator[itDipTypes]
 	if ${itDipTypes:First(exists)}
 	{
+		variable int i = 0
 		do
 		{
 			convTypes:Insert[${itDipTypes.Value}]
+			i:Inc
+			if ${i}>=5
+			{
+				break
+			}
 		}
 		while ${itDipTypes:Next(exists)}
 	}
@@ -1645,9 +1674,8 @@ atom(global) colorToggle(string Color)
 
 atom(global) colorBoxesSet()
 {
-	call FindNameInNPCList "${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}"
-
 	variable int temp
+	call FindNameInNPCList "${UIElement[NPCList@Options@DipTabs@Diplo].SelectedItem}"
 	temp:Set[${Return}]
 	
 	if ${dipNPCs[${temp}].red}
@@ -1684,6 +1712,8 @@ atom(global) colorBoxesSet()
 	}
 
 	variable int i
+	convTypes:Clear
+
 	if ${dipNPCs[${temp}].Incite}
 	{
 		UIElement[Incite@Options@DipTabs@Diplo]:SetChecked
