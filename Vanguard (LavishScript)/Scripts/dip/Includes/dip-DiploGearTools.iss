@@ -89,9 +89,7 @@ objectdef obj_diplogear
 		call ConvertPresence "${Presence}"
 		if ${Return} > 0
 		{
-			wait 3
 			call This.EquipGear2 "${Return}"
-			wait 3
 		}
 	}
 	method Save(string Presence, bool debug)
@@ -249,12 +247,11 @@ objectdef obj_diplogear
 				{
 					EchoIt "Equiping Ears 1a"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
-					wait 3
+					waitframe
 					Me.Inventory[${DiploRightEar}]:Equip
-					wait 3
+					waitframe
 				}
 			}
-			wait 2
 			if ${Me.Inventory[${DiploLeftEar}](exists)}
 			{
 				EchoIt "Checking Ears 1b"
@@ -262,12 +259,11 @@ objectdef obj_diplogear
 				{
 					EchoIt "Checking Ears 1b"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Left Ear]:Unequip
-					wait 3
+					waitframe
 					Me.Inventory[${DiploLeftEar}]:Equip
-					wait 3
+					waitframe
 				}
 			}
-			wait 2
 		}
 		else
 		{
@@ -278,10 +274,11 @@ objectdef obj_diplogear
 				{
 					EchoIt "Checking Ears 2"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Left Ear]:Unequip
-					wait 3
+					waitframe
 					Me.Inventory[CurrentEquipSlot, Diplomacy Right Ear]:Unequip
-					wait 3
+					waitframe
 					variable bool NeedLeftEar = TRUE
+					
 					for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 					{
 						if ${NeedLeftEar}
@@ -290,7 +287,7 @@ objectdef obj_diplogear
 							{
 								EchoIt "Equiping Ears 2a"
 								Me.Inventory[${i}]:Equip
-								wait 5
+								waitframe
 								i:Inc
 								NeedLeftEar:Set[FALSE]
 							}
@@ -299,12 +296,11 @@ objectdef obj_diplogear
 						{
 							EchoIt "Equiping Ears 2b"
 							Me.Inventory[${i}]:Equip
-							wait 3
+							waitframe
 						}
 					}
 				}
 			}
-			wait 2
 		}
 		
 		;Account for Same Name and ID Rings
@@ -319,24 +315,23 @@ objectdef obj_diplogear
 				{
 					EchoIt "Checking Rings 1a"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Right Finger]:Unequip
-					wait 3
+					waitframe
 					Me.Inventory[${DiploRightRing}]:Equip
-					wait 3
+					waitframe
 				}
 			}
-			wait 2
 			if ${Me.Inventory[${DiploLeftRing}](exists)}
 			{
 				if !${Me.Inventory[${DiploLeftRing}].CurrentEquipSlot.Equal[Diplomacy Left Finger]}
 				{
 					EchoIt "Checking Rings 1b"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Left Finger]:Unequip
-					wait 3
+					waitframe
 					Me.Inventory[${DiploLeftRing}]:Equip
-					wait 3
+					waitframe
 				}
 			}
-			wait 2
+			waitframe
 		}
 		else
 		{
@@ -347,10 +342,11 @@ objectdef obj_diplogear
 				{
 					EchoIt "Checking Rings 2"
 					Me.Inventory[CurrentEquipSlot, Diplomacy Left Finger]:Unequip
+					waitframe
 					Me.Inventory[CurrentEquipSlot, Diplomacy Right Finger]:Unequip
-					wait 3
-			
+					waitframe
 					variable bool NeedLeftRing = TRUE
+
 					for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 					{
 						if ${NeedLeftRing}
@@ -358,7 +354,7 @@ objectdef obj_diplogear
 							if ${Me.Inventory[${i}].Name.Equal[${DiploLeftRing}]}
 							{
 								Me.Inventory[${i}]:Equip
-								wait 3
+								waitframe
 								i:Inc
 								NeedLeftRing:Set[FALSE]
 							}
@@ -366,12 +362,12 @@ objectdef obj_diplogear
 						if ${Me.Inventory[${i}].Name.Equal[${DiploRightRing}]}
 						{
 							Me.Inventory[${i}]:Equip
-							wait 3
+							waitframe
 						}
 					}
 				}
 			}
-			wait 3
+			waitframe
 		}
 
 		;Load All Other Gear - 1.1 seconds
@@ -381,90 +377,79 @@ objectdef obj_diplogear
 		{
 			EchoIt "Equiping Head"
 			Me.Inventory[${DiploFace}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 2
 		EchoIt "Checking Cloak"
 		if !${DiploCloak.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Cloak]}]}
 		{
 			EchoIt "Equiping Cloak"
 			Me.Inventory[${DiploCloak}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Neck"
 		if !${DiploNeck.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Neck]}]}
 		{
 			EchoIt "Equiping Neck"
 			Me.Inventory[${DiploNeck}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Shoulders"
 		if !${DiploShoulders.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Shoulder]}]}
 		{
 			EchoIt "Equiping Shoulders"
 			Me.Inventory[${DiploShoulders}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Wrist"
 		if !${DiploWrist.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Wrists]}]}
 		{
 			EchoIt "Equiping Wrist"
 			Me.Inventory[${DiploWrist}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Chest"
 		if !${DiploChest.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Chest]}]}
 		{
 			EchoIt "Equiping Chest"
 			Me.Inventory[${DiploChest}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Hands"
 		if !${DiploHands.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Hands]}]}
 		{
 			EchoIt "Equiping Hands"
 			Me.Inventory[${DiploHands}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Held"
 		if !${DiploHeld.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Held Item]}]}
 		{
 			EchoIt "Equiping Held"
 			Me.Inventory[${DiploHeld}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Belt"
 		if !${DiploBelt.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Waist]}]}
 		{
 			EchoIt "Equiping Belt"
 			Me.Inventory[${DiploBelt}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Boots"
 		if !${DiploBoots.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Feet]}]}
 		{
 			EchoIt "Equiping Boots"
 			Me.Inventory[${DiploBoots}]:Equip
-			wait 2
+			waitframe
 		}
-		wait 3
 		EchoIt "Checking Legs"
 		if !${DiploLegs.Equal[${Me.Inventory[CurrentEquipSlot, Diplomacy Legs]}]}
 		{
 			EchoIt "Equiping Legs"
 			Me.Inventory[${DiploLegs}]:Equip
-			wait 2
+			waitframe
 		}
 		
-		wait 3
 		EchoIt "Saving current Diplo Presence for ${DiploPresence}"
 		This:XMLSave2[${di}]
 	}
