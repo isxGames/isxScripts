@@ -45,15 +45,14 @@
 		<TexturePressed Template="vg.button.TexturePressed" />
 	</Template>
 	
-
 	<!-- Window Name: (Tools) -->
 	<Window Name="Tools" Template="VG.Window">
 		<!-- Basic Window Information -->
 		<StorePosition>1</StorePosition>
 		<X>100</X>
 		<Y>100</Y>
-		<Width>225</Width>
-		<Height>90</Height>
+		<Width>210</Width>
+		<Height>500</Height>
 		<Title>Tools</Title>
 		<TitleBar Template="VG.Window.TitleBar">
 			<X>0</X>
@@ -84,91 +83,283 @@
 				</CommandButton>
 			</Children>
 		</TitleBar>
-
 		<!-- Nothing fancy for Window Client -->
+		<Client Template="VG.Window.Client" />
+<!--		
 		<Client Template="VG.Window.Client">
 			<Y>18</Y>
 			<Height>r18</Height>
 			<Texture Template="VG.TabControl.FrameTexture" />
 		</Client>
 
+-->		
 		<Children>
-			<checkbox Name="doCounter1" Template="VG.GreenCheckbox">
-				<visible>1</visible>
-				<X>3%</X>
-				<Y>15%</Y>
-				<Width>25%</Width>
-				<Height>15</Height>
-				<Text>Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
-				<AutoTooltip>  Use this counter when available </AutoTooltip>
-				<OnLoad>
-					if ${Script[Tools].VariableScope.doCounter1}
-					{
-						This:SetChecked
-					}
-				</OnLoad>
-				<OnLeftClick>
-					Script[Tools].VariableScope.doCounter1:Set[${This.Checked}]
-				</OnLeftClick>
-			</checkbox>
+			<!--main tab control-->
+			<TabControl name='DPS' Template='VG.Tabcontrol'>
+				<X>0</X>
+				<Y>3</Y>
+				<Font>
+					<Name>Arial</Name>
+					<Size>12</Size>
+				</Font>
+				<TabHeight>18</TabHeight>
+				<TabBorder>2</TabBorder>
+				<Height>99%</Height>
+				<Width>99%</Width>
+				<Tabs>
 
-			<checkbox Name="doCounter2" Template="VG.GreenCheckbox">
-				<visible>1</visible>
-				<X>3%</X>
-				<Y>35%</Y>
-				<Width>25%</Width>
-				<Height>15</Height>
-				<Text>Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
-				<AutoTooltip>  Use this counter when available </AutoTooltip>
-				<OnLoad>
-					if ${Script[Tools].VariableScope.doCounter2}
-					{
-						This:SetChecked
-					}
-				</OnLoad>
-				<OnLeftClick>
-					Script[Tools].VariableScope.doCounter2:Set[${This.Checked}]
-				</OnLeftClick>
-			</checkbox>
+					<!--Top Level Main Tab-->
+					<Tab name='Main'>
+						
+						<Text Name='txtAbilities' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>===== Abilities =====  </Text>
+						</Text>
+						<ComboBox Name="AbilitiesCombo" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>5%</Y>
+							<Width>180</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+							if ${This.SelectedItem.Text(exists)}
+							{
+								AddAbilities "${This.SelectedItem.Text}"
+								BuildAbilities
+							}
+							</OnSelect>
+						</ComboBox>
+						<Listbox Name="AbilitiesList" Template="VG.ListBox">
+							<X>6%</X>
+							<Y>9.5%</Y>
+							<Width>180</Width>
+							<Height>140</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								BuildAbilities
+							</OnLoad>
+							<OnRightClick>
+								RemoveAbilities "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								BuildAbilities
+							</OnRightClick>
+						</Listbox>
+						 <Text Name='txtItems' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>40%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>====== Items ======  </Text>
+						</Text>
+						<ComboBox Name="ItemsCombo" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>43%</Y>
+							<Width>180</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+							if ${This.SelectedItem.Text(exists)}
+							{
+								AddItems "${This.SelectedItem.Text}"
+								BuildItems
+							}
+							</OnSelect>
+						</ComboBox>
+						<Listbox Name="ItemsList" Template="VG.ListBox">
+							<X>6%</X>
+							<Y>47.5%</Y>
+							<Width>180</Width>
+							<Height>60</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								BuildItems
+							</OnLoad>
+							<OnRightClick>
+								RemoveItems "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								BuildItems
+							</OnRightClick>
+						</Listbox>
+						
+ 						<checkbox Name="doUseAbilities" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>63%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Use Abilities</Text>
+							<AutoTooltip> Use abilities listed above </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doUseAbilities}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doUseAbilities:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
 
-			<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
-				<visible>1</visible>
-				<X>3%</X>
-				<Y>55%</Y>
-				<Width>25%</Width>
-				<Height>15</Height>
-				<Text>Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
-				<AutoTooltip>  Strip Enchantments  </AutoTooltip>
-				<OnLoad>
-					if ${Script[Tools].VariableScope.doStripEnchantments}
-					{
-						This:SetChecked
-					}
-				</OnLoad>
-				<OnLeftClick>
-					Script[Tools].VariableScope.doStripEnchantments:Set[${This.Checked}]
-				</OnLeftClick>
-			</checkbox>
-			
-			<checkbox Name="doAutoAttack" Template="VG.GreenCheckbox">
-				<visible>1</visible>
-				<X>3%</X>
-				<Y>75%</Y>
-				<Width>25%</Width>
-				<Height>15</Height>
-				<Text>AutoAttack On/Off</Text>
-				<AutoTooltip>  AutoAttack - also stops if FURIOUS  </AutoTooltip>
-				<OnLoad>
-					if ${Script[Tools].VariableScope.doAutoAttack}
-					{
-						This:SetChecked
-					}
-				</OnLoad>
-				<OnLeftClick>
-					Script[Tools].VariableScope.doAutoAttack:Set[${This.Checked}]
-				</OnLeftClick>
-			</checkbox>
-			
+						<checkbox Name="doUseItems" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>67%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Use Items</Text>
+							<AutoTooltip> Use items listed above </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doUseItems}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doUseItems:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doCounter1" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>71%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
+							<AutoTooltip>Use this counter when available </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCounter1}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCounter1:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doCounter2" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>75%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
+							<AutoTooltip>Use this counter when available </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCounter2}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCounter2:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doPushStance" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>79%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Stance: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<AutoTooltip>Push Stances</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doPushStance}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doPushStance:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>83%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<AutoTooltip>Strip Enchantments</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doStripEnchantments}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doStripEnchantments:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doAutoAttack" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>87%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>AutoAttack On/Off</Text>
+							<AutoTooltip>AutoAttack - also stops if FURIOUS</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doAutoAttack}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doAutoAttack:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<Button Name="PauseBtn" Template="VG.RedButton">
+							<X>6%</X>
+							<Y>92%</Y>
+							<Width>180</Width>
+							<Height>30</Height>
+							<Text>Paused</Text>
+							<Alignment>Center</Alignment>
+							<OnLoad>
+								if ${Script[Tools].Variable[isPaused]}
+								{
+									This:SetText[Paused]
+									VG:ExecBinding[moveforward,release]
+								}
+								elseif !${Script[Tools].Variable[isPaused]}
+								{
+									This:SetText[Running]
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if !${Script[Tools].VariableScope.isPaused}
+								{ 
+									Script[Tools].VariableScope.isPaused:Set[TRUE]
+									This:SetText[Paused]
+								}
+								elseif ${Script[Tools].VariableScope.isPaused}
+								{ 
+									Script[Tools].VariableScope.isPaused:Set[FALSE]
+									This:SetText[Running]
+								}
+							</OnLeftClick>
+						</Button>
+						
+					</Tab>
+				</Tabs>
+			</TabControl>
 		</Children>
 	</Window>
 </ISUI>
