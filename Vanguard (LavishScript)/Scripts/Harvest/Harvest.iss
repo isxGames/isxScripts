@@ -154,7 +154,8 @@ function FollowHarvester()
 ;; TARGET WHATEVER THE HARVESTER IS TARGETING
 function AssistHarvester()
 {
-	if ${autoAssist} && !${GV[bool,bHarvesting]}
+	if ${autoAssist} && !${Me.InCombat}
+	;if ${autoAssist} && !${GV[bool,bHarvesting]}
 	{
 		;if ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40 && ${Pawn[id,${HarvesterID}].CombatState}>0
 		if ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40
@@ -176,7 +177,7 @@ function MoveCloserToResource()
 	}
 	
 	;; this wait is a must
-	waitframe
+	;waitframe
 
 	;; take control and move closer if within 12m of target
 	if ${Me.Target.Distance}<12 && ${Me.Target.IsHarvestable}
@@ -209,7 +210,8 @@ function BeginHarvesting()
 	if ${Pawn[id,${HarvesterID}].CombatState}>0 && ${Me.ToPawn.CombatState}==0 && ${Me.Target.IsHarvestable}
 	{
 		;; Begin Harvesting
-		if !${GV[bool,bHarvesting]} && ${Me.Target.Distance}<=5
+		;if !${GV[bool,bHarvesting]} && ${Me.Target.Distance}<=5
+		if !${Me.InCombat} && ${Me.Target.Distance}<=5
 		{
 			wait 10 !${Me.Target.IsHarvestable}
 			if ${Me.Target.IsHarvestable}
@@ -221,7 +223,7 @@ function BeginHarvesting()
 	}
 	
 	;; Let's wait here while we are harvesting
-	if ${GV[bool,bHarvesting]}
+	if ${GV[bool,bHarvesting]} || !${Me.InCombat}
 	{
 		StopHarvestTimer:Set[${Script.RunningTime}]
 
