@@ -111,6 +111,7 @@ function main()
 	
 	while ${isRunning}
 	{
+		wait 1
 		call FollowHarvester
 		call AssistHarvester
 		call MoveCloserToResource
@@ -138,7 +139,7 @@ function FollowHarvester()
 					Pawn[exactname,${Harvester}]:Face
 					VG:ExecBinding[moveforward]
 					AreWeMoving:Set[TRUE]
-					wait .5
+					wait .1
 				}
 				;; if we moved then we want to stop moving
 				if ${AreWeMoving}
@@ -154,10 +155,9 @@ function FollowHarvester()
 ;; TARGET WHATEVER THE HARVESTER IS TARGETING
 function AssistHarvester()
 {
-	if ${autoAssist} && !${Me.InCombat}
-	;if ${autoAssist} && !${GV[bool,bHarvesting]}
+	;; sometime when Bonus Yield is up the bHarvesting says we are still harvesting but we are not in combat, so...
+	if ${autoAssist} && (!${Me.InCombat} || !${GV[bool,bHarvesting]})
 	{
-		;if ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40 && ${Pawn[id,${HarvesterID}].CombatState}>0
 		if ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40
 		{
 			;; Always set our target to Harvester's target
@@ -170,91 +170,98 @@ function AssistHarvester()
 ;; WE GOT A TARGET SO MOVE IN CLOSER
 function MoveCloserToResource()
 {
-	;; Return if we don't have a target
-	if !${Me.Target(exists)}
+	if ${Me.Target(exists)}
 	{
-		return
-	}
-	
-	;; this wait is a must
-	;waitframe
-
-	;; take control and move closer if within 12m of target
-	if ${Me.Target.Distance}<12 && ${Me.Target.IsHarvestable}
-	{
-		;; Turn slowly toward the target
-		call faceloc ${Me.Target.X} ${Me.Target.Y} 20
-		face ${Me.Target.X} ${Me.Target.Y}
+		;; wait until target is harvestable
+		wait 10 ${Me.Target.IsHarvestable}
 		
-		;; Start moving closer to target
-		isMoving:Set[FALSE]
-		while ${Me.Target.Distance}>5 && ${Me.Target(exists)}
+		;; take control and move closer if within 12m of target
+		if  && ${Me.Target.Distance}<12 && ${Me.Target.IsHarvestable}
 		{
-			isMoving:Set[TRUE]
-			VG:ExecBinding[moveforward]
-		}
-		
-		;; Stop moving
-		if ${isMoving}
-		{
-			VG:ExecBinding[moveforward,release]
+			;; Turn slowly toward the target
+			call faceloc ${Me.Target.X} ${Me.Target.Y} 20
+			face ${Me.Target.X} ${Me.Target.Y}
+			
+			;; Start moving closer to target
 			isMoving:Set[FALSE]
+			while ${Me.Target.Distance}>5 && ${Me.Target(exists)}
+			{
+				isMoving:Set[TRUE]
+				VG:ExecBinding[moveforward]
+			}
+			
+			;; Stop moving
+			if ${isMoving}
+			{
+				VG:ExecBinding[moveforward,release]
+				isMoving:Set[FALSE]
+			}
 		}
 	}
 }
 
 ;; BEGIN HARVESTING
 function BeginHarvesting()
-{	
-	;; Routine to initiate harvesting if Harvester began harvesting
-	if ${Pawn[id,${HarvesterID}].CombatState}>0 && ${Me.ToPawn.CombatState}==0 && ${Me.Target.IsHarvestable}
+{
+	if ${Me.Target(exists)}
 	{
-		;; Begin Harvesting
-		;if !${GV[bool,bHarvesting]} && ${Me.Target.Distance}<=5
-		if !${Me.InCombat} && ${Me.Target.Distance}<=5
+		;; wait until target is harvestable
+		wait 10 ${Me.Target.IsHarvestable}
+		
+		;; is Harvester in combat and our target is harvestable?
+		if ${Me.Target.IsHarvestable} && ${Pawn[id,${HarvesterID}].CombatState}>0
 		{
-			wait 10 !${Me.Target.IsHarvestable}
-			if ${Me.Target.IsHarvestable}
+			;; Begin harvesting if we are not harvesting
+			if ${Me.ToPawn.CombatState}==0 && !${Me.InCombat}
 			{
-				Me.Ability[Auto Attack]:Use
-				wait 50 ${GV[bool,bHarvesting]}
+				;; Begin Harvesting
+				if ${Me.Target.Distance}<=5
+				{
+					Me.Ability[Auto Attack]:Use
+					wait 50 ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
+				}
 			}
-		}
-	}
-	
-	;; Let's wait here while we are harvesting
-	if ${GV[bool,bHarvesting]} || !${Me.InCombat}
-	{
-		StopHarvestTimer:Set[${Script.RunningTime}]
+			
+			;; Let's wait here while we are harvesting
+			if ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
+			{
+				StopHarvestTimer:Set[${Script.RunningTime}]
 
-		while ${GV[bool,bHarvesting]} && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
-		{
-			waitframe
-			if !${isRunning}
-			{
-				return
-			}
-			if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${HarvesterID}].Distance}>7
-			{
-				break
+				while ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0 && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
+				{
+					waitframe
+					if !${isRunning}
+					{
+						return
+					}
+					;; this will stop the harvest
+					if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${HarvesterID}].Distance}>7 || !${Me.Target.IsHarvestable}
+					{
+						break
+						VGExecute /endharvesting
+						waitframe
+						return
+					}
+				}
+				
 				VGExecute /endharvesting
 				waitframe
-				return
+				
+				if ${autoLoot}
+				{
+					Me.Target:LootAll
+				}
+				wait 5
+
+				VGExecute /hidewindow bonus yield
+				waitframe
+				VGExecute /hidewindow depletion bonus yield 
+				waitframe
 			}
 		}
-		
-		VGExecute /endharvesting
-		waitframe
-		
-		if ${autoLoot}
-		{
-			Me.Target:LootAll
-		}
-
-		wait 5
 	}
 }
-
+	
 function Loot()
 {
 	;; Return if we don't have a target or we do not want to loot
