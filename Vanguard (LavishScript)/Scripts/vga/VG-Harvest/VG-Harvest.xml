@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI><!-- Main UI Window -->
+
+	<!-- Font -->
+	<Template Name="VG.Font">
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+
+	<!-- Text -->
+	<template name="VG.Text.Font" Template="VG.Font" />
+	<template name="VG.Text">
+		<Font Template="VG.Text.Font" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name="VG.BoldText">
+		<Font Template="VG.BoldFont" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+
+	<!-- Green CheckBox -->
+	<Template Name="VG.GreenCheckbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.Checkbox.Texture" />
+		<TextureHover Template="VG.Checkbox.TextureHover" />
+		<TexturePressed Template="VG.Checkbox.TexturePressed" />
+		<TextureChecked Template="VG.Checkbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.Checkbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.Checkbox.TextureCheckedPressed" />
+	</Template>
+	
+	<!-- Grey CommandBox -->
+	<Template Name="VG.GreyCommandButton">
+		<Font Template="vg.button.Font" />
+		<Texture Template="vg.button.Texture" />
+		<TextureHover Template="vg.button.TextureHover" />
+		<TexturePressed Template="vg.button.TexturePressed" />
+	</Template>
+	
+	<!-- Window Name: (VG-Harvest) -->
+	<Window Name="VG-Harvest" Template="VG.Window">
+		<!-- Basic Window Information -->
+		<StorePosition>1</StorePosition>
+		<X>100</X>
+		<Y>100</Y>
+		<Width>260</Width>
+		<Height>200</Height>
+		<Title>VG-Harvest</Title>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>18</Height>
+			<Children>
+				<!-- Centered -->
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<!-- Minimize -->
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<!-- Close -->
+				<CommandButton Name="Custom Quit Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						Script[VG-Harvest].Variable[isRunning]:Set[FALSE]
+						endscript VG-Harvest 
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		
+		<Client Template="VG.Window.Client">
+			<Y>18</Y>
+			<Height>r18</Height>
+			<Texture Template="VG.TabControl.FrameTexture" />
+		</Client>
+
+		<Children>
+			<Text Name="Text-Toggles" Template="VG.BoldText">
+				<X>3%</X>
+				<Y>5%</Y>
+				<Width>200</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Text>TOGGLES:</Text>
+			</Text>
+
+			<checkbox Name="doLoot" Template="VG.GreenCheckbox">
+				<visible>1</visible>
+				<X>3%</X>
+				<Y>15%</Y>
+				<Width>15</Width>
+				<Height>15</Height>
+				<Text>Loot</Text>
+				<AutoTooltip> loot everything </AutoTooltip>
+				<OnLoad>
+					if ${Script[VG-Harvest].VariableScope.doLoot}
+					{
+						This:SetChecked
+					}
+				</OnLoad>
+				<OnLeftClick>
+					Script[VG-Harvest].VariableScope.doLoot:Set[${This.Checked}]
+				</OnLeftClick>
+			</checkbox>
+
+			<checkbox Name="doHarvestArea" Template="VG.GreenCheckbox">
+				<visible>1</visible>
+				<X>25%</X>
+				<Y>15%</Y>
+				<Width>15</Width>
+				<Height>15</Height>
+				<Text>Harvest Area</Text>
+				<AutoTooltip> harvesting radius increase from 5 meters to 15 meter radius </AutoTooltip>
+				<OnLoad>
+					if ${Script[VG-Harvest].VariableScope.doHarvestArea}
+					{
+						This:SetChecked
+					}
+				</OnLoad>
+				<OnLeftClick>
+					Script[VG-Harvest].VariableScope.doHarvestArea:Set[${This.Checked}]
+				</OnLeftClick>
+			</checkbox>
+
+			<checkbox Name="doMapArea" Template="VG.GreenCheckbox">
+				<visible>0</visible>
+				<X>3%</X>
+				<Y>45%</Y>
+				<Width>15</Width>
+				<Height>15</Height>
+				<Text>Map Area</Text>
+				<AutoTooltip> start mapping the chunk</AutoTooltip>
+				<OnLoad>
+					if ${Script[VG-Harvest].VariableScope.doMapArea}
+					{
+						This:SetChecked
+						Script[VG-Harvest].Variable[isPaused]:Set[TRUE]
+						UIElement[Run Button@VG-Harvest]:Set[This script is PAUSED]
+					}
+				</OnLoad>
+				<OnLeftClick>
+					Script[VG-Harvest].VariableScope.doMapArea:Set[${This.Checked}]
+				</OnLeftClick>
+			</checkbox>
+
+			<Textentry Name="AggroRadius" Template="VG.TextEntry">
+				<visible>0</visible>
+				<X>85%</X>
+				<Y>14%</Y>
+				<Width>10%</Width>
+				<Height>17</Height>
+				<Color>FFDDBB00</Color>
+				<OnLoad>
+					This:SetText[${Script[VG-Harvest].VariableScope.AggroRadius}]
+				</OnLoad>
+				<OnChange>
+					if ${This.Text.Length} == 0
+					{
+						Script[VG-Harvest].VariableScope.AggroRadius:Set[0]
+					}
+					if ${This.Text.Length} > 0
+					{
+						if ${Math.Calc[${This.Text}].Int} > 25
+						{
+							Script[VG-Harvest].VariableScope.AggroRadius:Set[25]
+							This:SetText[25]
+						}
+						Script[VG-Harvest].VariableScope.AggroRadius:Set[${Math.Calc[${This.Text}].Int}]
+					}
+				</OnChange>
+			</Textentry>
+
+			
+			<checkbox Name="WeAreMasterHarvester" Template="VG.GreenCheckbox">
+				<visible>1</visible>
+				<X>3%</X>
+				<Y>30%</Y>
+				<Width>15</Width>
+				<Height>15</Height>
+				<Text>Master Harvester</Text>
+				<AutoTooltip> toggle on if we are the master harvester </AutoTooltip>
+				<OnLoad>
+					if ${Script[VG-Harvest].VariableScope.WeAreMasterHarvester}
+					{
+						This:SetChecked
+					}
+				</OnLoad>
+				<OnLeftClick>
+					Script[VG-Harvest].VariableScope.WeAreMasterHarvester:Set[${This.Checked}]
+					if ${Script[VG-Harvest].VariableScope.WeAreMasterHarvester}
+					{
+						UIElement[MasterHarvesterName@VG-Harvest]:ToggleVisible
+						UIElement[MasterHarvesterEntry@VG-Harvest]:ToggleVisible
+						UIElement[SetMasterHarvester@VG-Harvest]:ToggleVisible
+						UIElement[AddWayPoint@VG-Harvest]:ToggleVisible
+						UIElement[TotalWaypoints@VG-Harvest]:ToggleVisible
+						UIElement[ClearWayPoints@VG-Harvest]:ToggleVisible
+						UIElement[doMapArea@VG-Harvest]:ToggleVisible
+					}
+					else
+					{
+						UIElement[MasterHarvesterName@VG-Harvest]:ToggleVisible
+						UIElement[MasterHarvesterEntry@VG-Harvest]:ToggleVisible
+						UIElement[SetMasterHarvester@VG-Harvest]:ToggleVisible
+						UIElement[AddWayPoint@VG-Harvest]:ToggleVisible
+						UIElement[TotalWaypoints@VG-Harvest]:ToggleVisible
+						UIElement[ClearWayPoints@VG-Harvest]:ToggleVisible
+						UIElement[doMapArea@VG-Harvest]:ToggleVisible
+					}
+					
+				</OnLeftClick>
+			</checkbox>
+
+			<checkbox Name="doEcho" Template="VG.GreenCheckbox">
+				<visible>1</visible>
+				<X>60%</X>
+				<Y>30%</Y>
+				<Width>15</Width>
+				<Height>15</Height>
+				<Text>Debug</Text>
+				<AutoTooltip> save debug info to save folder</AutoTooltip>
+				<OnLoad>
+					if ${Script[VG-Harvest].VariableScope.doEcho}
+					{
+						Navigate:StartDumpToFile
+						This:SetChecked
+					}
+				</OnLoad>
+				<OnLeftClick>
+					Script[VG-Harvest].VariableScope.doEcho:Set[${This.Checked}]
+					if ${Script[VG-Harvest].VariableScope.doEcho}
+					{
+						Navigate:StartDumpToFile
+					}
+					else
+					{
+						Navigate:StopDumpToFile
+					}
+				</OnLeftClick>
+			</checkbox>
+
+			<Commandbutton Name='SetMasterHarvester' Template='VG.GreyCommandButton'>
+				<visible>1</visible>
+				<X>3%</X>
+				<Y>45%</Y>
+				<Text>Set</Text>
+				<Width>30</Width> 
+				<Height>15</Height>
+				<Color>FFDDBB00</Color>
+				<OnLeftClick>
+					if ${Me.DTarget(exists)}
+					{
+						Script[VG-Harvest].Variable[MasterHarvesterName]:Set[${Me.DTarget.Name}]
+						Script[VG-Harvest].Variable[MasterHarvesterID]:Set[${Me.DTarget.ID}]
+					}
+					else
+					{
+						Script[VG-Harvest].Variable[MasterHarvesterName]:Set[Target a PC and try again]
+						Script[VG-Harvest].Variable[MasterHarvesterID]:Set[0]
+					}
+				</OnLeftClick>
+			</Commandbutton>
+
+			<Text Name="MasterHarvesterName" Template="VG.Text">
+				<visible>1</visible>
+				<X>16%</X>
+				<Y>45%</Y>
+				<Width>40%</Width>
+				<Height>15</Height>
+				<Color>FFDDBB00</Color>
+				<Text>Harvester:</Text>
+			</Text>
+
+			<Text Name="MasterHarvesterEntry" Template="VG.BoldText">
+				<visible>1</visible>
+				<X>39%</X>
+				<Y>45%</Y>
+				<Width>60%</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VG-Harvest].Variable[MasterHarvesterName]}]
+				</OnRender>
+			</Text>
+
+			
+			<Commandbutton Name="AddWayPoint" Template="VG.GreyCommandButton">
+				<visible>0</visible>
+				<X>2%</X>
+				<Y>58%</Y>
+				<Width>38%</Width>
+				<Height>23</Height>
+				<AutoTooltip>Click here to set Waypoints</AutoTooltip>
+				<Text>Add Waypoint</Text>
+				<OnLeftClick>
+					Script[VG-Harvest]:ExecuteAtom[AddWayPoint]
+				</OnLeftClick>
+			</Commandbutton>
+
+			<Text Name="TotalWayPoints" Template="VG.BoldText">
+				<visible>0</visible>
+				<X>45%</X>
+				<Y>60%</Y>
+				<Width>15%</Width>
+				<Height>15</Height>
+				<OnRender>
+					This:SetText[${Script[VG-Harvest].Variable[CurrentWayPoint]}/${Script[VG-Harvest].Variable[TotalWayPoints]}]
+				</OnRender>
+			</Text>
+			
+			<Commandbutton Name="ClearWayPoints" Template="VG.GreyCommandButton">
+				<visible>0</visible>
+				<X>57.5%</X>
+				<Y>58%</Y>
+				<Width>41%</Width>
+				<Height>22</Height>
+				<AutoTooltip>Clear All Waypoints</AutoTooltip>
+				<Text>Reset Waypoints</Text>
+				<OnLeftClick>
+					Script[VG-Harvest]:ExecuteAtom[ClearWaypoints]
+				</OnLeftClick>
+			</Commandbutton>
+
+			<Text Name="CurrentStatus" Template="VG.BoldText">
+				<visible>1</visible>
+				<X>3%</X>
+				<Y>75%</Y>
+				<Width>96%</Width>
+				<Height>20</Height>
+				<!--
+				<Font Template="VG.Text.Font">
+					<Color>FFDDBB00</Color>
+				</Font>
+				-->
+				<Text> Status:  ${Script[VG-Harvest].Variable[CurrentStatus]}</Text>
+			</Text>
+
+			<Commandbutton Name="Run Button" Template="VG.GreyCommandButton">
+				<visible>1</visible>
+				<X>20%</X>
+				<Y>86%</Y>
+				<Width>60%</Width>
+				<Height>20</Height>
+				<Text>This script is PAUSED</Text>
+				<OnLeftClick>
+					if ${Script[VG-Harvest].Variable[isPaused]}
+					{
+						Script[VG-Harvest].Variable[isPaused]:Set[FALSE]
+						This:SetText[This script is RUNNING]
+						UIElement[doMapArea@VG-Harvest]:UnsetChecked
+						Script[VG-Harvest].Variable[doMapArea]:Set[FALSE]
+					}
+					elseif !${Script[VG-Harvest].Variable[isPaused]}
+					{
+						Script[VG-Harvest].Variable[isPaused]:Set[TRUE]
+						This:SetText[This script is Paused]
+					}
+				</OnLeftClick>
+			</Commandbutton>
+
+		</Children>
+	</Window>
+</ISUI>
