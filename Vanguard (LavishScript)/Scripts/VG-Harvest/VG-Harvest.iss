@@ -467,34 +467,9 @@ function:bool HarvestTarget()
 		;; Bonus Yield causes bHarvesting to always report TRUE
 		while ${GV[bool,bHarvesting]} && ${Me.Target.IsHarvestable}
 		{
-			if ${Pawn[id,${MasterHarvesterID}].CombatState}==0
-			{
-				vgecho 1
-			}
-			if ${Me.Target.Name.Find[remains of]}
-			{
-				vgecho 2
-			}
-			if !${Me.Target(exists)}
-			{
-				vgecho 3
-			}
-			if ${Pawn[id,${MasterHarvesterID}].Distance}>7
-			{
-				vgecho 4
-			}
-			if !${isRunning}
-			{
-				vgecho 5
-			}
-			if ${isPaused}
-			{
-				vgecho 6
-			}
 			;; this will stop the harvest
 			if ${Pawn[id,${MasterHarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${MasterHarvesterID}].Distance}>7 || !${isRunning} || ${isPaused}
 			{
-				vgecho Harvesting was stopped
 				CurrentStatus:Set[Stopped Harvesting]
 				VGExecute /endharvesting
 				waitframe
@@ -723,8 +698,6 @@ function:int FindNearestWayPoint()
 		{
 			; set destination location X,Y,Z 
 			Destination:Set[${VG-MyPath_SSR.FindSet[${Me.Chunk}].FindSetting[WP-${i}]}]
-
-			vgecho "WP-${i} distance is ${Math.Distance["${Me.Location}","${Destination}"]}"
 
 			if ${Math.Distance["${Me.Location}","${Destination}"]} < ${ClosestDistance}
 			{
