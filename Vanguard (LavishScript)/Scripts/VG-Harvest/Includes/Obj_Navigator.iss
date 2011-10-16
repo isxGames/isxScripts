@@ -240,7 +240,6 @@ objectdef  Obj_Navigator
 		;; Check to see if we are on the map
 		if !${This.IsMapped[${Me.X},${Me.Y},${Me.Z}]}
 		{
-			echo NOT MAPPED
 			call MoveToMappedArea
 			return
 		}
