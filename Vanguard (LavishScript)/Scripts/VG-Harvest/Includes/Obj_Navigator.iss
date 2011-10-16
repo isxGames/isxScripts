@@ -25,7 +25,7 @@ objectdef  Obj_Navigator
 	variable bool doDumpToFile=FALSE
 	variable bool FaceNow=TRUE
 	variable bool doSave=FALSE
-	variable bool OffMap=FALSE
+	variable bool doMoveToMappedArea=TRUE
 	variable bool isMoving=FALSE
 	variable bool doMapping=FALSE
 	variable bool doFindPath=FALSE
@@ -160,6 +160,7 @@ objectdef  Obj_Navigator
 		This.doMoveToPoint:Set[FALSE]
 		This.isMoving:Set[FALSE]
 		This.doFindPath:Set[FALSE]
+		This.doMoveToMappedArea:Set[TRUE]
 	}
 
 	method MoveForward()
@@ -222,7 +223,7 @@ objectdef  Obj_Navigator
 	
 		;; Keep loading maps as we chunk
 		This:LoadMap["${Me.Chunk}"]
-	
+		
 		;; Start mapping if we are not moving to a point
 		if !${This.doMoveToPoint}
 		{
@@ -235,6 +236,14 @@ objectdef  Obj_Navigator
 			This:Stop
 			return
 		}
+		
+		;; Check to see if we are on the map
+		if !${This.IsMapped[${Me.X},${Me.Y},${Me.Z}]}
+		{
+			echo NOT MAPPED
+			call MoveToMappedArea
+			return
+		}
 
 		;; Keep Trying
 		if ${This.doFindPath}
@@ -242,13 +251,10 @@ objectdef  Obj_Navigator
 			call This.FindPath ${This.PointName}
 			if !${Return}
 			{
-				call MoveToMappedArea
-				if !${Return}
-				{
-					This:Stop
-				}	
+				This:Stop
 				return
 			}
+			This.doMoveToMappedArea:Set[TRUE]
 			This.doFindPath:Set[FALSE]
 		}
 
@@ -268,6 +274,25 @@ objectdef  Obj_Navigator
 	;; TO DO:  Pass it a destination that needs to check if on correct map - Do not call this from your routines
 	function:bool MoveToMappedArea()
 	{
+		;; No need to get back onto the map if we are already on it!
+		if ${This.IsMapped[${Me.X},${Me.Y},${Me.Z}]}
+		{
+			if !${doMoveToMappedArea}
+			{
+				This:Stop
+			}
+			This.doMoveToMappedArea:Set[TRUE]
+			return
+		}
+		
+		;; We are already moving onto the map 
+		if !${doMoveToMappedArea}
+		{
+			This:MoveForward
+			return
+		}
+	
+		This.doMoveToMappedArea:Set[FALSE]
 		variable index:lnavregionref SurroundingRegions
 		variable string Region
 		variable int RegionsFound
@@ -314,6 +339,22 @@ objectdef  Obj_Navigator
 	}
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;; Good - you may use this within your routine
+	member:bool IsMapped(float X, float Y, float Z)
+	{
+		variable string Region
+		Region:Set[${LNavRegion[${Me.Chunk}].BestContainer[${X},${Y},${Z}].ID}]
+		;; when it is not mapped it is Universe, otherwise, it would be Box
+		if ${LNavRegion[${Region}].Type.Equal[Universe]}
+		{
+			;echo FALSE - ${LNavRegion[${Region}].Type} // ${LNavRegion[${Region}]}
+			return FALSE
+		}
+		;echo TRUE - ${LNavRegion[${Region}].Type} // ${LNavRegion[${Region}]}
+		return TRUE
+	}
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 	;; Good - you may use this within your routines
 	method AddNamedPoint(string pointname, string custom)
 	{
@@ -351,10 +392,10 @@ objectdef  Obj_Navigator
 		if ${LNavRegion[${Region}].Type.Equal[Universe]}
 		{
 			This:EchoIt["Adding to ${LNavRegion[${This.CurrentREGION}].FQN}"]
-			;; trying different sizes
-			LNavRegion[${This.CurrentREGION}]:AddChild[box,"auto",-unique,${Math.Calc[${Me.X}-150]},${Math.Calc[${Me.X}+150]}, ${Math.Calc[${Me.Y}-150]}, ${Math.Calc[${Me.Y}+50]}, ${Math.Calc[${Me.Z}-150]},${Math.Calc[${Me.Z}+50]}]
-			;LNavRegion[${This.CurrentREGION}]:AddChild[box,"auto",-unique,${Math.Calc[${Me.X}-250]},${Math.Calc[${Me.X}+250]}, ${Math.Calc[${Me.Y}-250]}, ${Math.Calc[${Me.Y}+150]}, ${Math.Calc[${Me.Z}-250]},${Math.Calc[${Me.Z}+150]}]
-			;LNavRegion[${This.CurrentREGION}]:AddChild[box,"auto",-unique,${Math.Calc[${Me.X}-500]},${Math.Calc[${Me.X}+500]}, ${Math.Calc[${Me.Y}-500]}, ${Math.Calc[${Me.Y}+300]}, ${Math.Calc[${Me.Z}-500]},${Math.Calc[${Me.Z}+300]}]
+
+			;; trying different types
+			;LNavRegion[${Region}]:AddChild[sphere,"auto",250,${Me.X},${Me.Y},${Me.Z}]
+			LNavRegion[${This.CurrentREGION}]:AddChild[box,"auto",-unique,${Math.Calc[${Me.X}-250]},${Math.Calc[${Me.X}+250]}, ${Math.Calc[${Me.Y}-250]}, ${Math.Calc[${Me.Y}+150]}, ${Math.Calc[${Me.Z}-250]},${Math.Calc[${Me.Z}+150]}]
 
 			Region:Set[${LNavRegion[${Me.Chunk}].BestContainer[${Me.X},${Me.Y}, ${Me.Z}].ID}]
 			This.CurrentRegion:Set[${LNavRegion[${Region}].Name}]
