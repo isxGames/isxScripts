@@ -11,6 +11,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20111016 (Zandros)
+;  * Fixed setting DTarget and Follow Routines
+;
 ; 20111015 (Zandros)
 ;  * Worked on Obj_Navigator improving pathing and movement routines
 ;
@@ -127,7 +130,6 @@ function main()
 		;-------------------------------------------
 		if ${Me.HealthPct}<=0 || ${GV[bool,DeathReleasePopup]}
 		{
-			call StopAutoFollow
 			Navigate:Stop
 			isPaused:Set[TRUE]
 			VG:ExecBinding[moveforward,release]
@@ -151,7 +153,6 @@ function main()
 		{
 			;; stop navigating
 			Navigate:Stop
-			call StopAutoFollow
 
 			;; Begin mapping area if we are Master Harvester
 			if ${WeAreMasterHarvester} && ${Me.Chunk(exists)} && ${doMapArea}
@@ -282,8 +283,8 @@ function AssistMasterHarvester()
 	;; Set DTarget to our Master Harvester
 	if !${Me.DTarget.Name.Find[${MasterHarvesterName}]}
 	{
-		pawn[exactname,${MasterHarvesterName}]:Target
-		wait 10
+		Pawn[ExactName,${MasterHarvesterName}]:Target
+		waitframe
 	}
 	
 	;; return if Master Harvester can't be found
@@ -293,14 +294,13 @@ function AssistMasterHarvester()
 	}
 
 	;; always follow the Master Harvester
-	if ${Me.DTarget.Distance}>=7
+	if ${Me.DTarget.Distance}>=5
 	{
-		variable bool AreWeMoving = FALSE
+		variable bool AreWeMoving = TRUE
 		Face:Point[${Me.DTarget.X}, ${Me.DTarget.Y}, 0, FALSE]
-		wait 10
 
 		;; start moving until target is within 4m of self
-		while ${Me.DTarget.Distance}>=5
+		while ${Me.DTarget.Distance}>=3
 		{
 			;; check to see if we need to break out of loop
 			if ${isPaused} || !${Me.DTarget(exists)}
@@ -312,7 +312,6 @@ function AssistMasterHarvester()
 			;; face DTarget and move forward
 			Me.DTarget:Face
 			VG:ExecBinding[moveforward]
-			AreWeMoving:Set[TRUE]
 			wait .1
 		}
 
@@ -773,7 +772,6 @@ function TestWayPoints()
 function atexit()
 {
 	VG:ExecBinding[moveforward,release]
-	;call StopAutoFollow
 	SaveXMLSettings	
 	ui -unload "${Script.CurrentDirectory}/VG-Harvest.xml"
 }
@@ -789,40 +787,6 @@ atom(script) EchoIt(string aText)
 		echo "[${Time}] VG-Harvest: ${aText}"
 	}
 }
-
-
-;===================================================
-;===       SUBROUTINE - Start Auto Follow       ====
-;===================================================
-function StartAutoFollow()
-{
-	if ${WeAreFollowing}
-	{
-		return
-	}
-	VGExecute /follow
-	wait 20
-	WeAreFollowing:Set[TRUE]
-}
-
-;===================================================
-;===       SUBROUTINE - Stop Auto Follow        ====
-;===================================================
-function StopAutoFollow()
-{
-	if !${WeAreFollowing}
-	{
-		return
-	}
-	
-	;; Interupt autofollow - need better way to stop autofollow but this will do for now
-	VG:ExecBinding[moveforward]
-	waitframe
-	VG:ExecBinding[moveforward,release]
-	waitframe
-	WeAreFollowing:Set[FALSE]
-}
-
 
 ;===================================================
 ;===     ATOM - Save current waypoint           ====
