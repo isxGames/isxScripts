@@ -12,7 +12,7 @@
 ; Revision History
 ; ----------------
 ; 20111016 (Zandros)
-;  * Fixed setting DTarget and Follow Routines
+;  * Fixed setting DTarget, Follow Routines, and Looting Routines
 ;
 ; 20111015 (Zandros)
 ;  * Worked on Obj_Navigator improving pathing and movement routines
@@ -46,7 +46,7 @@ variable bool doAvoidAggro = TRUE
 variable bool WeAreMasterHarvester = FALSE
 variable bool doHarvestArea = FALSE
 variable bool WeAreFollowing = FALSE
-variable int HarvestingRange = 10
+variable int HarvestingRange = 15
 variable int AggroRadius = 15
 variable int HarvX = 968
 variable int HarvY = 924
@@ -344,7 +344,7 @@ function AssistMasterHarvester()
 }
 
 ;===================================================
-;===         Harvest Area Routine               ====
+;===  Harvest Area Routine  - Master Harvester  ====
 ;===================================================
 function:bool HarvestArea()
 {
@@ -355,11 +355,14 @@ function:bool HarvestArea()
 	
 	CurrentStatus:Set[Harvesting Area]
 
-	;; Let's go find a Resource that's 10 meter radius from us (default)
-	call FindTarget Resource ${HarvestingRange}
-	if !${Return}
+	;; scan the area around me for a target
+	Pawn[resource,radius,15]:Target
+	wait 10 ${Me.Target.IsHarvestable}
+	if !${Me.Target.IsHarvestable} 
 	{
-		;; stop searching for we are done with this area
+		;; Clear Target
+		VGExecute "/cleartargets"
+		wait 5
 		return FALSE
 	}
 
@@ -499,35 +502,43 @@ function LootTarget()
 {
 	if ${doLoot}
 	{
+		wait 10 !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
+	
 		;; Loot routine if target is a corpse
 		if !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
 		{
-		
 			CurrentStatus:Set[Looting]
 
-			;; Start Loot Window
-			Loot:BeginLooting
-			wait 10 ${Loot.NumItems} || !${Me.Target(exists)}
-			
-			;; Cycle through each item and loot it
+			;; if we are not looting then start looting
+			if !${Me.IsLooting}
+			{
+				Loot:BeginLooting
+				wait 10 ${Me.IsLooting} && ${Loot.NumItems}
+			}
+
+			;; start looting 1 item at a time, gaurantee to get all items
 			if ${Me.IsLooting}
 			{
-				variable int i = 0
-				for ( i:Set[${Loot.NumItems}] ; ${i}<=0 ; i:Dec )
+				if ${Loot.NumItems}
 				{
-					Loot.Item[${i}]:Loot
-					vgecho *Looting: ${Loot.Item[${i}]}
+					variable int i
+					;; start highest to lowest, last item will close loot
+					for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
+					{
+						vgecho Looting: ${Loot.Item[${i}]}
+						waitframe
+						Loot.Item[${i}]:Loot
+					}
 				}
-				Loot:EndLooting
-				wait 3
+				else
+				{
+					;; sometimes, we just have to loot everything if we can't determine how many items to loot
+					Loot:LootAll
+				}
 			}
-			
-			;; There is a chance we still have items to loot so loot everything
-			if ${Loot.Items}
-			{
-				Loot:LootAll
-				wait 2
-			}
+				
+			;; this will actually stop everything until you deal with the loot, need a timer of some form to break out
+			wait 10 !${Me.IsLooting}
 		}
 	}
 }
@@ -690,8 +701,6 @@ function:int FindNearestWayPoint()
 		variable int ClosestDistance = 999999
 		variable int ClosestWayPoint = 1
 		variable point3f Destination
-		
-		vgecho "----"
 		
 		for ( i:Set[1] ; ${i}<=${TotalWayPoints} ; i:Inc )
 		{

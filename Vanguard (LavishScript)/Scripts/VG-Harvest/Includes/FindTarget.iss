@@ -123,8 +123,8 @@ function:bool FindTarget(string TargetType, int Distance=15, int ConCheck=6, int
 				Obstacle:Set[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}]
 				if !${Obstacle.Equal[TerrainInfo0]}
 				{
-					;echo Obstacle=[${Obstacle}]
-					;echo LOS=[${Pawn[${i}].HaveLineOfSightTo}], Obstacle=[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}], Target=[${Pawn[${i}].Name}], Distance=[${Pawn[${i}].Distance}]
+					echo Obstacle=[${Obstacle}]
+					echo LOS=[${Pawn[${i}].HaveLineOfSightTo}], Obstacle=[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}], Target=[${Pawn[${i}].Name}], Distance=[${Pawn[${i}].Distance}]
 					;if ${doEcho}
 					;{
 					;	;echo "[${Time}][VG:EB] --> FindTarget: Obstacle between ${Pawn[${i}].Name} at ${Pawn[${i}].Distance} meters away"
