@@ -13,6 +13,7 @@ function solobuff()
 	debuglog "Checking Buffs"
 	Buff:GetSettingIterator[anIter]
 	anIter:First
+	variable string temp
 
 	while ( ${anIter.Key(exists)} )
 	{
@@ -24,6 +25,18 @@ function solobuff()
 			anIter:Next
 			continue
 		}
+
+		;; we do not want to recast the berry spell if they already exist in your inventory
+		if ${anIter.Key.Find[berries]}
+		{
+			temp:Set[${anIter.Key.Token[1," "]}]
+			if ${Me.Inventory[${temp}](exists)} || ${Me.Inventory[Tiny ${temp}](exists)} || ${Me.Inventory[Small ${temp}](exists)} || ${Me.Inventory[Large ${temp}](exists)} || ${Me.Inventory[Great ${temp}](exists)}
+			{
+				anIter:Next
+				continue
+			}
+		}
+		
 
 		;If our buff is gone, or has less than 60 seconds, rebuff
 		if !${Me.Effect[${anIter.Key}](exists)} || ${Me.Effect[${anIter.Key}].TimeRemaining} <= 60
@@ -47,6 +60,7 @@ function solobuff()
 				{
 					debuglog "Ready to Buff ${anIter.Key}"
 					call executeability "${anIter.Key}" "buff" "Neither"
+					wait 1
 				}
 			}
 		}
