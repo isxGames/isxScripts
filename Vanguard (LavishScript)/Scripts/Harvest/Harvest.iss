@@ -111,14 +111,33 @@ function main()
 	
 	while ${isRunning}
 	{
-		wait 1
-		call FollowHarvester
-		call AssistHarvester
-		call MoveCloserToResource
-		call BeginHarvesting
-		call Loot
-		call corpse_drag
-		call Close_HarvestingWindow
+		;; Set DTarget to our Master Harvester
+		if !${Me.DTarget.Name.Equal[${Harvester}]} && !${Harvester.Equal[${Me}]} && ${autoFollow}
+		{
+			Pawn[Name,${Harvester}]:Target
+			waitframe
+		}
+	
+		;; return if Master Harvester can't be found
+		if ${Me.DTarget.Name.Equal[${Harvester}]} && !${Harvester.Equal[${Me}]}
+		{
+			waitframe
+			if !${Me.DTarget.Name.Equal[${Harvester}]} && !${Harvester.Equal[${Me}]}
+			{
+				vgecho Turn AutoFollow OFF if trying to change who you will be assisting
+			}
+			
+			if ${Me.DTarget.Name.Equal[${Harvester}]} && !${Harvester.Equal[${Me}]}
+			{
+				call FollowHarvester
+				call AssistHarvester
+				call MoveCloserToResource
+				call BeginHarvesting
+				call Loot
+				call corpse_drag
+				call Close_HarvestingWindow
+			}
+		}
 	}
 }
 
@@ -127,26 +146,21 @@ function FollowHarvester()
 {
 	if ${autoFollow}
 	{
-		if ${Pawn[exactname,${Harvester}](exists)}
+		;; did target move out of rang?
+		if ${Me.DTarget.Distance}>=2
 		{
-			;; did target move out of rang?
-			if ${Pawn[exactname,${Harvester}].Distance}>=4
+			variable bool AreWeMoving = TRUE
+			;; start moving until target is within range
+			while ${isRunning} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}>=2
 			{
-				variable bool AreWeMoving = FALSE
-				;; start moving until target is within range
-				while ${isRunning} && ${Pawn[exactname,${Harvester}](exists)} && ${Pawn[exactname,${Harvester}].Distance}>=4 && ${Pawn[exactname,${Harvester}].Distance}<45
-				{
-					Pawn[exactname,${Harvester}]:Face
-					VG:ExecBinding[moveforward]
-					AreWeMoving:Set[TRUE]
-					wait .1
-				}
-				;; if we moved then we want to stop moving
-				if ${AreWeMoving}
-				{
-					isMoving:Set[FALSE]
-					VG:ExecBinding[moveforward,release]
-				}
+				Me.DTarget:Face
+				VG:ExecBinding[moveforward]
+			}
+			;; if we moved then we want to stop moving
+			if ${AreWeMoving}
+			{
+				isMoving:Set[FALSE]
+				VG:ExecBinding[moveforward,release]
 			}
 		}
 	}
@@ -158,11 +172,11 @@ function AssistHarvester()
 	;; sometime when Bonus Yield is up the bHarvesting says we are still harvesting but we are not in combat, so...
 	if ${autoAssist} && (!${Me.InCombat} || !${GV[bool,bHarvesting]})
 	{
-		if ${Pawn[${Harvester}].Name(exists)} && ${Pawn[${Harvester}].Distance}<=40
+		if ${Me.DTarget.Distance}<5
 		{
 			;; Always set our target to Harvester's target
 			VGExecute /assist ${Harvester}
-			wait 10 ${Me.Target.IsHarvestable} && !${VG.IsInParlay}
+			waitframe
 		}
 	}
 }
@@ -173,13 +187,13 @@ function MoveCloserToResource()
 	if ${Me.Target(exists)}
 	{
 		;; wait until target is harvestable
-		wait 10 ${Me.Target.IsHarvestable}
+		;wait 10 ${Me.Target.IsHarvestable} || ${Me.Target.Name.Find[remains of]}
 		
 		;; take control and move closer if within 12m of target
 		if  && ${Me.Target.Distance}<12 && ${Me.Target.IsHarvestable}
 		{
 			;; Turn slowly toward the target
-			call faceloc ${Me.Target.X} ${Me.Target.Y} 20
+			;call faceloc ${Me.Target.X} ${Me.Target.Y} 20
 			face ${Me.Target.X} ${Me.Target.Y}
 			
 			;; Start moving closer to target
@@ -203,17 +217,17 @@ function MoveCloserToResource()
 ;; BEGIN HARVESTING
 function BeginHarvesting()
 {
-	if ${Me.Target(exists)}
-	{
-		;; wait until target is harvestable
-		wait 10 ${Me.Target.IsHarvestable}
-		
-		;; is Harvester in combat and our target is harvestable?
-		if ${Me.Target.IsHarvestable} && ${Pawn[id,${HarvesterID}].CombatState}>0
+		if ${Pawn[id,${HarvesterID}].CombatState}>0
 		{
 			;; Begin harvesting if we are not harvesting
 			if ${Me.ToPawn.CombatState}==0 && !${Me.InCombat}
 			{
+				if !${Me.Target(exists)}
+				{
+					VGExecute /assist ${Harvester}
+					wait 10 ${Me.Target(exists)}
+				}
+				
 				;; Begin Harvesting
 				if ${Me.Target.Distance}<=5
 				{
@@ -259,7 +273,6 @@ function BeginHarvesting()
 				waitframe
 			}
 		}
-	}
 }
 	
 function Loot()
