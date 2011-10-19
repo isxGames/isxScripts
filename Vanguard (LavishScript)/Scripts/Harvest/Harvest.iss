@@ -56,6 +56,8 @@
 variable bool isRunning = TRUE
 variable bool isMoving = FALSE
 variable bool GIVEUP = FALSE
+variable bool BUMP = FALSE
+
 variable bool doEcho=TRUE
 variable string Harvester
 variable int64 HarvesterID
@@ -108,6 +110,12 @@ function main()
 	
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 	ui -reload "${Script.CurrentDirectory}/Harvest.xml"
+
+	;-------------------------------------------
+	; Turn on our event
+	;-------------------------------------------
+	Event[VG_onHitObstacle]:AttachAtom[Bump]
+	
 	
 	while ${isRunning}
 	{
@@ -150,11 +158,17 @@ function FollowHarvester()
 		if ${Me.DTarget.Distance}>=2
 		{
 			variable bool AreWeMoving = TRUE
+			variable bool Strifing = FALSE
 			;; start moving until target is within range
-			while ${isRunning} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}>=2
+			while ${isRunning} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}>=2 && ${autoFollow}
 			{
 				Me.DTarget:Face
 				VG:ExecBinding[moveforward]
+				if ${BUMP}
+				{
+					call HandleBump
+				}
+				wait .5 !${isRunning} || !${Me.DTarget(exists)} !! ${Me.DTarget.Distance}<2 || !${autoFollow}
 			}
 			;; if we moved then we want to stop moving
 			if ${AreWeMoving}
@@ -452,4 +466,95 @@ atom(script) EchoIt(string Text)
 		echo [${Time}][Harvest]: ${Text}
 		vgecho ${Text}
 	}
+}
+
+;-------------------------------------------
+; This happens when we bump into an obstacle
+;-------------------------------------------
+atom Bump(string Name)
+{
+	;; Set our BUMP flag
+	BUMP:Set[TRUE]
+}
+
+;-------------------------------------------
+; Handle the bump - lame routine
+;-------------------------------------------
+function HandleBump()
+{
+	variable int WAIT = 7
+	variable int RANDOM = ${Math.Rand[10]}
+	X:Set[${Me.X}]
+	Y:Set[${Me.Y}]
+	Z:Set[${Me.Z}]
+
+	;; Try moving LEFT then RIGHT
+	if ${RANDOM}>5
+	{
+		;; Move LEFT
+		VG:ExecBinding[StrafeLeft]
+		wait ${WAIT}
+		VG:ExecBinding[StrafeLeft,release]
+		if ${ECHO}
+			echo "[${Time}][VG:AutoFollow] OBSTACLE - Going LEFT (Moved: ${Math.Calc[${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}].Int}/100]})"
+
+		;; Move RIGHT if we didn't move
+		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<150
+		{
+			if ${ECHO}
+				echo "[${Time}][VG:AutoFollow] OBSTACLE - Trying RIGHT (Moved: ${Math.Calc[${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}].Int}/100]})"
+			VG:ExecBinding[StrafeRight]
+			wait ${WAIT}
+			VG:ExecBinding[StrafeRight,release]
+		}
+	}
+
+	;; Try moving RIGHT then LEFT
+	if ${RANDOM}<6
+	{
+		;; Move RIGHT
+		VG:ExecBinding[StrafeRight]
+		wait ${WAIT}
+		VG:ExecBinding[StrafeRight,release]
+		if ${ECHO}
+			echo "[${Time}][VG:AutoFollow] OBSTACLE - Going RIGHT (Moved: ${Math.Calc[${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}].Int}/100]})"
+
+		;; Move LEFT if we didn't move
+		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<150
+		{
+			if ${ECHO}
+				echo "[${Time}][VG:AutoFollow] OBSTACLE - Trying LEFT (Moved: ${Math.Calc[${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}].Int}/100]})"
+			VG:ExecBinding[StrafeLeft]
+			wait ${WAIT}
+			VG:ExecBinding[StrafeLeft,release]
+		}
+	}
+
+	;; If we didn't move then JUMP or BAIL
+	if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
+	{
+		VG:ExecBinding[Jump]
+		wait 2
+		VG:ExecBinding[Jump,release]
+		wait 1
+		VG:ExecBinding[Jump]
+		wait 2
+		VG:ExecBinding[Jump,release]
+		wait 1
+
+		;; If we still didn't move then BAIL
+		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<175
+		{
+			if ${ECHO}
+			echo "[${Time}][VG:AutoFollow] BAILED - Unable to move (Moved: ${Math.Calc[${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}].Int}/100]})"
+			endscript AutoFollow
+		}
+
+		;; Successful JUMP if we moved
+		if ${ECHO}
+			echo "[${Time}][VG:AutoFollow] OBSTACLE - Jumped worked (Moved: ${Math.Calc[${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}].Int}/100]})"
+
+	}
+	;; Clear our BUMP flag and resume
+	BUMP:Set[FALSE]
 }
