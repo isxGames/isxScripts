@@ -165,6 +165,10 @@ function main()
 				CurrentStatus:Set[Not Mapping area]
 				Navigate:StopMapping
 			}
+			
+			;; Always update our CurrentWayPoint
+			call FindNearestWayPoint
+			CurrentWayPoint:Set[${Return}]
 		}
 		;-------------------------------------------
 		;; Calls either Master Harvester or Assist Master Harvester
@@ -219,12 +223,19 @@ function MasterHarvester()
 		CurrentStatus:Set[Moving to WP-${CurrentWayPoint}]
 		return
 	}
+	
+	;; scan the area around me for a target
+	;if ${Pawn[resource,radius,30](exists)}
+	;{
+	;	Navigate:MoveToTarget[${Pawn[resource,radius,30](exists)}]
+	;}
+	
 
 	;; go ahead and define our point3f
 	variable point3f Destination = ${VG-MyPath_SSR.FindSet[${Me.Chunk}].FindSetting[WP-${CurrentWayPoint}]}
 	
 	;; start harvesting area if we are near it
-	if ${Math.Distance["${Me.Location}","${Destination}"]} < 500
+	if ${Math.Distance["${Me.Location}","${Destination}"]} < 1000
 	{
 		CurrentStatus:Set[Reached WP-${CurrentWayPoint}]
 		
@@ -238,32 +249,31 @@ function MasterHarvester()
 			}
 			EchoIt "Done Harvesting Area"
 		}
-	}
 
-	;; reset current way point if > total way points
-	if ${CurrentWayPoint}>=${TotalWayPoints}
-	{
-		CurrentWayPoint:Set[${TotalWayPoints}]
-		CountUp:Set[FALSE]
-	}
+		;; reset current way point if > total way points
+		if ${CurrentWayPoint}>=${TotalWayPoints}
+		{
+			CurrentWayPoint:Set[${TotalWayPoints}]
+			CountUp:Set[FALSE]
+		}
 
-	;; reset current way point if 1
-	if ${CurrentWayPoint}<=1
-	{
-		CurrentWayPoint:Set[1]
-		CountUp:Set[TRUE]
+		;; reset current way point if 1
+		if ${CurrentWayPoint}<=1
+		{
+			CurrentWayPoint:Set[1]
+			CountUp:Set[TRUE]
+		}
+			
+		;; adjust out current way point to move up or down the points once we are done harvesting area
+		if ${CountUp}
+		{
+			CurrentWayPoint:Inc
+		}
+		else
+		{
+			CurrentWayPoint:Dec
+		}
 	}
-		
-	;; adjust out current way point to move up or down the points once we are done harvesting area
-	if ${CountUp}
-	{
-		CurrentWayPoint:Inc
-	}
-	else
-	{
-		CurrentWayPoint:Dec
-	}
-		
 	
 	;; Lets navigate to our CurrentWayPoint - 2 seconds is plenty of time to ensure we are navigating - remember, we are still mapping
 	EchoIt "Navigating to WP-${CurrentWayPoint}"
@@ -718,6 +728,7 @@ function:int FindNearestWayPoint()
 	}
 	return 0
 }
+
 
 function TestWayPoints()
 {
