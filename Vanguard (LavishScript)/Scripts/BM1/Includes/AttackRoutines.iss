@@ -382,10 +382,6 @@ function AttackTarget()
 			{
 				doDots:Set[FALSE]
 			}
-			else
-			{
-				doDots:Set[TRUE]
-			}
 			break
 
 		case Electric Spark

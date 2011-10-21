@@ -297,7 +297,7 @@ function Initialize()
 	SetHighestAbility "RenewingSymbiote" "Renewing Symbiote"
 
 	;; Set Tank based upon DTarget
-	Tank:Set[${Me.Name}]
+	Tank:Set[${Pawn[Me].Name}]
 	if ${Me.DTarget.ID(exists)}
 	{
 		Tank:Set[${Me.DTarget.Name}]

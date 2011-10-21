@@ -1,98 +1,84 @@
-variable int TotalHarvest = 10
+variable int TotalHarvest = 20
 
-variable int QJ = ${Me.Inventory[Quickening Symbiote].Quantity}
-variable int VIT = ${Me.Inventory[Vitalizing Symbiote].Quantity}
-variable int FRENZY = ${Me.Inventory[Frenzied Symbiote].Quantity}
-variable int VialOfBlood = ${Me.Inventory[Vial of Blood].Quantity}
-variable int TwitchingMuscle = ${Me.Inventory[Twitching Muscle].Quantity}
-variable int QuiveringBrain = ${Me.Inventory[Quivering Brain].Quantity}
-variable int StillBeatingheart = ${Me.Inventory[Still Beating Heart].Quantity}
+variable int QJ = 0
+variable int VIT = 0
+variable int FRENZY = 0
+variable int VialOfBlood = 0
+variable int TwitchingMuscle = 0
+variable int QuiveringBrain = 0
+variable int StillBeatingheart = 0
 
 function main()
 {
 	call StartRoutine ${TotalHarvest}
-	
-
-/*	
-	;; the following will not assemble correctly.  It will repeat the previous one regardless of added ingredients
-
-	if ${VIT}<=50 && ${VialOfBlood}>2
-	{
-		vgecho Crafting VITALIZE
-		waitframe
-		VGExecute /assemblyaddingredient \"Vial of Blood\" \"3\"
-		wait 5
-		VGExecute /assemble \"Vitalizing Symbiote\"
-		wait 5
-		
-		while ${GV[bool,bAssembling]}
-		{
-			wait 5
-		}
-		
-		; Wait a second then loot
-		wait 10
-		Loot:LootAll
-		waitframe
-	}
-
-	if ${FRENZY}<=50 && ${VialOfBlood} && ${QuiveringBrain} && ${TwitchingMuscle}
-	{
-		vgecho Crafting FRENZY
-		waitframe
-		VGExecute /assemblyaddingredient \"Vial of Blood\"
-		wait 5
-		VGExecute /assemblyaddingredient \"Twitching Muscle\"
-		wait 5
-		VGExecute /assemblyaddingredient \"Quivering Brain\"
-		wait 5
-		VGExecute /assemble \"Frenzied Symbiote\"
-		wait 5
-		
-		while ${GV[bool,bAssembling]}
-		{
-			wait 5
-		}
-		
-		; Wait a second then loot
-		wait 10
-		Loot:LootAll
-		waitframe
-	}
-	
-
-	if ${QJ}<=50 && ${VialOfBlood} && ${QuiveringBrain} && ${StillBeatingheart} && ${TwitchingMuscle}
-	{
-		vgecho Crafting QJ
-		waitframe
-		VGExecute /assemblyaddingredient \"Quivering Brain\"
-		wait 5
-		VGExecute /assemblyaddingredient \"Still Beating Heart\"
-		wait 5
-		VGExecute /assemblyaddingredient \"Twitching Muscle\"
-		wait 5
-		VGExecute /assemblyaddingredient \"Vial of Blood\"
-		wait 5
-		VGExecute /assemble \"Quickening Symbiote\"
-		wait 5
-		
-		while ${GV[bool,bAssembling]}
-		{
-			wait 5
-		}
-		
-		; Wait a second then loot
-		wait 10
-		Loot:LootAll
-		waitframe
-	}
-		
-*/	
-	
 }
+
+
+function UpdateInventoryCount()
+{
+	QJ:Set[0]
+	VIT:Set[0]
+	FRENZY:Set[0]
+	VialOfBlood:Set[0]
+	TwitchingMuscle:Set[0]
+	QuiveringBrain:Set[0]
+	StillBeatingheart:Set[0]
+
+	;; total items in inventory
+	variable int TotalItems = 0
+	
+	;; define our index
+	variable index:item CurentItems
+	
+	;; populate our index and update total items in inventory
+	TotalItems:Set[${Me.GetInventory[CurentItems]}]
+
+	;; total quantity counter
+	variable int TotalQuantity = 0
+
+	;; counter
+	variable int i = 0
+	
+	;; loop through all items
+	for (i:Set[1] ; ${i}<=${TotalItems} ; i:Inc)
+	{
+		if ${CurentItems.Get[${i}].Name.Find[Quickening Symbiote]}
+		{
+			QJ:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+		elseif ${CurentItems.Get[${i}].Name.Find[Vitalizing Symbiote]}
+		{
+			VIT:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+		elseif ${CurentItems.Get[${i}].Name.Find[Frenzied Symbiote]}
+		{
+			FRENZY:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+		elseif ${CurentItems.Get[${i}].Name.Find[Vial of Blood]}
+		{
+			VialOfBlood:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+		elseif ${CurentItems.Get[${i}].Name.Find[Twitching Muscle]}
+		{
+			TwitchingMuscle:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+		elseif ${CurentItems.Get[${i}].Name.Find[Quivering Brain]}
+		{
+			QuiveringBrain:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+		elseif ${CurentItems.Get[${i}].Name.Find[Still Beating Heart]}
+		{
+			StillBeatingheart:Inc[${CurentItems.Get[${i}].Quantity}]
+		}
+	}
+}		
+
+
 
 function StartRoutine(int Symbiotes=5)
 {
+	call UpdateInventoryCount
+	
 	if !${Me.Ability[Grim Harvest](exists)}
 	{
 		return
@@ -150,8 +136,10 @@ function Harvest(int Symbiotes)
 		return
 	}
 
+	call UpdateInventoryCount
+
 	; Blood Vials
-	if ${Me.Inventory[Vial of Blood].Quantity}<${Symbiotes} && ${Me.HealthPct}>=90
+	if ${VialOfBlood}<${Symbiotes} && ${Me.HealthPct}>=90
 	{
 		if ${Me.Ability[Siphon Blood](exists)}
 		{
@@ -177,7 +165,7 @@ function Harvest(int Symbiotes)
 	}
 	
 	;; Twitching Muscle
-	if ${Me.Inventory[Twitching Muscle].Quantity}<${Symbiotes}
+	if ${TwitchingMuscle}<${Symbiotes}
 	{
 		if ${Me.Ability[${Constrict}](exists)}
 		{
@@ -199,7 +187,7 @@ function Harvest(int Symbiotes)
 	}
 	
 	;; Quivering Brain
-	if ${Me.Inventory[Quivering Brain].Quantity}<${Symbiotes}
+	if ${QuiveringBrain}<${Symbiotes}
 	{
 		if ${Me.Ability[Bursting Cyst I](exists)}
 		{
@@ -221,7 +209,7 @@ function Harvest(int Symbiotes)
 	}
 	
 	;; Still Beating Heart
-	if ${Me.Inventory[Still Beating Heart].Quantity}<${Symbiotes}
+	if ${StillBeatingheart}<${Symbiotes}
 	{
 		if ${Me.Ability[Union of Blood I](exists)}
 		{
@@ -267,6 +255,8 @@ function Harvest(int Symbiotes)
 
 function atexit()
 {
+	call UpdateInventoryCount
+	vgecho "----------"
 	vgecho QJ=${QJ}
 	vgecho VIT=${VIT}
 	vgecho FRENZY=${FRENZY}

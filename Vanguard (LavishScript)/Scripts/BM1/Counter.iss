@@ -15,6 +15,7 @@ function main()
 			{
 				if ${Me.Ability[${Metamorphism}].IsReady} && ${Me.Ability[${Metamorphism}].TimeRemaining}==0
 				{
+					wait .5
 					vgecho "${Metamorphism}:  ${Me.TargetCasting}"
 					VGExecute "/reactioncounter 2"
 					wait 3
@@ -25,6 +26,7 @@ function main()
 				}
 				if ${Me.Ability[${Dissolve}].IsReady} && ${Me.Ability[${Dissolve}].TimeRemaining}==0 
 				{
+					wait .5
 					vgecho "${Dissolve}:  ${Me.TargetCasting}"
 					VGExecute "/reactioncounter 1"
 					wait 3
