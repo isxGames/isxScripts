@@ -184,13 +184,16 @@ function FollowHarvester()
 function AssistHarvester()
 {
 	;; sometime when Bonus Yield is up the bHarvesting says we are still harvesting but we are not in combat, so...
-	if ${autoAssist} && (!${Me.InCombat} || !${GV[bool,bHarvesting]})
+	if ${autoAssist}
 	{
-		if ${Me.DTarget.Distance}<5
+		if !${Me.InCombat} || !${GV[bool,bHarvesting]}
 		{
-			;; Always set our target to Harvester's target
-			VGExecute /assist ${Harvester}
-			waitframe
+			if ${Me.DTarget.Distance}<5
+			{
+				;; Always set our target to Harvester's target
+				VGExecute /assist ${Harvester}
+				waitframe
+			}
 		}
 	}
 }
@@ -200,21 +203,18 @@ function MoveCloserToResource()
 {
 	if ${Me.Target(exists)}
 	{
-		;; wait until target is harvestable
-		;wait 10 ${Me.Target.IsHarvestable} || ${Me.Target.Name.Find[remains of]}
-		
 		;; take control and move closer if within 12m of target
-		if  && ${Me.Target.Distance}<12 && ${Me.Target.IsHarvestable}
+		if  ${Me.Target.Distance}>5 && ${Me.Target.Distance}<15 && ${Me.Target.IsHarvestable}
 		{
 			;; Turn slowly toward the target
-			;call faceloc ${Me.Target.X} ${Me.Target.Y} 20
-			face ${Me.Target.X} ${Me.Target.Y}
+			call faceloc ${Me.Target.X} ${Me.Target.Y} 20
 			
 			;; Start moving closer to target
 			isMoving:Set[FALSE]
 			while ${Me.Target.Distance}>5 && ${Me.Target(exists)}
 			{
 				isMoving:Set[TRUE]
+				Me.Target:Face
 				VG:ExecBinding[moveforward]
 			}
 			
@@ -231,62 +231,63 @@ function MoveCloserToResource()
 ;; BEGIN HARVESTING
 function BeginHarvesting()
 {
-		if ${Pawn[id,${HarvesterID}].CombatState}>0
+	if ${Pawn[id,${HarvesterID}].CombatState}>0
+	{
+		;; Begin harvesting if we are not harvesting
+		if ${Me.ToPawn.CombatState}==0 && !${Me.InCombat}
 		{
-			;; Begin harvesting if we are not harvesting
-			if ${Me.ToPawn.CombatState}==0 && !${Me.InCombat}
+			if !${Me.Target(exists)}
 			{
-				if !${Me.Target(exists)}
-				{
-					VGExecute /assist ${Harvester}
-					wait 10 ${Me.Target(exists)}
-				}
-				
-				;; Begin Harvesting
-				if ${Me.Target.Distance}<=5
-				{
-					Me.Ability[Auto Attack]:Use
-					wait 50 ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
-				}
+				VGExecute /assist ${Harvester}
+				wait 10 ${Me.Target(exists)}
 			}
 			
-			;; Let's wait here while we are harvesting
-			if ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
+			;; Begin Harvesting
+			if ${Me.Target.Distance}<=5
 			{
-				StopHarvestTimer:Set[${Script.RunningTime}]
-
-				while ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0 && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
-				{
-					waitframe
-					if !${isRunning}
-					{
-						return
-					}
-					;; this will stop the harvest
-					if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${HarvesterID}].Distance}>7 || !${Me.Target.IsHarvestable}
-					{
-						break
-						VGExecute /endharvesting
-						waitframe
-						return
-					}
-				}
-				
-				VGExecute /endharvesting
-				waitframe
-				
-				if ${autoLoot}
-				{
-					Me.Target:LootAll
-				}
-				wait 5
-
-				VGExecute /hidewindow bonus yield
-				waitframe
-				VGExecute /hidewindow depletion bonus yield 
-				waitframe
+				Me.Ability[Auto Attack]:Use
+				wait 50 ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
 			}
 		}
+		
+		;; Let's wait here while we are harvesting
+		if ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
+		{
+			StopHarvestTimer:Set[${Script.RunningTime}]
+
+			while ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0 && ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}<20
+			{
+				waitframe
+				if !${isRunning}
+				{
+					return
+				}
+
+				;; this will stop the harvest
+				if ${Pawn[id,${HarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${HarvesterID}].Distance}>7 || !${Me.Target.IsHarvestable}
+				{
+					break
+					VGExecute /endharvesting
+					waitframe
+					return
+				}
+			}
+		
+			VGExecute /endharvesting
+			waitframe
+			
+			if ${autoLoot}
+			{
+				Me.Target:LootAll
+			}
+			wait 5
+
+			VGExecute /hidewindow bonus yield
+			waitframe
+			VGExecute /hidewindow depletion bonus yield 
+			waitframe
+		}
+	}
 }
 	
 function Loot()
