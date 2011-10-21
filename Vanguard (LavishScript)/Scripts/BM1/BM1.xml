@@ -855,16 +855,26 @@
 					;Script[BM1].Variable[doFindGroupMembers]:Set[TRUE]
 				</OnLeftClick>
 			</Commandbutton>
-			<Commandbutton Name="Working" Template="VG.GreyCommandButton">
-				<visible>0</visible>
+			<Commandbutton Name="DropLev" Template="VG.GreyCommandButton">
+				<visible>1</visible>
 				<X>72%</X>
 				<Y>75%</Y>
 				<Width>25%</Width>
 				<Height>23</Height>
-				<Text>Working</Text>
+				<Text>Drop Lev</Text>
 				<OnLeftClick>
-					Script[BM1]:QueueCommand[call BuffArea]
-					;Script[BM1].Variable[doBuffArea]:Set[TRUE]
+					vgecho "Dropping Lev"
+					VGExecute /can \"Mind Over Body\"
+					VGExecute /can \"Boon of Alcipus\"
+					VGExecute /can \"Briel's Trill of the Clouds\"
+					VGExecute /can \"Cloudwalk\"
+					VGExecute /can \"Death March\"
+					VGExecute /can \"Deathwalk\"
+					VGExecute /can \"Gift of Alcipus\"
+					VGExecute /can \"Gravity Suspension\"
+					VGExecute /can \"Hollow Symbiote\"
+					VGExecute /can \"Parachute\"
+					VGExecute /can \"Wings of the Avenger\"
 				</OnLeftClick>
 			</Commandbutton>
 			<Commandbutton Name="Symbiotes" Template="VG.GreyCommandButton">

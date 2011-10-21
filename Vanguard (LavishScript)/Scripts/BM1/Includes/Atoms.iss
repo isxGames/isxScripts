@@ -518,7 +518,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			doSymbioteRequest:Set[TRUE]
 		}
 
-		if ${aText.Find["frenz"]}
+		if ${aText.Find["frenz"]} || ${aText.Find["fenz"]}
 		{
 			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 			PCName:Set[${PCNameFull.Token[1," "]}]
