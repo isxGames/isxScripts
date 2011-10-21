@@ -634,10 +634,17 @@ function AutoAttack()
 				;; Turn on auto-attack
 				if !${GV[bool,bIsAutoAttacking]} || !${Me.Ability[Auto Attack].Toggled}
 				{
-					if ${Me.Inventory[CurrentEquipSlot, Primary Hand].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot, Two Hand].Type.Equal[Weapon]}
+					if ${doWeaponCheck}
 					{
-						Me.Ability[Auto Attack]:Use
-						wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+						waitframe
+						if ${Me.Inventory[CurrentEquipSlot, Primary Hand].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot, Two Hand].Type.Equal[Weapon]}
+						{
+							waitframe
+							Me.Ability[Auto Attack]:Use
+							wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+							return
+						}
+						doWeaponCheck:Set[FALSE]
 					}
 				}
 				return
@@ -646,6 +653,8 @@ function AutoAttack()
 	}
 	call MeleeAttackOff
 }
+
+variable bool doWeaponCheck = TRUE
 
 ;===================================================
 ;===       MELEE ATTACKS OFF SUB-ROUTINE        ====
@@ -661,6 +670,7 @@ function MeleeAttackOff()
 			wait 10 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 		}
 	}
+	doWeaponCheck:Set[TRUE]
 }
 
 ;===================================================
