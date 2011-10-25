@@ -593,7 +593,7 @@
 					
 					<Text Name='PauseTimerText'>
 						<X>25</X>
-						<Y>350</Y>
+						<Y>330</Y>
 						<Width>150</Width> 
 						<Height>15</Height>
 						<Text>Delay in Minutes :</Text>
@@ -601,7 +601,7 @@
 
 					<Textentry Name='PauseTimer'>
 						<X>140</X>
-						<Y>350</Y>
+						<Y>330</Y>
 						<Width>30</Width> 
 						<Height>15</Height>
 						<MaxLength>3</MaxLength>
@@ -609,6 +609,38 @@
 							UIElement[PauseTimer@Sell@GUITabs@MyPrices]:SetText[${Script[myprices].VariableScope.PauseTimer}]
 						</OnLoad>
 					</Textentry>
+					<checkbox Name='UseOgreCraft'>
+						<X>5%</X>
+						<Y>350</Y>
+						<Width>20%</Width>
+						<Height>20</Height>
+						<Text>Use Ogre Craft</Text>
+						<AutoTooltip>
+							Use Ogre-Craft Instead of Craft.
+						</AutoTooltip>
+						<OnLoad>
+						if ${Script[myprices].VariableScope.UseOgreCraft}
+						{
+							UIElement[UseOgreCraft@Sell@GUITabs@MyPrices]:SetChecked
+						}
+						else
+						{
+							UIElement[UseOgreCraft@Sell@GUITabs@MyPrices]:UnsetChecked
+						}
+						</OnLoad>
+						<OnLeftClick>
+							if ${UIElement[UseOgreCraft@Sell@GUITabs@MyPrices].Checked}
+							{
+								Script[myprices]:QueueCommand[call SaveSetting UseOgreCraft TRUE]
+								Script[myprices].VariableScope.UseOgreCraft:Set[TRUE]
+							}
+							else
+							{
+								Script[myprices]:QueueCommand[call SaveSetting UseOgreCraft FALSE]
+								Script[myprices].VariableScope.UseOgreCraft:Set[FALSE]
+							}
+						</OnLeftClick>
+					</checkbox>
 					<Commandbutton name='Craft'>
 						<X>5%</X>
 						<Y>370</Y>
@@ -641,7 +673,14 @@
 							{
 								EQ2Execute /close_top_window
 								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
-								craft ${Me.TSSubClass}-_myprices
+								if ${Script[myprices].VariableScope.UseOgreCraft}
+								{
+									ogre craft -q _myprices.xml -s
+								}
+								else
+								{
+									craft ${Me.TSSubClass}-_myprices
+								}
 								Script[myprices].VariableScope.Exitmyprices:Set[TRUE]
 							}
 						</OnLeftClick>

@@ -41,6 +41,7 @@ variable bool Shinies
 variable bool PlaceRaws
 variable bool PlaceRares
 variable bool PlaceUncommon
+variable bool UseOgreCraft
 
 ; Bool variables used to integrate with eq2inventory script
 variable bool CraftListMade=FALSE
@@ -144,6 +145,7 @@ variable collection:string BadItems
 ; Strings holding all the various file paths
 variable filepath CraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Character Config/"
 variable filepath NewCraftPath="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Queues/"
+variable filepath OgreNewCraftPath="${LavishScript.HomeDirectory}/Scripts//eq2ogrecraft/Recipequeues/"
 variable filepath XMLPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/XML/"
 variable filepath BackupPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/Backup/"
 variable filepath MyPricesUIPath="${LavishScript.HomeDirectory}/Scripts/MyPrices/UI/"
@@ -1076,7 +1078,16 @@ function buy(string tabname, string action)
 	if ${action.Equal["compact"]}
 		UIElement[Errortext@Admin@GUITabs@MyPrices]:SetText[" ** Finished **"]
 	elseif ${action.Equal["scan"]} && ${tabname.Equal["Craft"]}
-		LavishSettings[newcraft]:Export[${NewCraftPath}${Me.TSSubClass}-_myprices.xml]
+		{
+			if ${UseOgreCraft}
+			{
+				LavishSettings[newcraft]:Export[${OgreNewCraftPath}_myprices.xml]
+			}
+			else
+			{
+				LavishSettings[newcraft]:Export[${NewCraftPath}${Me.TSSubClass}-_myprices.xml]
+			}
+		}
 
 	if ${action.Equal["place"]}
 		CraftItemsPlaced:Set[TRUE]
@@ -2789,6 +2800,7 @@ objectdef BrokerBot
 		IgnoreCopper:Set[${General.FindSetting[IgnoreCopper]}]
 		BuyItems:Set[${General.FindSetting[BuyItems]}]
 		SellItems:Set[${General.FindSetting[SellItems]}]
+		UseOgreCraft:Set[${General.FindSetting[UseOgreCraft]}]
 		PauseTimer:Set[${General.FindSetting[PauseTimer]}]
 		Craft:Set[${General.FindSetting[Craft]}]
 		MatchActual:Set[${General.FindSetting[ActualPrice]}]
@@ -2814,6 +2826,7 @@ objectdef BrokerBot
 
 		UncommonBox:Set[${General.FindSetting[UncommonBox]}]
 		
+
 		if ${UncommonBox} > ${brokerslots} || !${Me.Vending[${UncommonBox}](exists)}
 			UncommonBox:Set[0]
 		
