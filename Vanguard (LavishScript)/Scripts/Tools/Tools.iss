@@ -72,6 +72,7 @@ function main()
 	;-------------------------------------------
 	do
 	{
+		wait 5
 		if !${isPaused} && ${Me.Target(exists)} && !${Me.Target.IsDead}
 		{
 			if !${Me.Target.Type.Equal[Resource]}
@@ -260,8 +261,6 @@ function Initialize()
 	; Enable Events - this event is automatically removed at shutdown
 	;-------------------------------------------
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]	
-	
-	
 }
 
 ;===================================================
@@ -599,61 +598,69 @@ function PushStance()
 	}
 }
 
+
+;===================================================
+;===   OKAY TO ATTACK - returns TRUE/FALSE      ====
+;===================================================
+function:bool OkayToAttack()
+{
+	if ${Me.InCombat} && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=99
+	{
+		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
+		{
+			return FALSE
+		}
+		elseif ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+		{
+			return FALSE
+		}
+		elseif ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
+		{
+			return FALSE
+		}
+		elseif ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
+		{
+			return FALSE
+		}
+		else
+		{
+			return TRUE
+		}
+		return TRUE
+	}
+	return FALSE
+}
+
 ;===================================================
 ;===   AUTO ATTACK - this will turn On/Off  ====
 ;===================================================
-function AutoAttack()
+function:bool AutoAttack()
 {
-	;; Make sure target is within range
-	if ${doAutoAttack}
+	call OkayToAttack
+	if ${Return} && ${doAutoAttack} && ${Me.Target.Distance}<5
 	{
-		if ${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<5 && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=99
+		;; Turn on auto-attack
+		if !${GV[bool,bIsAutoAttacking]} || !${Me.Ability[Auto Attack].Toggled}
 		{
-			if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)} || ${isFurious}
+			if ${doWeaponCheck}
 			{
-				call MeleeAttackOff
-				if !${Me.TargetBuff[Furious](exists)}
+				waitframe
+				if ${Me.Inventory[CurrentEquipSlot, Primary Hand].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot, Two Hand].Type.Equal[Weapon]}
 				{
-					isFurious:Set[FALSE]
+					waitframe
+					Me.Ability[Auto Attack]:Use
+					wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+					return
 				}
-			}
-			elseif ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
-			{
-				call MeleeAttackOff
-			}
-			elseif ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
-			{
-				call MeleeAttackOff
-			}
-			elseif ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
-			{
-				call MeleeAttackOff
-			}
-			else
-			{
-				;; Turn on auto-attack
-				if !${GV[bool,bIsAutoAttacking]} || !${Me.Ability[Auto Attack].Toggled}
-				{
-					if ${doWeaponCheck}
-					{
-						waitframe
-						if ${Me.Inventory[CurrentEquipSlot, Primary Hand].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot, Two Hand].Type.Equal[Weapon]}
-						{
-							waitframe
-							Me.Ability[Auto Attack]:Use
-							wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
-							return
-						}
-						doWeaponCheck:Set[FALSE]
-					}
-				}
-				return
+				doWeaponCheck:Set[FALSE]
 			}
 		}
 	}
-	call MeleeAttackOff
-}
-
+	else
+	{
+		call MeleeAttackOff
+	}
+}	
 variable bool doWeaponCheck = TRUE
 
 ;===================================================
@@ -663,6 +670,7 @@ function MeleeAttackOff()
 {
 	if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
 	{
+		waitframe
 		;; Turn off auto-attack if target is not a resource
 		if !${Me.Target.Type.Equal[Resource]}
 		{
@@ -678,7 +686,8 @@ function MeleeAttackOff()
 ;===================================================
 function UseAbilities()
 {
-	if ${doUseAbilities} && !${isPaused} && ${isRunning}
+	call OkayToAttack
+	if ${Return} && ${doUseAbilities} && !${isPaused} && ${isRunning}
 	{
 		variable iterator Iterator
 		Abilities:GetSettingIterator[Iterator]
@@ -747,7 +756,8 @@ function UseAbility(string ABILITY)
 ;===================================================
 function UseItems()
 {
-	if ${doUseItems} && !${isPaused} && ${isRunning}
+	call OkayToAttack
+	if ${Return} && ${doUseItems} && !${isPaused} && ${isRunning}
 	{	
 		;
 		; Make sure every item you plan on using is on one of your Hot Bars;
