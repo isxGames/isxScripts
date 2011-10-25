@@ -610,21 +610,17 @@ function:bool OkayToAttack()
 		{
 			return FALSE
 		}
-		elseif ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+		if ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
 		{
 			return FALSE
 		}
-		elseif ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
+		if ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
 		{
 			return FALSE
 		}
-		elseif ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
+		if ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
 		{
 			return FALSE
-		}
-		else
-		{
-			return TRUE
 		}
 		return TRUE
 	}
@@ -648,6 +644,7 @@ function:bool AutoAttack()
 				if ${Me.Inventory[CurrentEquipSlot, Primary Hand].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot, Two Hand].Type.Equal[Weapon]}
 				{
 					waitframe
+				vgecho "Turning AutoAttack ON"
 					Me.Ability[Auto Attack]:Use
 					wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
 					return
@@ -670,12 +667,30 @@ function MeleeAttackOff()
 {
 	if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
 	{
-		waitframe
 		;; Turn off auto-attack if target is not a resource
 		if !${Me.Target.Type.Equal[Resource]}
 		{
+			if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
+			{
+				vgecho "FURIOUS"
+			}
+			if ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+			{
+				vgecho "Devout Foeman"
+			}
+			if ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
+			{
+				vgecho "Rust Shield/Mark of Verbs/Charge Imminent"
+			}
+			if ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
+			{
+				vgecho "Fire Advocate"
+			}
+
+			vgecho "Turning AutoAttack OFF"
+
 			Me.Ability[Auto Attack]:Use
-			wait 10 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
+			wait 15 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 		}
 	}
 	doWeaponCheck:Set[TRUE]
