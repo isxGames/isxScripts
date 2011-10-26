@@ -1,0 +1,10 @@
+<DotNetScript>
+  <References>
+    <string>Lavish.InnerSpace.dll</string>
+    <string>System.dll</string>
+  </References>
+  <SourceFiles>
+    <string>AttachWindbg.cs</string>
+  </SourceFiles>
+  <Language>C#</Language>
+</DotNetScript>
