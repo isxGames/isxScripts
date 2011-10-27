@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{d2b15c60-30e7-4ada-84e8-a151d0ba6a94}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Source Files\LavishScript Extensions">
+      <UniqueIdentifier>{9b3d3c45-9843-41cc-b776-fb98ae1d7629}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{e18a5248-2c56-4f45-82bb-b062f94085b1}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Header Files\LavishScript Extensions">
+      <UniqueIdentifier>{19166eea-0a13-4cef-b431-d4febb333a45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\LavishScript Extensions\Lists">
+      <UniqueIdentifier>{5508782f-9a92-46fe-8847-9b10db5041fc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LSMMySQL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands.cpp">
+      <Filter>Source Files\LavishScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="DataTypes.cpp">
+      <Filter>Source Files\LavishScript Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="TopLevelObjects.cpp">
+      <Filter>Source Files\LavishScript Extensions</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Events.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LSMMySQL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypes.h">
+      <Filter>Header Files\LavishScript Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands.h">
+      <Filter>Header Files\LavishScript Extensions\Lists</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypeList.h">
+      <Filter>Header Files\LavishScript Extensions\Lists</Filter>
+    </ClInclude>
+    <ClInclude Include="TopLevelObjects.h">
+      <Filter>Header Files\LavishScript Extensions\Lists</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
