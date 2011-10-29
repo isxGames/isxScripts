@@ -109,45 +109,42 @@ function main()
 	;-------------------------------------------
 	do
 	{
+		;; this allows AutoAttack to kick in
+		wait 5
+		
 		if !${isPaused}
 		{
+			;; Always check these
 			call AssistTank
+			call ChangeForm
+			call StripIt
+
+			;; Class Specific Routines - do these first before doing combat stuff
+			call Bard
 		
-			if !${Me.Target.Type.Equal[Resource]} && ${Me.Target(exists)} && !${Me.Target.IsDead}
+			;; we only want targets that are not a Resource and not dead
+			if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Resource]} && !${Me.Target.IsDead}
 			{
-				;-------------------------------------------
-				; Always check for counters and setting Auto Attack on/off
-				;-------------------------------------------
+				;; execute each of these
 				call CounterIt
-				call StripIt
 				call PushStance
-				call ChangeForm
 				call RangedAttack
 				call AutoAttack
-
-				;-------------------------------------------
-				; 1/2 Second delay really helps here
-				;-------------------------------------------
-				if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
-				{
-					call UseAbilities
-					call UseItems
-					NextDelayCheck:Set[${Script.RunningTime}]
-				}
+				call UseAbilities
+				call UseItems
 			}
 			else
 			{
+				;; our target is a Resource or is dead
 				call MeleeAttackOff
-				call ChangeForm
 				call CheckBuffs
 			}
-			
-			;; Class Specific Routines
-			call Bard
 		}
 		else 
 		{
+			;; we are paused
 			call MeleeAttackOff
+			call ChangeForm
 		}
 	}
 	while ${isRunning}
@@ -780,7 +777,7 @@ function PushStance()
 ;===================================================
 function:bool OkayToAttack()
 {
-	if ${Me.InCombat} && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
+	if (${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 	{
 		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
 		{
@@ -816,12 +813,6 @@ function:bool OkayToAttack()
 ;===================================================
 function:bool AutoAttack()
 {
-	if ${doAutoAttack}
-	{
-		;; this wait is a must if using melee weapons
-		wait 5
-	}
-
 	call OkayToAttack
 	if ${Return} && ${doAutoAttack} && ${Me.Target.Distance}<5
 	{
@@ -926,13 +917,13 @@ function CheckBuffs()
 function AssistTank()
 {
 	;; we want to assist the tank
-	if !${Me.Target(exists)} || ${Me.Target.IsDead}
+	if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
 	{
 		wait 5
-		if ${Pawn[ExactName,${Tank}](exists)}
+		if ${Pawn[Name,${Tank}](exists)}
 		{
 			;; assist the tank only if the tank is in combat and less than 50 meters away
-			if ${Pawn[ExactName,${Tank}].CombatState}>0 && ${Pawn[ExactName,${Tank}].Distance}<=50
+			if ${Pawn[Name,${Tank}].CombatState}>0 && ${Pawn[Name,${Tank}].Distance}<=50
 			{
 				EchoIt "Assisting ${Tank}"
 				VGExecute /cleartargets
