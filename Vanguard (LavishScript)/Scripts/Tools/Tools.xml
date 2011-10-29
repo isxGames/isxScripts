@@ -122,7 +122,7 @@
 							<Y>5%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Use Abilities</Text>
+							<Text> Use Abilities</Text>
 							<AutoTooltip> Use abilities On/Off </AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doUseAbilities}
@@ -141,7 +141,7 @@
 							<Y>10%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Use Items</Text>
+							<Text> Use Items</Text>
 							<AutoTooltip> Use items On/Off - put the item on your hotbar </AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doUseItems}
@@ -160,7 +160,7 @@
 							<Y>15%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
+							<Text> Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
 							<AutoTooltip> Use this counter when available </AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doCounter1}
@@ -179,7 +179,7 @@
 							<Y>20%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
+							<Text> Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
 							<AutoTooltip> Use this counter when available </AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doCounter2}
@@ -198,7 +198,7 @@
 							<Y>25%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Stance: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<Text> Stance: ${Script[Tools].VariableScope.StripEnchantment}</Text>
 							<AutoTooltip> Push Stances</AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doPushStance}
@@ -217,7 +217,7 @@
 							<Y>30%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<Text> Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
 							<AutoTooltip> Strip Enchantments</AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doStripEnchantments}
@@ -236,7 +236,7 @@
 							<Y>35%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text>AutoAttack On/Off</Text>
+							<Text> AutoAttack On/Off</Text>
 							<AutoTooltip> AutoAttack - also stops if FURIOUS</AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doAutoAttack}
@@ -256,7 +256,7 @@
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Ranged Attack On/Off</Text>
-							<AutoTooltip>Use your Ranged Weapon when available</AutoTooltip>
+							<AutoTooltip> Use your Ranged Weapon when available</AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doRangedAttack}
 								{
@@ -267,6 +267,90 @@
 								Script[Tools].VariableScope.doRangedAttack:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
+
+						<checkbox Name="doFace" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>45%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Face Target</Text>
+							<AutoTooltip> Always face your target On/Off</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doFace}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doFace:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<Textentry Name="StartAttack" Template="VG.TextEntry">
+							<X>6%</X>
+							<Y>75%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[Tools].VariableScope.StartAttack}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.StartAttack:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.StartAttack:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-StartAttack" Template="VG.Text">
+							<X>23%</X>
+							<Y>75.2%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Start Attacking</Text>
+						</Text>
+						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>82%</Y>
+							<Width>180</Width>
+							<Height>30</Height>
+							<Text>Tank:  </Text>
+                            <Onload>
+								if ${Me.DTarget(exists)}
+								{
+									Script[Tools].Variable[Tank]:Set[${Me.DTarget.Name}]
+									This:SetText[Tank:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[Tools].Variable[Tank]:Set[${Me.FName}]
+									This:SetText[Tank:  ${Me.FName}]
+								}
+                            </Onload>
+							<OnLeftClick>
+								if ${Me.DTarget(exists)}
+								{
+									Script[Tools].Variable[Tank]:Set[${Me.DTarget.Name}]
+									This:SetText[Tank:  ${Me.DTarget.Name}]
+								}
+								else
+								{
+									Script[Tools].Variable[Tank]:Set[${Me.FName}]
+									This:SetText[Tank:  ${Me.FName}]
+								}
+							</OnLeftClick>
+						</Commandbutton>
 
 						<Button Name="PauseBtn" Template="VG.RedButton">
 							<X>6%</X>
