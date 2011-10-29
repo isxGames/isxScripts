@@ -119,9 +119,9 @@ function main()
 				; Always check for counters and setting Auto Attack on/off
 				;-------------------------------------------
 				call CounterIt
-				call ChangeForm
 				call StripIt
 				call PushStance
+				call ChangeForm
 				call RangedAttack
 				call AutoAttack
 
@@ -130,14 +130,8 @@ function main()
 				;-------------------------------------------
 				if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
 				{
-					;-------------------------------------------
-					; Use these only if we are both in combat
-					;-------------------------------------------
-					if ${Me.InCombat} && ${Pawn[id,${Me.Target.ID}].CombatState}>0
-					{
-						call UseAbilities
-						call UseItems
-					}
+					call UseAbilities
+					call UseItems
 					NextDelayCheck:Set[${Script.RunningTime}]
 				}
 			}
