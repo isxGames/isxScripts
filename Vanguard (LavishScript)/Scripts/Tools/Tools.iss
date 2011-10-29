@@ -55,8 +55,11 @@ variable bool doPushStance = TRUE
 variable bool doStripEnchantments = TRUE
 variable bool doAutoAttack = TRUE
 variable bool doRangedAttack = TRUE
+variable bool doFace = FALSE
+variable string Tank = Unknown
 variable string CombatForm = NONE
 variable string NonCombatForm = NONE
+variable int StartAttack = 99
 
 ;; Bard stuff
 variable string CombatSong = CombatSong
@@ -108,6 +111,8 @@ function main()
 	{
 		if !${isPaused}
 		{
+			call AssistTank
+		
 			if !${Me.Target.Type.Equal[Resource]} && ${Me.Target(exists)} && !${Me.Target.IsDead}
 			{
 				;-------------------------------------------
@@ -115,26 +120,25 @@ function main()
 				;-------------------------------------------
 				call CounterIt
 				call ChangeForm
-				call AutoAttack
+				call StripIt
+				call PushStance
 				call RangedAttack
+				call AutoAttack
 
 				;-------------------------------------------
-				; 1 Second delay realy helps here
+				; 1/2 Second delay really helps here
 				;-------------------------------------------
-				if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
+				if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/500]}>1
 				{
-					call StripIt
-					call PushStance
+					;-------------------------------------------
+					; Use these only if we are both in combat
+					;-------------------------------------------
+					if ${Me.InCombat} && ${Pawn[id,${Me.Target.ID}].CombatState}>0
+					{
+						call UseAbilities
+						call UseItems
+					}
 					NextDelayCheck:Set[${Script.RunningTime}]
-				}
-
-				;-------------------------------------------
-				; Use these only if we are both in combat
-				;-------------------------------------------
-				if ${Me.InCombat} && ${Pawn[id,${Me.Target.ID}].CombatState}>0
-				{
-					call UseAbilities
-					call UseItems
 				}
 			}
 			else
@@ -280,9 +284,12 @@ function Initialize()
 	doStripEnchantments:Set[${General.FindSetting[doStripEnchantments,TRUE]}]
 	doAutoAttack:Set[${General.FindSetting[doAutoAttack,TRUE]}]
 	doRangedAttack:Set[${General.FindSetting[doRangedAttack,TRUE]}]
+	doFace:Set[${General.FindSetting[doFace,TRUE]}]
 	CombatForm:Set[${General.FindSetting[CombatForm,"NONE"]}]
 	NonCombatForm:Set[${General.FindSetting[NonCombatForm,"NONE"]}]
+	StartAttack:Set[${General.FindSetting[StartAttack,99]}]
 
+	
 	;; Class Specific - Bard
 	CombatSong:Set[${General.FindSetting[CombatSong]}]
 	PrimaryWeapon:Set[${General.FindSetting[PrimaryWeapon]}]
@@ -438,8 +445,10 @@ function atexit()
 	General:AddSetting[doStripEnchantments,${doStripEnchantments}]
 	General:AddSetting[doRangedAttack,${doRangedAttack}]
 	General:AddSetting[doAutoAttack,${doAutoAttack}]
+	General:AddSetting[doFace,${doFace}]
 	General:AddSetting[CombatForm,${CombatForm}]
 	General:AddSetting[NonCombatForm,${NonCombatForm}]
+	General:AddSetting[StartAttack,${StartAttack}]
 
 	;; update class specific - Bard
 	General:AddSetting[CombatSong,${CombatSong}]
@@ -476,7 +485,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
 	if ${ChannelNumber}==0 && ${aText.Find[You can't attack with that type of weapon.]}
 	{
-		EchoIt "[${ChannelNumber}a]${aText}"
+		EchoIt "[${ChannelNumber}]${aText}"
 		doAutoAttack:Set[FALSE]
 		UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
 		vgecho "Melee Off - can't attack with that weapon"
@@ -777,7 +786,7 @@ function PushStance()
 ;===================================================
 function:bool OkayToAttack()
 {
-	if ${Me.InCombat} && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=99
+	if ${Me.InCombat} && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 	{
 		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
 		{
@@ -795,8 +804,16 @@ function:bool OkayToAttack()
 		{
 			return FALSE
 		}
+
+		;; this is sloppy but works
+		if ${doFace}
+		{
+			Me.Target:Face
+		}
+
 		return TRUE
 	}
+	
 	return FALSE
 }
 
@@ -812,9 +829,6 @@ function:bool AutoAttack()
 	}
 
 	call OkayToAttack
-	
-	echo OkayToAttack=${Return}
-	
 	if ${Return} && ${doAutoAttack} && ${Me.Target.Distance}<5
 	{
 		;; Turn on auto-attack
@@ -878,6 +892,9 @@ function MeleeAttackOff()
 	doWeaponCheck:Set[TRUE]
 }
 
+;===================================================
+;===       RANGED ATTACK - Use it               ====
+;===================================================
 function RangedAttack()
 {
 	call OkayToAttack
@@ -889,6 +906,7 @@ function RangedAttack()
 		}
 	}
 }
+
 
 ;===================================================
 ;===             Check Buffs                    ====
@@ -905,6 +923,31 @@ function CheckBuffs()
 			call UseAbility "${Iterator.Key}"
 		}
 		Iterator:Next
+	}
+}
+
+;===================================================
+;===        ASSIST TANK SUBROUTINE              ====
+;===================================================
+function AssistTank()
+{
+	;; we want to assist the tank
+	if !${Me.Target(exists)} || ${Me.Target.IsDead}
+	{
+		wait 5
+		if ${Pawn[ExactName,${Tank}](exists)}
+		{
+			;; assist the tank only if the tank is in combat and less than 50 meters away
+			if ${Pawn[ExactName,${Tank}].CombatState}>0 && ${Pawn[ExactName,${Tank}].Distance}<=50
+			{
+				EchoIt "Assisting ${Tank}"
+				VGExecute /cleartargets
+				waitframe
+				VGExecute "/assist ${Tank}"
+				waitframe
+				wait 20 ${Me.TargetHealth}>0
+			}
+		}
 	}
 }
 
@@ -954,7 +997,6 @@ function UseAbility(string ABILITY)
 		echo "${ABILITY} does not exist or too high a level to use"
 		return
 	}
-
 	
 	;-------------------------------------------
 	; These have priority over everything
