@@ -91,7 +91,6 @@
 			<Height>r18</Height>
 			<Texture Template="VG.TabControl.FrameTexture" />
 		</Client>
-
 -->		
 		<Children>
 			<!--main tab control-->
@@ -107,10 +106,201 @@
 				<Height>99%</Height>
 				<Width>99%</Width>
 				<Tabs>
-
 					<!--Top Level Main Tab-->
 					<Tab name='Main'>
+ 						<Text Name='txtAbilities' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>====== Toggles ======  </Text>
+						</Text>
+						<checkbox Name="doUseAbilities" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>5%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Use Abilities</Text>
+							<AutoTooltip> Use abilities On/Off </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doUseAbilities}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doUseAbilities:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doUseItems" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>10%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Use Items</Text>
+							<AutoTooltip> Use items On/Off - put the item on your hotbar </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doUseItems}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doUseItems:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doCounter1" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>15%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
+							<AutoTooltip> Use this counter when available </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCounter1}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCounter1:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doCounter2" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>20%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
+							<AutoTooltip> Use this counter when available </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCounter2}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCounter2:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doPushStance" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>25%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Stance: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<AutoTooltip> Push Stances</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doPushStance}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doPushStance:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
 						
+						<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>30%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<AutoTooltip> Strip Enchantments</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doStripEnchantments}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doStripEnchantments:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doAutoAttack" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>35%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>AutoAttack On/Off</Text>
+							<AutoTooltip> AutoAttack - also stops if FURIOUS</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doAutoAttack}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doAutoAttack:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doRangedAttack" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>40%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Ranged Attack On/Off</Text>
+							<AutoTooltip>Use your Ranged Weapon when available</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doRangedAttack}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doRangedAttack:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<Button Name="PauseBtn" Template="VG.RedButton">
+							<X>6%</X>
+							<Y>92%</Y>
+							<Width>180</Width>
+							<Height>30</Height>
+							<Text>Paused</Text>
+							<Alignment>Center</Alignment>
+							<OnLoad>
+								if ${Script[Tools].Variable[isPaused]}
+								{
+									This:SetText[Paused]
+									VG:ExecBinding[moveforward,release]
+								}
+								elseif !${Script[Tools].Variable[isPaused]}
+								{
+									This:SetText[Running]
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if !${Script[Tools].VariableScope.isPaused}
+								{ 
+									Script[Tools].VariableScope.isPaused:Set[TRUE]
+									This:SetText[Paused]
+								}
+								elseif ${Script[Tools].VariableScope.isPaused}
+								{ 
+									Script[Tools].VariableScope.isPaused:Set[FALSE]
+									This:SetText[Running]
+								}
+							</OnLeftClick>
+						</Button>
+					</Tab>
+					<Tab name='Abilities'>
 						<Text Name='txtAbilities' Template='VG.BoldText'>
 							<X>8%</X>
 							<Y>2%</Y>
@@ -157,7 +347,7 @@
 							<Width>85%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
-							<Text>====== Items ======  </Text>
+							<Text>====== Items ====== </Text>
 						</Text>
 						<ComboBox Name="ItemsCombo" Template="VG.ComboBox">
 							<X>6%</X>
@@ -168,18 +358,18 @@
 								This:AddItem[NONE]
 							</OnLoad>
 							<OnSelect>
-							if ${This.SelectedItem.Text(exists)}
-							{
-								AddItems "${This.SelectedItem.Text}"
-								BuildItems
-							}
+								if ${This.SelectedItem.Text(exists)}
+								{
+									AddItems "${This.SelectedItem.Text}"
+									BuildItems
+								}
 							</OnSelect>
 						</ComboBox>
 						<Listbox Name="ItemsList" Template="VG.ListBox">
 							<X>6%</X>
 							<Y>47.5%</Y>
 							<Width>180</Width>
-							<Height>60</Height>
+							<Height>40</Height>
 							<AutoSort>TRUE</AutoSort>
 							<Sort>User</Sort>
 							<OnLoad>
@@ -191,172 +381,244 @@
 								BuildItems
 							</OnRightClick>
 						</Listbox>
-						
- 						<checkbox Name="doUseAbilities" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>63%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>Use Abilities</Text>
-							<AutoTooltip> Use abilities listed above </AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doUseAbilities}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doUseAbilities:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-
-						<checkbox Name="doUseItems" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>67%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>Use Items</Text>
-							<AutoTooltip> Use items listed above </AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doUseItems}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doUseItems:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-
-						<checkbox Name="doCounter1" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>71%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
-							<AutoTooltip>Use this counter when available </AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doCounter1}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doCounter1:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-
-						<checkbox Name="doCounter2" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>75%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
-							<AutoTooltip>Use this counter when available </AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doCounter2}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doCounter2:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-
-						<checkbox Name="doPushStance" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>79%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>Stance: ${Script[Tools].VariableScope.StripEnchantment}</Text>
-							<AutoTooltip>Push Stances</AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doPushStance}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doPushStance:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-						
-						<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>83%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
-							<AutoTooltip>Strip Enchantments</AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doStripEnchantments}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doStripEnchantments:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-						
-						<checkbox Name="doAutoAttack" Template="VG.GreenCheckbox">
-							<visible>1</visible>
-							<X>6%</X>
-							<Y>87%</Y>
-							<Width>25%</Width>
-							<Height>15</Height>
-							<Text>AutoAttack On/Off</Text>
-							<AutoTooltip>AutoAttack - also stops if FURIOUS</AutoTooltip>
-							<OnLoad>
-								if ${Script[Tools].VariableScope.doAutoAttack}
-								{
-									This:SetChecked
-								}
-							</OnLoad>
-							<OnLeftClick>
-								Script[Tools].VariableScope.doAutoAttack:Set[${This.Checked}]
-							</OnLeftClick>
-						</checkbox>
-
-						<Button Name="PauseBtn" Template="VG.RedButton">
-							<X>6%</X>
-							<Y>92%</Y>
-							<Width>180</Width>
-							<Height>30</Height>
-							<Text>Paused</Text>
+ 						<Text Name='txtCombatForm' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>57%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
 							<Alignment>Center</Alignment>
+							<Text>==== Combat Form ====  </Text>
+						</Text>
+						<ComboBox Name="CombatForm" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>60%</Y>
+							<Width>180</Width>
+							<Height>20</Height>
 							<OnLoad>
-								if ${Script[Tools].Variable[isPaused]}
-								{
-									This:SetText[Paused]
-									VG:ExecBinding[moveforward,release]
-								}
-								elseif !${Script[Tools].Variable[isPaused]}
-								{
-									This:SetText[Running]
-								}
+								This:AddItem[NONE]
 							</OnLoad>
-							<OnLeftClick>
-								if !${Script[Tools].VariableScope.isPaused}
-								{ 
-									Script[Tools].VariableScope.isPaused:Set[TRUE]
-									This:SetText[Paused]
+							<OnSelect>
+								Script[Tools].VariableScope.CombatForm:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						<Text Name='txtNonCombatForm' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>65%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>=== NonCombat Form ===  </Text>
+						</Text>
+						<ComboBox Name="NonCombatForm" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>68%</Y>
+							<Width>180</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.NonCombatForm:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						 <Text Name='txtBuffs' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>74%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>======= Buffs =======  </Text>
+						</Text>
+						<ComboBox Name="BuffsCombo" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>77%</Y>
+							<Width>180</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								if ${This.SelectedItem.Text(exists)}
+								{
+									AddBuff "${This.SelectedItem.Text}"
+									BuildBuffs
 								}
-								elseif ${Script[Tools].VariableScope.isPaused}
-								{ 
-									Script[Tools].VariableScope.isPaused:Set[FALSE]
-									This:SetText[Running]
-								}
-							</OnLeftClick>
-						</Button>
-						
+							</OnSelect>
+						</ComboBox>
+						<Listbox Name="BuffsList" Template="VG.ListBox">
+							<X>6%</X>
+							<Y>81.5%</Y>
+							<Width>180</Width>
+							<Height>80</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								BuildBuffs
+							</OnLoad>
+							<OnRightClick>
+								RemoveBuff "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								BuildBuffs
+							</OnRightClick>
+						</Listbox>
+					</Tab>
+					
+					<Tab name='Class'>
+						<Frame name='Bard'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>0</Visible>
+							<Children>
+								 <Text Name='txtBard' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>2%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Center</Alignment>
+									<Text>==== Bard Stuff ====  </Text>
+								</Text>
+								<Text Name='TextCombatSong' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>10%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Combat Song:</Text>
+								</Text>
+								<ComboBox Name="CombatSong" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>13%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.CombatSong:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+								<Text Name='TextPrimaryWeapon' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>18%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Primary Combat Item:</Text>
+								</Text>
+								<ComboBox Name="PrimaryWeapon" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>21%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+								<Text Name='TextCombatSecondaryWeapon' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>26%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Secondary Combat Item:</Text>
+								</Text>
+								<ComboBox Name="SecondaryWeapon" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>29%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+								<Text Name='TextRestSong' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>39%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Rest Song:</Text>
+								</Text>
+								<ComboBox Name="RestSong" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>42%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.RestSong:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+								<Text Name='TextBardRestInstrument' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>47%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Rest Instrument:</Text>
+								</Text>
+								<ComboBox Name="RestInstrument" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>50%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.RestInstrument:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+								<Text Name='TextBardTravelSong' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>60%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Travel Song:</Text>
+								</Text>
+								<ComboBox Name="TravelSong" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>63%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.TravelSong:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+								<Text Name='TextBardTravelInstrument' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>68%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Travel Instrument:</Text>
+								</Text>
+								<ComboBox Name="TravelInstrument" Template="VG.ComboBox">
+									<X>6%</X>
+									<Y>71%</Y>
+									<Width>90%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										Script[Tools].VariableScope.TravelInstrument:Set[${This.SelectedItem.Text}]
+									</OnSelect>
+								</ComboBox>
+							</Children>
+						</Frame>
 					</Tab>
 				</Tabs>
 			</TabControl>
