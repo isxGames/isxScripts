@@ -27,7 +27,7 @@ function Bard()
 	;; Now figure out what we should do
 	if ${Me.IsGrouped}
 	{
-		varible int i
+		variable int i
 		for (i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc)
 		{
 			if ${Pawn[ExactName,${Group[${i}].Name}].CombatState}>0
