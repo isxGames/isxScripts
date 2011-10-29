@@ -11,6 +11,19 @@
 ;
 ; Revision History
 ; ----------------
+; 20111028 (Zandros)
+;  * Added Buffs, Forms, and Randed Attack. Priority are Counters, Strip Enchantments,
+;    and Push Stance.
+;
+; 20111027 (Zandros)
+;  * Added my 1st class tab.  Currently, I added the Bard Class tab.  Nothing much
+;    but it was a lot of coding.  Basically, if you are a Bard then you can set what
+;    song you want and what weapons you want to equip the moment you are in combat.
+;    Once you are out of combat and someone is wounded then you you can establish
+;    what Rest song and Instrument you want.  Finally, if everyone is fully healed,
+;    then it will default to the song you identify for travel and equip the appropriate
+;    intrument.  
+;
 ; 20111008 (Zandros)
 ;  * Major work was done.  Recreated the UI to support adding your own abilities
 ;    and items to use, and all settings are saved under your player's name.  There
@@ -41,6 +54,18 @@ variable bool doCounter2 = TRUE
 variable bool doPushStance = TRUE
 variable bool doStripEnchantments = TRUE
 variable bool doAutoAttack = TRUE
+variable bool doRangedAttack = TRUE
+variable string CombatForm = NONE
+variable string NonCombatForm = NONE
+
+;; Bard stuff
+variable string CombatSong = CombatSong
+variable string PrimaryWeapon = PrimaryWeapon
+variable string SecondaryWeapon = SecondaryWeapon
+variable string RestSong = RestSong
+variable string RestInstrument = RestInstrument
+variable string TravelSong = TravelSong
+variable string TravelInstrument = TravelInstrument
 
 ;; Ability name variables
 variable string Counter1
@@ -52,10 +77,14 @@ variable string StripEnchantment1
 variable settingsetref General
 variable settingsetref Abilities
 variable settingsetref Items
+variable settingsetref Buffs
 
 ;; Equipment variables
 variable string LastPrimary
 variable string LastSecondary
+
+;; Class Specific Routines
+#include ./Tools/Class/Bard.iss
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -68,29 +97,27 @@ function main()
 	call Initialize
 	
 	;-------------------------------------------
+	; CLASS SPECIFIC Routines
+	;-------------------------------------------
+	call Bard
+	
+	;-------------------------------------------
 	; loop this until we exit the script
 	;-------------------------------------------
 	do
 	{
-		wait 5
-		if !${isPaused} && ${Me.Target(exists)} && !${Me.Target.IsDead}
+		if !${isPaused}
 		{
-			if !${Me.Target.Type.Equal[Resource]}
+			if !${Me.Target.Type.Equal[Resource]} && ${Me.Target(exists)} && !${Me.Target.IsDead}
 			{
 				;-------------------------------------------
 				; Always check for counters and setting Auto Attack on/off
 				;-------------------------------------------
 				call CounterIt
+				call ChangeForm
 				call AutoAttack
+				call RangedAttack
 
-				;-------------------------------------------
-				; Use these only if we are both in combat
-				;-------------------------------------------
-				if ${Me.InCombat} && ${Pawn[id,${Me.Target.ID}].CombatState}>0
-				{
-					call UseAbilities
-					call UseItems
-				}
 				;-------------------------------------------
 				; 1 Second delay realy helps here
 				;-------------------------------------------
@@ -100,16 +127,30 @@ function main()
 					call PushStance
 					NextDelayCheck:Set[${Script.RunningTime}]
 				}
+
+				;-------------------------------------------
+				; Use these only if we are both in combat
+				;-------------------------------------------
+				if ${Me.InCombat} && ${Pawn[id,${Me.Target.ID}].CombatState}>0
+				{
+					call UseAbilities
+					call UseItems
+				}
 			}
+			else
+			{
+				call MeleeAttackOff
+				call ChangeForm
+				call CheckBuffs
+			}
+			
+			;; Class Specific Routines
+			call Bard
 		}
 		else 
 		{
-			;-------------------------------------------
-			; Check and turn off Auto Attack
-			;-------------------------------------------
 			call MeleeAttackOff
 		}
-
 	}
 	while ${isRunning}
 }
@@ -222,12 +263,14 @@ function Initialize()
 	LavishSettings[DPS]:AddSet[General-${Me.FName}]
 	LavishSettings[DPS]:AddSet[Abilities-${Me.FName}]
 	LavishSettings[DPS]:AddSet[Items-${Me.FName}]
+	LavishSettings[DPS]:AddSet[Buffs-${Me.FName}]
 
 	LavishSettings[DPS]:Import[${Script.CurrentDirectory}/Tools_save.xml]
 	
 	General:Set[${LavishSettings[DPS].FindSet[General-${Me.FName}].GUID}]
 	Abilities:Set[${LavishSettings[DPS].FindSet[Abilities-${Me.FName}].GUID}]
 	Items:Set[${LavishSettings[DPS].FindSet[Items-${Me.FName}].GUID}]
+	Buffs:Set[${LavishSettings[DPS].FindSet[Buffs-${Me.FName}].GUID}]
 
 	doUseAbilities:Set[${General.FindSetting[doUseAbilities,TRUE]}]
 	doUseItems:Set[${General.FindSetting[doUseItems,FALSE]}]
@@ -236,6 +279,18 @@ function Initialize()
 	doPushStance:Set[${General.FindSetting[doPushStance,TRUE]}]
 	doStripEnchantments:Set[${General.FindSetting[doStripEnchantments,TRUE]}]
 	doAutoAttack:Set[${General.FindSetting[doAutoAttack,TRUE]}]
+	doRangedAttack:Set[${General.FindSetting[doRangedAttack,TRUE]}]
+	CombatForm:Set[${General.FindSetting[CombatForm,"NONE"]}]
+	NonCombatForm:Set[${General.FindSetting[NonCombatForm,"NONE"]}]
+
+	;; Class Specific - Bard
+	CombatSong:Set[${General.FindSetting[CombatSong]}]
+	PrimaryWeapon:Set[${General.FindSetting[PrimaryWeapon]}]
+	SecondaryWeapon:Set[${General.FindSetting[SecondaryWeapon]}]
+	RestSong:Set[${General.FindSetting[RestSong]}]
+	RestInstrument:Set[${General.FindSetting[RestInstrument]}]
+	TravelSong:Set[${General.FindSetting[TravelSong]}]
+	TravelInstrument:Set[${General.FindSetting[TravelInstrument]}]
 
 	;-------------------------------------------
 	; Reload the UI and draw our Tool window
@@ -246,16 +301,122 @@ function Initialize()
 	;-------------------------------------------
 	; Update UI from the XML Data
 	;-------------------------------------------
+	variable int i
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
-		UIElement[AbilitiesCombo@Main@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+		UIElement[AbilitiesCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
+		{
+			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Equal[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
+			{
+				UIElement[BuffsCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+			}
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
+	{
+		UIElement[CombatForm@Abilities@DPS@Tools]:AddItem[${Me.Form[${i}].Name}]
+		UIElement[NonCombatForm@Abilities@DPS@Tools]:AddItem[${Me.Form[${i}].Name}]
 	}
 	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
 	{
-		UIElement[ItemsCombo@Main@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		;; dump everything here
+		UIElement[ItemsCombo@Abilities@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+
+
+		;; delete these once the broken features are fixed "Me.Inventory[].xxxx"
+		;UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		;UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[RestInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[TravelInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		
+		
+		;;THE FOLLOWING FEATURES ARE BROKEN
+
+		if ${Me.Inventory[${i}].Type.Equal[Weapon]} || ${Me.Inventory[${i}].Type.Equal[Shield]}
+		{
+			;; Only Weapons here
+			if ${Me.Inventory[${i}].Type.Equal[Weapon]}
+			{
+				UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+			}
+			;; both Weapons and Sheilds here
+			UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		}
+		
+		if (${Me.Inventory[${i}].Keyword2.Find[Instrument]})
+		{
+			;; Bard - add instruments 
+			;UIElement[RestInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+			;UIElement[TravelInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		}
+
 	}
+
+	;; class Specific - Bard
+	for (i:Set[1] ; ${i} <= ${Songs} ; i:Inc)
+	{
+		UIElement[CombatSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
+		UIElement[RestSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
+		UIElement[TravelSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
+	}
+
+	;; Now select the items based upon what we had saved
 	BuildItems
 	BuildAbilities
+	BuildForms
+	BuildBuffs
+
+	;;Class Specific - Bard Stuff
+	for (i:Set[1] ; ${i} <= ${UIElement[CombatSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[CombatSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${CombatSong}]}
+		{
+			UIElement[CombatSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[PrimaryWeapon@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[PrimaryWeapon@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${PrimaryWeapon}]}
+		{
+			UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[SecondaryWeapon@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[SecondaryWeapon@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${SecondaryWeapon}]}
+		{
+			UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[RestSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[RestSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${RestSong}]}
+		{
+			UIElement[RestSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[RestInstrument@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[RestInstrument@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${RestInstrument}]}
+		{
+			UIElement[RestInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[TravelSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[TravelSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${TravelSong}]}
+		{
+			UIElement[TravelSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[TravelInstrument@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[TravelInstrument@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${TravelInstrument}]}
+		{
+			UIElement[TravelInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
+		}
+	}
 	
 	;-------------------------------------------
 	; Enable Events - this event is automatically removed at shutdown
@@ -275,8 +436,20 @@ function atexit()
 	General:AddSetting[doCounter2,${doCounter2}]
 	General:AddSetting[doPushStance,${doPushStance}]
 	General:AddSetting[doStripEnchantments,${doStripEnchantments}]
+	General:AddSetting[doRangedAttack,${doRangedAttack}]
 	General:AddSetting[doAutoAttack,${doAutoAttack}]
+	General:AddSetting[CombatForm,${CombatForm}]
+	General:AddSetting[NonCombatForm,${NonCombatForm}]
 
+	;; update class specific - Bard
+	General:AddSetting[CombatSong,${CombatSong}]
+	General:AddSetting[PrimaryWeapon,${PrimaryWeapon}]
+	General:AddSetting[SecondaryWeapon,${SecondaryWeapon}]
+	General:AddSetting[RestSong,${RestSong}]
+	General:AddSetting[RestInstrument,${RestInstrument}]
+	General:AddSetting[TravelSong,${TravelSong}]
+	General:AddSetting[TravelInstrument,${TravelInstrument}]
+	
 	;; save our settings to file
 	LavishSettings[DPS]:Export[${Script.CurrentDirectory}/Tools_Save.xml]
 
@@ -305,7 +478,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	{
 		EchoIt "[${ChannelNumber}a]${aText}"
 		doAutoAttack:Set[FALSE]
-		UIElement[doAutoAttack@Main@DPS@Tools]:UnsetChecked
+		UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
 		vgecho "Melee Off - can't attack with that weapon"
 	}
 
@@ -632,7 +805,16 @@ function:bool OkayToAttack()
 ;===================================================
 function:bool AutoAttack()
 {
+	if ${doAutoAttack}
+	{
+		;; this wait is a must if using melee weapons
+		wait 5
+	}
+
 	call OkayToAttack
+	
+	echo OkayToAttack=${Return}
+	
 	if ${Return} && ${doAutoAttack} && ${Me.Target.Distance}<5
 	{
 		;; Turn on auto-attack
@@ -641,10 +823,10 @@ function:bool AutoAttack()
 			if ${doWeaponCheck}
 			{
 				waitframe
-				if ${Me.Inventory[CurrentEquipSlot, Primary Hand].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot, Two Hand].Type.Equal[Weapon]}
+				if ${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot,"Two Hand"].Type.Equal[Weapon]}
 				{
 					waitframe
-				vgecho "Turning AutoAttack ON"
+					vgecho "Turning AutoAttack ON"
 					Me.Ability[Auto Attack]:Use
 					wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
 					return
@@ -696,20 +878,50 @@ function MeleeAttackOff()
 	doWeaponCheck:Set[TRUE]
 }
 
+function RangedAttack()
+{
+	call OkayToAttack
+	if ${Return} && ${doRangedAttack}
+	{
+		if ${Me.Ability[Ranged Attack](exists)}
+		{
+			call UseAbility "Ranged Attack"
+		}
+	}
+}
+
+;===================================================
+;===             Check Buffs                    ====
+;===================================================
+function CheckBuffs()
+{
+	variable iterator Iterator
+	Buffs:GetSettingIterator[Iterator]
+	while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
+	{
+		;; Use the abilit if it is ready and does not exist on target or myself
+		if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.Effect[${Iterator.Key}](exists)}
+		{
+			call UseAbility "${Iterator.Key}"
+		}
+		Iterator:Next
+	}
+}
+
 ;===================================================
 ;===              Use Abilities                 ====
 ;===================================================
 function UseAbilities()
 {
-	call OkayToAttack
-	if ${Return} && ${doUseAbilities} && !${isPaused} && ${isRunning}
+	if ${doUseAbilities} && !${isPaused} && ${isRunning}
 	{
 		variable iterator Iterator
 		Abilities:GetSettingIterator[Iterator]
 		while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning} && !${Me.Target.IsDead}
 		{
-			;; Use the abilit if it is ready and does not exist on target or myself
-			if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)} && !${Me.Effect[${Iterator.Key}](exists)}
+			;; Use the ability if it is ready and does not exist on target or myself
+			call OkayToAttack
+			if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)} && !${Me.Effect[${Iterator.Key}](exists)}
 			{
 				if ${Me.Ability[${Iterator.Key}].BloodUnionRequired} > ${Me.BloodUnion}
 				{
@@ -743,6 +955,14 @@ function UseAbility(string ABILITY)
 		return
 	}
 
+	
+	;-------------------------------------------
+	; These have priority over everything
+	;-------------------------------------------
+	call CounterIt
+	call StripIt
+	call PushStance
+	
 	;-------------------------------------------
 	; execute ability only if it is ready
 	;-------------------------------------------
@@ -751,13 +971,13 @@ function UseAbility(string ABILITY)
 		;; return if we do not have enough energy
 		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
 		{
-			echo "Not enought Energy for ${ABILITY}"
+			;echo "Not enought Energy for ${ABILITY}"
 			return FALSE
 		}
 		;; return if we do not have enough Endurance
 		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
 		{
-			echo "Not enought Endurance for ${ABILITY}"
+			;echo "Not enought Endurance for ${ABILITY}"
 			return FALSE
 		}
 
@@ -817,6 +1037,27 @@ function UseItems()
 }
 
 ;===================================================
+;===              Change Form                   ====
+;===================================================
+function ChangeForm()
+{
+	if ${Me.InCombat}
+	{
+		if !${Me.CurrentForm.Name.Equal[${CombatForm}]}
+		{
+			Me.Form[${CombatForm}]:ChangeTo
+			wait .5
+		}
+		return
+	}
+	if !${Me.CurrentForm.Name.Equal[${NonCombatForm}]}
+	{
+		Me.Form[${NonCombatForm}]:ChangeTo
+		wait .5
+	}
+}
+
+;===================================================
 ;===         UI Tools for Abilities             ====
 ;===================================================
 atom(global) AddAbilities(string aName)
@@ -838,18 +1079,18 @@ atom(global) BuildAbilities()
 {
 	variable iterator Iterator
 	Abilities:GetSettingIterator[Iterator]
-	UIElement[AbilitiesList@Main@DPS@Tools]:ClearItems
+	UIElement[AbilitiesList@Abilities@DPS@Tools]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
-		UIElement[AbilitiesList@Main@DPS@Tools]:AddItem[${Iterator.Key}]
+		UIElement[AbilitiesList@Abilities@DPS@Tools]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
 	variable int i = 0
 	Abilities:Clear
-	while ${i:Inc} <= ${UIElement[AbilitiesList@Main@DPS@Tools].Items}
+	while ${i:Inc} <= ${UIElement[AbilitiesList@Abilities@DPS@Tools].Items}
 	{
 		
-		LavishSettings[DPS].FindSet[Abilities-${Me.FName}]:AddSetting[${UIElement[AbilitiesList@Main@DPS@Tools].Item[${i}].Text}, ${UIElement[AbilitiesList@Main@DPS@Tools].Item[${i}].Text}]
+		LavishSettings[DPS].FindSet[Abilities-${Me.FName}]:AddSetting[${UIElement[AbilitiesList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[AbilitiesList@Abilities@DPS@Tools].Item[${i}].Text}]
 	}
 }
 
@@ -861,7 +1102,6 @@ atom(global) AddItems(string aName)
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[DPS].FindSet[Items-${Me.FName}]:AddSetting[${aName}, ${aName}]
-
 	}
 }
 atom(global) RemoveItems(string aName)
@@ -875,20 +1115,72 @@ atom(global) BuildItems()
 {
 	variable iterator Iterator
 	Items:GetSettingIterator[Iterator]
-	UIElement[ItemsList@Main@DPS@Tools]:ClearItems
+	UIElement[ItemsList@Abilities@DPS@Tools]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
-		UIElement[ItemsList@Main@DPS@Tools]:AddItem[${Iterator.Key}]
+		UIElement[ItemsList@Abilities@DPS@Tools]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
 	variable int i = 0
 	Items:Clear
-	while ${i:Inc} <= ${UIElement[ItemsList@Main@DPS@Tools].Items}
+	while ${i:Inc} <= ${UIElement[ItemsList@Abilities@DPS@Tools].Items}
 	{
-		LavishSettings[DPS].FindSet[Items-${Me.FName}]:AddSetting[${UIElement[ItemsList@Main@DPS@Tools].Item[${i}].Text}, ${UIElement[ItemsList@Main@DPS@Tools].Item[${i}].Text}]
+		LavishSettings[DPS].FindSet[Items-${Me.FName}]:AddSetting[${UIElement[ItemsList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[ItemsList@Abilities@DPS@Tools].Item[${i}].Text}]
 	}
 }
 
+;===================================================
+;===         UI Tools for Buffs                 ====
+;===================================================
+atom(global) AddBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[DPS].FindSet[Buffs-${Me.FName}]:AddSetting[${aName}, ${aName}]
+	}
+}
+atom(global) RemoveBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		Buffs.FindSetting[${aName}]:Remove
+	}
+}
+atom(global) BuildBuffs()
+{
+	variable iterator Iterator
+	Buffs:GetSettingIterator[Iterator]
+	UIElement[BuffsList@Abilities@DPS@Tools]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[BuffsList@Abilities@DPS@Tools]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+	variable int i = 0
+	Buffs:Clear
+	while ${i:Inc} <= ${UIElement[BuffsList@Abilities@DPS@Tools].Items}
+	{
+		LavishSettings[DPS].FindSet[Buffs-${Me.FName}]:AddSetting[${UIElement[BuffsList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[BuffsList@Abilities@DPS@Tools].Item[${i}].Text}]
+	}
+}
 
+atom(global) BuildForms()
+{
+	variable int i
+	for (i:Set[1] ; ${i} <= ${UIElement[CombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[CombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${CombatForm}]}
+		{
+			UIElement[CombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[NonCombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[NonCombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${NonCombatForm}]}
+		{
+			UIElement[NonCombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+}
 
 
