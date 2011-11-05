@@ -675,7 +675,7 @@
 								UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
 								if ${Script[myprices].VariableScope.UseOgreCraft}
 								{
-									run ogre craft -q _myprices.xml -s
+									run ogre craft -q ${Me.TSSubClass}-_myprices.xml -s
 								}
 								else
 								{
