@@ -1081,7 +1081,7 @@ function buy(string tabname, string action)
 		{
 			if ${UseOgreCraft}
 			{
-				LavishSettings[newcraft]:Export[${OgreNewCraftPath}_myprices.xml]
+				LavishSettings[newcraft]:Export[${OgreNewCraftPath}${Me.TSSubClass}-_myprices.xml]
 			}
 			else
 			{
