@@ -812,8 +812,7 @@
 							<Height>15</Height>
 							<Text>Mez</Text>
 							<OnLeftClick>
-								echo Mez1ID=${Mez1ID}
-								Script[VG-PSI]:QueueCommand[call Mezmerize ${Mez1ID}]
+								Script[VG-PSI]:QueueCommand[call Mezmerize "${Script[VG-PSI].Variable[Mez1ID]}"]
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton Name="Sync1" Template="VG.GreyCommandButton">
@@ -824,7 +823,7 @@
 							<Height>15</Height>
 							<Text>Sync</Text>
 							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Synchronize ${Mez1ID}]
+								Script[VG-PSI]:QueueCommand[call Synchronize "${Script[VG-PSI].Variable[Mez1ID]}"]
 							</OnLeftClick>
 						</Commandbutton>
 						<Text Name="Text-Mez1" Template="VG.BoldText">
@@ -879,7 +878,7 @@
 							<Height>15</Height>
 							<Text>Mez</Text>
 							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Mezmerize ${Mez2ID}]
+								Script[VG-PSI]:QueueCommand[call Mezmerize "${Script[VG-PSI].Variable[Mez2ID]}"]
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton Name="Sync2" Template="VG.GreyCommandButton">
@@ -890,7 +889,7 @@
 							<Height>15</Height>
 							<Text>Sync</Text>
 							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Synchronize ${Mez2ID}]
+								Script[VG-PSI]:QueueCommand[call Synchronize "${Script[VG-PSI].Variable[Mez2ID]}"]
 							</OnLeftClick>
 						</Commandbutton>
 						<Text Name="Text-Mez2" Template="VG.BoldText">
@@ -945,7 +944,7 @@
 							<Height>15</Height>
 							<Text>Mez</Text>
 							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Mezmerize ${Mez3ID}]
+								Script[VG-PSI]:QueueCommand[call Mezmerize "${Script[VG-PSI].Variable[Mez3ID]}"]
 							</OnLeftClick>
 						</Commandbutton>
 						<Commandbutton Name="Sync3" Template="VG.GreyCommandButton">
@@ -956,7 +955,7 @@
 							<Height>15</Height>
 							<Text>Sync</Text>
 							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Synchronize ${Mez3ID}]
+								Script[VG-PSI]:QueueCommand[call Synchronize "${Script[VG-PSI].Variable[Mez3ID]}"]
 							</OnLeftClick>
 						</Commandbutton>
 						<Text Name="Text-Mez3" Template="VG.BoldText">
@@ -988,7 +987,7 @@
 							<Height>25</Height>
 							<Text>Mezmerize 1st Encounter</Text>
  							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Mezmerize ${Me.Encounter[1].ID}]
+								Script[VG-PSI]:QueueCommand[call Mezmerize "${Me.Encounter[1].ID}"]
 							</OnLeftClick>
 						</Commandbutton>
 
@@ -1000,7 +999,7 @@
 							<Height>25</Height>
 							<Text>Mezmerize 2nd Encounter</Text>
  							<OnLeftClick>
-								Script[VG-PSI]:QueueCommand[call Mezmerize ${Me.Encounter[2].ID}]
+								Script[VG-PSI]:QueueCommand[call Mezmerize "${Me.Encounter[2].ID}"]
 							</OnLeftClick>
 						</Commandbutton>
 					</Tab>

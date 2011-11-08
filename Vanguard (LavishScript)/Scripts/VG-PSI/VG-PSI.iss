@@ -204,6 +204,9 @@ function main()
 	SetHighestAbility "Defense1" "Psionic Barrier"
 	SetHighestAbility "Defense2" "Diamond Skin"
 	SetHighestAbility "Defense3" "Mass Amnesia"
+	;; === MEZ ===
+	SetHighestAbility "TimeTrick" "Time Trick"
+	
 	;; === REGEN DOTS ===
 	;;
 	;; MANUALLY MODIFY REGEN DOT TO WHAT YOU WANT TO USE!
@@ -745,7 +748,6 @@ function SynchronizeTanksTarget()
 ;===================================================
 function Mezmerize(int64 TargetID)
 {
-	echo Mezmerize=TargetID
 	;; Make sure TargetID exists
 	if !${Pawn[id,${TargetID}](exists)}
 	{
@@ -763,7 +765,7 @@ function Mezmerize(int64 TargetID)
 	wait 3
 	
 	EchoIt "Mezmerize - ${Me.Target.Name}"
-	call UseAbility "Time Trick III"
+	call UseAbility "${TimeTrick}"
 }
 
 ;===================================================
