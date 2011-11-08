@@ -51,7 +51,7 @@
 		<StorePosition>1</StorePosition>
 		<X>100</X>
 		<Y>100</Y>
-		<Width>210</Width>
+		<Width>220</Width>
 		<Height>500</Height>
 		<Title>Tools</Title>
 		<TitleBar Template="VG.Window.TitleBar">
@@ -704,6 +704,167 @@
 							</Children>
 						</Frame>
 					</Tab>
+
+					<Tab name='BuffBot'>
+						<Text Name='txtBuffBot' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>=== Chat Monitor Toggles ===  </Text>
+						</Text>
+						<checkbox Name="doGroupsay" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>5%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Monitor Group Messages</Text>
+							<AutoTooltip> scann all group messages for a keyword to buff </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doGroupsay}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doGroupsay:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doRaidsay" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>10%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Monitor Raid Messages</Text>
+							<AutoTooltip> scan all raid messages for a keyword to buff </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doRaidsay}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doRaidsay:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doTells" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>15%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Monitor Tell Messages</Text>
+							<AutoTooltip> scan all tells for a keyword to buff </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doTells}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doTells:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doRift" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>20%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Buff on Rift</Text>
+							<AutoTooltip> buff those that just rifted</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doRift}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doRift:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<Text Name='txtTriggerBuffing' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>25%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>== Phrase to Trigger Buffing ==</Text>
+						</Text>
+						
+						<Textentry Name='TriggerBuffing' Template='VG.TextEntry'>
+							<X>6%</X>
+							<Y>28%</Y>
+							<Width>88%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.TriggerBuffing}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.TriggerBuffing:Set[${This.Text}]
+									;echo TriggerBuffing>0 == [${Script[Tools].VariableScope.TriggerBuffing}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[Tools].VariableScope.TriggerBuffing:Set[""]
+									;echo TriggerBuffing=0 == [${Script[Tools].VariableScope.TriggerBuffing}]
+								}
+							</OnChange>
+						</Textentry>
+
+						 <Text Name='txtBuffs' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>37%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>=== Cast these Buffs ===</Text>
+						</Text>
+						<ComboBox Name="TriggerBuffsCombo" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>40%</Y>
+							<Width>190</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								if ${This.SelectedItem.Text(exists)}
+								{
+									AddTriggerBuff "${This.SelectedItem.Text}"
+									BuildTriggerBuffs
+								}
+							</OnSelect>
+						</ComboBox>
+						<Listbox Name="TriggerBuffsList" Template="VG.ListBox">
+							<X>6%</X>
+							<Y>44.5%</Y>
+							<Width>190</Width>
+							<Height>80</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								BuildTriggerBuffs
+							</OnLoad>
+							<OnRightClick>
+								RemoveTriggerBuff "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								BuildTriggerBuffs
+							</OnRightClick>
+						</Listbox>
+						
+					</Tab>
+
 				</Tabs>
 			</TabControl>
 		</Children>

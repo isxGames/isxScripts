@@ -11,6 +11,11 @@
 ;
 ; Revision History
 ; ----------------
+; 20111104 (Zandros)
+;  * Added BuffBot to script.  This will allow you to monitor tells, group messages,
+;    and raid messages for a trigger phrase to begin buffing.  It can also buff all
+;    those that just rifted.
+;
 ; 20111028 (Zandros)
 ;  * Added Buffs, Forms, and Randed Attack. Priority are Counters, Strip Enchantments,
 ;    and Push Stance.
@@ -56,6 +61,11 @@ variable bool doStripEnchantments = TRUE
 variable bool doAutoAttack = TRUE
 variable bool doRangedAttack = TRUE
 variable bool doFace = FALSE
+variable bool doGroupsay = FALSE
+variable bool doRaidsay = FALSE
+variable bool doTells = FALSE
+variable bool doRift = FALSE
+variable string TriggerBuffing = ""
 variable string Tank = Unknown
 variable string CombatForm = NONE
 variable string NonCombatForm = NONE
@@ -81,10 +91,16 @@ variable settingsetref General
 variable settingsetref Abilities
 variable settingsetref Items
 variable settingsetref Buffs
+variable settingsetref TriggerBuffs
 
 ;; Equipment variables
 variable string LastPrimary
 variable string LastSecondary
+
+;; BuffBot variables
+variable string PCName
+variable string PCNameFull
+variable(global) collection:string Tools_BuffRequestList
 
 ;; Class Specific Routines
 #include ./Tools/Class/Bard.iss
@@ -118,6 +134,7 @@ function main()
 			call AssistTank
 			call ChangeForm
 			call StripIt
+			call BuffRequests
 
 			;; Class Specific Routines - do these first before doing combat stuff
 			call Bard
@@ -259,6 +276,7 @@ function Initialize()
 	LavishSettings[DPS]:AddSet[Abilities-${Me.FName}]
 	LavishSettings[DPS]:AddSet[Items-${Me.FName}]
 	LavishSettings[DPS]:AddSet[Buffs-${Me.FName}]
+	LavishSettings[DPS]:AddSet[TriggerBuffs-${Me.FName}]
 
 	LavishSettings[DPS]:Import[${Script.CurrentDirectory}/Tools_save.xml]
 	
@@ -266,6 +284,7 @@ function Initialize()
 	Abilities:Set[${LavishSettings[DPS].FindSet[Abilities-${Me.FName}].GUID}]
 	Items:Set[${LavishSettings[DPS].FindSet[Items-${Me.FName}].GUID}]
 	Buffs:Set[${LavishSettings[DPS].FindSet[Buffs-${Me.FName}].GUID}]
+	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}].GUID}]
 
 	doUseAbilities:Set[${General.FindSetting[doUseAbilities,TRUE]}]
 	doUseItems:Set[${General.FindSetting[doUseItems,FALSE]}]
@@ -279,7 +298,11 @@ function Initialize()
 	CombatForm:Set[${General.FindSetting[CombatForm,"NONE"]}]
 	NonCombatForm:Set[${General.FindSetting[NonCombatForm,"NONE"]}]
 	StartAttack:Set[${General.FindSetting[StartAttack,99]}]
-
+	doGroupsay:Set[${General.FindSetting[doGroupsay,FALSE]}]
+	doRaidsay:Set[${General.FindSetting[doRaidsay,FALSE]}]
+	doTells:Set[${General.FindSetting[doTells,FALSE]}]
+	doRift:Set[${General.FindSetting[doRift,FALSE]}]
+	TriggerBuffing:Set[${General.FindSetting[TriggerBuffing,""]}]
 	
 	;; Class Specific - Bard
 	CombatSong:Set[${General.FindSetting[CombatSong]}]
@@ -308,6 +331,7 @@ function Initialize()
 			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Equal[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
 			{
 				UIElement[BuffsCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+				UIElement[TriggerBuffsCombo@BuffBot@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
 			}
 		}
 	}
@@ -364,6 +388,7 @@ function Initialize()
 	BuildAbilities
 	BuildForms
 	BuildBuffs
+	BuildTriggerBuffs
 
 	;;Class Specific - Bard Stuff
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
@@ -440,6 +465,15 @@ function atexit()
 	General:AddSetting[CombatForm,${CombatForm}]
 	General:AddSetting[NonCombatForm,${NonCombatForm}]
 	General:AddSetting[StartAttack,${StartAttack}]
+	General:AddSetting[doGroupsay,${doGroupsay}]
+	General:AddSetting[doRaidsay,${doRaidsay}]
+	General:AddSetting[doTells,${doTells}]
+	General:AddSetting[doRift,${doRift}]
+	General:AddSetting[TriggerBuffing,${TriggerBuffing}]
+	if ${TriggerBuffing.Length}==0
+	{
+		General:AddSetting[TriggerBuffing,""]
+	}
 
 	;; update class specific - Bard
 	General:AddSetting[CombatSong,${CombatSong}]
@@ -477,8 +511,12 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	if ${ChannelNumber}==0 && ${aText.Find[You can't attack with that type of weapon.]}
 	{
 		EchoIt "[${ChannelNumber}]${aText}"
-		doAutoAttack:Set[FALSE]
-		UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
+		doWeaponCheck:Set[FALSE]
+		if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
+		{
+			Me.Ability[Auto Attack]:Use
+		}
+		;UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
 		vgecho "Melee Off - can't attack with that weapon"
 	}
 
@@ -493,6 +531,31 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			bText:Set[${bText.Right[${Math.Calc[${bText.Length}-3]}]}]
 			vgecho "<Purple=>COUNTERED: <Yellow=>${bText}"
 		}
+	}
+
+	;; Someone said something in group
+	if ${doGroupsay} && ${ChannelNumber}==8 && ${aText.Find[${TriggerBuffing}]}
+	{
+		EchoIt "GROUP = ${aText}"
+		PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+		PCName:Set[${PCNameFull.Token[1," "]}]
+		Tools_BuffRequestList:Set["${PCName}", "Buff"]
+	}
+	;; Someone said something in raid (Guild = 11)
+	if ${doRaidsay} && ${ChannelNumber}==9 && ${aText.Find[${TriggerBuffing}]}
+	{
+		EchoIt "RAID = ${aText}"
+		PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+		PCName:Set[${PCNameFull.Token[1," "]}]
+		Tools_BuffRequestList:Set["${PCName}", "Buff"]
+	}
+	;; Someone sent us a tell
+	if ${doTells} && ${ChannelNumber}==15 && ${aText.Find[${TriggerBuffing}]}
+	{
+		EchoIt "TELL = ${aText}"
+		PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+		PCName:Set[${PCNameFull.Token[1," "]}]
+		Tools_BuffRequestList:Set["${PCName}", "Buff"]
 	}
 }
 
@@ -821,8 +884,17 @@ function:bool AutoAttack()
 		{
 			if ${doWeaponCheck}
 			{
+				vgecho "Turning AutoAttack ON"
+				Me.Ability[Auto Attack]:Use
+				wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+				return
+			}
+			
+/*		
+			if ${doWeaponCheck}
+			{
 				waitframe
-				if ${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Type.Equal[Weapon]} || ${Me.Inventory[CurrentEquipSlot,"Two Hand"].Type.Equal[Weapon]}
+				if "${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Type.Equal[Weapon]}" || "${Me.Inventory[CurrentEquipSlot,"Two Hand"].Type.Equal[Weapon]}"
 				{
 					waitframe
 					vgecho "Turning AutoAttack ON"
@@ -832,6 +904,7 @@ function:bool AutoAttack()
 				}
 				doWeaponCheck:Set[FALSE]
 			}
+*/
 		}
 	}
 	else
@@ -874,7 +947,15 @@ function MeleeAttackOff()
 			wait 15 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 		}
 	}
-	doWeaponCheck:Set[TRUE]
+	
+	if !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
+	{
+		if !${doWeaponCheck}
+		{
+			wait 5
+		}
+		doWeaponCheck:Set[TRUE]
+	}
 }
 
 ;===================================================
@@ -899,10 +980,22 @@ function RangedAttack()
 function CheckBuffs()
 {
 	variable iterator Iterator
+	variable string temp
 	Buffs:GetSettingIterator[Iterator]
 	while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
 	{
-		;; Use the abilit if it is ready and does not exist on target or myself
+		;; we do not want to recast the berry spell if they already exist in your inventory
+		if ${anIter.Key.Find[berries]}
+		{
+			temp:Set[${anIter.Key.Token[1," "]}]
+			if ${Me.Inventory[${temp}](exists)} || ${Me.Inventory[Tiny ${temp}](exists)} || ${Me.Inventory[Small ${temp}](exists)} || ${Me.Inventory[Large ${temp}](exists)} || ${Me.Inventory[Great ${temp}](exists)}
+			{
+				anIter:Next
+				continue
+			}
+		}
+		
+		;; Use the ability if it is ready and does not exist on self
 		if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.Effect[${Iterator.Key}](exists)}
 		{
 			call UseAbility "${Iterator.Key}"
@@ -1041,25 +1134,90 @@ function UseItems()
 					LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Primary Hand]}]
 					LastSecondary:Set[${Me.Inventory[CurrentEquipSlot,Secondary Hand]}]
 					Me.Inventory[${Iterator.Key}]:Equip
+					wait 2
 					Me.Inventory[${Iterator.Key}]:Use
+					wait 2
 					if ${LastPrimary.Equal[LastSecondary]}
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
+						wait 2
 					}
 					else
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
 						Me.Inventory[${LastSecondary}]:Equip[Secondary Hand]
+						wait 2
 					}
 				}
 				else
 				{
 					Me.Inventory[${Iterator.Key}]:Use
+					wait 2
 				}
 			}
 			waitframe
 			Iterator:Next
 		}
+	}
+}
+
+;===================================================
+;===        BUFF REQUESTS SUBROUTINE            ====
+;===================================================
+function BuffRequests()
+{
+	if !${Me.Ability["Torch"].IsReady}
+	{
+		return
+	}
+	if ${Tools_BuffRequestList.FirstKey(exists)}
+	{
+		variable iterator Iterator
+		variable bool WeBuffed
+		
+		do
+		{
+			if ${Pawn[name,${Tools_BuffRequestList.CurrentKey}](exists)} && ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Distance}<25 && ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].HaveLineOfSightTo}
+			{
+				Pawn[name,${Tools_BuffRequestList.CurrentKey}]:Target
+				wait 10 ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
+				if ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
+				{
+					;; reset TriggerBuffs to 1st Key
+					TriggerBuffs:GetSettingIterator[Iterator]
+					WeBuffed:Set[FALSE]
+					
+					;; cycle through all our trigger buffs to ensure we casted them
+					while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
+					{
+						do
+						{
+							waitframe
+						}
+						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+						
+						;; cast the buff
+						if ${Me.Ability[${Iterator.Key}].IsReady}
+						{
+							call UseAbility "${Iterator.Key}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+							}
+						}
+						Iterator:Next
+					}
+					
+					;; announce we buffed someone
+					if ${WeBuffed}
+					{
+						vgecho "Buffed: ${Tools_BuffRequestList.CurrentKey}"
+					}
+				}
+			}
+		}
+		while ${Tools_BuffRequestList.NextKey(exists)}
+		Tools_BuffRequestList:Clear
 	}
 }
 
@@ -1210,4 +1368,40 @@ atom(global) BuildForms()
 	}
 }
 
-
+;===================================================
+;===         UI Tools for Trigger Buffs         ====
+;===================================================
+atom(global) AddTriggerBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}]:AddSetting[${aName}, ${aName}]
+	}
+}
+atom(global) RemoveTriggerBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		TriggerBuffs.FindSetting[${aName}]:Remove
+	}
+}
+atom(global) BuildTriggerBuffs()
+{
+	variable iterator Iterator
+	TriggerBuffs:GetSettingIterator[Iterator]
+	UIElement[TriggerBuffsList@BuffBot@DPS@Tools]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		if !${Iterator.Key.Equal[NULL]}
+		{
+			UIElement[TriggerBuffsList@BuffBot@DPS@Tools]:AddItem[${Iterator.Key}]
+		}
+		Iterator:Next
+	}
+	variable int i = 0
+	TriggerBuffs:Clear
+	while ${i:Inc} <= ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Items}
+	{
+		LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}]:AddSetting[${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}]
+	}
+}
