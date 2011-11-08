@@ -11,6 +11,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20111107 (Zandros)
+; * Added Auto Accept Rez and auto target to repair gear
+;
 ; 20111104 (Zandros)
 ;  * Added BuffBot to script.  This will allow you to monitor tells, group messages,
 ;    and raid messages for a trigger phrase to begin buffing.  It can also buff all
@@ -50,6 +53,7 @@ variable int i
 variable bool isRunning = TRUE
 variable bool isPaused = FALSE
 variable int NextDelayCheck = ${Script.RunningTime}
+variable int RepairTimer = ${Script.RunningTime}
 
 ;; UI/Script toggle variables
 variable bool doUseAbilities = TRUE
@@ -61,6 +65,9 @@ variable bool doStripEnchantments = TRUE
 variable bool doAutoAttack = TRUE
 variable bool doRangedAttack = TRUE
 variable bool doFace = FALSE
+variable bool doAutoRepairs = TRUE
+variable bool doAutoRez = TRUE
+variable bool doAcceptRez = FALSE
 variable bool doGroupsay = FALSE
 variable bool doRaidsay = FALSE
 variable bool doTells = FALSE
@@ -126,7 +133,13 @@ function main()
 	do
 	{
 		;; this allows AutoAttack to kick in
-		wait 5
+		if ${doAutoAttack}
+		{
+			wait 5
+		}
+		
+		;; check and accept Rez
+		call RezAccept
 		
 		if !${isPaused}
 		{
@@ -135,6 +148,7 @@ function main()
 			call ChangeForm
 			call StripIt
 			call BuffRequests
+			call RepairEquipment
 
 			;; Class Specific Routines - do these first before doing combat stuff
 			call Bard
@@ -295,6 +309,8 @@ function Initialize()
 	doAutoAttack:Set[${General.FindSetting[doAutoAttack,TRUE]}]
 	doRangedAttack:Set[${General.FindSetting[doRangedAttack,TRUE]}]
 	doFace:Set[${General.FindSetting[doFace,TRUE]}]
+	doAutoRepairs:Set[${General.FindSetting[doAutoRepairs,TRUE]}]
+	doAutoRez:Set[${General.FindSetting[doAutoRez,TRUE]}]
 	CombatForm:Set[${General.FindSetting[CombatForm,"NONE"]}]
 	NonCombatForm:Set[${General.FindSetting[NonCombatForm,"NONE"]}]
 	StartAttack:Set[${General.FindSetting[StartAttack,99]}]
@@ -445,6 +461,7 @@ function Initialize()
 	; Enable Events - this event is automatically removed at shutdown
 	;-------------------------------------------
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]	
+	Event[VG_OnPawnSpawned]:AttachAtom[PawnSpawned]
 }
 
 ;===================================================
@@ -462,6 +479,8 @@ function atexit()
 	General:AddSetting[doRangedAttack,${doRangedAttack}]
 	General:AddSetting[doAutoAttack,${doAutoAttack}]
 	General:AddSetting[doFace,${doFace}]
+	General:AddSetting[doAutoRepairs,${doAutoRepairs}]
+	General:AddSetting[doAutoRez,${doAutoRez}]
 	General:AddSetting[CombatForm,${CombatForm}]
 	General:AddSetting[NonCombatForm,${NonCombatForm}]
 	General:AddSetting[StartAttack,${StartAttack}]
@@ -500,6 +519,19 @@ function atexit()
 atom(script) EchoIt(string aText)
 {
 	echo "[${Time}][Tools]: ${aText}"
+}
+
+;===================================================
+;===       ATOM - PawnSpawned                   ====
+;===================================================
+atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
+{
+	if ${doRift}
+	{
+		;; ID, Level and Type sometimes generates 0 or NULL
+		PCName:Set[${aName.Token[1," "]}]
+		Tools_BuffRequestList:Set["${PCName}", "Buff"]
+	}
 }
 
 
@@ -557,6 +589,16 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		PCName:Set[${PCNameFull.Token[1," "]}]
 		Tools_BuffRequestList:Set["${PCName}", "Buff"]
 	}
+
+	;; Accept Rez
+	if ${ChannelNumber}==32
+	{
+		if ${aText.Find[is trying to resurrect you with]}
+		{
+			doAcceptRez:Set[TRUE]
+		}
+	}
+	
 }
 
 ;===================================================
@@ -1068,12 +1110,12 @@ function UseAbilities()
 ;===================================================
 ;===               Use Items                    ====
 ;===================================================
-function UseAbility(string ABILITY)
+function:bool UseAbility(string ABILITY)
 {
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
 		echo "${ABILITY} does not exist or too high a level to use"
-		return
+		return FALSE
 	}
 	
 	;-------------------------------------------
@@ -1103,7 +1145,9 @@ function UseAbility(string ABILITY)
 
 		Me.Ability[${ABILITY}]:Use
 		call IsCasting
+		return TRUE
 	}
+	return FALSE
 }
 
 ;===================================================
@@ -1192,6 +1236,10 @@ function BuffRequests()
 					{
 						do
 						{
+							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
+							{
+								break
+							}
 							waitframe
 						}
 						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
@@ -1239,6 +1287,170 @@ function ChangeForm()
 	{
 		Me.Form[${NonCombatForm}]:ChangeTo
 		wait .5
+	}
+}
+
+;===================================================
+;===           REZ ACCEPT SUB-ROUTINE           ====
+;===================================================
+function RezAccept()
+{
+	if ${doAcceptRez}
+	{
+		;; Accept that rez
+		VGExecute "/rezaccept"
+
+		;; allow time to relocate after accepting rez
+		wait 40
+		
+		;; target our nearest corpse
+		VGExecute "/targetmynearestcorpse"
+		wait 10
+		
+		;; drag it closer if we are still out of range
+		if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<21
+		{
+			VGExecute "/corpsedrag"
+			wait 10 ${Me.Target.Distance}<=5
+		}
+		
+		;; loot our tombstone and clear our target
+		VGExecute "/lootall"
+		waitframe
+		VGExecute "/cleartargets"
+		waitframe
+		
+		vgecho "Accepted Rez and Looted my tombstone"
+		doAcceptRez:Set[FALSE]
+	}
+}
+
+;===================================================
+;===           AUTO REPAIR SUB-ROUTINE          ====
+;===================================================
+function RepairEquipment()
+{
+	if ${doAutoRepairs}
+	{
+		;; check once every other second
+		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${RepairTimer}]}/1000]}<1
+		{
+			return
+		}
+
+		;; reset the timer
+		RepairTimer:Set[${Script.RunningTime}]
+		
+		;; total items in inventory
+		variable int TotalItems = 0
+		
+		;; define our index
+		variable index:item CurentItems
+		
+		;; populate our index and update total items in inventory
+		TotalItems:Set[${Me.GetInventory[CurentItems]}]
+
+		;; counter
+		variable int i = 0
+
+		;; Essence of Replenishment
+		if ${Pawn[Essence of Replenishment](exists)}
+		{
+			if ${Pawn[Essence of Replenishment].Distance}<5
+			{
+				;; loop through all items checking durability
+				for (i:Set[1] ; ${i}<=${TotalItems} ; i:Inc)
+				{
+					if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
+					{
+						Pawn[Essence of Replenishment]:Target
+						wait 10 ${Me.Target.Name.Find[Replenishment]}
+						if ${Me.Target.Name.Find[Replenishment]}
+						{
+							Merchant:Begin[Repair]
+							wait 3
+							Merchant:RepairAll
+							Merchant:End
+							vgecho Repaired equipment
+							VGExecute "/cleartargets"
+						}
+						return
+					}
+				}
+			}
+		}
+
+		;; Merchant Djinn
+		if ${Pawn[Merchant Djinn](exists)}
+		{
+			if ${Pawn[Merchant Djinn].Distance}<5
+			{
+				;; loop through all items checking durability
+				for (i:Set[1] ; ${i}<=${TotalItems} ; i:Inc)
+				{
+					if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
+					{
+						Pawn[Merchant Djinn]:Target
+						wait 10 ${Me.Target.Name.Find[Merchant Djinn]}
+						if ${Me.Target.Name.Find[Merchant Djinn]}
+						{
+							Merchant:Begin[Repair]
+							wait 3
+							Merchant:RepairAll
+							Merchant:End
+							vgecho Repaired equipment
+							VGExecute "/cleartargets"
+						}
+						return
+					}
+				}
+			}
+		}
+		;; Reparitron 5703
+		if ${Pawn[Reparitron 5703](exists)}
+		{
+			if ${Pawn[Reparitron 5703].Distance}<5
+			{
+				;; loop through all items checking durability
+				for (i:Set[1] ; ${i}<=${TotalItems} ; i:Inc)
+				{
+					if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
+					{
+						Pawn[Reparitron 5703]:Target
+						wait 10 ${Me.Target.Name.Find[Reparitron 5703]}
+						if ${Me.Target.Name.Find[Reparitron 5703]}
+						{
+							Merchant:Begin[Repair]
+							wait 3
+							Merchant:RepairAll
+							Merchant:End
+							vgecho Repaired equipment
+							VGExecute "/cleartargets"
+						}
+						return
+					}
+				}
+			}
+		}
+		
+		;; Merchant
+		if ${Me.Target.Type.Equal[Merchant]}
+		{
+			;; loop through all items checking durability
+			for (i:Set[1] ; ${i}<=${TotalItems} ; i:Inc)
+			{
+				if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
+				{
+					echo Repairing  ${CurentItems.Get[${i}].Name}
+					Merchant:Begin[Repair]
+					wait 3
+					Merchant:RepairAll
+					Merchant:End
+					vgecho Repaired equipment
+					return
+				}
+			}
+		}
 	}
 }
 

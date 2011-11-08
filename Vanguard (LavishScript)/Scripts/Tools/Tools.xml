@@ -287,6 +287,44 @@
 							</OnLeftClick>
 						</checkbox>
 
+						<checkbox Name="doAutoRepairs" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>50%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Auto Repair gear</Text>
+							<AutoTooltip> Automatically target and repair gear when below 80%</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doAutoRepairs}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doAutoRepairs:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doAutoRez" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>55%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Auto Accept Rez</Text>
+							<AutoTooltip> Automatically accept Rez</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doAutoRez}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doAutoRez:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
 						<Textentry Name="StartAttack" Template="VG.TextEntry">
 							<X>6%</X>
 							<Y>75%</Y>
