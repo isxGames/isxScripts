@@ -976,12 +976,30 @@
 
 						<Text Name="Text-Misc" Template="VG.BoldText">
 							<X>35%</X>
-							<Y>65%</Y>
+							<Y>56%</Y>
 							<Width>99%</Width>
 							<Height>20</Height>
 							<Alignment>Left</Alignment>
 							<Text>MISC:</Text>
 						</Text>
+						<checkbox Name="doDreadfulVisage" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>35%</X>
+							<Y>64%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Dreadful Visage</Text>
+							<AutoTooltip>  Increase your Dread </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DK].VariableScope.doDreadfulVisage}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DK].VariableScope.doDreadfulVisage:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
 						<checkbox Name="doDespoil" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>35%</X>

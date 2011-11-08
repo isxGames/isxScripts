@@ -70,6 +70,7 @@ variable bool doRavagingDarkness
 variable bool doSlay
 variable bool doBacklash
 ;; Misc
+variable bool doDreadfulVisage = TRUE
 variable bool doDespoil
 variable bool doAbyssalChains
 variable bool doDeBuff
@@ -113,4 +114,3 @@ variable bool doCycleTargetsReady = TRUE
 variable bool doDisEnchant = FALSE
 variable int TargetBuffs = 0
 variable int64 LastTargetID = 0
-variable bool doDreadfulVisage = TRUE
