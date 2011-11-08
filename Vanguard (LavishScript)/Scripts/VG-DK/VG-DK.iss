@@ -82,7 +82,18 @@ function main()
 		}
 		if !${Me.IsCasting} && ${Me.Ability["Torch"].IsReady}
 		{
-			CurrentAction:Set[Waiting]
+			if ${doHunt} && !${Me.InCombat} && (${Me.HealthPct}<80 || ${Me.EnergyPct}<80 || ${Me.EndurancePct}<80)
+			{
+				CurrentAction:Set[Resting]
+			}
+			elseif ${doHunt} && !${Me.InCombat} && ${Me.HealthPct}>=80 && ${Me.EnergyPct}>=80 && ${Me.EndurancePct}>=80
+			{
+				CurrentAction:Set[Hunting]
+			}
+			else
+			{
+				CurrentAction:Set[Waiting]
+			}
 		}
 
 		;; Execute any queued commands
