@@ -58,6 +58,8 @@ variable bool doFindGroupMembers = TRUE
 variable bool doSymbioteRequest = FALSE
 variable bool doFollow = FALSE
 variable(global) bool doBuffArea = FALSE
+variable int TotalHarvest = 10
+
 variable bool doSprint = TRUE
 variable bool doFace = TRUE
 variable bool UseAbilities = TRUE
@@ -110,6 +112,7 @@ variable bool doBloodFeast = TRUE
 
 ;; Collection variables
 variable(global) collection:string SymbioteRequestList
+variable(global) collection:string BuffRequestList
 
 ;; Delay Timers
 variable int NextShadowRain = ${Script.RunningTime}

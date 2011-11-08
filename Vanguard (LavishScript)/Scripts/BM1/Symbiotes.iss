@@ -1,4 +1,4 @@
-variable int TotalHarvest = 20
+variable int TotalHarvest = ${Script[BM1].VariableScope.TotalHarvest}
 
 variable int QJ = 0
 variable int VIT = 0
