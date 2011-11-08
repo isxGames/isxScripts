@@ -601,6 +601,39 @@
 							</OnChange>
 						</Textentry>
 
+						<Text Name="Text-TotalHarvest" Template="VG.Text">
+							<X>70%</X>
+							<Y>56%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Symbiotes</Text>
+						</Text>
+						<Textentry Name="TotalHarvest" Template="VG.TextEntry">
+							<X>90%</X>
+							<Y>55.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[BM1].VariableScope.TotalHarvest}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[BM1].VariableScope.TotalHarvest:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[99]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[BM1].VariableScope.TotalHarvest:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+
 						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
 							<visible>1</visible>
 							<X>5%</X>
@@ -875,6 +908,8 @@
 					VGExecute /can \"Hollow Symbiote\"
 					VGExecute /can \"Parachute\"
 					VGExecute /can \"Wings of the Avenger\"
+					VGExecute /can \"Group Illusion: Kobold\"
+					VGExecute /can \"Do not feed after midnight\"
 				</OnLeftClick>
 			</Commandbutton>
 			<Commandbutton Name="Symbiotes" Template="VG.GreyCommandButton">

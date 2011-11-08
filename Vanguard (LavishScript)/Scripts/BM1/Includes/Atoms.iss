@@ -437,6 +437,13 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		vgecho "Melee Off - can't attack with that weapon"
 	}
 
+
+	if ${aText.Find[You have received a raid ready check.]}
+	{
+		EchoIt "[${ChannelNumber}] ${aText}"
+		PlaySound ALARM
+	}
+	
 	if !${Me.InCombat}
 	{
 		if ${ChannelNumber}==8 || ${ChannelNumber}==9 || ${ChannelNumber}==11 || ${ChannelNumber}==15
@@ -445,6 +452,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			{
 				PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
 				PCName:Set[${PCNameFull.Token[1," "]}]
+				BuffRequestList:Set["${PCName}", "Buff"]
 				BuffRequest:Set[TRUE]
 				;vgecho [${ChannelNumber}] ${aText}
 				;vgecho PCName=${PCName}, PCNameFull=${PCNameFull}

@@ -337,136 +337,152 @@ function SprintCheck()
 }
 
 ;===================================================
-;===    COUNTER TARGET'S ABILITY SUBROUTINE     ====
+;===        BUFF REQUESTS SUBROUTINE            ====
 ;===================================================
 function BuffRequests()
 {
-	BuffRequest:Set[FALSE]
+	if !${Me.Ability["Torch"].IsReady}
+	{
+		return
+	}
+	if ${BuffRequestList.FirstKey(exists)}
+	{
+		do
+		{
+			if ${Pawn[name,${BuffRequestList.CurrentKey}](exists)} && ${Pawn[name,${BuffRequestList.CurrentKey}].Distance}<25 && ${Pawn[name,${BuffRequestList.CurrentKey}].HaveLineOfSightTo}
+			{
+				Pawn[name,${BuffRequestList.CurrentKey}]:Target
+				wait 10 ${Me.DTarget.Name.Find[${BuffRequestList.CurrentKey}]}
+				if ${Me.DTarget.Name.Find[${BuffRequestList.CurrentKey}]}
+				{
+					variable bool ConstructsAugmentationBuff = FALSE
+					variable bool FavorOfTheLifeGiverBuff = FALSE
+					variable bool SeraksAmplificationBuff = FALSE
+					variable bool InspiritBuff = FALSE
+					variable bool LifeGraftBuff = FALSE
+					variable bool MentalStimulationBuff = FALSE
+					variable bool AcceleratedRegenerationBuff = FALSE
+					variable bool CerebralGraftBuff = FALSE
+					variable bool HealthGraftBuff = FALSE
+					variable bool MentalInfusionBuff = FALSE
+					variable bool SeraksAugmentationBuff = FALSE
+					variable bool SeraksMantleBuff = FALSE
+					variable bool VitalizeBuff = FALSE
+					variable bool RegenerationBuff = FALSE
+					variable bool WeBuffed = FALSE
 
-	variable bool ConstructsAugmentationBuff = FALSE
-	variable bool FavorOfTheLifeGiverBuff = FALSE
-	variable bool SeraksAmplificationBuff = FALSE
-	variable bool InspiritBuff = FALSE
-	variable bool LifeGraftBuff = FALSE
-	variable bool MentalStimulationBuff = FALSE
-	variable bool AcceleratedRegenerationBuff = FALSE
-	variable bool CerebralGraftBuff = FALSE
-	variable bool HealthGraftBuff = FALSE
-	variable bool MentalInfusionBuff = FALSE
-	variable bool SeraksAugmentationBuff = FALSE
-	variable bool SeraksMantleBuff = FALSE
-	variable bool VitalizeBuff = FALSE
-	variable bool RegenerationBuff = FALSE
-	variable bool WeBuffed = FALSE
-
-	VGExecute /cleartargets
-	waitframe
-	Pawn[${PCName}]:Target
-	do
-	{
-		waitframe
-	}
-	while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
-	
-	if ${Me.Ability[${ConstructsAugmentation}](exists)}
-	{
-		wait 5 ${Me.Ability[${ConstructsAugmentation}].IsReady}
-		call UseAbility "${ConstructsAugmentation}"
-		if ${Return}
-		{
-			WeBuffed:Set[TRUE]
-		}
-	}
-	else
-	{
-		call UseAbility "${SeraksMantle}"
-		if ${Return}
-		{
-			WeBuffed:Set[TRUE]
-		}
-		
-		if ${Me.Ability[${FavorOfTheLifeGiver}](exists)}
-		{
-			wait 5 ${Me.Ability[${FavorOfTheLifeGiver}].IsReady}
-			call UseAbility "${FavorOfTheLifeGiver}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-			}
-		}
-		else
-		{
-			call UseAbility "${SeraksAmplification}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-				SeraksAugmentationBuff:Set[TRUE]
-			}
-			call UseAbility "${Inspirit}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-				VitalizeBuff:Set[TRUE]
-			}
-			call UseAbility "${LifeGraft}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-				HealthGraftBuff:Set[TRUE]
-			}
-			call UseAbility "${MentalStimulation}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-				MentalInfusionBuff:Set[TRUE]
-			}
-			call UseAbility "${AcceleratedRegeneration}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-			}
-			call UseAbility "${CerebralGraft}"
-			if ${Return}
-			{
-				WeBuffed:Set[TRUE]
-			}
-			if !${HealthGraftBuff}
-			{
-				call UseAbility "${HealthGraft}"
-				if ${Return}
-				{
-					WeBuffed:Set[TRUE]
-				}
-			}
-			if !${MentalInfusionBuff}
-			{
-				call UseAbility "${MentalInfusion}"
-				if ${Return}
-				{
-					WeBuffed:Set[TRUE]
-				}
-			}
-			if !${SeraksAugmentationBuff}
-			{
-				call UseAbility "${SeraksAugmentation}"
-				if ${Return}
-				{
-					WeBuffed:Set[TRUE]
-				}
-			}
-			if !${VitalizeBuff}
-			{
-				call UseAbility "${Vitalize}"
-				if ${Return}
-				{
-					WeBuffed:Set[TRUE]
+					do
+					{
+						waitframe
+					}
+					while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+					
+					if ${Me.Ability[${ConstructsAugmentation}](exists)}
+					{
+						wait 5 ${Me.Ability[${ConstructsAugmentation}].IsReady}
+						call UseAbility "${ConstructsAugmentation}"
+						if ${Return}
+						{
+							WeBuffed:Set[TRUE]
+						}
+					}
+					else
+					{
+						call UseAbility "${SeraksMantle}"
+						if ${Return}
+						{
+							WeBuffed:Set[TRUE]
+						}
+						
+						if ${Me.Ability[${FavorOfTheLifeGiver}](exists)}
+						{
+							wait 5 ${Me.Ability[${FavorOfTheLifeGiver}].IsReady}
+							call UseAbility "${FavorOfTheLifeGiver}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+							}
+						}
+						else
+						{
+							call UseAbility "${SeraksAmplification}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+								SeraksAugmentationBuff:Set[TRUE]
+							}
+							call UseAbility "${Inspirit}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+								VitalizeBuff:Set[TRUE]
+							}
+							call UseAbility "${LifeGraft}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+								HealthGraftBuff:Set[TRUE]
+							}
+							call UseAbility "${MentalStimulation}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+								MentalInfusionBuff:Set[TRUE]
+							}
+							call UseAbility "${AcceleratedRegeneration}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+							}
+							call UseAbility "${CerebralGraft}"
+							if ${Return}
+							{
+								WeBuffed:Set[TRUE]
+							}
+							if !${HealthGraftBuff}
+							{
+								call UseAbility "${HealthGraft}"
+								if ${Return}
+								{
+									WeBuffed:Set[TRUE]
+								}
+							}
+							if !${MentalInfusionBuff}
+							{
+								call UseAbility "${MentalInfusion}"
+								if ${Return}
+								{
+									WeBuffed:Set[TRUE]
+								}
+							}
+							if !${SeraksAugmentationBuff}
+							{
+								call UseAbility "${SeraksAugmentation}"
+								if ${Return}
+								{
+									WeBuffed:Set[TRUE]
+								}
+							}
+							if !${VitalizeBuff}
+							{
+								call UseAbility "${Vitalize}"
+								if ${Return}
+								{
+									WeBuffed:Set[TRUE]
+								}
+							}
+						}
+					}
+					if ${WeBuffed}
+					{
+						vgecho "Buffed ${BuffRequestList.CurrentKey}"
+					}
 				}
 			}
 		}
-	}
-	if ${WeBuffed}
-	{
-		vgecho "Buffed ${PCName}"
+		while ${BuffRequestList.NextKey(exists)}
+		BuffRequestList:Clear
+		BuffRequest:Set[FALSE]
 	}
 }
 
