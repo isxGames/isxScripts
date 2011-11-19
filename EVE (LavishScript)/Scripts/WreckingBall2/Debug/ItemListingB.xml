@@ -23,10 +23,13 @@
 	<Setting Name="250mm 'Scout' I Accelerator Cannon" Group="Hybrid Weapon" GroupID="74" Category="Module" CategoryID="7">7369</Setting>
 	<Setting Name="250mm Carbide Railgun I" Group="Hybrid Weapon" GroupID="74" Category="Module" CategoryID="7">7371</Setting>
 	<Setting Name="250mm Railgun I" Group="Hybrid Weapon" GroupID="74" Category="Module" CategoryID="7">570</Setting>
+	<Setting Name="30 Day Pilot's License Extension (PLEX)" Group="Game Time" GroupID="943" Category="Accessories" CategoryID="5">29668</Setting>
 	<Setting Name="Acolyte I" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2203</Setting>
+	<Setting Name="Advanced Planetology" Group="Planet Management" GroupID="1044" Category="Skill" CategoryID="16">2403</Setting>
 	<Setting Name="Alloyed Tritanium Bar" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25595</Setting>
 	<Setting Name="Antimatter Charge M" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">230</Setting>
 	<Setting Name="Assault Missile Launcher I" Group="Missile Launcher Assault" GroupID="511" Category="Module" CategoryID="7">1875</Setting>
+	<Setting Name="Aurora M" Group="Advanced Beam Laser Crystal" GroupID="374" Category="Charge" CategoryID="8">12822</Setting>
 	<Setting Name="Ballistic Control System II" Group="Ballistic Control system" GroupID="367" Category="Module" CategoryID="7">22291</Setting>
 	<Setting Name="Ballistic Deflection Field I" Group="Shield Hardener" GroupID="77" Category="Module" CategoryID="7">2291</Setting>
 	<Setting Name="Bane Torpedo" Group="Torpedo" GroupID="89" Category="Charge" CategoryID="8">2508</Setting>
@@ -35,6 +38,7 @@
 	<Setting Name="Burned Logic Circuit" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25600</Setting>
 	<Setting Name="Caldari Navy Commodore Insignia I" Group="Empire Insignia Drops" GroupID="409" Category="Commodity" CategoryID="17">15602</Setting>
 	<Setting Name="Caldari Navy Commodore Insignia II" Group="Empire Insignia Drops" GroupID="409" Category="Commodity" CategoryID="17">15656</Setting>
+	<Setting Name="Caldari Shuttle Blueprint" Group="Shuttle Blueprint" GroupID="111" Category="Blueprint" CategoryID="9">967</Setting>
 	<Setting Name="Cap Booster 100" Group="Capacitor Booster Charge" GroupID="87" Category="Charge" CategoryID="8">3554</Setting>
 	<Setting Name="Cap Booster 150" Group="Capacitor Booster Charge" GroupID="87" Category="Charge" CategoryID="8">11283</Setting>
 	<Setting Name="Cap Booster 25" Group="Capacitor Booster Charge" GroupID="87" Category="Charge" CategoryID="8">263</Setting>
@@ -45,6 +49,7 @@
 	<Setting Name="Cataclysm Cruise Missile" Group="Cruise Missile" GroupID="386" Category="Charge" CategoryID="8">204</Setting>
 	<Setting Name="Charred Micro Circuit" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25599</Setting>
 	<Setting Name="Civilian Shield Booster I" Group="Shield Booster" GroupID="40" Category="Module" CategoryID="7">10039</Setting>
+	<Setting Name="Cloaking" Group="Electronics" GroupID="272" Category="Skill" CategoryID="16">11579</Setting>
 	<Setting Name="Co-Processor I" Group="CPU Enhancer" GroupID="285" Category="Module" CategoryID="7">3887</Setting>
 	<Setting Name="Compulsive Multispectral ECM I" Group="ECM" GroupID="201" Category="Module" CategoryID="7">19931</Setting>
 	<Setting Name="Concussion Bomb" Group="Bomb" GroupID="90" Category="Charge" CategoryID="8">27912</Setting>
@@ -61,6 +66,8 @@
 	<Setting Name="Defender I" Group="Defender Missile" GroupID="88" Category="Charge" CategoryID="8">265</Setting>
 	<Setting Name="Devastator Cruise Missile" Group="Cruise Missile" GroupID="386" Category="Charge" CategoryID="8">205</Setting>
 	<Setting Name="Ditrigonal Thermal Barrier Crystallization I" Group="Shield Hardener" GroupID="77" Category="Module" CategoryID="7">9660</Setting>
+	<Setting Name="Drone Link Augmentor I" Group="Drone Control Range Module" GroupID="647" Category="Module" CategoryID="7">23527</Setting>
+	<Setting Name="Drones" Group="Drones" GroupID="273" Category="Skill" CategoryID="16">3436</Setting>
 	<Setting Name="Dual 150mm Carbide Railgun I" Group="Hybrid Weapon" GroupID="74" Category="Module" CategoryID="7">7331</Setting>
 	<Setting Name="Dual 150mm Railgun I" Group="Hybrid Weapon" GroupID="74" Category="Module" CategoryID="7">567</Setting>
 	<Setting Name="ECCM - Gravimetric I" Group="ECCM" GroupID="202" Category="Module" CategoryID="7">2004</Setting>
@@ -69,29 +76,40 @@
 	<Setting Name="ECM - Multispectral Jammer I" Group="ECM" GroupID="201" Category="Module" CategoryID="7">1957</Setting>
 	<Setting Name="ECM - Spatial Destabilizer I" Group="ECM" GroupID="201" Category="Module" CategoryID="7">1955</Setting>
 	<Setting Name="ECM Burst I" Group="ECM Burst" GroupID="80" Category="Module" CategoryID="7">580</Setting>
+	<Setting Name="Expanded Cargohold II" Group="Expanded Cargohold" GroupID="765" Category="Module" CategoryID="7">1319</Setting>
 	<Setting Name="Explosion Dampening Amplifier I" Group="Shield Amplifier" GroupID="295" Category="Module" CategoryID="7">2529</Setting>
 	<Setting Name="Exterminator F.O.F. Light Missile I" Group="FoF Light Missile" GroupID="394" Category="Charge" CategoryID="8">1814</Setting>
 	<Setting Name="F-12 Nonlinear Tracking Processor" Group="Tracking Computer" GroupID="213" Category="Module" CategoryID="7">6176</Setting>
 	<Setting Name="Flameburst Light Missile" Group="Light Missile" GroupID="384" Category="Charge" CategoryID="8">211</Setting>
 	<Setting Name="Fried Interface Circuit" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25601</Setting>
 	<Setting Name="Fusion S" Group="Projectile Ammo" GroupID="83" Category="Charge" CategoryID="8">183</Setting>
+	<Setting Name="Gallente Drone Specialization" Group="Drones" GroupID="273" Category="Skill" CategoryID="16">12486</Setting>
 	<Setting Name="Garde I" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">23561</Setting>
+	<Setting Name="GDN-9 &quot;Nightstalker&quot; Combat Goggles" Group="Eyewear" GroupID="1083" Category="Apparel" CategoryID="30">3958</Setting>
+	<Setting Name="Giant Secure Container" Group="Secure Cargo Container" GroupID="340" Category="Celestial" CategoryID="2">11489</Setting>
 	<Setting Name="Gleaming Alloy" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11740</Setting>
 	<Setting Name="Glossy Compound" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11724</Setting>
 	<Setting Name="Gneiss" Group="Gneiss" GroupID="467" Category="Asteroid" CategoryID="25">1229</Setting>
 	<Setting Name="Gravimetric Backup Array I" Group="Sensor Backup Array" GroupID="203" Category="Module" CategoryID="7">2579</Setting>
+	<Setting Name="Guided Missile Precision" Group="Missile Launcher Operation" GroupID="256" Category="Skill" CategoryID="16">20312</Setting>
 	<Setting Name="Guristas Palladium Tag" Group="Criminal Tags" GroupID="370" Category="Commodity" CategoryID="17">17208</Setting>
 	<Setting Name="Hammerhead I" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2183</Setting>
 	<Setting Name="Hammerhead II" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2185</Setting>
 	<Setting Name="Havoc Heavy Missile" Group="Heavy Missile" GroupID="385" Category="Charge" CategoryID="8">206</Setting>
 	<Setting Name="Heat Dissipation Amplifier I" Group="Shield Amplifier" GroupID="295" Category="Module" CategoryID="7">2537</Setting>
+	<Setting Name="Heat Dissipation Amplifier II" Group="Shield Amplifier" GroupID="295" Category="Module" CategoryID="7">2539</Setting>
 	<Setting Name="Heat Dissipation Field I" Group="Shield Hardener" GroupID="77" Category="Module" CategoryID="7">2295</Setting>
 	<Setting Name="Heavy Assault Missile Launcher I" Group="Missile Launcher Heavy Assault" GroupID="771" Category="Module" CategoryID="7">20138</Setting>
+	<Setting Name="Heavy Assault Missiles" Group="Missile Launcher Operation" GroupID="256" Category="Skill" CategoryID="16">25719</Setting>
+	<Setting Name="Heavy Beam Laser II" Group="Energy Weapon" GroupID="53" Category="Module" CategoryID="7">3025</Setting>
 	<Setting Name="Heavy Missile Launcher I" Group="Missile Launcher Heavy" GroupID="510" Category="Module" CategoryID="7">501</Setting>
+	<Setting Name="Heavy Missiles" Group="Missile Launcher Operation" GroupID="256" Category="Skill" CategoryID="16">3324</Setting>
+	<Setting Name="Heavy Water" Group="Ice Product" GroupID="423" Category="Material" CategoryID="4">16272</Setting>
 	<Setting Name="Hellhound F.O.F. Heavy Missile I" Group="FoF Heavy Missile" GroupID="395" Category="Charge" CategoryID="8">1824</Setting>
 	<Setting Name="Hobgoblin I" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2454</Setting>
 	<Setting Name="Hornet I" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2464</Setting>
 	<Setting Name="Hydra F.O.F. Heavy Missile I" Group="FoF Heavy Missile" GroupID="395" Category="Charge" CategoryID="8">1818</Setting>
+	<Setting Name="Ice Harvesting" Group="Industry" GroupID="268" Category="Skill" CategoryID="16">16281</Setting>
 	<Setting Name="Indirect Scanning Dampening Unit I" Group="Remote Sensor Damper" GroupID="208" Category="Module" CategoryID="7">5300</Setting>
 	<Setting Name="Initiated Multispectral ECM I" Group="ECM" GroupID="201" Category="Module" CategoryID="7">9521</Setting>
 	<Setting Name="Initiated Signal Distortion Amplifier I" Group="ECM Stabilizer" GroupID="514" Category="Module" CategoryID="7">25571</Setting>
@@ -99,13 +117,18 @@
 	<Setting Name="Iridium Charge S" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">217</Setting>
 	<Setting Name="Iron Charge M" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">223</Setting>
 	<Setting Name="Iron Charge S" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">215</Setting>
+	<Setting Name="Isogen" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">37</Setting>
 	<Setting Name="J5b Phased Prototype Warp Scrambler I" Group="Warp Scrambler" GroupID="52" Category="Module" CategoryID="7">5439</Setting>
+	<Setting Name="Kernite Mining Crystal II" Group="Mining Crystal" GroupID="482" Category="Charge" CategoryID="8">18606</Setting>
+	<Setting Name="Kernite Processing" Group="Industry" GroupID="268" Category="Skill" CategoryID="16">12188</Setting>
 	<Setting Name="Kruul's DNA" Group="Miscellaneous" GroupID="314" Category="Commodity" CategoryID="17">14292</Setting>
 	<Setting Name="Lead Charge M" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">226</Setting>
 	<Setting Name="Lead Charge S" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">218</Setting>
 	<Setting Name="Local Power Plant Manager: Reaction Shield Power Relay I" Group="Shield Power Relay" GroupID="57" Category="Module" CategoryID="7">8331</Setting>
+	<Setting Name="Low-grade Slave Alpha" Group="Cyberimplant" GroupID="300" Category="Implant" CategoryID="20">22119</Setting>
 	<Setting Name="Lucent Compound" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11738</Setting>
 	<Setting Name="Lustering Alloy" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11736</Setting>
+	<Setting Name="Magnetic Scattering Amplifier II" Group="Shield Amplifier" GroupID="295" Category="Module" CategoryID="7">2553</Setting>
 	<Setting Name="Malfunctioning Shield Emitter" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25589</Setting>
 	<Setting Name="Medium Armor Repairer I" Group="Armor Repair Unit" GroupID="62" Category="Module" CategoryID="7">3528</Setting>
 	<Setting Name="Medium C5-L Emergency Shield Overload I" Group="Shield Booster" GroupID="40" Category="Module" CategoryID="7">10872</Setting>
@@ -121,17 +144,29 @@
 	<Setting Name="Medium Subordinate Screen Stabilizer I" Group="Shield Extender" GroupID="38" Category="Module" CategoryID="7">8397</Setting>
 	<Setting Name="Medium Supplemental Barrier Emitter I" Group="Shield Extender" GroupID="38" Category="Module" CategoryID="7">8477</Setting>
 	<Setting Name="Medium YF-12a Smartbomb" Group="Smart Bomb" GroupID="72" Category="Module" CategoryID="7">9800</Setting>
+	<Setting Name="Megacyte" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">40</Setting>
 	<Setting Name="Melted Capacitor Console" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25603</Setting>
+	<Setting Name="Memory Augmentation - Basic" Group="Cyber Learning" GroupID="745" Category="Implant" CategoryID="20">9941</Setting>
+	<Setting Name="Men's 'Precision' Boots" Group="Footwear" GroupID="1091" Category="Apparel" CategoryID="30">3966</Setting>
 	<Setting Name="Metal Scraps" Group="Commodities" GroupID="526" Category="Commodity" CategoryID="17">15331</Setting>
+	<Setting Name="Mexallon" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">36</Setting>
+	<Setting Name="Micro B88 Core Augmentation" Group="Auxiliary Power Core" GroupID="339" Category="Module" CategoryID="7">16539</Setting>
 	<Setting Name="Microwave L" Group="Frequency Crystal" GroupID="86" Category="Charge" CategoryID="8">256</Setting>
 	<Setting Name="Militants" Group="Livestock" GroupID="283" Category="Commodity" CategoryID="17">25373</Setting>
 	<Setting Name="Miner I" Group="Mining Laser" GroupID="54" Category="Module" CategoryID="7">483</Setting>
+	<Setting Name="Mining Barge" Group="Spaceship Command" GroupID="257" Category="Skill" CategoryID="16">17940</Setting>
 	<Setting Name="Mining Drone I" Group="Mining Drone" GroupID="101" Category="Drone" CategoryID="18">10246</Setting>
+	<Setting Name="Mining Drone Operation" Group="Drones" GroupID="273" Category="Skill" CategoryID="16">3438</Setting>
+	<Setting Name="Mining Upgrades" Group="Industry" GroupID="268" Category="Skill" CategoryID="16">22578</Setting>
+	<Setting Name="Missile Launcher Operation" Group="Missile Launcher Operation" GroupID="256" Category="Skill" CategoryID="16">3319</Setting>
+	<Setting Name="Modulated Strip Miner II" Group="Frequency Mining Laser" GroupID="483" Category="Module" CategoryID="7">17912</Setting>
 	<Setting Name="Motley Compound" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11733</Setting>
 	<Setting Name="Multi Sensor Backup Array I" Group="Sensor Backup Array" GroupID="203" Category="Module" CategoryID="7">2591</Setting>
 	<Setting Name="Multifrequency L" Group="Frequency Crystal" GroupID="86" Category="Charge" CategoryID="8">262</Setting>
 	<Setting Name="Nanomechanical CPU Enhancer I" Group="CPU Enhancer" GroupID="285" Category="Module" CategoryID="7">8747</Setting>
+	<Setting Name="Nocxium" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">38</Setting>
 	<Setting Name="Non-Inertial Ballistic Screen Augmentation I" Group="Shield Hardener" GroupID="77" Category="Module" CategoryID="7">9608</Setting>
+	<Setting Name="Odin Synthetic Eye (left/gray)" Group="Eyewear" GroupID="1083" Category="Apparel" CategoryID="30">4048</Setting>
 	<Setting Name="Ogre II" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2446</Setting>
 	<Setting Name="Omni Positional ECCM Sensor System I" Group="ECCM" GroupID="202" Category="Module" CategoryID="7">7965</Setting>
 	<Setting Name="Omnidirectional Tracking Link I" Group="Drone Tracking Modules" GroupID="646" Category="Module" CategoryID="7">23533</Setting>
@@ -148,21 +183,33 @@
 	<Setting Name="Precious Alloy" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11737</Setting>
 	<Setting Name="Proton S" Group="Projectile Ammo" GroupID="83" Category="Charge" CategoryID="8">180</Setting>
 	<Setting Name="Prototype Cloaking Device I" Group="Cloaking Device" GroupID="330" Category="Module" CategoryID="7">11370</Setting>
+	<Setting Name="Pyerite" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">35</Setting>
+	<Setting Name="Pyroxeres Mining Crystal II" Group="Mining Crystal" GroupID="482" Category="Charge" CategoryID="8">18614</Setting>
+	<Setting Name="Quafe Zero" Group="Booster" GroupID="303" Category="Implant" CategoryID="20">3898</Setting>
+	<Setting Name="Refinery Efficiency" Group="Industry" GroupID="268" Category="Skill" CategoryID="16">3389</Setting>
+	<Setting Name="Refining" Group="Industry" GroupID="268" Category="Skill" CategoryID="16">3385</Setting>
 	<Setting Name="Remote Sensor Booster I" Group="Remote Sensor Booster" GroupID="290" Category="Module" CategoryID="7">1963</Setting>
 	<Setting Name="Remote Sensor Dampener I" Group="Remote Sensor Damper" GroupID="208" Category="Module" CategoryID="7">1968</Setting>
 	<Setting Name="Residual Survey Scanner I" Group="Survey Scanner" GroupID="49" Category="Module" CategoryID="7">6569</Setting>
 	<Setting Name="Rocket Launcher I" Group="Missile Launcher Rocket" GroupID="507" Category="Module" CategoryID="7">10629</Setting>
 	<Setting Name="Rudimentary Ship Scanner I" Group="Ship Scanner" GroupID="48" Category="Module" CategoryID="7">6527</Setting>
 	<Setting Name="Sabretooth Light Missile" Group="Light Missile" GroupID="384" Category="Charge" CategoryID="8">212</Setting>
+	<Setting Name="Sansha Copper Tag" Group="Criminal Tags" GroupID="370" Category="Commodity" CategoryID="17">17210</Setting>
+	<Setting Name="Sanshas Infrared S" Group="Frequency Crystal" GroupID="86" Category="Charge" CategoryID="8">19982</Setting>
+	<Setting Name="Sanshas Radio S" Group="Frequency Crystal" GroupID="86" Category="Charge" CategoryID="8">19978</Setting>
 	<Setting Name="Scorched Telemetry Processor" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25588</Setting>
+	<Setting Name="Scordite Mining Crystal II" Group="Mining Crystal" GroupID="482" Category="Charge" CategoryID="8">18616</Setting>
 	<Setting Name="Scourge Heavy Missile" Group="Heavy Missile" GroupID="385" Category="Charge" CategoryID="8">209</Setting>
+	<Setting Name="Scout Drone Operation" Group="Drones" GroupID="273" Category="Skill" CategoryID="16">3437</Setting>
 	<Setting Name="Sensor Booster I" Group="Sensor Booster" GroupID="212" Category="Module" CategoryID="7">1973</Setting>
 	<Setting Name="Sheen Compound" Group="Refinables" GroupID="355" Category="Commodity" CategoryID="17">11732</Setting>
+	<Setting Name="Shield Boost Amplifier II" Group="Shield Boost Amplifier" GroupID="338" Category="Module" CategoryID="7">24443</Setting>
 	<Setting Name="Shield Flux Coil I" Group="Shield Flux Coil" GroupID="770" Category="Module" CategoryID="7">1254</Setting>
 	<Setting Name="Shield Recharger I" Group="Shield Recharger" GroupID="39" Category="Module" CategoryID="7">393</Setting>
 	<Setting Name="Shield Recharger II" Group="Shield Recharger" GroupID="39" Category="Module" CategoryID="7">394</Setting>
 	<Setting Name="Signal Amplifier I" Group="Signal Amplifier" GroupID="210" Category="Module" CategoryID="7">1986</Setting>
 	<Setting Name="Signal Distortion Amplifier I" Group="ECM Stabilizer" GroupID="514" Category="Module" CategoryID="7">25561</Setting>
+	<Setting Name="Sisters Core Scanner Probe" Group="Scanner Probe" GroupID="479" Category="Charge" CategoryID="8">30488</Setting>
 	<Setting Name="Small 'Ghoul' Energy Siphon I" Group="Energy Vampire" GroupID="68" Category="Module" CategoryID="7">5141</Setting>
 	<Setting Name="Small 'Gremlin' Power Core Disruptor I" Group="Energy Destabilizer" GroupID="71" Category="Module" CategoryID="7">4477</Setting>
 	<Setting Name="Small Armor Repairer I" Group="Armor Repair Unit" GroupID="62" Category="Module" CategoryID="7">523</Setting>
@@ -176,26 +223,35 @@
 	<Setting Name="Small Peroxide I Capacitor Power Cell" Group="Capacitor Battery" GroupID="61" Category="Module" CategoryID="7">4789</Setting>
 	<Setting Name="Small Proton Smartbomb I" Group="Smart Bomb" GroupID="72" Category="Module" CategoryID="7">1547</Setting>
 	<Setting Name="Small Shield Booster I" Group="Shield Booster" GroupID="40" Category="Module" CategoryID="7">399</Setting>
+	<Setting Name="Small Shield Booster II" Group="Shield Booster" GroupID="40" Category="Module" CategoryID="7">400</Setting>
 	<Setting Name="Small Shield Extender I" Group="Shield Extender" GroupID="38" Category="Module" CategoryID="7">377</Setting>
 	<Setting Name="Small Shield Transporter I" Group="Shield Transporter" GroupID="41" Category="Module" CategoryID="7">3586</Setting>
+	<Setting Name="Small Tractor Beam I" Group="Tractor Beam" GroupID="650" Category="Module" CategoryID="7">24348</Setting>
 	<Setting Name="Smashed Trigger Unit" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25593</Setting>
 	<Setting Name="Special Delivery" Group="Miscellaneous" GroupID="314" Category="Commodity" CategoryID="17">11068</Setting>
 	<Setting Name="Spot Pulsing ECCM I" Group="Projected ECCM" GroupID="289" Category="Module" CategoryID="7">7217</Setting>
 	<Setting Name="Standard Missile Launcher I" Group="Missile Launcher Standard" GroupID="509" Category="Module" CategoryID="7">499</Setting>
 	<Setting Name="Stasis Webifier I" Group="Stasis Web" GroupID="65" Category="Module" CategoryID="7">526</Setting>
+	<Setting Name="Station Container" Group="Audit Log Secure Container" GroupID="448" Category="Celestial" CategoryID="2">17366</Setting>
+	<Setting Name="Station Warehouse" Group="Audit Log Secure Container" GroupID="448" Category="Celestial" CategoryID="2">17368</Setting>
 	<Setting Name="Supplemental Screen Generator I" Group="Shield Recharger" GroupID="39" Category="Module" CategoryID="7">6487</Setting>
 	<Setting Name="Survey Scanner I" Group="Survey Scanner" GroupID="49" Category="Module" CategoryID="7">444</Setting>
 	<Setting Name="Tangled Power Conduit" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25594</Setting>
 	<Setting Name="Targeting Range Dampening" Group="Sensor Dampener Script" GroupID="911" Category="Charge" CategoryID="8">29015</Setting>
+	<Setting Name="Temperate Command Center" Group="Command Centers" GroupID="1027" Category="Planetary Interaction" CategoryID="41">2254</Setting>
 	<Setting Name="Thorium Charge L" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">235</Setting>
 	<Setting Name="Thorium Charge S" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">219</Setting>
 	<Setting Name="Thorn Rocket" Group="Rocket" GroupID="387" Category="Charge" CategoryID="8">266</Setting>
 	<Setting Name="Thunderbolt Heavy Missile" Group="Heavy Missile" GroupID="385" Category="Charge" CategoryID="8">207</Setting>
+	<Setting Name="Tormentor Blueprint" Group="Frigate Blueprint" GroupID="105" Category="Blueprint" CategoryID="9">938</Setting>
 	<Setting Name="Tourists" Group="Livestock" GroupID="283" Category="Commodity" CategoryID="17">3719</Setting>
 	<Setting Name="Tracking Computer I" Group="Tracking Computer" GroupID="213" Category="Module" CategoryID="7">1977</Setting>
 	<Setting Name="Tracking Disruptor I" Group="Tracking Disruptor" GroupID="291" Category="Module" CategoryID="7">2108</Setting>
 	<Setting Name="Tracking Link I" Group="Tracking Link" GroupID="209" Category="Module" CategoryID="7">2103</Setting>
 	<Setting Name="Tripped Power Circuit" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25598</Setting>
+	<Setting Name="Tritanium" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">34</Setting>
+	<Setting Name="True Sansha Copper Tag" Group="Criminal Tags" GroupID="370" Category="Commodity" CategoryID="17">17254</Setting>
+	<Setting Name="True Sanshas Standard S" Group="Frequency Crystal" GroupID="86" Category="Charge" CategoryID="8">20855</Setting>
 	<Setting Name="Tungsten Charge M" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">224</Setting>
 	<Setting Name="Tungsten Charge S" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">216</Setting>
 	<Setting Name="Type-D Power Core Modification: Shield Flux" Group="Shield Flux Coil" GroupID="770" Category="Module" CategoryID="7">8295</Setting>
@@ -203,13 +259,17 @@
 	<Setting Name="Uranium Charge M" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">228</Setting>
 	<Setting Name="Uranium Charge S" Group="Hybrid Ammo" GroupID="85" Category="Charge" CategoryID="8">220</Setting>
 	<Setting Name="Valkyrie II" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">21640</Setting>
+	<Setting Name="Veldspar" Group="Veldspar" GroupID="462" Category="Asteroid" CategoryID="25">1230</Setting>
+	<Setting Name="Veldspar Mining Crystal II" Group="Mining Crystal" GroupID="482" Category="Charge" CategoryID="8">18618</Setting>
 	<Setting Name="Ward Console" Group="Salvaged Materials" GroupID="754" Category="Material" CategoryID="4">25606</Setting>
 	<Setting Name="Warp Core Stabilizer I" Group="Warp Core Stabilizer" GroupID="315" Category="Module" CategoryID="7">10998</Setting>
 	<Setting Name="Warrior II" Group="Combat Drone" GroupID="100" Category="Drone" CategoryID="18">2488</Setting>
 	<Setting Name="Widowmaker Heavy Missile" Group="Heavy Missile" GroupID="385" Category="Charge" CategoryID="8">208</Setting>
+	<Setting Name="Women's 'Sterling' Dress Blouse (olive)" Group="Tops" GroupID="1089" Category="Apparel" CategoryID="30">4064</Setting>
 	<Setting Name="Wrath Cruise Missile" Group="Cruise Missile" GroupID="386" Category="Charge" CategoryID="8">203</Setting>
 	<Setting Name="XR-3200 Heavy Missile Bay" Group="Missile Launcher Heavy" GroupID="510" Category="Module" CategoryID="7">7997</Setting>
 	<Setting Name="Xray S" Group="Frequency Crystal" GroupID="86" Category="Charge" CategoryID="8">244</Setting>
 	<Setting Name="Y-S8 Hydrocarbon I Afterburners" Group="Afterburner" GroupID="46" Category="Module" CategoryID="7">6005</Setting>
 	<Setting Name="Y-T8 Overcharged Hydrocarbon I Microwarpdrive" Group="Afterburner" GroupID="46" Category="Module" CategoryID="7">5975</Setting>
+	<Setting Name="Zydrine" Group="Mineral" GroupID="18" Category="Material" CategoryID="4">39</Setting>
 </InnerSpaceSettings>

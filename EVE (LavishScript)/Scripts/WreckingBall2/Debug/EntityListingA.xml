@@ -31,6 +31,9 @@
 			<Setting Name="Asteroid Belt">15</Setting>
 			<Setting Name="Ice Field">17774</Setting>
 		</Set>
+		<Set Name="Audit Log Secure Container" GroupID="448">
+			<Setting Name="Small Audit Log Secure Container">17363</Setting>
+		</Set>
 		<Set Name="Beacon" GroupID="310">
 			<Setting Name="Celestial Beacon">10645</Setting>
 		</Set>
@@ -39,11 +42,13 @@
 		</Set>
 		<Set Name="Cargo Container" GroupID="12">
 			<Setting Name="Cargo Container">23</Setting>
+			<Setting Name="Small Standard Container">3297</Setting>
 		</Set>
 		<Set Name="Cloud" GroupID="227">
 			<Setting Name="Dust Cloud">10067</Setting>
 			<Setting Name="Dust Streak">10756</Setting>
 			<Setting Name="Green Gas Cloud">10765</Setting>
+			<Setting Name="Wispy Orange Cloud">10754</Setting>
 		</Set>
 		<Set Name="Large Collidable Object" GroupID="226">
 			<Setting Name="Asteroid Colony - Factory">10771</Setting>
@@ -79,24 +84,32 @@
 			<Setting Name="Small Secure Container">3467</Setting>
 		</Set>
 		<Set Name="Stargate" GroupID="10">
+			<Setting Name="Stargate (Amarr Border)">29625</Setting>
+			<Setting Name="Stargate (Amarr Constellation)">17</Setting>
+			<Setting Name="Stargate (Amarr Region)">29626</Setting>
+			<Setting Name="Stargate (Amarr System)">29624</Setting>
+			<Setting Name="Stargate (Caldari Border)">3873</Setting>
 			<Setting Name="Stargate (Caldari Constellation)">29627</Setting>
 			<Setting Name="Stargate (Caldari Region)">29629</Setting>
 			<Setting Name="Stargate (Caldari System)">16</Setting>
-			<Setting Name="Stargate (Amarr System)">29624</Setting>
 		</Set>
 		<Set Name="Sun" GroupID="6">
 			<Setting Name="Sun A0 (Blue Small)">3801</Setting>
+			<Setting Name="Sun B5 (White Dwarf)">3803</Setting>
 			<Setting Name="Sun G3 (Pink Small)">3799</Setting>
 			<Setting Name="Sun G5 (Pink)">3797</Setting>
 			<Setting Name="Sun G5 (Yellow)">6</Setting>
+			<Setting Name="Sun K3 (Yellow Small)">3802</Setting>
 			<Setting Name="Sun K5 (Orange Bright)">3798</Setting>
 			<Setting Name="Sun K5 (Red Giant)">8</Setting>
 			<Setting Name="Sun M0 (Orange radiant)">3800</Setting>
 			<Setting Name="Sun O1 (Blue Bright)">3796</Setting>
 		</Set>
 		<Set Name="Wreck" GroupID="186">
+			<Setting Name="Amarr Rookie ship Wreck">26488</Setting>
 			<Setting Name="Guristas Medium Wreck">26574</Setting>
 			<Setting Name="Guristas Small Wreck">26573</Setting>
+			<Setting Name="Minmatar Industrial Wreck">26551</Setting>
 			<Setting Name="Sanshas Small Wreck">26579</Setting>
 		</Set>
 	</Set>
@@ -117,6 +130,9 @@
 		<Set Name="Rocket" GroupID="387">
 			<Setting Name="Thorn Rocket">266</Setting>
 		</Set>
+		<Set Name="Scanner Probe" GroupID="479">
+			<Setting Name="Combat Scanner Probe I">30028</Setting>
+		</Set>
 	</Set>
 	<Set Name="Drone" CatID="18">
 		<Set Name="Combat Drone" GroupID="100">
@@ -125,7 +141,9 @@
 			<Setting Name="Hammerhead II">2185</Setting>
 			<Setting Name="Hobgoblin II">2456</Setting>
 			<Setting Name="Hornet I">2464</Setting>
+			<Setting Name="Infiltrator I">2173</Setting>
 			<Setting Name="Ogre II">2446</Setting>
+			<Setting Name="Warrior I">2486</Setting>
 		</Set>
 		<Set Name="Mining Drone" GroupID="101">
 			<Setting Name="Mining Drone I">10246</Setting>
@@ -143,7 +161,16 @@
 			<Setting Name="CONCORD Police Captain">3885</Setting>
 			<Setting Name="CONCORD Police Commander">11125</Setting>
 		</Set>
+		<Set Name="Convoy" GroupID="297">
+			<Setting Name="Carrier">10830</Setting>
+			<Setting Name="Courier">10828</Setting>
+			<Setting Name="Purveyor">10829</Setting>
+			<Setting Name="Retailer">10823</Setting>
+			<Setting Name="Trader">10827</Setting>
+		</Set>
 		<Set Name="Customs Official" GroupID="446">
+			<Setting Name="Amarr Customs General">19371</Setting>
+			<Setting Name="Amarr Customs Surveillance Officer">19372</Setting>
 			<Setting Name="Caldari Customs Agent">19385</Setting>
 			<Setting Name="Caldari Customs Commissioner">19367</Setting>
 		</Set>
@@ -175,6 +202,9 @@
 		<Set Name="Faction Drone" GroupID="288">
 			<Setting Name="Caldari Navy Captain 3rd Rank">10651</Setting>
 			<Setting Name="Caldari Navy Vice Admiral">10050</Setting>
+			<Setting Name="Imperial Navy Colonel">10001</Setting>
+			<Setting Name="Imperial Navy Fleet Marshall">11137</Setting>
+			<Setting Name="Imperial Navy Sergeant">9998</Setting>
 		</Set>
 		<Set Name="Large Collidable Structure" GroupID="319">
 			<Setting Name="Guristas Bunker">16796</Setting>
@@ -191,11 +221,15 @@
 			<Setting Name="Starbase Ultra-Fast Silo">26721</Setting>
 		</Set>
 		<Set Name="Police Drone" GroupID="182">
+			<Setting Name="Amarr Surveillance General Major">11515</Setting>
+			<Setting Name="Amarr Surveillance Officer">9959</Setting>
+			<Setting Name="Amarr Surveillance Sergeant Major">9960</Setting>
 			<Setting Name="Caldari Police 3rd Lieutenant">9970</Setting>
 			<Setting Name="Caldari Police Commissioner">11521</Setting>
 			<Setting Name="Caldari Police Vice Commissioner">9965</Setting>
 		</Set>
 		<Set Name="Sentry Gun" GroupID="99">
+			<Setting Name="Amarr Sentry Gun">1194</Setting>
 			<Setting Name="Caldari Sentry Gun I">3740</Setting>
 			<Setting Name="Caldari Sentry Gun II">3741</Setting>
 			<Setting Name="Caldari Sentry Gun III">3739</Setting>
@@ -209,38 +243,74 @@
 	</Set>
 	<Set Name="Ship" CatID="6">
 		<Set Name="Assault Ship" GroupID="324">
+			<Setting Name="Enyo">12044</Setting>
+			<Setting Name="Harpy">11381</Setting>
 			<Setting Name="Hawk">11379</Setting>
+			<Setting Name="Ishkur">12042</Setting>
+			<Setting Name="Jaguar">11400</Setting>
+			<Setting Name="Retribution">11393</Setting>
 		</Set>
 		<Set Name="Battlecruiser" GroupID="419">
+			<Setting Name="Brutix">16229</Setting>
 			<Setting Name="Drake">24698</Setting>
 			<Setting Name="Ferox">16227</Setting>
+			<Setting Name="Harbinger">24696</Setting>
 			<Setting Name="Hurricane">24702</Setting>
+			<Setting Name="Prophecy">16233</Setting>
 		</Set>
 		<Set Name="Battleship" GroupID="27">
+			<Setting Name="Abaddon">24692</Setting>
 			<Setting Name="Apocalypse">642</Setting>
+			<Setting Name="Armageddon">643</Setting>
+			<Setting Name="Armageddon Navy Issue">32305</Setting>
 			<Setting Name="Dominix">645</Setting>
+			<Setting Name="Hyperion">24690</Setting>
 			<Setting Name="Machariel">17738</Setting>
 			<Setting Name="Maelstrom">24694</Setting>
+			<Setting Name="Megathron">641</Setting>
 			<Setting Name="Megathron Navy Issue">17728</Setting>
+			<Setting Name="Nightmare">17736</Setting>
 			<Setting Name="Rattlesnake">17918</Setting>
 			<Setting Name="Raven">638</Setting>
 			<Setting Name="Raven Navy Issue">17636</Setting>
+			<Setting Name="Rokh">24688</Setting>
 			<Setting Name="Scorpion">640</Setting>
 			<Setting Name="Scorpion Navy Issue">32309</Setting>
 			<Setting Name="Typhoon">644</Setting>
+			<Setting Name="Typhoon Fleet Issue">32311</Setting>
 			<Setting Name="Vindicator">17740</Setting>
+		</Set>
+		<Set Name="Black Ops" GroupID="898">
+			<Setting Name="Redeemer">22428</Setting>
 		</Set>
 		<Set Name="Capsule" GroupID="29">
 			<Setting Name="Capsule">670</Setting>
 		</Set>
+		<Set Name="Command Ship" GroupID="540">
+			<Setting Name="Damnation">22474</Setting>
+			<Setting Name="Sleipnir">22444</Setting>
+		</Set>
 		<Set Name="Covert Ops" GroupID="830">
 			<Setting Name="Anathema">11188</Setting>
+			<Setting Name="Buzzard">11192</Setting>
+			<Setting Name="Helios">11172</Setting>
 		</Set>
 		<Set Name="Cruiser" GroupID="26">
+			<Setting Name="Arbitrator">628</Setting>
+			<Setting Name="Blackbird">632</Setting>
 			<Setting Name="Caracal">621</Setting>
+			<Setting Name="Caracal Navy Issue">17634</Setting>
+			<Setting Name="Exequror">634</Setting>
+			<Setting Name="Gila">17715</Setting>
+			<Setting Name="Omen">2006</Setting>
+			<Setting Name="Osprey">620</Setting>
+			<Setting Name="Rupture">629</Setting>
 			<Setting Name="Stabber">622</Setting>
+			<Setting Name="Vexor">626</Setting>
 		</Set>
 		<Set Name="Destroyer" GroupID="420">
+			<Setting Name="Catalyst">16240</Setting>
+			<Setting Name="Coercer">16236</Setting>
 			<Setting Name="Cormorant">16238</Setting>
 			<Setting Name="Thrasher">16242</Setting>
 		</Set>
@@ -250,27 +320,47 @@
 		</Set>
 		<Set Name="Freighter" GroupID="513">
 			<Setting Name="Charon">20185</Setting>
+			<Setting Name="Fenrir">20189</Setting>
 			<Setting Name="Obelisk">20187</Setting>
+			<Setting Name="Providence">20183</Setting>
 		</Set>
 		<Set Name="Frigate" GroupID="25">
 			<Setting Name="Atron">608</Setting>
+			<Setting Name="Bantam">582</Setting>
 			<Setting Name="Caldari Navy Hookbill">17619</Setting>
+			<Setting Name="Condor">583</Setting>
 			<Setting Name="Dramiel">17932</Setting>
 			<Setting Name="Executioner">589</Setting>
 			<Setting Name="Heron">605</Setting>
 			<Setting Name="Imicus">607</Setting>
+			<Setting Name="Imperial Navy Slicer">17703</Setting>
+			<Setting Name="Inquisitor">590</Setting>
+			<Setting Name="Kestrel">602</Setting>
+			<Setting Name="Magnate">29248</Setting>
 			<Setting Name="Merlin">603</Setting>
+			<Setting Name="Probe">586</Setting>
 			<Setting Name="Punisher">597</Setting>
+			<Setting Name="Republic Fleet Firetail">17812</Setting>
 			<Setting Name="Rifter">587</Setting>
+			<Setting Name="Tristan">593</Setting>
 			<Setting Name="Vigil">3766</Setting>
 		</Set>
 		<Set Name="Heavy Assault Ship" GroupID="358">
 			<Setting Name="Ishtar">12005</Setting>
+			<Setting Name="Sacrilege">12019</Setting>
+		</Set>
+		<Set Name="Heavy Interdictor" GroupID="894">
+			<Setting Name="Phobos">12021</Setting>
 		</Set>
 		<Set Name="Industrial" GroupID="28">
 			<Setting Name="Badger">648</Setting>
 			<Setting Name="Badger Mark II">649</Setting>
 			<Setting Name="Bestower">1944</Setting>
+			<Setting Name="Hoarder">651</Setting>
+			<Setting Name="Iteron">650</Setting>
+			<Setting Name="Iteron Mark II">654</Setting>
+			<Setting Name="Iteron Mark III">655</Setting>
+			<Setting Name="Iteron Mark IV">656</Setting>
 			<Setting Name="Iteron Mark V">657</Setting>
 			<Setting Name="Mammoth">652</Setting>
 			<Setting Name="Noctis">2998</Setting>
@@ -279,32 +369,45 @@
 		<Set Name="Industrial Command Ship" GroupID="941">
 			<Setting Name="Orca">28606</Setting>
 		</Set>
+		<Set Name="Interceptor" GroupID="831">
+			<Setting Name="Stiletto">11198</Setting>
+		</Set>
 		<Set Name="Interdictor" GroupID="541">
 			<Setting Name="Flycatcher">22464</Setting>
 		</Set>
 		<Set Name="Jump Freighter" GroupID="902">
 			<Setting Name="Nomad">28846</Setting>
+			<Setting Name="Rhea">28844</Setting>
 		</Set>
 		<Set Name="Logistics" GroupID="832">
+			<Setting Name="Basilisk">11985</Setting>
 			<Setting Name="Guardian">11987</Setting>
+			<Setting Name="Scimitar">11978</Setting>
 		</Set>
 		<Set Name="Marauder" GroupID="900">
 			<Setting Name="Golem">28710</Setting>
+			<Setting Name="Kronos">28661</Setting>
 			<Setting Name="Vargur">28665</Setting>
 		</Set>
 		<Set Name="Mining Barge" GroupID="463">
 			<Setting Name="Covetor">17476</Setting>
+			<Setting Name="Retriever">17478</Setting>
 		</Set>
 		<Set Name="Rookie ship" GroupID="237">
 			<Setting Name="Ibis">601</Setting>
+			<Setting Name="Impairor">596</Setting>
 			<Setting Name="Reaper">588</Setting>
+			<Setting Name="Velator">606</Setting>
 		</Set>
 		<Set Name="Shuttle" GroupID="31">
 			<Setting Name="Amarr Shuttle">11134</Setting>
+			<Setting Name="Apotheosis">29266</Setting>
 			<Setting Name="Caldari Shuttle">672</Setting>
+			<Setting Name="Gallente Shuttle">11129</Setting>
 			<Setting Name="Minmatar Shuttle">11132</Setting>
 		</Set>
 		<Set Name="Stealth Bomber" GroupID="834">
+			<Setting Name="Hound">12034</Setting>
 			<Setting Name="Manticore">12032</Setting>
 		</Set>
 		<Set Name="Strategic Cruiser" GroupID="963">
@@ -315,25 +418,35 @@
 		</Set>
 		<Set Name="Transport Ship" GroupID="380">
 			<Setting Name="Bustard">12731</Setting>
+			<Setting Name="Crane">12729</Setting>
 			<Setting Name="Occator">12745</Setting>
+			<Setting Name="Prorator">12733</Setting>
 			<Setting Name="Prowler">12735</Setting>
 			<Setting Name="Viator">12743</Setting>
 		</Set>
 	</Set>
 	<Set Name="Station" CatID="3">
 		<Set Name="Station" GroupID="15">
+			<Setting Name="Amarr Industrial Station">1928</Setting>
+			<Setting Name="Amarr Mining Station">1930</Setting>
+			<Setting Name="Amarr Research Station">1931</Setting>
 			<Setting Name="Amarr Standard Station">1929</Setting>
+			<Setting Name="Amarr Station Hub">1926</Setting>
+			<Setting Name="Amarr Station Military">1927</Setting>
+			<Setting Name="Amarr Trade Post">1932</Setting>
 			<Setting Name="Caldari Food Processing Plant Station">4024</Setting>
 			<Setting Name="Caldari Mining Station">4023</Setting>
+			<Setting Name="Minmatar Military Station">2498</Setting>
 			<Setting Name="Minmatar Station">2501</Setting>
 			<Setting Name="Station ( Caldari 5 )">3871</Setting>
 			<Setting Name="Station ( Caldari 6 )">3872</Setting>
 			<Setting Name="Station ( Gallente 3 )">3865</Setting>
+			<Setting Name="Station ( Gallente 5 )">3867</Setting>
+			<Setting Name="Station ( Gallente 8 )">3870</Setting>
 			<Setting Name="Station (Caldari 1)">1529</Setting>
 			<Setting Name="Station (Caldari 2)">1530</Setting>
 			<Setting Name="Station (Caldari 3)">1531</Setting>
 			<Setting Name="Station (Caldari 4)">54</Setting>
-			<Setting Name="Amarr Mining Station">1930</Setting>
 		</Set>
 	</Set>
 </InnerSpaceSettings>
