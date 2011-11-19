@@ -426,7 +426,7 @@ objectdef Salvager
 		variable iterator Iter
 		
 		Locations:Clear
-		SafeSpot:Set[NULL]
+		;SafeSpot:Set[NULL]
 		
 		EVE:DoGetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[Iter]

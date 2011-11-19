@@ -3,6 +3,7 @@ objectdef Salvager
 	variable bool StillGoing = TRUE
 	variable int MaxRange
 	variable string Stage
+	variable bool Reloaded = FALSE
 	
 	variable string AsteroidType = Pyroxere
 	variable int Full = 90
@@ -65,7 +66,11 @@ objectdef Salvager
 	function Docked()
 	{
 		call Ship.Unload Hangar
-		call Ship.Grab ${MiningCrystalID}
+		if ${Reloaded}
+		{
+			;call Ship.Grab ${MiningCrystalID}, 1
+			Reloaded:Set[FALSE]
+		}
 		Stage:Set[MoveOn]
 		
 		if ${StillGoing}
@@ -96,7 +101,12 @@ objectdef Salvager
 		}
 		elseif ${CurrentLocation} > ${Locations.Used} && !${UseLastSpot}
 		{
-			
+			if ${CurrentLocation} > ${Belts.Used}
+			{
+				StillGoing:Set[FALSE]
+				call Ship.Goto ${SafeSpot}
+			}
+			call Ship.Goto ${Belts.Element[${CurrentLocation}]}
 		}
 		else
 		{
