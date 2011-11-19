@@ -8,7 +8,7 @@ objectdef Salvager
 	variable int CurrentLocation = 0
 	
 	variable collection:string Tractors
-	variable collection:int64 Salvagers
+	variable collection:string Salvagers
 	variable string Afterburner
 	variable string SensorBooster
 	variable string CloakingUnit
@@ -23,6 +23,8 @@ objectdef Salvager
 
 	function Begin()
 	{
+		while SHIPMODE == WARPING
+			wait RANDOM(SLOW,SLOW)
 		CurrentLocation:Set[0]
 		DoUnload:Set[FALSE]
 		if !INSPACE
@@ -179,8 +181,7 @@ objectdef Salvager
 				wait RANDOM(SLOW, SLOW)
 			
 			;Approach management next 4 if's
-			if ENTDISTANCE(${Approach}) < ${MaxRange}
-				Approach:Set[${This.Approachable}]
+			
 			
 			if ENTDISTANCE(${Approach}) > ${MaxRange} && !${Approaching}
 			{
@@ -194,7 +195,8 @@ objectdef Salvager
 				Debug:Spew["ENTDISTANCE(${Approach}) - ${MaxRange} - ${Approaching}", "StopShip", FALSE]
 				Approaching:Set[FALSE]
 			}
-			
+			if ENTDISTANCE(${Approach}) < ${MaxRange}
+				Approach:Set[${This.Approachable}]
 			if ${Approaching}
 			{
 				if CAPACITOR > 60 && !${Afterburning}
@@ -382,9 +384,9 @@ objectdef Salvager
 		
 		Tractors:Clear
 		Salvagers:Clear
-		Afterburner:Set[NULL]
-		SensorBooster:Set[NULL]
-		CloakingUnit:Set[NULL]
+		;Afterburner:Set[NULL]
+		;SensorBooster:Set[NULL]
+		;CloakingUnit:Set[NULL]
 		
 		MyShip:DoGetModules[Modules]
 		Modules:GetIterator[Iter]

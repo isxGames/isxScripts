@@ -4,7 +4,7 @@ objectdef Salvager
 	variable int MaxRange
 	variable string Stage
 	
-	variable int MiningType = 9999999
+	variable string AsteroidType = Pyroxere
 	variable int Full = 90
 	variable bool UseLastSpot = FALSE
 	
@@ -12,15 +12,18 @@ objectdef Salvager
 	variable string ShieldBooster
 	
 	variable collection:int64 Asteroids
+	variable collection:int64 Belts
 	variable index:int64 Targets
 	
 	variable index:string Locations
 	variable string SafeSpot
 	variable string LastSpot
-	variable int CurrentLocation
+	variable int CurrentLocation = 1
 	
 	function Begin()
 	{
+		while SHIPMODE == WARPING
+			wait RANDOM(SLOW,SLOW)
 		This:GetBookmarks
 		if ${SafeSpot.Length} < 1 && INSPACE
 		{
@@ -36,10 +39,13 @@ objectdef Salvager
 		if INSPACE && CARGOPCT > 60
 			call Ship.Goto ${SafeSpot}
 		
-		if INSPACE
+		if !INSPACE
 			Stage:Set[Docked]
 		else
+		{
 			Stage:Set[MoveOn]
+			This:GetBelts
+		}
 		
 		while ${StillGoing}
 		switch ${Stage}
@@ -59,31 +65,38 @@ objectdef Salvager
 	function Docked()
 	{
 		call Ship.Unload Hangar
+		call Ship.Grab ${MiningCrystalID}
 		Stage:Set[MoveOn]
 		
 		if ${StillGoing}
 		{
 			call Ship.Undock
-			if ${Lasers.Used} < 1 
+			if ${Lasers.Used} < 1
 			{
 				This:GetModules
-				if ${Tractors.Used} < 1 && ${Salvagers.Used} < 1
+				if ${Lasers.Used} < 1
 				{
-					echo "No Modules - ${Tractors.Used} - ${Salvagers.Used}"
-					Debug:Spew["${Tractors.Used} - ${Salvagers.Used}", "StartUpNoModules", TRUE]
+					echo "No Modules - ${Lasers.Used}"
+					Debug:Spew["${Lasers.Used}", "StartUpNoModules", TRUE]
 					call Ship.Goto ${SafeSpot}
 					StillGoing:Set[FALSE]
 				}
 			}
+			if ${Belts.Used} < 1
+				This:GetBelts
 		}
 	}
 	
 	function MoveOn()
 	{
-		if ${CurrentLocation} > ${Locations.Used}
+		if ${CurrentLocation} > ${Locations.Used} && ${Locations.Used} > 0
 		{
 			StillGoing:Set[FALSE]
 			call Ship.Goto ${SafeSpot}
+		}
+		elseif ${CurrentLocation} > ${Locations.Used} && !${UseLastSpot}
+		{
+			
 		}
 		else
 		{
@@ -92,11 +105,11 @@ objectdef Salvager
 			else
 			{
 				call Ship.Goto ${Locations.Get[${CurrentLocation}]}
-				if ${Entity[TypeID, ${MiningType}].Distance} > 150000
+				if ${Entity[${AsteroidType}].Distance} > 150000
 				{
 					while SHIPMODE != WARPING
 					{
-						Entity[TypeID, ${MiningType}]:WarpTo
+						Entity[${AsteroidType}]:WarpTo
 						wait RANDOM(SLOW, SLOW)
 					}
 					
@@ -115,6 +128,7 @@ objectdef Salvager
 	{
 		variable bool Mining = TRUE
 		variable iterator Iter
+		variable bool NotAligned = TRUE
 		
 		This:GetEntities
 		;;;;;;;;;;;;;;;;;
@@ -124,10 +138,25 @@ objectdef Salvager
 			if CARGOPCT > ${Full}
 				break
 			
+			if CARGOPCT > DIVIDE(${Full},0.9) && ${NotAligned}
+			{
+				BMALIGN(${SafeSpot})
+				wait RANDOM(SLOW,SLOW)
+				NotAligned:Set[FALSE]
+			}
+			
 			This:GetEntities
 			
+			if ENTDISTANCE(${This.Closest})
+			while ENTDISTANCE(${This.Closest})
+			{
+				call Ship.Approach ${This.Closest}
+				NotAligned:Set[TRUE]
+				wait RANDOM(SLOW,SLOW)
+			}
+			
 			;Lock
-			if ${Asteroids.FirstValue(exists)} && ALLTARGETS < MAXTARGETS
+			if ${Asteroids.FirstValue(exists)} && ALLTARGETS < ${Lasers.Used} && ALLTARGETS < MAXTARGETS
 			do
 			{
 				if ENTHASBEENLOCKED(${Asteroids.CurrentValue}) || ENTDISTANCE(${Asteroids.CurrentValue}) > ${MaxRange}
@@ -143,14 +172,37 @@ objectdef Salvager
 						waitframe
 				}
 			}
-			while ${Asteroids.NextValue(exists)} && ALLTARGETS < MAXTARGETS
+			while ${Asteroids.NextValue(exists)} && ALLTARGETS < ${Lasers.Used} && ALLTARGETS < ${Lasers.Used}
 			
 			This:GetTargets
 			Targets:GetIterator
 			if ${Iter:First(exists)}
 			do
 			{
-				
+				if ${Lasers.FirstValue(exists)}
+				do
+				{
+					if ENTDISTANCE(${Iter.Value}) > ${MaxRange}
+					{
+						call Ship.Approach ${Iter.Value}
+						NotAligned:Set[TRUE]
+						wait RANDOM(SLOW,SLOW)
+						break
+					}
+					if !MODACTIVATED(${Lasers.CurrentValue}) && !${Lasers.Element[${Iter.Value}](exists)}
+					{
+						ORBIT(${Iter.Value},DIVIDE(${MaxRange,3}))
+						NotAligned:Set[TRUE]
+						call Ship.MakeActiveTarget ${Iter.Value}
+						if ${Return} > 90
+							continue
+						call Ship.ActivateModule ${Lasers.CurrentValue}, TRUE
+						Lasers:Set[${Iter.Value}, ${Lasers.CurrentValue}]
+						Lasers:Erase[${Lasers.CurrentKey}]
+						break
+					}
+				}
+				while ${Lasers.NextValue(exists)}
 			}
 			while ${Iter:Next(exists)}
 			
@@ -160,7 +212,7 @@ objectdef Salvager
 		{
 			BMREMOVE(${LastSpot})
 			wait RANDOM(SLOW, SLOW)
-			variable string Temp = "${Debug.Runtime} Last Spot $$$"
+			variable string Temp = "@?@ ${Debug.Runtime} Last Spot"
 			EVE:CreateBookmark[${Temp}]
 			LastSpot:Set[${Temp}]
 			UseLastSpot:Set[TRUE]
@@ -177,7 +229,24 @@ objectdef Salvager
 	
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+	
+	member:int64 Closest()
+	{
+		variable int64 Winner = ${Me.ToEntity.ID}
+		variable float curDistance = 150000
+		if ${Asteroids.FirstValue(exists)}
+		do
+		{
+			if ENTDISTANCE(${Asteroids.CurrentValue}) < ${curDistance}
+			{
+				curDistance:Set[ENTDISTANCE(${Asteroids.CurrentValue})]
+				Winner:Set[${Asteroids.CurrentValue}]
+			}
+		}
+		while ${Asteroids.NextValue(exists)}
+		return ${Winner}
+	}
+	
 	method GetTargets()
 	{
 		variable index:entity MyTargets
@@ -260,9 +329,26 @@ objectdef Salvager
 		if ${Iter:First(exists)}
 		do
 		{
-			if ${Iter.Value.TypeID} == ENTGROUPWRECK
-			if ${Iter.Value.HaveLootRights}
+			if ${Iter.Value.Name.Find[${AsteroidType}]} > 0
 				Asteroids:Set[${Iter.Value.ID}, ${Iter.Value.ID}]
+		}
+		while ${Iter:Next(exists)}
+	}
+	
+	method GetBelts()
+	{
+		variable index:entity MyEntities
+		variable iterator Iter
+		
+		Belts:Clear
+		
+		EVE:DoGetEntities[MyEntities]
+		MyEntities:GetIterator[Iter]
+		if ${Iter:First(exists)}
+		do
+		{
+			if ${Iter.Value.TypeID} == ENTTYPEASTEROIDBELT
+				Belts:Set[${Iter.Value.ID}, {Iter.Value.ID}]
 		}
 		while ${Iter:Next(exists)}
 	}

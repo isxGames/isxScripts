@@ -31,6 +31,7 @@
 #define ENTGROUPCARGO 				12
 #define ENTGROUPACCELGATE			366
 #define ENTGROUPSTATION				15
+#define ENTTYPEASTEROIDBELT			15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;		Items
 #define ITMGROUPSALVAGER			1122
