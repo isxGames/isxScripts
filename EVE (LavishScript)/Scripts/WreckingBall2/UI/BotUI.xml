@@ -1,0 +1,418 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <ISUI>
+ 	<Window name='WreckingBot'>
+ 		<X>150</X>
+ 		<Y>100</Y>
+ 		<Width>500</Width>
+ 		<Height>500</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>30</Height>
+			<Children>
+				
+				<combobox name='WreckingMode'>
+					<X>50</X>
+					<Y>2</Y>
+					<Width>150</Width>
+					<Height>20</Height>
+					<FullHeight>100</FullHeight>
+					<ButtonWidth>20</ButtonWidth>
+					<Items>
+						<Item Value='1'>Salvager</Item>
+						<Item Value='2'>GoHome</Item>
+						<Item Value='3'>Goto</Item>
+						<Item Value='4'>  </Item>
+					</Items>
+					<OnSelect>Script[Start].VariableScope.State:Set[${This.SelectedItem.Text}]</OnSelect>
+					<OnLoad>This:SetSelection[1]</OnLoad>
+				</combobox>
+				
+				<text name='BotState'>
+					<X>220</X>
+					<Y>2</Y>
+					<Width>300</Width>
+					<Height>20</Height>
+					<Text>${Script[Start].VariableScope.State}</Text>
+				</text>
+				
+				<button name='Resume'>
+					<X>0</X>
+					<Y>0</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<AutoTooltip>   Resumes the bot</AutoTooltip>
+					<Text>Go</Text>
+					<OnLeftClick>Script[Start].VariableScope.Paused:Set[FALSE]</OnLeftClick>
+				</button>
+				
+				<button	Name='Close'>
+					<X>480</X>
+					<Y>0</Y>
+					<Width>20</Width>
+					<Height>20</Height>
+					<OnLeftClick>endscript Start</OnLeftClick>
+					<Text>X</Text>
+				</button>
+				
+			</Children>
+		</TitleBar>
+		
+ 		<Children>
+ 			<TabControl name='WreckingTabControl'>
+ 				<X>3%</X>
+				<Y>10</Y>
+ 				<Width>95%</Width>
+ 				<Height>460</Height>
+ 				<Tabs>
+ 					<Tab name='Main'>
+						
+						<text name='HomeIdentifier'>
+ 							<X>5</X>
+ 							<Y>5</Y>
+ 							<Width>45%</Width>
+ 							<Height>15</Height>
+							<Text>Home bookmark symbol</Text>
+						</text>
+						
+						<textentry name='HomeIdentifiers'>
+ 							<X>5</X>
+ 							<Y>20</Y>
+ 							<Width>45%</Width>
+ 							<Height>20</Height>
+							<OnLoad>This:SetText[${Script[Start].VariableScope.HomeBookmarkSymbol}]</OnLoad>
+ 							<OnChange>Script[Start].VariableScope.HomeBookmarkSymbol:Set[${This.Text.Escape}]</OnChange>
+						</textentry>
+						
+						<text name='LocationIdentifier'>
+ 							<X>5</X>
+ 							<Y>45</Y>
+ 							<Width>45%</Width>
+ 							<Height>15</Height>
+							<Text>Location bookmark symbol</Text>
+						</text>
+						
+  						<textentry name='LocationIdentifiers'>
+ 							<X>5</X>
+ 							<Y>60</Y>
+ 							<Width>45%</Width>
+ 							<Height>20</Height>
+								<OnLoad>This:SetText[${Script[Start].VariableScope.BookmarkSymbol}]</OnLoad>
+								<OnChange>Script[Start].VariableScope.BookmarkSymbol:Set[${This.Text.Escape}]</OnChange>
+ 						</textentry>
+						
+						<console name='StatusConsole'>
+ 							<X>5</X>
+ 							<Y>20%</Y>
+ 							<Width>r10</Width>
+ 							<Height>75%</Height>
+ 						</console>
+						
+						<text name='ChickenOnText'>
+ 							<X>50%</X>
+ 							<Y>37</Y>
+ 							<Width>100</Width>
+ 							<Height>15</Height>
+							<Text>Chicken's:</Text>
+						</text>
+						
+						<button name='TankChickenOn'>
+ 							<X>70%</X>
+ 							<Y>1</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.ChickenOnTank}
+								{
+									This:SetText[Tank]
+									Script[Start].VariableScope.ChickenOnTank:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[DontTank]
+									Script[Start].VariableScope.ChickenOnTank:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.ChickenOnTank}
+									This:SetText[DontTank]
+								else
+									This:SetText[Tank]
+								</OnLoad>
+ 						</button>
+						
+						<button name='EnemyChickenOn'>
+ 							<X>70%</X>
+ 							<Y>22</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.ChickenOnRat}
+								{
+									This:SetText[Rats]
+									Script[Start].VariableScope.ChickenOnRat:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[NoRats]
+									Script[Start].VariableScope.ChickenOnRat:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.ChickenOnRat}
+									This:SetText[NoRats]
+								else
+									This:SetText[Rats]
+								</OnLoad>
+ 						</button>
+						
+						<button name='OtherShipChickenOn'>
+ 							<X>70%</X>
+ 							<Y>43</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.ChickenOnPirate}
+								{
+									This:SetText[Ships]
+									Script[Start].VariableScope.ChickenOnPirate:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[NoShips]
+									Script[Start].VariableScope.ChickenOnPirate:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.ChickenOnPirate}
+									This:SetText[NoShips]
+								else
+									This:SetText[Ships]
+								</OnLoad>
+ 						</button>
+						
+						<button name='TargetedChickenOn'>
+ 							<X>70%</X>
+ 							<Y>64</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.ChickenOnTargeted}
+								{
+									This:SetText[TargetedOk]
+									Script[Start].VariableScope.ChickenOnTargeted:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[DontTargetMe]
+									Script[Start].VariableScope.ChickenOnTargeted:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.ChickenOnTargeted}
+									This:SetText[DontTargetMe]
+								else
+									This:SetText[TargetedOk]
+								</OnLoad>
+ 						</button>
+						
+						<button name='DebugOn'>
+ 							<X>70%</X>
+ 							<Y>95%</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.ShowDebug}
+								{
+									This:SetText[DontShow]
+									Script[Start].VariableScope.ShowDebug:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[ShowDebug]
+									Script[Start].VariableScope.ShowDebug:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.ShowDebug}
+									This:SetText[ShowDebug]
+								else
+									This:SetText[DontShow]
+								</OnLoad>
+ 						</button>
+						
+						<button name='EntityWatch'>
+ 							<X>20%</X>
+ 							<Y>95%</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.EntityWatch}
+								{
+									This:SetText[DontWatch]
+									Script[Start].VariableScope.EntityWatch:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[EntityWatch]
+									Script[Start].VariableScope.EntityWatch:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.EntityWatch}
+									This:SetText[EntityWatch]
+								else
+									This:SetText[DontWatch]
+								</OnLoad>
+ 						</button>
+						
+ 
+ 					</Tab>
+ 					<Tab name='Salvager Options'>
+						<button name='NoLoot'>
+ 							<X>10</X>
+ 							<Y>5</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.Looting}
+								{
+									This:SetText[NoLooting]
+									Script[Start].VariableScope.Looting:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[Looting]
+									Script[Start].VariableScope.Looting:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.Looting}
+									This:SetText[Looting]
+								else
+									This:SetText[NoLooting]
+								</OnLoad>
+ 						</button>
+ 
+ 						<button name='GoHome'>
+ 							<X>10</X>
+ 							<Y>27</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text> </Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.GoSafe}
+								{
+									This:SetText[DontUseSafe]
+									Script[Start].VariableScope.GoSafe:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[UseSafe]
+									Script[Start].VariableScope.GoSafe:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.GoSafe}
+									This:SetText[UseSafe]
+								else
+									This:SetText[DontUseSafe]
+								</OnLoad>
+ 						</button>
+						
+ 						<button name='StayOn'>
+ 							<X>10</X>
+ 							<Y>50</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text>Stay on</Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.StayOn}
+								{
+									This:SetText[DontStayOn]
+									Script[Start].VariableScope.StayOn:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[StayOn]
+									Script[Start].VariableScope.StayOn:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.StayOn}
+									This:SetText[StayOn]
+								else
+									This:SetText[DontStayOn]
+								</OnLoad>
+ 						</button>
+						
+						
+						<button name='RemoveBMS'>
+ 							<X>10</X>
+ 							<Y>73</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text>RemoveBookmarks</Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.RemoveBookmarks}
+								{
+									This:SetText[DontRemove]
+									Script[Start].VariableScope.RemoveBookmarks:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[RemoveBookmarks]
+									Script[Start].VariableScope.RemoveBookmarks:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.RemoveBookmarks}
+									This:SetText[RemoveBookmarks]
+								else
+									This:SetText[DontRemove]
+								</OnLoad>
+ 						</button>
+						
+						<button name='Looped'>
+ 							<X>10</X>
+ 							<Y>96</Y>
+ 							<Width>100</Width>
+ 							<Height>20</height>
+ 								<Text>Looped</Text>
+ 								<OnLeftClick>
+								if ${Script[Start].VariableScope.Looped}
+								{
+									This:SetText[DontLoop]
+									Script[Start].VariableScope.Looped:Set[FALSE]
+								}
+								else
+								{
+									This:SetText[Looped]
+									Script[Start].VariableScope.Looped:Set[TRUE]
+								}
+								</OnLeftClick>
+								<OnLoad>
+								if ${Script[Start].VariableScope.Looped}
+									This:SetText[Looped]
+								else
+									This:SetText[DontLoop]
+								</OnLoad>
+ 						</button>
+						
+						
+					</Tab>
+ 					<Tab name='Missioner'>
+						
+					
+					</Tab>
+ 				</Tabs>
+ 			</TabControl>
+ 		</Children>
+ 	</Window>
+ </ISUI>
