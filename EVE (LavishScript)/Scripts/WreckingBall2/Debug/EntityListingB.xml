@@ -43,9 +43,14 @@
 	<Setting Name="Brutix" Group="Battlecruiser" GroupID="419" Category="Ship" CategoryID="6">16229</Setting>
 	<Setting Name="Bustard" Group="Transport Ship" GroupID="380" Category="Ship" CategoryID="6">12731</Setting>
 	<Setting Name="Buzzard" Group="Covert Ops" GroupID="830" Category="Ship" CategoryID="6">11192</Setting>
+	<Setting Name="Caldari Barricade" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">16780</Setting>
 	<Setting Name="Caldari Customs Agent" Group="Customs Official" GroupID="446" Category="Entity" CategoryID="11">19385</Setting>
 	<Setting Name="Caldari Customs Commissioner" Group="Customs Official" GroupID="446" Category="Entity" CategoryID="11">19367</Setting>
+	<Setting Name="Caldari Elevator" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">16775</Setting>
+	<Setting Name="Caldari Fence" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">16781</Setting>
 	<Setting Name="Caldari Food Processing Plant Station" Group="Station" GroupID="15" Category="Station" CategoryID="3">4024</Setting>
+	<Setting Name="Caldari Junction" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">16776</Setting>
+	<Setting Name="Caldari Lookout" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">16777</Setting>
 	<Setting Name="Caldari Mining Station" Group="Station" GroupID="15" Category="Station" CategoryID="3">4023</Setting>
 	<Setting Name="Caldari Navy Captain 3rd Rank" Group="Faction Drone" GroupID="288" Category="Entity" CategoryID="11">10651</Setting>
 	<Setting Name="Caldari Navy Hookbill" Group="Frigate" GroupID="25" Category="Ship" CategoryID="6">17619</Setting>
@@ -100,6 +105,12 @@
 	<Setting Name="Dust Cloud" Group="Cloud" GroupID="227" Category="Celestial" CategoryID="2">10067</Setting>
 	<Setting Name="Dust Streak" Group="Cloud" GroupID="227" Category="Celestial" CategoryID="2">10756</Setting>
 	<Setting Name="Enyo" Group="Assault Ship" GroupID="324" Category="Ship" CategoryID="6">12044</Setting>
+	<Setting Name="EoM Black Priest" Group="Mission Generic Cruisers" GroupID="817" Category="Entity" CategoryID="11">16095</Setting>
+	<Setting Name="EoM Crusader" Group="Mission Generic Cruisers" GroupID="817" Category="Entity" CategoryID="11">16096</Setting>
+	<Setting Name="EoM Death Knight" Group="Mission Generic Cruisers" GroupID="817" Category="Entity" CategoryID="11">16097</Setting>
+	<Setting Name="EoM Demon" Group="Mission Generic Frigates" GroupID="818" Category="Entity" CategoryID="11">16091</Setting>
+	<Setting Name="EoM Prophet" Group="Mission Generic Cruisers" GroupID="817" Category="Entity" CategoryID="11">16094</Setting>
+	<Setting Name="EoM Succubus" Group="Mission Generic Frigates" GroupID="818" Category="Entity" CategoryID="11">16090</Setting>
 	<Setting Name="Executioner" Group="Frigate" GroupID="25" Category="Ship" CategoryID="6">589</Setting>
 	<Setting Name="Exequror" Group="Cruiser" GroupID="26" Category="Ship" CategoryID="6">634</Setting>
 	<Setting Name="Fenrir" Group="Freighter" GroupID="513" Category="Ship" CategoryID="6">20189</Setting>
@@ -155,6 +166,8 @@
 	<Setting Name="Jaguar" Group="Assault Ship" GroupID="324" Category="Ship" CategoryID="6">11400</Setting>
 	<Setting Name="Kestrel" Group="Frigate" GroupID="25" Category="Ship" CategoryID="6">602</Setting>
 	<Setting Name="Kronos" Group="Marauder" GroupID="900" Category="Ship" CategoryID="6">28661</Setting>
+	<Setting Name="LCO Freight Pad" Group="Large Collidable Object" GroupID="226" Category="Celestial" CategoryID="2">23237</Setting>
+	<Setting Name="LCO Radio Telescope" Group="Large Collidable Object" GroupID="226" Category="Celestial" CategoryID="2">22064</Setting>
 	<Setting Name="LCS Stargate ( Caldari 1 )" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">24565</Setting>
 	<Setting Name="Legion" Group="Strategic Cruiser" GroupID="963" Category="Ship" CategoryID="6">29986</Setting>
 	<Setting Name="Loki" Group="Strategic Cruiser" GroupID="963" Category="Ship" CategoryID="6">29990</Setting>
@@ -174,6 +187,8 @@
 	<Setting Name="Minmatar Sentry Gun" Group="Sentry Gun" GroupID="99" Category="Entity" CategoryID="11">3743</Setting>
 	<Setting Name="Minmatar Shuttle" Group="Shuttle" GroupID="31" Category="Ship" CategoryID="6">11132</Setting>
 	<Setting Name="Minmatar Station" Group="Station" GroupID="15" Category="Station" CategoryID="3">2501</Setting>
+	<Setting Name="Mission Generic Medium Wreck" Group="Wreck" GroupID="186" Category="Celestial" CategoryID="2">26934</Setting>
+	<Setting Name="Mission Generic Small Wreck" Group="Wreck" GroupID="186" Category="Celestial" CategoryID="2">26935</Setting>
 	<Setting Name="Moon" Group="Moon" GroupID="8" Category="Celestial" CategoryID="2">14</Setting>
 	<Setting Name="Nightmare" Group="Battleship" GroupID="27" Category="Ship" CategoryID="6">17736</Setting>
 	<Setting Name="Noctis" Group="Industrial" GroupID="28" Category="Ship" CategoryID="6">2998</Setting>
@@ -204,6 +219,7 @@
 	<Setting Name="Planet (Plasma)" Group="Planet" GroupID="7" Category="Celestial" CategoryID="2">2063</Setting>
 	<Setting Name="Planet (Storm)" Group="Planet" GroupID="7" Category="Celestial" CategoryID="2">2017</Setting>
 	<Setting Name="Planet (Temperate)" Group="Planet" GroupID="7" Category="Celestial" CategoryID="2">11</Setting>
+	<Setting Name="Plasmic Gas Cloud" Group="Cloud" GroupID="227" Category="Celestial" CategoryID="2">10757</Setting>
 	<Setting Name="Power Generator" Group="Large Collidable Structure" GroupID="319" Category="Entity" CategoryID="11">13034</Setting>
 	<Setting Name="Probe" Group="Frigate" GroupID="25" Category="Ship" CategoryID="6">586</Setting>
 	<Setting Name="Prophecy" Group="Battlecruiser" GroupID="419" Category="Ship" CategoryID="6">16233</Setting>

@@ -48,6 +48,7 @@
 			<Setting Name="Dust Cloud">10067</Setting>
 			<Setting Name="Dust Streak">10756</Setting>
 			<Setting Name="Green Gas Cloud">10765</Setting>
+			<Setting Name="Plasmic Gas Cloud">10757</Setting>
 			<Setting Name="Wispy Orange Cloud">10754</Setting>
 		</Set>
 		<Set Name="Large Collidable Object" GroupID="226">
@@ -61,6 +62,8 @@
 			<Setting Name="Debris - Broken Engine Part 1">10140</Setting>
 			<Setting Name="Debris - Broken Engine Part 2">10141</Setting>
 			<Setting Name="Dirty Bandit Shipyard">21659</Setting>
+			<Setting Name="LCO Freight Pad">23237</Setting>
+			<Setting Name="LCO Radio Telescope">22064</Setting>
 			<Setting Name="Outpost/Disc - Spiky &amp; Pulsating">10119</Setting>
 			<Setting Name="Rock Formation - Branched &amp; Twisted">10137</Setting>
 			<Setting Name="Ruined Monument">3881</Setting>
@@ -110,6 +113,8 @@
 			<Setting Name="Guristas Medium Wreck">26574</Setting>
 			<Setting Name="Guristas Small Wreck">26573</Setting>
 			<Setting Name="Minmatar Industrial Wreck">26551</Setting>
+			<Setting Name="Mission Generic Medium Wreck">26934</Setting>
+			<Setting Name="Mission Generic Small Wreck">26935</Setting>
 			<Setting Name="Sanshas Small Wreck">26579</Setting>
 		</Set>
 	</Set>
@@ -207,6 +212,11 @@
 			<Setting Name="Imperial Navy Sergeant">9998</Setting>
 		</Set>
 		<Set Name="Large Collidable Structure" GroupID="319">
+			<Setting Name="Caldari Barricade">16780</Setting>
+			<Setting Name="Caldari Elevator">16775</Setting>
+			<Setting Name="Caldari Fence">16781</Setting>
+			<Setting Name="Caldari Junction">16776</Setting>
+			<Setting Name="Caldari Lookout">16777</Setting>
 			<Setting Name="Guristas Bunker">16796</Setting>
 			<Setting Name="Guristas Elevator">16797</Setting>
 			<Setting Name="Guristas Fence">16802</Setting>
@@ -219,6 +229,16 @@
 			<Setting Name="Starbase Explosion Dampening Array">26727</Setting>
 			<Setting Name="Starbase Stealth Emitter Array">26725</Setting>
 			<Setting Name="Starbase Ultra-Fast Silo">26721</Setting>
+		</Set>
+		<Set Name="Mission Generic Cruisers" GroupID="817">
+			<Setting Name="EoM Black Priest">16095</Setting>
+			<Setting Name="EoM Crusader">16096</Setting>
+			<Setting Name="EoM Death Knight">16097</Setting>
+			<Setting Name="EoM Prophet">16094</Setting>
+		</Set>
+		<Set Name="Mission Generic Frigates" GroupID="818">
+			<Setting Name="EoM Demon">16091</Setting>
+			<Setting Name="EoM Succubus">16090</Setting>
 		</Set>
 		<Set Name="Police Drone" GroupID="182">
 			<Setting Name="Amarr Surveillance General Major">11515</Setting>
