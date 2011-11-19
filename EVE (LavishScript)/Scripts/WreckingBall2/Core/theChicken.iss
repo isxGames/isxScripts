@@ -33,6 +33,6 @@ objectdef theChicken
 		State:Set[Chickening]
 		call Ship.Goto ${SafeSpot}
 		echo "Wrecking Bot Chickened because of ${Reason}"
-		endscript Start
+		endscript wreckingball2
 	}
 }

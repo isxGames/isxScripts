@@ -23,7 +23,7 @@
 						<Item Value='3'>Goto</Item>
 						<Item Value='4'>  </Item>
 					</Items>
-					<OnSelect>Script[Start].VariableScope.State:Set[${This.SelectedItem.Text}]</OnSelect>
+					<OnSelect>Script[wreckingball2].VariableScope.State:Set[${This.SelectedItem.Text}]</OnSelect>
 					<OnLoad>This:SetSelection[1]</OnLoad>
 				</combobox>
 				
@@ -32,7 +32,7 @@
 					<Y>2</Y>
 					<Width>300</Width>
 					<Height>20</Height>
-					<Text>${Script[Start].VariableScope.State}</Text>
+					<Text>${Script[wreckingball2].VariableScope.State}</Text>
 				</text>
 				
 				<button name='Resume'>
@@ -42,7 +42,7 @@
 					<Height>20</Height>
 					<AutoTooltip>   Resumes the bot</AutoTooltip>
 					<Text>Go</Text>
-					<OnLeftClick>Script[Start].VariableScope.Paused:Set[FALSE]</OnLeftClick>
+					<OnLeftClick>Script[wreckingball2].VariableScope.Paused:Set[FALSE]</OnLeftClick>
 				</button>
 				
 				<button	Name='Close'>
@@ -50,7 +50,7 @@
 					<Y>0</Y>
 					<Width>20</Width>
 					<Height>20</Height>
-					<OnLeftClick>endscript Start</OnLeftClick>
+					<OnLeftClick>endscript wreckingball2</OnLeftClick>
 					<Text>X</Text>
 				</button>
 				
@@ -79,8 +79,8 @@
  							<Y>20</Y>
  							<Width>45%</Width>
  							<Height>20</Height>
-							<OnLoad>This:SetText[${Script[Start].VariableScope.HomeBookmarkSymbol}]</OnLoad>
- 							<OnChange>Script[Start].VariableScope.HomeBookmarkSymbol:Set[${This.Text.Escape}]</OnChange>
+							<OnLoad>This:SetText[${Script[wreckingball2].VariableScope.HomeBookmarkSymbol}]</OnLoad>
+ 							<OnChange>Script[wreckingball2].VariableScope.HomeBookmarkSymbol:Set[${This.Text.Escape}]</OnChange>
 						</textentry>
 						
 						<text name='LocationIdentifier'>
@@ -96,8 +96,8 @@
  							<Y>60</Y>
  							<Width>45%</Width>
  							<Height>20</Height>
-								<OnLoad>This:SetText[${Script[Start].VariableScope.BookmarkSymbol}]</OnLoad>
-								<OnChange>Script[Start].VariableScope.BookmarkSymbol:Set[${This.Text.Escape}]</OnChange>
+								<OnLoad>This:SetText[${Script[wreckingball2].VariableScope.BookmarkSymbol}]</OnLoad>
+								<OnChange>Script[wreckingball2].VariableScope.BookmarkSymbol:Set[${This.Text.Escape}]</OnChange>
  						</textentry>
 						
 						<console name='StatusConsole'>
@@ -122,19 +122,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.ChickenOnTank}
+								if ${Script[wreckingball2].VariableScope.ChickenOnTank}
 								{
 									This:SetText[Tank]
-									Script[Start].VariableScope.ChickenOnTank:Set[FALSE]
+									Script[wreckingball2].VariableScope.ChickenOnTank:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[DontTank]
-									Script[Start].VariableScope.ChickenOnTank:Set[TRUE]
+									Script[wreckingball2].VariableScope.ChickenOnTank:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.ChickenOnTank}
+								if ${Script[wreckingball2].VariableScope.ChickenOnTank}
 									This:SetText[DontTank]
 								else
 									This:SetText[Tank]
@@ -148,19 +148,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.ChickenOnRat}
+								if ${Script[wreckingball2].VariableScope.ChickenOnRat}
 								{
 									This:SetText[Rats]
-									Script[Start].VariableScope.ChickenOnRat:Set[FALSE]
+									Script[wreckingball2].VariableScope.ChickenOnRat:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[NoRats]
-									Script[Start].VariableScope.ChickenOnRat:Set[TRUE]
+									Script[wreckingball2].VariableScope.ChickenOnRat:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.ChickenOnRat}
+								if ${Script[wreckingball2].VariableScope.ChickenOnRat}
 									This:SetText[NoRats]
 								else
 									This:SetText[Rats]
@@ -174,19 +174,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.ChickenOnPirate}
+								if ${Script[wreckingball2].VariableScope.ChickenOnPirate}
 								{
 									This:SetText[Ships]
-									Script[Start].VariableScope.ChickenOnPirate:Set[FALSE]
+									Script[wreckingball2].VariableScope.ChickenOnPirate:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[NoShips]
-									Script[Start].VariableScope.ChickenOnPirate:Set[TRUE]
+									Script[wreckingball2].VariableScope.ChickenOnPirate:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.ChickenOnPirate}
+								if ${Script[wreckingball2].VariableScope.ChickenOnPirate}
 									This:SetText[NoShips]
 								else
 									This:SetText[Ships]
@@ -200,19 +200,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.ChickenOnTargeted}
+								if ${Script[wreckingball2].VariableScope.ChickenOnTargeted}
 								{
 									This:SetText[TargetedOk]
-									Script[Start].VariableScope.ChickenOnTargeted:Set[FALSE]
+									Script[wreckingball2].VariableScope.ChickenOnTargeted:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[DontTargetMe]
-									Script[Start].VariableScope.ChickenOnTargeted:Set[TRUE]
+									Script[wreckingball2].VariableScope.ChickenOnTargeted:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.ChickenOnTargeted}
+								if ${Script[wreckingball2].VariableScope.ChickenOnTargeted}
 									This:SetText[DontTargetMe]
 								else
 									This:SetText[TargetedOk]
@@ -226,19 +226,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.ShowDebug}
+								if ${Script[wreckingball2].VariableScope.ShowDebug}
 								{
 									This:SetText[DontShow]
-									Script[Start].VariableScope.ShowDebug:Set[FALSE]
+									Script[wreckingball2].VariableScope.ShowDebug:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[ShowDebug]
-									Script[Start].VariableScope.ShowDebug:Set[TRUE]
+									Script[wreckingball2].VariableScope.ShowDebug:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.ShowDebug}
+								if ${Script[wreckingball2].VariableScope.ShowDebug}
 									This:SetText[ShowDebug]
 								else
 									This:SetText[DontShow]
@@ -252,19 +252,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.EntityWatch}
+								if ${Script[wreckingball2].VariableScope.EntityWatch}
 								{
 									This:SetText[DontWatch]
-									Script[Start].VariableScope.EntityWatch:Set[FALSE]
+									Script[wreckingball2].VariableScope.EntityWatch:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[EntityWatch]
-									Script[Start].VariableScope.EntityWatch:Set[TRUE]
+									Script[wreckingball2].VariableScope.EntityWatch:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.EntityWatch}
+								if ${Script[wreckingball2].VariableScope.EntityWatch}
 									This:SetText[EntityWatch]
 								else
 									This:SetText[DontWatch]
@@ -281,19 +281,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.Looting}
+								if ${Script[wreckingball2].VariableScope.Looting}
 								{
 									This:SetText[NoLooting]
-									Script[Start].VariableScope.Looting:Set[FALSE]
+									Script[wreckingball2].VariableScope.Looting:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[Looting]
-									Script[Start].VariableScope.Looting:Set[TRUE]
+									Script[wreckingball2].VariableScope.Looting:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.Looting}
+								if ${Script[wreckingball2].VariableScope.Looting}
 									This:SetText[Looting]
 								else
 									This:SetText[NoLooting]
@@ -307,19 +307,19 @@
  							<Height>20</height>
  								<Text> </Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.GoSafe}
+								if ${Script[wreckingball2].VariableScope.GoSafe}
 								{
 									This:SetText[DontUseSafe]
-									Script[Start].VariableScope.GoSafe:Set[FALSE]
+									Script[wreckingball2].VariableScope.GoSafe:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[UseSafe]
-									Script[Start].VariableScope.GoSafe:Set[TRUE]
+									Script[wreckingball2].VariableScope.GoSafe:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.GoSafe}
+								if ${Script[wreckingball2].VariableScope.GoSafe}
 									This:SetText[UseSafe]
 								else
 									This:SetText[DontUseSafe]
@@ -333,19 +333,19 @@
  							<Height>20</height>
  								<Text>Stay on</Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.StayOn}
+								if ${Script[wreckingball2].VariableScope.StayOn}
 								{
 									This:SetText[DontStayOn]
-									Script[Start].VariableScope.StayOn:Set[FALSE]
+									Script[wreckingball2].VariableScope.StayOn:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[StayOn]
-									Script[Start].VariableScope.StayOn:Set[TRUE]
+									Script[wreckingball2].VariableScope.StayOn:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.StayOn}
+								if ${Script[wreckingball2].VariableScope.StayOn}
 									This:SetText[StayOn]
 								else
 									This:SetText[DontStayOn]
@@ -360,19 +360,19 @@
  							<Height>20</height>
  								<Text>RemoveBookmarks</Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.RemoveBookmarks}
+								if ${Script[wreckingball2].VariableScope.RemoveBookmarks}
 								{
 									This:SetText[DontRemove]
-									Script[Start].VariableScope.RemoveBookmarks:Set[FALSE]
+									Script[wreckingball2].VariableScope.RemoveBookmarks:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[RemoveBookmarks]
-									Script[Start].VariableScope.RemoveBookmarks:Set[TRUE]
+									Script[wreckingball2].VariableScope.RemoveBookmarks:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.RemoveBookmarks}
+								if ${Script[wreckingball2].VariableScope.RemoveBookmarks}
 									This:SetText[RemoveBookmarks]
 								else
 									This:SetText[DontRemove]
@@ -386,19 +386,19 @@
  							<Height>20</height>
  								<Text>Looped</Text>
  								<OnLeftClick>
-								if ${Script[Start].VariableScope.Looped}
+								if ${Script[wreckingball2].VariableScope.Looped}
 								{
 									This:SetText[DontLoop]
-									Script[Start].VariableScope.Looped:Set[FALSE]
+									Script[wreckingball2].VariableScope.Looped:Set[FALSE]
 								}
 								else
 								{
 									This:SetText[Looped]
-									Script[Start].VariableScope.Looped:Set[TRUE]
+									Script[wreckingball2].VariableScope.Looped:Set[TRUE]
 								}
 								</OnLeftClick>
 								<OnLoad>
-								if ${Script[Start].VariableScope.Looped}
+								if ${Script[wreckingball2].VariableScope.Looped}
 									This:SetText[Looped]
 								else
 									This:SetText[DontLoop]
