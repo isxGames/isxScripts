@@ -3794,6 +3794,30 @@ function LoadDefault()
 	while ${xvar:Inc} <= ${brokerslots}
 }
 
+function runcraft()
+{
+	EQ2Execute /close_top_window
+	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText[" Running Craft "]
+	if ${UseOgreCraft}
+	{
+		if ${Script[${OgreCraftUIScriptName}](exists)}
+		{
+			OgreCraft:AddRecipeListFromFile[${Me.TSSubClass}-_myprices.xml]
+			wait 50
+			OgreCraft:Start
+		}
+		else
+		{
+			ogre craft -q ${Me.TSSubClass}-_myprices.xml -s
+		}
+	}
+	else
+	{
+		craft ${Me.TSSubClass}-_myprices
+	}
+	Exitmyprices:Set[TRUE]
+}
+
 atom(script) EQ2_onInventoryUpdate()
 {
 	InventorySlotsFree:Set[${Me.InventorySlotsFree}]
