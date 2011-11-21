@@ -3803,8 +3803,7 @@ function runcraft()
 		if ${Script[${OgreCraftUIScriptName}](exists)}
 		{
 			OgreCraft:AddRecipeListFromFile[${Me.TSSubClass}-_myprices.xml]
-			wait 50
-			OgreCraft:Start
+			OgreCraft:Start[]
 		}
 		else
 		{
