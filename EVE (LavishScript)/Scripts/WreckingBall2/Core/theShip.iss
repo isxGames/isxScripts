@@ -1,6 +1,6 @@
 objectdef theShip
 {
-	function Unload(string Destination)
+	function Unload(string Destination, int Except)
 	{
 		variable iterator Iter
 		variable index:item Items
@@ -14,22 +14,25 @@ objectdef theShip
 		if ${Iter:First(exists)}
 		do
 		{
-			while ${Iter.Value.Location.Find[${Destination}]} < 1
+			if ${Iter.Value.TypeID} != ${Except}
 			{
-				if ${Iter.Value.Location.Find[${Destination}]} < 1
-					Debug:Spew["${Iter.Value.Location} - ${Destination}", "Unload", FALSE]
-				Iter.Value:MoveTo[${Destination}]
-				wait RANDOM(SLOWQ, SLOWQ)
-				i:Set[RANDOM(SLOW,SLOW)]
-				while ${i:Dec} > 0 && ${Iter.Value.Location.Find[${Destination}]} < 1
+				while ${Iter.Value.Location.Find[${Destination}]} < 1
+				{
+					if ${Iter.Value.Location.Find[${Destination}]} < 1
+						Debug:Spew["${Iter.Value.Location} - ${Destination}", "Unload", FALSE]
+					Iter.Value:MoveTo[${Destination}]
+					wait RANDOM(SLOWQ, SLOWQ)
+					i:Set[RANDOM(SLOW,SLOW)]
+					while ${i:Dec} > 0 && ${Iter.Value.Location.Find[${Destination}]} < 1
+						waitframe
+				}
+				
+				i:Set[RANDOM(SLOWQ,SLOWQ)]
+				while ${i:Dec} > 0
 					waitframe
+				if ${Iter.Value.Location.Find[${Destination}]} < 1
+					Debug:Spew["${Iter.Value.Location} - ${Destination}", "Unload", TRUE]
 			}
-			
-			i:Set[RANDOM(SLOWQ,SLOWQ)]
-			while ${i:Dec} > 0
-				waitframe
-			if ${Iter.Value.Location.Find[${Destination}]} < 1
-				Debug:Spew["${Iter.Value.Location} - ${Destination}", "Unload", TRUE]
 		}
 		while ${Iter:Next(exists)}
 	}
@@ -119,6 +122,57 @@ objectdef theShip
 			if !CARGOWINDOW
 				Debug:Spew["!CARGOWINDOW", "OpenCargo", TRUE]
 		}
+	}
+	
+	function Grab(int ItemType, int Qty)
+	{
+		variable index:item Items
+		variable iterator Iter
+		variable int Tmp
+		
+		Me.Station:DoGetHangarItems[Items]
+		Items:GetIterator[Iter]
+		if ${Iter:First(exists)}
+		do
+		{
+			if ${Iter.Value.TypeID} == ${ItemType}
+			{
+				if ${Iter.Value.Quantity} < ${Qty}
+				{
+					if ${Math.Calc[${Iter.Value.Quantity} * ${Iter.Value.Volume}]} > CARGOREMAINING
+					{
+						Debug:Spew["${Math.Calc[${Iter.Value.Quantity} * ${Iter.Value.Volume}]} - CARGOREMAINING", "GrabFullPartStack", FALSE]
+						Tmp:Set[${Math.Calc[CARGOREMAINING / ${Iter.Value.Volume}]}]
+						Iter.Value:MoveTo[MyShip,${Tmp}]
+						return 1
+					}
+					else
+					{
+						Debug:Spew["${Iter.Value.Quantity} - ${Qty}", "GrabPartStack", FALSE]
+						Qty:Dec[${Iter.Value.Quantity}]
+						Iter.Value:MoveTo[MyShip,${Iter.Value.Quantity}]
+					}
+				}
+				else
+				{
+					if ${Math.Calc[${Iter.Value.Quantity} * ${Iter.Value.Volume}]} > CARGOREMAINING
+					{
+						Debug:Spew["${Math.Calc[${Iter.Value.Quantity} * ${Iter.Value.Volume}]} - CARGOREMAINING", "GrabFullFullStack", FALSE]
+						Tmp:Set[${Math.Calc[CARGOREMAINING / ${Iter.Value.Volume}]}]
+						Iter.Value:MoveTo[MyShip,${Tmp}]
+						return 1
+					}
+					else
+					{
+						Debug:Spew["${Iter.Value.Quantity} - ${Qty}", "GrabFullStack", FALSE]
+						Iter.Value:MoveTo[MyShip,${Qty}]
+					}
+				}
+			}
+		}
+		while ${Iter:Next(exists)}
+		wait RANDOM(SLOW, SLOW)
+		return 0
 	}
 	
 	function OpenLoot(int64 TargetID)
@@ -218,15 +272,36 @@ objectdef theShip
 		wait RANDOM(SLOW, SLOW)
 	}
 	
+	function Reload(string Slot, int TypeID)
+	{
+		variable index:item Charges
+		variable iterator Iter
+		
+		MyShip.Module[${Slot}]:DoGetAvailableAmmo[Charges]
+		Charges:GetIterator[Iter]
+		if ${Iter:First(exists)}
+		do
+		{
+			if ${Iter.Value.TypeID} == ${TypeID}
+			{
+				MODRELOAD(${Slot},${Iter.Value.ID})
+				while MODRELOADING(${Slot})
+					wait RANDOM(SLOW,SLOW)
+				return
+			}
+		}
+		while ${Iter:Next(exists)}
+	}
+	
 	function Approach(int64 TargetID)
 	{
-		if APPROACHLEFT < 1
-		while APPROACHLEFT < 1
+		if SHIPMODE != APPROACHING
+		while SHIPMODE != APPROACHING
 		{
-			while APPROACHLEFT < 1
+			while SHIPMODE != APPROACHING
 			{
-				if APPROACHLEFT < 1
-					Debug:Spew["APPROACHLEFT - ENTDISTANCE(${TargetID})", "Approach", FALSE]
+				if SHIPMODE != APPROACHING
+					Debug:Spew["SHIPMODE - APPROACHING - ENTDISTANCE(${TargetID})", "Approach", FALSE]
 				APPROACH(${TargetID})
 				wait RANDOM(SLOW2, SLOW2)
 				i:Set[RANDOM(SLOW, SLOW)]
@@ -236,14 +311,15 @@ objectdef theShip
 			i:Set[RANDOM(SLOW, SLOW)]
 			while ${i:Dec} > 0
 				waitframe
-			if APPROACHLEFT < 1
-				Debug:Spew["APPROACHLEFT - ENTDISTANCE(${TargetID})", "Approach", TRUE]
+			if SHIPMODE != APPROACHING
+				Debug:Spew["SHIPMODE - APPROACHING - ENTDISTANCE(${TargetID})", "Approach", TRUE]
 		}
 	}
 	
 	function ActivateModule(string Slot, bool Activate)
 	{
 		variable int i
+		variable int j
 		if ${Activate}
 		if !MODACTIVATED(${Slot})
 		while !MODACTIVATED(${Slot})
@@ -263,6 +339,8 @@ objectdef theShip
 				waitframe
 			if !MODACTIVATED(${Slot})
 				Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot})", "Activate", TRUE]
+			if MODWAITING(${Slot})
+				return
 		}
 		if !${Activate}
 		if MODACTIVATED(${Slot}) && !MODDEACTIVATING(${Slot})
@@ -385,6 +463,7 @@ objectdef theShip
 						Debug:Spew["BMDISTANCE(${Label})", "Approach", FALSE]
 					}
 				}
+				wait RANDOM(SLOW2,SLOW2)
 			}
 		}
 	}

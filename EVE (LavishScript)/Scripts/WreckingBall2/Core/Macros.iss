@@ -56,6 +56,27 @@
 #endmac
 
 
+;;;;;;;;;;;;drones
+#macro DRONESLAUNCH(a)
+EVE:LaunchDrones[a]
+#endmac
+
+
+#macro DRONESMINE(a)
+EVE:DronesMineRepeatedly[a]
+#endmac
+
+
+#macro DRONESRETURN(a)
+EVE:DronesReturnToDroneBay[a]
+#endmac
+
+
+#macro DRONESATTACK(a)
+EVE:DronesEngageMyTarget[a]
+#endmac
+
+
 ;;;;;; Ship
 
 #macro MODACTIVATED(a)
@@ -83,8 +104,33 @@
 #endmac
 
 
+#macro MODCURRENTCHARGES(a)
+	${MyShip.Module[a].CurrentCharges}
+#endmac
+
+
+#macro MODMAXCHARGES(a)
+	${MyShip.Module[a].MaxCharges}
+#endmac
+
+
+#macro MODRELOADING(a)
+	${MyShip.Module[a].IsReloadingAmmo}
+#endmac
+
+
+#macro MODWAITING(a)
+	${MyShip.Module[a].IsWaitingForActiveTarget}
+#endmac
+
+
 #macro MODCLICK(a)
 	MyShip.Module[a]:Click
+#endmac
+
+
+#macro MODRELOAD(a,b)
+	MyShip.Module[a]:ChangeAmmo[b,MODMAXCHARGES(a)]
 #endmac
 
 
@@ -231,4 +277,9 @@
 
 #macro TARGET(a)
 	Entity[a]:MakeActiveTarget
+#endmac
+
+
+#macro WARPTO(a)
+	Entity[a]:WarpTo
 #endmac

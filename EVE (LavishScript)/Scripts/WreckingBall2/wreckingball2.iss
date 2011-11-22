@@ -8,12 +8,14 @@ variable(script) int Slow = 20
 #include debug/theDebug.iss
 
 #include moods/Salvager.iss
+#include moods/Miner.iss
 
 variable(script) theShip Ship
 variable(script) theChicken Chicken
 variable(script) theDebug Debug
 
 variable(script) Salvager Salvager
+variable(script) Miner Miner
 
 variable(script) bool Paused = TRUE
 variable(script) string State = Salvager
@@ -24,6 +26,8 @@ variable(script) bool EntityWatch = FALSE
 
 variable(script) string BookmarkSymbol = "@"
 variable(script) string HomeBookmarkSymbol = "?"
+
+variable(script) settingsetref AgentConfig
 
 variable(script) bool Looting = TRUE
 variable(script) bool GoSafe = TRUE
@@ -63,6 +67,9 @@ function main()
 				if !INSPACE
 					call Ship.Undock
 				call Ship.Goto ${EVE.Bookmark[${BookmarkSymbol}]}
+				break
+			case Miner
+				call Miner.Begin
 				break
 		}
 		if ${Looped}
