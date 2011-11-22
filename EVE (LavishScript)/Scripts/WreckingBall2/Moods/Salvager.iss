@@ -87,7 +87,7 @@ objectdef Salvager
 	
 	function Docked()
 	{
-		call Ship.Unload Hangar
+		call Ship.Unload Hangar, 0
 		Stage:Set[MoveOn]
 		
 		if ${DoUnload}
@@ -101,16 +101,13 @@ objectdef Salvager
 		if ${StillGoing}
 		{
 			call Ship.Undock
-			if ${Tractors.Used} < 1 || ${Salvagers.Used} < 1 
+			This:GetModules
+			if ${Tractors.Used} < 1 && ${Salvagers.Used} < 1
 			{
-				This:GetModules
-				if ${Tractors.Used} < 1 && ${Salvagers.Used} < 1
-				{
-					echo "No Modules - ${Tractors.Used} - ${Salvagers.Used}"
-					Debug:Spew["${Tractors.Used} - ${Salvagers.Used}", "FirstUndockNoModules", TRUE]
-					call Ship.Goto ${SafeSpot}
-					StillGoing:Set[FALSE]
-				}
+				echo "No Modules - ${Tractors.Used} - ${Salvagers.Used}"
+				Debug:Spew["${Tractors.Used} - ${Salvagers.Used}", "FirstUndockNoModules", TRUE]
+				call Ship.Goto ${SafeSpot}
+				StillGoing:Set[FALSE]
 			}
 		}
 	}
@@ -268,26 +265,6 @@ objectdef Salvager
 				if ${ChickenCheck.Find[Null]} < 1
 					call Chicken.DoChicken ${SafeSpot}, ${ChickenCheck}
 				
-				;Tractors on
-				if ENTDISTANCE(${Iter.Value}) > LOOTRANGE
-				{
-					if ${Tractors.FirstValue(exists)}
-					do
-					{
-						if !MODACTIVATED(${Tractors.CurrentValue}) && !${Tractors.Element[${Iter.Value}](exists)} && ENTEXISTS(${Iter.Value})
-						{
-							call Ship.MakeActiveTarget ${Iter.Value}
-							if ${Return} > 90
-								continue
-							call Ship.ActivateModule ${Tractors.CurrentValue}, TRUE
-							Tractors:Set[${Iter.Value}, ${Tractors.CurrentValue}]
-							Tractors:Erase[${Tractors.CurrentKey}]
-							break
-						}
-					}
-					while ${Tractors.NextValue(exists)}
-				}
-				
 				;Tractors off
 				if ENTDISTANCE(${Iter.Value}) < LOOTRANGE && MODACTIVE(${Tractors.Element[${Iter.Value}]}) && !${Approaching}
 					call Ship.ActivateModule ${Tractors.Element[${Iter.Value}]}, FALSE
@@ -308,6 +285,26 @@ objectdef Salvager
 						}
 					}
 					while ${Salvagers.NextKey(exists)}
+				}
+				
+				;Tractors on
+				if ENTDISTANCE(${Iter.Value}) > LOOTRANGE
+				{
+					if ${Tractors.FirstValue(exists)}
+					do
+					{
+						if !MODACTIVATED(${Tractors.CurrentValue}) && !${Tractors.Element[${Iter.Value}](exists)} && ENTEXISTS(${Iter.Value})
+						{
+							call Ship.MakeActiveTarget ${Iter.Value}
+							if ${Return} > 90
+								continue
+							call Ship.ActivateModule ${Tractors.CurrentValue}, TRUE
+							Tractors:Set[${Iter.Value}, ${Tractors.CurrentValue}]
+							Tractors:Erase[${Tractors.CurrentKey}]
+							break
+						}
+					}
+					while ${Tractors.NextValue(exists)}
 				}
 			}
 			while ${Iter:Next(exists)}

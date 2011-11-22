@@ -25,7 +25,17 @@
 		<Set Name="Gneiss" GroupID="467">
 			<Setting Name="Gneiss">1229</Setting>
 		</Set>
+		<Set Name="Ice" GroupID="465">
+			<Setting Name="Clear Icicle">16262</Setting>
+		</Set>
+		<Set Name="Pyroxeres" GroupID="459">
+			<Setting Name="Augumene">28618</Setting>
+			<Setting Name="Pyroxeres">1224</Setting>
+			<Setting Name="Solid Pyroxeres">17459</Setting>
+			<Setting Name="Viscous Pyroxeres">17460</Setting>
+		</Set>
 		<Set Name="Veldspar" GroupID="462">
+			<Setting Name="Banidine">28617</Setting>
 			<Setting Name="Veldspar">1230</Setting>
 		</Set>
 	</Set>
@@ -57,6 +67,7 @@
 			<Setting Name="Cap Booster 100">3554</Setting>
 			<Setting Name="Cap Booster 150">11283</Setting>
 			<Setting Name="Cap Booster 25">263</Setting>
+			<Setting Name="Cap Booster 50">264</Setting>
 			<Setting Name="Cap Booster 75">3552</Setting>
 		</Set>
 		<Set Name="Cruise Missile" GroupID="386">
@@ -68,18 +79,27 @@
 			<Setting Name="Defender I">265</Setting>
 		</Set>
 		<Set Name="FoF Heavy Missile" GroupID="395">
+			<Setting Name="Eradicator F.O.F. Heavy Missile I">1822</Setting>
 			<Setting Name="Hellhound F.O.F. Heavy Missile I">1824</Setting>
 			<Setting Name="Hydra F.O.F. Heavy Missile I">1818</Setting>
+			<Setting Name="Stalker F.O.F. Heavy Missile I">1820</Setting>
 		</Set>
 		<Set Name="FoF Light Missile" GroupID="394">
 			<Setting Name="Exterminator F.O.F. Light Missile I">1814</Setting>
+			<Setting Name="Firefly F.O.F. Light Missile I">1816</Setting>
+			<Setting Name="Seeker F.O.F. Light Missile I">269</Setting>
 		</Set>
 		<Set Name="Frequency Crystal" GroupID="86">
+			<Setting Name="Infrared S">241</Setting>
 			<Setting Name="Microwave L">256</Setting>
+			<Setting Name="Microwave S">240</Setting>
 			<Setting Name="Multifrequency L">262</Setting>
 			<Setting Name="Sanshas Infrared S">19982</Setting>
 			<Setting Name="Sanshas Radio S">19978</Setting>
+			<Setting Name="True Sanshas Microwave S">20851</Setting>
 			<Setting Name="True Sanshas Standard S">20855</Setting>
+			<Setting Name="Ultraviolet M">251</Setting>
+			<Setting Name="Ultraviolet S">243</Setting>
 			<Setting Name="Xray S">244</Setting>
 		</Set>
 		<Set Name="Heavy Missile" GroupID="385">
@@ -110,6 +130,9 @@
 			<Setting Name="Piranha Light Missile">213</Setting>
 			<Setting Name="Sabretooth Light Missile">212</Setting>
 		</Set>
+		<Set Name="Mercoxit Mining Crystal" GroupID="663">
+			<Setting Name="Mercoxit Mining Crystal I">18054</Setting>
+		</Set>
 		<Set Name="Mining Crystal" GroupID="482">
 			<Setting Name="Kernite Mining Crystal II">18606</Setting>
 			<Setting Name="Pyroxeres Mining Crystal II">18614</Setting>
@@ -118,7 +141,9 @@
 		</Set>
 		<Set Name="Projectile Ammo" GroupID="83">
 			<Setting Name="Carbonized Lead S">178</Setting>
+			<Setting Name="EMP M">193</Setting>
 			<Setting Name="Fusion S">183</Setting>
+			<Setting Name="Proton M">188</Setting>
 			<Setting Name="Proton S">180</Setting>
 		</Set>
 		<Set Name="Rocket" GroupID="387">
@@ -153,10 +178,12 @@
 		</Set>
 		<Set Name="Livestock" GroupID="283">
 			<Setting Name="Militants">25373</Setting>
+			<Setting Name="Slaves">3721</Setting>
 			<Setting Name="Tourists">3719</Setting>
 		</Set>
 		<Set Name="Miscellaneous" GroupID="314">
 			<Setting Name="Kruul's DNA">14292</Setting>
+			<Setting Name="Olufami's DNA">18655</Setting>
 			<Setting Name="Special Delivery">11068</Setting>
 		</Set>
 		<Set Name="Refinables" GroupID="355">
@@ -181,7 +208,9 @@
 			<Setting Name="Hammerhead I">2183</Setting>
 			<Setting Name="Hammerhead II">2185</Setting>
 			<Setting Name="Hobgoblin I">2454</Setting>
+			<Setting Name="Hobgoblin II">2456</Setting>
 			<Setting Name="Hornet I">2464</Setting>
+			<Setting Name="Infiltrator I">2173</Setting>
 			<Setting Name="Ogre II">2446</Setting>
 			<Setting Name="Praetor I">2193</Setting>
 			<Setting Name="Valkyrie II">21640</Setting>
@@ -200,6 +229,7 @@
 		</Set>
 		<Set Name="Cyberimplant" GroupID="300">
 			<Setting Name="Low-grade Slave Alpha">22119</Setting>
+			<Setting Name="Low-grade Slave Epsilon">22122</Setting>
 		</Set>
 	</Set>
 	<Set Name="Material" CatID="4">
@@ -217,6 +247,7 @@
 		</Set>
 		<Set Name="Salvaged Materials" GroupID="754">
 			<Setting Name="Alloyed Tritanium Bar">25595</Setting>
+			<Setting Name="Armor Plates">25605</Setting>
 			<Setting Name="Broken Drone Transceiver">25596</Setting>
 			<Setting Name="Burned Logic Circuit">25600</Setting>
 			<Setting Name="Charred Micro Circuit">25599</Setting>
@@ -241,8 +272,28 @@
 			<Setting Name="10MN MicroWarpdrive I">12052</Setting>
 			<Setting Name="1MN Afterburner I">439</Setting>
 			<Setting Name="1MN MicroWarpdrive I">434</Setting>
+			<Setting Name="Catalyzed Cold-Gas I Arcjet Thrusters">5973</Setting>
+			<Setting Name="Phased Monopropellant I Hydrazine Boosters">5971</Setting>
 			<Setting Name="Y-S8 Hydrocarbon I Afterburners">6005</Setting>
 			<Setting Name="Y-T8 Overcharged Hydrocarbon I Microwarpdrive">5975</Setting>
+		</Set>
+		<Set Name="Armor Coating" GroupID="98">
+			<Setting Name="Interphase Heat Diffusion Plating">16341</Setting>
+			<Setting Name="Magnetic Plating I">1284</Setting>
+			<Setting Name="Reactive Plating I">1264</Setting>
+			<Setting Name="Reflective Plating I">1197</Setting>
+			<Setting Name="Thermic Plating I">1294</Setting>
+		</Set>
+		<Set Name="Armor Plating Energized" GroupID="326">
+			<Setting Name="Energized Basic Reflective Plating">11215</Setting>
+			<Setting Name="Energized Basic Regenerative Plating">11235</Setting>
+			<Setting Name="N-Type Regenerative Membrane I">16423</Setting>
+		</Set>
+		<Set Name="Armor Reinforcer" GroupID="329">
+			<Setting Name="100mm Reinforced Titanium Plates I">11339</Setting>
+			<Setting Name="200mm Reinforced Nanofiber Plates I">11353</Setting>
+			<Setting Name="200mm Reinforced Steel Plates I">11295</Setting>
+			<Setting Name="50mm Reinforced Steel Plates I">11291</Setting>
 		</Set>
 		<Set Name="Armor Repair Unit" GroupID="62">
 			<Setting Name="Medium Armor Repairer I">3528</Setting>
@@ -262,7 +313,13 @@
 		</Set>
 		<Set Name="Capacitor Booster" GroupID="76">
 			<Setting Name="Medium Capacitor Booster I">577</Setting>
+			<Setting Name="Small Brief Capacitor Overcharge I">5009</Setting>
 			<Setting Name="Small Capacitor Booster I">3566</Setting>
+			<Setting Name="Small F-RX Prototype I Capacitor Boost">5007</Setting>
+		</Set>
+		<Set Name="Capacitor Power Relay" GroupID="767">
+			<Setting Name="Capacitor Power Relay I">1445</Setting>
+			<Setting Name="Type-D Power Core Modification: Capacitor Power Relay">8175</Setting>
 		</Set>
 		<Set Name="Cargo Scanner" GroupID="47">
 			<Setting Name="Cargo Scanner I">442</Setting>
@@ -275,6 +332,9 @@
 			<Setting Name="Co-Processor I">3887</Setting>
 			<Setting Name="Nanomechanical CPU Enhancer I">8747</Setting>
 		</Set>
+		<Set Name="Damage Control" GroupID="60">
+			<Setting Name="Damage Control I">2046</Setting>
+		</Set>
 		<Set Name="Drone Control Range Module" GroupID="647">
 			<Setting Name="Drone Link Augmentor I">23527</Setting>
 		</Set>
@@ -284,12 +344,16 @@
 		<Set Name="ECCM" GroupID="202">
 			<Setting Name="ECCM - Gravimetric I">2004</Setting>
 			<Setting Name="ECCM - Omni I">2005</Setting>
+			<Setting Name="ECCM - Radar I">1947</Setting>
 			<Setting Name="Omni Positional ECCM Sensor System I">7965</Setting>
 		</Set>
 		<Set Name="ECM" GroupID="201">
 			<Setting Name="Compulsive Multispectral ECM I">19931</Setting>
 			<Setting Name="ECM - Multispectral Jammer I">1957</Setting>
+			<Setting Name="ECM - Phase Inverter I">1958</Setting>
 			<Setting Name="ECM - Spatial Destabilizer I">1955</Setting>
+			<Setting Name="Enfeebling Phase Inversion ECM I">19939</Setting>
+			<Setting Name="Halting Phase Inversion ECM I">19937</Setting>
 			<Setting Name="Initiated Multispectral ECM I">9521</Setting>
 		</Set>
 		<Set Name="ECM Burst" GroupID="80">
@@ -301,18 +365,34 @@
 			<Setting Name="Signal Distortion Amplifier I">25561</Setting>
 		</Set>
 		<Set Name="Energy Destabilizer" GroupID="71">
+			<Setting Name="5W Infectious Power System Malfunction">4471</Setting>
+			<Setting Name="Medium Energy Neutralizer I">12265</Setting>
+			<Setting Name="Medium Unstable Power Fluctuator I">16471</Setting>
 			<Setting Name="Small 'Gremlin' Power Core Disruptor I">4477</Setting>
 			<Setting Name="Small Energy Neutralizer I">533</Setting>
 		</Set>
 		<Set Name="Energy Transfer Array" GroupID="67">
+			<Setting Name="Medium Energy Transfer Array I">12217</Setting>
 			<Setting Name="Small Energy Transfer Array I">529</Setting>
 		</Set>
 		<Set Name="Energy Vampire" GroupID="68">
+			<Setting Name="E5 Prototype Energy Vampire">5135</Setting>
+			<Setting Name="Medium 'Ghoul' Energy Siphon I">16505</Setting>
 			<Setting Name="Small 'Ghoul' Energy Siphon I">5141</Setting>
 			<Setting Name="Small Nosferatu I">530</Setting>
 		</Set>
 		<Set Name="Energy Weapon" GroupID="53">
+			<Setting Name="Dual Afocal Pulse Maser I">5217</Setting>
+			<Setting Name="Dual Light Beam Laser I">452</Setting>
+			<Setting Name="Dual Light Pulse Laser I">451</Setting>
+			<Setting Name="Dual Modal Light Laser I">6631</Setting>
+			<Setting Name="Focused Medium Beam Laser I">457</Setting>
+			<Setting Name="Gatling Pulse Laser I">450</Setting>
+			<Setting Name="Heavy Afocal Maser I">6961</Setting>
+			<Setting Name="Heavy Beam Laser I">459</Setting>
 			<Setting Name="Heavy Beam Laser II">3025</Setting>
+			<Setting Name="Heavy Pulse Laser I">458</Setting>
+			<Setting Name="Quad Light Beam Laser I">455</Setting>
 		</Set>
 		<Set Name="Expanded Cargohold" GroupID="765">
 			<Setting Name="Expanded Cargohold II">1319</Setting>
@@ -365,6 +445,9 @@
 		<Set Name="Passive Targeting System" GroupID="82">
 			<Setting Name="Passive Targeter I">581</Setting>
 		</Set>
+		<Set Name="Power Diagnostic System" GroupID="766">
+			<Setting Name="Power Diagnostic System I">1539</Setting>
+		</Set>
 		<Set Name="Projected ECCM" GroupID="289">
 			<Setting Name="ECCM Projector I">1959</Setting>
 			<Setting Name="Phased Muon ECCM Caster I">7220</Setting>
@@ -372,6 +455,10 @@
 		</Set>
 		<Set Name="Projectile Weapon" GroupID="55">
 			<Setting Name="125mm Gatling AutoCannon I">484</Setting>
+			<Setting Name="720mm Howitzer Artillery I">493</Setting>
+		</Set>
+		<Set Name="Reactor Control Unit" GroupID="769">
+			<Setting Name="Reactor Control Unit I">1353</Setting>
 		</Set>
 		<Set Name="Remote Sensor Booster" GroupID="290">
 			<Setting Name="Remote Sensor Booster I">1963</Setting>
@@ -382,15 +469,18 @@
 		</Set>
 		<Set Name="Sensor Backup Array" GroupID="203">
 			<Setting Name="Gravimetric Backup Array I">2579</Setting>
+			<Setting Name="Magnetometric Backup Array I">2587</Setting>
 			<Setting Name="Multi Sensor Backup Array I">2591</Setting>
 		</Set>
 		<Set Name="Sensor Booster" GroupID="212">
+			<Setting Name="Alumel-Wired I Sensor Augmentation">6159</Setting>
 			<Setting Name="Sensor Booster I">1973</Setting>
 		</Set>
 		<Set Name="Shield Amplifier" GroupID="295">
 			<Setting Name="Explosion Dampening Amplifier I">2529</Setting>
 			<Setting Name="Heat Dissipation Amplifier I">2537</Setting>
 			<Setting Name="Heat Dissipation Amplifier II">2539</Setting>
+			<Setting Name="Kinetic Deflection Amplifier I">2545</Setting>
 			<Setting Name="Magnetic Scattering Amplifier II">2553</Setting>
 		</Set>
 		<Set Name="Shield Boost Amplifier" GroupID="338">
@@ -435,14 +525,17 @@
 		</Set>
 		<Set Name="Ship Scanner" GroupID="48">
 			<Setting Name="Rudimentary Ship Scanner I">6527</Setting>
+			<Setting Name="Ship Scanner I">443</Setting>
 		</Set>
 		<Set Name="Signal Amplifier" GroupID="210">
 			<Setting Name="Signal Amplifier I">1986</Setting>
 		</Set>
 		<Set Name="Smart Bomb" GroupID="72">
 			<Setting Name="Medium Graviton Smartbomb I">3941</Setting>
+			<Setting Name="Medium Plasma Smartbomb I">3947</Setting>
 			<Setting Name="Medium Proton Smartbomb I">3937</Setting>
 			<Setting Name="Medium YF-12a Smartbomb">9800</Setting>
+			<Setting Name="Small Graviton Smartbomb I">1551</Setting>
 			<Setting Name="Small Proton Smartbomb I">1547</Setting>
 		</Set>
 		<Set Name="Stasis Web" GroupID="65">
@@ -472,7 +565,10 @@
 			<Setting Name="Warp Core Stabilizer I">10998</Setting>
 		</Set>
 		<Set Name="Warp Scrambler" GroupID="52">
+			<Setting Name="Initiated Harmonic Warp Scrambler I">5445</Setting>
 			<Setting Name="J5b Phased Prototype Warp Scrambler I">5439</Setting>
+			<Setting Name="Warp Disruptor I">3242</Setting>
+			<Setting Name="Warp Scrambler I">447</Setting>
 		</Set>
 	</Set>
 	<Set Name="Planetary Interaction" CatID="41">
