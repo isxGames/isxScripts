@@ -3,6 +3,7 @@
 ;
 ; Description - a small tool
 ; -----------
+; * Buff Bot 
 ; * Cycles through list of selected abilities
 ; * Cycles through list of items to use
 ; * Swaps weapons instantly to use item abilities (-clickies-)
@@ -11,6 +12,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20111128 (Zandros)
+; * Added Buff Only List that supports both PC Names and Guild Names
+;
 ; 20111107 (Zandros)
 ; * Added Auto Accept Rez and auto target to repair gear
 ;
@@ -99,6 +103,7 @@ variable settingsetref Abilities
 variable settingsetref Items
 variable settingsetref Buffs
 variable settingsetref TriggerBuffs
+variable settingsetref BuffOnly
 
 ;; Equipment variables
 variable string LastPrimary
@@ -108,6 +113,7 @@ variable string LastSecondary
 variable string PCName
 variable string PCNameFull
 variable(global) collection:string Tools_BuffRequestList
+variable string BuffOnlyName = ""
 
 ;; Class Specific Routines
 #include ./Tools/Class/Bard.iss
@@ -291,6 +297,7 @@ function Initialize()
 	LavishSettings[DPS]:AddSet[Items-${Me.FName}]
 	LavishSettings[DPS]:AddSet[Buffs-${Me.FName}]
 	LavishSettings[DPS]:AddSet[TriggerBuffs-${Me.FName}]
+	LavishSettings[DPS]:AddSet[BuffOnly-${Me.FName}]
 
 	LavishSettings[DPS]:Import[${Script.CurrentDirectory}/Tools_save.xml]
 	
@@ -299,6 +306,7 @@ function Initialize()
 	Items:Set[${LavishSettings[DPS].FindSet[Items-${Me.FName}].GUID}]
 	Buffs:Set[${LavishSettings[DPS].FindSet[Buffs-${Me.FName}].GUID}]
 	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}].GUID}]
+	BuffOnly:Set[${LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}].GUID}]
 
 	doUseAbilities:Set[${General.FindSetting[doUseAbilities,TRUE]}]
 	doUseItems:Set[${General.FindSetting[doUseItems,FALSE]}]
@@ -405,6 +413,7 @@ function Initialize()
 	BuildForms
 	BuildBuffs
 	BuildTriggerBuffs
+	BuildBuffOnly
 
 	;;Class Specific - Bard Stuff
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
@@ -534,7 +543,6 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 	}
 }
 
-
 ;===================================================
 ;===       ATOM - Monitor Chat Event            ====
 ;===================================================
@@ -598,7 +606,6 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			doAcceptRez:Set[TRUE]
 		}
 	}
-	
 }
 
 ;===================================================
@@ -875,7 +882,6 @@ function PushStance()
 		}
 	}
 }
-
 
 ;===================================================
 ;===   OKAY TO ATTACK - returns TRUE/FALSE      ====
@@ -1218,48 +1224,74 @@ function BuffRequests()
 	{
 		variable iterator Iterator
 		variable bool WeBuffed
+		variable bool Okay2Buff = FALSE
 		
 		do
 		{
 			if ${Pawn[name,${Tools_BuffRequestList.CurrentKey}](exists)} && ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Distance}<25 && ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].HaveLineOfSightTo}
 			{
-				Pawn[name,${Tools_BuffRequestList.CurrentKey}]:Target
-				wait 10 ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
-				if ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
+
+				;; set our Iterator to BuffOnly
+				BuffOnly:GetSettingIterator[Iterator]
+
+				;; if nothing is in the buffonly list then might as well we buff everyone
+				if !${Iterator.Key(exists)}
 				{
-					;; reset TriggerBuffs to 1st Key
-					TriggerBuffs:GetSettingIterator[Iterator]
-					WeBuffed:Set[FALSE]
-					
-					;; cycle through all our trigger buffs to ensure we casted them
-					while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
+					Okay2Buff:Set[TRUE]
+				}
+				
+				;; cycle through all our BuffOnly checking if they exist by name or by guild
+				while ${Iterator.Key(exists)}
+				{
+					if ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Name.Find[${Iterator.Key}]} || ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Title.Find[${Iterator.Key}]}
 					{
-						do
-						{
-							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
-							{
-								break
-							}
-							waitframe
-						}
-						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
-						
-						;; cast the buff
-						if ${Me.Ability[${Iterator.Key}].IsReady}
-						{
-							call UseAbility "${Iterator.Key}"
-							if ${Return}
-							{
-								WeBuffed:Set[TRUE]
-							}
-						}
-						Iterator:Next
+						Okay2Buff:Set[TRUE]
 					}
-					
-					;; announce we buffed someone
-					if ${WeBuffed}
+					Iterator:Next
+				}
+				
+				if ${Okay2Buff}
+				{
+					Pawn[name,${Tools_BuffRequestList.CurrentKey}]:Target
+					wait 10 ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
+					if ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
 					{
-						vgecho "Buffed: ${Tools_BuffRequestList.CurrentKey}"
+						;; set out Iterator to TriggerBuffs
+						TriggerBuffs:GetSettingIterator[Iterator]
+						
+						;; set our flagg to we have not buffed anyone
+						WeBuffed:Set[FALSE]
+								
+						;; cycle through all our trigger buffs to ensure we casted them
+						while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
+						{
+							do
+							{
+								if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
+								{
+									break
+								}
+								waitframe
+							}
+							while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+									
+							;; cast the buff
+							if ${Me.Ability[${Iterator.Key}].IsReady}
+							{
+								call UseAbility "${Iterator.Key}"
+								if ${Return}
+								{
+									WeBuffed:Set[TRUE]
+								}
+							}
+							Iterator:Next
+						}
+								
+						;; announce we buffed someone
+						if ${WeBuffed}
+						{
+							vgecho "Buffed: ${Tools_BuffRequestList.CurrentKey}"
+						}
 					}
 				}
 			}
@@ -1561,21 +1593,58 @@ atom(global) BuildBuffs()
 	}
 }
 
+;===================================================
+;===         UI Tools for Buff Only             ====
+;===================================================
+atom(global) AddBuffOnly(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}]:AddSetting[${aName}, ${aName}]
+	}
+}
+atom(global) RemoveBuffOnly(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		BuffOnly.FindSetting[${aName}]:Remove
+	}
+}
+atom(global) BuildBuffOnly()
+{
+	variable iterator Iterator
+	BuffOnly:GetSettingIterator[Iterator]
+	UIElement[BuffOnlyList@BuffBot@DPS@Tools]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[BuffOnlyList@BuffBot@DPS@Tools]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+	variable int i = 0
+	BuffOnly:Clear
+	while ${i:Inc} <= ${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Items}
+	{
+		LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}]:AddSetting[${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Item[${i}].Text}]
+	}
+}
+
+
+
 atom(global) BuildForms()
 {
 	variable int i
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
 	{
-		if ${UIElement[CombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${CombatForm}]}
+		if ${UIElement[CombatForm@BuffBot@DPS@Tools].Item[${i}].Text.Equal[${CombatForm}]}
 		{
-			UIElement[CombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
+			UIElement[CombatForm@BuffBot@DPS@Tools]:SelectItem[${i}]
 		}
 	}
-	for (i:Set[1] ; ${i} <= ${UIElement[NonCombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
+	for (i:Set[1] ; ${i} <= ${UIElement[NonCombatForm@BuffBot@DPS@Tools].Items} ; i:Inc)
 	{
-		if ${UIElement[NonCombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${NonCombatForm}]}
+		if ${UIElement[NonCombatForm@BuffBot@DPS@Tools].Item[${i}].Text.Equal[${NonCombatForm}]}
 		{
-			UIElement[NonCombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
+			UIElement[NonCombatForm@BuffBot@DPS@Tools]:SelectItem[${i}]
 		}
 	}
 }

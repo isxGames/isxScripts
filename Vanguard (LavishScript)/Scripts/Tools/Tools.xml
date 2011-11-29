@@ -583,6 +583,7 @@
 								BuildBuffs
 							</OnRightClick>
 						</Listbox>
+
 					</Tab>
 					
 					<Tab name='Class'>
@@ -900,9 +901,64 @@
 								BuildTriggerBuffs
 							</OnRightClick>
 						</Listbox>
-						
+						 <Text Name='txtBuffOnly' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>65%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>== Buff these PCs/Guilds ==</Text>
+						</Text>
+						<CommandButton Name="AddBuffOnlyButton" Template="VG.GreenCommandButton">
+							<X>6%</X>
+							<Y>68%</Y>
+							<Height>18</Height>
+							<Width>80</Width>
+							<Text>Add Name</Text>
+							<OnLeftClick>
+								AddBuffOnly "${Script[Tools].VariableScope.BuffOnlyName}"
+								BuildBuffOnly
+							</OnLeftClick>
+						</CommandButton>
+						<Textentry Name='BuffOnlyName' Template='VG.TextEntry'>
+							<X>47%</X>
+							<Y>68%</Y>
+							<Width>47%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.BuffOnlyName}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.BuffOnlyName:Set[${This.Text}]
+									;echo BuffOnlyName>0 == [${Script[Tools].VariableScope.BuffOnlyName}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[Tools].VariableScope.BuffOnlyName:Set[""]
+									;echo BuffOnlyName=0 == [${Script[Tools].VariableScope.BuffOnlyName}]
+								}
+							</OnChange>
+						</Textentry>
+						<listbox Name="BuffOnlyList" Template="VG.ListBox">
+							<X>6%</X>
+							<Y>72.5%</Y>
+							<Width>190</Width>
+							<Height>80</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								BuildBuffOnly
+							</OnLoad>
+							<OnRightClick>
+								RemoveBuffOnly "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								BuildBuffOnly
+							</OnRightClick>
+						</listbox>
 					</Tab>
-
 				</Tabs>
 			</TabControl>
 		</Children>
