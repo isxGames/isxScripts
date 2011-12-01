@@ -4,6 +4,7 @@
 ; Description - a small tool
 ; -----------
 ; * Buff Bot 
+; * Assist and follow tank
 ; * Cycles through list of selected abilities
 ; * Cycles through list of items to use
 ; * Swaps weapons instantly to use item abilities (-clickies-)
@@ -12,6 +13,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20111130 (Zandros)
+; * Added follow tank routine
+;
 ; 20111128 (Zandros)
 ; * Added Buff Only List that supports both PC Names and Guild Names
 ;
@@ -76,6 +80,7 @@ variable bool doGroupsay = FALSE
 variable bool doRaidsay = FALSE
 variable bool doTells = FALSE
 variable bool doRift = FALSE
+variable bool doFollow = FALSE
 variable string TriggerBuffing = ""
 variable string Tank = Unknown
 variable string CombatForm = NONE
@@ -115,6 +120,11 @@ variable string PCNameFull
 variable(global) collection:string Tools_BuffRequestList
 variable string BuffOnlyName = ""
 
+;; Follow variables
+variable int FollowDistance1 = 3
+variable int FollowDistance2 = 5
+
+
 ;; Class Specific Routines
 #include ./Tools/Class/Bard.iss
 
@@ -138,11 +148,9 @@ function main()
 	;-------------------------------------------
 	do
 	{
+	
 		;; this allows AutoAttack to kick in
-		if ${doAutoAttack}
-		{
-			wait 5
-		}
+		wait .5
 		
 		;; check and accept Rez
 		call RezAccept
@@ -152,7 +160,7 @@ function main()
 			;; Always check these
 			call AssistTank
 			call ChangeForm
-			call StripIt
+			call FollowTank
 			call BuffRequests
 			call RepairEquipment
 
@@ -163,6 +171,7 @@ function main()
 			if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Resource]} && !${Me.Target.IsDead}
 			{
 				;; execute each of these
+				call StripIt
 				call CounterIt
 				call PushStance
 				call RangedAttack
@@ -327,6 +336,8 @@ function Initialize()
 	doTells:Set[${General.FindSetting[doTells,FALSE]}]
 	doRift:Set[${General.FindSetting[doRift,FALSE]}]
 	TriggerBuffing:Set[${General.FindSetting[TriggerBuffing,""]}]
+	FollowDistance1:Set[${General.FindSetting[FollowDistance1,3]}]
+	FollowDistance2:Set[${General.FindSetting[FollowDistance2,5]}]
 	
 	;; Class Specific - Bard
 	CombatSong:Set[${General.FindSetting[CombatSong]}]
@@ -497,6 +508,8 @@ function atexit()
 	General:AddSetting[doRaidsay,${doRaidsay}]
 	General:AddSetting[doTells,${doTells}]
 	General:AddSetting[doRift,${doRift}]
+	General:AddSetting[FollowDistance1,${FollowDistance1}]
+	General:AddSetting[FollowDistance2,${FollowDistance2}]
 	General:AddSetting[TriggerBuffing,${TriggerBuffing}]
 	if ${TriggerBuffing.Length}==0
 	{
@@ -1480,6 +1493,37 @@ function RepairEquipment()
 					Merchant:End
 					vgecho Repaired equipment
 					return
+				}
+			}
+		}
+	}
+}
+
+;===================================================
+;===        FOLLOW TANK SUB-ROUTINE             ====
+;===================================================
+function FollowTank()
+{
+	if ${doFollow}
+	{
+		if ${Pawn[name,${Tank}](exists)}
+		{
+			;; did target move out of rang?
+			if ${Pawn[name,${Tank}].Distance}>=${FollowDistance2}
+			{
+				variable bool DidWeMove = FALSE
+				;; start moving until target is within range
+				while !${isPaused} && ${doFollow} && ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[name,${Tank}].Distance}<45
+				{
+					Pawn[name,${Tank}]:Face
+					VG:ExecBinding[moveforward]
+					DidWeMove:Set[TRUE]
+					wait .25
+				}
+				;; if we moved then we want to stop moving
+				if ${DidWeMove}
+				{
+					VG:ExecBinding[moveforward,release]
 				}
 			}
 		}

@@ -324,7 +324,6 @@
 								Script[Tools].VariableScope.doAutoRez:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-
 						<Textentry Name="StartAttack" Template="VG.TextEntry">
 							<X>6%</X>
 							<Y>75%</Y>
@@ -357,10 +356,103 @@
 							<Alignment>Left</Alignment>
 							<Text>Start Attacking</Text>
 						</Text>
+						
+						<checkbox Name="doFollow" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>80%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Follow Tank:</Text>
+							<AutoTooltip>  be sure to adjust your Turn-Speed Multiplier in settings </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doFollow}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doFollow:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="FollowDistance1" Template="VG.TextEntry">
+							<X>50%</X>
+							<Y>79.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[Tools].VariableScope.FollowDistance1}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.FollowDistance1:Set[3]
+								}
+								if ${This.Text.Length} > 2
+								{
+									This:SetText[45]
+								}
+								if ${This.Text.Length} > 0
+								{
+									if ${This.Text} > 45
+									{
+										This:SetText[45]
+									}
+									if  ${This.Text} > ${Script[Tools].VariableScope.FollowDistance2}
+									{
+										This:SetText[${Script[Tools].VariableScope.FollowDistance2}]
+									}
+									
+									Script[Tools].VariableScope.FollowDistance1:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-Follow" Template="VG.Text">
+							<X>65%</X>
+							<Y>80%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>to</Text>
+						</Text>
+						<Textentry Name="FollowDistance2" Template="VG.TextEntry">
+							<X>72%</X>
+							<Y>79.5%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[Tools].VariableScope.FollowDistance2}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.FollowDistance2:Set[3]
+								}
+								if ${This.Text.Length} > 2
+								{
+									This:SetText[45]
+								}
+								if ${This.Text.Length} > 0
+								{
+									if ${This.Text} > 45
+									{
+										This:SetText[45]
+									}
+									if ${Script[Tools].VariableScope.FollowDistance1} > ${This.Text}
+									{
+										This:SetText[${Script[Tools].VariableScope.FollowDistance1}]
+									}
+									Script[Tools].VariableScope.FollowDistance2:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+
 						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>82%</Y>
+							<Y>85%</Y>
 							<Width>180</Width>
 							<Height>30</Height>
 							<Text>Tank:  </Text>
