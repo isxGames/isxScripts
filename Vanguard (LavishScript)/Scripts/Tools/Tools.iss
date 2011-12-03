@@ -231,7 +231,7 @@ function Initialize()
 			StripEnchantment1:Set[Strip Enchantment]
 			break
 		
-		Psionicist
+		case Psionicist
 			Counter1:Set[Nullifying Field]
 			Counter2:Set[Psychic Mutation]
 			PushStance1:Set[None]
