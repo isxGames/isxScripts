@@ -41,6 +41,11 @@
 #endmac
 
 
+#macro RELOAD()
+	EVE:Execute[CmdReloadAmmo]
+#endmac
+
+
 #macro AUTOPILOT()
 	EVE:Execute[CmdToggleAutopilot]
 #endmac
@@ -53,6 +58,11 @@
 
 #macro STACKCARGOITEMS()
 	MyShip:StackAllCargo
+#endmac
+
+
+#macro OPENFITTING()
+	EVE:Execute[OpenFitting]
 #endmac
 
 
@@ -104,6 +114,10 @@ EVE:DronesEngageMyTarget[a]
 #endmac
 
 
+#macro MODMININGAMOUNT(a)
+	${MyShip.Module[a].SpecialtyCrystalMiningAmount}
+#endmac
+
 #macro MODCURRENTCHARGES(a)
 	${MyShip.Module[a].CurrentCharges}
 #endmac
@@ -131,6 +145,11 @@ EVE:DronesEngageMyTarget[a]
 
 #macro MODRELOAD(a,b)
 	MyShip.Module[a]:ChangeAmmo[b,MODMAXCHARGES(a)]
+#endmac
+
+
+#macro MODUNLOAD(a,b)
+	MyShip.Module[a]:RemoveCharge
 #endmac
 
 
@@ -272,6 +291,11 @@ EVE:DronesEngageMyTarget[a]
 
 #macro LOCK(a)
 	Entity[a]:LockTarget
+#endmac
+
+
+#macro UNLOCK(a)
+	Entity[a]:UnlockTarget
 #endmac
 
 

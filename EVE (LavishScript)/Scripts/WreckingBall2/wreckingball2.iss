@@ -3,18 +3,22 @@ variable(script) int Slow = 20
 #include core/Defines.iss
 #include core/Macros.iss
 #include core/theShip.iss
+#include core/theAgent.iss
 #include core/theChicken.iss
 
 #include debug/theDebug.iss
 
 #include moods/Salvager.iss
 #include moods/Miner.iss
+#include moods/Missioner.iss
 
 variable(script) theShip Ship
+variable(script) theAgent Mission
 variable(script) theChicken Chicken
 variable(script) theDebug Debug
 
 variable(script) Salvager Salvager
+variable(script) Missioner Missioner
 variable(script) Miner Miner
 
 variable(script) bool Paused = TRUE
@@ -28,12 +32,14 @@ variable(script) string BookmarkSymbol = "@"
 variable(script) string HomeBookmarkSymbol = "?"
 
 variable(script) settingsetref AgentConfig
+variable(script) int64 CurrentAgent
 
 variable(script) bool Looting = TRUE
 variable(script) bool GoSafe = TRUE
 variable(script) bool StayOn = FALSE
 variable(script) bool Looped = FALSE
 variable(script) bool RemoveBookmarks = FALSE
+variable(script) int CargoFullPct = 90
 
 variable(script) bool ChickenOnTank = FALSE
 variable(script) bool ChickenOnRat = FALSE
@@ -46,7 +52,6 @@ function main()
 	
 	UI -load UI/BotUI
 	
-	variable int i = 100
 	while 1
 	{
 		while ${Paused}
@@ -70,6 +75,9 @@ function main()
 				break
 			case Miner
 				call Miner.Begin
+				break
+			case Missioner
+				call Missioner.Begin
 				break
 		}
 		if ${Looped}

@@ -19,10 +19,6 @@
 					<ButtonWidth>20</ButtonWidth>
 					<Items>
 						<Item Value='1'>Salvager</Item>
-						<Item Value='2'>GoHome</Item>
-						<Item Value='3'>Goto</Item>
-						<Item Value='3'>Miner</Item>
-						<Item Value='4'>  </Item>
 					</Items>
 					<OnSelect>Script[wreckingball2].VariableScope.State:Set[${This.SelectedItem.Text}]</OnSelect>
 					<OnLoad>This:SetSelection[1]</OnLoad>
@@ -109,117 +105,7 @@
  							<Height>75%</Height>
  						</console>
 						
-						<text name='ChickenOnText'>
- 							<X>50%</X>
- 							<Y>37</Y>
- 							<Width>100</Width>
- 							<Height>15</Height>
-							<Text>Chicken's:</Text>
-						</text>
 						
-						<button name='TankChickenOn'>
- 							<X>70%</X>
- 							<Y>1</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text> </Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.ChickenOnTank}
-								{
-									This:SetText[Tank]
-									Script[wreckingball2].VariableScope.ChickenOnTank:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[DontTank]
-									Script[wreckingball2].VariableScope.ChickenOnTank:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.ChickenOnTank}
-									This:SetText[DontTank]
-								else
-									This:SetText[Tank]
-								</OnLoad>
- 						</button>
-						
-						<button name='EnemyChickenOn'>
- 							<X>70%</X>
- 							<Y>22</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text> </Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.ChickenOnRat}
-								{
-									This:SetText[Rats]
-									Script[wreckingball2].VariableScope.ChickenOnRat:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[NoRats]
-									Script[wreckingball2].VariableScope.ChickenOnRat:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.ChickenOnRat}
-									This:SetText[NoRats]
-								else
-									This:SetText[Rats]
-								</OnLoad>
- 						</button>
-						
-						<button name='OtherShipChickenOn'>
- 							<X>70%</X>
- 							<Y>43</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text> </Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.ChickenOnPirate}
-								{
-									This:SetText[Ships]
-									Script[wreckingball2].VariableScope.ChickenOnPirate:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[NoShips]
-									Script[wreckingball2].VariableScope.ChickenOnPirate:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.ChickenOnPirate}
-									This:SetText[NoShips]
-								else
-									This:SetText[Ships]
-								</OnLoad>
- 						</button>
-						
-						<button name='TargetedChickenOn'>
- 							<X>70%</X>
- 							<Y>64</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text> </Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.ChickenOnTargeted}
-								{
-									This:SetText[TargetedOk]
-									Script[wreckingball2].VariableScope.ChickenOnTargeted:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[DontTargetMe]
-									Script[wreckingball2].VariableScope.ChickenOnTargeted:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.ChickenOnTargeted}
-									This:SetText[DontTargetMe]
-								else
-									This:SetText[TargetedOk]
-								</OnLoad>
- 						</button>
 						
 						<button name='DebugOn'>
  							<X>70%</X>
@@ -414,220 +300,27 @@
 								</OnLoad>
  						</button>
 						
+						<text name='cargopct'>
+ 							<X>5</X>
+ 							<Y>80%</Y>
+ 							<Width>45%</Width>
+ 							<Height>20</Height>
+							<Text>CargoFull %</Text>
+							</text>
+						
+						
+						<textentry name='cargopctentry'>
+ 							<X>5</X>
+ 							<Y>90%</Y>
+ 							<Width>45%</Width>
+ 							<Height>20</Height>
+								<OnLoad>This:SetText[${Script[wreckingball2].VariableScope.CargoFullPct}]</OnLoad>
+								<OnChange>Script[wreckingball2].VariableScope.CargoFullPct:Set[${This.Text.Escape}]</OnChange>
+ 						</textentry>
+						
 						
 					</Tab>
 					
-					
-					
- 					<Tab name='Miner'>
-					
-					
-						<text name='Runsa'>
-							<X>10</X>
-							<Y>5%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>Runs</Text>
-						</text>
-						
-						<text name='Profita'>
-							<X>10</X>
-							<Y>10%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>Profit</Text>
-						</text>
-						
-						<text name='Profitseca'>
-							<X>10</X>
-							<Y>15%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>isk/s</Text>
-						</text>
-						
-						<text name='Profithra'>
-							<X>10</X>
-							<Y>20%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>isk/hr</Text>
-						</text>
-						
-						<text name='Profitruna'>
-							<X>10</X>
-							<Y>25%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>isk/run</Text>
-						</text>
-						
-						<text name='RunningTimea'>
-							<X>10</X>
-							<Y>30%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>time</Text>
-						</text>
-						
-						<text name='Runs'>
-							<X>100</X>
-							<Y>5%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>${Script[wreckingball2].VariableScope.Miner.Runs}</Text>
-						</text>
-						
-						<text name='Profit'>
-							<X>100</X>
-							<Y>10%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>${Script[wreckingball2].VariableScope.Miner.Profit}</Text>
-						</text>
-						
-						<text name='Profitsec'>
-							<X>100</X>
-							<Y>15%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>${Math.Calc[${Script[wreckingball2].VariableScope.Miner.Profit} / ${Script[wreckingball2].RunningTime} / 1000]}</Text>
-						</text>
-						
-						<text name='Profithr'>
-							<X>100</X>
-							<Y>20%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>${Math.Calc[${Script[wreckingball2].VariableScope.Miner.Profit} / ${Script[wreckingball2].RunningTime} / 1000 * 60 * 60]}</Text>
-						</text>
-						
-						<text name='Profitrun'>
-							<X>100</X>
-							<Y>25%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>
-								der
-							</Text>
-						</text>
-						
-						<text name='RunningTime'>
-							<X>100</X>
-							<Y>30%</Y>
-							<Width>300</Width>
-							<Height>20</Height>
-							<Text>${Math.Calc[${Script[wreckingball2].RunningTime} / 1000]}</Text>
-						</text>
-					
-					</Tab>
-					<Tab name='Missioner'>
-						
-						<button name='GoDungeon'>
- 							<X>10</X>
- 							<Y>96</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text>Dungeon</Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.Looped}
-								{
-									This:SetText[DontLoop]
-									Script[wreckingball2].VariableScope.Looped:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[Looped]
-									Script[wreckingball2].VariableScope.Looped:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.Looped}
-									This:SetText[Looped]
-								else
-									This:SetText[DontLoop]
-								</OnLoad>
- 						</button>
-						
-						<button name='GetToHome'>
- 							<X>10</X>
- 							<Y>96</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text>Home</Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.Looped}
-								{
-									This:SetText[DontLoop]
-									Script[wreckingball2].VariableScope.Looped:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[Looped]
-									Script[wreckingball2].VariableScope.Looped:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.Looped}
-									This:SetText[Looped]
-								else
-									This:SetText[DontLoop]
-								</OnLoad>
- 						</button>
-						
-						<button name='DoCourier'>
- 							<X>10</X>
- 							<Y>96</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text>DoCourier</Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.Looped}
-								{
-									This:SetText[DontLoop]
-									Script[wreckingball2].VariableScope.Looped:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[Looped]
-									Script[wreckingball2].VariableScope.Looped:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.Looped}
-									This:SetText[Looped]
-								else
-									This:SetText[DontLoop]
-								</OnLoad>
- 						</button>
-						
-						<button name='GetInfo'>
- 							<X>10</X>
- 							<Y>96</Y>
- 							<Width>100</Width>
- 							<Height>20</height>
- 								<Text>GetInfo</Text>
- 								<OnLeftClick>
-								if ${Script[wreckingball2].VariableScope.Looped}
-								{
-									This:SetText[DontLoop]
-									Script[wreckingball2].VariableScope.Looped:Set[FALSE]
-								}
-								else
-								{
-									This:SetText[Looped]
-									Script[wreckingball2].VariableScope.Looped:Set[TRUE]
-								}
-								</OnLeftClick>
-								<OnLoad>
-								if ${Script[wreckingball2].VariableScope.Looped}
-									This:SetText[Looped]
-								else
-									This:SetText[DontLoop]
-								</OnLoad>
- 						</button>
-					
-					</Tab>
  				</Tabs>
  			</TabControl>
  		</Children>

@@ -160,9 +160,6 @@ objectdef Salvager
 		
 		call Ship.OpenCargo
 		
-		ChickenCheck:Set[${Chicken.Safe}]
-		if ${ChickenCheck.Find[Null]} < 1
-			call Chicken.DoChicken ${SafeSpot}, ${ChickenCheck}
 		
 		if ${SensorBooster.Length} > 0
 		if !MODACTIVATED(${SensorBooster})
@@ -178,7 +175,6 @@ objectdef Salvager
 				wait RANDOM(SLOW, SLOW)
 			
 			;Approach management next 4 if's
-			
 			
 			if ENTDISTANCE(${Approach}) > ${MaxRange} && !${Approaching}
 			{
@@ -212,11 +208,6 @@ objectdef Salvager
 				Afterburning:Set[FALSE]
 				call Ship.ActivateModule ${Afterburner}, FALSE
 			}
-			
-			
-			ChickenCheck:Set[${Chicken.Safe}]
-			if ${ChickenCheck.Find[Null]} < 1
-				call Chicken.DoChicken ${SafeSpot}, ${ChickenCheck}
 			
 			This:GetEntities
 			
@@ -260,10 +251,14 @@ objectdef Salvager
 			if ${Iter:First(exists)}
 			do
 			{
+				if ${Iter.Value.GroupID} != ENTGROUPCARGO || ${Iter.Value.GroupID} != ENTGROUPWRECK
+				{
+					UNLOCK(${Iter.Value.ID})
+					wait RANDOM(SLOW,SLOW)
+					continue
+				}
+				
 				State:Set["Wrecks - ${Wrecks.Used}"]
-				ChickenCheck:Set[${Chicken.Safe}]
-				if ${ChickenCheck.Find[Null]} < 1
-					call Chicken.DoChicken ${SafeSpot}, ${ChickenCheck}
 				
 				;Tractors off
 				if ENTDISTANCE(${Iter.Value}) < LOOTRANGE && MODACTIVE(${Tractors.Element[${Iter.Value}]}) && !${Approaching}
@@ -308,12 +303,12 @@ objectdef Salvager
 				}
 			}
 			while ${Iter:Next(exists)}
-			if CARGOPCT > 80
+			if CARGOPCT > ${CargoFullPct}
 				break
 		}
 		STACKCARGOITEMS()
 		Stage:Set[MoveOn]
-		if CARGOPCT > 80 && ${GoSafe}
+		if CARGOPCT > ${CargoFullPct} && ${GoSafe}
 		{
 			Stage:Set[GoSafe]
 			DoUnload:Set[TRUE]

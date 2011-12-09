@@ -1,10 +1,28 @@
 objectdef Missioner
 {
-	
+	variable string Stage = Paused
 	
 	function Begin()
 	{
-	
+		while 1
+		{
+			while ${Stage.Find[Paused]} > 0
+				wait RANDOM(SLOW,SLOW)
+			switch ${Stage}
+			{
+				case Echo
+					echo Start
+					call Mission.GetDetails
+					break
+				case Ender
+					endscript wreckingball2
+					break
+			
+			}
+			Stage:Set[Paused]
+		
+		
+		}
 	}
 	
 	
