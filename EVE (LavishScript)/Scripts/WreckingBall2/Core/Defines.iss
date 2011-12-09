@@ -54,15 +54,18 @@
 #define ITMGROUPMININGLASER			483
 #define ITMGROUPSHIELDBOOSTER		40
 
-#define ITMGROUPCOMBATDRONE		100
-#define ITMGROUPMININGDRONE		101
+#define DRONEGROUPCOMBAT			100
+#define DRONEGROUPMINING			100
+#define DRONECATEGORY				18
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;     Windows
 #define AGENTWINDOW					${EVEWindow[ByCaption,Agent Conversation](exists)}
+#define JOURNALWINDOW				${EVEWindow[ByCaption,Journal](exists)}
 #define CARGOWINDOW					${EVEWindow[MyShipCargo](exists)}
 #define ITEMSWINDOW					${EVEWindow[hangarFloor](exists)}
 #define LOOTWINDOW					${If[${EVEWindow[ByCaption,Floating](exists)} || ${EVEWindow[ByCaption,Wreck](exists)},TRUE,FALSE]}
+#define FITTINGWINDOW				${If[${EVEWindow[ByCaption,Fitting](exists)} || ${EVEWindow[ByCaption,Wreck](exists)},TRUE,FALSE]}
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;		Others

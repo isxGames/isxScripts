@@ -320,6 +320,7 @@ objectdef theShip
 	{
 		variable int i
 		variable int j
+		variable time MyTime = ${Time.Timestamp}
 		if ${Activate}
 		if !MODACTIVATED(${Slot})
 		while !MODACTIVATED(${Slot})
@@ -327,20 +328,24 @@ objectdef theShip
 			while !MODACTIVATED(${Slot})
 			{
 				if !MODACTIVATED(${Slot})
-					Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot})", "Activate", FALSE]
+					Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot})", "Activate ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]}", FALSE]
 				MODCLICK(${Slot})
 				wait RANDOM(SLOWQ, SLOWQ)
 				i:Set[RANDOM(SLOW, SLOW)]
 				while !MODACTIVATED(${Slot}) && ${i:Dec} > 0
 					waitframe
+				if ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]} > 7
+					return 1
 			}
 			i:Set[RANDOM(SLOWQ, SLOWQ)]
 			while ${i:Dec} > 0
 				waitframe
 			if !MODACTIVATED(${Slot})
-				Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot})", "Activate", TRUE]
+				Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot})", "Activate ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]}", TRUE]
 			if MODWAITING(${Slot})
-				return
+				return 1
+			if ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]} > 7
+				return 1
 		}
 		if !${Activate}
 		if MODACTIVATED(${Slot}) && !MODDEACTIVATING(${Slot})
@@ -363,6 +368,7 @@ objectdef theShip
 			if MODACTIVATED(${Slot}) && !MODDEACTIVATING(${Slot})
 				Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot}) - !MODDEACTIVATING(${Slot})", "Deactivate", TRUE]
 		}
+		return 0
 	}
 	
 	function MakeActiveTarget(int64 TargetID)
@@ -393,6 +399,31 @@ objectdef theShip
 				Debug:Spew["${Entity[${TargetID}].Name} - !ENTISTARGET(${TargetID}) - ${Entity[${TargetID}](exists)}", "Target", TRUE]
 		}
 		return 0
+	}
+	
+	function Drones(collection:int64 MyDrones, string Command)
+	{
+		variable iterator Iter
+		variable index:item DroneBay
+		switch ${Command}
+		{
+			case Launch
+				MyShip:DoGetDrones[DroneBay]
+				DroneBay:GetIterator[Iter]
+				if ${Iter:First(exists)}
+				do
+				{
+					
+				}
+				while ${Iter:Next(exists)}
+				break
+			case Engage
+				break
+			case Mine
+				break
+			case Return
+				break
+		}
 	}
 	
 	function Goto(string Label)
