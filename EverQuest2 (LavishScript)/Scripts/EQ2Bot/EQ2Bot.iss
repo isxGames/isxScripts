@@ -4942,7 +4942,7 @@ function CheckBuffsOnce()
 
 	if ${Me.CastingSpell}
 	{
-		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel to finish casting..."]
+		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel} to finish casting..."]
 		do
 		{
 			waitframe

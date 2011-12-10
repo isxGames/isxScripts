@@ -521,7 +521,7 @@ function Have_Aggro(int agroid)
 
 function Lost_Aggro(int mobid)
 {
-	if ${Actor${mobid}].Target.ID}!=${Me.ID}
+	if ${Actor[${mobid}].Target.ID}!=${Me.ID}
 	{
 
 		call CastSpellRange 270 0 1 0 ${Actor[${mobid}].ID}
@@ -531,22 +531,22 @@ function Lost_Aggro(int mobid)
 			KillTarget:Set[${mobid}]
 			target ${mobid}
 
-			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			if ${Actor[${mobid}].Target.ID}!=${Me.ID}
 			{
 				call CastSpellRange 100 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
-			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			if ${Actor[${mobid}].Target.ID}!=${Me.ID}
 			{
 				call CastSpellRange 101 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
-			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			if ${Actor[${mobid}].Target.ID}!=${Me.ID}
 			{
 				call CastSpellRange 102 0 1 1 ${aggroid} 0 0 0 0 1
 			}
 
-			if ${Actor${mobid}].Target.ID}!=${Me.ID}
+			if ${Actor[${mobid}].Target.ID}!=${Me.ID}
 			{
 				call CastSpellRange 103 0 1 1 ${aggroid} 0 0 0 0 1
 			}
