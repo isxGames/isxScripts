@@ -5495,7 +5495,7 @@ objectdef EQ2BotObj
 						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 					if (${Me.Raid[${tmpvar}].Class.Equal[mystic]} || ${Me.Raid[${tmpvar}].Class.Equal[defiler]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
 						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-					if (${Me.Raid[${tmpvar}].Class.Equal[beastlord]} && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+					if ${Me.Raid[${tmpvar}].Class.Equal[beastlord]} && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
 						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]						
 				}
 			}
@@ -5513,7 +5513,7 @@ objectdef EQ2BotObj
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 					if (${Me.Group[${tmpvar}].Class.Equal[mystic]} || ${Me.Group[${tmpvar}].Class.Equal[defiler]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-					if (${Me.Group[${tmpvar}].Class.Equal[beastlord]} && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+					if ${Me.Group[${tmpvar}].Class.Equal[beastlord]} && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]						
 				}
 			}

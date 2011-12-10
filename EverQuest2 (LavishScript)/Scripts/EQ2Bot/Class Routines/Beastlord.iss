@@ -56,8 +56,8 @@ function Buff_Routine(int xAction)
 
 	declare BuffTarget string local
 
-	call CheckHeals
-	call ApplyStance
+	;call CheckHeals
+	;call ApplyStance
 
 	switch ${PreAction[${xAction}]}
 	{
