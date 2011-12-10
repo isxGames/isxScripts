@@ -429,7 +429,7 @@ function Lost_Aggro(int mobid)
 	{
 		if ${TauntMode}
 		{
-			if !${MezMode} && ${Actor${mobid}].Target.ID}!=${Me.ID}
+			if !${MezMode} && ${Actor[${mobid}].Target.ID}!=${Me.ID}
 			{
 				KillTarget:Set[${mobid}]
 				target ${mobid}
@@ -438,11 +438,11 @@ function Lost_Aggro(int mobid)
 			if ${Actor[${KillTarget}].Target.ID}!=${Me.ID} && ${Me.Ability[${SpellType[270]}].IsReady}
 				call CastSpellRange 270 0 1 0 ${Actor[${mobid}].ID}
 
-			if ${Me.Ability[${SpellType[500]}].IsReady} && ${Actor${KillTarget}].Target.ID}!=${Me.ID}
+			if ${Me.Ability[${SpellType[500]}].IsReady} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				call CastSpellRange 500 0 1 0 ${Actor[${KillTarget}].ID}
-			elseif ${Me.Ability[${SpellType[502]}].IsReady} && ${Actor${KillTarget}].Target.ID}!=${Me.ID}
+			elseif ${Me.Ability[${SpellType[502]}].IsReady} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				call CastSpellRange 502 0 1 0 ${Actor[${KillTarget}].ID}
-			elseif ${Me.Ability[${SpellType[160]}].IsReady} && ${Actor${KillTarget}].Target.ID}!=${Me.ID}
+			elseif ${Me.Ability[${SpellType[160]}].IsReady} && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
 
 			;use rescue if new agro target is under 65 health
