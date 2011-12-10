@@ -49,13 +49,14 @@ variable int Latest_MysticVersion = 0
 variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 20090623
 variable int Latest_RangerVersion = 0
-variable int Latest_ShadownightVersion = 20100130
+variable int Latest_ShadowknightVersion = 20100130
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 20090619
 variable int Latest_WardenVersion = 20090703
 variable int Latest_WarlockVersion = 20090622
 variable int Latest_WizardVersion = 20090622
+variable int Latest_BeastlordVersion = 20111209
 ;===================================================
 ;===        Keyboard Configuration              ====
 ;===================================================
@@ -5490,10 +5491,12 @@ objectdef EQ2BotObj
 				if ${Me.Raid[${tmpvar}].ToActor(exists)}
 				{
 					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
-					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
 						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 					if (${Me.Raid[${tmpvar}].Class.Equal[mystic]} || ${Me.Raid[${tmpvar}].Class.Equal[defiler]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
 						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+					if (${Me.Raid[${tmpvar}].Class.Equal[beastlord]} && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]						
 				}
 			}
 			while ${tmpvar:Inc} <= 24
@@ -5510,6 +5513,8 @@ objectdef EQ2BotObj
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
 					if (${Me.Group[${tmpvar}].Class.Equal[mystic]} || ${Me.Group[${tmpvar}].Class.Equal[defiler]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
 						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+					if (${Me.Group[${tmpvar}].Class.Equal[beastlord]} && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]						
 				}
 			}
 			while ${tmpvar:Inc} <= ${Me.Group}
@@ -5883,6 +5888,7 @@ objectdef EQ2BotObj
 				case swashbuckler
 				case dirge
 				case troubador
+				case beastlord
 					if ${Me.Group[${tempgrp}].MaxHitPoints}>${highesthp}
 					{
 						highesthp:Set[${Me.Group[${tempgrp}].MaxHitPoints}]

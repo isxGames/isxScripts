@@ -674,6 +674,7 @@ function IsMage(uint ID)
 	}
 }
 
+;; for the sake of EQ2bot (for now), we're going to say that a beastlord is a 'scout'
 function IsScout(uint ID)
 {
 	switch ${Actor[${ID}].Class}
@@ -685,6 +686,7 @@ function IsScout(uint ID)
 		case brigand
 		case troubador
 		case dirge
+		case beastlord
 			return TRUE
 		default
 			return FALSE
@@ -707,6 +709,7 @@ function IsFighterOrScout(uint ID)
 		case brigand
 		case troubador
 		case dirge
+		case beastlord
 			return TRUE
 		default
 			return FALSE
@@ -841,7 +844,7 @@ function CheckGroupHealth(int MinHealth)
 			Return FALSE
 
 		;check health of summoner pets
-		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]}
+		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
 		{
 			if ${Me.Group[${counter}].ToActor.Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health} > 0
 				Return FALSE
@@ -1030,7 +1033,7 @@ function CommonHeals(int Health)
 				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<${Health}
 					grpheal:Inc
 
-				if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
+				if ${Me.Group[${temphl}].Class.Equal[conjuror]} || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[beastlord]}
 				{
 					if ${Me.Group[${temphl}].ToActor.Pet.Health}<${Health} && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
 						grpheal:Inc
@@ -1186,7 +1189,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 					return FALSE
 
 				;check health of summoner pets .. TO DO -- why do we care about these on epic/raid fights?
-				if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]}
+				if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
 				{
 					if (${Me.Group[${counter}].ToActor.Pet(exists)} && !${Me.Group[${counter}].ToActor.Pet.IsDead})
 					{
