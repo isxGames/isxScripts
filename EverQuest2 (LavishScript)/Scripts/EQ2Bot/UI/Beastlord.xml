@@ -1,4 +1,144 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-
+	<Commandcheckbox Name='AoEMode'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Cast AoE Spells</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='PBAoEMode'>
+		<X>10</X>
+		<Y>30</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Cast PBAoE Spells</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PBAoEMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PBAoEMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblPetType'>
+		<X>10</X>
+		<Y>130</Y>
+		<Width>20</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Pet:</Text>
+	</Text>
+	<combobox name='cbPetType'>
+		<x>55</x>
+		<y>130</y>
+		<width>100</width>
+		<height>20</height>
+		<items>
+			<Item Value='1'>Bear</Item>
+			<Item Value='2'>Feline</Item>
+		</items>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PetType]:Set[${This.SelectedItem.ID}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Pet Type",${This.SelectedItem.ID}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+		<OnLoad>This.Item[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Pet Type]}]:Select
+		</OnLoad>
+	</combobox>
+	<Text Name='lblStanceType'>
+		<X>10</X>
+		<Y>150</Y>
+		<Width>20</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Stance:</Text>
+	</Text>
+	<combobox name='cbStanceType'>
+		<x>55</x>
+		<y>150</y>
+		<width>100</width>
+		<height>20</height>
+		<items>
+			<Item Value='1'>Defensive</Item>
+			<Item Value='0'>Offensive</Item>
+		</items>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PetDefStance]:Set[${This.SelectedItem.ID}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["PetDefStance",${This.SelectedItem.ID}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+		<OnLoad>This.Item[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[PetDefStance]}]:Select
+		</OnLoad>
+	</combobox>
+	<Commandcheckbox Name='UsePets'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>170</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Pets</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Use Pets",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PetMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Use Pets",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Pets]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblStanceType'>
+		<X>10</X>
+		<Y>150</Y>
+		<Width>50</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Stance:</Text>
+	</Text>
+	<combobox name='cbStanceType'>
+		<x>60</x>
+		<y>150</y>
+		<width>100</width>
+		<height>20</height>
+		<items>
+			<Item Value='1'>Offensive</Item>
+		</items>
+		<OnSelect>
+			Script[EQ2Bot].Variable[StanceType]:Set[${This.SelectedItem.ID}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Stance Type",${This.SelectedItem.ID}]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+		<OnLoad>This.Item[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Stance Type]}]:Select
+		</OnLoad>
+	</combobox>	
 </ISUI>
