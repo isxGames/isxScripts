@@ -13,6 +13,10 @@
 ;
 ; Revision History
 ; ----------------
+; 20111217 (Zandros)
+; * Added Buff Area - check if have buff and if not then buff; added Force Buff Area - 
+;   will buff without checking if the buff exists.
+;
 ; 20111130 (Zandros)
 ; * Added follow tank routine
 ;
@@ -154,6 +158,13 @@ function main()
 		
 		;; check and accept Rez
 		call RezAccept
+
+		;; execute any queued commands
+		if ${QueuedCommands}
+		{
+			ExecuteQueued
+			FlushQueued
+		}
 		
 		if !${isPaused}
 		{
@@ -489,6 +500,12 @@ function Initialize()
 ;===================================================
 function atexit()
 {
+	;; Unload Tools_BuffArea routine
+	if ${Script[Tools_BuffArea](exists)}
+	{
+		endscript Tools_BuffArea
+	}
+
 	;; update our toggle settings
 	General:AddSetting[doUseAbilities,${doUseAbilities}]
 	General:AddSetting[doUseItems,${doUseItems}]
@@ -1225,6 +1242,44 @@ function UseItems()
 }
 
 ;===================================================
+;===        BUFF AREA SUBROUTINE                ====
+;===================================================
+function BuffArea()
+{
+	;-------------------------------------------
+	; Start/Stop our BuffArea script
+	;-------------------------------------------
+	if ${Script[Tools_BuffArea](exists)}
+	{
+		endscript Tools_BuffArea
+	}
+	elseif !${Script[Tools_BuffArea](exists)}
+	{
+		run ./Tools/Tools_BuffArea.iss TRUE
+	}
+}
+
+
+;===================================================
+;===       FORCE BUFF AREA SUBROUTINE           ====
+;===================================================
+function ForceBuffArea()
+{
+	;-------------------------------------------
+	; Start/Stop our BuffArea script
+	;-------------------------------------------
+	if ${Script[Tools_BuffArea](exists)}
+	{
+		endscript Tools_BuffArea
+	}
+	elseif !${Script[Tools_BuffArea](exists)}
+	{
+		run ./Tools/Tools_BuffArea.iss FALSE
+	}
+}
+
+
+;===================================================
 ;===        BUFF REQUESTS SUBROUTINE            ====
 ;===================================================
 function BuffRequests()
@@ -1233,6 +1288,7 @@ function BuffRequests()
 	{
 		return
 	}
+
 	if ${Tools_BuffRequestList.FirstKey(exists)}
 	{
 		variable iterator Iterator
