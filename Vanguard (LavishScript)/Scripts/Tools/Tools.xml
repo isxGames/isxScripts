@@ -198,7 +198,7 @@
 							<Y>25%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
-							<Text> Stance: ${Script[Tools].VariableScope.StripEnchantment}</Text>
+							<Text> Stance: ${Script[Tools].VariableScope.PushStance}</Text>
 							<AutoTooltip> Push Stances</AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doPushStance}
@@ -449,7 +449,7 @@
 							</OnChange>
 						</Textentry>
 
-						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
+						<Commandbutton Name="Button-Set Tank" Template="VG.GreyCommandButton">
 							<visible>1</visible>
 							<X>6%</X>
 							<Y>85%</Y>
@@ -482,7 +482,7 @@
 							</OnLeftClick>
 						</Commandbutton>
 
-						<Button Name="PauseBtn" Template="VG.RedButton">
+						<Button Name="PauseBtn" Template="VG.GreyCommandButton">
 							<X>6%</X>
 							<Y>92%</Y>
 							<Width>180</Width>
@@ -955,7 +955,7 @@
 
 						 <Text Name='txtBuffs' Template='VG.BoldText'>
 							<X>8%</X>
-							<Y>37%</Y>
+							<Y>34%</Y>
 							<Width>85%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
@@ -963,7 +963,7 @@
 						</Text>
 						<ComboBox Name="TriggerBuffsCombo" Template="VG.ComboBox">
 							<X>6%</X>
-							<Y>40%</Y>
+							<Y>37%</Y>
 							<Width>190</Width>
 							<Height>20</Height>
 							<OnLoad>
@@ -979,7 +979,7 @@
 						</ComboBox>
 						<Listbox Name="TriggerBuffsList" Template="VG.ListBox">
 							<X>6%</X>
-							<Y>44.5%</Y>
+							<Y>41.5%</Y>
 							<Width>190</Width>
 							<Height>80</Height>
 							<AutoSort>TRUE</AutoSort>
@@ -995,15 +995,15 @@
 						</Listbox>
 						 <Text Name='txtBuffOnly' Template='VG.BoldText'>
 							<X>8%</X>
-							<Y>65%</Y>
+							<Y>62%</Y>
 							<Width>85%</Width>
 							<Height>20</Height>
 							<Alignment>Center</Alignment>
 							<Text>== Buff these PCs/Guilds ==</Text>
 						</Text>
-						<CommandButton Name="AddBuffOnlyButton" Template="VG.GreenCommandButton">
+						<CommandButton Name="AddBuffOnlyButton" Template="VG.GreyCommandButton">
 							<X>6%</X>
-							<Y>68%</Y>
+							<Y>65%</Y>
 							<Height>18</Height>
 							<Width>80</Width>
 							<Text>Add Name</Text>
@@ -1014,7 +1014,7 @@
 						</CommandButton>
 						<Textentry Name='BuffOnlyName' Template='VG.TextEntry'>
 							<X>47%</X>
-							<Y>68%</Y>
+							<Y>65%</Y>
 							<Width>47%</Width>
 							<Height>18</Height>
 							<Border>0</Border>
@@ -1036,7 +1036,7 @@
 						</Textentry>
 						<listbox Name="BuffOnlyList" Template="VG.ListBox">
 							<X>6%</X>
-							<Y>72.5%</Y>
+							<Y>69.5%</Y>
 							<Width>190</Width>
 							<Height>80</Height>
 							<AutoSort>TRUE</AutoSort>
@@ -1050,6 +1050,50 @@
 								BuildBuffOnly
 							</OnRightClick>
 						</listbox>
+						<Commandbutton Name="BuffArea" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>88%</Y>
+							<Width>190</Width>
+							<Height>25</Height>
+							<Text>Buff Area</Text>
+							<OnRender>
+								if ${Script[Tools_BuffArea](exists)}
+								{
+									This:SetAlpha[0.5]
+								}
+								else
+								{
+									This:SetAlpha[1]
+								}
+							</OnRender>
+							<OnLeftClick>
+								Script[Tools]:QueueCommand[call BuffArea]
+							</OnLeftClick>
+							<Data>${Script[Tools_BuffArea](exists)}</Data>
+						</Commandbutton>
+						<Commandbutton Name="ForceBuffArea" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>94%</Y>
+							<Width>190</Width>
+							<Height>25</Height>
+							<Text>Force Buff Area</Text>
+							<OnRender>
+								if ${Script[Tools_BuffArea](exists)}
+								{
+									This:SetAlpha[0.5]
+								}
+								else
+								{
+									This:SetAlpha[1]
+								}
+							</OnRender>
+							<OnLeftClick>
+								Script[Tools]:QueueCommand[call ForceBuffArea]
+							</OnLeftClick>
+							<Data>${Script[Tools_BuffArea](exists)}</Data>
+						</Commandbutton>
 					</Tab>
 				</Tabs>
 			</TabControl>
