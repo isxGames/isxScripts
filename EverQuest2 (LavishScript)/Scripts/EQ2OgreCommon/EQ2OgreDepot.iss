@@ -1,5 +1,5 @@
 /**
-Version 1.02
+Version 1.03
 Written by: Kannkor
 
 Note: EQ2OgreDepotResourceInformation is NEVER cleared from the current session incase the user us using that information with the Ogre Harvest bot. Information is cleared with EQ2OgreHarvest or when the session is closed.
@@ -39,7 +39,8 @@ function main(string TypeToDeposit=Raw)
 			else
 			{
 				echo Adding Raw to Depot: ${Me.CustomInventory[${xx}].Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Tier]}
-				Me.CustomInventory[${xx}]:AddToDepot[${Actor[nokillnpc,depot].ID}]
+				;// Me.CustomInventory[${xx}]:AddToDepot[${Actor[nokillnpc,depot].ID}]
+				Me.CustomInventory[${xx}]:AddToDepot[${Actor[Tradeskill Unit,depot].ID}]
 				wait 10
 			}
 		}
