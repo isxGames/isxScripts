@@ -5127,19 +5127,19 @@ objectdef ActorCheck
 				break
 
 			case PC
-				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a PC."]
+				;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a PC."]
 				return FALSE
 
 			case Pet
-				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a PET."]	
+				;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a PET."]	
 				return FALSE
 
 			case MyPet
-				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is MyPet."]
+				;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is MyPet."]
 				return FALSE
 
 			Default
-				Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type failed identification."]
+				;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type failed identification."]
 				return FALSE
 		}
 
@@ -5152,13 +5152,13 @@ objectdef ActorCheck
 
 		if ${Actor[${actorid}].IsLocked}
 		{
-			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor IsLocked"]
+			;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor IsLocked"]
 			return FALSE
 		}
 
 		if ${This.FriendlyPet[${actorid}]}
 		{
-			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a charmed pet, ignore it"]
+			;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a charmed pet, ignore it"]
 			return FALSE
 		}
 
@@ -5168,7 +5168,7 @@ objectdef ActorCheck
 		}
 		else
 		{
-			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor doesn't exist"]
+			;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor doesn't exist"]
 			return FALSE
 		}
 	}
@@ -5178,7 +5178,7 @@ objectdef ActorCheck
 	{
 		if ${Actor[${actorid}].IsDead}
 		{
-			Debug:Echo["EQ2Bot-AggroGroup(): Return False - Actor IsDead"]
+			;Debug:Echo["EQ2Bot-AggroGroup(): Return False - Actor IsDead"]
 			return FALSE
 		}
 		
@@ -5186,13 +5186,19 @@ objectdef ActorCheck
 
 		if ${This.FriendlyPet[${actorid}]}
 		{
-			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a charmed pet, ignore it"]
+			;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor is a charmed pet, ignore it"]
 			return FALSE
 		}
 
 		if ${Actor[${actorid}].Type.Equal[PC]}
 		{
-			Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type is PC"]
+			;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type is PC"]
+			return FALSE
+		}
+
+		if ${Actor[${actorid}].Type.Equal[Mercenary]}
+		{
+			;Debug:Echo["EQ2Bot-CheckActor(): Return False - Actor Type is Mercenary"]
 			return FALSE
 		}
 
