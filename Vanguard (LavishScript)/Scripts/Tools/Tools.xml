@@ -867,7 +867,7 @@
 						<checkbox Name="doRaidsay" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>10%</Y>
+							<Y>9%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Monitor Raid Messages</Text>
@@ -886,7 +886,7 @@
 						<checkbox Name="doTells" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>15%</Y>
+							<Y>13%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Monitor Tell Messages</Text>
@@ -905,7 +905,7 @@
 						<checkbox Name="doRift" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>20%</Y>
+							<Y>17%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Buff on Rift</Text>
@@ -918,6 +918,25 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRift:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doMonotorTells" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>21%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Log and Ping all Tells</Text>
+							<AutoTooltip> this will log and ping all tells</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doMonotorTells}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doMonotorTells:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						

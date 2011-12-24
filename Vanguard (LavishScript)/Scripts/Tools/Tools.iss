@@ -13,6 +13,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20111224 (Zandros)
+; * Added Tell logging and pinging
+;
 ; 20111217 (Zandros)
 ; * Added Buff Area - check if have buff and if not then buff; added Force Buff Area - 
 ;   will buff without checking if the buff exists.
@@ -85,6 +88,7 @@ variable bool doRaidsay = FALSE
 variable bool doTells = FALSE
 variable bool doRift = FALSE
 variable bool doFollow = FALSE
+variable bool doMonotorTells = FALSE
 variable string TriggerBuffing = ""
 variable string Tank = Unknown
 variable string CombatForm = NONE
@@ -128,9 +132,14 @@ variable string BuffOnlyName = ""
 variable int FollowDistance1 = 3
 variable int FollowDistance2 = 5
 
-
 ;; Class Specific Routines
 #include ./Tools/Class/Bard.iss
+
+;; Defines - good within this script
+#define ALARM "${Script.CurrentDirectory}/ping.wav"
+
+;; Logging path
+variable string LogThis = "${Script.CurrentDirectory}/ChatLog.txt"
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -345,10 +354,11 @@ function Initialize()
 	doGroupsay:Set[${General.FindSetting[doGroupsay,FALSE]}]
 	doRaidsay:Set[${General.FindSetting[doRaidsay,FALSE]}]
 	doTells:Set[${General.FindSetting[doTells,FALSE]}]
-	doRift:Set[${General.FindSetting[doRift,FALSE]}]
+	doRift:Set[${General.FindSetting[doRift,TRUE]}]
 	TriggerBuffing:Set[${General.FindSetting[TriggerBuffing,""]}]
 	FollowDistance1:Set[${General.FindSetting[FollowDistance1,3]}]
 	FollowDistance2:Set[${General.FindSetting[FollowDistance2,5]}]
+	doMonotorTells:Set[${General.FindSetting[doMonotorTells,TRUE]}]
 	
 	;; Class Specific - Bard
 	CombatSong:Set[${General.FindSetting[CombatSong]}]
@@ -525,6 +535,7 @@ function atexit()
 	General:AddSetting[doRaidsay,${doRaidsay}]
 	General:AddSetting[doTells,${doTells}]
 	General:AddSetting[doRift,${doRift}]
+	General:AddSetting[doMonotorTells,${doMonotorTells}]
 	General:AddSetting[FollowDistance1,${FollowDistance1}]
 	General:AddSetting[FollowDistance2,${FollowDistance2}]
 	General:AddSetting[TriggerBuffing,${TriggerBuffing}]
@@ -578,6 +589,20 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 ;===================================================
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
+	;; Log all tells to a file and play a sound
+	if ${doMonotorTells} && ${ChannelNumber}==15
+	{
+		Redirect -append "${LogThis}" echo "[${Time}][Tools]: ${aText}"
+		PlaySound ALARM
+	}
+
+	;; Ready Check!
+	if ${aText.Find[You have received a raid ready check.]}
+	{
+		EchoIt "[${ChannelNumber}] ${aText}"
+		PlaySound ALARM
+	}
+
 	if ${ChannelNumber}==0 && ${aText.Find[You can't attack with that type of weapon.]}
 	{
 		EchoIt "[${ChannelNumber}]${aText}"
@@ -633,8 +658,21 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	{
 		if ${aText.Find[is trying to resurrect you with]}
 		{
+			PlaySound ALARM
 			doAcceptRez:Set[TRUE]
 		}
+	}
+}
+
+
+;===================================================
+;===          ATOM - PLAY A SOUND               ====
+;===================================================
+atom(script) PlaySound(string Filename)
+{
+	if ${doSound}
+	{
+		System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 	}
 }
 
