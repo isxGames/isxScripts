@@ -4,7 +4,7 @@
 function:bool HealWounded()
 {
 
-/*
+
 	;; Check to see if we need to use the 10m group heal
 	if ${Health.TotalGroupWounded}>2
 	{
@@ -24,7 +24,7 @@ function:bool HealWounded()
 		}
 		
 	}
-*/
+
 
 	while !${Me.CurrentForm.Name.Equal[${NonCombatForm}]}
 	{
