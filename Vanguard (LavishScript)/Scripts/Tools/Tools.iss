@@ -242,7 +242,6 @@ function Initialize()
 	; Identify your Class Abilities
 	; (only use the base name of the ability)
 	;-------------------------------------------
-	echo 
 	switch "${Me.Class}"
 	{
 		case Blood Mage
