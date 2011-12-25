@@ -242,6 +242,7 @@ function Initialize()
 	; Identify your Class Abilities
 	; (only use the base name of the ability)
 	;-------------------------------------------
+	echo 
 	switch "${Me.Class}"
 	{
 		case Blood Mage
@@ -258,7 +259,7 @@ function Initialize()
 			StripEnchantment1:Set[None]
 			break
 
-		case Sorceror
+		case Sorcerer
 			Counter1:Set[Disperse]
 			Counter2:Set[Reflect]
 			PushStance1:Set[None]
