@@ -910,6 +910,7 @@
 					VGExecute /can \"Wings of the Avenger\"
 					VGExecute /can \"Group Illusion: Kobold\"
 					VGExecute /can \"Do not feed after midnight\"
+					VGExecute /can \"Tingling Sensation\"
 				</OnLeftClick>
 			</Commandbutton>
 			<Commandbutton Name="Symbiotes" Template="VG.GreyCommandButton">

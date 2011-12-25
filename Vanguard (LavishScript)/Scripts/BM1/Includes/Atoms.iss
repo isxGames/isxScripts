@@ -272,7 +272,7 @@ atom CombatText(string aText, int aType)
 		if ${aText.Find[Ice Compression]} && ${aText.Find[YERK]}
 		{
 			Pawn[Me]:Target
-			VGExecute "/raid <Purple=>Cetok is FROZEN - <Yellow=>Group 2"
+			VGExecute "/raid <Purple=>${Me.FName} is FROZEN"
 		}
 	}
 
