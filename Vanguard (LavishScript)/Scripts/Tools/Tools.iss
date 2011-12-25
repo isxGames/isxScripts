@@ -670,10 +670,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 ;===================================================
 atom(script) PlaySound(string Filename)
 {
-	if ${doSound}
-	{
-		System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
-	}
+	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 }
 
 ;===================================================
