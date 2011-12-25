@@ -11,6 +11,10 @@
 ;
 ; Revision History
 ; ----------------
+; 20111225 (Zandros)
+; * Merry Christmas!  Fixed 2 bugs that wouldn't allow attacking the target and
+;   identifying target immunity (resists)
+;
 ; 20111224 (Zandros)
 ; * Improved many routines 
 ;
@@ -232,7 +236,7 @@ function SetImmunities()
 		if ${Me.TargetBuff[Molten Form](exists)} || ${Me.TargetBuff[Fire Form](exists)}
 		{
 			doFire:Set[FALSE]
-			if !${MobResists.Type.Equal[Fire]} && ${do8}
+			if !${MobResists.Type.Equal[Fire]} && ${Do8}
 			{
 				AddFire "${Me.Target.Name}"
                 BuildFire
@@ -242,7 +246,7 @@ function SetImmunities()
 		if ${Me.TargetBuff[Ice Form](exists)} ||${Me.TargetBuff[Cold Form](exists)} ||${Me.TargetBuff[Frozen Form](exists)}
 		{
 			doColdIce:Set[FALSE]
-			if !${MobResists.Type.Equal[ColdIce]} && ${do8}
+			if !${MobResists.Type.Equal[ColdIce]} && ${Do8}
 			{
 				AddColdIce "${Me.Target.Name}"
                 BuildColdIce
@@ -252,7 +256,7 @@ function SetImmunities()
 		if ${Me.TargetBuff[Earth Form](exists)}
 		{
 			doPhysical:Set[FALSE]
-			if !${MobResists.Type.Equal[Physical]} && ${do8}
+			if !${MobResists.Type.Equal[Physical]} && ${Do8}
 			{
 				AddPhysical "${Me.Target.Name}"
                 BuildPhysical
@@ -268,11 +272,11 @@ function SetImmunities()
 function Do1()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || !${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
 	{
 		return
 	}
-
+	
 	;; Use these abilities if target is immune to fire
 	if ${MobResists.Type.Equal[Fire]} || !${doFire}
 	{
@@ -332,7 +336,7 @@ function Do1()
 function Do2()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || !${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
 	{
 		return
 	}
@@ -391,7 +395,7 @@ function Do2()
 function Do3()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || !${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
 	{
 		return
 	}
@@ -450,7 +454,7 @@ function Do3()
 function Do4()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || !${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
 	{
 		return
 	}
