@@ -144,6 +144,7 @@ variable(script) bool isRunning = TRUE
 variable(script) bool doAutoDelete = FALSE
 variable(script) bool doAutoSell = FALSE
 variable(script) bool doRemoveLowLevelDiplo = FALSE
+variable(script) bool doCheckGear = TRUE
 variable(script) int curNPC = 0
 variable(global) string CurrentRegion
 variable(global) string LastRegion
@@ -294,6 +295,7 @@ function main()
 		{
 			call GoDiploSomething
 		}
+		wait 5
 	}
 	
 	if ${Me.Chunk(exists)} && ${Me.FName(exists)}
@@ -398,7 +400,7 @@ function GoDiploSomething()
 	}
 	
 	;; always check to see if we need to change equipment
-	if ${doChangeEquipment}
+	if ${doChangeEquipment} && ${doCheckGear}
 	{
 		call ChangeEquipment
 	}
@@ -678,7 +680,7 @@ function StartParlay()
 
 function ChangeEquipment()
 {
-	if ${doChangeEquipment}
+	if ${doChangeEquipment} && ${doCheckGear}
 	{
 		call PresenceNeeded
 		returnvalue:Set[${Return}]
