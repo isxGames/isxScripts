@@ -1,0 +1,423 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Template Name='VG.Font'>
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+		<template name='VG.Text.Font' Template='VG.Font' />
+	<template name='VG.Text'>
+		<Font Template='VG.Text.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name='VG.BoldText'>
+		<Font Template='VG.BoldFont' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<Window Name='vgtwodot' Template='VG.Window'>
+		<StorePosition>1</StorePosition>
+		<Title>     VG2Dot  </Title>
+		<TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>170</Width>
+		<Height>230</Height>
+		<StorePosition>1</StorePosition>
+		<Title>VG Sorc</Title>
+			<TitleBar template='VG.window.TitleBar'>
+			<X>0</X>
+			<Y>0</Y>
+			<Width>100%</Width>
+			<Height>18</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>12</Width>
+					<Height>12</Height>
+				</Button>
+				<commandbutton name='Custom Close Button' template='VG.Window.TitleBar.Close'>
+                                        <Command>ui -unload "&filename;";endscript vgtwodot</Command>
+                                </commandbutton>
+			</Children>
+		</TitleBar>
+		<Client Template="VG.Window.Client">
+			<Y>18</Y>
+			<Height>r18</Height>
+			<Texture Template="VG.TabControl.FrameTexture" />
+		</Client>
+<Children>
+<!--main tab control-->
+      <TabControl name='VGT' Template='VG.Tabcontrol'>
+        <X>0</X>
+        <Y>3</Y>
+        <Font>
+          <Name>Arial</Name>
+          <Size>12</Size>
+        </Font>
+        <TabHeight>18</TabHeight>
+        <TabBorder>2</TabBorder>
+        <Height>99%</Height>
+        <Width>99%</Width>
+             <OnSelect>
+                    switch ${This.SelectedTab}
+                    {
+                    Case Soc
+                    UIElement[vgtwodot]:SetWidth[170]
+                    UIElement[vgtwodot]:SetHeight[230]
+                    break
+                    Case Mobs
+                    UIElement[vgtwodot]:SetWidth[400]
+                    UIElement[vgtwodot]:SetHeight[640]
+                    break
+                    }
+                  </OnSelect>
+	<Tabs>
+                    <Tab name='Soc'>
+                      <Frame name='SocCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children>
+			<checkbox Name='chkDo1' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>10</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>FIRE Elementals</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do1}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do1:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo2' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>30</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>ICE Elementals</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do2}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do2:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo3' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>50</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>ARCANE Elementals</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do3}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do3:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo4' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>70</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>EARTH Elementals</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do4}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do4:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo5' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>90</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Loot Targets </Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do5}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do5:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo6' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>110</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Hunt Targets </Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do6}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do6:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo7' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>130</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Gather Energy</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do7}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do7:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo8' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>10</X>
+                            <Y>150</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Identify Immunities</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do8}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do8:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+
+		     </Children>
+                      </Frame>
+                    </Tab>
+                    <Tab name='Mobs'>
+                      <Frame name='MobsCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children>
+                <Text Name='txtAbilityTarget' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>13</Y>
+                  <Width>95%</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Your Target</Text>
+                  <OnLoad>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnLoad>
+                  <OnRender>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnRender>
+                </Text>
+                <Text Name='txtaddTarget' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>33</Y>
+                  <Width>50</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Add to:</Text>
+                </Text>
+                <Button Name="ArcaneButton" Template="VG.GreenButton">
+                  <X>75</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Arcane</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddArcane "${Me.Target.Name}"
+                    BuildArcane
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Button Name="FireButton" Template="VG.GreenButton">
+                  <X>150</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Fire</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddFire "${Me.Target.Name}"
+                    BuildFire
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Button Name="ColdIceButton" Template="VG.GreenButton">
+                  <X>225</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Cold/Ice</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddColdIce "${Me.Target.Name}"
+                    BuildColdIce
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Button Name="PhysicalButton" Template="VG.GreenButton">
+                  <visible>1</visible>
+                  <X>300</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Physical</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddPhysical "${Me.Target.Name}"
+                    BuildPhysical
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Text Name='txtArcaneList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>50</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Arcane Pawns:</Text>
+                </Text>
+                <Listbox Name="ArcaneList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>65</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildArcane
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveArcane "${This.SelectedItem}"
+                    BuildArcane
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+                <Text Name='txtFireList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>140</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Fire Pawns: </Text>
+                </Text>
+                <Listbox Name="FireList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>160</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildFire
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveFire "${This.SelectedItem}"
+                    BuildFire
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+				<Text Name='txtColdIceList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>235</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Cold/Ice Pawns: </Text>
+                </Text>
+                <Listbox Name="ColdIceList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>255</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildColdIce
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveColdIce "${This.SelectedItem}"
+                    BuildColdIce
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+                <Text Name='txtPhysicalList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>330</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Physical Pawns: </Text>
+                </Text>
+                <Listbox Name="PhysicalList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>350</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildPhysical
+                  </OnLoad>
+                  <OnRightClick>
+                    RemovePhysical "${This.SelectedItem}"
+                    BuildPhysical
+                    Script[vgtwodot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+		     </Children>
+                      </Frame>
+                    </Tab>
+         </Tabs>
+      </TabControl>
+  </Children>
+    
+	</Window>
+</ISUI>
