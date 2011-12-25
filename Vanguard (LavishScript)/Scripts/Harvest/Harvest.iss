@@ -238,6 +238,11 @@ function BeginHarvesting()
 		{
 			if !${Me.Target(exists)}
 			{
+				;; do nothing
+				if !${autoAssist}
+				{
+					return
+				}
 				VGExecute /assist ${Harvester}
 				wait 10 ${Me.Target(exists)}
 			}
