@@ -183,7 +183,7 @@ function:bool CheckMeleeAttacks()
 			StopAttacks:Set[TRUE]
 		}
 	}
-	if !${Me.Target(exists)}
+	if !${Me.Target(exists)} || ${Me.Target.IsDead}
 	{
 		StopAttacks:Set[TRUE]
 	}
@@ -420,7 +420,7 @@ function Fight()
 		if "!${Paused} && ${doMeleeMove} && ${Me.Target.Distance}>5 && ${Me.Target.Distance}<12 && ${Me.TargetHealth}<${EngagePct}"
 		{
 			echo Moving closer to target
-			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 3
+			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 4
 			;call movetoobject ${Me.Target.ID} 3 1
 		}
 		
