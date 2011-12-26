@@ -50,13 +50,15 @@ variable string BarrierType = "Force"
 variable string LastTargetName = "None"
 variable int64 LastTargetID = 0
 variable int WhatStepWeOn = 0
+variable int TotalKills = 0
 
-;; reference variables
+;; XML variables used to store and save data
 variable settingsetref Arcane
 variable settingsetref Fire
 variable settingsetref ColdIce
 variable settingsetref Physical
 variable settingsetref options
+variable settingsetref Buffs
 
 ;; UI toggles - excessively alot of toggles
 variable bool Do1
@@ -85,7 +87,7 @@ function main()
 	while ${isRunning}
 	{
 		wait 3
-		call Buffs
+		call CheckBuffs
 		call SetImmunities
 		call MandatoryChecks
 		call GoDoSomething
@@ -121,10 +123,25 @@ function Initialize()
 	;-------------------------------------------
 	call loadxmls
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
-	ui -reload  -skin VGSkin "${Script.CurrentDirectory}/vgtwodot.xml"
-	UIElement[vgtwodot]:SetWidth[170]
+	wait 5
+	ui -reload -skin VGSkin "${Script.CurrentDirectory}/vgtwodot.xml"
+	UIElement[vgtwodot]:SetWidth[180]
 	UIElement[vgtwodot]:SetHeight[230]
 
+	;-------------------------------------------
+	; Populate the UI
+	;-------------------------------------------
+	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
+	{
+		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
+		{
+			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Equal[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
+			{
+				UIElement[BuffsCombo@Miscfrm@Misc@VGT@vgtwodot]:AddItem[${Me.Ability[${i}].Name}]
+			}
+		}
+	}
+	BuildBuffs
 	
 	;-------------------------------------------
 	; Find highest level of abilities
@@ -183,6 +200,10 @@ function Initialize()
 			call executeability "${ConjureQuicksilverFocus}"
 		}
 	}
+
+	;; Add in our events
+	Event[VG_onPawnStatusChange]:AttachAtom[PawnStatusChange]
+	
 }	
 
 	
@@ -671,15 +692,15 @@ function Do5()
 function Do6()
 {
 	;; go find a target that is 80 meters, 3-dot or less, level range from 1 to 60
-	if !${Me.Target(exists)} && ${Me.Encounter} < 1 && !${Me.InCombat}
+	if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat}
 	{
 		call FindTarget AggroNPC 80 3 1 60
 	}
 	
 	;; Move Closer to target
-	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>20 && ${Me.Target.Distance}<=80
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>22 && ${Me.Target.Distance}<=80
 	{
-		call movetoobject ${Me.Target.ID} 20 0
+		call movetoobject ${Me.Target.ID} 22 0
 		wait 5
 	}
 }
@@ -762,9 +783,11 @@ function loadxmls()
 	LavishSettings[vgtwodot]:Clear
 
 	LavishSettings:AddSet[vgtwodot]
+	LavishSettings[vgtwodot]:AddSet[Buffs]
 	LavishSettings[vgtwodot]:AddSet[options]
 	LavishSettings[vgtwodot]:Import[${LavishScript.CurrentDirectory}/scripts/vgtwodot/Saves/${Me.FName}.xml]
 
+	LavishSettings[MobResists]:Clear
 	LavishSettings:AddSet[MobResists]
 	LavishSettings[MobResists]:AddSet[Arcane]
 	LavishSettings[MobResists]:AddSet[Fire]
@@ -772,6 +795,7 @@ function loadxmls()
 	LavishSettings[MobResists]:AddSet[Physical]
 	LavishSettings[MobResists]:Import[${LavishScript.CurrentDirectory}/scripts/vgtwodot/Saves/Mobs.xml]
 
+	Buffs:Set[${LavishSettings[vgtwodot].FindSet[Buffs]}]
 	options:Set[${LavishSettings[vgtwodot].FindSet[options]}]
 	Arcane:Set[${LavishSettings[MobResists].FindSet[Arcane]}]
 	Fire:Set[${LavishSettings[MobResists].FindSet[Fire]}]
@@ -787,8 +811,8 @@ function loadxmls()
 	Do6:Set[${options.FindSetting[Do6,${Do6}]}]
 	Do7:Set[${options.FindSetting[Do7,${Do7}]}]
 	Do8:Set[${options.FindSetting[Do8,${Do8}]}]
-	
 }
+
 ;===================================================
 ;===        Lavish Save Routine                 ====
 ;===================================================
@@ -822,7 +846,7 @@ atom atexit()
 ;===================================================
 ;===             Buffs Subroutine               ====
 ;===================================================
-function Buffs()
+function CheckBuffs()
 {
 	;; we do not want to continue if we are in combat
 	if ${Me.InCombat} || ${Me.Encounter}>0 || ${Me.Target(exists)}
@@ -830,17 +854,21 @@ function Buffs()
 		return
 	}
 
-	;-------------------------------------------
-	; Put your buffs you want to cast here
-	;-------------------------------------------
-	call CastBuff "${SeeInvisibility}"
-	call CastBuff "${ArcaneMantle}"
-	call CastBuff "${ElementalMantle}"
-	call CastBuff "${AsayasInsight}"
-	call CastBuff "${SeradonsVision}"
-	call CastBuff "${NullingWard}"
-	call CastBuff "${ChromaticHalo}"
+	;; loop through all our buffs and see which we need to cast
+	variable iterator Iterator
+	variable string temp
+	Buffs:GetSettingIterator[Iterator]
+	while ${Iterator.Key(exists)}
+	{
+		;; Use the ability if it is ready and does not exist on self
+		if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.Effect[${Iterator.Key}](exists)}
+		{
+			call executeability "${Iterator.Key}"
+		}
+		Iterator:Next
+	}
 
+	;; Handle type of Barrier we want
 	switch ${BarrierType}
 	{
 		Case Force
@@ -858,6 +886,7 @@ function Buffs()
 			break
 	}
 		
+	;; Hande type of Focus we want
 	switch ${FocusType}
 	{
 		Case Quartz
@@ -990,3 +1019,50 @@ function Forget()
 	}
 }
 
+;===================================================
+;===         UI Tools for Buffs                 ====
+;===================================================
+atom(global) AddBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[vgtwodot].FindSet[Buffs]:AddSetting[${aName}, ${aName}]
+	}
+}
+atom(global) RemoveBuff(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		Buffs.FindSetting[${aName}]:Remove
+	}
+}
+atom(global) BuildBuffs()
+{
+	variable iterator Iterator
+	Buffs:GetSettingIterator[Iterator]
+	UIElement[BuffsList@Miscfrm@Misc@VGT@vgtwodot]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		UIElement[BuffsList@Miscfrm@Misc@VGT@vgtwodot]:AddItem[${Iterator.Key}]
+		Iterator:Next
+	}
+	variable int i = 0
+	Buffs:Clear
+	while ${i:Inc} <= ${UIElement[BuffsList@Miscfrm@Misc@VGT@vgtwodot].Items}
+	{
+		LavishSettings[vgtwodot].FindSet[Buffs]:AddSetting[${UIElement[BuffsList@Miscfrm@Misc@VGT@vgtwodot].Item[${i}].Text}, ${UIElement[BuffsList@Miscfrm@Misc@VGT@vgtwodot].Item[${i}].Text}]
+	}
+}
+
+;===================================================
+;===         Catch target death                 ====
+;===================================================
+atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
+{
+	if ${PawnID}==${LastTargetID} && ${ChangeType.Equal[NowDead]}
+	{
+		TotalKills:Inc
+		call debug "Total Kills = ${TotalKills}"
+		vgecho "Total Kills = ${TotalKills}"
+	}
+}

@@ -73,7 +73,7 @@
                     switch ${This.SelectedTab}
                     {
                     Case Soc
-						UIElement[vgtwodot]:SetWidth[170]
+						UIElement[vgtwodot]:SetWidth[180]
 						UIElement[vgtwodot]:SetHeight[230]
 						break
                     Case Mobs
@@ -82,7 +82,7 @@
 						break
                     Case Misc
 						UIElement[vgtwodot]:SetWidth[350]
-						UIElement[vgtwodot]:SetHeight[270]
+						UIElement[vgtwodot]:SetHeight[280]
 						break
                     }
                   </OnSelect>
@@ -422,7 +422,7 @@
 				
 					
 					<Tab name='Misc'>
-						<Frame name='Misc'>
+						<Frame name='Miscfrm'>
 							<Height>100%</Height>
 							<Width>100%</Width>
 							<Visible>1</Visible>
@@ -438,7 +438,7 @@
 								<checkbox Name="DoForget" Template="VG.GreenCheckbox">
 									<visible>1</visible>
 									<X>3%</X>
-									<Y>20%</Y>
+									<Y>15%</Y>
 									<Width>15</Width>
 									<Height>15</Height>
 									<Text>Forget</Text>
@@ -455,7 +455,7 @@
 								<Text Name="BarrierMode" Template="VG.BoldText">
 									<visible>1</visible>
 									<X>3%</X>
-									<Y>33%</Y>
+									<Y>25%</Y>
 									<Width>40%</Width>
 									<Height>20</Height>
 									<Text>Barrier Type:</Text>
@@ -463,7 +463,7 @@
 								<ComboBox name="BarrierType" template="VG.ComboBox">
 									<visible>1</visible>
 									<X>3%</X>
-									<Y>40%</Y>
+									<Y>32%</Y>
 									<Width>95%</Width>
 									<Height>18</Height>
 									<Sort>None</Sort>
@@ -490,7 +490,7 @@
 								<Text Name="FocusMode" Template="VG.BoldText">
 									<visible>1</visible>
 									<X>3%</X>
-									<Y>49%</Y>
+									<Y>42%</Y>
 									<Width>42%</Width>
 									<Height>20</Height>
 									<Text>Focus Type:</Text>
@@ -498,7 +498,7 @@
 								<ComboBox name="FocusType" template="VG.ComboBox">
 									<visible>1</visible>
 									<X>3%</X>
-									<Y>56%</Y>
+									<Y>49%</Y>
 									<Width>95%</Width>
 									<Height>18</Height>
 									<Sort>None</Sort>
@@ -532,6 +532,48 @@
 										}
 									</OnSelect>
 								</ComboBox>
+								
+						 <Text Name='txtBuffs' Template='VG.BoldText'>
+							<X>3%</X>
+							<Y>60%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Buffs:</Text>
+						</Text>
+						<ComboBox Name="BuffsCombo" Template="VG.ComboBox">
+							<X>3%</X>
+							<Y>67%</Y>
+							<Width>95%</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								if ${This.SelectedItem.Text(exists)}
+								{
+									AddBuff "${This.SelectedItem.Text}"
+									BuildBuffs
+								}
+							</OnSelect>
+						</ComboBox>
+						<Listbox Name="BuffsList" Template="VG.ListBox">
+							<X>3%</X>
+							<Y>75.5%</Y>
+							<Width>95%</Width>
+							<Height>50</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								BuildBuffs
+							</OnLoad>
+							<OnRightClick>
+								RemoveBuff "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								BuildBuffs
+							</OnRightClick>
+						</Listbox>
+								
 							</Children>
 						</Frame>
 					</Tab>
