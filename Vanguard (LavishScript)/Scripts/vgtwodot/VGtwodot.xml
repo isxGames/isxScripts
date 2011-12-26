@@ -73,13 +73,17 @@
                     switch ${This.SelectedTab}
                     {
                     Case Soc
-                    UIElement[vgtwodot]:SetWidth[170]
-                    UIElement[vgtwodot]:SetHeight[230]
-                    break
+						UIElement[vgtwodot]:SetWidth[170]
+						UIElement[vgtwodot]:SetHeight[230]
+						break
                     Case Mobs
-                    UIElement[vgtwodot]:SetWidth[400]
-                    UIElement[vgtwodot]:SetHeight[640]
-                    break
+						UIElement[vgtwodot]:SetWidth[400]
+						UIElement[vgtwodot]:SetHeight[640]
+						break
+                    Case Misc
+						UIElement[vgtwodot]:SetWidth[350]
+						UIElement[vgtwodot]:SetHeight[270]
+						break
                     }
                   </OnSelect>
 	<Tabs>
@@ -413,8 +417,124 @@
                   </OnRightClick>
                 </Listbox>
 		     </Children>
-                      </Frame>
-                    </Tab>
+           </Frame>
+         </Tab>
+				
+					
+					<Tab name='Misc'>
+						<Frame name='Misc'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>
+								<Text Name="ClassText" Template="VG.BoldText">
+									<X>3%</X>
+									<Y>7%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>TOGGLES:</Text>
+								</Text>
+								<checkbox Name="DoForget" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>20%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Forget</Text>
+									<OnLoad>
+										if ${Script[vgtwodot].VariableScope.doForget}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[vgtwodot].VariableScope.doForget:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<Text Name="BarrierMode" Template="VG.BoldText">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>33%</Y>
+									<Width>40%</Width>
+									<Height>20</Height>
+									<Text>Barrier Type:</Text>
+								</Text>
+								<ComboBox name="BarrierType" template="VG.ComboBox">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>40%</Y>
+									<Width>95%</Width>
+									<Height>18</Height>
+									<Sort>None</Sort>
+									<Items>
+										<Item value='1'> FORCE - Absorb 1 attack and Stun</Item>
+										<Item value='2'> FIRE - 10 percent Spell haste and energy regen</Item>
+										<Item value='3' default='3'> CHROMATIC - Reflect 1 spell</Item>
+									</Items>
+									<OnSelect>
+										if ${This.Selection}==1
+										{
+											Script[vgtwodot].Variable[BarrierType]:Set[Force]
+										}
+										if ${This.Selection}==2
+										{
+											Script[vgtwodot].Variable[BarrierType]:Set[Fire]
+										}
+										if ${This.Selection}==3
+										{
+											Script[vgtwodot].Variable[BarrierType]:Set[Chromatic]
+										}
+									</OnSelect>
+								</ComboBox>
+								<Text Name="FocusMode" Template="VG.BoldText">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>49%</Y>
+									<Width>42%</Width>
+									<Height>20</Height>
+									<Text>Focus Type:</Text>
+								</Text>
+								<ComboBox name="FocusType" template="VG.ComboBox">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>56%</Y>
+									<Width>95%</Width>
+									<Height>18</Height>
+									<Sort>None</Sort>
+									<Items>
+										<Item value='1'> QUARTZ - See Invisibility</Item>
+										<Item value='2'> AQUAMARINE - Water Breathing</Item>
+										<Item value='3'> DIAMOND - Levitatation</Item>
+										<Item value='4' default='4'> QUICKSILVER - 25 percent Spell refresh and Movement</Item>
+										<Item value='5'> OPAL - Immunity to movement debuff</Item>
+									</Items>
+									<OnSelect>
+										if ${This.Selection}==1
+										{
+											Script[vgtwodot].Variable[FocusType]:Set[Quartz]
+										}
+										if ${This.Selection}==2
+										{
+											Script[vgtwodot].Variable[FocusType]:Set[Aquamarine]
+										}
+										if ${This.Selection}==3
+										{
+											Script[vgtwodot].Variable[FocusType]:Set[Diamond]
+										}
+										if ${This.Selection}==4
+										{
+											Script[vgtwodot].Variable[FocusType]:Set[Quicksilver]
+										}
+										if ${This.Selection}==5
+										{
+											Script[vgtwodot].Variable[FocusType]:Set[Opal]
+										}
+									</OnSelect>
+								</ComboBox>
+							</Children>
+						</Frame>
+					</Tab>
          </Tabs>
       </TabControl>
   </Children>

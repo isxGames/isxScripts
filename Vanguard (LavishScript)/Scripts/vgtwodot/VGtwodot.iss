@@ -44,9 +44,12 @@ variable bool doFire = TRUE
 variable bool doArcane = TRUE
 variable bool doColdIce = TRUE
 variable bool doPhysical = TRUE
-variable int WhatStepWeOn = 0
+variable string doForget = FALSE
+variable string FocusType = "Quartz"
+variable string BarrierType = "Force"
 variable string LastTargetName = "None"
 variable int64 LastTargetID = 0
+variable int WhatStepWeOn = 0
 
 ;; reference variables
 variable settingsetref Arcane
@@ -82,9 +85,11 @@ function main()
 	while ${isRunning}
 	{
 		wait 3
+		call Buffs
 		call SetImmunities
 		call MandatoryChecks
 		call GoDoSomething
+		call Forget
 	}
 }
 
@@ -119,7 +124,64 @@ function Initialize()
 	ui -reload  -skin VGSkin "${Script.CurrentDirectory}/vgtwodot.xml"
 	UIElement[vgtwodot]:SetWidth[170]
 	UIElement[vgtwodot]:SetHeight[230]
+
 	
+	;-------------------------------------------
+	; Find highest level of abilities
+	;-------------------------------------------
+	;; === BARRIERS ===
+	call SetHighestAbility "ForceBarrier" "Force Barrier"
+	call SetHighestAbility "FireBarrier" "Fire Barrier"
+	call SetHighestAbility "ChromaticBarrier" "Chromatic Barrier"
+	;; === FOCUS ===
+	call SetHighestAbility "ConjureQuartzFocus" "Conjure Quartz Focus"
+	call SetHighestAbility "ConjureAquamarineFocus" "Conjure Aquamarine Focus"
+	call SetHighestAbility "ConjureDiamondFocus" "Conjure Diamond Focus"
+	call SetHighestAbility "ConjureQuicksilverFocus" "Conjure Quicksilver Focus"
+	call SetHighestAbility "ConjureOpalFocus" "Conjure Opal Focus"
+	;; === BUFFS ===
+	call SetHighestAbility "ArcaneMantle" "Arcane Mantle"
+	call SetHighestAbility "ElementalMantle" "Elemental Mantle"
+	call SetHighestAbility "AsayasInsight" "Asaya's Insight"
+	call SetHighestAbility "NullingWard" "Nulling Ward"
+	call SetHighestAbility "SeradonsVision" "Seradon's Vision"
+	call SetHighestAbility "SeeInvisibility" "See Invisibility"
+	;; === MISC ===
+	call SetHighestAbility "Forget" "Forget"
+	call SetHighestAbility "Disenchant" "Disenchant"
+	
+
+	;-------------------------------------------
+	; Put in our inventory all our Focus Items
+	;-------------------------------------------
+	if ${Me.Ability[${ConjureQuartzFocus}](exists)}
+	{
+		if !${Me.Inventory[Quartz Focus](exists)}
+		{
+			call executeability "${ConjureQuartzFocus}"
+		}
+	}
+	if ${Me.Ability[${ConjureAquamarineFocus}](exists)}
+	{
+		if !${Me.Inventory[Aquamarine Focus](exists)}
+		{
+			call executeability "${ConjureAquamarineFocus}"
+		}
+	}
+	if ${Me.Ability[${ConjureDiamondFocus}](exists)}
+	{
+		if !${Me.Inventory[Diamond Focus](exists)}
+		{
+			call executeability "${ConjureDiamondFocus}"
+		}
+	}
+	if ${Me.Ability[${ConjureQuicksilverFocus}](exists)}
+	{
+		if !${Me.Inventory[Quicksilver Focus](exists)}
+		{
+			call executeability "${ConjureQuicksilverFocus}"
+		}
+	}
 }	
 
 	
@@ -672,7 +734,7 @@ function executeability(string x_ability)
 	face ${Me.Target.X} ${Me.Target.Y}
 	Me.Ability[${x_ability}]:Use
 	wait 2
-	call debug ${x_ability}
+	call debug "Casting: ${x_ability}"
 	while ${Me.IsCasting}
 	{
 		wait 1
@@ -689,7 +751,7 @@ function executeability(string x_ability)
 ;===================================================
 function debug(string Text)
 {
-	echo [${Time}] "${Text}"
+	echo [${Time}][vg2dot] --> "${Text}"
 }
 
 ;===================================================
@@ -716,6 +778,7 @@ function loadxmls()
 	ColdIce:Set[${LavishSettings[MobResists].FindSet[ColdIce]}]
 	Physical:Set[${LavishSettings[MobResists].FindSet[Physical]}]
 
+	doForget:Set[${options.FindSetting[doForget,${doForget}]}]
 	Do1:Set[${options.FindSetting[Do1,${Do1}]}]
 	Do2:Set[${options.FindSetting[Do2,${Do2}]}]
 	Do3:Set[${options.FindSetting[Do3,${Do3}]}]
@@ -724,12 +787,14 @@ function loadxmls()
 	Do6:Set[${options.FindSetting[Do6,${Do6}]}]
 	Do7:Set[${options.FindSetting[Do7,${Do7}]}]
 	Do8:Set[${options.FindSetting[Do8,${Do8}]}]
+	
 }
 ;===================================================
 ;===        Lavish Save Routine                 ====
 ;===================================================
 function LavishSave()
 {
+	options:AddSetting[doForget,${doForget}]
 	options:AddSetting[Do1,${Do1}]
 	options:AddSetting[Do2,${Do2}]
 	options:AddSetting[Do3,${Do3}]
@@ -741,8 +806,8 @@ function LavishSave()
 
 	LavishSettings[vgtwodot]:Export[${LavishScript.CurrentDirectory}/scripts/vgtwodot/Saves/${Me.FName}.xml]
 	LavishSettings[MobResists]:Export[${LavishScript.CurrentDirectory}/scripts/vgtwodot/Saves/Mobs.xml]
-
 }
+
 ;===================================================
 ;===                   Exit                     ====
 ;===================================================
@@ -754,4 +819,173 @@ atom atexit()
 	ui -unload "${Script.CurrentDirectory}/vgtwodot.xml"
 }
 
+;===================================================
+;===             Buffs Subroutine               ====
+;===================================================
+function Buffs()
+{
+	;; we do not want to continue if we are in combat
+	if ${Me.InCombat} || ${Me.Encounter}>0 || ${Me.Target(exists)}
+	{
+		return
+	}
+
+	;-------------------------------------------
+	; Put your buffs you want to cast here
+	;-------------------------------------------
+	call CastBuff "${SeeInvisibility}"
+	call CastBuff "${ArcaneMantle}"
+	call CastBuff "${ElementalMantle}"
+	call CastBuff "${AsayasInsight}"
+	call CastBuff "${SeradonsVision}"
+	call CastBuff "${NullingWard}"
+
+	switch ${BarrierType}
+	{
+		Case Force
+			call CastBuff "${ForceBarrier}"
+			break
+			
+		Case Fire
+			call CastBuff "${FireBarrier}"
+			break
+			
+		Case Chromatic
+			call CastBuff "${ChromaticBarrier}"
+			break
+		Default
+			break
+	}
+		
+	switch ${FocusType}
+	{
+		Case Quartz
+			if ${Me.Ability[Conjure Quartz Focus](exists)} && !${Me.Effect[Quartz Focus Essence](exists)}
+			{
+				Me.Inventory[Quartz Focus]:Use
+				wait 15
+			}
+			break
+		Case Aquamarine
+			if ${Me.Ability[Conjure Aquamarine Focus](exists)} && !${Me.Effect[Aquamarine Focus Essence](exists)}
+			{
+				Me.Inventory[Aquamarine Focus]:Use
+				wait 15
+			}
+			break
+		Case Diamond
+			if ${Me.Ability[Conjure Diamond Focus](exists)} && !${Me.Effect[Diamond Focus Essence](exists)}
+			{
+				Me.Inventory[Diamond Focus]:Use
+				wait 15
+			}
+			break
+		Case Quicksilver
+			if ${Me.Ability[Conjure Quicksilver Focus](exists)} && !${Me.Effect[Quicksilver Focus Essence](exists)}
+			{
+				Me.Inventory[Quicksilver Focus]:Use
+				wait 15
+			}
+			break
+		Case Opal
+			if ${Me.Ability[Conjure Opal Focus](exists)} && !${Me.Effect[Opal Focus Essence](exists)}
+			{
+				Me.Inventory[Opal Focus]:Use
+				wait 15
+			}
+			break
+		Default
+			break
+	}
+}
+
+function:bool CastBuff(string ABILITY)
+{
+	if ${Me.Ability[${ABILITY}](exists)} && !${Me.Effect[${ABILITY}](exists)}
+	{
+		if !${Me.DTarget.Name.Equal[${Me.FName}]}
+		{
+			Pawn[me]:Target
+			waitframe
+		}
+		;; loop this while checking for crits and furious
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+		{
+			waitframe
+		}
+		call executeability "${ABILITY}"
+		wait 100 ${Me.Effect[${ABILITY}](exists)}
+		wait 5
+		return TRUE
+	}
+	return FALSE
+}
+
+;===================================================
+;===      SetHighestAbility Routine             ====
+;===================================================
+function SetHighestAbility(string AbilityVariable, string AbilityName)
+{
+	declare L int local 8
+	declare ABILITY string local ${AbilityName}
+	declare AbilityLevels[8] string local
+
+	AbilityLevels[1]:Set[I]
+	AbilityLevels[2]:Set[II]
+	AbilityLevels[3]:Set[III]
+	AbilityLevels[4]:Set[IV]
+	AbilityLevels[5]:Set[V]
+	AbilityLevels[6]:Set[VI]
+	AbilityLevels[7]:Set[VII]
+	AbilityLevels[8]:Set[VIII]
+
+	;-------------------------------------------
+	; Return if Ability already exists - based upon current level
+	;-------------------------------------------
+	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${ABILITY}].LevelGranted}<=${Me.Level}
+	{
+		echo "[${Time}][vg2dot] --> ${AbilityVariable}:  Level=${Me.Ability[${ABILITY}].LevelGranted} - ${ABILITY}"
+		declare	${AbilityVariable}	string	script "${ABILITY}"
+		return
+	}
+
+	;-------------------------------------------
+	; Find highest Ability level - based upon current level
+	;-------------------------------------------
+	do
+	{
+		if ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"](exists)} && ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"].LevelGranted}<=${Me.Level}
+		{
+			ABILITY:Set["${AbilityName} ${AbilityLevels[${L}]}"]
+			break
+		}
+	}
+	while (${L:Dec}>0)
+
+	;-------------------------------------------
+	; If Ability exist then return
+	;-------------------------------------------
+	if ${Me.Ability["${ABILITY}"](exists)} && ${Me.Ability["${ABILITY}"].LevelGranted}<=${Me.Level}
+	{
+		echo "[${Time}][vg2dot] --> ${AbilityVariable}:  Level=${Me.Ability[${ABILITY}].LevelGranted} - ${ABILITY}"
+		declare	${AbilityVariable}	string	script "${ABILITY}"
+		return
+	}
+
+	;-------------------------------------------
+	; Otherwise, new Ability is named "None"
+	;-------------------------------------------
+	echo "[${Time}][vg2dot] --> ${AbilityVariable}:  None"
+	declare	${AbilityVariable}	string	script "None"
+	return
+}
+
+function Forget()
+{
+	;; deaggro the mob
+	if ${Me.IsGrouped} && ${doForget} && ${Me.TargetHealth}<70
+	{
+		call executeability "${Forget}"
+	}
+}
 
