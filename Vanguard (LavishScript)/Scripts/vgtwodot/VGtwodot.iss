@@ -146,6 +146,7 @@ function Initialize()
 	call SetHighestAbility "NullingWard" "Nulling Ward"
 	call SetHighestAbility "SeradonsVision" "Seradon's Vision"
 	call SetHighestAbility "SeeInvisibility" "See Invisibility"
+	call SetHighestAbility "ChromaticHalo" "Chromatic Halo"
 	;; === MISC ===
 	call SetHighestAbility "Forget" "Forget"
 	call SetHighestAbility "Disenchant" "Disenchant"
@@ -613,7 +614,6 @@ function Do5()
 	{
 		return
 	}
-	
 
 	;; loot the target if its within range
 	if ${Me.Target.IsDead} && ${Pawn[${Me.Target}].Type.Equal[Corpse]} && ${Pawn[${Me.Target}].ContainsLoot} && ${Me.Target.Distance}<5
@@ -666,7 +666,7 @@ function Do5()
 }
 
 ;===================================================
-;===            HANDLE ALL LOOTING              ====
+;===            HUNTING ROUTINE                 ====
 ;===================================================
 function Do6()
 {
@@ -839,6 +839,7 @@ function Buffs()
 	call CastBuff "${AsayasInsight}"
 	call CastBuff "${SeradonsVision}"
 	call CastBuff "${NullingWard}"
+	call CastBuff "${ChromaticHalo}"
 
 	switch ${BarrierType}
 	{
