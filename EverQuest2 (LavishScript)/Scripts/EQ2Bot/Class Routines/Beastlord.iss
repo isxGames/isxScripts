@@ -73,8 +73,15 @@ function Buff_Init()
 	PreAction[1]:Set[Pathfinding]
 	PreSpellRange[1,1]:Set[302]
 
-	PreAction[2]:Set[Offensive_Stance]
+	PreAction[2]:Set[Stance]
 	PreSpellRange[2,1]:Set[290]
+	PreSpellRange[2,2]:Set[295]
+	
+	PreAction[3]:Set[Claws]
+	PreSpellRange[3,1]:Set[25]
+	
+	PreAction[4]:Set[Claws]
+	PreSpellRange[4,1]:Set[30]	
 
 }
 
@@ -112,13 +119,14 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
+		case Claws
 		case Pathfinding
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			break
-		case Offensive_Stance
+		case Stance
 			if ${StanceType}==1
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
@@ -146,14 +154,115 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
-	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
-		call PetAttack	
-
 	if !${Me.ToActor.Pet(exists)} && ${PetMode}
 		call SummonPet
+
+	call CheckHeals
+	
+	if ${Me.Pet(exists)}
+  {
+    if ${Me.Pet.Target.ID} != ${Target.ID}
+    {
+      eq2execute /pet backoff
+      wait 5
+      if ${Target(exists)}
+        eq2execute /pet attack
+    }
+    elseif !${Me.Pet.InCombatMode} && ${Target(exists)}
+    {
+      eq2execute /pet attack
+    }
+  }
+  
+
+	;`Use Savagery
+	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=1
+	{
+		;;;;Luclin's Pain
+		if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[235]}].IsReady} 
+		{
+			call CastSpellRange 235 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+		;;;;Claw
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[220]}].IsReady} 
+		{
+			call CastSpellRange 220 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}			
+		;;;;Mandate
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[225]}].IsReady} 
+		{
+			call CastSpellRange 225 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}		
+		;;;;Venom
+		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[230]}].IsReady} 
+		{
+			call CastSpellRange 230 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}		
+	}
+
+  if ${Me.Maintained[Feral Stance](exists)}
+  {
+    ;Callous Ferocity
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[205]}].IsReady} && !${Me.Maintained[${SpellType[205]}](exists)}
+    {
+    	call CastSpellRange 205 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+    ;Shiverback Endemic
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[210]}].IsReady} && !${Me.Maintained[${SpellType[210]}](exists)}
+    {
+    	call CastSpellRange 210 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+    ;Flurry of Claws
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[200]}].IsReady} && !${Me.Maintained[${SpellType[200]}](exists)}
+    {
+    	call CastSpellRange 200 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+    ;Glacial Roar
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[215]}].IsReady} && !${Me.Maintained[${SpellType[215]}](exists)}
+    {
+    	call CastSpellRange 215 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+  }
+  elseif ${Me.Maintained[Spiritual Stance](exists)}
+  {
+    ;Frigid Fortification
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[206]}].IsReady} && !${Me.Maintained[${SpellType[206]}](exists)}
+    {
+    	call CastSpellRange 206 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+    ;Bestial Vehemence
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[211]}].IsReady} && !${Me.Maintained[${SpellType[211]}](exists)}
+    {
+    	call CastSpellRange 211 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+    ;Astral Ravaging
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[201]}].IsReady} && !${Me.Maintained[${SpellType[201]}](exists)}
+    {
+    	call CastSpellRange 201 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+    ;Savage Resilience
+    if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[216]}].IsReady} && !${Me.Maintained[${SpellType[216]}](exists)}
+    {
+    	call CastSpellRange 216 0 0 0 ${KillTarget}
+			spellsused:Inc
+    }
+  }
+
+
 	
 	;;;; Buff Ralissj's Insight
-	if ${Me.Ability[${SpellType[392]}].IsReady} && ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[392]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[392]}].IsReady} && ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[392]}](exists)}
 	{
 		call CastSpellRange 392	
 		spellsused:Inc
@@ -173,7 +282,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}			
 
-	if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		Target ${KillTarget}
 		call CheckPosition 1 1 ${KillTarget}
@@ -201,7 +310,28 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 150 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}	
-		
+
+	;;;;Elnaki's Swipe
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[390]}].IsReady} 
+	{
+		call CastSpellRange 390 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+
+	;;;;Primal Consumption
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[396]}].IsReady}
+	{
+		call CastSpellRange 396 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+
+	;;;;Glacial Lance
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[61]}].IsReady} && ${Target.Distance}>5
+	{
+		call CastSpellRange 61 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	
 }
 
 function Post_Combat_Routine(int xAction)
