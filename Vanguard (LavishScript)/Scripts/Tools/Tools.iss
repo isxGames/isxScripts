@@ -134,6 +134,7 @@ variable int FollowDistance2 = 5
 
 ;; Class Specific Routines
 #include ./Tools/Class/Bard.iss
+#include ./Tools/Class/Sorcerer.iss
 
 ;; Defines - good within this script
 #define ALARM "${Script.CurrentDirectory}/ping.wav"
@@ -155,6 +156,7 @@ function main()
 	; CLASS SPECIFIC Routines
 	;-------------------------------------------
 	call Bard
+	call Sorcerer
 	
 	;-------------------------------------------
 	; loop this until we exit the script
@@ -186,6 +188,7 @@ function main()
 
 			;; Class Specific Routines - do these first before doing combat stuff
 			call Bard
+			call Sorcerer
 		
 			;; we only want targets that are not a Resource and not dead
 			if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Resource]} && !${Me.Target.IsDead}
@@ -440,12 +443,12 @@ function Initialize()
 	}
 
 	;; Now select the items based upon what we had saved
-	BuildItems
-	BuildAbilities
-	BuildForms
-	BuildBuffs
-	BuildTriggerBuffs
-	BuildBuffOnly
+	Tools_BuildItems
+	Tools_BuildAbilities
+	Tools_BuildForms
+	Tools_BuildBuffs
+	Tools_BuildTriggerBuffs
+	Tools_BuildBuffsOnly
 
 	;;Class Specific - Bard Stuff
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
@@ -776,6 +779,7 @@ function CounterIt()
 				if ${Me.Ability[${CounterA}].IsReady} && ${Me.Ability[${CounterA}].TimeRemaining}==0
 				{
 					VGExecute "/reactioncounter 1"
+					wait 1
 					call GlobalCooldown
 				}
 			}
@@ -784,6 +788,7 @@ function CounterIt()
 				if ${Me.Ability[${CounterB}].IsReady} && ${Me.Ability[${CounterB}].TimeRemaining}==0
 				{
 					VGExecute "/reactioncounter 2"
+					wait 1
 					call GlobalCooldown
 				}
 			}
@@ -953,7 +958,7 @@ function PushStance()
 ;===================================================
 function:bool OkayToAttack()
 {
-	if (${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
+	if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 	{
 		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
 		{
@@ -1155,7 +1160,8 @@ function UseAbilities()
 		{
 			;; Use the ability if it is ready and does not exist on target or myself
 			call OkayToAttack
-			if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)} && !${Me.Effect[${Iterator.Key}](exists)}
+			;if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)} && !${Me.Effect[${Iterator.Key}](exists)}
+			if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)}
 			{
 				if ${Me.Ability[${Iterator.Key}].BloodUnionRequired} > ${Me.BloodUnion}
 				{
@@ -1195,6 +1201,7 @@ function:bool UseAbility(string ABILITY)
 	call CounterIt
 	call StripIt
 	call PushStance
+	call SorcCrits
 	
 	;-------------------------------------------
 	; execute ability only if it is ready
@@ -1239,20 +1246,49 @@ function UseItems()
 		{
 			if ${Me.Inventory[${Iterator.Key}].IsReady}
 			{
+				;
+				; The following checks will cause the system to crash over time;
+				; is it needed, only if you do not want many error messages
+				;
 				if ${Me.Inventory[${Iterator.Key}].Type.Equal[Weapon]} || ${Me.Inventory[${Iterator.Key}].Type.Equal[Shield]} || ${Me.Inventory[${Iterator.Key}].Type.Equal[Instrument]}
 				{
 					;
-					; The above checks will cause the system to crash over time;
-					; is it needed, only if you do not want many error messages
+					; save our current equiped itemes
 					;
-					waitframe
-					LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Primary Hand]}]
-					LastSecondary:Set[${Me.Inventory[CurrentEquipSlot,Secondary Hand]}]
+					if ${Me.Inventory[CurrentEquipSlot,Primary Hand](exists)}
+					{
+						LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Primary Hand]}]
+					}
+					if ${Me.Inventory[CurrentEquipSlot,Secondary Hand](exists)}
+					{
+						LastSecondary:Set[${Me.Inventory[CurrentEquipSlot,Secondary Hand]}]
+					}
+					if ${Me.Inventory[CurrentEquipSlot,Two Hands](exists)}
+					{
+						LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Two Hands]}]
+						LastSecondary:Set[${LastPrimary}]
+					}
+					
+					;
+					; use the item if already equiped
+					;
+					if ${LastPrimary.Equal[${Iterator.Key}]} || ${LastSecondary.Equal[${Iterator.Key}]}
+					{
+						Me.Inventory[${Iterator.Key}]:Use
+						wait 2
+						Iterator:Next
+						continue
+					}
+					
+					;
+					; otherwise, equip the item, use it, then equip old items
+					;
 					Me.Inventory[${Iterator.Key}]:Equip
 					wait 2
 					Me.Inventory[${Iterator.Key}]:Use
-					wait 2
-					if ${LastPrimary.Equal[LastSecondary]}
+					waitframe
+					
+					if ${LastPrimary.Equal[${LastSecondary}]}
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
 						wait 2
@@ -1267,10 +1303,9 @@ function UseItems()
 				else
 				{
 					Me.Inventory[${Iterator.Key}]:Use
-					wait 2
+					waitframe
 				}
 			}
-			waitframe
 			Iterator:Next
 		}
 	}
@@ -1624,7 +1659,7 @@ function FollowTank()
 ;===================================================
 ;===         UI Tools for Abilities             ====
 ;===================================================
-atom(global) AddAbilities(string aName)
+atom(global) Tools_AddAbilities(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
@@ -1632,14 +1667,14 @@ atom(global) AddAbilities(string aName)
 
 	}
 }
-atom(global) RemoveAbilities(string aName)
+atom(global) Tools_RemoveAbilities(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		Abilities.FindSetting[${aName}]:Remove
 	}
 }
-atom(global) BuildAbilities()
+atom(global) Tools_BuildAbilities()
 {
 	variable iterator Iterator
 	Abilities:GetSettingIterator[Iterator]
@@ -1661,21 +1696,21 @@ atom(global) BuildAbilities()
 ;===================================================
 ;===         UI Tools for Items                 ====
 ;===================================================
-atom(global) AddItems(string aName)
+atom(global) Tools_AddItems(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[DPS].FindSet[Items-${Me.FName}]:AddSetting[${aName}, ${aName}]
 	}
 }
-atom(global) RemoveItems(string aName)
+atom(global) Tools_RemoveItems(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		Items.FindSetting[${aName}]:Remove
 	}
 }
-atom(global) BuildItems()
+atom(global) Tools_BuildItems()
 {
 	variable iterator Iterator
 	Items:GetSettingIterator[Iterator]
@@ -1696,21 +1731,21 @@ atom(global) BuildItems()
 ;===================================================
 ;===         UI Tools for Buffs                 ====
 ;===================================================
-atom(global) AddBuff(string aName)
+atom(global) Tools_AddBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[DPS].FindSet[Buffs-${Me.FName}]:AddSetting[${aName}, ${aName}]
 	}
 }
-atom(global) RemoveBuff(string aName)
+atom(global) Tools_RemoveBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		Buffs.FindSetting[${aName}]:Remove
 	}
 }
-atom(global) BuildBuffs()
+atom(global) Tools_BuildBuffs()
 {
 	variable iterator Iterator
 	Buffs:GetSettingIterator[Iterator]
@@ -1731,21 +1766,21 @@ atom(global) BuildBuffs()
 ;===================================================
 ;===         UI Tools for Buff Only             ====
 ;===================================================
-atom(global) AddBuffOnly(string aName)
+atom(global) Tools_AddBuffOnly(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}]:AddSetting[${aName}, ${aName}]
 	}
 }
-atom(global) RemoveBuffOnly(string aName)
+atom(global) Tools_RemoveBuffOnly(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		BuffOnly.FindSetting[${aName}]:Remove
 	}
 }
-atom(global) BuildBuffOnly()
+atom(global) Tools_BuildBuffsOnly()
 {
 	variable iterator Iterator
 	BuffOnly:GetSettingIterator[Iterator]
@@ -1765,7 +1800,7 @@ atom(global) BuildBuffOnly()
 
 
 
-atom(global) BuildForms()
+atom(global) Tools_BuildForms()
 {
 	variable int i
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
@@ -1787,21 +1822,21 @@ atom(global) BuildForms()
 ;===================================================
 ;===         UI Tools for Trigger Buffs         ====
 ;===================================================
-atom(global) AddTriggerBuff(string aName)
+atom(global) Tools_AddTriggerBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}]:AddSetting[${aName}, ${aName}]
 	}
 }
-atom(global) RemoveTriggerBuff(string aName)
+atom(global) Tools_RemoveTriggerBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
 	{
 		TriggerBuffs.FindSetting[${aName}]:Remove
 	}
 }
-atom(global) BuildTriggerBuffs()
+atom(global) Tools_BuildTriggerBuffs()
 {
 	variable iterator Iterator
 	TriggerBuffs:GetSettingIterator[Iterator]
