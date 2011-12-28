@@ -534,8 +534,8 @@
 							<OnSelect>
 							if ${This.SelectedItem.Text(exists)}
 							{
-								AddAbilities "${This.SelectedItem.Text}"
-								BuildAbilities
+								Tools_AddAbilities "${This.SelectedItem.Text}"
+								Tools_BuildAbilities
 							}
 							</OnSelect>
 						</ComboBox>
@@ -547,12 +547,12 @@
 							<AutoSort>TRUE</AutoSort>
 							<Sort>User</Sort>
 							<OnLoad>
-								BuildAbilities
+								Tools_BuildAbilities
 							</OnLoad>
 							<OnRightClick>
-								RemoveAbilities "${This.SelectedItem}"
+								Tools_RemoveAbilities "${This.SelectedItem}"
 								This.SelectedItem:Remove
-								BuildAbilities
+								Tools_BuildAbilities
 							</OnRightClick>
 						</Listbox>
 						 <Text Name='txtItems' Template='VG.BoldText'>
@@ -574,8 +574,8 @@
 							<OnSelect>
 								if ${This.SelectedItem.Text(exists)}
 								{
-									AddItems "${This.SelectedItem.Text}"
-									BuildItems
+									Tools_AddItems "${This.SelectedItem.Text}"
+									Tools_BuildItems
 								}
 							</OnSelect>
 						</ComboBox>
@@ -587,12 +587,12 @@
 							<AutoSort>TRUE</AutoSort>
 							<Sort>User</Sort>
 							<OnLoad>
-								BuildItems
+								Tools_BuildItems
 							</OnLoad>
 							<OnRightClick>
-								RemoveItems "${This.SelectedItem}"
+								Tools_RemoveItems "${This.SelectedItem}"
 								This.SelectedItem:Remove
-								BuildItems
+								Tools_BuildItems
 							</OnRightClick>
 						</Listbox>
  						<Text Name='txtCombatForm' Template='VG.BoldText'>
@@ -654,8 +654,8 @@
 							<OnSelect>
 								if ${This.SelectedItem.Text(exists)}
 								{
-									AddBuff "${This.SelectedItem.Text}"
-									BuildBuffs
+									Tools_AddBuff "${This.SelectedItem.Text}"
+									Tools_BuildBuffs
 								}
 							</OnSelect>
 						</ComboBox>
@@ -667,12 +667,12 @@
 							<AutoSort>TRUE</AutoSort>
 							<Sort>User</Sort>
 							<OnLoad>
-								BuildBuffs
+								Tools_BuildBuffs
 							</OnLoad>
 							<OnRightClick>
-								RemoveBuff "${This.SelectedItem}"
+								Tools_RemoveBuff "${This.SelectedItem}"
 								This.SelectedItem:Remove
-								BuildBuffs
+								Tools_BuildBuffs
 							</OnRightClick>
 						</Listbox>
 
@@ -834,6 +834,22 @@
 								</ComboBox>
 							</Children>
 						</Frame>
+						
+						<Frame name='Sorcerer'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>0</Visible>
+							<Children>
+								 <Text Name='txtSorc' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>2%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Center</Alignment>
+									<Text>==== Sorc Stuff ====  </Text>
+								</Text>
+							</Children>
+						</Frame>
 					</Tab>
 
 					<Tab name='BuffBot'>
@@ -991,8 +1007,8 @@
 							<OnSelect>
 								if ${This.SelectedItem.Text(exists)}
 								{
-									AddTriggerBuff "${This.SelectedItem.Text}"
-									BuildTriggerBuffs
+									Tools_AddTriggerBuff "${This.SelectedItem.Text}"
+									Tools_BuildTriggerBuffs
 								}
 							</OnSelect>
 						</ComboBox>
@@ -1004,12 +1020,12 @@
 							<AutoSort>TRUE</AutoSort>
 							<Sort>User</Sort>
 							<OnLoad>
-								BuildTriggerBuffs
+								Tools_BuildTriggerBuffs
 							</OnLoad>
 							<OnRightClick>
-								RemoveTriggerBuff "${This.SelectedItem}"
+								Tools_RemoveTriggerBuff "${This.SelectedItem}"
 								This.SelectedItem:Remove
-								BuildTriggerBuffs
+								Tools_BuildTriggerBuffs
 							</OnRightClick>
 						</Listbox>
 						 <Text Name='txtBuffOnly' Template='VG.BoldText'>
@@ -1020,15 +1036,15 @@
 							<Alignment>Center</Alignment>
 							<Text>== Buff these PCs/Guilds ==</Text>
 						</Text>
-						<CommandButton Name="AddBuffOnlyButton" Template="VG.GreyCommandButton">
+						<CommandButton Name="Tools_AddBuffOnlyButton" Template="VG.GreyCommandButton">
 							<X>6%</X>
 							<Y>65%</Y>
 							<Height>18</Height>
 							<Width>80</Width>
 							<Text>Add Name</Text>
 							<OnLeftClick>
-								AddBuffOnly "${Script[Tools].VariableScope.BuffOnlyName}"
-								BuildBuffOnly
+								Tools_AddBuffOnly "${Script[Tools].VariableScope.BuffOnlyName}"
+								Tools_BuildBuffsOnly
 							</OnLeftClick>
 						</CommandButton>
 						<Textentry Name='BuffOnlyName' Template='VG.TextEntry'>
@@ -1061,12 +1077,12 @@
 							<AutoSort>TRUE</AutoSort>
 							<Sort>User</Sort>
 							<OnLoad>
-								BuildBuffOnly
+								Tools_BuildBuffsOnly
 							</OnLoad>
 							<OnRightClick>
-								RemoveBuffOnly "${This.SelectedItem}"
+								Tools_RemoveBuffOnly "${This.SelectedItem}"
 								This.SelectedItem:Remove
-								BuildBuffOnly
+								Tools_BuildBuffsOnly
 							</OnRightClick>
 						</listbox>
 						<Commandbutton Name="BuffArea" Template="VG.GreyCommandButton">
