@@ -13,6 +13,10 @@
 ;
 ; Revision History
 ; ----------------
+; 20111229 (Zandros)
+; * Items will now cycle through each one, just make sure the item is on one of
+;   you hotbars.
+;
 ; 20111224 (Zandros)
 ; * Added Tell logging and pinging
 ;
@@ -121,6 +125,7 @@ variable settingsetref BuffOnly
 ;; Equipment variables
 variable string LastPrimary
 variable string LastSecondary
+variable string LastItemUsed
 
 ;; BuffBot variables
 variable string PCName
@@ -1242,6 +1247,22 @@ function UseItems()
 		;
 		variable iterator Iterator
 		Items:GetSettingIterator[Iterator]
+
+		;; keep looping until we reached the last item used
+		while ${Iterator.Key(exists)} && !${LastItemUsed.Equal[${Iterator.Key}]}
+		{
+			Iterator:Next
+		}
+
+		;; get the next one
+		Iterator:Next
+		
+		;; if it doesn't exist then reset to the 1st one
+		if !${Iterator.Key(exists)}
+		{
+			Iterator:First
+		}
+
 		while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning} && !${Me.Target.IsDead}
 		{
 			if ${Me.Inventory[${Iterator.Key}].IsReady}
@@ -1275,6 +1296,7 @@ function UseItems()
 					if ${LastPrimary.Equal[${Iterator.Key}]} || ${LastSecondary.Equal[${Iterator.Key}]}
 					{
 						Me.Inventory[${Iterator.Key}]:Use
+						LastItemUsed:Set[${Iterator.Key}]
 						wait 2
 						Iterator:Next
 						continue
@@ -1284,26 +1306,30 @@ function UseItems()
 					; otherwise, equip the item, use it, then equip old items
 					;
 					Me.Inventory[${Iterator.Key}]:Equip
-					wait 2
+					wait 1
 					Me.Inventory[${Iterator.Key}]:Use
-					waitframe
+					LastItemUsed:Set[${Iterator.Key}]
+					wait 2
 					
 					if ${LastPrimary.Equal[${LastSecondary}]}
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
-						wait 2
+						wait 1
 					}
 					else
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
 						Me.Inventory[${LastSecondary}]:Equip[Secondary Hand]
-						wait 2
+						wait 1
 					}
+					return
 				}
 				else
 				{
+					;; sometimes th
 					Me.Inventory[${Iterator.Key}]:Use
-					waitframe
+					LastItemUsed:Set[${Iterator.Key}]
+					wait 2
 				}
 			}
 			Iterator:Next
