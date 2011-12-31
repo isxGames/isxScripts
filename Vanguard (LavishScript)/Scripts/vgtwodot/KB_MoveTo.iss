@@ -184,7 +184,7 @@ function movetoobject(string ObjectID, float MaxDist, float MinDist)
 		}
 
 	}
-	while (${Pawn[id,${ObjectID}].Distance} > ${MaxDist} || ${Pawn[id,${ObjectID}].Distance} < ${MinDist}) && ${LavishScript.RunningTime} < ${BailOut} && ${Pawn[${Me}].CombatState} == 0
+	while (${Pawn[id,${ObjectID}].Distance}>${MaxDist} || ${Pawn[id,${ObjectID}].Distance}<${MinDist}) && ${LavishScript.RunningTime}<${BailOut} && ${Pawn[${Me}].CombatState}==0 && ${Me.HealthPct}>0 && !${GV[bool,DeathReleasePopup]}
 
 	VG:ExecBinding[moveforward,release]
 	VG:ExecBinding[movebackward,release]
