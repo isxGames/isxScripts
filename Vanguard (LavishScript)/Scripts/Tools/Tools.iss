@@ -584,9 +584,10 @@ atom(script) EchoIt(string aText)
 ;===================================================
 atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 {
-	if ${doRift}
+	if ${doRift} && !${aType.Find[NPC]}
 	{
 		;; ID, Level and Type sometimes generates 0 or NULL
+		EchoIt "[${aID}], lvl=${aLevel}, ${aName}, ${aType}"
 		PCName:Set[${aName.Token[1," "]}]
 		Tools_BuffRequestList:Set["${PCName}", "Buff"]
 	}
@@ -1824,23 +1825,24 @@ atom(global) Tools_BuildBuffsOnly()
 	}
 }
 
-
-
+;===================================================
+;===        UI Tools for Build Forms            ====
+;===================================================
 atom(global) Tools_BuildForms()
 {
 	variable int i
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
 	{
-		if ${UIElement[CombatForm@BuffBot@DPS@Tools].Item[${i}].Text.Equal[${CombatForm}]}
+		if ${UIElement[CombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${CombatForm}]}
 		{
-			UIElement[CombatForm@BuffBot@DPS@Tools]:SelectItem[${i}]
+			UIElement[CombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
 		}
 	}
-	for (i:Set[1] ; ${i} <= ${UIElement[NonCombatForm@BuffBot@DPS@Tools].Items} ; i:Inc)
+	for (i:Set[1] ; ${i} <= ${UIElement[NonCombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
 	{
-		if ${UIElement[NonCombatForm@BuffBot@DPS@Tools].Item[${i}].Text.Equal[${NonCombatForm}]}
+		if ${UIElement[NonCombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${NonCombatForm}]}
 		{
-			UIElement[NonCombatForm@BuffBot@DPS@Tools]:SelectItem[${i}]
+			UIElement[NonCombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
 		}
 	}
 }
