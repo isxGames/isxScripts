@@ -691,6 +691,13 @@ function Do5()
 ;===================================================
 function Do6()
 {
+	;; we are dead so stop hunting
+	if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
+	{
+		Do6:Set[False]
+		return
+	}
+	
 	;; go find a target that is 80 meters, 3-dot or less, level range from 1 to 60
 	if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat}
 	{
@@ -712,7 +719,7 @@ function Do7()
 {
 	if ${Do7}
 	{
-		if ${Me.Ability[Gather Energy].IsReady}
+		if ${Me.Ability[Gather Energy].IsReady} && ${Me.EnergyPct}<30
 		{
 			vgecho "Gathering Energy"
 			call executeability "Gather Energy"
