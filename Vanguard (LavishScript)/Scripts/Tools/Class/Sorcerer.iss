@@ -71,14 +71,16 @@ function SorcCrits()
 	
 
 	;; FIRE CRIT
-	if ${Me.Ability[${Incinerate}].IsReady} && ${Me.Ability[${Incinerate}].TimeRemaining}==0
+	call OkayToAttack "${Incinerate}"
+	if ${Return} &&	${Me.Ability[${Incinerate}].IsReady} && ${Me.Ability[${Incinerate}].TimeRemaining}==0
 	{
 		Me.Ability[${Incinerate}]:Use
 		call GlobalCooldown
 	}
 
 	;; ARCANE CRIT
-	if ${Me.Ability[${Mimic}].IsReady} && ${Me.Ability[${Mimic}].TimeRemaining}==0
+	call OkayToAttack "${Mimic}"
+	if ${Return} && ${Me.Ability[${Mimic}].IsReady} && ${Me.Ability[${Mimic}].TimeRemaining}==0
 	{
 		Me.Ability[${Mimic}]:Use
 		call GlobalCooldown

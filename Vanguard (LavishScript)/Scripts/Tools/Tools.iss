@@ -13,6 +13,10 @@
 ;
 ; Revision History
 ; ----------------
+; 20120102 (Zandros)
+; * Added (Physical, Arcane, Mental, Fire, Cold/Ice, Spirictual), Foraging, and a
+;   new class tab... Necromancer.
+;
 ; 20111229 (Zandros)
 ; * Items will now cycle through each one, just make sure the item is on one of
 ;   you hotbars.
@@ -73,19 +77,21 @@ variable bool isRunning = TRUE
 variable bool isPaused = FALSE
 variable int NextDelayCheck = ${Script.RunningTime}
 variable int RepairTimer = ${Script.RunningTime}
+variable int64 LastTargetID = 0
 
 ;; UI/Script toggle variables
-variable bool doUseAbilities = TRUE
-variable bool doUseItems = TRUE
-variable bool doCounter1 = TRUE
-variable bool doCounter2 = TRUE
-variable bool doPushStance = TRUE
-variable bool doStripEnchantments = TRUE
-variable bool doAutoAttack = TRUE
-variable bool doRangedAttack = TRUE
+variable bool doUseAbilities = FALSE
+variable bool doUseItems = FALSE
+variable bool doCounter1 = FALSE
+variable bool doCounter2 = FALSE
+variable bool doPushStance = FALSE
+variable bool doStripEnchantments = FALSE
+variable bool doForage = FALSE
+variable bool doAutoAttack = FALSE
+variable bool doRangedAttack = FALSE
 variable bool doFace = FALSE
-variable bool doAutoRepairs = TRUE
-variable bool doAutoRez = TRUE
+variable bool doAutoRepairs = FALSE
+variable bool doAutoRez = FALSE
 variable bool doAcceptRez = FALSE
 variable bool doGroupsay = FALSE
 variable bool doRaidsay = FALSE
@@ -98,6 +104,14 @@ variable string Tank = Unknown
 variable string CombatForm = NONE
 variable string NonCombatForm = NONE
 variable int StartAttack = 99
+
+;; Immunity variables
+variable bool doPhysical = TRUE
+variable bool doArcane = TRUE
+variable bool doFire = TRUE
+variable bool doIce = TRUE
+variable bool doSpiritual = TRUE
+variable bool doMental = TRUE
 
 ;; Bard stuff
 variable string CombatSong = CombatSong
@@ -113,6 +127,7 @@ variable string Counter1
 variable string Counter2
 variable string PushStance1
 variable string StripEnchantment1
+variable string Forage = "Forage"
 
 ;; XML variables used to store and save data
 variable settingsetref General
@@ -140,6 +155,8 @@ variable int FollowDistance2 = 5
 ;; Class Specific Routines
 #include ./Tools/Class/Bard.iss
 #include ./Tools/Class/Sorcerer.iss
+#include ./Tools/Class/Ranger.iss
+#include ./Tools/Class/Necromancer.iss
 
 ;; Defines - good within this script
 #define ALARM "${Script.CurrentDirectory}/ping.wav"
@@ -162,13 +179,13 @@ function main()
 	;-------------------------------------------
 	call Bard
 	call Sorcerer
+	call Ranger
 	
 	;-------------------------------------------
 	; loop this until we exit the script
 	;-------------------------------------------
 	do
 	{
-	
 		;; this allows AutoAttack to kick in
 		wait .5
 		
@@ -190,21 +207,24 @@ function main()
 			call FollowTank
 			call BuffRequests
 			call RepairEquipment
+			call Forage
 
 			;; Class Specific Routines - do these first before doing combat stuff
 			call Bard
 			call Sorcerer
+			call Ranger
+			call Necromancer
 		
 			;; we only want targets that are not a Resource and not dead
-			if ${Me.Target(exists)} && !${Me.Target.Type.Equal[Resource]} && !${Me.Target.IsDead}
+			if ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]})
 			{
 				;; execute each of these
-				call StripIt
 				call CounterIt
+				call StripIt
 				call PushStance
+				call UseAbilities
 				call RangedAttack
 				call AutoAttack
-				call UseAbilities
 				call UseItems
 			}
 			else
@@ -245,7 +265,7 @@ function Initialize()
 	}
 	wait 30 ${Me.Chunk(exists)}
 	EchoIt "Started Tools Script"
-
+	
 	;-------------------------------------------
 	; Identify your Class Abilities
 	; (only use the base name of the ability)
@@ -315,6 +335,14 @@ function Initialize()
 			StripEnchantment1:Set[None]
 			break
 	}
+
+	;-------------------------------------------
+	; Set Forage
+	;-------------------------------------------
+	if !${Me.Ability[Forage](exists)}
+	{
+		Forage:Set[None]
+	}
 	
 	;-------------------------------------------
 	; Calculate Highest Level
@@ -351,6 +379,7 @@ function Initialize()
 	doCounter2:Set[${General.FindSetting[doCounter2,TRUE]}]
 	doPushStance:Set[${General.FindSetting[doPushStance,TRUE]}]
 	doStripEnchantments:Set[${General.FindSetting[doStripEnchantments,TRUE]}]
+	doForage:Set[${General.FindSetting[doForage,TRUE]}]
 	doAutoAttack:Set[${General.FindSetting[doAutoAttack,TRUE]}]
 	doRangedAttack:Set[${General.FindSetting[doRangedAttack,TRUE]}]
 	doFace:Set[${General.FindSetting[doFace,TRUE]}]
@@ -367,6 +396,12 @@ function Initialize()
 	FollowDistance1:Set[${General.FindSetting[FollowDistance1,3]}]
 	FollowDistance2:Set[${General.FindSetting[FollowDistance2,5]}]
 	doMonotorTells:Set[${General.FindSetting[doMonotorTells,TRUE]}]
+	doPhysical:Set[${General.FindSetting[doPhysical,TRUE]}]
+	doArcane:Set[${General.FindSetting[doArcane,TRUE]}]
+	doFire:Set[${General.FindSetting[doFire,TRUE]}]
+	doIce:Set[${General.FindSetting[doIce,TRUE]}]
+	doSpiritual:Set[${General.FindSetting[doSpiritual,TRUE]}]
+	doMental:Set[${General.FindSetting[doMental,TRUE]}]
 	
 	;; Class Specific - Bard
 	CombatSong:Set[${General.FindSetting[CombatSong]}]
@@ -377,6 +412,12 @@ function Initialize()
 	TravelSong:Set[${General.FindSetting[TravelSong]}]
 	TravelInstrument:Set[${General.FindSetting[TravelInstrument]}]
 
+	;; Class Specific - Necromancer
+	AbominationName:Set[${General.FindSetting[AbominationName,"Stinky"]}]
+	doSummonAbomination:Set[${General.FindSetting[doSummonAbomination,FALSE]}]
+	AbominationStartAttack:Set[${General.FindSetting[AbominationStartAttack,99]}]
+	doNecropsy:Set[${General.FindSetting[doNecropsy,FALSE]}]
+	
 	;-------------------------------------------
 	; Reload the UI and draw our Tool window
 	;-------------------------------------------
@@ -531,8 +572,9 @@ function atexit()
 	General:AddSetting[doCounter2,${doCounter2}]
 	General:AddSetting[doPushStance,${doPushStance}]
 	General:AddSetting[doStripEnchantments,${doStripEnchantments}]
-	General:AddSetting[doRangedAttack,${doRangedAttack}]
+	General:AddSetting[doForage,${doForage}]
 	General:AddSetting[doAutoAttack,${doAutoAttack}]
+	General:AddSetting[doRangedAttack,${doRangedAttack}]
 	General:AddSetting[doFace,${doFace}]
 	General:AddSetting[doAutoRepairs,${doAutoRepairs}]
 	General:AddSetting[doAutoRez,${doAutoRez}]
@@ -546,6 +588,12 @@ function atexit()
 	General:AddSetting[doMonotorTells,${doMonotorTells}]
 	General:AddSetting[FollowDistance1,${FollowDistance1}]
 	General:AddSetting[FollowDistance2,${FollowDistance2}]
+	General:AddSetting[doPhysical,${doPhysical}]
+	General:AddSetting[doArcane,${doArcane}]
+	General:AddSetting[doFire,${doFire}]
+	General:AddSetting[doIce,${doIce}]
+	General:AddSetting[doSpiritual,${doSpiritual}]
+	General:AddSetting[doMental,${doMental}]
 	General:AddSetting[TriggerBuffing,${TriggerBuffing}]
 	if ${TriggerBuffing.Length}==0
 	{
@@ -560,6 +608,12 @@ function atexit()
 	General:AddSetting[RestInstrument,${RestInstrument}]
 	General:AddSetting[TravelSong,${TravelSong}]
 	General:AddSetting[TravelInstrument,${TravelInstrument}]
+
+	;; update class specific - Necromancer
+	General:AddSetting[AbominationName,${AbominationName}]
+	General:AddSetting[doSummonAbomination,${doSummonAbomination}]
+	General:AddSetting[AbominationStartAttack,${AbominationStartAttack}]
+	General:AddSetting[doNecropsy,${doNecropsy}]
 	
 	;; save our settings to file
 	LavishSettings[DPS]:Export[${Script.CurrentDirectory}/Tools_Save.xml]
@@ -584,12 +638,15 @@ atom(script) EchoIt(string aText)
 ;===================================================
 atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 {
-	if ${doRift} && !${aType.Find[NPC]}
+	if ${doRift}
 	{
-		;; ID, Level and Type sometimes generates 0 or NULL
-		EchoIt "[${aID}], lvl=${aLevel}, ${aName}, ${aType}"
-		PCName:Set[${aName.Token[1," "]}]
-		Tools_BuffRequestList:Set["${PCName}", "Buff"]
+		if ${aType.Equal[PC]} || ${aType.Equal[Group Member]} || !${aType(exists)}
+		{
+			;; ID, Level and Type sometimes generates 0 or NULL
+			EchoIt "[${aID}], lvl=${aLevel}, ${aName}, ${aType}"
+			PCName:Set[${aName.Token[1," "]}]
+			Tools_BuffRequestList:Set["${PCName}", "Buff"]
+		}
 	}
 }
 
@@ -962,10 +1019,14 @@ function PushStance()
 ;===================================================
 ;===   OKAY TO ATTACK - returns TRUE/FALSE      ====
 ;===================================================
-function:bool OkayToAttack()
+function:bool OkayToAttack(string ABILITY="None")
 {
 	if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 	{
+		if ${Me.TargetHealth}<1 || !${Me.TargetHealth(exists)}
+		{
+			return FALSE
+		}
 		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
 		{
 			return FALSE
@@ -982,13 +1043,315 @@ function:bool OkayToAttack()
 		{
 			return FALSE
 		}
+		if ${Me.Effect[Marshmallow Madness](exists)}
+		{
+			return FALSE
+		}
+		
+		;; we definitely do not want to be hitting any of these mobs!
+		if ${Me.Target.Name.Equal[Corrupted Essence]}
+		{
+			return FALSE
+		}
+		if ${Me.Target.Name.Equal[Corrupted Residue]}
+		{
+			return FALSE
+		}
 
+		;-------------------------------------------
+		; Check PHYSICAL resistances
+		;-------------------------------------------
+		if ${Me.Ability[${ABILITY}].School.Find[Physical]}
+		{
+			if !${doPhysical}
+			{
+				return FALSE
+			}
+			if ${Me.TargetBuff[Earth Form](exists)}
+			{
+				return FALSE
+			}
+			switch "${Me.Target.Name}"
+			{
+				case Summoned Earth Elemental
+					return FALSE
+
+				case Wing Grafted Slasher
+					return FALSE
+
+				case Enraged Death Hound
+					return FALSE
+
+				case Lesser Flarehound
+					return FALSE
+
+				case Lirikin
+					return FALSE
+
+				case Nathrix
+					return FALSE
+
+				case Shonaka
+					return FALSE
+
+				case Wisil
+					return FALSE
+
+				case Filtha
+					return FALSE
+
+				case SILIUSAURUS
+					return FALSE
+
+				case ARCHON TRAVIX
+					return FALSE
+
+				case Earthen Marauder
+					return FALSE
+
+				case Earthen Resonator
+					return FALSE
+
+				case Cartheon Devourer
+					return FALSE
+
+				case Rock Elemental
+					return FALSE
+
+				case Cartheon Soulslasher
+					return FALSE
+
+				case Cartheon Abomination
+					return FALSE
+
+				case Glowing Infineum
+					return FALSE
+
+				case Living Infineum
+					return FALSE
+
+				case Spawn of Infineum
+					return FALSE
+
+				case Myconid Fungal Ravager
+					return FALSE
+
+				case Xakrin Sage
+					return FALSE
+
+				case Hound of Rahz
+					return FALSE
+
+				case Ancient Juggernaut
+					return FALSE
+
+				case Xakrin Razarclaw
+					return FALSE
+
+				case Assaulting Death Hound
+					return FALSE
+
+				case Blood-crazed Ettercap
+					return FALSE
+
+				case Flarehound
+					return FALSE
+
+				case Lixirikin
+					return FALSE
+
+				case Flarehound Watcher
+					return FALSE
+
+				case Nefarious Titan
+					return FALSE
+
+				case Nefarious Elemental
+					return FALSE
+
+				case Enraged Convocation
+					return FALSE
+
+				Default
+					break
+			}
+		}
+
+		;-------------------------------------------
+		; Check ARCANE resistances
+		;-------------------------------------------
+		if ${Me.Ability[${ABILITY}].School.Find[Arcane]}
+		{
+			if !${doArcane}
+			{
+				return FALSE
+			}
+			if ${Me.TargetBuff[Electric Form](exists)}
+			{
+				return FALSE
+			}
+			switch "${Me.Target.Name}"
+			{
+				case Descrier Sentry
+					return FALSE
+
+				case Summoned Air Elemental
+					return FALSE
+
+				case Descrier Psionicist
+					return FALSE
+
+				case Descrier Dreadwatcher
+					return FALSE
+
+				case Sub-Warden Mer
+					return FALSE
+
+				case OVERWARDEN
+					return FALSE
+
+				case Omac
+					return FALSE
+
+				case Salrin
+					return FALSE
+
+				case Bandori
+					return FALSE
+
+				case Guardian B27
+					return FALSE
+
+				case Energized Marauder
+					return FALSE
+
+				case Energized Resonator
+					return FALSE
+
+				case Electric Elemental
+					return FALSE
+
+				case Lesser Electric Elemental
+					return FALSE
+
+				case Greater Electric Elemental
+					return FALSE
+
+				case Energized Elemental
+					return FALSE
+
+				case Construct of Lightning
+					return FALSE
+
+				case Cartheon Wingwraith
+					return FALSE
+
+				case Source of Arcane Energy
+					return FALSE
+
+				case Ancient Infector
+					return FALSE
+
+				case Cartheon Archivist
+					return FALSE
+
+				case Cartheon Arcanist
+					return FALSE
+
+				case Cartheon Scholar
+					return FALSE
+
+				case Eyelord Seeker
+					return FALSE
+
+				case Mechanized Stormsuit
+					return FALSE
+
+				Default
+					break
+			}
+		}
+
+		;-------------------------------------------
+		; Check FIRE resistances
+		;-------------------------------------------
+		if ${Me.Ability[${ABILITY}].School.Find[Fire]}
+		{
+			if !${doFire}
+			{
+				return FALSE
+			}
+			if (${Me.TargetBuff[Molten Form](exists)} || ${Me.TargetBuff[Fire Form](exists)})
+			{
+				return FALSE
+			}
+			switch "${Me.Target.Name}"
+			{
+				case Mechanized Pyromaniac
+					return FALSE
+
+				Default
+					break
+			}
+		}
+
+		;-------------------------------------------
+		; Check ICE/COLD resistances
+		;-------------------------------------------
+		if (${Me.Ability[${ABILITY}].School.Find[Ice]} || ${Me.Ability[${ABILITY}].School.Find[Cold]})
+		{
+			if !${doIce}
+			{
+				return FALSE
+			}
+			if (${Me.TargetBuff[Ice Form](exists)} || ${Me.TargetBuff[Cold Form](exists)} || ${Me.TargetBuff[Frozen Form](exists)})
+			{
+				return FALSE
+			}
+			switch "${Me.Target.Name}"
+			{
+				Default
+					break
+			}
+		}
+
+		;-------------------------------------------
+		; Check MENTAL resistances
+		;-------------------------------------------
+		if ${Me.Ability[${ABILITY}].School.Find[Mental]}
+		{
+			if !${doMental}
+			{
+				return FALSE
+			}
+			switch "${Me.Target.Name}"
+			{
+				Default
+					break
+			}
+		}
+
+		;-------------------------------------------
+		; Check SPIRITUAL resistances
+		;-------------------------------------------
+		if ${Me.Ability[${ABILITY}].School.Find[Spiritual]}
+		{
+			if !${doSpiritual}
+			{
+				return FALSE
+			}
+			switch "${Me.Target.Name}"
+			{
+				Default
+					break
+			}
+		}
+		
 		;; this is sloppy but works
 		if ${doFace}
 		{
 			Me.Target:Face
 		}
-
 		return TRUE
 	}
 	
@@ -1122,6 +1485,8 @@ function CheckBuffs()
 		;; Use the ability if it is ready and does not exist on self
 		if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.Effect[${Iterator.Key}](exists)}
 		{
+			Pawn[Me]:Target
+			wait 3
 			call UseAbility "${Iterator.Key}"
 		}
 		Iterator:Next
@@ -1164,9 +1529,8 @@ function UseAbilities()
 		Abilities:GetSettingIterator[Iterator]
 		while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning} && !${Me.Target.IsDead}
 		{
-			;; Use the ability if it is ready and does not exist on target or myself
-			call OkayToAttack
-			;if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)} && !${Me.Effect[${Iterator.Key}](exists)}
+			;; use the ability if it is ready and does not exist on target
+			call OkayToAttack "${Iterator.Key}"
 			if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)}
 			{
 				if ${Me.Ability[${Iterator.Key}].BloodUnionRequired} > ${Me.BloodUnion}
@@ -1208,6 +1572,8 @@ function:bool UseAbility(string ABILITY)
 	call StripIt
 	call PushStance
 	call SorcCrits
+	call RangerCrits
+	call NecroCrits
 	
 	;-------------------------------------------
 	; execute ability only if it is ready
@@ -1240,7 +1606,7 @@ function:bool UseAbility(string ABILITY)
 function UseItems()
 {
 	call OkayToAttack
-	if ${Return} && ${doUseItems} && !${isPaused} && ${isRunning}
+	if ${Return} && ${doUseItems} && !${isPaused} && ${isRunning} && ${Me.Ability["Torch"].IsReady}
 	{	
 		;
 		; Make sure every item you plan on using is on one of your Hot Bars;
@@ -1314,13 +1680,13 @@ function UseItems()
 					
 					if ${LastPrimary.Equal[${LastSecondary}]}
 					{
+						Me.Inventory[${LastSecondary}]:Equip[Secondary Hand]
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
 						wait 1
 					}
 					else
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
-						Me.Inventory[${LastSecondary}]:Equip[Secondary Hand]
 						wait 1
 					}
 					return
@@ -1339,7 +1705,42 @@ function UseItems()
 }
 
 ;===================================================
-;===        BUFF AREA SUBROUTINE                ====
+;===           FORAGE SUBROUTINE                ====
+;===================================================
+variable bool Okay2Forage = FALSE
+function Forage()
+{
+	if ${doForage} && ${Forage.Equal[Forage]}
+	{
+		;; we in combat so set the flag and return
+		if ${Me.InCombat} || ${Me.Encounter}>0
+		{
+			Okay2Forage:Set[TRUE]
+			return
+		}
+		
+		if ${Okay2Forage}
+		{
+			;; go ahead and forage the area
+			call UseAbility "${Forage}"
+			if ${Me.IsLooting}
+			{
+				Loot:LootAll
+				wait 2
+				if ${Me.IsLooting}
+				{
+					Loot:EndLooting
+				}
+			}
+			;; this will cut back the foraging spamming
+			;; until I decide to do a timer of some sort
+			Okay2Forage:Set[FALSE]
+		}
+	}
+}
+	
+;===================================================
+;===          BUFF AREA SUBROUTINE              ====
 ;===================================================
 function BuffArea()
 {
