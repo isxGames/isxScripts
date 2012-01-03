@@ -138,7 +138,7 @@
 						<checkbox Name="doUseItems" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>10%</Y>
+							<Y>9%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Use Items</Text>
@@ -157,7 +157,7 @@
 						<checkbox Name="doCounter1" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>15%</Y>
+							<Y>13%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Counter1: ${Script[Tools].VariableScope.CounterA}</Text>
@@ -176,7 +176,7 @@
 						<checkbox Name="doCounter2" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>20%</Y>
+							<Y>17%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Counter2: ${Script[Tools].VariableScope.CounterB}</Text>
@@ -195,7 +195,7 @@
 						<checkbox Name="doPushStance" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>25%</Y>
+							<Y>21%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Stance: ${Script[Tools].VariableScope.PushStance}</Text>
@@ -214,7 +214,7 @@
 						<checkbox Name="doStripEnchantments" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>30%</Y>
+							<Y>25%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Strip: ${Script[Tools].VariableScope.StripEnchantment}</Text>
@@ -230,10 +230,29 @@
 							</OnLeftClick>
 						</checkbox>
 						
+						<checkbox Name="doForage" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>29%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forage: ${Script[Tools].VariableScope.Forage}</Text>
+							<AutoTooltip> Forage area after battle</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doForage}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doForage:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
 						<checkbox Name="doAutoAttack" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>35%</Y>
+							<Y>33%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> AutoAttack On/Off</Text>
@@ -252,7 +271,7 @@
 						<checkbox Name="doRangedAttack" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>40%</Y>
+							<Y>37%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Ranged Attack On/Off</Text>
@@ -271,7 +290,7 @@
 						<checkbox Name="doFace" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>45%</Y>
+							<Y>41%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Face Target</Text>
@@ -290,7 +309,7 @@
 						<checkbox Name="doAutoRepairs" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>50%</Y>
+							<Y>45%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Auto Repair gear</Text>
@@ -309,7 +328,7 @@
 						<checkbox Name="doAutoRez" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
-							<Y>55%</Y>
+							<Y>49%</Y>
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Auto Accept Rez</Text>
@@ -324,6 +343,117 @@
 								Script[Tools].VariableScope.doAutoRez:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
+
+						<checkbox Name="doPhysical" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>65%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Physical</Text>
+							<AutoTooltip> Toggle using physical abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doPhysical}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doPhysical:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doArcane" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>65%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Arcane</Text>
+							<AutoTooltip> Toggle using arcane abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doArcane}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doArcane:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doMental" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>67%</X>
+							<Y>65%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Mental</Text>
+							<AutoTooltip> Toggle using mental abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doMental}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doMental:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doFire" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>69%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Fire</Text>
+							<AutoTooltip> Toggle using fire abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doFire}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doFire:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doIce" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>36%</X>
+							<Y>69%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Cold/Ice</Text>
+							<AutoTooltip> Toggle using cold/ice abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doIce}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doIce:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doSpiritual" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>67%</X>
+							<Y>69%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Spiritual</Text>
+							<AutoTooltip> Toggle using spiritual abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doSpiritual}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doSpiritual:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						
 						<Textentry Name="StartAttack" Template="VG.TextEntry">
 							<X>6%</X>
 							<Y>75%</Y>
@@ -840,7 +970,7 @@
 							<Width>100%</Width>
 							<Visible>0</Visible>
 							<Children>
-								 <Text Name='txtSorc' Template='VG.BoldText'>
+								 <Text Name='txtLabel' Template='VG.BoldText'>
 									<X>6%</X>
 									<Y>2%</Y>
 									<Width>85%</Width>
@@ -850,6 +980,148 @@
 								</Text>
 							</Children>
 						</Frame>
+
+						<Frame name='Ranger'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>0</Visible>
+							<Children>
+								 <Text Name='txtLabel' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>2%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Center</Alignment>
+									<Text>==== Ranger Stuff ====  </Text>
+								</Text>
+							</Children>
+						</Frame>
+
+						<Frame name='Necromancer'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>0</Visible>
+							<Children>
+								 <Text Name='txtLabel' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>2%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Center</Alignment>
+									<Text>==== Necromancer Stuff ====  </Text>
+								</Text>
+								<Text Name='txtAbominationName' Template='VG.BoldText'>
+									<X>8%</X>
+									<Y>10%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Center</Alignment>
+									<Text>== Abomination Name ==</Text>
+								</Text>
+								
+								<Textentry Name='AbominationName' Template='VG.TextEntry'>
+									<X>6%</X>
+									<Y>13%</Y>
+									<Width>88%</Width>
+									<Height>18</Height>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[Tools].VariableScope.AbominationName}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											This:SetText[${This.Text.Lower}]
+											variable string temp = "abcdefghijklmnopqrstuvwxyz"
+											if ${This.Text.Length}>12 || !${temp.Find[${This.Text.Right[1]}]}
+											{
+												This:SetText[${Script[Tools].VariableScope.AbominationName}]
+											}
+											else
+											{
+												Script[Tools].VariableScope.AbominationName:Set[${This.Text}]
+											}
+											;echo AbominationName>0 == [${Script[Tools].VariableScope.AbominationName}]
+										}
+										elseif ${This.Text.Length}==0
+										{
+											Script[Tools].VariableScope.AbominationName:Set[""]
+											;echo AbominationName=0 == [${Script[Tools].VariableScope.AbominationName}]
+										}
+									</OnChange>
+								</Textentry>
+								<checkbox Name="doSummonAbomination" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>6%</X>
+									<Y>17%</Y>
+									<Width>25%</Width>
+									<Height>15</Height>
+									<Text> Awaken Abomination</Text>
+									<AutoTooltip> This will summon your Abomination </AutoTooltip>
+									<OnLoad>
+										if ${Script[Tools].VariableScope.doSummonAbomination}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[Tools].VariableScope.doSummonAbomination:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<Textentry Name="AbominationStartAttack" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>21%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[Tools].VariableScope.AbominationStartAttack}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[Tools].VariableScope.AbominationStartAttack:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[100]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[Tools].VariableScope.AbominationStartAttack:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="txtAbominationStartAttack" Template="VG.Text">
+									<X>23%</X>
+									<Y>21.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pet Start Attacking</Text>
+								</Text>
+								<checkbox Name="doNecropsy" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>6%</X>
+									<Y>25%</Y>
+									<Width>25%</Width>
+									<Height>15</Height>
+									<Text> Necropsy</Text>
+									<AutoTooltip> Harvest corpse for grafts </AutoTooltip>
+									<OnLoad>
+										if ${Script[Tools].VariableScope.doNecropsy}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[Tools].VariableScope.doNecropsy:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+
+							</Children>
+						</Frame>
+
 					</Tab>
 
 					<Tab name='BuffBot'>
@@ -868,7 +1140,7 @@
 							<Width>25%</Width>
 							<Height>15</Height>
 							<Text> Monitor Group Messages</Text>
-							<AutoTooltip> scann all group messages for a keyword to buff </AutoTooltip>
+							<AutoTooltip> scan all group messages for a keyword to buff </AutoTooltip>
 							<OnLoad>
 								if ${Script[Tools].VariableScope.doGroupsay}
 								{
