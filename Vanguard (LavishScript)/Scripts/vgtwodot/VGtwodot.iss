@@ -11,6 +11,10 @@
 ;
 ; Revision History
 ; ----------------
+; 20120106 (Zandros)
+; * changed the wa loot is handled, will no longer loot if AggroNPC is nearby
+;   and changed the way how hunting for targets... way faster than before!
+;
 ; 20111225 (Zandros)
 ; * Merry Christmas!  Fixed 2 bugs that wouldn't allow attacking the target and
 ;   identifying target immunity (resists)
@@ -86,11 +90,19 @@ function main()
 	;-------------------------------------------
 	while ${isRunning}
 	{
-		wait 3
+		;; no delays that I can find that affects combat
 		call CheckBuffs
+
+		;; removed all delays (only affected intial combat
 		call SetImmunities
+		
+		;; no delays that I can find that affects combat
 		call MandatoryChecks
+		
+		;; spedup the looting and hunting
 		call GoDoSomething
+		
+		;; no delays that I can find that affects combat
 		call Forget
 	}
 }
@@ -295,18 +307,13 @@ function SetImmunities()
 	;; Now, toggle off which ability based upon the target's immunity
 	if ${Me.Target(exists)} && ${Me.TargetHealth(exists)}
 	{
-		if ${LastTargetName.NotEqual[${Me.Target.Name}]}
-		{
-			wait 7
-			LastTargetName:Set[${Me.Target.Name}]
-		}
-		
-		if ${LastTargetID}!=${Me.Target.ID}
-		{
-			wait 7
-			LastTargetID:Set[${Me.Target.ID}]
-		}
-
+	
+		;
+		; Target Buffs usuly takes 1 second to register
+		; which is needed to determine what immunity it has
+		;
+		;wait 10 ${Me.TargetBuff}>0
+	
 		if ${Me.TargetBuff[Electric Form](exists)}
 		{
 			doArcane:Set[FALSE]
@@ -327,7 +334,7 @@ function SetImmunities()
                 call LavishSave
 			}
 		}
-		if ${Me.TargetBuff[Ice Form](exists)} ||${Me.TargetBuff[Cold Form](exists)} ||${Me.TargetBuff[Frozen Form](exists)}
+		if ${Me.TargetBuff[Ice Form](exists)} || ${Me.TargetBuff[Cold Form](exists)} || ${Me.TargetBuff[Frozen Form](exists)}
 		{
 			doColdIce:Set[FALSE]
 			if !${MobResists.Type.Equal[ColdIce]} && ${Do8}
@@ -356,7 +363,7 @@ function SetImmunities()
 function Do1()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
 	{
 		return
 	}
@@ -420,7 +427,7 @@ function Do1()
 function Do2()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
 	{
 		return
 	}
@@ -479,7 +486,7 @@ function Do2()
 function Do3()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
 	{
 		return
 	}
@@ -538,7 +545,7 @@ function Do3()
 function Do4()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 20
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
 	{
 		return
 	}
@@ -630,21 +637,34 @@ function Do4()
 ;===================================================
 function Do5()
 {
-	;; if there are no corpses around...then why bother.
-	if !${Pawn[Corpse](exists)} && !${Me.IsLooting}
+	;; we do not want to try looting if our target is alive
+	if ${Me.Target(exists)} && !${Me.Target.IsDead}
 	{
 		return
 	}
-
-	;; loot the target if its within range
-	if ${Me.Target.IsDead} && ${Pawn[${Me.Target}].Type.Equal[Corpse]} && ${Pawn[${Me.Target}].ContainsLoot} && ${Me.Target.Distance}<5
+	
+	;; immediately loot if target is in looting range
+	if ${Me.Target.IsDead} && ${Me.Target.Distance}<5
 	{
-		VGExecute /Lootall
-		wait 10 !${Me.Target.ContainsLoot} && !${Me.IsLooting}
-		VGExecute "/cleartargets"
-		wait 10 !${Me.Target(exists)}
+		;; target is dead so wait long enough for loot to register
+		wait 5 ${Me.Target.ContainsLoot}
+		if ${Me.Target.ContainsLoot}
+		{
+			Loot:BeginLooting
+			wait 5 ${Me.IsLooting} && ${Loot.NumItems}
+			Loot:LootAll
+			wait 2
+			if ${Me.IsLooting}
+			{
+				Loot:EndLooting
+			}
+		}
 	}
-
+	
+	;; clear the target
+	VGExecute "/cleartargets"
+	wait 10 !${Me.Target(exists)}
+	
 	;; if not in combat and have no encounters then search for corpses to loot
 	if !${Me.InCombat} && ${Me.Encounter}==0
 	{
@@ -654,26 +674,28 @@ function Do5()
 	
 		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<20 && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
 		{
-			echo [${i}] Type=${CurrentPawns.Get[${i}].Type}, Distance=${CurrentPawns.Get[${i}].Distance}, HasLoot=${CurrentPawns.Get[${i}].ContainsLoot}
 			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].Distance}<20 && ${CurrentPawns.Get[${i}].ContainsLoot}
 			{
+				;; skip looting if there are any AggroNPC's near corpse
+				if ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,18](exists)}
+				{
+					echo "[${Time}] Skipping looting due to AggroNPC within range of corpse"
+					continue
+				}
+			
 				;; target the corpse
 				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
 				wait 10 ${Me.Target.ContainsLoot}
 				
 				;; move closer to corpse
-				if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<20
+				if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<22
 				{
 					call movetoobject ${Me.Target.ID} 4 0
 				}
 				
 				;; loot the corpse
 				VGExecute /Lootall
-				wait 10 !${Me.Target.ContainsLoot} && !${Me.IsLooting}
-				if ${Me.Target.ContainsLoot} || ${Me.IsLooting}
-				{
-					break
-				}
+				wait 3
 				
 				;; clear the target
 				VGExecute "/cleartargets"
@@ -698,17 +720,16 @@ function Do6()
 		return
 	}
 	
-	;; go find a target that is 80 meters, 3-dot or less, level range from 1 to 60
+	;; go find an AggroNPC that is within 80 meters
 	if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat}
 	{
-		call FindTarget AggroNPC 80 3 1 60
+		call FindTarget 80
 	}
 	
 	;; Move Closer to target
-	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>22 && ${Me.Target.Distance}<=80
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>22 && ${Me.Target.Distance}<=85
 	{
-		call movetoobject ${Me.Target.ID} 22 0
-		wait 5
+		call movetoobject ${Me.Target.ID} 20 0
 	}
 }
 
@@ -1019,8 +1040,14 @@ function SetHighestAbility(string AbilityVariable, string AbilityName)
 
 function Forget()
 {
+	;; we want a live target that is within range
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 23
+	{
+		return
+	}
+	
 	;; deaggro the mob
-	if ${Me.IsGrouped} && ${doForget} && ${Me.TargetHealth}<70
+	if ${doForget} && ${Me.IsGrouped} && ${Me.TargetHealth}<70
 	{
 		call executeability "${Forget}"
 	}
