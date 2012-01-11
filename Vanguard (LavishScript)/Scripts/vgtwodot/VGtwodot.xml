@@ -452,6 +452,23 @@
 										Script[vgtwodot].VariableScope.doForget:Set[${This.Checked}]
 									</OnLeftClick>
 								</checkbox>
+								<checkbox Name="doCheckLineOfSight" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>30%</X>
+									<Y>15%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Check LineOfSight while hunting</Text>
+									<OnLoad>
+										if ${Script[vgtwodot].VariableScope.doCheckLineOfSight}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[vgtwodot].VariableScope.doCheckLineOfSight:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
 								<Text Name="BarrierMode" Template="VG.BoldText">
 									<visible>1</visible>
 									<X>3%</X>

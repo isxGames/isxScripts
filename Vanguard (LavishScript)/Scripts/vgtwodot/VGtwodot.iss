@@ -11,6 +11,12 @@
 ;
 ; Revision History
 ; ----------------
+; 20120110 (Zandros)
+; * Fixed the ping-pong between corpses when looting.  Instead of skipping
+;   the corpse with loot, it will target the nearest AggroNPC next to the corse
+;   resulting better chances to safely loot corpses.  Rewrote the moveto routine
+;   and toggling Hunt will stop moving and hunting.
+;
 ; 20120106 (Zandros)
 ; * changed the wa loot is handled, will no longer loot if AggroNPC is nearby
 ;   and changed the way how hunting for targets... way faster than before!
@@ -33,7 +39,7 @@
 #include ./vgtwodot/Common.iss
 #include ./vgtwodot/FaceSlow.iss
 #include ./vgtwodot/FindTarget.iss
-#include ./vgtwodot/MoveCloser.iss
+;#include ./vgtwodot/MoveCloser.iss
 #include ./vgtwodot/KB_MoveTo.iss
 #include ./vgtwodot/MobResists.iss
 
@@ -48,13 +54,16 @@ variable bool doFire = TRUE
 variable bool doArcane = TRUE
 variable bool doColdIce = TRUE
 variable bool doPhysical = TRUE
-variable string doForget = FALSE
+variable bool doCheckLineOfSight = TRUE
+variable bool doForget = FALSE
+variable bool BUMP = FALSE
 variable string FocusType = "Quartz"
 variable string BarrierType = "Force"
 variable string LastTargetName = "None"
 variable int64 LastTargetID = 0
 variable int WhatStepWeOn = 0
 variable int TotalKills = 0
+variable collection:int64 BlackListCorpse
 
 ;; XML variables used to store and save data
 variable settingsetref Arcane
@@ -70,7 +79,7 @@ variable bool Do2
 variable bool Do3
 variable bool Do4
 variable bool Do5
-variable bool Do6
+variable bool Do6 = FALSE
 variable bool Do7
 variable bool Do8
 variable bool Do9
@@ -124,7 +133,7 @@ function Initialize()
 	if !${ISXVG.IsReady}
 	{
 		echo "Unable to load ISXVG, exiting script"
-		endscript BM1
+		endscript vgtwodot
 	}
 	echo "Started vgtwodot Script"
 	wait 30 ${Me.Chunk(exists)}
@@ -302,12 +311,10 @@ function SetImmunities()
 	doFire:Set[TRUE]
 	doColdIce:Set[TRUE]
 	doPhysical:Set[TRUE]
-
 	
 	;; Now, toggle off which ability based upon the target's immunity
 	if ${Me.Target(exists)} && ${Me.TargetHealth(exists)}
 	{
-	
 		;
 		; Target Buffs usuly takes 1 second to register
 		; which is needed to determine what immunity it has
@@ -637,26 +644,43 @@ function Do4()
 ;===================================================
 function Do5()
 {
-	;; we do not want to try looting if our target is alive
-	if ${Me.Target(exists)} && !${Me.Target.IsDead}
+	if ${Me.Target(exists)}
 	{
-		return
-	}
-	
-	;; immediately loot if target is in looting range
-	if ${Me.Target.IsDead} && ${Me.Target.Distance}<5
-	{
-		;; target is dead so wait long enough for loot to register
-		wait 5 ${Me.Target.ContainsLoot}
+		;; we do not want to try looting if our target is alive
+		if !${Me.Target.IsDead}
+		{
+			return
+		}
+
+		;; must wait for target to change to corpse
+		wait 10 ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.ContainsLoot}
+
+		;; does the corpse have any loot?
 		if ${Me.Target.ContainsLoot}
 		{
-			Loot:BeginLooting
-			wait 5 ${Me.IsLooting} && ${Loot.NumItems}
-			Loot:LootAll
-			wait 2
-			if ${Me.IsLooting}
+			;; move closer
+			if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<10
 			{
-				Loot:EndLooting
+			
+				;call movetoobject ${Me.Target.ID} 4 0
+				call MoveCloser 4
+			}
+			
+			;; start looting
+			if ${Me.Target.Distance}<=5
+			{
+				;; make sure we blacklist so we don't try looting it again
+				BlackListCorpse:Set[${Me.Target.ID},${Me.Target.ID}]
+
+				;; loot it
+				Loot:BeginLooting
+				wait 5 ${Me.IsLooting} && ${Loot.NumItems}
+				Loot:LootAll
+				wait 2
+				if ${Me.IsLooting}
+				{
+					Loot:EndLooting
+				}
 			}
 		}
 	}
@@ -672,15 +696,23 @@ function Do5()
 		variable index:pawn CurrentPawns
 		TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
 	
-		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<20 && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
+		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<35 && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
 		{
-			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].Distance}<20 && ${CurrentPawns.Get[${i}].ContainsLoot}
+			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].ContainsLoot}
 			{
-				;; skip looting if there are any AggroNPC's near corpse
-				if ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,18](exists)}
+				;; we do not want to retarget same corpse twice
+				if ${BlackListCorpse.Element[${CurrentPawns.Get[${i}].ID}](exists)}
 				{
-					echo "[${Time}] Skipping looting due to AggroNPC within range of corpse"
 					continue
+				}
+				
+				;; skip looting if there are any AggroNPC's near corpse and we are hunting
+				if ${Do6} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,15](exists)}
+				{
+					Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,15]:Target
+					wait 3
+					echo "[${Time}] Aquiring new AggroNPC target within 15m range of corpse"
+					return
 				}
 			
 				;; target the corpse
@@ -688,10 +720,13 @@ function Do5()
 				wait 10 ${Me.Target.ContainsLoot}
 				
 				;; move closer to corpse
-				if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<22
+				if ${Me.Target.Distance}>5
 				{
-					call movetoobject ${Me.Target.ID} 4 0
+					;call movetoobject ${Me.Target.ID} 4 0
+					call MoveCloser 4
 				}
+
+				BlackListCorpse:Set[${Me.Target.ID},${Me.Target.ID}]		
 				
 				;; loot the corpse
 				VGExecute /Lootall
@@ -729,7 +764,8 @@ function Do6()
 	;; Move Closer to target
 	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>22 && ${Me.Target.Distance}<=85
 	{
-		call movetoobject ${Me.Target.ID} 20 0
+		;call movetoobject ${Me.Target.ID} 20 0
+		call MoveCloser 20
 	}
 }
 
@@ -758,7 +794,6 @@ function Do8()
 {
 	
 }
-
 
 ;===================================================
 ;===  Auto Decon - Not being called by anything ====
@@ -830,13 +865,14 @@ function loadxmls()
 	ColdIce:Set[${LavishSettings[MobResists].FindSet[ColdIce]}]
 	Physical:Set[${LavishSettings[MobResists].FindSet[Physical]}]
 
+	doCheckLineOfSight:Set[${options.FindSetting[doCheckLineOfSight,${doCheckLineOfSight}]}]
 	doForget:Set[${options.FindSetting[doForget,${doForget}]}]
 	Do1:Set[${options.FindSetting[Do1,${Do1}]}]
 	Do2:Set[${options.FindSetting[Do2,${Do2}]}]
 	Do3:Set[${options.FindSetting[Do3,${Do3}]}]
 	Do4:Set[${options.FindSetting[Do4,${Do4}]}]
 	Do5:Set[${options.FindSetting[Do5,${Do5}]}]
-	Do6:Set[${options.FindSetting[Do6,${Do6}]}]
+	;Do6:Set[${options.FindSetting[Do6,${Do6}]}]
 	Do7:Set[${options.FindSetting[Do7,${Do7}]}]
 	Do8:Set[${options.FindSetting[Do8,${Do8}]}]
 }
@@ -846,6 +882,7 @@ function loadxmls()
 ;===================================================
 function LavishSave()
 {
+	options:AddSetting[doCheckLineOfSight,${doCheckLineOfSight}]
 	options:AddSetting[doForget,${doForget}]
 	options:AddSetting[Do1,${Do1}]
 	options:AddSetting[Do2,${Do2}]
@@ -1099,4 +1136,68 @@ atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 		call debug "Total Kills = ${TotalKills}"
 		vgecho "Total Kills = ${TotalKills}"
 	}
+}
+
+function MoveCloser(int Distance)
+{
+	if !${Me.Target(exists)}
+	{
+		return
+	}
+	
+	if ${Me.Target.X}==0 || ${Me.Target.Y}==0
+	{
+		VGExecute /cleartargets
+		wait 10
+	}
+	
+	BUMP:Set[FALSE]
+	variable float X = ${Me.X}
+	variable float Y = ${Me.Y}
+	variable float Z = ${Me.Z}
+	Event[VG_onHitObstacle]:AttachAtom[Bump]
+	variable int bailOut
+	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(10000)]}]
+	
+	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${Do6} && ${LavishScript.RunningTime}<${bailOut}
+	{
+		VG:ExecBinding[moveforward]
+		face ${Me.Target.X} ${Me.Target.Y}
+		wait 1
+		if ${BUMP}
+		{
+			if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
+			{
+				VG:ExecBinding[StrafeRight]
+				wait 5
+				VG:ExecBinding[StrafeRight,release]
+				if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
+				{
+					VG:ExecBinding[moveforward,release]
+					VG:ExecBinding[movebackward]
+					wait 7
+					VG:ExecBinding[movebackward,release]
+				}
+				continue
+			}
+			BUMP:Set[FALSE]
+		}
+		X:Set[${Me.X}]
+		Y:Set[${Me.Y}]
+		Z:Set[${Me.Z}]
+	}
+	VG:ExecBinding[moveforward,release]
+	Event[VG_onHitObstacle]:DetachAtom[Bump]
+	
+	;; we timed out so clear our target and try again
+	if ${BUMP}
+	{
+		VGExecute /cleartargets
+		wait 10		
+	}
+}
+
+atom Bump(string Name)
+{
+	BUMP:Set[TRUE]
 }

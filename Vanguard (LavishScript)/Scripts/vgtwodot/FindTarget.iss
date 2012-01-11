@@ -49,9 +49,12 @@ function FindTarget(int Distance)
 	for (i:Set[1];  ${i}<=${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<${Distance};  i:Inc)
 	{
 		;; we only want targets we can see
-		if !${Pawn[id,${CurrentPawns.Get[${i}].ID}].HaveLineOfSightTo}
+		if ${doCheckLineOfSight}
 		{
-			continue
+			if !${Pawn[id,${CurrentPawns.Get[${i}].ID}].HaveLineOfSightTo}
+			{
+				continue
+			}
 		}
 
 		;; get left of name
