@@ -488,7 +488,7 @@ objectdef  Obj_Navigator
 		WPY:Set[${mypath.Region[${This.bpathindex}].CenterPoint.Y}]
 
 		;; We are near our point so let's set our pointer to the next point on path
-		while ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}<=300 && ${This.bpathindex}<${mypath.Hops}
+		while ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}<=250 && ${This.bpathindex}<${mypath.Hops}
 		{
 			;; keep incrementing counter until it is more than 4m away - should help on the ping-ponging
 			This:EchoIt["Hop = ${This.bpathindex} of ${mypath.Hops} and Distance = ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}].Int}"]
@@ -500,7 +500,7 @@ objectdef  Obj_Navigator
 		}
 
 		;; Move towards our point on path
-		if ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}>300 && ${This.bpathindex}<=${mypath.Hops}
+		if ${Math.Distance[${Me.X},${Me.Y},${WPX},${WPY}]}>250 && ${This.bpathindex}<=${mypath.Hops}
 		{
 			face ${WPX} ${WPY}
 			This:MoveForward
