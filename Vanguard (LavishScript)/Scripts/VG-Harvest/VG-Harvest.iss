@@ -11,6 +11,13 @@
 ;
 ; Revision History
 ; ----------------
+; 20120111 (Zandros)
+;  * Now will harvest correctly and run through all the points.  It will 
+;    always begin with point 1.  Fixed harvesting nodes you can't harvest.
+;    It will continue harvesting even if the Yield window is up.  Implemented
+;    the option to harvest only Nodes you identify... plus when adding the 
+;    node you want to harvest just target it and click add.
+;
 ; 20111016 (Zandros)
 ;  * Fixed setting DTarget, Follow Routines, and Looting Routines
 ;
@@ -46,6 +53,7 @@ variable bool doAvoidAggro = TRUE
 variable bool WeAreMasterHarvester = FALSE
 variable bool doHarvestArea = FALSE
 variable bool WeAreFollowing = FALSE
+variable bool doHarvestOnly = FALSE
 variable int HarvestingRange = 15
 variable int AggroRadius = 15
 variable int HarvX = 968
@@ -67,6 +75,7 @@ variable int64 MasterHarvesterID = ${Pawn[Me].ID}
 ;; variables - save/load "we keep them loaded at all times"
 variable settingsetref VG-Harvest_SSR
 variable settingsetref VG-MyPath_SSR
+variable settingsetref VG-HarvestNodes_SSR
 
 ;; initialize our objects
 variable(global) Obj_Navigator Navigate
@@ -94,8 +103,14 @@ function main()
 	LoadXMLSettings
 	
 	;; Reload the UI
+	waitframe
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
+	waitframe
 	ui -reload -skin VGSkin "${Script.CurrentDirectory}/VG-Harvest.xml"
+	waitframe
+
+	;; get our chat monitor up
+	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
 
 	;-------------------------------------------
 	; Loop this until program ends
@@ -118,6 +133,11 @@ function main()
 			;; load our new settings
 			EchoIt "Loading current chunk data"
 			LoadXMLSettings
+		}
+		
+		if ${Me.Target(exists)} && ${Me.Target.Type.Equal[Resource]} && ${Me.Target.IsHarvestable}
+		{
+			UIElement[HarvestText@Nodes@Tabs@VG-Harvest]:SetText[${Me.Target.Name}]
 		}
 
 		;-------------------------------------------
@@ -167,8 +187,8 @@ function main()
 			}
 			
 			;; Always update our CurrentWayPoint
-			call FindNearestWayPoint
-			CurrentWayPoint:Set[${Return}]
+			;call FindNearestWayPoint
+			;CurrentWayPoint:Set[${Return}]
 		}
 		;-------------------------------------------
 		;; Calls either Master Harvester or Assist Master Harvester
@@ -202,83 +222,67 @@ function MasterHarvester()
 	{
 		return
 	}
-	
-	;; we need to find closest waypoint to us
-	if ${CurrentWayPoint}==0
-	{
-		call FindNearestWayPoint
-		CurrentWayPoint:Set[${Return}]
-		;; No need to move to nothing
-		if ${CurrentWayPoint}==0
-		{
-			CurrentStatus:Set[Not on Map]
-			return
-		}
-		EchoIt "Closest WayPoint is ${CurrentWayPoint}"
-	}
 
+	;; we are going back to waypoint #1
+	if ${CurrentWayPoint}==0 || ${CurrentWayPoint}>=${TotalWayPoints}
+	{
+		CurrentStatus:Set[Starting at WP-1]
+		CurrentWayPoint:Set[1]
+	}
+	
 	;; Return if we are navigating
 	if ${Navigate.isMoving}
 	{
 		CurrentStatus:Set[Moving to WP-${CurrentWayPoint}]
 		return
 	}
-	
-	;; scan the area around me for a target
-	;if ${Pawn[resource,radius,30](exists)}
-	;{
-	;	Navigate:MoveToTarget[${Pawn[resource,radius,30](exists)}]
-	;}
-	
 
 	;; go ahead and define our point3f
 	variable point3f Destination = ${VG-MyPath_SSR.FindSet[${Me.Chunk}].FindSetting[WP-${CurrentWayPoint}]}
-	
+
 	;; start harvesting area if we are near it
 	if ${Math.Distance["${Me.Location}","${Destination}"]} < 1000
 	{
 		CurrentStatus:Set[Reached WP-${CurrentWayPoint}]
 		
+		call FindTarget Resource 5
+		if ${Return}
+		{
+			echo Resource at ${Me.Target.Distance} meters
+
+			;; harvest and loot Master Harvester's target
+			if ${Me.Target(exists)}
+			{
+				;; harvest target
+				call HarvestTarget
+				
+				;; loot target
+				call LootTarget
+				
+				;; consolidate all them resources we've been collecting
+				call Consolidate_Resources
+			}
+		}
+		
 		;; keep harvesting area until nothing is left
-		if ${doHarvestArea}
+		while ${doHarvestArea}
 		{
 			call HarvestArea
-			if ${Return}
+			if !${Return}
 			{
-				return
+				break
 			}
 			EchoIt "Done Harvesting Area"
 		}
 
-		;; reset current way point if > total way points
-		if ${CurrentWayPoint}>=${TotalWayPoints}
-		{
-			CurrentWayPoint:Set[${TotalWayPoints}]
-			CountUp:Set[FALSE]
-		}
-
-		;; reset current way point if 1
-		if ${CurrentWayPoint}<=1
-		{
-			CurrentWayPoint:Set[1]
-			CountUp:Set[TRUE]
-		}
-			
-		;; adjust out current way point to move up or down the points once we are done harvesting area
-		if ${CountUp}
-		{
-			CurrentWayPoint:Inc
-		}
-		else
-		{
-			CurrentWayPoint:Dec
-		}
+		;; We are at our destination so lets go to next waypoint
+		CurrentWayPoint:Inc
 	}
 	
 	;; Lets navigate to our CurrentWayPoint - 2 seconds is plenty of time to ensure we are navigating - remember, we are still mapping
 	EchoIt "Navigating to WP-${CurrentWayPoint}"
 	Navigate:MoveToPoint[WP-${CurrentWayPoint}]
-	wait 20 ${Navigate.isMoving}
+	wait 40 ${Navigate.isMoving}
 	if !${Navigate.isMoving}
 	{
 		CurrentStatus:Set[Not on Map]
@@ -364,10 +368,16 @@ function:bool HarvestArea()
 	}
 	
 	CurrentStatus:Set[Harvesting Area]
+	
+	call FindTarget Resource 15
+	if !${Return}
+	{
+		;; Clear Target
+		VGExecute "/cleartargets"
+		wait 5
+		return FALSE
+	}
 
-	;; scan the area around me for a target
-	Pawn[resource,radius,15]:Target
-	wait 10 ${Me.Target.IsHarvestable}
 	if !${Me.Target.IsHarvestable} 
 	{
 		;; Clear Target
@@ -431,14 +441,13 @@ function:bool HarvestTarget()
 		;; change posture to walking
 		VGExecute /walk
 
-		;; start moving forward
-		VG:ExecBinding[moveforward]
-
-		;; loop until target doesn't exist or outside 4 meters
+		;; loop until target doesn't exist or inside 4 meters
 		while ${Me.Target.Distance}>=4
 		{
+			VG:ExecBinding[moveforward]
+			face ${Me.Target.X} ${Me.Target.Y}
 			if !${Me.Target(exists)} || !${isRunning} || ${isPaused}
-				break
+					break
 		}
 
 		;; stop moving forward
@@ -455,19 +464,22 @@ function:bool HarvestTarget()
 		return
 	}
 	
-	;; return if we are harvesting 
-	;if ${GV[bool,bHarvesting]} && ${Me.ToPawn.CombatState}>0
-	;{
-	;	return TRUE
-	;}
-
 	;; Start harvesting
-	if !${GV[bool,bIsAutoAttacking]} || ${Me.ToPawn.CombatState}==0
+	;if !${GV[bool,bIsAutoAttacking]} || ${Me.ToPawn.CombatState}==0
+	if !${GV[bool,bIsAutoAttacking]}
 	{
+		TargetBlackList:Set[${Me.Target.ID}, ${Me.Target.ID}]
 		CurrentStatus:Set[Begin harvesting]
 		Me.Ability[Auto Attack]:Use
 		wait 30 ${GV[bool,bIsAutoAttacking]} && ${Me.ToPawn.CombatState}>0
 		waitframe
+	}
+	
+	;; Blacklist and clear this target
+	if ${Me.ToPawn.CombatState}==0
+	{
+		TargetBlackList:Set[${Me.Target.ID}, ${Me.Target.ID}]
+		VGExecute /cleartargets
 	}
 	
 	;; Let's wait here while we are harvesting
@@ -476,11 +488,13 @@ function:bool HarvestTarget()
 		CurrentStatus:Set[Harvesting - ${Me.Target.Name}]
 		EchoIt "Harvesting: ${Me.Target.Name}"
 	
+		variable int StopHarvestTimer = ${Script.RunningTime}
+		
 		;; Bonus Yield causes bHarvesting to always report TRUE
 		while ${GV[bool,bHarvesting]} && ${Me.Target.IsHarvestable}
 		{
 			;; this will stop the harvest
-			if ${Pawn[id,${MasterHarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${MasterHarvesterID}].Distance}>7 || !${isRunning} || ${isPaused}
+			if ${Pawn[id,${MasterHarvesterID}].CombatState}==0 || ${Me.Target.Name.Find[remains of]} || !${Me.Target(exists)} || ${Pawn[id,${MasterHarvesterID}].Distance}>7 || !${isRunning} || ${isPaused} || ${Math.Calc[${Math.Calc[${Script.RunningTime}-${StopHarvestTimer}]}/1000]}>20
 			{
 				CurrentStatus:Set[Stopped Harvesting]
 				VGExecute /endharvesting
@@ -510,7 +524,7 @@ function:bool HarvestTarget()
 ;===================================================
 function LootTarget()
 {
-	if ${doLoot}
+	if ${doLoot} && ${Me.Target(exists)}
 	{
 		wait 10 !${Me.Target.IsHarvestable} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<5
 	
@@ -549,6 +563,9 @@ function LootTarget()
 				
 			;; this will actually stop everything until you deal with the loot, need a timer of some form to break out
 			wait 10 !${Me.IsLooting}
+			
+			VGExecute "/cleartargets"
+			wait 5			
 		}
 	}
 }
@@ -723,7 +740,7 @@ function:int FindNearestWayPoint()
 				ClosestDistance:Set[${Math.Distance["${Me.Location}","${Destination}"]}]
 			}
 		}
-		EchoIt "Distance to WP-${ClosestWayPoint} is ${ClosestDistance}"
+		;EchoIt "Distance to WP-${ClosestWayPoint} is ${ClosestDistance}"
 		return ${ClosestWayPoint}
 	}
 	return 0
@@ -848,7 +865,23 @@ atom(script) ClearWayPoints()
 	;; echo that we cleared our path and waypoints
 	EchoIt "Cleared all Waypoints for ${Me.Chunk}"
 }
-	
+
+;===================================================
+;===     ATOM - Chatevent                       ====
+;===================================================
+atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
+{
+	;; Clear target if lacking harvesting skill
+	if (${Text.Find["You do not have enough skill to begin harvesting this resource"]})
+	{
+		if ${Me.Target(exists)}
+		{
+			TargetBlackList:Set[${Me.Target.ID}, ${Me.Target.ID}]
+			VGExecute /cleartargets
+		}
+	}
+}
+
 ;===================================================
 ;===     ATOM - Load Variables from XML         ====
 ;===================================================
@@ -864,20 +897,23 @@ atom(script) LoadXMLSettings()
 
 	LavishSettings[VG-Harvest]:AddSet[MySettings]
 	LavishSettings[VG-Harvest]:AddSet[MyPath]
+	LavishSettings[VG-Harvest]:AddSet[Nodes]
 	
 	LavishSettings[VG-Harvest]:Import[${savePath}/MySettings.txt]	
 
 	;; set our reference
 	VG-Harvest_SSR:Set[${LavishSettings[VG-Harvest].FindSet[MySettings]}]
 	VG-MyPath_SSR:Set[${LavishSettings[VG-Harvest].FindSet[MyPath]}]
-
+	VG-HarvestNodes_SSR:Set[${LavishSettings[VG-Harvest].FindSet[Nodes]}]
+	
 	;; Load our settings
 	HarvX:Set[${VG-Harvest_SSR.FindSetting[HarvX,968]}]
 	HarvY:Set[${VG-Harvest_SSR.FindSetting[HarvY,924]}]
 	doHarvestArea:Set[${VG-Harvest_SSR.FindSetting[doHarvestArea,TRUE]}]
 	doEcho:Set[${VG-Harvest_SSR.FindSetting[doEcho,FALSE]}]
 	doLoot:Set[${VG-Harvest_SSR.FindSetting[doLoot,FALSE]}]
-	
+	doHarvestOnly:Set[${VG-Harvest_SSR.FindSetting[doHarvestOnly,FALSE]}]
+
 	if ${Me.Chunk(exists)}
 	{
 		if !${VG-MyPath_SSR.FindSet[${Me.Chunk}](exists)}
@@ -893,8 +929,9 @@ atom(script) LoadXMLSettings()
 		{
 			TotalWayPoints:Set[${VG-MyPath_SSR[${Me.Chunk}].FindSetting[TotalWayPoints,0]}]
 			EchoIt "TotalWayPoints Found in ${Me.Chunk}: ${TotalWayPoints}, Closest WayPoint is ${CurrentWayPoint}"
-			call FindNearestWayPoint
-			CurrentWayPoint:Set[${Return}]
+			;call FindNearestWayPoint
+			;CurrentWayPoint:Set[${Return}]
+			CurrentWayPoint:Set[1]
 		}
 	}
 }
@@ -914,11 +951,51 @@ atom(script) SaveXMLSettings()
 	VG-Harvest_SSR:AddSetting[doHarvestArea,${doHarvestArea}]
 	VG-Harvest_SSR:AddSetting[doEcho,${doEcho}]
 	VG-Harvest_SSR:AddSetting[doLoot,${doLoot}]
+	VG-Harvest_SSR:AddSetting[doHarvestOnly,${doHarvestOnly}]
 	
 	;; Save to file
 	LavishSettings[VG-Harvest]:Export[${savePath}/MySettings.txt]
 }
 
 	
+;===================================================
+;===         UI Tools for Trigger Buffs         ====
+;===================================================
+atom(global) AddHarvestList(string aName)
+{
+	if (${aName.Length} > 1) && !${aName.Equal[NONE]}
+	{
+		LavishSettings[VG-Harvest].FindSet[Nodes]:AddSetting[${aName}, ${aName}]
+		echo "Adding: ${aName}"
+	}
+}
+atom(global) RemoveHarvestList(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		VG-HarvestNodes_SSR.FindSetting[${aName}]:Remove
+		echo "Removing: ${aName}"
+	}
+}
+atom(global) VG-Harvest_BuildNodes()
+{
+	variable iterator Iterator
+	VG-HarvestNodes_SSR:GetSettingIterator[Iterator]
+	UIElement[HarvestList@Nodes@Tabs@VG-Harvest]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		if !${Iterator.Key.Equal[NULL]}
+		{
+			UIElement[HarvestList@Nodes@Tabs@VG-Harvest]:AddItem[${Iterator.Key}]
+		}
+		Iterator:Next
+	}
+	variable int i = 0
+	VG-HarvestNodes_SSR:Clear
+	while ${i:Inc} <= ${UIElement[HarvestList@Nodes@Tabs@VG-Harvest].Items}
+	{
+		LavishSettings[VG-Harvest].FindSet[Nodes]:AddSetting[${UIElement[HarvestList@Nodes@Tabs@VG-Harvest].Item[${i}].Text}, ${UIElement[HarvestList@Nodes@Tabs@VG-Harvest].Item[${i}].Text}]
+	}
+}
 	
 

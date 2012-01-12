@@ -70,7 +70,9 @@ function:bool FindTarget(string TargetType, int Distance=15, int ConCheck=6, int
 	variable string Obstacle
 	Dist:Set[${Math.Calc[${Distance}*100].Int}]
 
-
+	variable iterator Iterator
+	variable bool Okay2Harvest = FALSE
+	
 	;-------------------------------------------
 	; Let's find us a target
 	;-------------------------------------------
@@ -92,8 +94,6 @@ function:bool FindTarget(string TargetType, int Distance=15, int ConCheck=6, int
 			;-------------------------------------------
 			if ${Pawn[${i}].Distance.Int}>${Distance}
 				break
-			;if ${Math.Distance[${Pawn[${i}].X},${Pawn[${i}].Y},${HomeX},${HomeY}]}>${Dist}
-			;	break
 
 			;-------------------------------------------
 			; Must pass our first check
@@ -106,13 +106,9 @@ function:bool FindTarget(string TargetType, int Distance=15, int ConCheck=6, int
 			;-------------------------------------------
 			if ${TargetType.Equal[Corpse]} && !${Pawn[${i}].IsHarvestable} && ${Pawn[${i}].ContainsLoot}
 			{
-				;if ${doEcho}
-				;	echo "[${Time}][VG:EB] --> FindTarget2: (${TargetType}) - ${Pawn[${i}].Name} - Contains Loot= ${Pawn[${i}].ContainsLoot}"
 				continue
 			}
-
-			;echo LOS=[${Pawn[${i}].HaveLineOfSightTo}], Obstacle=[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}], Target=[${Pawn[${i}].Name}], Distance=[${Pawn[${i}].Distance}]
-			
+		
 			;-------------------------------------------
 			; Must pass our third check
 			;-------------------------------------------
@@ -120,21 +116,37 @@ function:bool FindTarget(string TargetType, int Distance=15, int ConCheck=6, int
 			if !${Pawn[${i}].HaveLineOfSightTo}
 			{
 				continue
-				Obstacle:Set[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}]
-				if !${Obstacle.Equal[TerrainInfo0]}
+			}
+			
+			;-------------------------------------------
+			; Do we want to harvest only only what's in our list?
+			;-------------------------------------------
+			if ${doHarvestOnly}
+			{
+				Okay2Harvest:Set[FALSE]
+				VG-HarvestNodes_SSR:GetSettingIterator[Iterator]
+				
+				;; loop thru the HarvestList
+				while ( ${Iterator.Key(exists)} )
 				{
-					echo Obstacle=[${Obstacle}]
-					echo LOS=[${Pawn[${i}].HaveLineOfSightTo}], Obstacle=[${Pawn[${i}].CheckCollision[${Me.X},${Me.Y},${Me.Z}]}], Target=[${Pawn[${i}].Name}], Distance=[${Pawn[${i}].Distance}]
-					;if ${doEcho}
-					;{
-					;	;echo "[${Time}][VG:EB] --> FindTarget: Obstacle between ${Pawn[${i}].Name} at ${Pawn[${i}].Distance} meters away"
-					;}
+					if !${Iterator.Key.Equal[NULL]}
+					{
+						if ${Pawn[${i}].Name.Equal[${Iterator.Key}]}
+						{
+							Okay2Harvest:Set[TRUE]
+							break
+						}
+					}
+					Iterator:Next
+				}
+				
+				;; if there is no match then continue
+				if !${Okay2Harvest}
+				{
 					continue
 				}
 			}
 			
-			;wait 15
-
 			;-------------------------------------------
 			; Let's target what we found
 			;-------------------------------------------
