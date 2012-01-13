@@ -11,6 +11,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20120112 (Zandros)
+; * Added ajustable loot variables and tab
+;
 ; 20120110 (Zandros)
 ; * Fixed the ping-pong between corpses when looting.  Instead of skipping
 ;   the corpse with loot, it will target the nearest AggroNPC next to the corse
@@ -63,6 +66,11 @@ variable string LastTargetName = "None"
 variable int64 LastTargetID = 0
 variable int WhatStepWeOn = 0
 variable int TotalKills = 0
+
+;; loot variables
+variable int LootNearRange = 8
+variable int LootMaxRange = 40
+variable int LootCheckForAggroRadius = 20
 variable collection:int64 BlackListCorpse
 
 ;; XML variables used to store and save data
@@ -74,15 +82,15 @@ variable settingsetref options
 variable settingsetref Buffs
 
 ;; UI toggles - excessively alot of toggles
-variable bool Do1
-variable bool Do2
-variable bool Do3
-variable bool Do4
-variable bool Do5
+variable bool Do1 = FALSE
+variable bool Do2 = FALSE
+variable bool Do3 = FALSE
+variable bool Do4 = FALSE
+variable bool Do5 = FALSE
 variable bool Do6 = FALSE
-variable bool Do7
-variable bool Do8
-variable bool Do9
+variable bool Do7 = FALSE
+variable bool Do8 = FALSE
+variable bool Do9 = FALSE
 
 ;===================================================
 ;===               Main Routine                 ====
@@ -146,7 +154,7 @@ function Initialize()
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 	wait 5
 	ui -reload -skin VGSkin "${Script.CurrentDirectory}/vgtwodot.xml"
-	UIElement[vgtwodot]:SetWidth[180]
+	UIElement[vgtwodot]:SetWidth[200]
 	UIElement[vgtwodot]:SetHeight[230]
 
 	;-------------------------------------------
@@ -241,7 +249,7 @@ function GoDoSomething()
 
 	;; increment our step
 	WhatStepWeOn:Inc
-	if ${WhatStepWeOn}>=9
+	if ${WhatStepWeOn}>9
 	{
 		WhatStepWeOn:Set[1]
 	}
@@ -653,13 +661,13 @@ function Do5()
 		}
 
 		;; must wait for target to change to corpse
-		wait 10 ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.ContainsLoot}
+		wait 15 ${Me.Target(exists)} && ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.ContainsLoot}
 
 		;; does the corpse have any loot?
 		if ${Me.Target.ContainsLoot}
 		{
 			;; move closer
-			if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<10
+			if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<${LootNearRange}
 			{
 			
 				;call movetoobject ${Me.Target.ID} 4 0
@@ -696,7 +704,7 @@ function Do5()
 		variable index:pawn CurrentPawns
 		TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
 	
-		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<35 && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
+		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<${LootMaxRange} && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
 		{
 			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].ContainsLoot}
 			{
@@ -707,11 +715,11 @@ function Do5()
 				}
 				
 				;; skip looting if there are any AggroNPC's near corpse and we are hunting
-				if ${Do6} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,15](exists)}
+				if ${Do6} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}](exists)}
 				{
-					Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,15]:Target
+					Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}]:Target
 					wait 3
-					echo "[${Time}] Aquiring new AggroNPC target within 15m range of corpse"
+					echo "[${Time}] Aquiring new AggroNPC target within ${LootCheckForAggroRadius} meters radius of corpse"
 					return
 				}
 			
@@ -788,24 +796,27 @@ function Do7()
 }
 
 ;===================================================
-;===                     Do8                   ====
+;===                     Do8                    ====
 ;===================================================
 function Do8()
 {
-	
+	;; Auto add immunities
 }
-
 ;===================================================
-;===  Auto Decon - Not being called by anything ====
+;===                     Do9                    ====
 ;===================================================
-function decon()
+function Do9()
 {
+	;; DECON SHANDREL JUNK
 	if !${Me.InCombat} && ${Me.Inventory[Shandrel](exists)}
 	{
-		Me.Inventory[Deconstruction Kit]:Use
-		wait 5
-		Me.Inventory[Shandrel].Container:DeconstructToResource
-		wait 4
+		if ${Me.Inventory[Deconstruction Kit](exists)}
+		{
+			Me.Inventory[Deconstruction Kit]:Use
+			wait 5
+			Me.Inventory[Shandrel].Container:DeconstructToResource
+			wait 5
+		}
 	}
 	return
 }
@@ -875,6 +886,10 @@ function loadxmls()
 	;Do6:Set[${options.FindSetting[Do6,${Do6}]}]
 	Do7:Set[${options.FindSetting[Do7,${Do7}]}]
 	Do8:Set[${options.FindSetting[Do8,${Do8}]}]
+	Do9:Set[${options.FindSetting[Do9,${Do9}]}]
+	LootCheckForAggroRadius:Set[${options.FindSetting[LootCheckForAggroRadius,${LootCheckForAggroRadius}]}]
+	LootNearRange:Set[${options.FindSetting[LootNearRange,${LootNearRange}]}]
+	LootMaxRange:Set[${options.FindSetting[LootMaxRange,${LootMaxRange}]}]
 }
 
 ;===================================================
@@ -892,6 +907,10 @@ function LavishSave()
 	options:AddSetting[Do6,${Do6}]
 	options:AddSetting[Do7,${Do7}]
 	options:AddSetting[Do8,${Do8}]
+	options:AddSetting[Do9,${Do9}]
+	options:AddSetting[LootCheckForAggroRadius,${LootCheckForAggroRadius}]
+	options:AddSetting[LootNearRange,${LootNearRange}]
+	options:AddSetting[LootMaxRange,${LootMaxRange}]
 
 	LavishSettings[vgtwodot]:Export[${LavishScript.CurrentDirectory}/scripts/vgtwodot/Saves/${Me.FName}.xml]
 	LavishSettings[MobResists]:Export[${LavishScript.CurrentDirectory}/scripts/vgtwodot/Saves/Mobs.xml]
