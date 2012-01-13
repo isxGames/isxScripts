@@ -27,7 +27,7 @@
 		<TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
 		<X>20</X>
 		<Y>20</Y>
-		<Width>170</Width>
+		<Width>200</Width>
 		<Height>230</Height>
 		<StorePosition>1</StorePosition>
 		<Title>VG Sorc</Title>
@@ -73,7 +73,7 @@
                     switch ${This.SelectedTab}
                     {
                     Case Soc
-						UIElement[vgtwodot]:SetWidth[180]
+						UIElement[vgtwodot]:SetWidth[200]
 						UIElement[vgtwodot]:SetHeight[230]
 						break
                     Case Mobs
@@ -84,7 +84,11 @@
 						UIElement[vgtwodot]:SetWidth[350]
 						UIElement[vgtwodot]:SetHeight[280]
 						break
-                    }
+                   Case Loot
+						UIElement[vgtwodot]:SetWidth[300]
+						UIElement[vgtwodot]:SetHeight[280]
+						break
+					}
                   </OnSelect>
 	<Tabs>
                     <Tab name='Soc'>
@@ -222,7 +226,7 @@
                             <OnLoad>
                               if ${Script[vgtwodot].VariableScope.Do8}
                               {
-                              This:SetChecked
+								This:SetChecked
                               }
                             </OnLoad>
                             <OnLeftClick>
@@ -550,53 +554,175 @@
 									</OnSelect>
 								</ComboBox>
 								
-						 <Text Name='txtBuffs' Template='VG.BoldText'>
-							<X>3%</X>
-							<Y>60%</Y>
-							<Width>85%</Width>
-							<Height>20</Height>
-							<Alignment>Left</Alignment>
-							<Text>Buffs:</Text>
-						</Text>
-						<ComboBox Name="BuffsCombo" Template="VG.ComboBox">
-							<X>3%</X>
-							<Y>67%</Y>
-							<Width>95%</Width>
-							<Height>20</Height>
-							<OnLoad>
-								This:AddItem[NONE]
-							</OnLoad>
-							<OnSelect>
-								if ${This.SelectedItem.Text(exists)}
-								{
-									AddBuff "${This.SelectedItem.Text}"
-									BuildBuffs
-								}
-							</OnSelect>
-						</ComboBox>
-						<Listbox Name="BuffsList" Template="VG.ListBox">
-							<X>3%</X>
-							<Y>75.5%</Y>
-							<Width>95%</Width>
-							<Height>50</Height>
-							<AutoSort>TRUE</AutoSort>
-							<Sort>User</Sort>
-							<OnLoad>
-								BuildBuffs
-							</OnLoad>
-							<OnRightClick>
-								RemoveBuff "${This.SelectedItem}"
-								This.SelectedItem:Remove
-								BuildBuffs
-							</OnRightClick>
-						</Listbox>
+								 <Text Name='txtBuffs' Template='VG.BoldText'>
+									<X>3%</X>
+									<Y>60%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Buffs:</Text>
+								</Text>
+								<ComboBox Name="BuffsCombo" Template="VG.ComboBox">
+									<X>3%</X>
+									<Y>67%</Y>
+									<Width>95%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										if ${This.SelectedItem.Text(exists)}
+										{
+											AddBuff "${This.SelectedItem.Text}"
+											BuildBuffs
+										}
+									</OnSelect>
+								</ComboBox>
+								<Listbox Name="BuffsList" Template="VG.ListBox">
+									<X>3%</X>
+									<Y>75.5%</Y>
+									<Width>95%</Width>
+									<Height>50</Height>
+									<AutoSort>TRUE</AutoSort>
+									<Sort>User</Sort>
+									<OnLoad>
+										BuildBuffs
+									</OnLoad>
+									<OnRightClick>
+										RemoveBuff "${This.SelectedItem}"
+										This.SelectedItem:Remove
+										BuildBuffs
+									</OnRightClick>
+								</Listbox>
 								
 							</Children>
 						</Frame>
 					</Tab>
-         </Tabs>
-      </TabControl>
-  </Children>
-    
+					<Tab name='Loot'>
+						<Frame name='Frame'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>
+								<Textentry Name="LootNearRange" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>10%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VGtwodot].VariableScope.LootNearRange}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VGtwodot].VariableScope.LootNearRange:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[99]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VGtwodot].VariableScope.LootNearRange:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-LootNearRange" Template="VG.Text">
+									<X>23%</X>
+									<Y>10.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Near Range to must loot</Text>
+								</Text>
+								<Textentry Name="LootMaxRange" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>20%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VGtwodot].VariableScope.LootMaxRange}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VGtwodot].VariableScope.LootMaxRange:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[99]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VGtwodot].VariableScope.LootMaxRange:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-LootMaxRange" Template="VG.Text">
+									<X>23%</X>
+									<Y>20.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Max Range to scan for loot</Text>
+								</Text>
+								<Textentry Name="LootCheckForAggroRadius" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>30%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VGtwodot].VariableScope.LootCheckForAggroRadius}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VGtwodot].VariableScope.LootCheckForAggroRadius:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[99]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VGtwodot].VariableScope.LootCheckForAggroRadius:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-LootCheckForAggroRadius" Template="VG.Text">
+									<X>23%</X>
+									<Y>30.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Safe Radius of Corpse to loot</Text>
+								</Text>
+								<checkbox Name="chkDo9" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>6%</X>
+									<Y>45%</Y>
+									<Width>25%</Width>
+									<Height>15</Height>
+									<Text> Auto Decon</Text>
+									<AutoTooltip> Use Decon Kit to decon your junk </AutoTooltip>
+									<OnLoad>
+										if ${Script[VGtwodot].VariableScope.Do9}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VGtwodot].VariableScope.Do9:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+							</Children>
+						</Frame>							
+					</Tab>
+				</Tabs>
+			</TabControl>
+		</Children>
 	</Window>
 </ISUI>
