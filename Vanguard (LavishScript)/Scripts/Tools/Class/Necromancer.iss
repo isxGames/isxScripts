@@ -4,6 +4,7 @@ variable int AbominationStartAttack = 99
 variable string AbominationName = "Stinky"
 variable bool doSummonAbomination = FALSE
 variable bool doNecropsy = FALSE
+variable bool doVileRitual = TRUE
 function Necromancer()
 {
 	;; return if your class is not a Bard
@@ -25,10 +26,22 @@ function Necromancer()
 		SetHighestAbility "CripplingBlight" "Crippling Blight"
 		SetHighestAbility "Torment" "Torment"
 		SetHighestAbility "VileRitual" "Vile Ritual"
-		;; Crits
 		SetHighestAbility "SealedFate" "Sealed Fate"
+		;; Crits
+		SetHighestAbility "BoneSpear" "Bone Spear"
 		SetHighestAbility "BoneChill" "Bone Chill"
+		SetHighestAbility "ShadowFeast" "Shadow Feast"
 		NecroRunOnce:Set[FALSE]
+	}
+	
+	if ${Pawn[Essence](exists)}
+	{
+		VGExecute /pet "Backoff"
+		wait 3
+		Pawn[Essence]:Target
+		wait 3
+		Me.Inventory[Narahari's Phial]:Use
+		wait 50
 	}
 	
 	;; Name your pet
@@ -67,7 +80,7 @@ function Necromancer()
 			if ${Me.HavePet}
 			{
 				VGExecute /pet Attack
-				return
+				;return
 			}
 		}
 	}
@@ -93,7 +106,7 @@ function Necromancer()
 				if ${Me.Target.ContainsLoot}
 				{
 					Loot:BeginLooting
-					wait 5 ${Me.IsLooting} && ${Loot.NumItems}
+					wait 15 ${Me.IsLooting} && ${Loot.NumItems}
 					Loot:LootAll
 					wait 2
 					if ${Me.IsLooting}
@@ -125,7 +138,7 @@ function Necromancer()
 					if ${Me.Target.ContainsLoot}
 					{
 						Loot:BeginLooting
-						wait 5 ${Me.IsLooting} && ${Loot.NumItems}
+						wait 15 ${Me.IsLooting} && ${Loot.NumItems}
 						Loot:LootAll
 						wait 2
 						if ${Me.IsLooting}
@@ -136,6 +149,10 @@ function Necromancer()
 				}
 				VGExecute /cleartargets
 				wait 5
+				if ${doVileRitual} && ${Me.EnergyPct}<80
+				{
+					call UseAbility "${VileRitual}"
+				}
 			}
 		}
 	}
@@ -154,28 +171,47 @@ function Necromancer()
 			}
 			wait 3
 		}
-		if !${Me.DTarget.Name.Equal[${AbominationName}]}
+		;; Heal Pet
+		if ${Me.HealthPct}>50 && ${Me.Pet.Health}<50
 		{
-			Pawn[${AbominationName}]:Target
-			wait 3
-		}
-		if ${Me.DTarget.Name.Equal[${AbominationName}]}
-		{
-			;; Heal Pet
-			if ${Me.HealthPct}>50 && ${Me.DTargetHealth}<50
-			{
-				call UseAbility "${BloodRite}"
-			}
+			call UseAbility "${BloodRite}"
 		}
 	}
 
 	;; This forces the pet to attack
 	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>5 && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${AbominationStartAttack} && ${Me.TargetHealth}>0
 	{
+		if ${Me.Minion}==0
+		{
+			;call UseAbility "Ritual of the Slayer"
+			call UseAbility "Plague Bringer's Ritual"
+			wait 10 ${Me.Minion}>0
+		}
+	
 		if ${Me.HavePet} && ${Pawn[${AbominationName}].CombatState}==0
 		{
 			VGExecute /pet Attack
-			wait 5
+
+			;variable int64 LastID
+			;LastID:Set[${Me.Target.ID}]
+			;if !${Me.Target.IsDead} && ${Pawn[Corpse](exists)} && ${Pawn[Corpse].Distance}<25
+			;{
+			;	;VGExecute /cleartargets
+			;	wait 3
+			;	call UseAbility "Ritual Animatus I"
+			;	Pawn[id,${LastID}]:Target
+			;	wait 3
+			;}
+			if ${Me.Minion}>0
+			{
+				vgecho "Minions ATACK!"
+				VGExecute /minions attack
+				wait 5
+			}
+		}
+		if ${Me.TargetHealth}<40
+		{
+			call UseAbility "${BoneSpear}"
 		}
 	}
 	
@@ -190,6 +226,20 @@ function Necromancer()
 ;===================================================
 function NecroCrits()
 {
+	if ${Me.ToT.Name.Find[${Me.FName}](exists)} && ${Me.InCombat} && !${Me.TargetMyDebuff[Fear I](exists)}
+	{
+		if ${Me.Minion}>0
+		{
+			VGExecute /minions attack
+			wait 5
+		}
+	;	vgecho TARGET ON ME
+	;	wait 10 !${VG.InGlobalRecovery} && ${Me.Ability["Torch"].IsReady} && !${Me.IsCasting}
+	;	Me.Ability[Fear I]:Use
+	;	call IsCasting
+	}
+	
+	
 	;; scan all encounters and target the one on me
 	if ${Me.Encounter} && ${Me.HavePet}
 	{
@@ -224,9 +274,17 @@ function NecroCrits()
 		}
 	
 		;; return if no crits
-		if ${Me.Ability[${SealedFate}].TriggeredCountdown}==0 && ${Me.Ability[${BoneChill}].TriggeredCountdown}==0
+		if ${Me.Ability[${SealedFate}].TriggeredCountdown}==0 && ${Me.Ability[${BoneChill}].TriggeredCountdown}==0 && ${Me.Ability[${ShadowFeast}].TimeRemaining}==0
 		{
 			return
+		}
+
+		;; SPIRITUAL FINISHER - a benefiting DOT
+		call OkayToAttack "${ShadowFeast}"
+		if ${Return} && ${Me.Ability[${ShadowFeast}].IsReady} && ${Me.Ability[${ShadowFeast}].TimeRemaining}==0
+		{
+			Me.Ability[${ShadowFeast}]:Use
+			call GlobalCooldown
 		}
 
 		;; PHYSICAL FINISHER - A devistating DOT

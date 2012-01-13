@@ -13,9 +13,15 @@
 ;
 ; Revision History
 ; ----------------
+; 20120112 (Zandros)
+; * Added a tab called 'Counters' which now gives you full control which ability
+;   you want to counter.  As you identify the target's ability, it will automatically
+;   populate the text box so that all you need to do is click the 'Add' button or
+;   if you know in advance then you can manually type it in.
+;
 ; 20120102 (Zandros)
 ; * Added (Physical, Arcane, Mental, Fire, Cold/Ice, Spirictual), Foraging, and a
-;   new class tab... Necromancer.
+;   new class tab... Necromancer.  Nothing fancy and still have a ways to go.
 ;
 ; 20111229 (Zandros)
 ; * Items will now cycle through each one, just make sure the item is on one of
@@ -84,6 +90,8 @@ variable bool doUseAbilities = FALSE
 variable bool doUseItems = FALSE
 variable bool doCounter1 = FALSE
 variable bool doCounter2 = FALSE
+variable bool doCounter1Only = FALSE
+variable bool doCounter2Only = FALSE
 variable bool doPushStance = FALSE
 variable bool doStripEnchantments = FALSE
 variable bool doForage = FALSE
@@ -136,6 +144,8 @@ variable settingsetref Items
 variable settingsetref Buffs
 variable settingsetref TriggerBuffs
 variable settingsetref BuffOnly
+variable settingsetref Counters1
+variable settingsetref Counters2
 
 ;; Equipment variables
 variable string LastPrimary
@@ -187,7 +197,7 @@ function main()
 	do
 	{
 		;; this allows AutoAttack to kick in
-		wait .5
+		wait 1
 		
 		;; check and accept Rez
 		call RezAccept
@@ -363,6 +373,8 @@ function Initialize()
 	LavishSettings[DPS]:AddSet[Buffs-${Me.FName}]
 	LavishSettings[DPS]:AddSet[TriggerBuffs-${Me.FName}]
 	LavishSettings[DPS]:AddSet[BuffOnly-${Me.FName}]
+	LavishSettings[DPS]:AddSet[Counters1-${Me.FName}]
+	LavishSettings[DPS]:AddSet[Counters2-${Me.FName}]
 
 	LavishSettings[DPS]:Import[${Script.CurrentDirectory}/Tools_save.xml]
 	
@@ -372,30 +384,34 @@ function Initialize()
 	Buffs:Set[${LavishSettings[DPS].FindSet[Buffs-${Me.FName}].GUID}]
 	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}].GUID}]
 	BuffOnly:Set[${LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}].GUID}]
+	Counters1:Set[${LavishSettings[DPS].FindSet[Counters1-${Me.FName}].GUID}]
+	Counters2:Set[${LavishSettings[DPS].FindSet[Counters2-${Me.FName}].GUID}]
 
-	doUseAbilities:Set[${General.FindSetting[doUseAbilities,TRUE]}]
+	doUseAbilities:Set[${General.FindSetting[doUseAbilities,FALSE]}]
 	doUseItems:Set[${General.FindSetting[doUseItems,FALSE]}]
-	doCounter1:Set[${General.FindSetting[doCounter1,TRUE]}]
-	doCounter2:Set[${General.FindSetting[doCounter2,TRUE]}]
-	doPushStance:Set[${General.FindSetting[doPushStance,TRUE]}]
-	doStripEnchantments:Set[${General.FindSetting[doStripEnchantments,TRUE]}]
-	doForage:Set[${General.FindSetting[doForage,TRUE]}]
-	doAutoAttack:Set[${General.FindSetting[doAutoAttack,TRUE]}]
-	doRangedAttack:Set[${General.FindSetting[doRangedAttack,TRUE]}]
-	doFace:Set[${General.FindSetting[doFace,TRUE]}]
-	doAutoRepairs:Set[${General.FindSetting[doAutoRepairs,TRUE]}]
-	doAutoRez:Set[${General.FindSetting[doAutoRez,TRUE]}]
+	doCounter1:Set[${General.FindSetting[doCounter1,FALSE]}]
+	doCounter2:Set[${General.FindSetting[doCounter2,FALSE]}]
+	doCounter1Only:Set[${General.FindSetting[doCounter1Only,FALSE]}]
+	doCounter2Only:Set[${General.FindSetting[doCounter2Only,FALSE]}]
+	doPushStance:Set[${General.FindSetting[doPushStance,FALSE]}]
+	doStripEnchantments:Set[${General.FindSetting[doStripEnchantments,FALSE]}]
+	doForage:Set[${General.FindSetting[doForage,FALSE]}]
+	doAutoAttack:Set[${General.FindSetting[doAutoAttack,FALSE]}]
+	doRangedAttack:Set[${General.FindSetting[doRangedAttack,FALSE]}]
+	doFace:Set[${General.FindSetting[doFace,FALSE]}]
+	doAutoRepairs:Set[${General.FindSetting[doAutoRepairs,FALSE]}]
+	doAutoRez:Set[${General.FindSetting[doAutoRez,FALSE]}]
 	CombatForm:Set[${General.FindSetting[CombatForm,"NONE"]}]
 	NonCombatForm:Set[${General.FindSetting[NonCombatForm,"NONE"]}]
 	StartAttack:Set[${General.FindSetting[StartAttack,99]}]
 	doGroupsay:Set[${General.FindSetting[doGroupsay,FALSE]}]
 	doRaidsay:Set[${General.FindSetting[doRaidsay,FALSE]}]
 	doTells:Set[${General.FindSetting[doTells,FALSE]}]
-	doRift:Set[${General.FindSetting[doRift,TRUE]}]
+	doRift:Set[${General.FindSetting[doRift,FALSE]}]
 	TriggerBuffing:Set[${General.FindSetting[TriggerBuffing,""]}]
 	FollowDistance1:Set[${General.FindSetting[FollowDistance1,3]}]
 	FollowDistance2:Set[${General.FindSetting[FollowDistance2,5]}]
-	doMonotorTells:Set[${General.FindSetting[doMonotorTells,TRUE]}]
+	doMonotorTells:Set[${General.FindSetting[doMonotorTells,FALSE]}]
 	doPhysical:Set[${General.FindSetting[doPhysical,TRUE]}]
 	doArcane:Set[${General.FindSetting[doArcane,TRUE]}]
 	doFire:Set[${General.FindSetting[doFire,TRUE]}]
@@ -421,9 +437,12 @@ function Initialize()
 	;-------------------------------------------
 	; Reload the UI and draw our Tool window
 	;-------------------------------------------
+	waitframe
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
+	waitframe
 	ui -reload -skin VGSkin "${Script.CurrentDirectory}/Tools.xml"
-
+	waitframe
+	
 	;-------------------------------------------
 	; Update UI from the XML Data
 	;-------------------------------------------
@@ -570,6 +589,8 @@ function atexit()
 	General:AddSetting[doUseItems,${doUseItems}]
 	General:AddSetting[doCounter1,${doCounter1}]
 	General:AddSetting[doCounter2,${doCounter2}]
+	General:AddSetting[doCounter1Only,${doCounter1Only}]
+	General:AddSetting[doCounter2Only,${doCounter2Only}]
 	General:AddSetting[doPushStance,${doPushStance}]
 	General:AddSetting[doStripEnchantments,${doStripEnchantments}]
 	General:AddSetting[doForage,${doForage}]
@@ -837,9 +858,37 @@ function CounterIt()
 		; in order to counter we have to be able to ID the ability
 		if !${Me.TargetCasting.Equal[None]}
 		{
+			variable bool Okay2Counter
+			variable iterator Iterator
+		
+			;; target is casting so update UI to show casted ability
+			UIElement[Counter1@Counters@DPS@Tools]:SetText[${Me.TargetCasting}]
+			UIElement[Counter2@Counters@DPS@Tools]:SetText[${Me.TargetCasting}]
+
 			if ${doCounter1}
 			{
-				if ${Me.Ability[${CounterA}].IsReady} && ${Me.Ability[${CounterA}].TimeRemaining}==0
+				Okay2Counter:Set[TRUE]
+				if ${doCounter1Only}
+				{
+					Okay2Counter:Set[FALSE]
+					Counters1:GetSettingIterator[Iterator]
+					
+					;; loop thru the Counter1List
+					while ( ${Iterator.Key(exists)} )
+					{
+						if !${Iterator.Key.Equal[NULL]}
+						{
+							if ${Me.TargetCasting.Equal[${Iterator.Key}]}
+							{
+								Okay2Counter:Set[TRUE]
+								break
+							}
+						}
+						Iterator:Next
+					}
+				}
+			
+				if ${Okay2Counter} && ${Me.Ability[${CounterA}].IsReady} && ${Me.Ability[${CounterA}].TimeRemaining}==0
 				{
 					VGExecute "/reactioncounter 1"
 					wait 1
@@ -848,7 +897,28 @@ function CounterIt()
 			}
 			if ${doCounter2}
 			{
-				if ${Me.Ability[${CounterB}].IsReady} && ${Me.Ability[${CounterB}].TimeRemaining}==0
+				Okay2Counter:Set[TRUE]
+				if ${doCounter2Only}
+				{
+					Okay2Counter:Set[FALSE]
+					Counters2:GetSettingIterator[Iterator]
+					
+					;; loop thru the Counter2List
+					while ( ${Iterator.Key(exists)} )
+					{
+						if !${Iterator.Key.Equal[NULL]}
+						{
+							if ${Me.TargetCasting.Equal[${Iterator.Key}]}
+							{
+								Okay2Counter:Set[TRUE]
+								break
+							}
+						}
+						Iterator:Next
+					}
+				}
+
+				if ${Okay2Counter} && ${Me.Ability[${CounterB}].IsReady} && ${Me.Ability[${CounterB}].TimeRemaining}==0
 				{
 					VGExecute "/reactioncounter 2"
 					wait 1
@@ -1487,7 +1557,8 @@ function CheckBuffs()
 		{
 			Pawn[Me]:Target
 			wait 3
-			call UseAbility "${Iterator.Key}"
+			Me.Ability["${Iterator.Key}"]:Use
+			call IsCasting
 		}
 		Iterator:Next
 	}
@@ -1673,7 +1744,7 @@ function UseItems()
 					; otherwise, equip the item, use it, then equip old items
 					;
 					Me.Inventory[${Iterator.Key}]:Equip
-					wait 1
+					wait 2
 					Me.Inventory[${Iterator.Key}]:Use
 					LastItemUsed:Set[${Iterator.Key}]
 					wait 2
@@ -1682,12 +1753,12 @@ function UseItems()
 					{
 						Me.Inventory[${LastSecondary}]:Equip[Secondary Hand]
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
-						wait 1
+						wait 2
 					}
 					else
 					{
 						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
-						wait 1
+						wait 2
 					}
 					return
 				}
@@ -2283,5 +2354,81 @@ atom(global) Tools_BuildTriggerBuffs()
 	while ${i:Inc} <= ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Items}
 	{
 		LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}]:AddSetting[${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}]
+	}
+}
+
+;===================================================
+;===         UI Tools for Counters1             ====
+;===================================================
+atom(global) Tools_AddCounter1(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[DPS].FindSet[Counters1-${Me.FName}]:AddSetting[${aName}, ${aName}]
+	}
+}
+atom(global) Tools_RemoveCounter1(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		Counters1.FindSetting[${aName}]:Remove
+	}
+}
+atom(global) Tools_BuildCounter1()
+{
+	variable iterator Iterator
+	Counters1:GetSettingIterator[Iterator]
+	UIElement[Counter1List@Counters@DPS@Tools]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		if !${Iterator.Key.Equal[NULL]}
+		{
+			UIElement[Counter1List@Counters@DPS@Tools]:AddItem[${Iterator.Key}]
+		}
+		Iterator:Next
+	}
+	variable int i = 0
+	Counters1:Clear
+	while ${i:Inc} <= ${UIElement[Counter1List@Counters@DPS@Tools].Items}
+	{
+		LavishSettings[DPS].FindSet[Counters1-${Me.FName}]:AddSetting[${UIElement[Counter1List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter1List@Counters@DPS@Tools].Item[${i}].Text}]
+	}
+}
+
+;===================================================
+;===         UI Tools for Counters2             ====
+;===================================================
+atom(global) Tools_AddCounter2(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		LavishSettings[DPS].FindSet[Counters2-${Me.FName}]:AddSetting[${aName}, ${aName}]
+	}
+}
+atom(global) Tools_RemoveCounter2(string aName)
+{
+	if ( ${aName.Length} > 1 )
+	{
+		Counters2.FindSetting[${aName}]:Remove
+	}
+}
+atom(global) Tools_BuildCounter2()
+{
+	variable iterator Iterator
+	Counters2:GetSettingIterator[Iterator]
+	UIElement[Counter2List@Counters@DPS@Tools]:ClearItems
+	while ( ${Iterator.Key(exists)} )
+	{
+		if !${Iterator.Key.Equal[NULL]}
+		{
+			UIElement[Counter2List@Counters@DPS@Tools]:AddItem[${Iterator.Key}]
+		}
+		Iterator:Next
+	}
+	variable int i = 0
+	Counters2:Clear
+	while ${i:Inc} <= ${UIElement[Counter2List@Counters@DPS@Tools].Items}
+	{
+		LavishSettings[DPS].FindSet[Counters2-${Me.FName}]:AddSetting[${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}]
 	}
 }

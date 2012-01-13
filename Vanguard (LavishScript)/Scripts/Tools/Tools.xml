@@ -83,15 +83,10 @@
 				</CommandButton>
 			</Children>
 		</TitleBar>
+
 		<!-- Nothing fancy for Window Client -->
 		<Client Template="VG.Window.Client" />
-<!--		
-		<Client Template="VG.Window.Client">
-			<Y>18</Y>
-			<Height>r18</Height>
-			<Texture Template="VG.TabControl.FrameTexture" />
-		</Client>
--->		
+
 		<Children>
 			<!--main tab control-->
 			<TabControl name='DPS' Template='VG.Tabcontrol'>
@@ -1401,6 +1396,139 @@
 							</OnLeftClick>
 							<Data>${Script[Tools_BuffArea](exists)}</Data>
 						</Commandbutton>
+					</Tab>
+					<Tab name='Counters'>
+						<Text Name='Header1' Template='VG.BoldText'>
+							<X>3%</X>
+							<Y>2%</Y>
+							<Width>94%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>= Counter1: ${Script[Tools].VariableScope.CounterA} =</Text>
+						</Text>
+						<checkbox Name="doCounter1Only" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>6%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Counter only these abilities</Text>
+							<AutoTooltip> Counter only the following identifed abilities </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCounter1Only}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCounter1Only:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name='Counter1' Template='VG.TextEntry'>
+							<X>3%</X>
+							<Y>10%</Y>
+							<Width>84%</Width>
+							<Height>20</Height>
+							<Color>FFDDBB00</Color>
+							<SelectionColor>FF000000</SelectionColor>
+							<Border>0</Border>
+						</Textentry>
+						<Button Name="Counter1Button" Template="VG.GreyCommandButton">
+							<X>88%</X>
+							<Y>10%</Y>
+							<Width>12%</Width>
+							<Height>20</Height>
+							<Text>Add</Text>
+							<Alignment>Center</Alignment>
+							<OnLeftClick>
+								echo "Adding: ${UIElement[Counter1@Counters@DPS@Tools].Text}"
+								Tools_AddCounter1 "${UIElement[Counter1@Counters@DPS@Tools].Text}"
+								Tools_BuildCounter1
+								UIElement[Counter1@Counters@DPS@Tools]:SetText[]
+							</OnLeftClick>
+						</Button>
+						<Listbox Name="Counter1List" Template="VG.ListBox">
+							<X>3%</X>
+							<Y>15%</Y>
+							<Width>94%</Width>
+							<Height>35%</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								Tools_BuildCounter1
+							</OnLoad>
+							<OnRightClick>
+								Tools_RemoveCounter1 "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								Tools_BuildCounter1
+							</OnRightClick>
+						</Listbox>
+
+						<Text Name='Header2' Template='VG.BoldText'>
+							<X>3%</X>
+							<Y>52%</Y>
+							<Width>94%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>= Counter2: ${Script[Tools].VariableScope.CounterB} =</Text>
+						</Text>
+						<checkbox Name="doCounter2Only" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>56%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Counter only these abilities</Text>
+							<AutoTooltip> Counter only the following identifed abilities </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCounter2Only}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCounter2Only:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name='Counter2' Template='VG.TextEntry'>
+							<X>3%</X>
+							<Y>60%</Y>
+							<Width>84%</Width>
+							<Height>20</Height>
+							<Color>FFDDBB00</Color>
+							<SelectionColor>FF000000</SelectionColor>
+							<Border>0</Border>
+						</Textentry>
+						<Button Name="Counter2Button" Template="VG.GreyCommandButton">
+							<X>88%</X>
+							<Y>60%</Y>
+							<Width>12%</Width>
+							<Height>20</Height>
+							<Text>Add</Text>
+							<Alignment>Center</Alignment>
+							<OnLeftClick>
+								echo "Adding: ${UIElement[Counter2@Counters@DPS@Tools].Text}"
+								Tools_AddCounter2 "${UIElement[Counter2@Counters@DPS@Tools].Text}"
+								Tools_BuildCounter2
+								UIElement[Counter2@Counters@DPS@Tools]:SetText[]
+							</OnLeftClick>
+						</Button>
+						<Listbox Name="Counter2List" Template="VG.ListBox">
+							<X>3%</X>
+							<Y>65%</Y>
+							<Width>94%</Width>
+							<Height>35%</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnLoad>
+								Tools_BuildCounter2
+							</OnLoad>
+							<OnRightClick>
+								Tools_RemoveCounter2 "${This.SelectedItem}"
+								This.SelectedItem:Remove
+								Tools_BuildCounter2
+							</OnRightClick>
+						</Listbox>
 					</Tab>
 				</Tabs>
 			</TabControl>
