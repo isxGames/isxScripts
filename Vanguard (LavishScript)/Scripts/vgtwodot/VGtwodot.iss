@@ -271,6 +271,8 @@ function MandatoryChecks()
 	{
 		return
 	}
+	
+	waitframe
 
 	;; Check our Health!!
 	if ${Me.HealthPct} < 70 && ${Me.Inventory[Great Roseberries].IsReady}
@@ -302,10 +304,20 @@ function MandatoryChecks()
 	}
 
 	;; Clear the target if it is dead
-	if ${Me.Target.IsDead} && ${Pawn[${Me.Target}].Type.Equal[Corpse]} && !${Pawn[${Me.Target}].ContainsLoot}
+	if ${Me.Target.IsDead}
 	{
-		VGExecute /cleartargets
-		wait 3
+		if ${Me.Target.Type.Equal[Corpse]}
+		{
+			if !${Me.Target.ContainsLoot}
+			{
+				wait 15 ${Me.Target.ContainsLoot}
+				if !${Me.Target.ContainsLoot}
+				{
+					VGExecute /cleartargets
+					wait 3
+				}
+			}
+		}
 	}
 }
 
