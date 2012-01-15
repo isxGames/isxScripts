@@ -363,13 +363,16 @@ function MandatoryChecks()
 	;; check only once every second
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
 	{
-		if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
+		if !${Me.InCombat} && ${Me.Encounter}==0
 		{
-			call SellItemList
-		}
-		if ${doAutoDelete}
-		{	
-			call DeleteItemList	
+			if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
+			{
+				call SellItemList
+			}
+			if ${doAutoDelete}
+			{	
+				call DeleteItemList	
+			}
 		}
 		NextItemListCheck:Set[${Script.RunningTime}]
 	}
@@ -444,7 +447,7 @@ function SetImmunities()
 function Do1()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22 || !${Me.Target.Type.Equal[AggroNPC]}
 	{
 		return
 	}
@@ -508,7 +511,7 @@ function Do1()
 function Do2()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22 || !${Me.Target.Type.Equal[AggroNPC]}
 	{
 		return
 	}
@@ -567,7 +570,7 @@ function Do2()
 function Do3()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22 || !${Me.Target.Type.Equal[AggroNPC]}
 	{
 		return
 	}
@@ -626,7 +629,7 @@ function Do3()
 function Do4()
 {
 	;; we want a live target that is within range
-	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22
+	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 22 || !${Me.Target.Type.Equal[AggroNPC]}
 	{
 		return
 	}
@@ -902,7 +905,7 @@ function Do6()
 	}
 	
 	;; Move Closer to target
-	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>22 && ${Me.Target.Distance}<=99
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>22 && ${Me.Target.Distance}<=99 && ${Me.Target.Type.Equal[AggroNPC]}
 	{
 		call MoveCloser 20
 	}
@@ -1494,7 +1497,19 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	{
 		if ${aText.Find[is trying to resurrect you with]}
 		{
-			doAcceptRez:Set[TRUE]
+			variable string PCName
+			variable string PCNameFull
+			PCNameFull:Set[${aText.Token[2,">"].Token[1,"<"]}]
+			PCName:Set[${PCNameFull.Token[1," "]}]
+			if ${Pawn[name,${PCName}].Title.Find[${Pawn[me].Title}]}
+			{
+				doAcceptRez:Set[TRUE]
+				vgecho "Accepting REZ from ${PCName}"
+			}
+			else
+			{
+				vgecho "Did not accept REZ from ${PCName}"
+			}
 		}
 	}
 }
