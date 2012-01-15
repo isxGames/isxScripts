@@ -73,20 +73,24 @@
                     switch ${This.SelectedTab}
                     {
                     Case Soc
-						UIElement[vgtwodot]:SetWidth[200]
-						UIElement[vgtwodot]:SetHeight[230]
+						UIElement[vgtwodot]:SetWidth[260]
+						UIElement[vgtwodot]:SetHeight[270]
 						break
                     Case Mobs
 						UIElement[vgtwodot]:SetWidth[400]
 						UIElement[vgtwodot]:SetHeight[640]
 						break
                     Case Misc
-						UIElement[vgtwodot]:SetWidth[350]
+						UIElement[vgtwodot]:SetWidth[280]
 						UIElement[vgtwodot]:SetHeight[280]
 						break
                    Case Loot
-						UIElement[vgtwodot]:SetWidth[300]
+						UIElement[vgtwodot]:SetWidth[280]
 						UIElement[vgtwodot]:SetHeight[280]
+						break
+					Case Items
+						UIElement[vgtwodot]:SetWidth[280]
+						UIElement[vgtwodot]:SetHeight[300]
 						break
 					}
                   </OnSelect>
@@ -175,11 +179,13 @@
                             <OnLoad>
                               if ${Script[vgtwodot].VariableScope.Do5}
                               {
-                              This:SetChecked
+								This:SetChecked
                               }
+                              Script[vgtwodot].VariableScope.BlackListCorpse:Clear
                             </OnLoad>
                             <OnLeftClick>
                               Script[vgtwodot].VariableScope.Do5:Set[${This.Checked}]
+                              Script[vgtwodot].VariableScope.BlackListCorpse:Clear
                             </OnLeftClick>
                           </checkbox>
 			<checkbox Name='chkDo6' Template='VG.BlueCheckbox'>
@@ -231,6 +237,44 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vgtwodot].VariableScope.Do8:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo10' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>10</X>
+                            <Y>170</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Accept Rez</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do10}
+                              {
+								This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do10:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo11' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>10</X>
+                            <Y>190</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>No mobs, move to start point and wait</Text>
+                            <OnLoad>
+                              if ${Script[vgtwodot].VariableScope.Do11}
+                              {
+								This:SetChecked
+                              }
+                              Script[vgtwodot].VariableScope.HomeX:Set[${Me.X}]
+                              Script[vgtwodot].VariableScope.HomeY:Set[${Me.Y}]
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[vgtwodot].VariableScope.Do11:Set[${This.Checked}]
+                              Script[vgtwodot].VariableScope.HomeX:Set[${Me.X}]
+                              Script[vgtwodot].VariableScope.HomeY:Set[${Me.Y}]
                             </OnLeftClick>
                           </checkbox>
 
@@ -491,7 +535,7 @@
 									<Items>
 										<Item value='1'> FORCE - Absorb 1 attack and Stun</Item>
 										<Item value='2'> FIRE - 10 percent Spell haste and energy regen</Item>
-										<Item value='3' default='3'> CHROMATIC - Reflect 1 spell</Item>
+										<Item value='3'> CHROMATIC - Reflect 1 spell</Item>
 									</Items>
 									<OnSelect>
 										if ${This.Selection}==1
@@ -527,7 +571,7 @@
 										<Item value='1'> QUARTZ - See Invisibility</Item>
 										<Item value='2'> AQUAMARINE - Water Breathing</Item>
 										<Item value='3'> DIAMOND - Levitatation</Item>
-										<Item value='4' default='4'> QUICKSILVER - 25 percent Spell refresh and Movement</Item>
+										<Item value='4'> QUICKSILVER - 25 percent Spell refresh and Movement</Item>
 										<Item value='5'> OPAL - Immunity to movement debuff</Item>
 									</Items>
 									<OnSelect>
@@ -698,15 +742,65 @@
 									<Width>200</Width>
 									<Height>20</Height>
 									<Alignment>Left</Alignment>
-									<Text>Safe Radius of Corpse to loot</Text>
+									<Text>Radius around corpse to scan for mobs</Text>
 								</Text>
-								<checkbox Name="chkDo9" Template="VG.GreenCheckbox">
+							</Children>
+						</Frame>							
+					</Tab>
+					
+					
+					
+					
+					<!-- Tab Name: (Sell) -->
+					<Tab name='Items'>
+						<Frame name='Frame'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>					
+								<checkbox Name='doAutoSell' Template='VG.GreenCheckbox'>
 									<visible>1</visible>
-									<X>6%</X>
-									<Y>45%</Y>
-									<Width>25%</Width>
+									<X>3.5%</X>
+									<Y>8%</Y>
+									<Width>15</Width>
 									<Height>15</Height>
-									<Text> Auto Decon</Text>
+									<Text>Auto Sell</Text>
+									<AutoTooltip>  Sell items in list when targetting a Merchant </AutoTooltip>
+									<OnLoad>
+										if ${Script[vgtwodot].VariableScope.doAutoSell}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[vgtwodot].VariableScope.doAutoSell:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doAutoDelete' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>31%</X>
+									<Y>8%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Auto Delete</Text>
+									<AutoTooltip>  Delete all items in list </AutoTooltip>
+									<OnLoad>
+										if ${Script[vgtwodot].VariableScope.doAutoDelete}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[vgtwodot].VariableScope.doAutoDelete:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name="doAutoDecon" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>66%</X>
+									<Y>8%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Auto Decon</Text>
 									<AutoTooltip> Use Decon Kit to decon your junk </AutoTooltip>
 									<OnLoad>
 										if ${Script[VGtwodot].VariableScope.Do9}
@@ -718,6 +812,40 @@
 										Script[VGtwodot].VariableScope.Do9:Set[${This.Checked}]
 									</OnLeftClick>
 								</checkbox>
+								<Textentry Name="ItemEntry" Template="VG.TextEntry">
+									<X>3%</X>
+									<Y>16%</Y>
+									<Width>80%</Width>
+									<Height>20</Height>
+								</Textentry>
+								<CommandButton Name="ItemEntryButton" Template="VG.GreenCommandButton">
+									<X>87%</X>
+									<Y>15%</Y>
+									<Width>10%</Width>
+									<Height>20</Height>
+									<Text>Add</Text>
+									<Alignment>Center</Alignment>
+									<OnLeftClick>
+										AddItemList "${UIElement[ItemEntry@Frame@Items@VGT@vgtwodot].Text}"
+										PopulateItemList "ItemList@Frame@Items@VGT@vgtwodot"
+										UIElement[ItemEntry@Frame@Items@VGT@vgtwodot]:SetText[]
+									</OnLeftClick>
+								</CommandButton>
+								<Listbox Name="ItemList" Template="VG.ListBox">
+									<X>3%</X>
+									<Y>25%</Y>
+									<Width>94%</Width>
+									<Height>70%</Height>
+									<AutoSort>TRUE</AutoSort>
+									<Sort>Text</Sort>
+									<OnLoad>
+										PopulateItemList "ItemList@Frame@Items@VGT@vgtwodot"
+									</OnLoad>
+									<OnRightClick>
+										RemoveItemList "${This.SelectedItem}"
+										This.SelectedItem:Remove
+									</OnRightClick>
+								</Listbox>
 							</Children>
 						</Frame>							
 					</Tab>
