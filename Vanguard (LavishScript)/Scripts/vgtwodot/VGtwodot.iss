@@ -81,8 +81,7 @@ variable int LootNearRange = 8
 variable int LootMaxRange = 40
 variable int LootCheckForAggroRadius = 20
 variable collection:int64 BlackListCorpse
-variable bool doAutoSell = FALSE
-variable bool doAutoDelete = FALSE
+
 
 ;; XML variables used to store and save data
 variable settingsetref Arcane
@@ -360,7 +359,7 @@ function MandatoryChecks()
 		}
 	}
 
-	;; check only once every second
+	;; check only once every other second
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
 	{
 		if !${Me.InCombat} && ${Me.Encounter}==0
@@ -369,7 +368,7 @@ function MandatoryChecks()
 			{
 				call SellItemList
 			}
-			if ${doAutoDelete}
+			if ${doDeleteSell} || ${doDeleteNoSell}
 			{	
 				call DeleteItemList	
 			}
@@ -1063,7 +1062,8 @@ function loadxmls()
 	doCheckLineOfSight:Set[${options.FindSetting[doCheckLineOfSight,${doCheckLineOfSight}]}]
 	doForget:Set[${options.FindSetting[doForget,${doForget}]}]
 	doAutoSell:Set[${options.FindSetting[doAutoSell,${doAutoSell}]}]
-	doAutoDelete:Set[${options.FindSetting[doAutoDelete,${doAutoDelete}]}]
+	doDeleteSell:Set[${options.FindSetting[doDeleteSell,${doDeleteSell}]}]
+	doDeleteNoSell:Set[${options.FindSetting[doDeleteNoSell,${doDeleteNoSell}]}]
 	BarrierType:Set[${options.FindSetting[BarrierType,${BarrierType}]}]
 	FocusType:Set[${options.FindSetting[FocusType,${FocusType}]}]
 	Do1:Set[${options.FindSetting[Do1,${Do1}]}]
@@ -1090,7 +1090,8 @@ function LavishSave()
 	options:AddSetting[doCheckLineOfSight,${doCheckLineOfSight}]
 	options:AddSetting[doForget,${doForget}]
 	options:AddSetting[doAutoSell,${doAutoSell}]
-	options:AddSetting[doAutoDelete,${doAutoDelete}]
+	options:AddSetting[doDeleteSell,${doDeleteSell}]
+	options:AddSetting[doDeleteNoSell,${doDeleteNoSell}]
 	options:AddSetting[BarrierType,${BarrierType}]
 	options:AddSetting[FocusType,${FocusType}]
 	options:AddSetting[Do1,${Do1}]
