@@ -1,7 +1,9 @@
 ;; Defines
 #define ALARM "${Script.CurrentDirectory}/level.wav"
 
-
+variable bool doAutoSell = FALSE
+variable bool doDeleteSell = FALSE
+variable bool doDeleteNoSell = FALSE
 
 ;===================================================
 ;===          ATOM - Add Item to List           ====
@@ -160,13 +162,16 @@ function SellItemList()
 						vgecho "Selling: ${Iterator.Key}"
 
 						;; if not in BuySell dialog then...
-						if !${Merchant.NumItemsForSale}>0 && ${Me.Target.Distance}>4
+						if !${Merchant.NumItemsForSale}>0
 						{
-							vgecho MOVING
-							waitframe
-							;; get closer
-							call MoveCloser 4
-								
+							if ${Me.Target.Distance}>4
+							{
+								vgecho MOVING
+								waitframe
+								;; get closer
+								call MoveCloser 4
+							}
+							
 							;; open BuySell dialog with merchant
 							Pawn[${Me.Target.Name}]:DoubleClick
 							wait 3
@@ -174,7 +179,7 @@ function SellItemList()
 							wait 5
 						}
 
-						while ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${doAutoSell} && ${Me.Target(exists)}
+						while ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${Me.Target(exists)} && ${doAutoSell}
 						{
 							;; some items will not sell if you set the quantity to the reported quantity
 							Me.Inventory[exactname,${Iterator.Key}]:Sell[1]
@@ -183,7 +188,6 @@ function SellItemList()
 					}
 				}
 			}
-						
 			;; get next iterator
 			Iterator:Next
 		}
@@ -214,7 +218,7 @@ function DeleteItemList()
 	ItemList:GetSettingIterator[Iterator]
 				
 	;; iterate through ItemList
-	while ${Iterator.Key(exists)} && ${doAutoDelete}
+	while ${Iterator.Key(exists)}
 	{
 		;; we only want to delete items existing in our inventory
 		if ${Me.Inventory[exactname,${Iterator.Key}](exists)}
@@ -222,16 +226,36 @@ function DeleteItemList()
 			;; skip diplo papers - that will be handled separately
 			if !${Me.Inventory[exactname,${Iterator.Key}].Description.Find[would have an interest in this]}>0
 			{
-				echo "Deleting: ${Iterator.Key}"
-				while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doAutoDelete}
+				;; delete only: Unique, No Trade, No Sell, No Rent, and Quest items in list
+				if ${doDeleteNoSell}
 				{
-					;; some items will not delete if you set the quantity to the reported quantity
-					Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
-					wait 2
-				}						
+					if ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
+					{
+						echo "Deleting NoSell: ${Iterator.Key}"
+						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteNoSell}
+						{
+							;; some items will not delete if you set the quantity to the reported quantity
+							Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
+							wait 2
+						}
+					}
+				}
+				;; delete only: sellable items in list
+				if ${doDeleteSell}
+				{
+					if !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
+					{
+						echo "Deleting Sellable: ${Iterator.Key}"
+						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteSell}
+						{
+							;; some items will not delete if you set the quantity to the reported quantity
+							Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
+							wait 2
+						}
+					}
+				}
 			}
 		}
-				
 		;; get next iterator
 		Iterator:Next
 	}

@@ -89,7 +89,7 @@
 						UIElement[vgtwodot]:SetHeight[280]
 						break
 					Case Items
-						UIElement[vgtwodot]:SetWidth[280]
+						UIElement[vgtwodot]:SetWidth[320]
 						UIElement[vgtwodot]:SetHeight[300]
 						break
 					}
@@ -776,27 +776,9 @@
 										Script[vgtwodot].VariableScope.doAutoSell:Set[${This.Checked}]
 									</OnLeftClick>
 								</checkbox>
-								<checkbox Name='doAutoDelete' Template='VG.GreenCheckbox'>
-									<visible>1</visible>
-									<X>31%</X>
-									<Y>8%</Y>
-									<Width>15</Width>
-									<Height>15</Height>
-									<Text>Auto Delete</Text>
-									<AutoTooltip>  Delete all items in list </AutoTooltip>
-									<OnLoad>
-										if ${Script[vgtwodot].VariableScope.doAutoDelete}
-										{
-											This:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										Script[vgtwodot].VariableScope.doAutoDelete:Set[${This.Checked}]
-									</OnLeftClick>
-								</checkbox>
 								<checkbox Name="doAutoDecon" Template="VG.GreenCheckbox">
 									<visible>1</visible>
-									<X>66%</X>
+									<X>50%</X>
 									<Y>8%</Y>
 									<Width>15</Width>
 									<Height>15</Height>
@@ -812,15 +794,51 @@
 										Script[VGtwodot].VariableScope.Do9:Set[${This.Checked}]
 									</OnLeftClick>
 								</checkbox>
+								<checkbox Name='doDeleteSell' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>3.5%</X>
+									<Y>16%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Delete Sellable Items</Text>
+									<AutoTooltip>  Delete all sellable items in list</AutoTooltip>
+									<OnLoad>
+										if ${Script[vgtwodot].VariableScope.doDeleteSell}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[vgtwodot].VariableScope.doDeleteSell:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name="doDeleteNoSell" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>50%</X>
+									<Y>16%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Delete NonSellable Items</Text>
+									<AutoTooltip> Delete Unique, No Trade, No Rent, No Sell, and Quest items in list</AutoTooltip>
+									<OnLoad>
+										if ${Script[VGtwodot].VariableScope.doDeleteNoSell}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VGtwodot].VariableScope.doDeleteNoSell:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
 								<Textentry Name="ItemEntry" Template="VG.TextEntry">
 									<X>3%</X>
-									<Y>16%</Y>
+									<Y>24%</Y>
 									<Width>80%</Width>
 									<Height>20</Height>
 								</Textentry>
 								<CommandButton Name="ItemEntryButton" Template="VG.GreenCommandButton">
 									<X>87%</X>
-									<Y>15%</Y>
+									<Y>23%</Y>
 									<Width>10%</Width>
 									<Height>20</Height>
 									<Text>Add</Text>
@@ -833,9 +851,9 @@
 								</CommandButton>
 								<Listbox Name="ItemList" Template="VG.ListBox">
 									<X>3%</X>
-									<Y>25%</Y>
+									<Y>33%</Y>
 									<Width>94%</Width>
-									<Height>70%</Height>
+									<Height>65%</Height>
 									<AutoSort>TRUE</AutoSort>
 									<Sort>Text</Sort>
 									<OnLoad>
