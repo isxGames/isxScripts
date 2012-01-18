@@ -963,12 +963,17 @@ function Do9()
 	;; DECON SHANDREL JUNK
 	if !${Me.InCombat}
 	{
-		if ${Me.Inventory[Deconstruction Kit](exists)} && ${Me.Inventory[Shandrel](exists)}
+		if ${Me.Inventory[Deconstruction Kit](exists)}
 		{
-			Me.Inventory[Deconstruction Kit]:Use
-			wait 5
-			Me.Inventory[Shandrel].Container:DeconstructToResource
-			wait 10
+			if ${Me.Inventory[Shandrel's](exists)} && ${Me.Inventory[Shandrel's].Description.Find[This relic]}
+			{
+				echo "Deconstructing:  ${Me.Inventory[Shandrel's].Name}"
+				vgecho "Deconstructing:  ${Me.Inventory[Shandrel's].Name}"
+				Me.Inventory[Deconstruction Kit]:Use
+				wait 5
+				Me.Inventory[Shandrel's]:DeconstructToResource
+				wait 10
+			}
 		}
 	}
 	return
