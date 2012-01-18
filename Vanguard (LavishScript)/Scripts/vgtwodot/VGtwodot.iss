@@ -929,10 +929,10 @@ function Do7()
 			return
 		}
 		
-		;; Use the Meditation Stone while in combat and our Energy drops below 30%
-		if ${Me.InCombat} && ${Me.EnergyPct}<30
+		;; Use the Meditation Stone while in combat and our Energy drops below 20%
+		if !${Me.InCombat} && ${Me.EnergyPct}<20
 		{
-			if ${Me.Inventory[Meditation Stone](exists)} && ${Me.Inventory[Meditation Stone].IsReady}
+			if ${Me.Inventory[Meditation Stone](exists)} && ${Me.Inventory[Meditation Stone].IsReady} && !${Me.Ability[Gather Energy].IsReady}
 			{
 				if !${Me.DTarget.Name.Equal[${Me.FName}]}
 				{
