@@ -76,6 +76,7 @@ variable float HomeX
 variable float HomeY
 variable int NextItemListCheck = ${Script.RunningTime}
 
+
 ;; loot variables
 variable int LootNearRange = 8
 variable int LootMaxRange = 40
@@ -919,12 +920,28 @@ function Do7()
 {
 	if ${Do7}
 	{
-		if ${Me.Ability[Gather Energy].IsReady} && ${Me.EnergyPct}<30
+		;; Gather Energy while not in combat
+		if ${Me.Ability[Gather Energy].IsReady} && ${Me.EnergyPct}<30 && !${Me.InCombat}
 		{
 			vgecho "Gathering Energy"
 			call executeability "Gather Energy"
 			wait 180
 			return
+		}
+		
+		;; Use the Meditation Stone while in combat and our Energy drops below 30%
+		if ${Me.InCombat} && ${Me.EnergyPct}<30
+		{
+			if ${Me.Inventory[Meditation Stone](exists)} && ${Me.Inventory[Meditation Stone].IsReady}
+			{
+				if !${Me.DTarget.Name.Equal[${Me.FName}]}
+				{
+					Pawn[me]:Target
+					waitframe
+				}
+				Me.Inventory[Meditation Stone]:Use
+				wait 5
+			}
 		}
 	}
 	return
@@ -944,14 +961,14 @@ function Do8()
 function Do9()
 {
 	;; DECON SHANDREL JUNK
-	if !${Me.InCombat} && ${Me.Inventory[Shandrel](exists)}
+	if !${Me.InCombat}
 	{
-		if ${Me.Inventory[Deconstruction Kit](exists)}
+		if ${Me.Inventory[Deconstruction Kit](exists)} && ${Me.Inventory[Shandrel](exists)}
 		{
 			Me.Inventory[Deconstruction Kit]:Use
 			wait 5
 			Me.Inventory[Shandrel].Container:DeconstructToResource
-			wait 5
+			wait 10
 		}
 	}
 	return
@@ -1129,6 +1146,12 @@ atom atexit()
 ;===================================================
 function CheckBuffs()
 {
+	;; always keep this toggled on even when in/out of combat
+	if ${Me.Ability[Chromatic Halo](exists)} && ${Me.Ability[Chromatic Halo].IsReady} && !${Me.Effect[Chromatic Halo](exists)}
+	{
+		call executeability "Chromatic Halo"
+	}
+	
 	;; we do not want to continue if we are in combat
 	if ${Me.InCombat} || ${Me.Encounter}>0 || ${Me.Target(exists)}
 	{
@@ -1438,13 +1461,18 @@ function MoveHome()
 		{
 			if ${Do6} || ${Me.Target(exists)}
 			{
-				call FindTarget 80
-				if ${Me.Target(exists)}
+				if ${Me.EnergyPct}>=50
 				{
-					echo [${Time}] Found a target while returning home
-					vgecho Found a target while returning home
-					;; break out of the while loop
-					break
+					;; reset our flag
+					NeedMoreEnergy:Set[FALSE]
+					call FindTarget 40
+					if ${Me.Target(exists)}
+					{
+						echo [${Time}] Found a target while returning home
+						vgecho Found a target while returning home
+						;; break out of the while loop
+						break
+					}
 				}
 			}			
 
