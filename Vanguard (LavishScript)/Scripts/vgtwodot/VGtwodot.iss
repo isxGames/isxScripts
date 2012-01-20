@@ -807,7 +807,7 @@ function Do5()
 ;===================================================
 function LootCorpse()
 {
-	if ${Me.Target(exists)} && ${Me.Target.IsDead}
+	if ${Me.Target(exists)} && ${Me.Target.IsDead} && ${Me.Target.Distance}<5
 	{
 		;; we do not want to retarget same corpse twice
 		BlackListCorpse:Set[${Me.Target.ID},${Me.Target.ID}]		
@@ -819,10 +819,8 @@ function LootCorpse()
 		if ${Me.Target.ContainsLoot}
 		{
 			;; start looting only if within range
-			if ${Me.Target.Distance}<=5
+			if ${Me.Target.Distance}<5
 			{
-
-
 				;; start the loot process
 				Loot:BeginLooting
 				wait 20 ${Me.IsLooting} && ${Loot.NumItems}
