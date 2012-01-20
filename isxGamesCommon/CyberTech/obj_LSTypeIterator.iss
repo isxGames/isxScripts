@@ -33,7 +33,7 @@
 				ItemTest:IterateMembers["Me"]
 
 				EndTime:Set[${Script.RunningTime}]
-				echo "Testing of datatype ${ItemTest.TypeName} completed in ${Math.Calc[(${EndTime}-${StartTime}) / 1000]} seconds"
+				echo "    Testing of datatype ${ItemTest.TypeName} completed in ${Math.Calc[(${EndTime}-${StartTime}) / 1000]} seconds"
 			}
 
 		Additional Example, of the output of a datatype that is aquired into an index:
@@ -51,12 +51,12 @@
 
 					EVE:Execute[OpenHangarFloor]
 					wait 15
-					Me.Station:DoGetHangarItems[HangarItems]
-					echo "Me.Station:DoGetHangarItems returned ${HangarItems.Used} items"
+					Me.Station:GetHangarItems[HangarItems]
+					echo "    Me.Station:GetHangarItems returned ${HangarItems.Used} items"
 					ItemTest:IterateMembers["HangarItems.Get[1]"]
 
 					EndTime:Set[${Script.RunningTime}]
-					echo "Testing of datatype ${ItemTest.TypeName} completed in ${Math.Calc[(${EndTime}-${StartTime}) / 1000]} seconds"
+					echo "    Testing of datatype ${ItemTest.TypeName} completed in ${Math.Calc[(${EndTime}-${StartTime}) / 1000]} seconds"
 				}
 
 		Example output:
@@ -124,7 +124,7 @@ objectdef obj_LSTypeIterator
 		variable string MemberStr
 		This.TypeMembers:GetIterator[Member]
 
-		echo "Members of datatype \"${This.TypeName}\""
+		echo "    LSTypeIterator: Members of datatype \"${This.TypeName}\""
 		if ${Member:First(exists)}
 		do
 		{
@@ -132,7 +132,7 @@ objectdef obj_LSTypeIterator
 			MemberStr:Concat[", "]
 		}
 		while ${Member:Next(exists)}
-		echo "Members: ${MemberStr.Left[-2]}"
+		echo "    LSTypeIterator: Members: ${MemberStr.Left[-2]}"
 	}
 
 	; Dump the list of methods to a single line for review or loggging
@@ -142,7 +142,7 @@ objectdef obj_LSTypeIterator
 		variable string MethodStr
 		This.TypeMethods:GetIterator[Method]
 
-		echo "Methods of datatype \"${This.TypeName}\""
+		echo "    LSTypeIterator: Methods of datatype \"${This.TypeName}\""
 		if ${Method:First(exists)}
 		do
 		{
@@ -150,7 +150,7 @@ objectdef obj_LSTypeIterator
 			MethodStr:Concat[", "]
 		}
 		while ${Method:Next(exists)}
-		echo "Methods: ${MethodStr.Left[-2]}"
+		echo "    LSTypeIterator: Methods: ${MethodStr.Left[-2]}"
 	}
 
 
@@ -158,13 +158,12 @@ objectdef obj_LSTypeIterator
 	method ParseMembers()
 	{
 		variable string temp
-		echo "========================================================"
-		echo "Parsing datatype ${This.TypeName} members and methods..."
+		echo "    LSTypeIterator: Parsing datatype \"${This.TypeName}\" members and methods..."
 		redirect "lstypes.${Script.Filename}.txt" "lstype ${This.TypeName}"
 		This.TypeListTempFile:Open
 		if !${This.TypeListTempFile.Open}
 		{
-			echo "Unable to open file ${This.TypeListTempFile.Filename}"
+			echo "    LSTypeIterator: Unable to open file ${This.TypeListTempFile.Filename}"
 			return
 		}
 		do
@@ -177,7 +176,7 @@ objectdef obj_LSTypeIterator
 				temp:Set[${temp.Replace[\n, ""]}]
 				if ${temp.Equal["No type '${This.TypeName}' found. Type names are case sensitive."]}
 				{
-					echo "Invalid datatype passed to ${This.ObjectName}.Initialize"
+					echo "    LSTypeIterator: Invalid datatype passed to ${This.ObjectName}.Initialize"
 					return
 				}
 				if ${temp.Equal["Members of type ${This.TypeName}"]}
@@ -271,7 +270,7 @@ objectdef obj_LSTypeIterator
 		redirect -append ${testfile} echo "\}"
 
 		echo "---"
-		echo "Created manual test script: ${Script.CurrentDirectory}/${testfile}""
+		echo "    LSTypeIterator: Created manual test script: ${Script.CurrentDirectory}/${testfile}""
 		echo "---"
 
 	}
@@ -298,15 +297,17 @@ objectdef obj_LSTypeIterator
 
 		if ${Output}
 		{
-			echo "Members of datatype \"${This.TypeName}\", instance \"${ObjectName}\""
+			echo "    LSTypeIterator: Members of datatype \"${This.TypeName}\", instance \"${ObjectName}\""
 		}
 
+		variable float CallTime
+		CallTime:Set[${Script.RunningTime}]
 		if ${Member:First(exists)}
 		do
 		{
 			if ${This.ExcludedMembers.Contains["${Member.Key}"]}
 			{
-				echo "Excluded member: ${Member.Key}"
+				echo "    Excluded member: ${Member.Key}"
 				continue
 			}
 			Result:Set[${${ObjectName}.${Member.Key}}]
@@ -319,10 +320,16 @@ objectdef obj_LSTypeIterator
 				}
 				if !${OutputNullOnly} || ${Result.Equal["NULL"]}
 				{
-					echo "  ${temp} == ${Result}"
+					echo "      ${temp} == ${Result}"
 				}
 			}
 		}
 		while ${Member:Next(exists)}
+		temp:Set["${ObjectName} Iteration Time"]
+		while ${temp.Length} < ${PadLength}
+		{
+			temp:Concat[" "]
+		}
+		echo "      ${temp} == ${Math.Calc[(${Script.RunningTime}-${CallTime}) / 1000]} seconds"
 	}
 }
