@@ -60,14 +60,14 @@ objectdef obj_PulseTimer
 	{
 		LogPrefix:Set["${This.ObjectName}"]
 	}
-	
+
 	method SetIntervals(float MinIntervalSeconds, float MaxIntervalSeconds)
 	{
 		This.MinPulseInterval:Set[${Math.Calc[${MinIntervalSeconds} * 1000]}]
 		This.MaxPulseInterval:Set[${Math.Calc[${MaxIntervalSeconds} * 1000]}]
 	}
 
-	method SetMinInterval(float MaxIntervalSeconds)
+	method SetMinInterval(float MinIntervalSeconds)
 	{
 		This.MinPulseInterval:Set[${Math.Calc[${MinIntervalSeconds} * 1000]}]
 	}
@@ -94,7 +94,7 @@ objectdef obj_PulseTimer
 	method Update(bool Randomize=TRUE)
 	{
 		This.ExpireTime:Set[${Script.RunningTime}]
-		
+
 		; Config.Common is a configuration object used in my projects, this will use it if it exists otherwise rely
 		; purely on the Randomize var.
 		if ( (${Config.Common(exists)} && ${Config.Common.Randomize} && ${Randomize}) || \
@@ -146,7 +146,7 @@ objectdef obj_TimedCallBack inherits obj_PulseTimer
 	{
 		LogPrefix:Set["${This.ObjectName}"]
 	}
-	
+
 	method SetCallBack(string _CallBack="", string _Params="", bool _Repeat=FALSE)
 	{
 		This.CallBack:Set[${_CallBack}]
@@ -158,12 +158,12 @@ objectdef obj_TimedCallBack inherits obj_PulseTimer
 	{
 		Event[EVENT_ONFRAME]:AttachAtom[This:Pulse]
 	}
-	
+
 	method Stop()
 	{
 		Event[EVENT_ONFRAME]:AttachAtom[This:Pulse]
 	}
-	
+
 	method Pulse()
 	{
 		if ${Script.RunningTime} >= ${This.ExpireTime}
