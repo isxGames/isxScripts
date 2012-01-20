@@ -78,6 +78,12 @@ objectdef obj_PulseTimer
 	}
 
 	; Increase the timer period one time
+	method Increase(float DelaySeconds=0.0)
+	{
+		This:Extend[${DelaySeconds}]
+	}
+
+	; Increase the timer period one time
 	method Extend(float DelaySeconds=0.0)
 	{
 		This.ExpireTime:Set[${Script.RunningTime}]
