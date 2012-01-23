@@ -7,7 +7,7 @@
 		<Height>220</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>BJ XP Bot        Version 2.01</Title> 
+		<Title>BJ XP Bot        Version 2.02</Title> 
 		<OnLoad>
 		declarevariable statusvar string global
 		declarevariable lastpotion string global
