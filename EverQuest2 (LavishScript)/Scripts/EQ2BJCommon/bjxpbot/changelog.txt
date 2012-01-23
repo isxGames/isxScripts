@@ -32,6 +32,12 @@ COMING SOON...
 - Display the amount of looted coin
 - Add a potion selection button
 	- Allow customizable priority list (Like Ogre CA's)
+- put 300 as the default value but then if a level xx/300 is leveling xp levels it won't work
+- Stats should no longer reset when pressing the stop button
+- Play a sound when a limit is reached
+- Leave group option when limit is reached
+- Convert xp gained to levels gained
+- Convert time running to hours and minutes
 
 		
 KNOWN BUGS
@@ -45,9 +51,13 @@ KNOWN BUGS
 
 REVISION HISTORY
 
+BJXPBot-2012.01.020, Version 2.02
+
+- Updated AA cap to 320 to match the increase with Age of Destiny Expansion
+
 BJXPBot-2011.09.01, Version 2.01
 
-- Fixed the way OgreBot is paused due to a recent update to OgreBot
+- Fixed the way OgreBot is paused due to a recent update to OgreBot (Ogrebot V.15 Compatible)
 - Fixed the settings UI not unloaded when the script was ended
 
 BJXPBot-2011.08.05, Version 2.00

@@ -68,7 +68,7 @@ function main()
 					endscript bjxpbot
 				}
 			}		
-					if ${Me.Level} != 90 || ${Me.TotalEarnedAPs} != 300
+					if ${Me.Level} != 90 || ${Me.TotalEarnedAPs} != 320
 					{	
 						wait !${Me.InCombat} && !${Me.CastingSpell}
 						
