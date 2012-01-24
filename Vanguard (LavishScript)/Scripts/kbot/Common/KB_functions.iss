@@ -22,7 +22,8 @@ function lootCorpse()
 	;Move to the corpse if you're not close
 	if ${Me.Target.Distance} >= 5
 	{
-		call movetoobject ${Me.Target.ID} 4 1
+		echo Moving to Corpse
+		call movetoobject ${Me.Target.ID} 5 1
 	}
 
 	;; Make sure we blacklist so we don't try looting it again
