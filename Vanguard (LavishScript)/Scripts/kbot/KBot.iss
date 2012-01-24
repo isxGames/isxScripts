@@ -293,7 +293,7 @@ function main(string Version)
 			call CheckState
 		}
 
-		if ( ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 120 )
+		if ( ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]} > 20 )
 		{
 			call DebugIt "NOTICE: Idle for more than 2 minutes, kickstart!"
 			echo "Timeout: ${Math.Calc64[${Time.Timestamp} - ${tTimeOut.Timestamp}]}"
@@ -628,7 +628,8 @@ function CheckState()
 
 				if ${Me.Target.Distance} > 5
 				{
-					call movetoobject ${Me.Target.ID} 4 1
+					echo Harvest
+					call movetoobject ${Me.Target.ID} 5 1
 					if ${Return.Equal[COLLISION]}
 					{
 						call DebugIt " .  Blacklist Harvest target because COLLISION: ${Me.Target.Name}"
@@ -1011,8 +1012,10 @@ function:bool Roaming(bool moveNow)
 		if ${Return.Equal[MOB]}
 		{
 			call DebugIt "Found Target While Roaming: PreMove"
-			;call bNavi.StopMoving
-			;wait 5
+			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
+			wait 5
 			cState:Set[KB_FINDTARGET]
 			return FALSE
 		}
@@ -1020,6 +1023,8 @@ function:bool Roaming(bool moveNow)
 		{
 			call DebugIt "Found Corpse to loot While Roaming: PreMove"
 			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			wait 5
 			cState:Set[KB_CORPSECHECK]
 			return FALSE
@@ -1028,6 +1033,8 @@ function:bool Roaming(bool moveNow)
 		{
 			call DebugIt "Found Harvest resource While Roaming: PreMove"
 			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			wait 5
 			cState:Set[KB_HARVESTCHECK]
 			return FALSE
@@ -1105,6 +1112,8 @@ function:bool Roaming(bool moveNow)
 		{
 			call DebugIt ". Roaming: InCombat is TRUE"
 			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			cState:Set[KB_FINDTARGET]
 			return FALSE
 		}
@@ -1131,6 +1140,8 @@ function:bool Roaming(bool moveNow)
 
 			call DebugIt "Found Target While Roaming"
 			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			wait 5
 			cState:Set[KB_FINDTARGET]
 			return FALSE
@@ -1139,6 +1150,8 @@ function:bool Roaming(bool moveNow)
 		{
 			call DebugIt "Found Corpse to loot While Roaming"
 			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			wait 5
 			cState:Set[KB_CORPSECHECK]
 			return FALSE
@@ -1147,6 +1160,8 @@ function:bool Roaming(bool moveNow)
 		{
 			call DebugIt "Found Harvest resource While Roaming"
 			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			wait 5
 			cState:Set[KB_HARVESTCHECK]
 			return FALSE
@@ -1170,6 +1185,8 @@ function:bool Roaming(bool moveNow)
 		{
 			echo ".  Roaming: Error, move to pathLoc.XY is ZERO!"
 			call DebugIt ".  Roaming: Error, move to pathLoc.XY is ZERO!"
+			VG:ExecBinding[movebackward,release]
+			VG:ExecBinding[moveforward,release]
 			return FALSE
 		}
 		call moveto ${pathLoc.X} ${pathLoc.Y} 400 TRUE
@@ -1245,6 +1262,10 @@ function Downtime()
 ; *******************
 function:bool Pull()
 {
+	call bNavi.StopMoving
+	VG:ExecBinding[movebackward,release]
+	VG:ExecBinding[moveforward,release]
+
 	call DoEvents
 
 	if ${Me.Target.IsDead} && ${Me.Encounter} == 0
@@ -1335,6 +1356,8 @@ function:bool Pull()
 				call DoEvents
 				waitframe
 			}
+			call bNavi.StopMoving
+			VG:ExecBinding[movebackward,release]
 			VG:ExecBinding[moveforward,release]
 		}
 		if !${Me.Target.ID(exists)}
@@ -1413,6 +1436,10 @@ function:bool Tag()
 		return TRUE
 	}
 
+	call bNavi.StopMoving
+	VG:ExecBinding[movebackward,release]
+	VG:ExecBinding[moveforward,release]
+
 	call DebugIt ".   Tag: Starting Tag Routine"
 
 	call DoEvents
@@ -1459,6 +1486,9 @@ function:bool Tag()
 function Fight()
 {
 	;call DebugIt ".Starting Fight Routine"
+
+	VG:ExecBinding[movebackward,release]
+	VG:ExecBinding[moveforward,release]
 
 	call DoEvents
 
@@ -1523,9 +1553,9 @@ function Fight()
 	{
 		; Move into melee range
 		Face
-		if ${maxMeleeRange}<4
+		if ${maxMeleeRange}<5
 		{
-			call movetoobject ${Me.Target.ID} 4 1
+			call movetoobject ${Me.Target.ID} 5 1
 		}
 		else
 		{
@@ -1534,11 +1564,13 @@ function Fight()
 	}
 
 	; We are to Close, step back
-	while ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 1
+	if ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 1
 	{
-		Face
-		VG:ExecBinding[movebackward]
-		wait 1
+		while ${Me.Target.ID(exists)} && ${Me.Target.Distance} < 2
+		{
+			Face
+			VG:ExecBinding[movebackward]
+		}
 		VG:ExecBinding[movebackward,release]
 	}
 
@@ -1546,7 +1578,7 @@ function Fight()
 	{
 		Face
 		VG:ExecBinding[movebackward]
-		wait 1
+		wait 10
 		VG:ExecBinding[movebackward,release]
 	}
 
@@ -1572,9 +1604,9 @@ function Fight()
 		{
 			; Move into melee range
 			Face
-			if ${maxMeleeRange}<4
+			if ${maxMeleeRange}<5
 			{
-				call movetoobject ${Me.Target.ID} 4 1
+				call movetoobject ${Me.Target.ID} 5 1
 			}
 			else
 			{
@@ -1610,7 +1642,7 @@ function Fight()
 	{
 		face
 		VG:ExecBinding[movebackward]
-		wait 1
+		wait 10
 		VG:ExecBinding[movebackward,release]
 	}
 
@@ -3595,6 +3627,9 @@ atom(script) KBot_onIncomingCombatText(string aText, int iType)
 
 	if ${aText.Find[have no line of sight]}
 	{
+		face
+		VG:ExecBinding[moveforward,release]
+		VG:ExecBinding[movebackward,release]
 		call DebugIt "CombatText: ${aText}"
 	}
 }

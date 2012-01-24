@@ -18,6 +18,7 @@ v1.1 - Fixed a bug with a ' instead of a ;
 
 function moveto(float X, float Y, float Precision, bool checkCollision)
 {
+	echo MOVETO called
 	declare SavX float local ${Me.X}
 	declare SavY float local ${Me.Y}
 	declare SavZ float local ${Me.Z}
@@ -75,6 +76,7 @@ function moveto(float X, float Y, float Precision, bool checkCollision)
 ; if specified.
 function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 {
+	echo ID=${ObjectID}, MaxDist=${MaxDist}, MinDist=${MinDist}
 
 	;; we are moving so save current target ID
 	lastTargetID:Set[${ObjectID}]
@@ -83,7 +85,7 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 	declare SavX float local ${Me.X}
 	declare SavY float local ${Me.Y}
 	declare SavZ float local ${Me.Z}
-	declare BailOut int local ${Math.Calc[${LavishScript.RunningTime}+(1000*120)]}
+	declare BailOut int local ${Math.Calc[${LavishScript.RunningTime}+(1000*8)]}
 	declare StuckCheck bool local FALSE
 	declare StuckCheckTime int local
 
@@ -91,18 +93,24 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 	if ${MinDist} > ${MaxDist}
 	{
 		echo Invalid arguments min distance must be less than max
+		VG:ExecBinding[moveforward,release]
+		VG:ExecBinding[movebackward,release]
 		return
 	}
 
 	if ${MinDist} < 0 || ${MaxDist} < 0
 	{
 		echo Invalid value for min or max distance
+		VG:ExecBinding[moveforward,release]
+		VG:ExecBinding[movebackward,release]
 		return
 	}
 
 	if !${Pawn[id,${ObjectID}](exists)}
 	{
 		echo no object specified
+		VG:ExecBinding[moveforward,release]
+		VG:ExecBinding[movebackward,release]
 		return
 	}
 
@@ -118,9 +126,7 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 		;If too far away run forward
 		if ${Pawn[id,${ObjectID}].Distance} > ${MaxDist}
 		{
-			;echo Too far closing
-			;echo ${Pawn[id,${ObjectID}].Distance} is GT ${MaxDist}
-			;press and hold the forward button
+			echo Forward1 - Pawn=${Pawn[id,${ObjectID}].Distance}, MaxDist=${MaxDist}
 			VG:ExecBinding[movebackward,release]
 			VG:ExecBinding[moveforward]
 		}
@@ -128,9 +134,7 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 		;If too close then run backward
 		if ${Pawn[id,${ObjectID}].Distance}<${MinDist}
 		{
-			;echo Too close backing up
-			;echo ${Pawn[id,${ObjectID}].Distance} is LT ${MinDist}
-			;press and hold the backward button
+			echo Backward1
 			VG:ExecBinding[moveforward,release]
 			VG:ExecBinding[movebackward]
 			Face ${Pawn[id,${ObjectID}].X} ${Pawn[id,${ObjectID}].Y}
@@ -140,18 +144,21 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 		;if ${Pawn[id,${ObjectID}].Distance} > ${MinDist} && ${Pawn[id,${ObjectID}].Distance} < ${MaxDist}
 		if ${Pawn[id,${ObjectID}].Distance} < ${MaxDist}
 		{
+			echo Finished moving
 			VG:ExecBinding[moveforward,release]
 			VG:ExecBinding[movebackward,release]
 			StuckCheck:Set[FALSE]
 		}
 
 		;wait for half a second to give our pc a chance to move
-		;wait 5
+		wait 2
 		
 		;	echo ${Pawn[id,${ObjectID}].Name} ${Pawn[id,${ObjectID}].Distance}
 		; Check to make sure we have moved if not then try and avoid the
 		; obstacle thats in our path
-		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${SavX},${SavY},${SavZ}]} < 1
+		
+		echo Distance Moved=${Math.Distance[${Me.X},${Me.Y},${Me.Z},${SavX},${SavY},${SavZ}]}
+		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${SavX},${SavY},${SavZ}]} < 10
 		{
 			;	echo Distdiff ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${SavX},${SavY},${SavZ}]}
 			; I think i might be stuck so save off the current time
@@ -174,6 +181,8 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 						call AvoidCollision ${Pawn[id,${ObjectID}].X} ${Pawn[id,${ObjectID}].Y} ${Pawn[id,${ObjectID}].Z}
 						if !${Return}
 						{
+							VG:ExecBinding[moveforward,release]
+							VG:ExecBinding[movebackward,release]
 							return "COLLISION"
 						}
 					}
@@ -191,14 +200,18 @@ function:string movetoobject(string ObjectID, float MaxDist, float MinDist)
 	}
 	while (${Pawn[id,${ObjectID}].Distance} > ${MaxDist} || ${Pawn[id,${ObjectID}].Distance} < ${MinDist}) && ${LavishScript.RunningTime} < ${BailOut}
 
-	if !${CurrentChunk.Equal[${Me.Chunk}]}	
+	VG:ExecBinding[moveforward,release]
+	VG:ExecBinding[movebackward,release]
+
+	if ${VG.CheckCollision[${Pawn[id,${ObjectID}].X},${Pawn[id,${ObjectID}].Y},${Pawn[id,${ObjectID}].Z}](exists)}
 	{
-		VG:ExecBinding[moveforward,release]
 		return "COLLISION"
 	}
 	
-	VG:ExecBinding[moveforward,release]
-	VG:ExecBinding[movebackward,release]
+	if !${CurrentChunk.Equal[${Me.Chunk}]}	
+	{
+		return "COLLISION"
+	}
 	return "SUCCESS"
 }
 

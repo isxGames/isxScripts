@@ -547,6 +547,7 @@ objectdef  bnav
 
 	function:string MovetoXYZ(int iX, int iY, int iZ, bool iCheckMobs)
 	{
+		echo MoveToXYZ called
 		variable string CPname
 
 		call This.FindClosestPoint ${iX} ${iY} ${iZ}
@@ -667,6 +668,8 @@ objectdef  bnav
 		variable int xTimer
 		variable int FullTimer
 
+		
+		
 		;call DebugOut "bNav: doFastMove: ${X} ${Y}"
 
 		Face ${X} ${Y}
@@ -679,6 +682,8 @@ objectdef  bnav
 		do
 		{
 			xDist:Set[${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}]
+			
+			;echo doFastMove xDist=${xDist}, range=${range}
 
 			if ${Math.Calc[${SavDist} - ${xDist}]} < 60
 			{
