@@ -66,6 +66,7 @@ variable int TotalWayPoints = 0
 variable int CurrentWayPoint = 0
 variable int LastWayPoint = 0
 variable bool CountUp = FALSE
+variable bool doRestartToWP1 = FALSE
 variable string CurrentChunk 
 
 ;; variables - harvester
@@ -276,7 +277,31 @@ function MasterHarvester()
 		}
 
 		;; We are at our destination so lets go to next waypoint
-		CurrentWayPoint:Inc
+		;CurrentWayPoint:Inc
+		
+		;; reset current way point if > total way points
+		if ${CurrentWayPoint}>=${TotalWayPoints}
+		{
+			CurrentWayPoint:Set[${TotalWayPoints}]
+			CountUp:Set[FALSE]
+		}
+
+		;; reset current way point if 1
+		if ${CurrentWayPoint}<=1
+		{
+			CurrentWayPoint:Set[1]
+			CountUp:Set[TRUE]
+		}
+			
+		;; adjust out current way point to move up or down the points once we are done harvesting area
+		if ${CountUp} || ${doRestartToWP1}
+		{
+			CurrentWayPoint:Inc
+		}
+		else
+		{
+			CurrentWayPoint:Dec
+		}		
 	}
 	
 	;; Lets navigate to our CurrentWayPoint - 2 seconds is plenty of time to ensure we are navigating - remember, we are still mapping
