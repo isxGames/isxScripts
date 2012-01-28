@@ -1,7 +1,7 @@
  <?xml version="1.0" encoding="UTF-8"?>
  <ISUI>
  	<Window name='WreckingBot'>
- 		<X>150</X>
+ 		<X>100</X>
  		<Y>100</Y>
  		<Width>500</Width>
  		<Height>500</Height>

@@ -51,7 +51,6 @@ function main()
 	echo Start
 	
 	UI -load UI/BotUI
-	
 	while 1
 	{
 		while ${Paused}

@@ -71,6 +71,7 @@
 		</Set>
 		<Set Name="Secure Cargo Container" GroupID="340">
 			<Setting Name="Giant Secure Container">11489</Setting>
+			<Setting Name="Small Secure Container">3467</Setting>
 		</Set>
 	</Set>
 	<Set Name="Charge" CatID="8">
@@ -92,6 +93,7 @@
 		<Set Name="Cruise Missile" GroupID="386">
 			<Setting Name="Cataclysm Cruise Missile">204</Setting>
 			<Setting Name="Devastator Cruise Missile">205</Setting>
+			<Setting Name="Inferno Cruise Missile">204</Setting>
 			<Setting Name="Paradise Cruise Missile">202</Setting>
 			<Setting Name="Wrath Cruise Missile">203</Setting>
 		</Set>
@@ -199,6 +201,7 @@
 			<Setting Name="Thorn Rocket">266</Setting>
 		</Set>
 		<Set Name="Scanner Probe" GroupID="479">
+			<Setting Name="Sisters Combat Scanner Probe">30486</Setting>
 			<Setting Name="Sisters Core Scanner Probe">30488</Setting>
 		</Set>
 		<Set Name="Sensor Booster Script" GroupID="910">
@@ -206,6 +209,7 @@
 			<Setting Name="Targeting Range">29009</Setting>
 		</Set>
 		<Set Name="Sensor Dampener Script" GroupID="911">
+			<Setting Name="Scan Resolution Dampening">29013</Setting>
 			<Setting Name="Targeting Range Dampening">29015</Setting>
 		</Set>
 		<Set Name="Torpedo" GroupID="89">
@@ -259,6 +263,7 @@
 			<Setting Name="Akori's Insignia">17801</Setting>
 			<Setting Name="Caldari Navy Commodore Insignia I">15602</Setting>
 			<Setting Name="Caldari Navy Commodore Insignia II">15656</Setting>
+			<Setting Name="CONCORD Soldier Emblem">16119</Setting>
 		</Set>
 		<Set Name="Frozen" GroupID="281">
 			<Setting Name="Dairy Products">3717</Setting>
@@ -270,6 +275,7 @@
 			<Setting Name="Tobacco">9852</Setting>
 		</Set>
 		<Set Name="Livestock" GroupID="283">
+			<Setting Name="Exotic Dancers">17765</Setting>
 			<Setting Name="Marines">3810</Setting>
 			<Setting Name="Militants">25373</Setting>
 			<Setting Name="Professor Kajurei Delainen">28835</Setting>
@@ -291,6 +297,8 @@
 			<Setting Name="1st Tier Overseer's Personal Effects">19400</Setting>
 			<Setting Name="3rd Tier Overseer's Personal Effects">19402</Setting>
 			<Setting Name="5th Tier Overseer's Personal Effects">19404</Setting>
+			<Setting Name="7th Tier Overseer's Personal Effects">19406</Setting>
+			<Setting Name="8th Tier Overseer's Personal Effects">19407</Setting>
 		</Set>
 		<Set Name="Refinables" GroupID="355">
 			<Setting Name="Condensed Alloy">11739</Setting>
@@ -388,6 +396,10 @@
 			<Setting Name="Tritanium">34</Setting>
 			<Setting Name="Zydrine">39</Setting>
 		</Set>
+		<Set Name="Rogue Drone Components" GroupID="886">
+			<Setting Name="Drone Capillary Fluid">28362</Setting>
+			<Setting Name="Drone Synaptic Relay Wiring">28361</Setting>
+		</Set>
 		<Set Name="Salvaged Materials" GroupID="754">
 			<Setting Name="Alloyed Tritanium Bar">25595</Setting>
 			<Setting Name="Armor Plates">25605</Setting>
@@ -429,6 +441,8 @@
 			<Setting Name="Y-T8 Overcharged Hydrocarbon Microwarpdrive">5975</Setting>
 		</Set>
 		<Set Name="Armor Coating" GroupID="98">
+			<Setting Name="Centii C-Type Magnetic Plating">18714</Setting>
+			<Setting Name="Centii C-Type Thermic Plating">18726</Setting>
 			<Setting Name="Corpii C-Type Reflective Plating">18720</Setting>
 			<Setting Name="Dark Blood Reactive Plating">14015</Setting>
 			<Setting Name="Interphase Heat Diffusion Plating">16341</Setting>
@@ -436,6 +450,7 @@
 			<Setting Name="Reactive Plating I">1264</Setting>
 			<Setting Name="Reflective Plating I">1197</Setting>
 			<Setting Name="Thermic Plating I">1294</Setting>
+			<Setting Name="True Sansha Magnetic Plating">14007</Setting>
 		</Set>
 		<Set Name="Armor Hardener" GroupID="328">
 			<Setting Name="Armor Kinetic Hardener I">11305</Setting>
@@ -521,8 +536,10 @@
 			<Setting Name="Damage Control I">2046</Setting>
 		</Set>
 		<Set Name="Data Miners" GroupID="538">
+			<Setting Name="Analyzer I">22177</Setting>
 			<Setting Name="Civilian Analyzer">27019</Setting>
 			<Setting Name="Civilian Codebreaker">27014</Setting>
+			<Setting Name="Codebreaker I">22175</Setting>
 			<Setting Name="Purloined Sansha Codebreaker">3581</Setting>
 		</Set>
 		<Set Name="Drone Control Range Module" GroupID="647">
@@ -581,6 +598,7 @@
 			<Setting Name="E5 Prototype Energy Vampire">5135</Setting>
 			<Setting Name="Medium 'Ghoul' Energy Siphon I">16505</Setting>
 			<Setting Name="Small 'Ghoul' Energy Siphon I">5141</Setting>
+			<Setting Name="Small 'Knave' Energy Drain">5137</Setting>
 			<Setting Name="Small Nosferatu I">530</Setting>
 		</Set>
 		<Set Name="Energy Weapon" GroupID="53">
@@ -593,10 +611,12 @@
 			<Setting Name="Heavy Afocal Maser I">6961</Setting>
 			<Setting Name="Heavy Beam Laser I">459</Setting>
 			<Setting Name="Heavy Beam Laser II">3025</Setting>
+			<Setting Name="Heavy Modal Pulse Laser I">6919</Setting>
 			<Setting Name="Heavy Pulse Laser I">458</Setting>
 			<Setting Name="Medium Afocal Maser I">6717</Setting>
 			<Setting Name="Medium Beam Laser I">454</Setting>
 			<Setting Name="Mega Afocal Pulse Maser I">7085</Setting>
+			<Setting Name="Quad Afocal Light Maser I">6759</Setting>
 			<Setting Name="Quad Light Beam Laser I">455</Setting>
 		</Set>
 		<Set Name="Expanded Cargohold" GroupID="765">
@@ -682,6 +702,7 @@
 			<Setting Name="Passive Targeter I">581</Setting>
 		</Set>
 		<Set Name="Power Diagnostic System" GroupID="766">
+			<Setting Name="Dark Blood Power Diagnostic System">14134</Setting>
 			<Setting Name="Power Diagnostic System I">1539</Setting>
 		</Set>
 		<Set Name="Projected ECCM" GroupID="289">
@@ -717,6 +738,7 @@
 			<Setting Name="Civilian Salvager">26983</Setting>
 		</Set>
 		<Set Name="Scan Probe Launcher" GroupID="481">
+			<Setting Name="Core Probe Launcher I">17938</Setting>
 			<Setting Name="Expanded Probe Launcher I">18639</Setting>
 			<Setting Name="Prototype Iris Probe Launcher">2083</Setting>
 		</Set>
@@ -737,6 +759,7 @@
 		</Set>
 		<Set Name="Shield Amplifier" GroupID="295">
 			<Setting Name="Additional Thermal Barrier Emitter I">9568</Setting>
+			<Setting Name="Domination Magnetic Scattering Amplifier">14041</Setting>
 			<Setting Name="Explosion Dampening Amplifier I">2529</Setting>
 			<Setting Name="Heat Dissipation Amplifier I">2537</Setting>
 			<Setting Name="Heat Dissipation Amplifier II">2539</Setting>
@@ -765,6 +788,7 @@
 		<Set Name="Shield Extender" GroupID="38">
 			<Setting Name="Large Azeotropic Ward Salubrity I">8419</Setting>
 			<Setting Name="Large F-S9 Regolith Shield Induction">8529</Setting>
+			<Setting Name="Large Shield Extender II">3841</Setting>
 			<Setting Name="Large Supplemental Barrier Emitter I">8489</Setting>
 			<Setting Name="Medium Azeotropic Ward Salubrity I">8433</Setting>
 			<Setting Name="Medium Shield Extender I">3829</Setting>
@@ -788,6 +812,7 @@
 		<Set Name="Shield Power Relay" GroupID="57">
 			<Setting Name="Local Power Plant Manager: Reaction Shield Power Relay I">8331</Setting>
 			<Setting Name="Shield Power Relay I">2331</Setting>
+			<Setting Name="Shield Power Relay II">1422</Setting>
 		</Set>
 		<Set Name="Shield Recharger" GroupID="39">
 			<Setting Name="Shield Recharger I">393</Setting>
@@ -797,6 +822,7 @@
 		<Set Name="Shield Transporter" GroupID="41">
 			<Setting Name="Large 'Atonement' Ward Projector">8637</Setting>
 			<Setting Name="Large Murky Shield Screen Transmitter I">8635</Setting>
+			<Setting Name="Large S95a Partial Shield Transporter">8641</Setting>
 			<Setting Name="Medium Asymmetric Barrier Transpositioner I">8583</Setting>
 			<Setting Name="Medium Shield Transporter I">3596</Setting>
 			<Setting Name="Small Asymmetric Barrier Transpositioner I">8535</Setting>
@@ -814,6 +840,7 @@
 			<Setting Name="Medium Graviton Smartbomb I">3941</Setting>
 			<Setting Name="Medium Plasma Smartbomb I">3947</Setting>
 			<Setting Name="Medium Proton Smartbomb I">3937</Setting>
+			<Setting Name="Medium Rudimentary Concussion Bomb I">9728</Setting>
 			<Setting Name="Medium YF-12a Smartbomb">9800</Setting>
 			<Setting Name="Small Graviton Smartbomb I">1551</Setting>
 			<Setting Name="Small Proton Smartbomb I">1547</Setting>
@@ -853,6 +880,7 @@
 		</Set>
 		<Set Name="Tractor Beam" GroupID="650">
 			<Setting Name="Small Tractor Beam I">24348</Setting>
+			<Setting Name="Small Tractor Beam II">4250</Setting>
 		</Set>
 		<Set Name="Warp Core Stabilizer" GroupID="315">
 			<Setting Name="'Accord' Core Compensation">16297</Setting>
@@ -860,6 +888,7 @@
 			<Setting Name="Warp Core Stabilizer I">10998</Setting>
 		</Set>
 		<Set Name="Warp Scrambler" GroupID="52">
+			<Setting Name="Fleeting Progressive Warp Scrambler I">5441</Setting>
 			<Setting Name="Initiated Harmonic Warp Scrambler I">5445</Setting>
 			<Setting Name="J5b Phased Prototype Warp Scrambler I">5439</Setting>
 			<Setting Name="Warp Disruptor I">3242</Setting>
@@ -897,22 +926,40 @@
 			<Setting Name="Refinery Efficiency">3389</Setting>
 			<Setting Name="Refining">3385</Setting>
 		</Set>
+		<Set Name="Mechanics" GroupID="269">
+			<Setting Name="Nanite Interfacing">28880</Setting>
+		</Set>
 		<Set Name="Missile Launcher Operation" GroupID="256">
 			<Setting Name="Guided Missile Precision">20312</Setting>
 			<Setting Name="Heavy Assault Missiles">25719</Setting>
 			<Setting Name="Heavy Missiles">3324</Setting>
 			<Setting Name="Missile Launcher Operation">3319</Setting>
 		</Set>
+		<Set Name="Navigation" GroupID="275">
+			<Setting Name="Fuel Conservation">3451</Setting>
+			<Setting Name="High Speed Maneuvering">3454</Setting>
+		</Set>
 		<Set Name="Planet Management" GroupID="1044">
 			<Setting Name="Advanced Planetology">2403</Setting>
+			<Setting Name="Planetology">2406</Setting>
 		</Set>
 		<Set Name="Science" GroupID="270">
+			<Setting Name="Astrometric Acquisition">25811</Setting>
+			<Setting Name="Astrometric Pinpointing">25810</Setting>
 			<Setting Name="Electromagnetic Physics">11448</Setting>
 			<Setting Name="Gallentean Starship Engineering">11450</Setting>
+			<Setting Name="Hacking">21718</Setting>
 			<Setting Name="Minmatar Starship Engineering">11445</Setting>
+		</Set>
+		<Set Name="Social" GroupID="278">
+			<Setting Name="Distribution Connections">3894</Setting>
+			<Setting Name="Security Connections">3895</Setting>
 		</Set>
 		<Set Name="Spaceship Command" GroupID="257">
 			<Setting Name="Mining Barge">17940</Setting>
+		</Set>
+		<Set Name="Trade" GroupID="274">
+			<Setting Name="Retail">3444</Setting>
 		</Set>
 	</Set>
 </InnerSpaceSettings>
