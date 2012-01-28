@@ -251,12 +251,12 @@ objectdef Salvager
 			if ${Iter:First(exists)}
 			do
 			{
-				if ${Iter.Value.GroupID} != ENTGROUPCARGO || ${Iter.Value.GroupID} != ENTGROUPWRECK
-				{
-					UNLOCK(${Iter.Value.ID})
-					wait RANDOM(SLOW,SLOW)
-					continue
-				}
+				;if ${Iter.Value.GroupID} != ENTGROUPCARGO || ${Iter.Value.GroupID} != ENTGROUPWRECK
+				;{
+				;	UNLOCK(${Iter.Value.ID})
+				;	wait RANDOM(SLOW,SLOW)
+				;	continue
+				;}
 				
 				State:Set["Wrecks - ${Wrecks.Used}"]
 				
@@ -364,7 +364,7 @@ objectdef Salvager
 		if ${Iter:First(exists)}
 		do
 		{
-			Targets:Insert[${Iter.Value}]
+			Targets:Insert[${Iter.Value.ID}]
 		}
 		while ${Iter:Next(exists)}
 	}
