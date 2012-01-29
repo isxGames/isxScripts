@@ -16,7 +16,6 @@
 
 #define INSPACE						${Me.InSpace}
 #define SOLARSYSTEM					${Me.SolarSystemID}
-#define WAYPOINTS					${EVE.GetWaypoints}
 #define AUTOPILOTON					${Me.AutoPilotOn}
 #define SHIPMODE					${Me.ToEntity.Mode}
 #define APPROACHLEFT				${Me.ToEntity.Approaching.Distance}
