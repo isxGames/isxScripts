@@ -433,11 +433,13 @@ objectdef theShip
 		index:int Waypoints
 		EVE:GetWaypoints[Waypoints]
 		
-		if SOLARSYSTEM != BMSYSTEM(${Label})
+		if SOLARSYSTEM != BMSYSTEM(${EVE.Bookmark[${Label}]})
 		{
+			
 			while ${Waypoints.Used} < 1
 			{
-				BMSETDEST(${Label})
+			
+				BMSETDEST(${EVE.Bookmark[${Label}]})
 				wait RANDOM(SLOW, SLOW)
 				Debug:Spew["${Waypoints.Used}", "SetDest", FALSE]
 				EVE:GetWaypoints[Waypoints]
@@ -449,9 +451,9 @@ objectdef theShip
 				wait RANDOM(SLOW2, SLOW2)
 			}
 			Debug:Spew["!AUTOPILOTON", "Autopilot", FALSE]
-			while SOLARSYSTEM != BMSYSTEM(${Label})
+			while SOLARSYSTEM != BMSYSTEM(${EVE.Bookmark[${Label}]})
 			{
-				while SOLARSYSTEM != BMSYSTEM(${Label})
+				while SOLARSYSTEM != BMSYSTEM(${EVE.Bookmark[${Label}]})
 					wait RANDOM(SLOW,SLOW)
 				wait RANDOM(SLOW5,SLOW5)
 				Debug:Spew["SOLARSYSTEM - BMSYSTEM(${Label})", "AreWeThereYet", FALSE]
@@ -459,42 +461,43 @@ objectdef theShip
 			
 		}
 		Debug:Spew["SOLARSYSTEM - BMSYSTEM(${Label})", "InSystem", FALSE]
-		if SOLARSYSTEM == BMSYSTEM(${Label})
+		if SOLARSYSTEM == BMSYSTEM(${EVE.Bookmark[${Label}]})
 		{
 			Debug:Spew["BMDISTANCE(${Label}) - WARPRANGE", "Warp", FALSE]
-			if BMDISTANCE(${Label}) > WARPRANGE
+			
+			if BMDISTANCE(${EVE.Bookmark[${Label}]}) > WARPRANGE
 			{
 				while SHIPMODE != WARPING
 				{
-					BMWARP(${Label})
+					BMWARP(${EVE.Bookmark[${Label}]})
 					wait RANDOM(SLOW, SLOW)
 				}
 			}
 			else
 			{
-				BMWARP(${Label})
+				BMWARP(${EVE.Bookmark[${Label}]})
 				wait RANDOM(SLOW, SLOW)
-				BMWARP(${Label})
+				BMWARP(${EVE.Bookmark[${Label}]})
 				wait RANDOM(SLOW, SLOW)
 			}
 			Debug:Spew["SHIPMODE - WARPING", "Warping", FALSE]
 			while SHIPMODE == WARPING
 				wait RANDOM(SLOW, SLOW)
 			
-			if BMGROUPID(${Label}) == ENTGROUPSTATION
+			if BMGROUPID(${EVE.Bookmark[${Label}]}) == ENTGROUPSTATION
 			{
 				while INSPACE
 				{
-					if BMDISTANCE(${Label}) < 400
+					if BMDISTANCE(${EVE.Bookmark[${Label}]}) < 400
 					{
-						BMDOCK(${Label})
+						BMDOCK(${EVE.Bookmark[${Label}]})
 						wait RANDOM(SLOW2,SLOW)
 						Debug:Spew["BMDISTANCE(${Label})", "Dock", FALSE]
 					}
 					
-					if	BMDISTANCE(${Label}) > 400
+					if	BMDISTANCE(${EVE.Bookmark[${Label}]}) > 400
 					{
-						BMAPPROACH(${Label})
+						BMAPPROACH(${EVE.Bookmark[${Label}]})
 						wait RANDOM(SLOW2,SLOW)
 						Debug:Spew["BMDISTANCE(${Label})", "Approach", FALSE]
 					}
@@ -502,5 +505,6 @@ objectdef theShip
 				wait RANDOM(SLOW2,SLOW2)
 			}
 		}
+		
 	}
 }
