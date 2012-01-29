@@ -2,32 +2,30 @@ BJ Auction Bot - Changelog
 
 First Created:  September 13, 2011
 Written By: bjcasey
-Many thanks to Kannkor for a TON of coding help.
+
 
 INSTRUCTIONS
 
+run bj bjauction
 
+Fill in the fields with your starting bid and phrases.  Open the examine window of the first item you want to auction and press the set item 1 button.  Repeat with second item if desired.
+
+Press Start button to start the script.  Use the update button and the item bid boxes to update the values as people bid.  You can click the checkbox beside start bid to remove it from the posting.
+
+At any time you can click the checkbox next to optional text to add a message at the end of the post.
 
 COMING SOON...
 
-- Text entry for a timer
-- Start/Stop timer button
-- Text field to display a countdown timer
-- Auto scanning of chat logs to create a DB for item links.
-		- Scan chat logs and store any item links.  When you are examining an item it will check the name against the DB to pull the link up.
-- Add bid incriment text field
-- Split into semi-auto and manual
-		- Semi-auto changes the value of the bids based on text response.
-		- Manual doesn't change anything automatically.  Useful if you just want to save time retyping the same format for all your loot auctions.
-- Add functionality to support two items simultaneously.
-		- Examine item one and click set item one. The name of the item will be displayed on screen.  Examine item two and click set item two and the name of the item will be displayed on screen.
-		- Clear items button.
+- Two timers
+	- First timer will start when you click the Start button and will count up until you press the Stop button.  This will show you how long it has been since the start of 	the auction.
+	-Second timer will start when you click the Start button and will count up until you press the Update button, Stop button or Sold button.  Every time you press the 		Update button, going once button, or going twice button it will reset this timer to zero.  This will show you how long it has been since you last updated/posted 		something to your channel.
+- Preview Window
+	- Hit the preview button to open another window where you can see what will be posted to your chat window.
 
 		
 KNOWN BUGS
 
-- HighBid can return more than numbers, which looks bad. (IE. 90 priest --> returns as 90 priest instead of just 90)
-		- Something wrong with the if statements on line 130
+None
 
 		
 
@@ -35,10 +33,7 @@ REVISION HISTORY
 
 BJAuctionBot-2011.09.01, Version BETA
 
-- HighBid can parse links as a bid [FIXED]
-	- It ignores text from the character running the script
-- Need to restart the script if you change items [FIXED]	
-- Auto parsing of log for bids/bidder and display it on UI [ADDED]
+
 - Stupid user check to prevent "Please choose" from being broadcast to the channel. [ADDED]
 	
 
