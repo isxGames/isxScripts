@@ -26,8 +26,11 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		echo ****Commands and Arguments***
 		echo All commands are run "run Bj <command> <Args>"
 		echo Run BJ BJMagic -- Loads the Words of Pure Magic Shrine Clicker
-		echo Run Bj BJXPBot	--	Loads the Auto XP Potion Script
+		echo Run BJ BJXPBot	--	Loads the Auto XP Potion Script
 		echo Run BJ BJHammarmund -- Loads the scripted movement for the trio fight in Temple of Rallos Zek
+		echo Run BJ BJCure -- Loads the script that forces OgreBot to interrupt whatever it is casting in order to cast a cure
+		echo Run BJ BJAuction -- Loads the script that assists in auction of loot
+		echo Run BJ BJShuffle -- Loads the script that shuffles your toons around so they are not all standing in one spot
 		echo                         -- Example: "Run Bj bjmagic" runs the clicker script, "run Bj end bjmagic" ends the clicker script
 		return
 	}
@@ -46,6 +49,32 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/hammarmund/hammarmund.iss"
 		return
 	}
+	elseif ${LoginModifer.Equal[bjcure]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjcure/bjcureSHELL.iss"
+		return
+	}
+	elseif ${LoginModifer.Equal[bjidolhm]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjidolhm/bjidolhmSHELL.iss"
+		return
+	}
+	elseif ${LoginModifer.Equal[bjdecorin]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjdecorin/bjdecorin.iss"
+		return
+	}	
+	elseif ${LoginModifer.Equal[bjauction]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctionSHELL.iss"
+		return
+	}		
+	elseif ${LoginModifer.Equal[bjshuffle]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjshuffle/bjshuffleSHELL.iss"
+		return
+	}
+	
 	elseif ${LoginModifer.Equal[end]}
 	{
 		if ${Script[bjmagic](exists)}
