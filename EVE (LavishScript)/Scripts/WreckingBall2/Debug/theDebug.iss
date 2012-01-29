@@ -92,7 +92,7 @@ objectdef theDebug
 		LavishSettings[EntityListB]:Import[Debug/EntityListingB.xml]
 		EntityListingA:Set[${LavishSettings.FindSet[EntityListA]}]
 		EntityListingB:Set[${LavishSettings.FindSet[EntityListB]}]
-		EVE:DoGetEntities[MyScan]
+		EVE:QueryEntities[MyScan]
 		MyScan:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -174,7 +174,7 @@ objectdef theDebug
 		LavishSettings[ItemListB]:Import[Debug/ItemListingB.xml]
 		ItemListingA:Set[${LavishSettings.FindSet[ItemListA]}]
 		ItemListingB:Set[${LavishSettings.FindSet[ItemListB]}]
-		Me.Station:DoGetHangarItems[MyScan]
+		Me.Station:GetHangarItems[MyScan]
 		MyScan:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
