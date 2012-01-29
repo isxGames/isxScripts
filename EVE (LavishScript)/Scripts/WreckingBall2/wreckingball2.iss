@@ -65,12 +65,12 @@ function main()
 			case GoHome
 				if !INSPACE
 					call Ship.Undock
-				call Ship.Goto ${EVE.Bookmark[${HomeBookmarkSymbol}]}
+				call Ship.Goto ${HomeBookmarkSymbol}
 				break
 			case Goto
 				if !INSPACE
 					call Ship.Undock
-				call Ship.Goto ${EVE.Bookmark[${BookmarkSymbol}]}
+				call Ship.Goto ${BookmarkSymbol}
 				break
 			case Miner
 				call Miner.Begin
