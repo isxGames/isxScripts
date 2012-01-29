@@ -365,7 +365,7 @@ objectdef Miner
 		variable index:entity Entities
 		variable iterator Iter
 		
-		EVE:DoGetEntities[Entities,CategoryID,ENTCATENTITY]
+		EVE:QueryEntities[Entities,CategoryID = ENTCATENTITY]
 		Entities:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -382,7 +382,7 @@ objectdef Miner
 		variable index:item Cargo
 		variable iterator Iter
 		variable int Qty = 0
-		MyShip:DoGetCargo[Cargo]
+		MyShip:GetCargo[Cargo]
 		Cargo:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -400,7 +400,7 @@ objectdef Miner
 		variable iterator Iter
 		variable int Count = 0
 		
-		MyShip:DoGetCargo[Cargo]
+		MyShip:GetCargo[Cargo]
 		Cargo:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -418,7 +418,7 @@ objectdef Miner
 		variable iterator Iter
 		Targets:Clear
 		
-		Me:DoGetTargets[MyTargets]
+		Me:GetTargets[MyTargets]
 		MyTargets:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -435,7 +435,7 @@ objectdef Miner
 		
 		Lasers:Clear
 		
-		MyShip:DoGetModules[Modules]
+		MyShip:GetModules[Modules]
 		Modules:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -460,7 +460,7 @@ objectdef Miner
 		
 		Locations:Clear
 		
-		EVE:DoGetBookmarks[Bookmarks]
+		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -485,7 +485,7 @@ objectdef Miner
 		
 		Asteroids:Clear
 		
-		EVE:DoGetEntities[MyEntities]
+		EVE:QueryEntities[MyEntities]
 		MyEntities:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -506,7 +506,7 @@ objectdef Miner
 		
 		Belts:Clear
 		
-		EVE:DoGetEntities[MyEntities]
+		EVE:QueryEntities[MyEntities]
 		MyEntities:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -530,7 +530,7 @@ objectdef Miner
 		CombatDrones:Clear
 		LaunchedDrones:Clear
 		
-		MyShip:DoGetDrones[DroneBay]
+		MyShip:GetDrones[DroneBay]
 		DroneBay:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -542,12 +542,12 @@ objectdef Miner
 		}
 		while ${Iter:Next(exists)}
 		
-		EVE:DoGetEntities[DroneEntities,CategoryID,DRONECATEGORY]
+		EVE:QueryEntities[DroneEntities,CategoryID = DRONECATEGORY]
 		DroneEntities:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
 		{
-			if ${Iter.Value.OwnerID} == ${Me.CharID}
+			if ${Iter.Value.OwnerID.Equal[${Me.CharID}]
 				LaunchedDrones:Insert[${Iter.Value.ID}]
 		}
 		while ${Iter:Next(exists)}

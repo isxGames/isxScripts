@@ -316,12 +316,12 @@ objectdef Salvager
 		}
 		elseif !${GoSafe}
 		{
-			if ${Entity[GroupID,ENTGROUPACCELGATE](exists)}
+			if ${Entity[GroupID = ENTGROUPACCELGATE](exists)}
 			{
-				Entity[GroupID,ENTGROUPACCELGATE]:Approach
+				Entity[GroupID = ENTGROUPACCELGATE]:Approach
 				wait RANDOM(SLOW,SLOW)
 				call Ship.ActivateModule ${Afterburner}
-				Debug:Spew["${Entity[GroupID,ENTGROUPACCELGATE](exists)}", "ApproachGate", FALSE]
+				Debug:Spew["${Entity[GroupID = ENTGROUPACCELGATE](exists)}", "ApproachGate", FALSE]
 			}
 			Debug:Spew[" ", "Done", FALSE]
 			StillGoing:Set[FALSE]
@@ -359,7 +359,7 @@ objectdef Salvager
 		variable iterator Iter
 		Targets:Clear
 		
-		Me:DoGetTargets[MyTargets]
+		Me:GetTargets[MyTargets]
 		MyTargets:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -380,7 +380,7 @@ objectdef Salvager
 		;SensorBooster:Set[NULL]
 		;CloakingUnit:Set[NULL]
 		
-		MyShip:DoGetModules[Modules]
+		MyShip:GetModules[Modules]
 		Modules:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -420,7 +420,7 @@ objectdef Salvager
 		Locations:Clear
 		;SafeSpot:Set[NULL]
 		
-		EVE:DoGetBookmarks[Bookmarks]
+		EVE:GetBookmarks[Bookmarks]
 		Bookmarks:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -440,7 +440,7 @@ objectdef Salvager
 		
 		Wrecks:Clear
 		
-		EVE:DoGetEntities[MyEntities]
+		EVE:QueryEntities[MyEntities]
 		MyEntities:GetIterator[Iter]
 		if ${Iter:Last(exists)}
 		do
