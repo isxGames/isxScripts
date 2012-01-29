@@ -429,13 +429,17 @@ objectdef theShip
 	function Goto(string Label)
 	{
 		EVE:ClearAllWaypoints
+		
+		index:int Waypoints
+		EVE:GetWaypoints[Waypoints]
+		
 		if SOLARSYSTEM != BMSYSTEM(${Label})
 		{
-			while WAYPOINTS < 1
+			while ${Waypoints.Used} < 1
 			{
 				BMSETDEST(${Label})
 				wait RANDOM(SLOW, SLOW)
-				Debug:Spew["WAYPOINTS", "SetDest", FALSE]
+				Debug:Spew["${Waypoints.Used}", "SetDest", FALSE]
 			}
 			
 			while !AUTOPILOTON
