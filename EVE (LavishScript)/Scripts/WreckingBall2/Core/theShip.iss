@@ -440,6 +440,7 @@ objectdef theShip
 				BMSETDEST(${Label})
 				wait RANDOM(SLOW, SLOW)
 				Debug:Spew["${Waypoints.Used}", "SetDest", FALSE]
+				EVE:GetWaypoints[Waypoints]
 			}
 			
 			while !AUTOPILOTON
