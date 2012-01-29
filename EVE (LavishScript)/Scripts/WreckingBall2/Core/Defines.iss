@@ -6,11 +6,11 @@
 #define HULL						${MyShip.HullPct}
 #define CAPACITOR					${MyShip.CapacitorPct}
 
-#define TARGETING					${Me.GetTargeting}
-#define TARGETS						${Me.GetTargets}
-#define TARGETEDBY					${Me.GetTargetedBy}
+#define TARGETING					${Me.TargetingCount}
+#define TARGETS						${Me.TargetCount}
+#define TARGETEDBY					${Me.TargetedByCount}
 #define TARGETINGRANGE				${MyShip.MaxTargetRange}
-#define ALLTARGETS					${Math.Calc[${Me.GetTargeting} + ${Me.GetTargets}]}
+#define ALLTARGETS					${Math.Calc[${Me.TargetingCount} + ${Me.TargetCount}]}
 #define MAXTARGETS					${If[${Me.MaxLockedTargets} < ${MyShip.MaxLockedTargets},${Me.MaxLockedTargets},${MyShip.MaxLockedTargets}]}
 #define LOOTRANGE					2300
 

@@ -10,14 +10,14 @@ objectdef theChicken
 		}
 		if ${ChickenOnRat}
 		{
-			if ${Entity[Mission](exists)}
+			if ${Entity[Name =- "Mission"](exists)}
 				return "ChickenOnRat"
-			if ${Entity[Deadspace](exists)}
+			if ${Entity[Name =- "Deadspace"](exists)}
 				return "ChickenOnRat"
 		}
 		if ${ChickenOnPirate}
 		{
-			if ${Entity[CategoryID,6](exists)}
+			if ${Entity[CategoryID = "6"](exists)}
 				return "ChickenOnPirate"
 		}
 		if ${ChickenOnTargeted}

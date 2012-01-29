@@ -8,7 +8,7 @@ objectdef theAgent
 		variable iterator Iter
 		variable index:agentmission Missions
 		
-		EVE:DoGetAgentMissions[Missions]
+		EVE:GetAgentMissions[Missions]
 		Missions:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -41,7 +41,7 @@ objectdef theAgent
 		variable index:dialogstring DialogIndex
 		variable iterator Iter
 		
-		Agent[${CurrentAgent}]:DoGetDialogResponses[DialogIndex]
+		Agent[${CurrentAgent}]:GetDialogResponses[DialogIndex]
 		DialogIndex:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -60,7 +60,7 @@ objectdef theAgent
 		variable index:dialogstring DialogIndex
 		variable iterator Iter
 		
-		Agent[${CurrentAgent}]:DoGetDialogResponses[DialogIndex]
+		Agent[${CurrentAgent}]:GetDialogResponses[DialogIndex]
 		DialogIndex:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -83,7 +83,7 @@ objectdef theAgent
 			;call This.OpenJournal
 			
 		
-		EVE:DoGetAgentMissions[Missions]
+		EVE:GetAgentMissions[Missions]
 		Missions:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do

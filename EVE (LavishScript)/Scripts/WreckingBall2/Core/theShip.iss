@@ -9,7 +9,7 @@ objectdef theShip
 		call This.OpenItems
 		call This.OpenCargo
 		
-		MyShip:DoGetCargo[Items]
+		MyShip:GetCargo[Items]
 		Items:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -47,7 +47,7 @@ objectdef theShip
 		call This.OpenItems
 		call This.OpenCargo
 		
-		MyShip:DoGetCargo[Items]
+		MyShip:GetCargo[Items]
 		Items:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -130,7 +130,7 @@ objectdef theShip
 		variable iterator Iter
 		variable int Tmp
 		
-		Me.Station:DoGetHangarItems[Items]
+		Me.Station:GetHangarItems[Items]
 		Items:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -238,7 +238,7 @@ objectdef theShip
 		call This.OpenLoot ${TargetID}
 		if ${Return} >= 95
 			return
-		Entity[${TargetID}]:DoGetCargo[Loot]
+		Entity[${TargetID}]:GetCargo[Loot]
 		Debug:Spew["ENTNAME(${TargetID})", "Looting ${Loot.Used} Items", FALSE]
 		Loot:GetIterator[Iter]
 		if ${Iter:First(exists)}
@@ -259,7 +259,7 @@ objectdef theShip
 		variable index:int64 TmpLoot
 		variable iterator Iter
 		call This.OpenLoot ${TargetID}
-		Entity[${TargetID}]:DoGetCargo[Loot]
+		Entity[${TargetID}]:GetCargo[Loot]
 		Loot:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -277,7 +277,7 @@ objectdef theShip
 		variable index:item Charges
 		variable iterator Iter
 		
-		MyShip.Module[${Slot}]:DoGetAvailableAmmo[Charges]
+		MyShip.Module[${Slot}]:GetAvailableAmmo[Charges]
 		Charges:GetIterator[Iter]
 		if ${Iter:First(exists)}
 		do
@@ -408,7 +408,7 @@ objectdef theShip
 		switch ${Command}
 		{
 			case Launch
-				MyShip:DoGetDrones[DroneBay]
+				MyShip:GetDrones[DroneBay]
 				DroneBay:GetIterator[Iter]
 				if ${Iter:First(exists)}
 				do

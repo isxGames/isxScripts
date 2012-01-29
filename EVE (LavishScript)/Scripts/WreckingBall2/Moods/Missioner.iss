@@ -35,13 +35,13 @@ objectdef Missioner
 		variable index:agentmission AcceptedMissions
 		variable iterator AcceptedIter
 		
-		EVE:DoGetAgentMissions[AcceptedMissions]
+		EVE:GetAgentMissions[AcceptedMissions]
 		AcceptedMissions:GetIterator[AcceptedIter]
 		if ${AcceptedIter:First(exists)}
 		do
 		{
 			if ${AcceptedIter.Value.State} > 1
-				AcceptedIter.Value:DoGetBookmarks[MissionBookmarks]
+				AcceptedIter.Value:GetBookmarks[MissionBookmarks]
 		}
 		while ${AcceptedIter:Next(exists)}
 	}
