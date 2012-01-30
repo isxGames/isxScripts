@@ -250,7 +250,9 @@ objectdef theShip
 				waitframe
 		}
 		while ${Iter:Next(exists)}
-		call This.CloseLoot ${TargetID}
+		CLOSELOOT(${TargetID})
+		wait RANDOM(SLOWQ,SLOWQ)
+		;call This.CloseLoot ${TargetID}
 	}
 	
 	function GetAllLoot(int64 TargetID)
@@ -334,7 +336,7 @@ objectdef theShip
 				i:Set[RANDOM(SLOW, SLOW)]
 				while !MODACTIVATED(${Slot}) && ${i:Dec} > 0
 					waitframe
-				if ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]} > 7
+				if ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]} > 3
 					return 1
 			}
 			i:Set[RANDOM(SLOWQ, SLOWQ)]
@@ -344,7 +346,7 @@ objectdef theShip
 				Debug:Spew["MODNAME(${Slot}) - MODACTIVATED(${Slot})", "Activate ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]}", TRUE]
 			if MODWAITING(${Slot})
 				return 1
-			if ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]} > 7
+			if ${Math.Calc[${Time.Timestamp}-${MyTime.Timestamp}]} > 3
 				return 1
 		}
 		if !${Activate}
@@ -380,7 +382,7 @@ objectdef theShip
 		{
 			while !ENTISTARGET(${TargetID})
 			{
-				if ${Entity[${TargetID}].Name.Find[entity]} > 0
+				if ${Entity[${TargetID}].Name.Find[entity]} > 0 || ${Entity[${TargetID}](exists)}
 					return 100
 				if !ENTISTARGET(${TargetID})
 					Debug:Spew["${Entity[${TargetID}].Name} - !ENTISTARGET(${TargetID}) - ${Entity[${TargetID}](exists)}", "Target", FALSE]
