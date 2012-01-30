@@ -59,7 +59,7 @@ function main(string Destination)
 		while (!${EVE.Bookmark[${Destination}](exists)})	   
 	}	  
  
- 	if (${EVE.Bookmark[${Destination}].SolarSystemID} != ${Me.SolarSystemID})
+ 	if (!${EVE.Bookmark[${Destination}].SolarSystemID.Equal[${Me.SolarSystemID}]})
  	{
   	echo "- Setting autopilot destination: ${EVE.Bookmark[${Destination}]}"
 		EVE.Bookmark[${Destination}]:SetDestination

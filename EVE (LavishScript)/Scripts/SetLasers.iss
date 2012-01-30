@@ -1,4 +1,3 @@
-variable(script) int AllModulesCount
 variable(script) int LasersCount
 variable(script) int AmmoCount
 variable(script) index:item Ammo
@@ -15,8 +14,8 @@ function GetModulesInformation()
 
   ;; Determine the modules at our disposal
   echo "- Acquiring Information about your ship's modules..."
-  AllModulesCount:Set[${Me.Ship.GetModules[AllModules]}]
-  if (${AllModulesCount} <= 0)
+  Me.Ship:GetModules[AllModules]
+  if (${AllModules.Used} <= 0)
   {
     echo ERROR -- Your ship does not appear to have any modules
     return
@@ -32,7 +31,7 @@ function GetModulesInformation()
       }
     }	
   }
-  while ${k:Inc} <= ${AllModulesCount}
+  while ${k:Inc} <= ${AllModules.Used}
 	
   LasersCount:Set[${Lasers.Used}]
   echo "- Your ship has ${LasersCount} Laser(s)."
