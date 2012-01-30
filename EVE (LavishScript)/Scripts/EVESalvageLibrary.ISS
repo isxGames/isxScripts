@@ -1,5 +1,4 @@
 ;; Declare all script or global variables here
-variable(script) int AllModulesCount
 variable(script) int TractorBeamCount
 variable(script) int SalvagerCount
 variable(script) int AfterburnerCount
@@ -12,15 +11,12 @@ variable(script) index:item CargoToTransfer
 variable(script) index:int64  NewCargoToTransfer
 variable(script) int MaxSalvageRange
 variable(script) int MaxTractorRange
-variable(script) int WrecksCount
 variable(script) index:entity Wrecks
 variable(script) int MaxTargets
 variable(script) int MaxTargetRange
-variable(script) int TargetCount
 variable(script) index:entity Targets
 variable(script) bool ContinueOn
 variable(script) index:entity Cans
-variable(script) int CanCount
 variable(script) int EntityCargoCount
 variable(script) index:item EntityCargo
 variable(script) collection:int64 ProcessedEntities
@@ -65,8 +61,8 @@ function GetModulesInformation(bool LootCans)
 
 	;; Determine the modules at our disposal
 	echo "- Acquiring Information about your ship's modules..."
-	AllModulesCount:Set[${Me.Ship.GetModules[AllModules]}]
-	if (${AllModulesCount} <= 0)
+	Me.Ship:GetModules[AllModules]
+	if (${AllModules.Used} <= 0)
 	{
 		echo ERROR -- Your ship does not appear to have any modules
 		return
@@ -98,7 +94,7 @@ function GetModulesInformation(bool LootCans)
    	  Afterburners:Insert[${AllModules.Get[${k}]}] 	  
    	}   	
 	}
-	while ${k:Inc} <= ${AllModulesCount}
+	while ${k:Inc} <= ${AllModules.Used}
 	
 	TractorBeamCount:Set[${TractorBeams.Used}]
 	SalvagerCount:Set[${Salvagers.Used}]
@@ -144,39 +140,39 @@ function CheckForLoot()
 	variable int k
 	variable int j
 	
-  CanCount:Set[${EVE.GetEntities[Cans,Cargo Container]}]
+  EVE.QueryEntities[Cans, Name =- "Cargo Container"]
   
-  if ${CanCount} > 0
+  if ${Cans.Used} > 0
   {
-  	echo "- Looting: ${CanCount} cargo containers found, processing..."
+  	echo "- Looting: ${Cans.Used} cargo containers found, processing..."
 	 	
 	 	do
 	 	{
-			if (${Me.GetTargets} == ${MaxTargets})
+			if (${Me.TargetCount} == ${MaxTargets})
 				{
 				  echo "-- Max Targets reached (${MaxTargets}): holding..."
 					do
 					{
 						wait 30
 					}
-					while (${Me.GetTargets} == ${MaxTargets})
+					while (${Me.TargetCount} == ${MaxTargets})
 				}	
 				
 				; Make sure we're not already targetting this can...
-				TargetCount:Set[${Me.GetTargets[Targets]}]
+				Me:GetTargets[Targets]
 				k:Set[1]
-				if ${TargetCount} > 0
+				if ${Targets.Used} > 0
 				{
 				 	do
 				 	{
-				 		if ${Targets.Get[${k}].ID} == ${Cans.Get[${i}].ID}
+				 		if ${Targets.Get[${k}].ID.Equal[${Cans.Get[${i}].ID}]}
 				 		{
 				 		   i:Inc
 				 		   continue
 				 		}		
 				 		wait 2
 				 	}
-				 	while ${k:Inc} <= ${TargetCount}
+				 	while ${k:Inc} <= ${Targets.Used}
 				}
 				
 				if (!${Cans.Get[${i}].HaveLootRights})
@@ -336,27 +332,27 @@ function CheckForLoot()
 				{
 			  	Cans.Get[${i}]:CloseCargo
 			  	wait 2
-			  	TargetCount:Set[${Me.GetTargets[Targets]}]
+			  	Me:GetTargets[Targets]
 					k:Set[1]
-					if ${TargetCount} > 0
+					if ${Targets.Used} > 0
 					{
 					 	do
 					 	{
-					 		if ${Targets.Get[${k}].ID} == ${Cans.Get[${i}].ID}
+					 		if ${Targets.Get[${k}].ID.Equal[${Cans.Get[${i}].ID}]} 
 					 		{
 					 		   Cans.Get[${i}]:UnlockTarget
 					 		   break
 					 		}		
 					 		wait 2
 					 	}
-					 	while ${k:Inc} <= ${TargetCount}
+					 	while ${k:Inc} <= ${Targets.Used}
 					}
 				}
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				
 				i:Inc
 		}
-	 	while ${i} <= ${CanCount}
+	 	while ${i} <= ${Cans.Used}
 	}
 	 	
 }
@@ -373,10 +369,10 @@ function DoSalvage(bool LootCans)
 	wait 5
 	MaxTargetRange:Set[${Me.Ship.MaxTargetRange}]
 
-	WrecksCount:Set[${EVE.GetEntities[Wrecks,wreck]}]
-	echo "- Salvager initialized ... ${WrecksCount} wrecks found in this area."
+	EVE:QueryEntities[Wrecks,Name =- "wreck"]
+	echo "- Salvager initialized ... ${Wrecks.Used} wrecks found in this area."
 	
-	if ${WrecksCount} == 0
+	if ${Wrecks.Used} == 0
 	{
 	   if ${LootCans}
 	   		call CheckForLoot		
@@ -385,35 +381,35 @@ function DoSalvage(bool LootCans)
 	
 	do
 	{
-		if (${i} <= ${WrecksCount})
+		if (${i} <= ${Wrecks.Used})
 		{
-		  echo "- Processing Wrecks: ${WrecksCount} wrecks remaining"
+		  echo "- Processing Wrecks: ${Wrecks.Used} wrecks remaining"
 		
-			if (${Me.GetTargets} == ${MaxTargets})
+			if (${Me.TargetCount} == ${MaxTargets})
 			{
-			    echo "-- Max Targets reached (${MaxTargets}): holding..."
+			  echo "-- Max Targets reached (${MaxTargets}): holding..."
 				do
 				{
 					wait 30
 				}
-				while (${Me.GetTargets} == ${MaxTargets})
+				while (${Me.TargetCount} == ${MaxTargets})
 			}	
 			
 			; Make sure we're not already targetting this wreck...
-			TargetCount:Set[${Me.GetTargets[Targets]}]
+			Me:GetTargets[Targets]
 			k:Set[1]
-			if ${TargetCount} > 0
+			if ${Targets.Used} > 0
 			{
 			 	do
 			 	{
-			 		if ${Targets.Get[${k}].ID} == ${Wrecks.Get[${i}].ID}
+			 		if ${Targets.Get[${k}].ID.Equal[${Wrecks.Get[${i}].ID}]} 
 			 		{
 			 		   i:Inc
 			 		   continue
 			 		}		
 			 		wait 2
 			 	}
-			 	while ${k:Inc} <= ${TargetCount}
+			 	while ${k:Inc} <= ${Targets.Used}
 			}
 			
 			; Make sure we own this wreck
@@ -427,7 +423,7 @@ function DoSalvage(bool LootCans)
 				}
 			}
 		  
-		    ProcessedEntities:Set[${Wrecks.Get[${i}].ID},1]
+		  ProcessedEntities:Set[${Wrecks.Get[${i}].ID},1]
 			echo "-- Processing: ${Wrecks.Get[${i}].Name}"
 			;;; Target
 			if (${Wrecks.Get[${i}].Distance} > ${MaxTargetRange})
@@ -463,7 +459,7 @@ function DoSalvage(bool LootCans)
 			{
 			 	wait 15
 			}
-			while ${Me.GetTargeting} > 0
+			while ${Me.TargetingCount} > 0
 			
 			wait 15
 			Wrecks.Get[${i}]:MakeActiveTarget
@@ -586,7 +582,7 @@ function DoSalvage(bool LootCans)
 			
 			wait 10
 		}
-		;; END of: if ${i} <= ${WrecksCount}
+		;; END of: if ${i} <= ${Wrecks.Used}
 		
 		
 		; Do any looting
@@ -594,10 +590,10 @@ function DoSalvage(bool LootCans)
 			call CheckForLoot
 
 		i:Set[1]
-		WrecksCount:Set[${EVE.GetEntities[Wrecks,wreck]}]
+		EVE:QueryEntities[Wrecks,Name =- "wreck"]
 		
 		; Break out if there is but one wreck left and it's your target
-		if (${WrecksCount} == 1)
+		if (${Wrecks.Used} == 1)
 		{
 		   if (${Me.ActiveTarget.Name.Find[wreck]} > 0)
 			 {
@@ -606,7 +602,7 @@ function DoSalvage(bool LootCans)
 	  }
 	  
 	  ; Break out if there are no wrecks at all
-	  if ${WrecksCount} == 0
+	  if ${Wrecks.Used} == 0
 	  	break
 	  
 	  ; Break out if you do not own any of the wrecks that are left
@@ -620,7 +616,7 @@ function DoSalvage(bool LootCans)
 	  		break
 	  	}
 	  }
-	  while ${k:Inc} <= ${WrecksCount}
+	  while ${k:Inc} <= ${Wrecks.Used}
 	  if !${ContinueOn}
 	  	break
 	  
@@ -639,17 +635,17 @@ function DoSalvage(bool LootCans)
 		call CheckShipIsFull ${LootCans} 0
 		
 	}
-	while ${WrecksCount} > 1
+	while ${Wrecks.Used} > 1
 	
 	
 	;; Wait until the last wreck is finished
-	if (${Me.GetTargets} > 0)
+	if (${Me.TargetCount} > 0)
 	{
 	  do
 	  {
 	     wait 30
 	  }
-	  while (${Me.GetTargets} > 0)
+	  while (${Me.TargetCount} > 0)
   }
   wait 2
   
@@ -660,8 +656,6 @@ function DoSalvage(bool LootCans)
 
 function TransferSalvagedItemsToHangar()
 {	
-		variable int CargoCount
-	
     wait 10
 		if (!${EVEWindow[MyShipCargo](exists)})
 		{
@@ -674,17 +668,16 @@ function TransferSalvagedItemsToHangar()
 			wait 30
 		}
 					
-		CargoCount:Set[${Me.Ship.GetCargo[MyCargo]}]
-		if (${CargoCount} == 0)
+		Me.Ship:GetCargo[MyCargo]
+		if (${MyCargo.Used} == 0)
 		{
 			EVEWindow[MyShipCargo]:Close
 			wait 10
 			EVE:Execute[OpenCargoHoldOfActiveShip]
 			wait 20
-			CargoCount:Set[${Me.Ship.GetCargo[MyCargo]}]
+			Me.Ship:GetCargo[MyCargo]
 		}					
 						
-		
 		variable iterator ThisCargo
 		
 		NewCargoToTransfer:Clear[]
@@ -741,8 +734,6 @@ function TransferSalvagedItemsToHangar()
 
 function TransferLootToHangar()
 {	
-		variable int CargoCount
-	
     wait 10
 		if !${EVEWindow[MyShipCargo](exists)}
 		{
@@ -757,14 +748,14 @@ function TransferLootToHangar()
 		}
 						
 		echo "DEBUG: TransferLootToHangar: ${CargoholdLoot.Used}"		
-		CargoCount:Set[${Me.Ship.GetCargo[MyCargo]}]
-		if (${CargoCount} == 0)
+		Me.Ship:GetCargo[MyCargo]
+		if (${MyCargo.Used} == 0)
 		{
 			EVEWindow[MyShipCargo]:Close
 			wait 10
 			EVE:Execute[OpenCargoHoldOfActiveShip]
 			wait 20
-			CargoCount:Set[${Me.Ship.GetCargo[MyCargo]}]
+			Me.Ship:GetCargo[MyCargo]
 		}
 		
 		variable iterator ThisCargo
@@ -834,7 +825,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 	 	; else, make a temp bookmark, return us to our salvage home, unload, and go back for more
 	 	echo "- Cargo Hold Full:  Returning to station to unload...
 		EVE:CreateBookmark["tmp-looting"]
-	  MyBookmarksCount:Set[${EVE.GetBookmarks[MyBookmarks]}]
+	  EVE:GetBookmarks[MyBookmarks]
 	  
 	  ; Close cargo hold!
 	  if (${EVEWindow[MyShipCargo](exists)})
@@ -845,7 +836,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 		{
 			if (${MyBookmarks.Get[${j}].Label.Find["Salvager Home Base"]} > 0)
 			{
-				if (${MyBookmarks[${j}].SolarSystemID} != ${Me.SolarSystemID})
+				if (!${MyBookmarks[${j}].SolarSystemID.Equal[${Me.SolarSystemID}]})
 				{
 					echo "- Setting destination and activating auto pilot for return to home station"
 					MyBookmarks[${j}]:SetDestination
@@ -905,7 +896,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 						   {
 						      echo " - Docking atttempt failed ... trying again."
 						      ;EVE.Bookmark[${Destination}].ToEntity:Dock
-						      Entity[CategoryID,3]:Dock
+						      Entity[CategoryID = 3]:Dock
 						      Counter:Set[0]
 						   }
 						}
@@ -914,7 +905,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 				}
 			}
 		}
-		while ${j:Inc} <= ${MyBookmarksCount}
+		while ${j:Inc} <= ${MyBookmarks.Used}
 	 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	 	
 	 	
@@ -967,7 +958,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 		}
 		
 		;;; Set destination and then activate autopilot (if we're not in that system to begin with)    			
-		if (${EVE.Bookmark["tmp-looting"].SolarSystemID} != ${Me.SolarSystemID})
+		if (!${EVE.Bookmark["tmp-looting"].SolarSystemID.Equal[${Me.SolarSystemID}]})
 		{
 		  echo "- Setting Destination and activating auto pilot to resume salvage operation"
 		  wait 5
@@ -1014,10 +1005,10 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 	
 }
 
-function LootEntity(int EntityID)
+function LootEntity(int64 EntityID)
 {	
 
-		Entity[${EntityID}]:DoGetCargo[EntityCargo]
+		Entity[${EntityID}]:GetCargo[EntityCargo]
 		
 		variable iterator ThisCargo
 		

@@ -1,7 +1,6 @@
 ;; Declare all script or global variables here
 variable(script) int NumSalvageLocations
 variable(script) index:bookmark MyBookmarks
-variable(script) int MyBookmarksCount
 variable(script) bool LeftStation
 variable(script) bool SalvagerHomeBaseFound
 variable(script) int Counter
@@ -116,7 +115,7 @@ function main(... Args)
   else
   	echo "- The Salvager will *NOT* loot cans as it goes."
 
-  MyBookmarksCount:Set[${EVE.GetBookmarks[MyBookmarks]}]
+  EVE:GetBookmarks[MyBookmarks]
 
   ;;; For use with the -at flag
   if ${UsingAt}
@@ -134,7 +133,7 @@ function main(... Args)
 			  			SalvagerHomeBaseFound:Set[TRUE]
 			  		}
 			   }
-			   while ${k:Inc} <= ${MyBookmarksCount}
+			   while ${k:Inc} <= ${MyBookmarks.Used}
 
 			   if !${SalvagerHomeBaseFound}
 			   {
@@ -187,7 +186,7 @@ function main(... Args)
   ; Checks required for using bookmarks...
   if (!${UsingAt})
   {
-      if ${MyBookmarksCount} == 0
+      if ${MyBookmarks.Used} == 0
       {
         echo "- Sorry, you do not appear to have any bookmarks!"
         return
@@ -206,7 +205,7 @@ function main(... Args)
         {
     		if (${MyBookmarks.Get[${j}].Label.Find[${SalvageLocationLabels[${i}]}]} > 0)
     		{
-    		  SalvageYardFound:Set[TRUE]
+    		  	SalvageYardFound:Set[TRUE]
     	      if (!${SalvageYardFound})
     	      {
                  echo "- Sorry, no bookmarks were found that matched the arguments given."
@@ -232,7 +231,7 @@ function main(... Args)
     				  			SalvagerHomeBaseFound:Set[TRUE]
     				  		}
     				   }
-    				   while ${k:Inc} <= ${MyBookmarksCount}
+    				   while ${k:Inc} <= ${MyBookmarks.Used}
 
     				   if !${SalvagerHomeBaseFound}
     				   {
@@ -269,7 +268,7 @@ function main(... Args)
     		}
 
     		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
-    		if (${MyBookmarks[${j}].SolarSystemID} != ${Me.SolarSystemID})
+    		if (!${MyBookmarks[${j}].SolarSystemID.Equal[${Me.SolarSystemID}]})
     		{
     		  echo "- Setting Destination and activating auto pilot for salvage operation ${i} (${MyBookmarks.Get[${j}].Label})."
     		  wait 5
@@ -318,7 +317,7 @@ function main(... Args)
     		wait 10
           }
         }
-       	while ${j:Inc} <= ${MyBookmarksCount}
+       	while ${j:Inc} <= ${MyBookmarks.Used}
       }
       while ${i:Inc} <= ${NumSalvageLocations}
   }
@@ -333,13 +332,13 @@ function main(... Args)
   echo "- Salvage operations completed .. returning to home base"
   if (${EVEWindow[MyShipCargo](exists)})
   	EVEWindow[MyShipCargo]:Close
-  MyBookmarksCount:Set[${EVE.GetBookmarks[MyBookmarks]}]
+  EVE:GetBookmarks[MyBookmarks]
 	j:Set[1]
 	do
 	{
 		if (${MyBookmarks.Get[${j}].Label.Find["Salvager Home Base"]} > 0)
 		{
-			if (${MyBookmarks[${j}].SolarSystemID} != ${Me.SolarSystemID})
+			if (!${MyBookmarks[${j}].SolarSystemID.Equal[${Me.SolarSystemID}]})
 			{
 				echo "- Setting destination and activating auto pilot for return to home base"
 				MyBookmarks[${j}]:SetDestination
@@ -399,7 +398,7 @@ function main(... Args)
 					   {
 					      echo " - Docking atttempt failed ... trying again."
 					      ;EVE.Bookmark[${Destination}].ToEntity:Dock
-					      Entity[CategoryID,3]:Dock
+					      Entity[CategoryID = 3]:Dock
 					      Counter:Set[0]
 					   }
 					}
@@ -408,7 +407,7 @@ function main(... Args)
 			}
 		}
 	}
-	while ${j:Inc} <= ${MyBookmarksCount}
+	while ${j:Inc} <= ${MyBookmarks.Used}
  	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
