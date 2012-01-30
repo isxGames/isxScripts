@@ -547,8 +547,7 @@ objectdef Miner
 		if ${Iter:First(exists)}
 		do
 		{
-			if ${Iter.Value.OwnerID.Equal[${Me.CharID}]
-				LaunchedDrones:Insert[${Iter.Value.ID}]
+			echo emptiness
 		}
 		while ${Iter:Next(exists)}
 	}
