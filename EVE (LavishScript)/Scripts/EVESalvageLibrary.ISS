@@ -140,7 +140,7 @@ function CheckForLoot()
 	variable int k
 	variable int j
 	
-  EVE.QueryEntities[Cans, Name =- "Cargo Container"]
+  EVE:QueryEntities[Cans, Name =- "Cargo Container"]
   
   if ${Cans.Used} > 0
   {
@@ -261,47 +261,56 @@ function CheckForLoot()
 					}
 
 				  ;; Activate Tractor Beam...
-					ContinueOn:Set[FALSE]
-					do
-					{
-						j:Set[1]
+				  if (${TractorBeams.Used} > 0)
+				  {
+						ContinueOn:Set[FALSE]
 						do
 						{
-							if (!${TractorBeams.Get[${j}].IsActive} && !${TractorBeams.Get[${j}].IsDeactivating} && !${ContinueOn})
+							j:Set[1]
+							do
 							{
-							  echo "---- Activating: ${TractorBeams.Get[${j}].ToItem.Name}"
-								TractorBeams.Get[${j}]:Click
-								
-								if ${Cans.Get[${i}].Distance} > 1300
+								if (!${TractorBeams.Get[${j}].IsActive} && !${TractorBeams.Get[${j}].IsDeactivating} && !${ContinueOn})
 								{
-									if (${AfterburnerCount} > 0)
+								  echo "---- Activating: ${TractorBeams.Get[${j}].ToItem.Name}"
+									TractorBeams.Get[${j}]:Click
+									
+									if ${Cans.Get[${i}].Distance} > 1300
 									{
-									   Cans.Get[${i}]:Approach
-									   if (${Cans.Get[${i}].Distance} > 10000)
-									   {
-										   if (${Afterburners.Get[1].IsDeactivating})
+										if (${AfterburnerCount} > 0)
+										{
+										   Cans.Get[${i}]:Approach
+										   if (${Cans.Get[${i}].Distance} > 10000)
 										   {
-										      do
-										      {
-										      	wait 5
-										      }
-										      while ${Afterburners.Get[1].IsDeactivating}
-										   }
-										   if (!${Afterburners.Get[1].IsActive})
-											   Afterburners.Get[1]:Click
-											 wait 2
-										 }
-									}							
-								}
-								ContinueOn:Set[TRUE]
-								wait 5
-							}	
-							wait 2
+											   if (${Afterburners.Get[1].IsDeactivating})
+											   {
+											      do
+											      {
+											      	wait 5
+											      }
+											      while ${Afterburners.Get[1].IsDeactivating}
+											   }
+											   if (!${Afterburners.Get[1].IsActive})
+												   Afterburners.Get[1]:Click
+												 wait 2
+											 }
+										}							
+									}
+									ContinueOn:Set[TRUE]
+									wait 5
+								}	
+								wait 2
+							}
+							while (${j:Inc} <= ${TractorBeamCount})
 						}
-						while (${j:Inc} <= ${TractorBeamCount})
+						while !${ContinueOn}
 					}
-					while !${ContinueOn}
-				
+					else
+					{
+						echo "---- ERROR: You do not appear to have any tractor beams!  Sorry..."
+						endscript EveSalvage
+						return
+					}
+					
 					do 
 					{
 						wait 20
