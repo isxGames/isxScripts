@@ -1,12 +1,9 @@
 variable(script) int MaxTargets
 variable(script) int MaxTargetRange
 variable(script) index:entity TargetedBy
-variable(script) int TargetedByCount
 variable(script) index:entity Targets
-variable(script) int TargetCount
-variable(script) int TargetThisID
+variable(script) int64 TargetThisID
 variable(script) index:entity Targeting
-variable(script) int TargetingCount
 variable(script) int MaxTargeting
 variable(script) bool Found
 
@@ -61,49 +58,49 @@ function main(... Args)
   {
     if ${Me.InStation}
       continue
-    TargetCount:Set[${Me.GetTargets[Targets]}]
-    if (${TargetCount} >= ${MaxTargets})
+    Me.GetTargets[Targets]
+    if (${Targets.Used} >= ${MaxTargets})
       continue  
   	
     ; don't target too many at the same time...
-    TargetingCount:Set[${Me.GetTargeting[Targeting]}]
-    if (${TargetingCount} >= ${MaxTargeting})				
+    Me:GetTargeting[Targeting]
+    if (${Targeting.Used} >= ${MaxTargeting})				
     {
-      echo "-- Targeting ${TargetingCount} already -- waiting..."
+      echo "-- Targeting ${Targeting.Used} already -- waiting..."
       wait 5
       continue	
     }
   	  
-    TargetedByCount:Set[${Me.GetTargetedBy[TargetedBy]}]
-    if (${TargetedByCount} > 0)
+    Me:GetTargetedBy[TargetedBy]
+    if (${TargetedBy.Used} > 0)
     {
-      ;echo "- ${TargetedByCount} hostiles found within range that are currently targeting you..."
+      ;echo "- ${TargetedBy.Used} hostiles found within range that are currently targeting you..."
       i:Set[1]
       TargetThisID:Set[0]
-      if (${TargetedByCount} > 0)
+      if (${TargetedBy.Used} > 0)
       {
         do
         {
           if (${TargetedBy.Get[${i}].Distance} > ${MaxTargetRange})
             continue
 		  				
-          TargetCount:Set[${Me.GetTargets[Targets]}]
-          if (${TargetCount} >= ${MaxTargets})
+          Me.GetTargets[Targets]
+          if (${Targets.Used} >= ${MaxTargets})
             continue  
 				  		
           k:Set[1]
           Found:Set[FALSE]
-          if (${TargetCount} > 0)
+          if (${Me.TargetCount} > 0)
           {
             do
             {
-              if (${Targets.Get[${k}].ID} == ${TargetedBy.Get[${i}].ID})
+              if (${Targets.Get[${k}].ID.Equal[${TargetedBy.Get[${i}].ID}]})
               {
                 Found:Set[TRUE]
                 break
               }
             }
-            while ${k:Inc} <= ${TargetCount}
+            while ${k:Inc} <= ${Me.TargetCount}
           }		  				
           if (${Found})
             continue	
@@ -114,23 +111,23 @@ function main(... Args)
             continue
           }
 		  			
-          if (${Entity[id,${TargetThisID}].Distance} > ${TargetedBy.Get[${i}].Distance})
+          if (${Entity[${TargetThisID}].Distance} > ${TargetedBy.Get[${i}].Distance})
           {
             Targeting:Clear
-            TargetingCount:Set[${Me.GetTargeting[Targeting]}]		
+            Me:GetTargeting[Targeting]
             j:Set[1]
             Found:Set[FALSE]
-            if (${TargetingCount} > 0)
+            if (${Targeting.Used} > 0)
             {
               do
               {
-                if (${Targeting.Get[${j}].ID} == ${TargetedBy.Get[${i}].ID})
+                if (${Targeting.Get[${j}].ID.Equal[${TargetedBy.Get[${i}].ID}]})
                 {
                   Found:Set[TRUE]
                   break
                 }
               }
-              while ${j:Inc} <= ${TargetingCount}
+              while ${j:Inc} <= ${Targeting.Used}
             }
 		  				 
             if !${Found}
@@ -140,36 +137,36 @@ function main(... Args)
             }
           }
         }
-        while ${i:Inc} <= ${TargetedByCount}
+        while ${i:Inc} <= ${Me.TargetedByCount}
       }
   		
   		
       Targeting:Clear
-      TargetingCount:Set[${Me.GetTargeting[Targeting]}]		
+      Me:GetTargeting[Targeting]	
       j:Set[1]
       Found:Set[FALSE]
-      if (${TargetingCount} > 0)
+      if (${Targeting.Used} > 0)
       {
         do
         {
-          if (${Targeting.Get[${j}].ID} == ${TargetThisID})
+          if (${Targeting.Get[${j}].ID.Equal[${TargetThisID}]})
           {
             Found:Set[TRUE]
             break
           }
         }
-        while ${j:Inc} <= ${TargetingCount}
+        while ${j:Inc} <= ${Targeting.Used}
       }
 			 				 	
       if !${Found}
       {			 	
-        if (${TargetThisID} != ${Me.ToEntity.ID})
+        if (!${TargetThisID.Equal[${Me.ToEntity.ID}]})
         {	
           ; CategoryID 11 = "Entity"
-          if (${Entity[id,${TargetThisID}].CategoryID} == 11)
+          if (${Entity[${TargetThisID}].CategoryID} == 11)
           {
-            Entity[id,${TargetThisID}]:LockTarget
-            echo "-- Targeting: ${Entity[id,${TargetThisID}].Name}..."
+            Entity[${TargetThisID}]:LockTarget
+            echo "-- Targeting: ${Entity[${TargetThisID}].Name}..."
             wait 5
           }
         }

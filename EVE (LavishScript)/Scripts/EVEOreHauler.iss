@@ -51,7 +51,7 @@ function TransferOreToHangar()
 			wait 30		
 		}
 		
-		Me.Ship:DoGetCargo[MyCargo]
+		Me.Ship:GetCargo[MyCargo]
 		
 		variable iterator ThisCargo
 		
@@ -129,7 +129,7 @@ function TransferOreToShip()
 			wait 30		
 		}
 		
-		Me.Station:DoGetHangarItems[HangarCargo]
+		Me.Station:GetHangarItems[HangarCargo]
 		
 		variable iterator ThisCargo
 		
@@ -200,7 +200,7 @@ function TransferOreToShip()
     ;;;;;;;;;;;;;;;;
     ; Now check to see if any ore is left...
     EverythingHauled:Set[TRUE]
- 		Me.Station:DoGetHangarItems[HangarCargo]		
+ 		Me.Station:GetHangarItems[HangarCargo]		
 		HangarCargo:GetIterator[ThisCargo]
 		if ${ThisCargo:First(exists)}
 		do
@@ -309,7 +309,7 @@ function main(string Origin, string Destination, string ReturnToOrigin)
 	  		while (!${EVE.Bookmark[${Destination}](exists)})	   
 	  	}	
 			;;; Set destination and then activate autopilot (if we're not in that system to begin with)    			
-   		if (${EVE.Bookmark[${Destination}].SolarSystemID} != ${Me.SolarSystemID})	  	
+   		if (!${EVE.Bookmark[${Destination}].SolarSystemID.Equal[${Me.SolarSystemID}]})  
    		{
 		  	call DoLog "- Setting autopilot destination: ${EVE.Bookmark[${Destination}]}"
 				EVE.Bookmark[${Destination}]:SetDestination
@@ -370,7 +370,7 @@ function main(string Origin, string Destination, string ReturnToOrigin)
 					   {
 					      call DoLog "- Docking atttempt failed ... trying again."
 					      ;EVE.Bookmark[${Destination}].ToEntity:Dock	
-					      Entity[CategoryID,3]:Dock
+					      Entity[CategoryID = 3]:Dock
 					      Counter:Set[0]
 					   }
 					}
@@ -428,7 +428,7 @@ function main(string Origin, string Destination, string ReturnToOrigin)
 	  		while (!${EVE.Bookmark[${Origin}](exists)})	   
 	  	}	  	
 			;;; Set destination and then activate autopilot (if we're not in that system to begin with)    			
-   		if (${EVE.Bookmark[${Origin}].SolarSystemID} != ${Me.SolarSystemID})	  	
+   		if (!${EVE.Bookmark[${Origin}].SolarSystemID.Equal[${Me.SolarSystemID}]})  	
    		{	  	
 		  	call DoLog "- Setting autopilot destination: ${EVE.Bookmark[${Origin}]}"
 				EVE.Bookmark[${Origin}]:SetDestination
@@ -489,7 +489,7 @@ function main(string Origin, string Destination, string ReturnToOrigin)
 					   {
 					      call DoLog " - Docking atttempt failed ... trying again."
 					      ;EVE.Bookmark[${Destination}].ToEntity:Dock	
-					      Entity[CategoryID,3]:Dock
+					      Entity[CategoryID = 3]:Dock
 					      Counter:Set[0]
 					   }
 					}
