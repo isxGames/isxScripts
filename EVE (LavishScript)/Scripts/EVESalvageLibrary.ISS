@@ -457,7 +457,7 @@ function DoSalvage(bool LootCans)
 			
 			do
 			{
-			 	wait 15
+			 	wait 10
 			}
 			while ${Me.TargetingCount} > 0
 			
