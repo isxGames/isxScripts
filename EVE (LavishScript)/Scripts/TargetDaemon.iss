@@ -58,7 +58,7 @@ function main(... Args)
   {
     if ${Me.InStation}
       continue
-    Me.GetTargets[Targets]
+    Me:GetTargets[Targets]
     if (${Targets.Used} >= ${MaxTargets})
       continue  
   	
@@ -84,7 +84,7 @@ function main(... Args)
           if (${TargetedBy.Get[${i}].Distance} > ${MaxTargetRange})
             continue
 		  				
-          Me.GetTargets[Targets]
+          Me:GetTargets[Targets]
           if (${Targets.Used} >= ${MaxTargets})
             continue  
 				  		

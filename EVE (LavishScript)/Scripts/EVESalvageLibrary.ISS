@@ -69,29 +69,29 @@ function GetModulesInformation(bool LootCans)
 	}
 	do
 	{
-   	if (${AllModules.Get[${k}].MaxTractorVelocity} > 0)
+   	if (${AllModules[${k}].MaxTractorVelocity} > 0)
    	{
-   	  ;echo "Adding ${AllModules.Get[${k}].ToItem.Name} to 'TractorBeams'"
-			TractorBeams:Insert[${AllModules.Get[${k}]}]
+   	  ;echo "Adding ${AllModules[${k}].ToItem.Name} to 'TractorBeams'"
+			TractorBeams:Insert[${AllModules[${k}].ID}]
 			if ${MaxTractorRange} <= 0
 			{
-				MaxTractorRange:Set[${AllModules.Get[${k}].OptimalRange}]
+				MaxTractorRange:Set[${AllModules[${k}].OptimalRange}]
 				;echo "MaxTractorRange set to: ${MaxTractorRange}"
 			}
    	}
-   	elseif (${AllModules.Get[${k}].AccessDifficultyBonus} > 0)
+   	elseif (${AllModules[${k}].AccessDifficultyBonus} > 0)
    	{
-   	  ;echo "Adding ${AllModules.Get[${k}].ToItem.Name} to 'Salvagers'"
-   	  Salvagers:Insert[${AllModules.Get[${k}]}]
+   	  ;echo "Adding ${AllModules[${k}].ToItem.Name} to 'Salvagers'"
+   	  Salvagers:Insert[${AllModules[${k}].ID}]
 			if ${MaxSalvageRange} <= 0
 			{
-				MaxSalvageRange:Set[${AllModules.Get[${k}].OptimalRange}]
+				MaxSalvageRange:Set[${AllModules[${k}].OptimalRange}]
 			}   	  
    	}
-   	elseif (${AllModules.Get[${k}].MaxVelocityBonus} > 0)
+   	elseif (${AllModules[${k}].MaxVelocityBonus} > 0)
    	{
-   	  ;echo "Adding ${AllModules.Get[${k}].ToItem.Name} to 'Afterburners'"
-   	  Afterburners:Insert[${AllModules.Get[${k}]}] 	  
+   	  ;echo "Adding ${AllModules[${k}].ToItem.Name} to 'Afterburners'"
+   	  Afterburners:Insert[${AllModules[${k}].ID}] 	  
    	}   	
 	}
 	while ${k:Inc} <= ${AllModules.Used}
@@ -100,7 +100,6 @@ function GetModulesInformation(bool LootCans)
 	SalvagerCount:Set[${Salvagers.Used}]
 	AfterburnerCount:Set[${Afterburners.Used}]
   echo "- Your ship has ${TractorBeamCount} Tractor Beams, ${SalvagerCount} Salvage Modules, and ${AfterburnerCount} Afterburner."
-
 	return
 }
 
@@ -220,7 +219,7 @@ function CheckForLoot()
 				{
 				 	wait 15
 				}
-				while ${Me.GetTargeting} > 0
+				while ${Me.TargetingCount} > 0
 				
 				wait 15
 				Cans.Get[${i}]:MakeActiveTarget
