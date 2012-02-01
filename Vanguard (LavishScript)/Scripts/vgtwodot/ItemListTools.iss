@@ -218,7 +218,7 @@ function DeleteItemList()
 	ItemList:GetSettingIterator[Iterator]
 				
 	;; iterate through ItemList
-	while ${Iterator.Key(exists)}
+	while ${Iterator.Key(exists)} && !${Me.InCombat}
 	{
 		;; we only want to delete items existing in our inventory
 		if ${Me.Inventory[exactname,${Iterator.Key}](exists)}
@@ -232,7 +232,7 @@ function DeleteItemList()
 					if ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 || ${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
 					{
 						echo "Deleting NoSell: ${Iterator.Key}"
-						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteNoSell}
+						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteNoSell} && !${Me.InCombat}
 						{
 							;; some items will not delete if you set the quantity to the reported quantity
 							Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
@@ -246,7 +246,7 @@ function DeleteItemList()
 					if !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
 					{
 						echo "Deleting Sellable: ${Iterator.Key}"
-						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteSell}
+						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteSell} && !${Me.InCombat}
 						{
 							;; some items will not delete if you set the quantity to the reported quantity
 							Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
