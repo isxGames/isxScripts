@@ -77,12 +77,11 @@ variable float HomeY
 variable int NextItemListCheck = ${Script.RunningTime}
 
 
-;; loot variables
+;; Loot variables
 variable int LootNearRange = 8
 variable int LootMaxRange = 40
 variable int LootCheckForAggroRadius = 20
 variable collection:int64 BlackListCorpse
-
 
 ;; XML variables used to store and save data
 variable settingsetref Arcane
@@ -361,9 +360,9 @@ function MandatoryChecks()
 	}
 
 	;; check only once every other second
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=3
 	{
-		if !${Me.InCombat} && ${Me.Encounter}==0
+		if !${Me.InCombat} && ${Me.Encounter}==0 && !${Me.Target.Type.Equal[AggroNPC]}
 		{
 			if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
 			{
@@ -809,9 +808,6 @@ function LootCorpse()
 {
 	if ${Me.Target(exists)} && ${Me.Target.IsDead} && ${Me.Target.Distance}<5
 	{
-		;; we do not want to retarget same corpse twice
-		BlackListCorpse:Set[${Me.Target.ID},${Me.Target.ID}]		
-
 		;; wait up to 1 second for loot to register
 		wait 10 ${Me.Target.ContainsLoot}
 
