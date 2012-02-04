@@ -37,7 +37,7 @@ atom(global) AddItemList(string AddItem)
 			LavishSettings[DeleteItem]:Clear
 			
 			;; repopulate our window
-			PopulateItemList "ItemList@Items@DipTabs@Diplo"
+			PopulateItemList "ItemList@Frame@Items@VGT@vgtwodot"
 		}
 	}
 }
@@ -81,12 +81,36 @@ atom(global) RemoveItemList(string RemoveItem)
 ;===================================================
 atom(global) PopulateItemList(string UIElementXML)
 {
-	;; build and import ItemList
+	;; Import ItemList into PopulateItem
 	LavishSettings[PopulateItem]:Clear
 	LavishSettings:AddSet[PopulateItem]
 	LavishSettings[PopulateItem]:AddSet[ItemList]
 	LavishSettings[PopulateItem]:Import[${Script.CurrentDirectory}/ItemList.xml]
+
+	;; Import ItemList into AddItem
+	LavishSettings[AddItem]:Clear
+	LavishSettings:AddSet[AddItem]
+	LavishSettings[AddItem]:AddSet[ItemList]
+	LavishSettings[AddItem]:Import[${Script.CurrentDirectory}/ItemList.xml]	
 					
+	;; Import ItemList into RemoveItem
+	LavishSettings[RemoveItem]:Clear
+	LavishSettings:AddSet[RemoveItem]
+	LavishSettings[RemoveItem]:AddSet[ItemList]
+	LavishSettings[RemoveItem]:Import[${Script.CurrentDirectory}/ItemList.xml]
+
+	;; Import ItemList into SellItem
+	LavishSettings[SellItem]:Clear
+	LavishSettings:AddSet[SellItem]
+	LavishSettings[SellItem]:AddSet[ItemList]
+	LavishSettings[SellItem]:Import[${Script.CurrentDirectory}/ItemList.xml]
+
+	;; Import ItemList into DeleteItem
+	LavishSettings[DeleteItem]:Clear
+	LavishSettings:AddSet[DeleteItem]
+	LavishSettings[DeleteItem]:AddSet[ItemList]
+	LavishSettings[DeleteItem]:Import[${Script.CurrentDirectory}/ItemList.xml]
+
 	;; set our settingsetref to ItemList
 	variable settingsetref ItemList
 	ItemList:Set[${LavishSettings[PopulateItem].FindSet[ItemList]}]
@@ -258,5 +282,28 @@ function DeleteItemList()
 		}
 		;; get next iterator
 		Iterator:Next
+	}
+}
+
+;===================================================
+;===       ATOM - Monitor Chat Event            ====
+;===================================================
+atom(script) InventoryChatEvent(string aText, string ChannelNumber, string ChannelName)
+{
+	if ${doAutoSell}
+	{
+		if ${ChannelNumber.Equal[0]}
+		{
+			if ${aText.Find[You sell]}
+			{
+				variable string FindSell
+				FindSell:Set[${aText.Mid[9,${Math.Calc[${aText.Length}-9]}]}]
+				if ( ${FindSell.Length} > 1 )
+				{
+					AddItemList "${FindSell}"
+					PopulateItemList "ItemList@Frame@Items@VGT@vgtwodot"
+				}
+			}
+		}
 	}
 }

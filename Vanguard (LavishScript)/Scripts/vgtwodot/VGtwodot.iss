@@ -11,6 +11,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20120203 (Zandros)
+; * Minor adjustments improving Item Management
+;
 ; 20120114 (Zandros)
 ; * Added Accept Rez, added return to safe spot if no mobs around, added AutoSell and AutoDelete
 ;
@@ -278,7 +281,9 @@ function Initialize()
 
 	;; Add in our events
 	Event[VG_onPawnStatusChange]:AttachAtom[PawnStatusChange]
-	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]	
+	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
+	Event[VG_OnIncomingText]:AttachAtom[InventoryChatEvent]	
+	
 }	
 
 	
@@ -360,7 +365,7 @@ function MandatoryChecks()
 	}
 
 	;; check only once every other second
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=3
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=1
 	{
 		if !${Me.InCombat} && ${Me.Encounter}==0 && !${Me.Target.Type.Equal[AggroNPC]}
 		{
