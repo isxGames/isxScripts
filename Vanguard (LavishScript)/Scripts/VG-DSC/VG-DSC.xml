@@ -4,7 +4,7 @@
 	<!-- Font -->
 	<Template Name="VG.Font">
 		<Name>Tahoma</Name>
-		<Size>12</Size>
+		<Size>13</Size>
 		<Color>FF100000</Color>
 	</Template>
 	<Template Name="VG.BoldFont" Template="VG.Font">
@@ -85,14 +85,7 @@
 		</TitleBar>
 		<!-- Nothing fancy for Window Client -->
 		<Client Template="VG.Window.Client" />
-<!--		
-		<Client Template="VG.Window.Client">
-			<Y>18</Y>
-			<Height>r18</Height>
-			<Texture Template="VG.TabControl.FrameTexture" />
-		</Client>
 
--->		
 		<Children>
 			<!-- Tab: (Tabs) -->
 			<TabControl Name="Tabs" Template="VG.Tabcontrol">
@@ -100,19 +93,45 @@
 				<Y>5</Y>
 				<Font>
 					<Name>Times New Roman</Name>
-					<Size>10</Size>
+					<Size>12</Size>
 				</Font>
-				<OnSelect>
-				</OnSelect>
 				<TabHeight>15</TabHeight>
 				<TabBorder>3</TabBorder>
 				<Height>72%</Height>
 				<Width>97%</Width>
+				<OnSelect>
+					switch ${This.SelectedTab}
+					{
+						Case Main
+							UIElement[VG-DSC]:SetWidth[250]
+							UIElement[VG-DSC]:SetHeight[340]
+							break
+						Case Mobs
+							UIElement[VG-DSC]:SetWidth[400]
+							UIElement[VG-DSC]:SetHeight[640]
+							break
+						Case Misc
+							UIElement[VG-DSC]:SetWidth[280]
+							UIElement[VG-DSC]:SetHeight[280]
+							break
+						Case Loot
+							UIElement[VG-DSC]:SetWidth[280]
+							UIElement[VG-DSC]:SetHeight[280]
+							break
+						Case Items
+							UIElement[VG-DSC]:SetWidth[320]
+							UIElement[VG-DSC]:SetHeight[300]
+							break
+						Case Hunt
+							UIElement[VG-DSC]:SetWidth[250]
+							UIElement[VG-DSC]:SetHeight[340]
+							break
+					}
+				</OnSelect>
 				<Tabs>
 
 					<!-- Tab Name: (Main) -->
 					<Tab Name="Main">
-
 						<Text Name="Text-StartAttack" Template="VG.BoldText">
 							<X>3%</X>
 							<Y>3%</Y>
@@ -153,14 +172,13 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="FeignDeathTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>18.5%</Y>
 							<Width>200</Width>
 							<Height>15</Height>
 							<Alignment>Left</Alignment>
-							<Text>Feign Death</Text>
+							<Text>Feign Death or Encounters = </Text>
 						</Text>
 						<Textentry Name="FeignDeathPct" Template="VG.TextEntry">
 							<X>3%</X>
@@ -186,7 +204,30 @@
 								}
 							</OnChange>
 						</Textentry>
-					
+						<Textentry Name="FeignDeathEncounters" Template="VG.TextEntry">
+							<X>82%</X>
+							<Y>18%</Y>
+							<Width>35</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.FeignDeathEncounters}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.FeignDeathEncounters:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.FeignDeathEncounters:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
 						<Text Name="RacialAbilityTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>26.5%</Y>
@@ -219,7 +260,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="Crit_HealTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>34.5%</Y>
@@ -252,7 +292,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="BreathOfLifeTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>42.5%</Y>
@@ -285,7 +324,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="KissOfHeavenTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>50.5%</Y>
@@ -318,7 +356,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="LaoJinFlashTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>58.5%</Y>
@@ -351,7 +388,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="Crit_DPS_RaJinFlareTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>66.5%</Y>
@@ -384,7 +420,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
 						<Text Name="StartAttackTxt" Template="VG.Text">
 							<X>21%</X>
 							<Y>74.5%</Y>
@@ -417,11 +452,6 @@
 								}
 							</OnChange>
 						</Textentry>
-					
-					
-					
-					
-
 						<checkbox Name="doUseAbilities" Template="VG.GreenCheckbox">
 							<visible>0</visible>
 							<X>3%</X>
@@ -458,7 +488,6 @@
 								Script[VG-DSC].VariableScope.doAutoAttack:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-						
 						<checkbox Name="doRangeAttack" Template="VG.GreenCheckbox">
 							<visible>0</visible>
 							<X>3%</X>
@@ -531,7 +560,6 @@
 								Script[VG-DSC].VariableScope.doSprint:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-
 						<Commandbutton Name="Button-Set Tank" Template="VG.GreenCommandButton">
 							<visible>1</visible>
 							<X>3%</X>
@@ -564,7 +592,6 @@
 								}
 							</OnLeftClick>
 						</Commandbutton>
-
 						<Commandbutton Name="Button-Set Follow" Template="VG.GreenCommandButton">
 							<visible>1</visible>
 							<X>3%</X>
@@ -598,12 +625,438 @@
 							</OnLeftClick>
 						</Commandbutton>
 					</Tab>
+
+					<!-- Tab Name: (Loot) -->
+					<Tab name='Loot'>
+						<checkbox Name='doLoot' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>10%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Loot corpses</Text>
+							<AutoTooltip>  Loot corpses that contains loot </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doLoot}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doLoot:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="LootNearRange" Template="VG.TextEntry">
+							<X>6%</X>
+							<Y>20%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.LootNearRange}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.LootNearRange:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[99]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.LootNearRange:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-LootNearRange" Template="VG.Text">
+							<X>23%</X>
+							<Y>20.2%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Near Range to must loot</Text>
+						</Text>
+						<Textentry Name="LootMaxRange" Template="VG.TextEntry">
+							<X>6%</X>
+							<Y>30%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.LootMaxRange}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.LootMaxRange:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[99]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.LootMaxRange:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-LootMaxRange" Template="VG.Text">
+							<X>23%</X>
+							<Y>30.2%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Max Range to scan for loot</Text>
+						</Text>
+						<Textentry Name="LootCheckForAggroRadius" Template="VG.TextEntry">
+							<X>6%</X>
+							<Y>40%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.LootCheckForAggroRadius}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.LootCheckForAggroRadius:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[99]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.LootCheckForAggroRadius:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-LootCheckForAggroRadius" Template="VG.Text">
+							<X>23%</X>
+							<Y>40.2%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<Alignment>Left</Alignment>
+							<Text>Radius around corpse to scan for mobs</Text>
+						</Text>
+					</Tab>
+
+					<!-- Tab Name: (Items) -->
+					<Tab name='Items'>
+						<checkbox Name='doAutoSell' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3.5%</X>
+							<Y>6%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Auto Sell</Text>
+							<AutoTooltip>  Sell items in list when targetting a Merchant </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doAutoSell}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doAutoSell:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doAutoDecon" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>50%</X>
+							<Y>6%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Auto Decon</Text>
+							<AutoTooltip> Use Decon Kit to decon your junk </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doAutoDecon}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doAutoDecon:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doDeleteSell' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3.5%</X>
+							<Y>16%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Delete Sellable Items</Text>
+							<AutoTooltip>  Delete all sellable items in list</AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doDeleteSell}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doDeleteSell:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name="doDeleteNoSell" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>50%</X>
+							<Y>16%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Delete NonSellable Items</Text>
+							<AutoTooltip> Delete Unique, No Trade, No Rent, No Sell, and Quest items in list</AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doDeleteNoSell}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doDeleteNoSell:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="ItemEntry" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>24%</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+						</Textentry>
+						<CommandButton Name="ItemEntryButton" Template="VG.GreenCommandButton">
+							<X>87%</X>
+							<Y>23%</Y>
+							<Width>10%</Width>
+							<Height>20</Height>
+							<Text>Add</Text>
+							<Alignment>Center</Alignment>
+							<OnLeftClick>
+								AddItemList "${UIElement[ItemEntry@Items@Tabs@VG-DSC].Text}"
+								PopulateItemList "ItemList@Items@Tabs@VG-DSC"
+								UIElement[ItemEntry@Items@Tabs@VG-DSC]:SetText[]
+							</OnLeftClick>
+						</CommandButton>
+						<Listbox Name="ItemList" Template="VG.ListBox">
+							<X>3%</X>
+							<Y>33%</Y>
+							<Width>94%</Width>
+							<Height>65%</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>Text</Sort>
+							<OnLoad>
+								PopulateItemList "ItemList@Items@Tabs@VG-DSC"
+							</OnLoad>
+							<OnRightClick>
+								RemoveItemList "${This.SelectedItem}"
+								This.SelectedItem:Remove
+							</OnRightClick>
+						</Listbox>
+					</Tab>
+
+					<!-- Tab Name: (Hunt) -->
+					<Tab name='Hunt'>
+						<checkbox Name='doHunt' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>5%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Auto Hunting</Text>
+							<AutoTooltip>  Begin hunting for targets to kill </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doHunt}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doHunt:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doLineOfSight' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>13%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Line of Sight Only</Text>
+							<AutoTooltip>  Target only those that you have a direct line of sight to </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doLineOfSight}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doLineOfSight:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doCheckForObstacles' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>3%</X>
+							<Y>21%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Check for obstacles</Text>
+							<AutoTooltip>  Check for any obstacles while moving around </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doCheckForObstacles}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doCheckForObstacles:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doCheckForAdds' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>3%</X>
+							<Y>29%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Check for Adds</Text>
+							<AutoTooltip> try not to attack targets with adds next to it </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doCheckForAdds}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doCheckForAdds:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="PullDistance" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>37%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.PullDistance}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.PullDistance:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.PullDistance:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-PullDistance" Template="VG.Text">
+							<X>18%</X>
+							<Y>37.3%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Pull Distance</Text>
+						</Text>
+						<Textentry Name="MinimumLevel" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>45%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.MinimumLevel}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.MinimumLevel:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.MinimumLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-MinimumLevel" Template="VG.Text">
+							<X>18%</X>
+							<Y>45.3%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Minimum level of target</Text>
+						</Text>
+						<Textentry Name="MaximumLevel" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>53%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.MaximumLevel}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.MaximumLevel:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.MaximumLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-MaximumLevel" Template="VG.Text">
+							<X>18%</X>
+							<Y>53.3%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Minimum level of target</Text>
+						</Text>
+						<button name='SetWaypoint' Template='VG.GreenCommandButton'>
+							<X>3%</X>
+							<Y>65%</Y>
+							<Width>45%</Width>
+							<Height>20</Height>
+							<AutoTooltip>Click here to set Waypoints</AutoTooltip>
+							<Text>Add Waypoint</Text>
+							<OnLeftClick>
+								Script[VG-DSC]:ExecuteAtom[AddWayPoint]
+							</OnLeftClick>
+						</button>
+
+						<button name='ClearWayPoints' Template='VG.GreenCommandButton'>
+							<X>52%</X>
+							<Y>65%</Y>
+							<Width>45%</Width>
+							<Height>20</Height>
+							<AutoTooltip>Clear All Waypoints</AutoTooltip>
+							<Text>Clear Waypoints</Text>
+							<OnLeftClick>
+								Script[VG-DSC]:ExecuteAtom[ClearWayPoints]
+							</OnLeftClick>
+						</button>
+
+
+
+					</Tab>
+
+
 				</Tabs>
 			</TabControl>
 
-
-			<!-- Outside the tab: (Tabs) -->
-			
+			<!-- Outside the tab -->
 			
 			<Text Name="ActionTxt" Template="VG.BoldText">
 				<visible>1</visible>
@@ -687,6 +1140,7 @@
 					VGExecute /can \"Tingling Sensation\"
 				</OnLeftClick>
 			</Commandbutton>
+			
 		</Children>
 	</Window>
 </ISUI>

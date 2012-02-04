@@ -24,6 +24,13 @@ atom(script) FindAction()
 		return
 	}
 
+	;; we must have chunked so reload our settings
+	if !${CurrentChunk.Equal[${Me.Chunk}]}
+	{
+		Action:Set[WeChunked]
+		return
+	}
+	
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextFormCheck}]}/1000]}>8
 	{
 		;;;;;;;;;;
@@ -86,6 +93,15 @@ atom(script) FindAction()
 			return
 		}
 	}
+
+	;;;;;;;;;;
+	;; Immediately loot the corpse if it is within looting distance.  If it
+	;; is outside looting range then the Idle routine will manage looting
+	if ${doLoot} && ${Me.Target(exists)} && ${Me.Target.IsDead} && ${Me.Target.Distance}<5
+	{
+		Action:Set[LootCorpse]
+		return
+	}
 	
 	;;;;;;;;;;
 	;; We need to ensure that we always assist the tank or change target 
@@ -100,6 +116,7 @@ atom(script) FindAction()
 			Action:Set[KissOfHeaven]
 			return
 		}
+		
 		
 		;; Assist the tank
 		if ${Pawn[Name,${Tank}](exists)} && !${Tank.Find[${Me.FName}]}
@@ -167,7 +184,7 @@ atom(script) FindAction()
 
 		;;;;;;;;;;
 		;; Feign Death for 3 seconds if my health is below 20%, then heal self
-		if ${Me.HealthPct}<${FeignDeathPct}
+		if ${Me.HealthPct}<${FeignDeathPct} || ${Me.Encounter}>=${FeignDeathEncounters}
 		{
 			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].IsReady}
 			{
@@ -263,6 +280,14 @@ atom(script) FindAction()
 				return
 			}
 		}
+		
+		;;;;;;;;;;
+		;; stay within melee distance
+		if ${Me.Target.Distance}<1 || ${Me.Target.Distance}>2
+		{
+			Action:Set[MoveToMeleeDistance]
+			return
+		}
 
 		;;;;;;;;;;
 		;; The following are our DPS/DAMAGE routines
@@ -309,29 +334,35 @@ atom(script) FindAction()
 			;; within 10m it increases damage and healing for 5 minutes
 			if ${Me.Ability[${FallingPetal}].TriggeredCountdown} || ${Me.Ability[${PetalSplitsEarth}].TriggeredCountdown} || ${Me.Ability[${WhiteLotusStrike}].TriggeredCountdown}
 			{
+				;; if you do not have the updated ability then this routine applies
 				if  ${Me.Ability[${FallingPetal}](exists)} && !${Me.Ability[${PetalSplitsEarth}](exists)}
 				{
-					if (!${Me.Effect[${FallingPetal}](exists)} || ${Me.Ability[${FallingPetal}].TimeRemaining}<60)
+					if (!${Me.Effect[${FallingPetal}](exists)} || ${Me.Effect[${FallingPetal}].TimeRemaining}<60)
 					{
-						echo FallingPetal Ability=${Me.Ability[${FallingPetal}](exists)}, Exist=${Me.Effect[${FallingPetal}](exists)}, TimeRemaining=${Me.Ability[${FallingPetal}].TimeRemaining}
+						;echo FallingPetal Ability=${Me.Ability[${FallingPetal}](exists)}, Exist=${Me.Effect[${FallingPetal}](exists)}, TimeRemaining=${Me.Effect[${FallingPetal}].TimeRemaining}
+						ExecutedAbility:Set[${FallingPetal}]
 						Action:Set[Crit_PetalSeries]
 						return
 					}
 				}
+				;; this is the updated ability
 				if ${Me.Ability[${PetalSplitsEarth}](exists)}
 				{
-					if (!${Me.Effect[${PetalSplitsEarth}](exists)} || ${Me.Ability[${PetalSplitsEarth}].TimeRemaining}<60)
+					if (!${Me.Effect[${PetalSplitsEarth}](exists)} || ${Me.Effect[${PetalSplitsEarth}].TimeRemaining}<60)
 					{
-						echo PetalSplitsEarth Ability=${Me.Ability[${PetalSplitsEarth}](exists)}, Exist=${Me.Effect[${PetalSplitsEarth}](exists)}, TimeRemaining=${Me.Ability[${PetalSplitsEarth}].TimeRemaining}
+						;echo PetalSplitsEarth Ability=${Me.Ability[${PetalSplitsEarth}](exists)}, Exist=${Me.Effect[${PetalSplitsEarth}](exists)}, TimeRemaining=${Me.Effect[${PetalSplitsEarth}].TimeRemaining}
+						ExecutedAbility:Set[${PetalSplitsEarth}]
 						Action:Set[Crit_PetalSeries]
 						return
 					}
 				}
+				;; this doesn't change... it is the second set of the series
 				if ${Me.Ability[${WhiteLotusStrike}](exists)}
 				{
-					if (!${Me.Effect[${WhiteLotusStrike}](exists)} || ${Me.Ability[${WhiteLotusStrike}].TimeRemaining}<60)
+					if (!${Me.Effect[${WhiteLotusStrike}](exists)} || ${Me.Effect[${WhiteLotusStrike}].TimeRemaining}<60)
 					{
-						echo WhiteLotusStrike Ability=${Me.Ability[${WhiteLotusStrike}](exists)}, Exist=${Me.Effect[${WhiteLotusStrike}](exists)}, TimeRemaining=${Me.Ability[${WhiteLotusStrike}].TimeRemaining}
+						;echo WhiteLotusStrike Ability=${Me.Ability[${WhiteLotusStrike}](exists)}, Exist=${Me.Effect[${WhiteLotusStrike}](exists)}, TimeRemaining=${Me.Effect[${WhiteLotusStrike}].TimeRemaining}
+						ExecutedAbility:Set[${WhiteLotusStrike}]
 						Action:Set[Crit_PetalSeries]
 						return
 					}
@@ -353,13 +384,13 @@ atom(script) FindAction()
 			}
 			if !${Me.Effect["Endowment of Enmity"](exists)} && ${Me.Ability["Endowment of Enmity"](exists)}
 			{
-				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady}
+				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
 				{
 					Action:Set[Endowment_Enmity]
 					return
 				}
 			}
-			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)}
+			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}<30
 			{
 				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 				{
@@ -379,7 +410,6 @@ atom(script) FindAction()
 				}
 				if ${Me.Stat[Adventuring,Jin]}>12 && !${Me.Effect[${KissOfTorment}](exists)} && ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && ${Me.Ability[${KissOfTorment}].TimeRemaining}==0
 				{
-					echo KissOfTorment Ability=${Me.Ability[${KissOfTorment}](exists)}, Exist=${Me.Effect[${KissOfTorment}](exists)}, TimeRemaining=${Me.Ability[${KissOfTorment}].TimeRemaining}
 					Action:Set[Crit_KissOfTorment]
 					return
 				}
@@ -416,12 +446,17 @@ atom(script) FindAction()
 
 			;;;;;;;;;;
 			;; These do some serious damage so execute these whenever possible!
+			if !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
+			{
+				Action:Set[Crit_DPS]
+				return
+			}
 			if !${Me.Effect[${TouchOfDiscord}](exists)} && ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} && ${Me.Ability[${TouchOfDiscord}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
 			}
-			if !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
+			if !${Me.Effect[${GraspOfDiscord}](exists)} && ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} && ${Me.Ability[${GraspOfDiscord}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
@@ -441,7 +476,7 @@ atom(script) FindAction()
 			;; Use Ra'Jin Flare and turn Melee Attack Back On... Ranged Damage
 			if ${Me.Encounter}<2 && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct}
 			{
-				if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+				if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]} && ${doRangedWeapon}
 				{
 					Action:Set[RaJinFlare]
 					return
@@ -449,15 +484,11 @@ atom(script) FindAction()
 			}
 			
 			;;;;;;;;;;
-			;; Rebuild our Jin and do some healing
-			if ${Me.Encounter}>=2 || ${Me.Stat[Adventuring,Jin]}<8 || ${Me.HealthPct}<${Crit_DPS_RaJinFlarePct}
+			;; lets build out health and jin by repeating Endowement of Life
+			if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 			{
-				;; We used the DPS Crit Chain so lets build out health and jin by repeating Endowement of Life
-				if ${Me.Ability[${BlessedWind}].IsReady}
-				{
-					Action:Set[Endowment_Life]
-					return
-				}
+				Action:Set[Endowment_Life]
+				return
 			}
 		}
 	}

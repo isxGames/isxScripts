@@ -17,7 +17,19 @@
 ;    well as a visual display to show you the Actio being performed and the
 ;    Ability being executed.  No routines for saving your settings to file.
 ;
-
+; 20120128 (Zandros)
+;  * Added saving variables; added Item List Manager which will allow you to 
+;    delete non-sellable items (trash), sell items for profit, and decon items; also,
+;    added basic looting routines
+;
+; 20120130 (Zandros)
+;  * Implementing my version of LavishNav so that it can map an area and move around
+;    obstacles.  This will be used for hunting.
+;
+; 20120203 (Zandros)
+;  * Fixed many things such as:  what to do if you run out of Shurikens, what if the
+;    target push you out of melee range, what if you get too many Encounters....
+;
 ;===================================================
 ;===            VARIABLES                       ====
 ;===================================================
@@ -27,17 +39,19 @@ variable int i
 variable bool isRunning = TRUE
 variable bool isPaused = FALSE
 variable bool isSitting = FALSE
-variable int NextFormCheck = ${Script.RunningTime}
-variable string LastAction = Nothing
+variable bool doTankEndowementOfLife = TRUE
+variable bool doRangedWeapon = TRUE
 variable string Tank
 variable string temp
+variable string LastAction = Nothing
 variable int EndowmentStep = 1
-variable bool doTankEndowementOfLife = TRUE
+variable int NextFormCheck = ${Script.RunningTime}
+variable int NextItemListCheck = ${Script.RunningTime}
 
-
-;; UI/Script setting variables
+;; UI - Main Tab
 variable int ChangeFormPct = 60
 variable int FeignDeathPct = 20
+variable int FeignDeathEncounters = 3
 variable int RacialAbilityPct = 30
 variable int Crit_HealPct = 40
 variable int BreathOfLifePct = 50
@@ -48,6 +62,41 @@ variable int StartAttack = 100
 variable string ExecutedAbility = None
 variable string TargetsTarget = "No Target"
 
+
+;; UI - Loot Tab
+variable bool doLoot = FALSE
+variable int LootNearRange = 8
+variable int LootMaxRange = 40
+variable int LootCheckForAggroRadius = 20
+variable collection:int64 BlackListCorpse
+
+
+;; UI - Hunt Tab
+variable bool doHunt = FALSE
+variable bool doLineOfSight = TRUE
+variable bool doCheckForAdds = FALSE
+variable bool doCheckForObstacles = TRUE
+variable int PullDistance = 22
+variable int MinimumLevel = ${Me.Level}
+variable int MaximumLevel = ${Me.Level}
+variable int DifficultyLevel = 2
+variable bool NeedMoreEnergy = FALSE
+
+
+;; Navigator variables
+variable int TotalWayPoints = 0
+variable int CurrentWayPoint = 0
+variable bool doRandomWayPoints = FALSE
+variable bool CountUp = FALSE
+variable bool doRestartToWP1 = FALSE
+variable string CurrentChunk 
+
+
+
+;; XML variables used to store and save data
+variable settingsetref Settings
+variable settingsetref MyPath
+
 ;; to be added
 variable bool doAutoAttack = FALSE
 variable bool doRangedAttack = FALSE
@@ -57,13 +106,18 @@ variable bool doSprint = FALSE
 variable bool doFollow = FALSE
 variable int Speed = 100
 
-
 ;; Immunity variables
 variable bool doPhysical = TRUE
 variable bool doSpiritual = TRUE
 
 ;; Includes
 #include ./VG-DSC/Includes/FindAction.iss
+#include ./VG-DSC/Includes/ItemListTools.iss
+#include ./VG-DSC/Includes/FindTarget.iss
+#include ./VG-DSC/Includes/Obj_Navigator.iss
+
+;; initialize our objects
+variable(global) Obj_Navigator Navigate
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -86,11 +140,10 @@ function main()
 		}
 
 		;;;;;;;;;;
-		;; Slow this script down to 10 checks per second.  By having this wait here
+		;; Slow this script down.  By having this wait here
 		;; will improve FPS and allow AutoAttack to register.
-		wait 1
-		
-			
+		wait .5
+
 		;;;;;;;;;;
 		;; Default action will be "Idle"
 		Action:Set[Idle]
@@ -104,40 +157,10 @@ function main()
 		}
 		
 		;;;;;;;;;;
-		;; Update the display that shows the Acttion of what we are doing
-		;; and this also makes sure we don't repeatedly show the LastAction
-		if ${LastAction.NotEqual[${Action}]}
-		{
-			LastAction:Set[${Action}]
-			EchoIt "Action=${Action}"
-			if ${isSitting}
-			{
-				VGExecute /stand
-				wait 5
-				isSitting:Set[FALSE
-			}
-		}
-		
-		;;;;;;;;;;
-		;; Update the display that shows the Target's Target
-		if ${Me.Target(exists)}
-		{
-			temp:Set[${Me.ToT.Name}]
-			if ${temp.Equal[NULL]}
-			{
-				TargetsTarget:Set[No Target]
-			}
-			else
-			{
-				TargetsTarget:Set[${Me.ToT.Name}]
-			}
-		}
-
-		;;;;;;;;;;
 		;; The variable "Action" is set by the FindAction routine which is
 		;; the name of the routine we want to call.  Doing it this way will
 		;; cut back lots of coding as well as easier tracking of what we are doing
-		call ${Action}
+		call PerformAction "${Action}"
 	}
 }
 
@@ -149,8 +172,16 @@ function atexit()
 	;;;;;;;;;;
 	;; Unload our UI
 	ui -unload "${Script.CurrentDirectory}/VG-DSC.xml"
+
+	;;;;;;;;;;
+	;; Save our XML Settings
+	SaveXMLSettings
 	
-	EchoIt "Stopped Tools Script"
+	;;;;;;;;;;
+	;; clear the VG-DSC settings from memory
+	LavishSettings[VG-DSC]:Clear
+	
+	echo "[${Time}][VG-DSC]: Stopped Tools Script"
 }
 
 ;===================================================
@@ -159,6 +190,46 @@ function atexit()
 atom(script) EchoIt(string aText)
 {
 	echo "[${Time}][VG-DSC]: ${aText}"
+}
+
+;===================================================
+;===      This will execute the "Action"        ====
+;===================================================
+function PerformAction(string Action)
+{
+	;;;;;;;;;;
+	;; Update the display that shows the Action of what we are doing
+	;; and this also makes sure we don't repeatedly show the LastAction
+	if ${LastAction.NotEqual[${Action}]}
+	{
+		LastAction:Set[${Action}]
+		EchoIt "Action=${Action}"
+		if ${isSitting}
+		{
+			VGExecute /stand
+			wait 5
+			isSitting:Set[FALSE
+		}
+	}
+	
+	;;;;;;;;;;
+	;; Update the display that shows the Target's Target
+	if ${Me.Target(exists)}
+	{
+		temp:Set[${Me.ToT.Name}]
+		if ${temp.Equal[NULL]}
+		{
+			TargetsTarget:Set[No Target]
+		}
+		else
+		{
+			TargetsTarget:Set[${Me.ToT.Name}]
+		}
+	}
+	
+	;;;;;;;;;;
+	;; The actual command
+	call ${Action}
 }
 
 ;===================================================
@@ -187,7 +258,97 @@ function Idle()
 			}
 		}
 	}
+	
+	if !${isPaused}
+	{
+		;;;;;;;;;;
+		;; check only once every other second
+		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
+		{
+			if !${Me.InCombat} && ${Me.Encounter}==0
+			{
+				if ${doAutoDecon}
+				{
+					call AutoDecon
+				}
+				if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
+				{
+					call SellItemList
+				}
+				if ${doDeleteSell} || ${doDeleteNoSell}
+				{	
+					call DeleteItemList	
+				}
+			}
+			NextItemListCheck:Set[${Script.RunningTime}]
+		}
+		
+		;;;;;;;;;;
+		;; Loot Something
+		if ${doLoot}
+		{
+			call LootSomething	
+		}
+		
+		if ${doHunt}
+		{
+			;; we are dead so stop hunting
+			if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
+			{
+				doHunt:Set[False]
+				return
+			}
+			
+			;; go find an AggroNPC that is within 80 meters
+			if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat}
+			{
+				;; echo that we need more energy
+				if ${Me.EnergyPct}<50 && !${NeedMoreEnergy}
+				{
+					NeedMoreEnergy:Set[TRUE]
+					vgecho RESTING FOR MORE ENERGY BEFORE HUNTING
+					return
+				}
+					
+				;; some sorcs need mana to fight, especially back to back fighing
+				if ${Me.EnergyPct}>=50
+				{
+					;; reset our flag
+					NeedMoreEnergy:Set[FALSE]
+
+					call FindTarget 80
+					if !${Me.Target(exists)}
+					{
+						call MoveToWayPoint
+					}
+				}
+			}
+			
+			;; Move Closer to target
+			if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99
+			{
+				if ${doRangedWeapon}
+				{
+					call FaceTarget
+					call MoveCloser ${PullDistance}
+					wait 20 ${Me.Ability[${RaJinFlare}].IsReady}
+					vgecho RajinFlare=${Me.Ability[${RaJinFlare}].IsReady}, TargetDistance=${Me.Target.Distance}
+					if !${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Target.Distance}<=${PullDistance}
+					{
+						call MoveCloser 3
+						call FaceTarget
+					}
+				}
+				if !${doRangedWeapon} && ${PullDistance}>4 
+				{
+					call MoveCloser 3
+					call FaceTarget
+				}
+			}
+		}
+	}
 }
+
 ;===================================================
 ;===   Setup the UI, load variables, et cetera  ====
 ;===================================================
@@ -206,7 +367,10 @@ function Initialize()
 		echo "Unable to load ISXVG, exiting script"
 		endscript VG-DSC
 	}
-	wait 30 ${Me.Chunk(exists)}
+	wait 30 ${Me.Chunk(exists)} && ${Me.FName(exists)}
+	CurrentChunk:Set[${Me.Chunk}]
+
+
 	EchoIt "Started VG-DSC Script"
 	
 	;;;;;;;;;;
@@ -269,15 +433,20 @@ function Initialize()
 	SetHighestAbility "VoidHand" "Void Hand"
 	SetHighestAbility "WhiteLotusStrike" "White Lotus Strike"
 	SetHighestAbility "WisdomOfTheGrasshopper" "Wisdom of the Grasshopper"
-
-	;; abilities I do not have
+	;; upgraded abilities
 	SetHighestAbility "ResilientGrasshopper" "Resilient Grasshopper"
 	SetHighestAbility "ConcordantSplendor" "Concordant Splendor"
 	SetHighestAbility "PetalSplitsEarth" "Petal Splits Earth"
+	SetHighestAbility "LaoJinFlash" "Lao'Jin Flash"
+	;; abilities I do not have
 	SetHighestAbility "FocusedSonicBlast" "Focused Sonic Blast"
 	SetHighestAbility "BlessedWhirl" "Blessed Whirl"
 	SetHighestAbility "BreathOfLife" "Breath of Life"
-	SetHighestAbility "LaoJinFlash" "Lao'Jin Flash"
+
+
+	;;;;;;;;;;
+	;; this will load all our settings
+	LoadXMLSettings
 	
 	;;;;;;;;;;
 	;; Reload the UI and draw our Tool window,putting a waitframe here
@@ -286,7 +455,10 @@ function Initialize()
 	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
 	waitframe
 	ui -reload -skin VGSkin "${Script.CurrentDirectory}/VG-DSC.xml"
-	waitframe	
+	UIElement[VG-DSC]:SetWidth[250]
+	UIElement[VG-DSC]:SetHeight[340]
+	waitframe
+	
 	
 	;;;;;;;;;;
 	;; We only need to check our inventory one time for this item
@@ -308,6 +480,66 @@ function Initialize()
 	EchoIt "-----------------------"
 	EchoIt "Tank is set to ${Tank}"
 	vgecho "Tank is set to ${Tank}"
+	
+	
+	;;;;;;;;;;
+	;; Enable Events - this event is automatically removed at shutdown
+	Event[VG_OnIncomingText]:AttachAtom[InventoryChatEvent]	
+	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
+	
+	;;;;;;;;;;
+	;; Turn mapping ON
+	Navigate:StartMapping
+}
+
+;===================================================
+;===           Handles chunking                 ====
+;===================================================
+function WeChunked()
+{
+	;;;;;;;;;;
+	;; Handle chunking and loading new chunk data  
+	if !${CurrentChunk.Equal[${Me.Chunk}]}
+	{
+		wait 80 ${Me.Chunk(exists)}
+
+		if ${Me.Chunk(exists)}
+		{
+			;; we chunked
+			EchoIt "We chunked from ${CurrentChunk} to ${Me.Chunk}"
+
+			;; update current chunk
+			CurrentChunk:Set[${Me.Chunk}]
+			
+			;; load our new settings
+			EchoIt "Loading current chunk data"
+			LoadXMLSettings
+		}
+	}
+}
+
+;===================================================
+;===         Move to melee distance             ====
+;===================================================
+function MoveToMeleeDistance()
+{
+	if ${Me.TargetHealth}<99 && ${Me.Target.Distance}<15
+	{
+		VGExecute /walk
+		call FaceTarget
+		call MoveCloser 2
+		call FaceTarget
+		if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+		{
+			while ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+			{
+				Me.Target:Face
+				VG:ExecBinding[movebackward]
+			}
+			VG:ExecBinding[movebackward,release]
+		}
+		VGExecute /run
+	}
 }
 
 ;===================================================
@@ -422,19 +654,26 @@ function TargetEncounter()
 ;===================================================
 function PullTarget()
 {
-	if ${Me.Target.Distance}<=30 && ${Me.Ability[${RaJinFlare}].IsReady}
+	doRangedWeapon:Set[TRUE]
+	call RaJinFlare
+	if ${Return}
 	{
-		call RaJinFlare
+		wait 10
+	}
+	;; doRangedWeapon is triggered if we run out of Shurikens
+	if ${Me.Target.Distance}<=25 && !${doRangedWeapon}
+	{
+		call LeechsGrasp
 		if ${Return}
 		{
 			wait 10
-			if ${Me.Encounter}>1
-			{
-				ExecutedAbility:Set[We pulled too many]
-				EchoIt "We pulled too many"
-				call FeignDeath
-			}
 		}
+	}
+	if ${Me.Encounter}>=${FeignDeathEncounters}
+	{
+		ExecutedAbility:Set[We pulled too many]
+		EchoIt "We pulled too many"
+		call FeignDeath
 	}
 }
 
@@ -445,13 +684,15 @@ function FeignDeath()
 {
 	;; get our HOT up
 	call KissOfHeaven
+
 	;; pretend we are dead
+	wait 10 ${Me.Ability[${FeignDeath}].IsReady}
 	call UseAbility "${FeignDeath}"
 	if ${Return}
 	{
-		;; wait 3 seconds
+		;; wait 5 seconds
 		VGExecute /cleartargets
-		wait 30
+		wait 50
 		
 		;; start healing self if we need it
 		if ${Me.HealthPct}<80
@@ -747,7 +988,7 @@ function Endowment_Enmity()
 	;;;;;;;;;;
 	;; Executing a series of abilities generates a beneficial buff:  increase 10% damage for self
 	;; this will ignore everything else while it is in this loop thus we risk dying or the tank might die
-	if !${Me.Effect[Endowment of Enmity](exists)} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady}
+	if !${Me.Effect[Endowment of Enmity](exists)} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
 	{
 		if ${EndowmentStep} == 1
 		{
@@ -778,23 +1019,36 @@ function Endowment_Life()
 	;; this is where we want to make sure we set the DTarget to whom we want to get the benefits of this, ie the Tank
 	if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 	{
-		if ${EndowmentStep} == 1
+		if ${EndowmentStep} == 1 && ${Me.HealthPct}>80
 		{
 			call BlessedWhirl
 			if ${Return}
 			{
+				call Crit_DPS
+				if ${Return}
+				{
+					EndowmentStep:Set[1]
+					return
+				}
 				EndowmentStep:Set[2]
 			}
 		}
-		if ${EndowmentStep} == 2
+		
+		if ${EndowmentStep} == 2 && ${Me.HealthPct}>80
 		{
 			call CycloneKick
 			if ${Return}
 			{
+				call Crit_DPS
+				if ${Return}
+				{
+					EndowmentStep:Set[1]
+					return
+				}
 				EndowmentStep:Set[3]
 			}
 		}
-		if ${EndowmentStep} == 3
+		if ${EndowmentStep} == 3 && ${Me.HealthPct}>80
 		{
 			if !${Me.Effect[Endowment of Life](exists)}
 			{
@@ -818,6 +1072,7 @@ function Endowment_Life()
 			call VoidHand
 			if ${Return}
 			{
+				call Crit_DPS
 				EndowmentStep:Set[1]
 			}
 		}
@@ -861,25 +1116,53 @@ function Crit_PetalSeries()
 	;; This add more to our healing so we want to ensure this is always up
 	while ${Me.Ability[${FallingPetal}].TriggeredCountdown} || ${Me.Ability[${PetalSplitsEarth}].TriggeredCountdown} || ${Me.Ability[${WhiteLotusStrike}].TriggeredCountdown}
 	{
-		ExecutedAbility:Set[/reactionchain 2... Petal Series]
+		;ExecutedAbility:Set[/reactionchain 2... Petal Series]
 		VGExecute "/reactionchain 2"
 		call GlobalCooldown
-		waitframe
+		;waitframe
 	}
 }
 
 ;===================================================
 ;===    CRIT:  DISCORD SERIES (DPS)             ====
 ;===================================================
-function Crit_DPS()
+function:bool Crit_DPS()
 {
-	while ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} || ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} || ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} || ${Me.Ability[${FistOfDiscord}].TriggeredCountdown}
+	if ${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}>=30
 	{
-		ExecutedAbility:Set[/reactionchain 3... Discord Series]
-		VGExecute "/reactionchain 3"
-		call GlobalCooldown
-		waitframe
+		while ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} || ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} || ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} || ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} || ${Me.Ability[${FistOfDiscord}].TriggeredCountdown}
+		{
+			Action:Set[Crit_DPS]
+			EchoIt "Action=${Action}"
+			call UseAbility "${FocusedSonicBlast}"
+			if ${Return} && ${Me.HealthPct}<80
+			{
+				return TRUE
+			}
+			call UseAbility "${TouchOfDiscord}"
+			if ${Return} && ${Me.HealthPct}<80
+			{
+				return TRUE
+			}
+			call UseAbility "${GraspOfDiscord}"
+			if ${Return} && ${Me.HealthPct}<80
+			{
+				return TRUE
+			}
+			call UseAbility "${PalmOfDiscord}"
+			if ${Return} && ${Me.HealthPct}<80
+			{
+				return TRUE
+			}
+			call UseAbility "${FistOfDiscord}"
+			if ${Return} && ${Me.HealthPct}<80
+			{
+				return TRUE
+			}
+			call GlobalCooldown
+		}
 	}
+	return FALSE
 }
 
 ;===================================================
@@ -887,10 +1170,14 @@ function Crit_DPS()
 ;===================================================
 function:bool RaJinFlare()
 {
-	call UseAbility "${RaJinFlare}"
-	if ${Return}
+	if ${doRangedWeapon}
 	{
-		return TRUE
+		call UseAbility "${RaJinFlare}"
+		if ${Return}
+		{
+			vgecho SUCCESSFULL RANGE
+			return TRUE
+		}
 	}
 	return FALSE
 }
@@ -1017,10 +1304,25 @@ function:bool UseAbility(string ABILITY)
 	{
 		return FALSE
 	}
+
+	;; Feign Death for 3 seconds if my health is below xx%, then heal self
+	if !${ABILITY.Equal[${FeignDeath}]}
+	{
+		if ${Me.HealthPct}<${FeignDeathPct} || ${Me.Encounter}>=${FeignDeathEncounters}
+		{
+			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].IsReady}
+			{
+				ExecutedAbility:Set[${FeignDeath}]
+				EchoIt "UseAbility: ${FeignDeath}"
+				call FeignDeath
+			}
+		}
+	}
 	
 	;; this will stop attacks if we are not supposed to attack
 	if ${Me.Ability[${ABILITY}].School.Find[Attack]} || ${Me.Ability[${ABILITY}].School.Find[Counterattack]}
 	{
+		call MoveToMeleeDistance	
 		call OkayToAttack
 		if !${Return}
 		{
@@ -1164,7 +1466,7 @@ function:bool OkayToAttack()
 		if ${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
 		{
 			;; make sure we are in combat, tank is in combat, or we are not in a group
-			if !${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0
+			if  ${Tank.Find[${Me.FName}]} || !${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0
 			{
 				if !${Me.TargetHealth(exists)}
 				{
@@ -1212,3 +1514,626 @@ function:bool OkayToAttack()
 	}
 	return FALSE
 }
+
+
+;===================================================
+;===        LOAD XML SETTINGS                   ====
+;===================================================
+atom(script) LoadXMLSettings(string aText)
+{	
+	;; build and import Settings
+	LavishSettings[VG-DSC]:Clear
+	LavishSettings:AddSet[VG-DSC]
+	LavishSettings[VG-DSC]:AddSet[Settings]
+	LavishSettings[VG-DSC]:AddSet[MyPath]
+	LavishSettings[VG-DSC]:Import[${Script.CurrentDirectory}/Saves/Settings.xml]
+
+	Settings:Set[${LavishSettings[VG-DSC].FindSet[Settings].GUID}]
+	MyPath:Set[${LavishSettings[VG-DSC].FindSet[MyPath].GUID}]
+
+	;; import Main UI variables
+	ChangeFormPct:Set[${Settings.FindSetting[ChangeFormPct,60]}]
+	FeignDeathPct:Set[${Settings.FindSetting[FeignDeathPct,20]}]
+	FeignDeathEncounters:Set[${Settings.FindSetting[FeignDeathEncounters,3]}]
+	RacialAbilityPct:Set[${Settings.FindSetting[RacialAbilityPct,30]}]
+	Crit_HealPct:Set[${Settings.FindSetting[Crit_HealPct,40]}]
+	BreathOfLifePct:Set[${Settings.FindSetting[BreathOfLifePct,50]}]
+	KissOfHeavenPct:Set[${Settings.FindSetting[KissOfHeavenPct,60]}]
+	LaoJinFlashPct:Set[${Settings.FindSetting[LaoJinFlashPct,70]}]
+	Crit_DPS_RaJinFlarePct:Set[${Settings.FindSetting[Crit_DPS_RaJinFlarePct,80]}]
+	StartAttack:Set[${Settings.FindSetting[StartAttack,99]}]
+
+	;; import Loot variables
+	doLoot:Set[${Settings.FindSetting[doLoot,FALSE]}]
+	LootNearRange:Set[${Settings.FindSetting[LootNearRange,8]}]
+	LootMaxRange:Set[${Settings.FindSetting[LootMaxRange,40]}]
+	LootCheckForAggroRadius:Set[${Settings.FindSetting[LootCheckForAggroRadius,20]}]
+
+	;; import Item List variables
+	doAutoSell:Set[${Settings.FindSetting[doAutoSell,FALSE]}]
+	doDeleteSell:Set[${Settings.FindSetting[doDeleteSell,FALSE]}]
+	doDeleteNoSell:Set[${Settings.FindSetting[doDeleteNoSell,FALSE]}]
+	doAutoDecon:Set[${Settings.FindSetting[doAutoDecon,FALSE]}]
+	
+	;; import Hunt variables
+	doLineOfSight:Set[${Settings.FindSetting[doLineOfSight,FALSE]}]
+	doCheckForAdds:Set[${Settings.FindSetting[doCheckForAdds,FALSE]}]
+	doCheckForObstacles:Set[${Settings.FindSetting[doCheckForObstacles,FALSE]}]
+	PullDistance:Set[${Settings.FindSetting[PullDistance,20]}]
+	MinimumLevel:Set[${Settings.FindSetting[MinimumLevel,${Me.Level}]}]
+	MaximumLevel:Set[${Settings.FindSetting[MaximumLevel,${Me.Level}]}]
+
+	;; setup our paths
+	if ${Me.Chunk(exists)}
+	{
+		if !${MyPath.FindSet[${Me.Chunk}](exists)}
+		{
+			EchoIt "Adding (${Me.Chunk}) Chunk Region to Config"
+			MyPath:AddSet[${Me.Chunk}]
+			CurrentWayPoint:Set[0]
+			TotalWayPoints:Set[0]
+			MyPath.FindSet[${Me.Chunk}]:Clear
+			Navigate:ClearAll
+		}
+		else
+		{
+			TotalWayPoints:Set[${MyPath[${Me.Chunk}].FindSetting[TotalWayPoints,0]}]
+			call FindNearestWayPoint
+			CurrentWayPoint:Set[${Return}]
+			if ${CurrentWayPoint}<1
+			{
+				CurrentWayPoint:Set[1]
+			}
+			EchoIt "TotalWayPoints Found in ${Me.Chunk}: ${TotalWayPoints}, Closest WayPoint is ${CurrentWayPoint}"
+		}
+	}
+}
+
+;===================================================
+;===          SAVE XML SETTINGS                 ====
+;===================================================
+atom(script) SaveXMLSettings(string aText)
+{
+	;; Create the Save directory incase it doesn't exist
+	variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/VG-DSC/Save"
+	mkdir "${savePath}"
+
+	;; cut down on the loading times
+	if !${LavishSettings[VG-DSC].FindSet[Settings](exists)}
+	{
+		;; build and import Settings
+		LavishSettings[VG-DSC]:Clear
+		LavishSettings:AddSet[VG-DSC]
+		LavishSettings[VG-DSC]:AddSet[Settings]
+		LavishSettings[VG-DSC]:AddSet[MyPath]
+		LavishSettings[VG-DSC]:Import[${Script.CurrentDirectory}/Saves/Settings.xml]
+	}
+	
+	;; update our pointers
+	Settings:Set[${LavishSettings[VG-DSC].FindSet[Settings]}]
+	MyPath:Set[${LavishSettings[VG-DSC].FindSet[MyPath]}]
+
+	;; update our settings
+	Settings:AddSetting[ChangeFormPct,${ChangeFormPct}]
+	Settings:AddSetting[FeignDeathPct,${FeignDeathPct}]
+	Settings:AddSetting[FeignDeathEncounters,${FeignDeathEncounters}]
+	Settings:AddSetting[RacialAbilityPct,${RacialAbilityPct}]
+	Settings:AddSetting[Crit_HealPct,${Crit_HealPct}]
+	Settings:AddSetting[BreathOfLifePct,${BreathOfLifePct}]
+	Settings:AddSetting[KissOfHeavenPct,${KissOfHeavenPct}]
+	Settings:AddSetting[LaoJinFlashPct,${LaoJinFlashPct}]
+	Settings:AddSetting[Crit_DPS_RaJinFlarePct,${Crit_DPS_RaJinFlarePct}]
+	Settings:AddSetting[StartAttack,${StartAttack}]
+
+	;; update loot settings
+	Settings:AddSetting[doLoot,${doLoot}]
+	Settings:AddSetting[LootNearRange,${LootNearRange}]
+	Settings:AddSetting[LootMaxRange,${LootMaxRange}]
+	Settings:AddSetting[LootCheckForAggroRadius,${LootCheckForAggroRadius}]
+
+	;; update our item list settings
+	Settings:AddSetting[doAutoSell,${doAutoSell}]
+	Settings:AddSetting[doDeleteSell,${doDeleteSell}]
+	Settings:AddSetting[doDeleteNoSell,${doDeleteNoSell}]
+	Settings:AddSetting[doAutoDecon,${doAutoDecon}]
+	
+	;; update our hunt variables
+	Settings:AddSetting[doLineOfSight,${doLineOfSight}]
+	Settings:AddSetting[doCheckForAdds,${doCheckForAdds}]
+	Settings:AddSetting[doCheckForObstacles,${doCheckForObstacles}]
+	Settings:AddSetting[PullDistance,${PullDistance}]
+	Settings:AddSetting[MinimumLevel,${MinimumLevel}]
+	Settings:AddSetting[MaximumLevel,${MaximumLevel}]
+	
+	;; save settings
+	LavishSettings[VG-DSC]:Export[${Script.CurrentDirectory}/Saves/Settings.xml]
+}
+
+
+;===================================================
+;===            HANDLE ALL LOOTING              ====
+;===================================================
+function LootSomething()
+{
+	if ${Me.Target(exists)}
+	{
+		;; we do not want to try looting if our target is alive
+		if !${Me.Target.IsDead}
+		{
+			return
+		}
+		
+		;; Loot the corpse right now if it is in range!
+		if ${Me.Target.Distance}<5
+		{
+			call LootCorpse
+		}
+		
+		;; Let's move closer to the corpse
+		elseif ${Me.Target.Distance}>=5 && ${Me.Target.Distance}<=${LootNearRange}
+		{
+			;; If we are hunting then check for and target nearest AggroNPC if within range of corpse
+			if ${Do6} && ${Pawn[AggroNPC,from,${Me.Target.X},${Me.Target.Y},${Me.Target.Z},radius,${LootCheckForAggroRadius}](exists)}
+			{
+				Pawn[AggroNPC,from,${Me.Target.X},${Me.Target.Y},${Me.Target.Z},radius,${LootCheckForAggroRadius}]:Target
+				wait 3
+				echo "[${Time}] Aquiring new AggroNPC target within ${LootCheckForAggroRadius} meters radius of corpse"
+				return
+			}
+		
+			;; Begin moving closer
+			call MoveCloser 2
+			call FaceTarget
+			
+			
+			;; Now Loot the corpse
+			call LootCorpse
+		}
+	}
+
+	;;
+	;; Time to find us some corpses to loot
+	;;
+	
+	;; if not in combat and have no encounters then search for corpses to loot
+	if !${Me.InCombat} && ${Me.Encounter}==0
+	{
+		variable int TotalPawns
+		variable index:pawn CurrentPawns
+		TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
+	
+		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<=${LootMaxRange} && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
+		{
+			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].ContainsLoot}
+			{
+				;; we do not want to retarget same corpse twice
+				if ${BlackListCorpse.Element[${CurrentPawns.Get[${i}].ID}](exists)}
+				{
+					continue
+				}
+				
+				;; skip looting if there are any AggroNPC's near corpse and we are hunting
+				if ${Do6} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}](exists)}
+				{
+					Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}]:Target
+					wait 3
+					echo "[${Time}] Aquiring new AggroNPC target within ${LootCheckForAggroRadius} meters radius of corpse"
+					return
+				}
+			
+				;; target the corpse
+				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
+				wait 10
+				
+				;; Begin moving closer
+				call MoveCloser 2
+				call FaceTarget
+				
+				;; Now Loot the corpse
+				call LootCorpse
+				
+				;; get next corpse
+				continue
+			}
+		}	
+	}
+}
+
+;===================================================
+;===        SUBROUTINE TO LOOTING               ====
+;===================================================
+function LootCorpse()
+{
+	if ${Me.Target(exists)} && ${Me.Target.IsDead} && ${Me.Target.Distance}<5
+	{
+		;; wait up to 1 second for loot to register
+		wait 10 ${Me.Target.ContainsLoot}
+
+		;; does the corpse have any loot?
+		if ${Me.Target.ContainsLoot}
+		{
+			;; start looting only if within range
+			if ${Me.Target.Distance}<5
+			{
+				;; start the loot process
+				Loot:BeginLooting
+				wait 20 ${Me.IsLooting} && ${Loot.NumItems}
+
+				;; start looting 1 item at a time, gaurantee to get all items
+				if ${Me.IsLooting}
+				{
+					;; make sure we blacklist so we don't try looting it again
+					BlackListCorpse:Set[${Me.Target.ID},${Me.Target.ID}]
+
+					if ${Loot.NumItems}
+					{
+						;; start highest to lowest, last item will close loot
+						for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
+						{
+							vgecho *Looting: ${Loot.Item[${i}]}
+							;waitframe
+							Loot.Item[${i}]:Loot
+						}
+						waitframe
+					}
+					else
+					{
+						;; sometimes, we just have to loot everything if we can't determine how many items to loot
+						Loot:LootAll
+					}
+					
+					;; End looting if we are still looting
+					wait 2
+					if ${Me.IsLooting}
+					{
+						Loot:EndLooting
+					}
+				}
+			}
+		}
+
+		;; No matter what, we are clearing our target because we no longer need it
+		VGExecute "/cleartargets"
+		wait 5			
+	}
+}
+
+function MoveCloser(int Distance=4)
+{
+	if !${Me.Target(exists)}
+	{
+		vgecho NO TARGET
+		return
+	}
+	
+	if ${Me.Target.X}==0 || ${Me.Target.Y}==0
+	{
+		vgecho X and Y = 0
+		VGExecute /cleartargets
+		wait 10
+		return
+	}
+	
+	BUMP:Set[FALSE]
+	variable float X = ${Me.X}
+	variable float Y = ${Me.Y}
+	variable float Z = ${Me.Z}
+	Event[VG_onHitObstacle]:AttachAtom[Bump]
+	variable int bailOut
+	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(10000)]}]
+	
+	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${LavishScript.RunningTime}<${bailOut}
+	{
+		VG:ExecBinding[moveforward]
+		face ${Me.Target.X} ${Me.Target.Y}
+		if ${BUMP}
+		{
+			if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
+			{
+				VG:ExecBinding[StrafeRight]
+				wait 5
+				VG:ExecBinding[StrafeRight,release]
+				if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
+				{
+					VG:ExecBinding[moveforward,release]
+					VG:ExecBinding[movebackward]
+					wait 7
+					VG:ExecBinding[movebackward,release]
+				}
+				continue
+			}
+			BUMP:Set[FALSE]
+		}
+		X:Set[${Me.X}]
+		Y:Set[${Me.Y}]
+		Z:Set[${Me.Z}]
+	}
+	VG:ExecBinding[moveforward,release]
+	Event[VG_onHitObstacle]:DetachAtom[Bump]
+	
+	;; we timed out so clear our target and try again
+	if ${BUMP}
+	{
+		VGExecute /cleartargets
+		wait 10		
+	}
+}
+
+atom Bump(string Name)
+{
+	BUMP:Set[TRUE]
+}
+
+
+;===================================================
+;===     Calculate closest waypoint             ====
+;===================================================
+function:int FindNearestWayPoint()
+{
+	;;;;;;;;;;
+	;; cycle through all our waypoints finding nearest one 
+	;; to our current location
+	if ${TotalWayPoints}
+	{
+		variable int i
+		variable int ClosestDistance = 999999
+		variable int ClosestWayPoint = 1
+		variable point3f Destination
+		
+		for ( i:Set[1] ; ${i}<=${TotalWayPoints} ; i:Inc )
+		{
+			; set destination location X,Y,Z 
+			Destination:Set[${MyPath.FindSet[${Me.Chunk}].FindSetting[WP-${i}]}]
+
+			if ${Math.Distance["${Me.Location}","${Destination}"]} < ${ClosestDistance}
+			{
+				ClosestWayPoint:Set[${i}]
+				ClosestDistance:Set[${Math.Distance["${Me.Location}","${Destination}"]}]
+			}
+		}
+		;EchoIt "Distance to WP-${ClosestWayPoint} is ${ClosestDistance}"
+		return ${ClosestWayPoint}
+	}
+	return 0
+}
+
+
+;===================================================
+;===         Save current waypoint              ====
+;===================================================
+atom(script) AddWayPoint()
+{
+	;; increase our total waypoints
+	TotalWayPoints:Inc
+
+	;; store our settings for quick reference
+	MyPath.FindSet[${Me.Chunk}]:AddSetting[TotalWayPoints, ${TotalWayPoints}]
+	MyPath.FindSet[${Me.Chunk}]:AddSetting[WP-${TotalWayPoints}, "${Me.Location}"]
+
+	;; save our settings
+	SaveXMLSettings
+	
+	;; LavishNav: add point name to path
+	Navigate:AddNamedPoint[WP-${TotalWayPoints}]
+	
+	
+	;; echo that we added our waypoint
+	EchoIt "Added WP-${TotalWayPoints} to ${Me.Chunk}"
+}
+
+
+;===================================================
+;===        Clear current waypoint              ====
+;===================================================
+atom(script) ClearWayPoints()
+{
+	;; clear our variables
+	CurrentWayPoint:Set[0]
+	TotalWayPoints:Set[0]
+	
+	;; clear our path settings
+	MyPath.FindSet[${Me.Chunk}]:Clear
+	
+	;; save everything
+	SaveXMLSettings
+
+	;; LavishNav: reset our path
+	Navigate:ClearAll
+
+	;; echo that we cleared our path and waypoints
+	EchoIt "Cleared all Waypoints for ${Me.Chunk}"
+}
+
+;===================================================
+;===     Handles movement to next waypoint      ====
+;===================================================
+function(script) MoveToWayPoint()
+{
+	;; do absolutely nothing until we get a waypoint
+	if !${doHunt} || ${TotalWayPoints}==0
+	{
+		return
+	}
+
+	;; reset waypoint if outside of range
+	if ${CurrentWayPoint}<1 || ${CurrentWayPoint}>${TotalWayPoints}
+	{
+		CurrentStatus:Set[Starting at WP-1]
+		CurrentWayPoint:Set[1]
+	}
+
+	;; return if we are already navigating to a waypoint
+	if ${Navigate.isMoving}
+	{
+		CurrentStatus:Set[Moving to WP-${CurrentWayPoint}]
+		return
+	}
+
+	;; calculate our distance to the waypoint
+	variable point3f Destination = ${MyPath.FindSet[${Me.Chunk}].FindSetting[WP-${CurrentWayPoint}]}
+	EchoIt "[WP-${CurrentWayPoint}][Distance from = ${Math.Distance[${Me.Location},${Destination}].Int}]"
+
+	;; if we are in range of our destination then its time to go to next waypoint
+	if ${Math.Distance["${Me.Location}","${Destination}"]} < 1000
+	{
+		;; reset current way point if > total way points
+		if ${CurrentWayPoint}>=${TotalWayPoints}
+		{
+			CurrentWayPoint:Set[${TotalWayPoints}]
+			CountUp:Set[FALSE]
+		}
+
+		;; reset current way point if 1
+		if ${CurrentWayPoint}<=1
+		{
+			CurrentWayPoint:Set[1]
+			CountUp:Set[TRUE]
+		}
+			
+		;; adjust out current way point to move up or down the points once we are done harvesting area
+		if ${CountUp} || ${doRestartToWP1}
+		{
+			CurrentWayPoint:Inc
+		}
+		else
+		{
+			CurrentWayPoint:Dec
+		}		
+	}
+	
+	;; LavishNav: Move to a Point
+	Navigate:MoveToPoint[WP-${CurrentWayPoint}]
+	
+	;; allow time to register we are moving
+	wait 40 ${Navigate.isMoving}
+	
+	;; loop this while we are moving to waypoint
+	while ${Navigate.isMoving}
+	{
+		Action:Set[Moving to WP-${CurrentWayPoint}]
+
+		;; keep looking for a target
+		call FindTarget 80
+
+		;; stop moving if we paused or picked up an encounter
+		if ${isPaused} || ${Me.Encounter}>0 || ${Me.InCombat} || ${Me.Target(exists)} || !${doHunt}
+		{
+			Navigate:Stop
+			VG:ExecBinding[moveforward,release]
+			wait 1
+		}
+	}
+
+	;; if we have an encounter then target it
+	if ${Encounter}>0
+	{
+		Action:Set[ENCOUNTER]
+		Pawn[ID,${Me.Encounter[1].ID}]:Target
+		wait 3
+		return
+	}
+	
+	;; if we have a target then face it
+	if ${Me.Target(exists)}
+	{
+		Action:Set[Attacking ${Me.Target.Name}]
+		Me.Target:Face
+		wait 2
+	}
+}
+
+;===================================================
+;===          ATOM - CHAT EVENT                 ====
+;===================================================
+atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
+{
+	;EchoIt "[${ChannelNumber}] ${Text}"
+
+	if ${ChannelNumber}==0
+	{
+		if ${Text.Find["You are not wielding the proper weapon type to use that ability"]}
+		{
+			EchoIt "Unable to use Ra'Jin Flare - No Shurikens in inventory"
+			doRangedWeapon:Set[FALSE]
+		}
+	
+		if ${Text.Find["no line of sight to your target"]} || ${Text.Find["You can't see your target"]}
+		{
+			EchoIt "Face issue chatevent fired, facing target"
+			face ${Math.Calc[${Pawn[id,${Me.Target.ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
+		}
+	}
+}
+
+;===================================================
+;===          FUNCTION - Face Target            ====
+;===================================================
+function FaceTarget()
+{
+	variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
+	;; face only if target exists
+	if ${Me.Target(exists)}
+	{
+		CalculateAngles
+		if ${AngleDiffAbs} > 45
+		{
+			EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
+			VG:ExecBinding[turnright,release]
+			VG:ExecBinding[turnleft,release]
+			if ${AngleDiff}>0
+			{
+				VG:ExecBinding[turnright]
+				while ${AngleDiff} > ${i}
+				{
+					CalculateAngles
+				}
+				VG:ExecBinding[turnright,release]
+				return
+			}
+			if ${AngleDiff}<0
+			{
+				VG:ExecBinding[turnleft]
+				while ${AngleDiff} < ${i}
+				{
+					CalculateAngles
+				}
+				VG:ExecBinding[turnleft,release]
+				return
+			}
+			VG:ExecBinding[turnright,release]
+			VG:ExecBinding[turnleft,release]
+		}
+	}
+}
+
+variable int AngleDiff = 0
+variable int AngleDiffAbs = 0
+
+atom(script) CalculateAngles()
+{
+	if ${Me.Target(exists)}
+	{
+		variable float temp1 = ${Math.Calc[${Me.Y} - ${Me.Target.Y}]}
+		variable float temp2 = ${Math.Calc[${Me.X} - ${Me.Target.X}]}
+		variable float result = ${Math.Calc[${Math.Atan[${temp1},${temp2}]} - 90]}
+		
+		result:Set[${Math.Calc[${result} + (${result} < 0) * 360]}]
+		result:Set[${Math.Calc[${result} - ${Me.Heading}]}]
+		while ${result} > 180
+		{
+			result:Set[${Math.Calc[${result} - 360]}]
+		}
+		while ${result} < -180
+		{
+			result:Set[${Math.Calc[${result} + 360]}]
+		}
+		AngleDiff:Set[${result}]
+		AngleDiffAbs:Set[${Math.Abs[${result}]}]
+	}
+	else
+	{
+		AngleDiff:Set[0]
+		AngleDiffAbs:Set[0]
+	}
+}
+
