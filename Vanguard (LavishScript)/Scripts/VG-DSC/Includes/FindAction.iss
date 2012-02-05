@@ -23,6 +23,20 @@ atom(script) FindAction()
 		Action:Set[Initialize]
 		return
 	}
+	
+	;; check to see if we are dead
+	if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
+	{
+		Action:Set[WeAreDead]
+		return
+	}
+	
+	;; if we are feign death then get out of it
+	if ${Me.Effect[${FeignDeath}](exists)} && !${isPaused}
+	{
+		Action:Set[FeignDeath]
+		return
+	}
 
 	;; we must have chunked so reload our settings
 	if !${CurrentChunk.Equal[${Me.Chunk}]}
@@ -186,7 +200,8 @@ atom(script) FindAction()
 		;; Feign Death for 3 seconds if my health is below 20%, then heal self
 		if ${Me.HealthPct}<${FeignDeathPct} || ${Me.Encounter}>=${FeignDeathEncounters}
 		{
-			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].IsReady}
+			echo * MyHealth=${Me.HealthPct}, FeignDeathPct=${FeignDeathPct}, Encounters=${Me.Encounter}, FeignDeathEncounters=${FeignDeathEncounters}
+			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.Ability[${FeignDeath}].TimeRemaining}==0
 			{
 				Action:Set[FeignDeath]
 				return
@@ -285,7 +300,7 @@ atom(script) FindAction()
 		;; stay within melee distance
 		if ${Me.Target.Distance}<1 || ${Me.Target.Distance}>2
 		{
-			if ${Me.Target.Distance}<=15
+			if ${Me.Target.Distance}<=15 && ${doHunt}
 			{
 				Action:Set[MoveToMeleeDistance]
 				return

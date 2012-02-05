@@ -303,7 +303,7 @@ function AutoDecon()
 				Me.Inventory[Deconstruction Kit]:Use
 				wait 5
 				Me.Inventory[Shandrel's]:DeconstructToResource
-				wait 10
+				wait 25
 			}
 		}
 	}
