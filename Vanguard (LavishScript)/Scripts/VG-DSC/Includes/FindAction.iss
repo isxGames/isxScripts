@@ -86,7 +86,7 @@ atom(script) FindAction()
 	if !${Me.InCombat}
 	{
 		call OkayToAttack
-		if ${Return} && ${Me.Target(exists)} && (${Me.Target.Type.Equal[AggroNPC]} || ${Me.Target.Type.Equal[NPC]}) && !${Me.Target.IsDead} && ${Me.Target.Distance}<30
+		if ${Return} && ${Me.Target(exists)} && (${Me.Target.Type.Equal[AggroNPC]} || ${Me.Target.Type.Equal[NPC]}) && !${Me.Target.IsDead}
 		{
 			doTankEndowementOfLife:Set[TRUE]
 			Action:Set[PullTarget]
@@ -111,7 +111,7 @@ atom(script) FindAction()
 	if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
 	{
 		;; get our health up if we are not in combat or target is dead
-		if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<80 && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<80 && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 		{
 			Action:Set[KissOfHeaven]
 			return
@@ -256,7 +256,7 @@ atom(script) FindAction()
 		
 		;;;;;;;;;;
 		;; Kiss of Heaven for an instant HOT when our health is below 60%, lasts 32 second
-		if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${KissOfHeavenPct}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${KissOfHeavenPct}
 		{
 			if ${Me.Ability[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].IsReady} && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
@@ -285,8 +285,11 @@ atom(script) FindAction()
 		;; stay within melee distance
 		if ${Me.Target.Distance}<1 || ${Me.Target.Distance}>2
 		{
-			Action:Set[MoveToMeleeDistance]
-			return
+			if ${Me.Target.Distance}<=15
+			{
+				Action:Set[MoveToMeleeDistance]
+				return
+			}
 		}
 
 		;;;;;;;;;;
@@ -374,7 +377,7 @@ atom(script) FindAction()
 			;; Master = reduces 10% energy and endurance costs to all within 10m
 			;; Emnity = increase 10% damage for self
 			;; Life = increase DTarget's health and regenerates our jin
-			if !${Me.Effect["Endowment of Mastery"](exists)} && ${Me.Ability["Endowment of Mastery"](exists)}
+			if !${Me.Effect["Endowment of Mastery"](exists)} && ${Me.Ability["Endowment of Mastery"](exists)} && ${Me.Effect["Endowment of Mastery"].TimeRemaining}<45
 			{
 				if ${Me.Ability[${SoulCutter}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Ability[${KnifeHand}].IsReady}
 				{
@@ -382,7 +385,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			if !${Me.Effect["Endowment of Enmity"](exists)} && ${Me.Ability["Endowment of Enmity"](exists)}
+			if !${Me.Effect["Endowment of Enmity"](exists)} && ${Me.Ability["Endowment of Enmity"](exists)} && ${Me.Effect["Endowment of Enmity"].TimeRemaining}<45
 			{
 				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
 				{
@@ -390,7 +393,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}<30
+			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}<45
 			{
 				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 				{
