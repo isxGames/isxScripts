@@ -432,7 +432,7 @@ objectdef theShip
 	{
 		EVE:ClearAllWaypoints
 		
-		index:int Waypoints
+		variable index:int Waypoints
 		EVE:GetWaypoints[Waypoints]
 		
 		if SOLARSYSTEM != BMSYSTEM(${EVE.Bookmark[${Label}]})
