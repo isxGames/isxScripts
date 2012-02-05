@@ -599,11 +599,53 @@ function ScanAreaToBuff()
 	}
 }
 
+
+;===================================================
+;===        FOLLOW TANK SUB-ROUTINE             ====
+;===================================================
+function FollowTank()
+{
+	if ${doFollow}
+	{
+		if ${Pawn[name,${FollowName}](exists)}
+		{
+			;; did target move out of rang?
+			if ${Pawn[name,${FollowName}].Distance}>=4
+			{
+				variable bool DidWeMove = FALSE
+				;; start moving until target is within range
+				while !${isPaused} && ${doFollow} && ${Pawn[name,${FollowName}](exists)} && ${Pawn[name,${FollowName}].Distance}>=1 && ${Pawn[name,${FollowName}].Distance}<45
+				{
+					if ${Pawn[name,${FollowName}].Distance}<=5
+					{
+						VGExecute /walk
+					}
+					Pawn[name,${FollowName}]:Face
+					VG:ExecBinding[moveforward]
+					DidWeMove:Set[TRUE]
+					wait .25
+				}
+				;; if we moved then we want to stop moving
+				if ${DidWeMove}
+				{
+					VG:ExecBinding[moveforward,release]
+				}
+			}
+		}
+	}
+	VGExecute /run
+}
+
+
+
 ;===================================================
 ;===               FOLLOW                       ====
 ;===================================================
 function Follow()
 {
+	call FollowTank
+	return
+	
 	if ${doFollow}
 	{
 		if !${Me.InCombat}
@@ -1616,6 +1658,10 @@ function LootMyTombstone()
 ;===================================================
 function atexit()
 {
+	;; stop moving incase we are moving
+	VG:ExecBinding[moveforward,release]
+	VGExecute /run
+
 	;; Save our Settings
 	SaveXMLSettings	
 
