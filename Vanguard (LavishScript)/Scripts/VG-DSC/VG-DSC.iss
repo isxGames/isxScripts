@@ -501,39 +501,42 @@ function WeChunked()
 ;===================================================
 function MoveToMeleeDistance()
 {
-	;; target nearest target
-	if ${Me.Encounter}>0
+	if ${doHunt}
 	{
-		if ${Me.Encounter[1].Distance}<${Me.Target.Distance}
+		;; target nearest target
+		if ${Me.Encounter}>0
 		{
-			Pawn[id,${Me.Encounter[1].ID}]:Target
-			wait 1
+			if ${Me.Encounter[1].Distance}<${Me.Target.Distance}
+			{
+				Pawn[id,${Me.Encounter[1].ID}]:Target
+				wait 1
+			}
 		}
-	}
 
-	;if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.Distance}<15)
-	if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0)
-	{
-		;if ${Me.TargetHealth}<99 || ${Me.Encounter}>0 || !${Me.InCombat}
-		if ${Me.Encounter}>0 || !${Me.InCombat} || ${Me.Target.CombatState}>0
+		;if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.Distance}<15)
+		if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0)
 		{
-			if ${Me.InCombat}
+			;if ${Me.TargetHealth}<99 || ${Me.Encounter}>0 || !${Me.InCombat}
+			if ${Me.Encounter}>0 || !${Me.InCombat} || ${Me.Target.CombatState}>0
 			{
-				VGExecute /walk
-			}
-			call FaceTarget
-			call MoveCloser 2
-			call FaceTarget
-			if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
-			{
-				while ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+				if ${Me.InCombat}
 				{
-					Me.Target:Face
-					VG:ExecBinding[movebackward]
+					VGExecute /walk
 				}
-				VG:ExecBinding[movebackward,release]
+				call FaceTarget
+				call MoveCloser 2
+				call FaceTarget
+				if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+				{
+					while ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+					{
+						Me.Target:Face
+						VG:ExecBinding[movebackward]
+					}
+					VG:ExecBinding[movebackward,release]
+				}
+				VGExecute /run
 			}
-			VGExecute /run
 		}
 	}
 }
@@ -572,8 +575,10 @@ function Buff_InnerLight()
 ;===================================================
 function Buff_ResilientGrasshopper()
 {
+	Pawn[me]:Target
+	wait 5
 	call UseAbility "${ResilientGrasshopper}"
-	wait 10 ${Me.Effect[${ResilientGrasshopper}](exists)}}
+	wait 10 ${Me.Effect[${ResilientGrasshopper}](exists)}
 }
 
 ;===================================================
@@ -652,7 +657,7 @@ function PullTarget()
 {
 	doRangedWeapon:Set[TRUE]
 	;; Move Closer to target
-	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99 && ${doHunt}
 	{
 		call FaceTarget
 		call MoveCloser ${PullDistance}
@@ -678,30 +683,33 @@ function PullTarget()
 }
 
 ;===================================================
-;===    THis is how we will feign death         ====
+;===    This is how we will feign death         ====
 ;===================================================
 function FeignDeath()
 {
-	;; get our HOT up
-	call KissOfHeaven
+	if !${Me.Effect[${FeignDeath}](exists)}
+	{
+		;; get our HOT up
+		call KissOfHeaven
 
-	;; pretend we are dead
-	wait 10 ${Me.Ability[${FeignDeath}].IsReady}
-	call UseAbility "${FeignDeath}"
-	if ${Return}
+		;; pretend we are dead
+		wait 10 ${Me.Ability[${FeignDeath}].IsReady}
+		call UseAbility "${FeignDeath}"
+	}
+	if ${Me.Effect[${FeignDeath}](exists)}
 	{
 		;; wait 5 seconds
 		VGExecute /cleartargets
-		wait 50
+		wait 30
+		VGExecute /stand
+		waitframe
 		
 		;; start healing self if we need it
 		if ${Me.HealthPct}<80
 		{
 			call BreathOfLife
 		}
-		return TRUE
 	}
-	return FALSE
 }
 
 
@@ -1305,20 +1313,6 @@ function:bool UseAbility(string ABILITY)
 		return FALSE
 	}
 
-	;; Feign Death for 3 seconds if my health is below xx%, then heal self
-	if !${ABILITY.Equal[${FeignDeath}]}
-	{
-		if ${Me.HealthPct}<${FeignDeathPct} || ${Me.Encounter}>=${FeignDeathEncounters}
-		{
-			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].IsReady}
-			{
-				ExecutedAbility:Set[${FeignDeath}]
-				EchoIt "UseAbility: ${FeignDeath}"
-				call FeignDeath
-			}
-		}
-	}
-	
 	;; this will stop attacks if we are not supposed to attack
 	if ${Me.Ability[${ABILITY}].School.Find[Attack]} || ${Me.Ability[${ABILITY}].School.Find[Counterattack]}
 	{
@@ -1459,8 +1453,18 @@ function MeleeAttackOff()
 function:bool OkayToAttack()
 {
 	;;;;;;;;;;
+	;; Make sure we catch this... Health usually reports 0 when you 1st target it
+	if ${Me.Target(exists)} && !${Me.Target.IsDead}
+	{
+		if ${Me.Target.CombatState}==0 && ${Me.TargetHealth}==0
+		{
+			wait 10 ${Me.TargetHealth}>0
+		}
+	}
+
+	;;;;;;;;;;
 	;; The following are things I found we do not want to attack through
-	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.TargetHealth}<=${StartAttack}
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.TargetHealth}<=${StartAttack} && !${isPaused}
 	{
 		;; target must be an NPC or AggroNPC
 		if ${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}
@@ -1504,7 +1508,7 @@ function:bool OkayToAttack()
 				}
 				
 				;; Now, let's face the target
-				if ${doFaceTarget}
+				if ${doFaceTarget} && ${doHunt}
 				{
 					Me.Target:Face
 				}
@@ -1709,6 +1713,12 @@ function LootSomething()
 		{
 			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].ContainsLoot}
 			{
+				;; only target corpses if we are not hunting and within 5 meters of us
+				if !${doHunt} &&  ${CurrentPawns.Get[${i}].Distance}>5
+				{
+					continue
+				}
+
 				;; we do not want to retarget same corpse twice
 				if ${BlackListCorpse.Element[${CurrentPawns.Get[${i}].ID}](exists)}
 				{
@@ -1716,21 +1726,24 @@ function LootSomething()
 				}
 				
 				;; skip looting if there are any AggroNPC's near corpse and we are hunting
-				if ${Do6} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}](exists)}
+				if ${doHunt} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}](exists)}
 				{
+					EchoIt "Aquiring new AggroNPC target within ${LootCheckForAggroRadius} meters radius of corpse"
 					Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}]:Target
 					wait 3
-					echo "[${Time}] Aquiring new AggroNPC target within ${LootCheckForAggroRadius} meters radius of corpse"
 					return
 				}
-			
+
 				;; target the corpse
 				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
-				wait 10
-				
-				;; Begin moving closer
-				call FaceTarget
-				call MoveCloser 2
+				wait 3
+
+				;; if we are hunting then face target and move closer
+				if ${doHunt}
+				{
+					call FaceTarget
+					call MoveCloser 2
+				}
 				
 				;; Now Loot the corpse
 				call LootCorpse
@@ -1801,14 +1814,20 @@ function LootCorpse()
 	}
 }
 
+;===================================================
+;===        MOVE CLOSER TO TARGET               ====
+;===================================================
 function MoveCloser(int Distance=4)
 {
-	if !${Me.Target(exists)}
+	;;;;;;;;;;
+	;; we only want to move if target doesn't exist
+	if !${Me.Target(exists)} || !${doHunt}
 	{
-		vgecho NO TARGET
 		return
 	}
 	
+	;;;;;;;;;;
+	;; Only move if target has a valid position
 	if ${Me.Target.X}==0 || ${Me.Target.Y}==0
 	{
 		vgecho X and Y = 0
@@ -1817,25 +1836,36 @@ function MoveCloser(int Distance=4)
 		return
 	}
 	
+	;;;;;;;;;;
+	;; Set our variables and turn on our bump monitor
 	BUMP:Set[FALSE]
 	variable float X = ${Me.X}
 	variable float Y = ${Me.Y}
 	variable float Z = ${Me.Z}
-	Event[VG_onHitObstacle]:AttachAtom[Bump]
 	variable int bailOut
 	bailOut:Set[${Math.Calc[${LavishScript.RunningTime}+(10000)]}]
-	
+	Event[VG_onHitObstacle]:AttachAtom[Bump]
+
+	;;;;;;;;;;
+	;; Loop this until we are within range of target or our timer has expired which is 10 seconds
 	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${LavishScript.RunningTime}<${bailOut}
 	{
+		;; face target and move forward
+		Me.Target:Face
 		VG:ExecBinding[moveforward]
-		face ${Me.Target.X} ${Me.Target.Y}
+		
+		;; did we bump into something?
 		if ${BUMP}
 		{
+			;; try moving right or backwards if we didn't move
 			if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
 			{
+				;; move right for half a second
 				VG:ExecBinding[StrafeRight]
 				wait 5
 				VG:ExecBinding[StrafeRight,release]
+				
+				;; try moving backward if we didn't move
 				if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]}<250
 				{
 					VG:ExecBinding[moveforward,release]
@@ -1847,13 +1877,19 @@ function MoveCloser(int Distance=4)
 			}
 			BUMP:Set[FALSE]
 		}
+		
+		;; update our location
 		X:Set[${Me.X}]
 		Y:Set[${Me.Y}]
 		Z:Set[${Me.Z}]
 	}
+	
+	;;;;;;;;;;
+	;; stop moving forward and turn off our bump monitor
 	VG:ExecBinding[moveforward,release]
 	Event[VG_onHitObstacle]:DetachAtom[Bump]
 	
+	;;;;;;;;;;
 	;; we timed out so clear our target and try again
 	if ${BUMP}
 	{
@@ -1862,6 +1898,9 @@ function MoveCloser(int Distance=4)
 	}
 }
 
+;===================================================
+;===     BUMP ROUTINE USED BY MOVE ROUTINE      ====
+;===================================================
 atom Bump(string Name)
 {
 	BUMP:Set[TRUE]
@@ -1952,12 +1991,14 @@ atom(script) ClearWayPoints()
 ;===================================================
 function(script) MoveToWayPoint()
 {
+	;;;;;;;;;;
 	;; do absolutely nothing until we get a waypoint
 	if !${doHunt} || ${TotalWayPoints}==0
 	{
 		return
 	}
 
+	;;;;;;;;;;
 	;; reset waypoint if outside of range
 	if ${CurrentWayPoint}<1 || ${CurrentWayPoint}>${TotalWayPoints}
 	{
@@ -1965,6 +2006,7 @@ function(script) MoveToWayPoint()
 		CurrentWayPoint:Set[1]
 	}
 
+	;;;;;;;;;;
 	;; return if we are already navigating to a waypoint
 	if ${Navigate.isMoving}
 	{
@@ -1972,29 +2014,31 @@ function(script) MoveToWayPoint()
 		return
 	}
 
+	;;;;;;;;;;
 	;; calculate our distance to the waypoint
 	variable point3f Destination = ${MyPath.FindSet[${Me.Chunk}].FindSetting[WP-${CurrentWayPoint}]}
 	EchoIt "[WP-${CurrentWayPoint}][Distance from = ${Math.Distance[${Me.Location},${Destination}].Int}]"
 
+	;;;;;;;;;;
 	;; if we are in range of our destination then its time to go to next waypoint
 	if ${Math.Distance["${Me.Location}","${Destination}"]} < 1000
 	{
-		;; reset current way point if > total way points
+		;; reset current way point if equals total way points or more
 		if ${CurrentWayPoint}>=${TotalWayPoints}
 		{
 			CurrentWayPoint:Set[${TotalWayPoints}]
 			CountUp:Set[FALSE]
 		}
 
-		;; reset current way point if 1
+		;; reset current way point if equals 1 or less
 		if ${CurrentWayPoint}<=1
 		{
 			CurrentWayPoint:Set[1]
 			CountUp:Set[TRUE]
 		}
 			
-		;; adjust out current way point to move up or down the points once we are done harvesting area
-		if ${CountUp} || ${doRestartToWP1}
+		;; adjust out current way point to move up or down 
+		if ${CountUp}
 		{
 			CurrentWayPoint:Inc
 		}
@@ -2004,12 +2048,14 @@ function(script) MoveToWayPoint()
 		}		
 	}
 	
+	;;;;;;;;;;
 	;; LavishNav: Move to a Point
 	Navigate:MoveToPoint[WP-${CurrentWayPoint}]
 	
 	;; allow time to register we are moving
 	wait 40 ${Navigate.isMoving}
 	
+	;;;;;;;;;;
 	;; loop this while we are moving to waypoint
 	while ${Navigate.isMoving}
 	{
@@ -2027,6 +2073,7 @@ function(script) MoveToWayPoint()
 		}
 	}
 
+	;;;;;;;;;;
 	;; if we have an encounter then target it
 	if ${Encounter}>0
 	{
@@ -2036,6 +2083,7 @@ function(script) MoveToWayPoint()
 		return
 	}
 	
+	;;;;;;;;;;
 	;; if we have a target then face it
 	if ${Me.Target(exists)}
 	{
@@ -2069,17 +2117,17 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 }
 
 ;===================================================
-;===          FUNCTION - Face Target            ====
+;===         FACE TARGET SUBROUTINE             ====
 ;===================================================
 function FaceTarget()
 {
-	variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
 	;; face only if target exists
-	if ${Me.Target(exists)}
+	if ${Me.Target(exists)} && ${doHunt}
 	{
 		CalculateAngles
 		if ${AngleDiffAbs} > 45
 		{
+			variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
 			EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
 			VG:ExecBinding[turnright,release]
 			VG:ExecBinding[turnleft,release]
@@ -2112,6 +2160,9 @@ function FaceTarget()
 variable int AngleDiff = 0
 variable int AngleDiffAbs = 0
 
+;===================================================
+;===     CALCULATE TARGET'S ANGLE FROM YOU      ====
+;===================================================
 atom(script) CalculateAngles()
 {
 	if ${Me.Target(exists)}
@@ -2140,3 +2191,10 @@ atom(script) CalculateAngles()
 	}
 }
 
+;===================================================
+;===     WE ARE DEAD - DO NOTHING ROUTINE       ====
+;===================================================
+function WeAreDead()
+{
+	isPaused:Set[TRUE]
+}
