@@ -73,7 +73,7 @@ variable collection:int64 BlackListCorpse
 
 ;; UI - Hunt Tab
 variable bool doHunt = FALSE
-variable bool doLineOfSight = TRUE
+variable bool doCheckLineOfSight = TRUE
 variable bool doCheckForAdds = FALSE
 variable bool doCheckForObstacles = TRUE
 variable int PullDistance = 22
@@ -323,28 +323,6 @@ function Idle()
 					}
 				}
 			}
-			
-			;; Move Closer to target
-			if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99
-			{
-				if ${doRangedWeapon}
-				{
-					call FaceTarget
-					call MoveCloser ${PullDistance}
-					wait 20 ${Me.Ability[${RaJinFlare}].IsReady}
-					vgecho RajinFlare=${Me.Ability[${RaJinFlare}].IsReady}, TargetDistance=${Me.Target.Distance}
-					if !${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Target.Distance}<=${PullDistance}
-					{
-						call MoveCloser 3
-						call FaceTarget
-					}
-				}
-				if !${doRangedWeapon} && ${PullDistance}>4 
-				{
-					call MoveCloser 3
-					call FaceTarget
-				}
-			}
 		}
 	}
 }
@@ -523,22 +501,40 @@ function WeChunked()
 ;===================================================
 function MoveToMeleeDistance()
 {
-	if ${Me.TargetHealth}<99 && ${Me.Target.Distance}<15
+	;; target nearest target
+	if ${Me.Encounter}>0
 	{
-		VGExecute /walk
-		call FaceTarget
-		call MoveCloser 2
-		call FaceTarget
-		if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+		if ${Me.Encounter[1].Distance}<${Me.Target.Distance}
 		{
-			while ${Me.Target.Distance}<1 && ${Me.Target(exists)}
-			{
-				Me.Target:Face
-				VG:ExecBinding[movebackward]
-			}
-			VG:ExecBinding[movebackward,release]
+			Pawn[id,${Me.Encounter[1].ID}]:Target
+			wait 1
 		}
-		VGExecute /run
+	}
+
+	;if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.Distance}<15)
+	if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0)
+	{
+		;if ${Me.TargetHealth}<99 || ${Me.Encounter}>0 || !${Me.InCombat}
+		if ${Me.Encounter}>0 || !${Me.InCombat} || ${Me.Target.CombatState}>0
+		{
+			if ${Me.InCombat}
+			{
+				VGExecute /walk
+			}
+			call FaceTarget
+			call MoveCloser 2
+			call FaceTarget
+			if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+			{
+				while ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+				{
+					Me.Target:Face
+					VG:ExecBinding[movebackward]
+				}
+				VG:ExecBinding[movebackward,release]
+			}
+			VGExecute /run
+		}
 	}
 }
 
@@ -655,20 +651,24 @@ function TargetEncounter()
 function PullTarget()
 {
 	doRangedWeapon:Set[TRUE]
+	;; Move Closer to target
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99
+	{
+		call FaceTarget
+		call MoveCloser ${PullDistance}
+	}
+	
 	call RaJinFlare
 	if ${Return}
 	{
-		wait 10
+		wait 20 !${doRangedWeapon}
 	}
-	;; doRangedWeapon is triggered if we run out of Shurikens
-	if ${Me.Target.Distance}<=25 && !${doRangedWeapon}
+
+	if !${doRangedWeapon}
 	{
-		call LeechsGrasp
-		if ${Return}
-		{
-			wait 10
-		}
+		call MoveToMeleeDistance	
 	}
+
 	if ${Me.Encounter}>=${FeignDeathEncounters}
 	{
 		ExecutedAbility:Set[We pulled too many]
@@ -924,6 +924,7 @@ function:bool KissOfHeaven()
 	call UseAbility "${KissOfHeaven}"
 	if ${Return}
 	{
+		wait 10 ${Me.Effect[${KissOfHeaven}](exists)}
 		return TRUE
 	}
 	return FALSE
@@ -1175,7 +1176,6 @@ function:bool RaJinFlare()
 		call UseAbility "${RaJinFlare}"
 		if ${Return}
 		{
-			vgecho SUCCESSFULL RANGE
 			return TRUE
 		}
 	}
@@ -1556,7 +1556,7 @@ atom(script) LoadXMLSettings(string aText)
 	doAutoDecon:Set[${Settings.FindSetting[doAutoDecon,FALSE]}]
 	
 	;; import Hunt variables
-	doLineOfSight:Set[${Settings.FindSetting[doLineOfSight,FALSE]}]
+	doCheckLineOfSight:Set[${Settings.FindSetting[doCheckLineOfSight,FALSE]}]
 	doCheckForAdds:Set[${Settings.FindSetting[doCheckForAdds,FALSE]}]
 	doCheckForObstacles:Set[${Settings.FindSetting[doCheckForObstacles,FALSE]}]
 	PullDistance:Set[${Settings.FindSetting[PullDistance,20]}]
@@ -1638,7 +1638,7 @@ atom(script) SaveXMLSettings(string aText)
 	Settings:AddSetting[doAutoDecon,${doAutoDecon}]
 	
 	;; update our hunt variables
-	Settings:AddSetting[doLineOfSight,${doLineOfSight}]
+	Settings:AddSetting[doCheckLineOfSight,${doCheckLineOfSight}]
 	Settings:AddSetting[doCheckForAdds,${doCheckForAdds}]
 	Settings:AddSetting[doCheckForObstacles,${doCheckForObstacles}]
 	Settings:AddSetting[PullDistance,${PullDistance}]
@@ -1689,6 +1689,9 @@ function LootSomething()
 			;; Now Loot the corpse
 			call LootCorpse
 		}
+		;; No matter what, we are clearing our target because we no longer need it
+		VGExecute "/cleartargets"
+		wait 5			
 	}
 
 	;;
@@ -1726,8 +1729,8 @@ function LootSomething()
 				wait 10
 				
 				;; Begin moving closer
-				call MoveCloser 2
 				call FaceTarget
+				call MoveCloser 2
 				
 				;; Now Loot the corpse
 				call LootCorpse
@@ -1735,7 +1738,7 @@ function LootSomething()
 				;; get next corpse
 				continue
 			}
-		}	
+		}
 	}
 }
 

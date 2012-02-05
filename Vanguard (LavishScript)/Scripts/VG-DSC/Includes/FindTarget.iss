@@ -52,6 +52,12 @@ function FindTarget(int Distance)
 		{
 			continue
 		}
+
+		;; most likely this target is fighting someone else
+		if ${Pawn[id,${CurrentPawns.Get[${i}].ID}].CombatState}>0
+		{
+			continue
+		}
 		
 		;; we only want targets we can see
 		if ${doCheckLineOfSight}
@@ -81,7 +87,14 @@ function FindTarget(int Distance)
 				}
 
 				;; Say we found a target
-				vgecho "FindTarget - (${Me.Target.Type}) - ${Me.Target.Name}"
+				if ${Me.Target.HaveLineOfSightTo}
+				{
+					vgecho "FindTarget - (${Me.Target.Type}/HaveLineOfSight) - ${Me.Target.Name}"
+				}
+				else
+				{
+					vgecho "FindTarget - (${Me.Target.Type}) - ${Me.Target.Name}"
+				}
 				return
 			}
 		}

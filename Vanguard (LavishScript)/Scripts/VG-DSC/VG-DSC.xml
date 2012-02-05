@@ -874,7 +874,7 @@
 								Script[VG-DSC].VariableScope.doHunt:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-						<checkbox Name='doLineOfSight' Template='VG.GreenCheckbox'>
+						<checkbox Name='doCheckLineOfSight' Template='VG.GreenCheckbox'>
 							<visible>1</visible>
 							<X>3%</X>
 							<Y>13%</Y>
@@ -883,13 +883,13 @@
 							<Text>Line of Sight Only</Text>
 							<AutoTooltip>  Target only those that you have a direct line of sight to </AutoTooltip>
 							<OnLoad>
-								if ${Script[VG-DSC].VariableScope.doLineOfSight}
+								if ${Script[VG-DSC].VariableScope.doCheckLineOfSight}
 								{
 									This:SetChecked
 								}
 							</OnLoad>
 							<OnLeftClick>
-								Script[VG-DSC].VariableScope.doLineOfSight:Set[${This.Checked}]
+								Script[VG-DSC].VariableScope.doCheckLineOfSight:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='doCheckForObstacles' Template='VG.GreenCheckbox'>
