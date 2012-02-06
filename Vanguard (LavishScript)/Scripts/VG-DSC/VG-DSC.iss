@@ -263,7 +263,7 @@ function Idle()
 	{
 		;;;;;;;;;;
 		;; check only once every other second
-		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
+		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=1
 		{
 			if !${Me.InCombat} && ${Me.Encounter}==0
 			{
@@ -464,6 +464,7 @@ function Initialize()
 	;; Enable Events - this event is automatically removed at shutdown
 	Event[VG_OnIncomingText]:AttachAtom[InventoryChatEvent]	
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
+	Event[VG_OnIncomingCombatText]:AttachAtom[ChatEvent]
 	
 	;;;;;;;;;;
 	;; Turn mapping ON
@@ -1073,7 +1074,7 @@ function Endowment_Life()
 				if !${Me.DTarget.Name.Equal[${Tank}]}
 				{
 					;; otherwise, target the tank
-					doTankEndowementOfLife:[FALSE]
+					doTankEndowementOfLife:Set[FALSE]
 					Pawn[${Tank}]:Target
 					wait 3
 				}
@@ -2100,7 +2101,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
 	;EchoIt "[${ChannelNumber}] ${Text}"
 
-	if ${ChannelNumber}==0
+	if ${ChannelNumber}==0 || ${ChannelNumber}==1
 	{
 		if ${Text.Find["You are not wielding the proper weapon type to use that ability"]}
 		{
@@ -2108,7 +2109,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 			doRangedWeapon:Set[FALSE]
 		}
 	
-		if ${Text.Find["no line of sight to your target"]} || ${Text.Find["You can't see your target"]}
+		if ${Text.Find["no line of sight to your target"]} || ${Text.Find[You can't see your target]}
 		{
 			EchoIt "Face issue chatevent fired, facing target"
 			face ${Math.Calc[${Pawn[id,${Me.Target.ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}

@@ -153,6 +153,9 @@ function SellItemList()
 	;; Sell items only if Merchant is in BuySell dialog
 	if ${Me.Target.Type.Equal[Merchant]}
 	{
+		;; create a temp variable
+		variable string temp
+		
 		;; cut down on the loading times
 		if !${LavishSettings[SellItem].FindSet[ItemList](exists)}
 		{
@@ -204,10 +207,11 @@ function SellItemList()
 							wait 5
 						}
 
-						while ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
+						temp:Set[${Iterator.Key}]
+						while ${Me.Inventory[exactname,${temp}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
 						{
 							;; some items will not sell if you set the quantity to the reported quantity
-							Me.Inventory[exactname,${Iterator.Key}]:Sell[1]
+							Me.Inventory[exactname,${temp}]:Sell[1]
 							wait 2
 						}
 					}
@@ -224,6 +228,9 @@ function SellItemList()
 ;===================================================
 function DeleteItemList()
 {
+	;; create a temp variable
+	variable string temp
+		
 	;; cut down on the loading times
 	if !${LavishSettings[DeleteItem].FindSet[ItemList](exists)}
 	{
@@ -270,11 +277,11 @@ function DeleteItemList()
 				{
 					if !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
 					{
-						echo "Deleting Sellable: ${Iterator.Key}"
-						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteSell} && !${Me.InCombat}
+						temp:Set[${Iterator.Key}]
+						while ${Me.Inventory[ExactName,${temp}](exists)} && ${doDeleteSell} && !${Me.InCombat}
 						{
 							;; some items will not delete if you set the quantity to the reported quantity
-							Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
+							Me.Inventory[exactname,${temp}]:Delete[1]
 							wait 2
 						}
 					}
