@@ -418,22 +418,6 @@ atom(script) FindAction()
 			}
 			
 			;;;;;;;;;;
-			;; Do we need this?  Not really, but could make a difference down the road
-			if ${Me.Stat[Adventuring,Jin]}>12
-			{
-				if ${Me.Ability[${BloomingRidgeHand}](exists)} && ${Me.Ability[${BloomingRidgeHand}].IsReady} && !${Me.TargetMyDebuff[${BloomingRidgeHand}](exists)}
-				{
-					Action:Set[BloomingRidgeHand]
-					return
-				}
-				if ${Me.Stat[Adventuring,Jin]}>12 && !${Me.Effect[${KissOfTorment}](exists)} && ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && ${Me.Ability[${KissOfTorment}].TimeRemaining}==0
-				{
-					Action:Set[Crit_KissOfTorment]
-					return
-				}
-			}
-
-			;;;;;;;;;;
 			;; these will add Jin if we get too low
 			if ${Me.Stat[Adventuring,Jin]}<12
 			{
@@ -451,6 +435,22 @@ atom(script) FindAction()
 				}
 			}
 			
+			;;;;;;;;;;
+			;; Do we need this?  Not really, but could make a difference down the road
+			if ${Me.Stat[Adventuring,Jin]}>12
+			{
+				if ${Me.Ability[${BloomingRidgeHand}](exists)} && ${Me.Ability[${BloomingRidgeHand}].IsReady} && !${Me.TargetMyDebuff[${BloomingRidgeHand}](exists)}
+				{
+					Action:Set[BloomingRidgeHand]
+					return
+				}
+				if ${Me.Stat[Adventuring,Jin]}>12 && !${Me.Effect[${KissOfTorment}](exists)} && ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && ${Me.Ability[${KissOfTorment}].TimeRemaining}==0
+				{
+					Action:Set[Crit_KissOfTorment]
+					return
+				}
+			}
+
 			;;;;;;;;;;
 			;; This will replenish some energy
 			if ${Me.EnergyPct}<=20 && ${Me.Ability[${MindlessClutch}](exists)} && ${Me.Ability[${MindlessClutch}].IsReady} && ${Me.Ability[${MindlessClutch}].JinCost}<=${Me.Stat[Adventuring,Jin]}

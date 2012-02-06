@@ -81,10 +81,6 @@ function FindTarget(int Distance)
 				;; let's target the AggroNPC
 				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
 				wait 7 ${Me.Target.ID}==${CurrentPawns.Get[${i}].ID}
-				if ${Me.Target(exists)}
-				{
-					Me.Target:Face
-				}
 
 				;; Say we found a target
 				if ${Me.Target.HaveLineOfSightTo}
