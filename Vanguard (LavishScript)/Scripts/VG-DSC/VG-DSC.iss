@@ -3,9 +3,11 @@
 ;
 ; Description - Script for Disciples
 ; -----------
-; * Buff Bot 
+; * Attacks your target
 ; * Auto Attack turns on and off
-; * Generate Endowments
+; * Generate and maintain Endowments
+; * Item List Manager (Sells/Deletes/Decons)
+; * LavishNav for hunting
 ;
 ; Revision History
 ; ----------------
@@ -13,22 +15,27 @@
 ;  * A simple script that handles combat, no UI support
 ;
 ; 20120119 (Zandros)
-;  * Added the UI that allows you to change various setting in combat as
-;    well as a visual display to show you the Actio being performed and the
-;    Ability being executed.  No routines for saving your settings to file.
+; * Added the UI that allows you to change various setting in combat as
+;   well as a visual display to show you the Actio being performed and the
+;   Ability being executed.  No routines for saving your settings to file.
 ;
 ; 20120128 (Zandros)
-;  * Added saving variables; added Item List Manager which will allow you to 
-;    delete non-sellable items (trash), sell items for profit, and decon items; also,
-;    added basic looting routines
+; * Added saving variables; added Item List Manager which will allow you to 
+;   delete non-sellable items (trash), sell items for profit, and decon items; also,
+;   added basic looting routines
 ;
 ; 20120130 (Zandros)
-;  * Implementing my version of LavishNav so that it can map an area and move around
-;    obstacles.  This will be used for hunting.
+; * Implementing my version of LavishNav so that it can map an area and move around
+;   obstacles.  This will be used for hunting.
 ;
 ; 20120203 (Zandros)
-;  * Fixed many things such as:  what to do if you run out of Shurikens, what if the
-;    target push you out of melee range, what if you get too many Encounters....
+; * Fixed many things such as:  what to do if you run out of Shurikens, what if the
+;   target push you out of melee range, what if you get too many Encounters....
+;
+; 20120207 (Zandros)
+; * Added bump and line of sight routines.  If you can't hit the target is will backup
+; and try again.  If it still can't hit the target it will clear all targets and go look
+; for a new target.
 ;
 ;===================================================
 ;===            VARIABLES                       ====
@@ -74,6 +81,7 @@ variable collection:int64 BlackListCorpse
 ;; UI - Hunt Tab
 variable bool doHunt = FALSE
 variable bool doCheckLineOfSight = TRUE
+variable bool NoLineOfSight = FALSE
 variable bool doCheckForAdds = FALSE
 variable bool doCheckForObstacles = TRUE
 variable int PullDistance = 22
@@ -89,13 +97,14 @@ variable int CurrentWayPoint = 0
 variable bool doRandomWayPoints = FALSE
 variable bool CountUp = FALSE
 variable bool doRestartToWP1 = FALSE
-variable string CurrentChunk 
-
+variable string CurrentChunk
+variable bool BUMP = FALSE
 
 
 ;; XML variables used to store and save data
 variable settingsetref Settings
 variable settingsetref MyPath
+
 
 ;; to be added
 variable bool doAutoAttack = FALSE
@@ -106,15 +115,18 @@ variable bool doSprint = FALSE
 variable bool doFollow = FALSE
 variable int Speed = 100
 
+
 ;; Immunity variables
 variable bool doPhysical = TRUE
 variable bool doSpiritual = TRUE
+
 
 ;; Includes
 #include ./VG-DSC/Includes/FindAction.iss
 #include ./VG-DSC/Includes/ItemListTools.iss
 #include ./VG-DSC/Includes/FindTarget.iss
 #include ./VG-DSC/Includes/Obj_Navigator.iss
+
 
 ;; initialize our objects
 variable(global) Obj_Navigator Navigate
@@ -241,26 +253,32 @@ function Idle()
 	;; Update what we are doing
 	ExecutedAbility:Set[None]
 	
-	;;;;;;;;;;
-	;; not in combat so get our Jin up!
-	if !${Me.InCombat} && ${Me.Encounter}==0 && ${Me.Stat[Adventuring,Jin]}<=2
-	{
-		if !${Me.Effect[${Meditate}](exists)}
-		{
-			call UseAbility "${Meditate}"
-			isSitting:Set[TRUE]
-			wait 20 ${Me.Effect[${Meditate}](exists)}
-			
-			;; Keep looping this until we have 20 Jin or exit out of Meditate
-			while !${Me.InCombat} && ${Me.Stat[Adventuring,Jin]}<20 && ${Me.Encounter}==0 && ${Me.Effect[${Meditate}](exists)}
-			{
-				waitframe
-			}
-		}
-	}
-	
 	if !${isPaused}
 	{
+		;;;;;;;;;;
+		;; not in combat so get our Jin up!
+		if !${Me.InCombat} && ${Me.Encounter}==0 && ${Me.Stat[Adventuring,Jin]}<=2
+		{
+			if !${Me.Effect[${Meditate}](exists)}
+			{
+				call UseAbility "${Meditate}"
+				isSitting:Set[TRUE]
+				wait 20 ${Me.Effect[${Meditate}](exists)}
+				
+				;; Keep looping this until we have 20 Jin or exit out of Meditate
+				while !${Me.InCombat} && ${Me.Stat[Adventuring,Jin]}<20 && ${Me.Encounter}==0 && ${Me.Effect[${Meditate}](exists)}
+				{
+					waitframe
+				}
+				
+				if ${Me.Effect[${Meditate}](exists)}
+				{
+					VGExecute /stand
+					waitframe
+				}
+			}
+		}
+	
 		;;;;;;;;;;
 		;; check only once every other second
 		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=1
@@ -657,6 +675,15 @@ function TargetEncounter()
 function PullTarget()
 {
 	doRangedWeapon:Set[TRUE]
+
+	;; force turning off!
+	if ${doHunt}
+	{
+		VG:ExecBinding[turnright,release]
+		VG:ExecBinding[turnleft,release]
+		wait 2
+	}
+
 	;; Move Closer to target
 	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99 && ${doHunt}
 	{
@@ -1309,7 +1336,7 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 ;===================================================
 function:bool UseAbility(string ABILITY)
 {
-	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
+	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level} || ${Pawn[me].IsMounted}
 	{
 		return FALSE
 	}
@@ -1317,6 +1344,7 @@ function:bool UseAbility(string ABILITY)
 	;; this will stop attacks if we are not supposed to attack
 	if ${Me.Ability[${ABILITY}].School.Find[Attack]} || ${Me.Ability[${ABILITY}].School.Find[Counterattack]}
 	{
+		call FixLineOfSight
 		call MoveToMeleeDistance	
 		call OkayToAttack
 		if !${Return}
@@ -1334,19 +1362,19 @@ function:bool UseAbility(string ABILITY)
 		{
 			;EchoIt "${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 			;; check if we have enough Jin
-			if ${Me.Ability[${ABILITY}].JinCost}>=${Me.Stat[Adventuring,Jin]}
+			if ${Me.Ability[${ABILITY}].JinCost}>${Me.Stat[Adventuring,Jin]}
 			{
 				EchoIt "1-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 				return FALSE
 			}
 			;; check if we have enough endurance
-			if ${Me.Ability[${ABILITY}].EnduranceCost}>=${Me.Endurance}
+			if ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
 			{
 				EchoIt "2-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 				return FALSE
 			}
 			;; check if we have enough energy
-			if ${Me.Ability[${ABILITY}].EnergyCost}>=${Me.Energy}
+			if ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
 			{
 				EchoIt "3-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 				return FALSE
@@ -2113,8 +2141,42 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 		{
 			EchoIt "Face issue chatevent fired, facing target"
 			face ${Math.Calc[${Pawn[id,${Me.Target.ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
+			NoLineOfSight:Set[TRUE]
 		}
 	}
+}
+
+
+variable int LoSRetries = 0
+function FixLineOfSight()
+{
+	if ${NoLineOfSight}
+	{
+		if ${Me.Target(exists)}
+		{
+			LoSRetries:Inc
+			if ${LoSRetries}>=3
+			{
+				VGExecute "/cleartargets"
+				wait 3
+			}
+			else
+			{
+				VG:ExecBinding[moveforward,release]
+				VG:ExecBinding[movebackward]
+				VG:ExecBinding[StrafeRight]
+				wait 4
+				VG:ExecBinding[StrafeRight,release]
+				wait 2
+				VG:ExecBinding[movebackward,release]
+			}
+		}
+	}
+	if !${NoLineOfSight}
+	{
+		LoSRetries:Set[0]
+	}
+	NoLineOfSight:Set[FALSE]
 }
 
 ;===================================================
@@ -2123,37 +2185,40 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 function FaceTarget()
 {
 	;; face only if target exists
-	if ${Me.Target(exists)} && ${doHunt}
+	if ${doHunt}
 	{
-		CalculateAngles
-		if ${AngleDiffAbs} > 45
+		if ${Me.Target(exists)}
 		{
-			variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
-			EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
-			VG:ExecBinding[turnright,release]
-			VG:ExecBinding[turnleft,release]
-			if ${AngleDiff}>0
+			CalculateAngles
+			if ${AngleDiffAbs} > 45
 			{
-				VG:ExecBinding[turnright]
-				while ${AngleDiff} > ${i}
+				variable int i = ${Math.Calc[20-${Math.Rand[40]}]}
+				EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
+				VG:ExecBinding[turnright,release]
+				VG:ExecBinding[turnleft,release]
+				if ${AngleDiff}>0
 				{
-					CalculateAngles
+					VG:ExecBinding[turnright]
+					while ${AngleDiff} > ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
+					{
+						CalculateAngles
+					}
+					VG:ExecBinding[turnright,release]
+					return
+				}
+				if ${AngleDiff}<0
+				{
+					VG:ExecBinding[turnleft]
+					while ${AngleDiff} < ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
+					{
+						CalculateAngles
+					}
+					VG:ExecBinding[turnleft,release]
+					return
 				}
 				VG:ExecBinding[turnright,release]
-				return
-			}
-			if ${AngleDiff}<0
-			{
-				VG:ExecBinding[turnleft]
-				while ${AngleDiff} < ${i}
-				{
-					CalculateAngles
-				}
 				VG:ExecBinding[turnleft,release]
-				return
 			}
-			VG:ExecBinding[turnright,release]
-			VG:ExecBinding[turnleft,release]
 		}
 	}
 }
