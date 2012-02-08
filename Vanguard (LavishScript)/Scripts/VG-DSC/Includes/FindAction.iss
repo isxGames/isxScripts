@@ -221,7 +221,7 @@ atom(script) FindAction()
 
 		;;;;;;;;;;
 		;; Lao'Jin Flash for an instant heal without a cooldown when our health is below 50%, 15 second refresh
-		if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${LaoJinFlashPct}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${LaoJinFlashPct}
 		{
 			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
@@ -402,7 +402,7 @@ atom(script) FindAction()
 			}
 			if !${Me.Effect["Endowment of Enmity"](exists)} && ${Me.Ability["Endowment of Enmity"](exists)} && ${Me.Effect["Endowment of Enmity"].TimeRemaining}<45
 			{
-				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
+				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 				{
 					Action:Set[Endowment_Enmity]
 					return
@@ -492,7 +492,7 @@ atom(script) FindAction()
 			
 			;;;;;;;;;;
 			;; Use Ra'Jin Flare and turn Melee Attack Back On... Ranged Damage
-			if ${Me.Encounter}<2 && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct}
+			if ${Me.Encounter}<2 && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
 				if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]} && ${doRangedWeapon}
 				{
