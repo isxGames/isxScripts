@@ -1778,7 +1778,6 @@ function UseItems()
 ;===================================================
 ;===           FORAGE SUBROUTINE                ====
 ;===================================================
-variable bool Okay2Forage = FALSE
 function Forage()
 {
 	if ${doForage} && ${Forage.Equal[Forage]}
@@ -1786,25 +1785,20 @@ function Forage()
 		;; we in combat so set the flag and return
 		if ${Me.InCombat} || ${Me.Encounter}>0
 		{
-			Okay2Forage:Set[TRUE]
 			return
 		}
-		
-		if ${Okay2Forage}
+
+		;; go ahead and forage the area
+		call UseAbility "${Forage}"
+		wait 10 ${Me.IsLooting}
+		if ${Me.IsLooting}
 		{
-			;; go ahead and forage the area
-			call UseAbility "${Forage}"
+			Loot:LootAll
+			wait 2
 			if ${Me.IsLooting}
 			{
-				Loot:LootAll
-				wait 2
-				if ${Me.IsLooting}
-				{
-					Loot:EndLooting
-				}
+				Loot:EndLooting
 			}
-			;; this will cut back the foraging spamming
-			;; until I decide to do a timer of some sort
 			Okay2Forage:Set[FALSE]
 		}
 	}
