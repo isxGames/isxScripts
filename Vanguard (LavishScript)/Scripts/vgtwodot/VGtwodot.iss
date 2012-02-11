@@ -246,6 +246,10 @@ function Initialize()
 	;; === MISC ===
 	call SetHighestAbility "Forget" "Forget"
 	call SetHighestAbility "Disenchant" "Disenchant"
+	;; === COUNTERS ===
+	call SetHighestAbility "Disperse" "${Disperse}"
+	call SetHighestAbility "Reflect" "${Reflect}"
+	
 
 	;-------------------------------------------
 	; Put in our inventory all our Focus Items
@@ -380,6 +384,10 @@ function MandatoryChecks()
 		}
 		NextItemListCheck:Set[${Script.RunningTime}]
 	}
+
+	;; attempt to counter if target is casting
+	call CounterIt
+	
 }
 
 ;===================================================
@@ -1036,10 +1044,12 @@ function executeability(string x_ability)
 	call debug "Casting: ${x_ability}"
 	while ${Me.IsCasting}
 	{
+		call CounterIt
 		wait 1
 	}
 	while ${VG.InGlobalRecovery}
 	{
+		call CounterIt
 		wait 1
 	}
 	wait 2
@@ -1542,6 +1552,50 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			else
 			{
 				vgecho "Did not accept REZ from ${PCName}"
+			}
+		}
+	}
+	if ${ChannelNumber}==26
+	{
+		;; this may be different for each class
+		if ${aText.Find[and it is dispersed!]}
+		{
+			variable string bText
+			bText:Set[${aText.Mid[${aText.Find['s ]},${aText.Length}]}]
+			bText:Set[${bText.Left[${Math.Calc[${bText.Length}-21]}]}]
+			bText:Set[${bText.Right[${Math.Calc[${bText.Length}-3]}]}]
+			vgecho "<Purple=>COUNTERED: <Yellow=>${bText}"
+		}
+	}
+}
+
+;===================================================
+;===   COUNTER IT - this will counter a spell   ====
+;===================================================
+function CounterIt()
+{
+	if ${isRunning}
+	{
+		; in order to counter we have to be able to ID the ability
+		if !${Me.TargetCasting.Equal[None]}
+		{
+			if ${Me.Ability[${Disperse}].IsReady} && ${Me.Ability[${Disperse}].TimeRemaining}==0
+			{
+				VGExecute "/reactioncounter 1"
+				wait 1
+				while ${VG.InGlobalRecovery}
+				{
+					wait 1
+				}
+			}
+			if ${Me.Ability[${Reflect}].IsReady} && ${Me.Ability[${Reflect}].TimeRemaining}==0
+			{
+				VGExecute "/reactioncounter 2"
+				wait 1
+				while ${VG.InGlobalRecovery}
+				{
+					wait 1
+				}
 			}
 		}
 	}
