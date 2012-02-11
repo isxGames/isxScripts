@@ -52,14 +52,14 @@ atom(script) FindAction()
 		;; but if there is then the script will appear to pause when your health
 		;; bounces above and below 60% while it waits to change forms
 		;; It is important to change forms now than later
-		if ${Me.HealthPct}>=${ChangeFormPct} && !${Me.CurrentForm.Name.Equal[Celestial Tiger]}
+		if ${Me.HealthPct}>=${ChangeFormPct} && !${Me.CurrentForm.Name.Equal[Celestial Tiger]} && ${Me.CurrentForm.Name.Equal[Celestial Tiger](exists)}
 		{
 			;; DPS - Inner Light is more effective
 			Action:Set[Form_CelestialTiger]
 			NextFormCheck:Set[${Script.RunningTime}]
 			return
 		}
-		if ${Me.HealthPct}<${ChangeFormPct} && !${Me.CurrentForm.Name.Equal[Immortal Jade Dragon]}
+		if ${Me.HealthPct}<${ChangeFormPct} && !${Me.CurrentForm.Name.Equal[Immortal Jade Dragon]} && ${Me.CurrentForm.Name.Equal[Immortal Jade Dragon](exists)}
 		{
 			;; HEALING - Blessed Wind and Kiss of Heaven are instant
 			Action:Set[Form_ImmortalJadeDragon]
@@ -76,7 +76,7 @@ atom(script) FindAction()
 	if ${Me.CurrentForm.Name.Equal[Celestial Tiger]} && ${Me.Ability[${InnerLight}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 	{
 		;; one of these are the correct Modified check
-		if !${Me.Effect[${InnerLight}](exists)} && !${Me.Effect[${InnerLight}(Modified)](exists)} && !${Me.Effect[${InnerLight} (Modified)](exists)}
+		if ${Me.Ability[${InnerLight}](exists)} && !${Me.Effect[${InnerLight}](exists)} && !${Me.Effect[${InnerLight}(Modified)](exists)} && !${Me.Effect[${InnerLight} (Modified)](exists)}
 		{
 			Action:Set[Buff_InnerLight]
 			return
@@ -100,11 +100,35 @@ atom(script) FindAction()
 	if !${Me.InCombat}
 	{
 		call OkayToAttack
-		if ${Return} && ${Me.Target(exists)} && (${Me.Target.Type.Equal[AggroNPC]} || ${Me.Target.Type.Equal[NPC]}) && !${Me.Target.IsDead}
+		if ${Return} && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.TargetHealth}>0
 		{
-			doTankEndowementOfLife:Set[TRUE]
-			Action:Set[PullTarget]
-			return
+			if (${doNPC} && ${Me.Target.Type.Equal[NPC]}) || (${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]})
+			{
+				;; go get the target if we are hunting
+				if ${doHunt}
+				{
+					doTankEndowementOfLife:Set[TRUE]
+					Action:Set[PullTarget]
+					return
+				}
+				
+				;; attack the target only if it is in range and we are not hunting
+				if !${doHunt}
+				{
+					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>=${Me.Target.Distance}
+					{
+						doTankEndowementOfLife:Set[TRUE]
+						Action:Set[PullTarget]
+						return
+					}
+					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Ability[${VoidHand}].Range}>=${Me.Target.Distance}
+					{
+						doTankEndowementOfLife:Set[TRUE]
+						Action:Set[PullTarget]
+						return
+					}
+				}
+			}
 		}
 	}
 
@@ -125,7 +149,7 @@ atom(script) FindAction()
 	if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
 	{
 		;; get our health up if we are not in combat or target is dead
-		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<80 && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<80 && ${Me.Ability[${KissOfHeaven}](exists)} && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 		{
 			Action:Set[KissOfHeaven]
 			return
@@ -298,7 +322,7 @@ atom(script) FindAction()
 		
 		;;;;;;;;;;
 		;; stay within melee distance
-		if ${Me.Target.Distance}<1 || ${Me.Target.Distance}>2
+		if ${Me.Target.Distance}<1 || ${Me.Target.Distance}>=5
 		{
 			if ${Me.Target.Distance}<=15 && ${doHunt}
 			{
@@ -316,17 +340,17 @@ atom(script) FindAction()
 			;; Big Crit Heal Chain if our health is below 40%, 1 minute cooldown
 			if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${Crit_HealPct} && ${Me.Target(exists)} && !${Me.Target.IsDead}
 			{
-				if ${Me.Ability[${ConcordantSplendor}].TriggeredCountdown} && ${Me.Ability[${ConcordantSplendor}].TimeRemaining}==0
+				if ${Me.Ability[${ConcordantSplendor}](exists)} && ${Me.Ability[${ConcordantSplendor}].TriggeredCountdown} && ${Me.Ability[${ConcordantSplendor}].TimeRemaining}==0
 				{
 					Action:Set[Crit_HealSeries]
 					return
 				}
-				if ${Me.Ability[${ConcordantPalm}].TriggeredCountdown} && ${Me.Ability[${ConcordantPalm}].TimeRemaining}==0
+				if ${Me.Ability[${ConcordantPalm}](exists)} && ${Me.Ability[${ConcordantPalm}].TriggeredCountdown} && ${Me.Ability[${ConcordantPalm}].TimeRemaining}==0
 				{
 					Action:Set[Crit_HealSeries]
 					return
 				}
-				if ${Me.Ability[${ConcordantHand}].TriggeredCountdown} && ${Me.Ability[${ConcordantHand}].TimeRemaining}==0
+				if ${Me.Ability[${ConcordantHand}](exists)} && ${Me.Ability[${ConcordantHand}].TriggeredCountdown} && ${Me.Ability[${ConcordantHand}].TimeRemaining}==0
 				{
 					Action:Set[Crit_HealSeries]
 					return
@@ -408,7 +432,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}<45
+			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}<45 && ${Me.Stat[Adventuring,Jin]}>=2
 			{
 				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 				{
@@ -444,7 +468,7 @@ atom(script) FindAction()
 					Action:Set[BloomingRidgeHand]
 					return
 				}
-				if ${Me.Stat[Adventuring,Jin]}>12 && !${Me.Effect[${KissOfTorment}](exists)} && ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && ${Me.Ability[${KissOfTorment}].TimeRemaining}==0
+				if ${Me.Ability[${KissOfTorment}](exists)} && ${Me.Stat[Adventuring,Jin]}>12 && !${Me.Effect[${KissOfTorment}](exists)} && ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && ${Me.Ability[${KissOfTorment}].TimeRemaining}==0
 				{
 					Action:Set[Crit_KissOfTorment]
 					return
@@ -464,27 +488,27 @@ atom(script) FindAction()
 
 			;;;;;;;;;;
 			;; These do some serious damage so execute these whenever possible!
-			if !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
+			if ${Me.Ability[${FocusedSonicBlast}](exists)} && !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
 			}
-			if !${Me.Effect[${TouchOfDiscord}](exists)} && ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} && ${Me.Ability[${TouchOfDiscord}].TimeRemaining}==0
+			if ${Me.Ability[${TouchOfDiscord}](exists)} && !${Me.Effect[${TouchOfDiscord}](exists)} && ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} && ${Me.Ability[${TouchOfDiscord}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
 			}
-			if !${Me.Effect[${GraspOfDiscord}](exists)} && ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} && ${Me.Ability[${GraspOfDiscord}].TimeRemaining}==0
+			if ${Me.Ability[${GraspOfDiscord}](exists)} && !${Me.Effect[${GraspOfDiscord}](exists)} && ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} && ${Me.Ability[${GraspOfDiscord}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
 			}
-			if !${Me.Effect[${PalmOfDiscord}](exists)} && ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} && ${Me.Ability[${PalmOfDiscord}].TimeRemaining}==0
+			if ${Me.Ability[${PalmOfDiscord}](exists)} && !${Me.Effect[${PalmOfDiscord}](exists)} && ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} && ${Me.Ability[${PalmOfDiscord}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
 			}
-			if !${Me.Effect[${FistOfDiscord}](exists)} && ${Me.Ability[${FistOfDiscord}].TriggeredCountdown} && ${Me.Ability[${FistOfDiscord}].TimeRemaining}==0
+			if ${Me.Ability[${FistOfDiscord}](exists)} && !${Me.Effect[${FistOfDiscord}](exists)} && ${Me.Ability[${FistOfDiscord}].TriggeredCountdown} && ${Me.Ability[${FistOfDiscord}].TimeRemaining}==0
 			{
 				Action:Set[Crit_DPS]
 				return
@@ -503,11 +527,39 @@ atom(script) FindAction()
 			
 			;;;;;;;;;;
 			;; lets build out health and jin by repeating Endowement of Life
-			if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
+			if ${Me.Ability[${BlessedWind}](exists)} && ${Me.Ability[${CycloneKick}](exists)} && ${Me.Ability[${VoidHand}](exists)} && ${Me.Stat[Adventuring,Jin]}>=2
 			{
-				Action:Set[Endowment_Life]
-				return
+				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
+				{
+					Action:Set[Endowment_Life]
+					return
+				}
 			}
+			
+			;;;;;;;;;;
+			;; Last ability to use... available at level 2
+			if ${Me.Ability[${BlessedWind}](exists)}
+			{
+				if ${Me.Ability[${BlessedWind}].IsReady}
+				{
+					Action:Set[BlessedWind]
+					return
+				}
+			}
+			
+			;;;;;;;;;;
+			;; Last ability to use... available at level 1
+			if ${Me.Ability[${VoidHand}](exists)} && ${Me.EnergyPct}>20
+			{
+				if ${Me.Ability[${VoidHand}].IsReady}
+				{
+					Action:Set[VoidHand]
+					return
+				}
+			}
+
+			
+			
 		}
 	}
 }

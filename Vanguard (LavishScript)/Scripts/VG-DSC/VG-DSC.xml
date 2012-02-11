@@ -234,7 +234,7 @@
 							<Width>200</Width>
 							<Height>15</Height>
 							<Alignment>Left</Alignment>
-							<Text>Racial Ability</Text>
+							<Text>${Script[VG-DSC].VariableScope.RacialAbility}</Text>
 						</Text>
 						<Textentry Name="RacialAbilityPct" Template="VG.TextEntry">
 							<X>3%</X>
@@ -890,6 +890,42 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[VG-DSC].VariableScope.doCheckLineOfSight:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doAggroNPC' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>21%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Attack AggroNPC (red targets)</Text>
+							<AutoTooltip>  Turning this on will allow attacking AggroNPC  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doAggroNPC}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doAggroNPC:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doNPC' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>29%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Attack NPC (yellow targets)</Text>
+							<AutoTooltip>  Turning this on will allow attacking any NPC  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doNPC}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doNPC:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name='doCheckForObstacles' Template='VG.GreenCheckbox'>

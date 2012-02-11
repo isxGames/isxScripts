@@ -33,6 +33,7 @@ function FindTarget(int Distance)
 	
 	variable int i
 	variable string leftofname
+	variable bool CorrectType
 	
 	variable int TotalPawns
 	variable index:pawn CurrentPawns
@@ -47,6 +48,21 @@ function FindTarget(int Distance)
 	;-------------------------------------------
 	for (i:Set[1];  ${i}<=${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<${Distance};  i:Inc)
 	{
+		;; check if we want to hunt for AggroNPC and/or NPC
+		CorrectType:Set[FALSE]
+		if ${doNPC} && ${CurrentPawns.Get[${i}].Type.Equal[NPC]}
+		{
+			CorrectType:Set[TRUE]
+		}
+		if ${doAggroNPC} && ${CurrentPawns.Get[${i}].Type.Equal[AggroNPC]}
+		{
+			CorrectType:Set[TRUE]
+		}
+		if !${CorrectType}
+		{
+			continue
+		}
+	
 		;; find a target that is within our level range
 		if ${CurrentPawns.Get[${i}].Level}<${MinimumLevel} || ${CurrentPawns.Get[${i}].Level}>${MaximumLevel}
 		{
