@@ -34,8 +34,14 @@
 ;
 ; 20120207 (Zandros)
 ; * Added bump and line of sight routines.  If you can't hit the target is will backup
-; and try again.  If it still can't hit the target it will clear all targets and go look
-; for a new target.
+;   and try again.  If it still can't hit the target it will clear all targets and go look
+;   for a new target.
+;
+; 20120212 (Zandros)
+; * Added toggles to control type of target to attack (AggroNPC and NPC).  Made some minor
+;   adjustments to the routines "Endowment of Life", "MoveToMeleeDistance", and "PullTarget".
+;   If you notice a small delay when targetting and moving, it is because the script is waiting
+;   for the target's health to be anything other than 0 or NULL.
 ;
 ;===================================================
 ;===            VARIABLES                       ====
@@ -54,6 +60,7 @@ variable string LastAction = Nothing
 variable int EndowmentStep = 1
 variable int NextFormCheck = ${Script.RunningTime}
 variable int NextItemListCheck = ${Script.RunningTime}
+
 
 ;; UI - Main Tab
 variable int ChangeFormPct = 60
@@ -89,6 +96,8 @@ variable int MinimumLevel = ${Me.Level}
 variable int MaximumLevel = ${Me.Level}
 variable int DifficultyLevel = 2
 variable bool NeedMoreEnergy = FALSE
+variable bool doNPC = FALSE
+variable bool doAggroNPC = TRUE
 
 
 ;; Navigator variables
@@ -438,7 +447,15 @@ function Initialize()
 	SetHighestAbility "FocusedSonicBlast" "Focused Sonic Blast"
 	SetHighestAbility "BlessedWhirl" "Blessed Whirl"
 	SetHighestAbility "BreathOfLife" "Breath of Life"
-
+	;; racial ability
+	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
+	{
+		if ${Me.Ability[${i}].Name.Find[Racial Ability:]}
+		{
+			RacialAbility:Set[${Me.Ability[${i}].Name}]
+			EchoIt "RacialAbility] = ${RacialAbility}"
+		}
+	}
 
 	;;;;;;;;;;
 	;; this will load all our settings
@@ -532,10 +549,8 @@ function MoveToMeleeDistance()
 			}
 		}
 
-		;if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.Distance}<15)
 		if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0)
 		{
-			;if ${Me.TargetHealth}<99 || ${Me.Encounter}>0 || !${Me.InCombat}
 			if ${Me.Encounter}>0 || !${Me.InCombat} || ${Me.Target.CombatState}>0
 			{
 				if ${Me.InCombat}
@@ -544,12 +559,11 @@ function MoveToMeleeDistance()
 				}
 				call FaceTarget
 				call MoveCloser 2
-				call FaceTarget
+				Me.Target:Face
 				if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
 				{
-					while ${Me.Target.Distance}<1 && ${Me.Target(exists)}
+					while ${Me.Target.Distance}<1 && ${Me.Target(exists)} && !${isPaused}
 					{
-						Me.Target:Face
 						VG:ExecBinding[movebackward]
 					}
 					VG:ExecBinding[movebackward,release]
@@ -684,13 +698,14 @@ function PullTarget()
 		wait 2
 	}
 
-	;; Move Closer to target
+	;; move Closer to target
 	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99 && ${doHunt}
 	{
 		call FaceTarget
 		call MoveCloser ${PullDistance}
 	}
 	
+	;; attack with our ranged attack
 	call RaJinFlare
 	if ${Return}
 	{
@@ -699,7 +714,12 @@ function PullTarget()
 
 	if !${doRangedWeapon}
 	{
-		call MoveToMeleeDistance	
+		call MoveToMeleeDistance
+	}
+	
+	if !${Me.InCombat}
+	{
+		call VoidHand
 	}
 
 	if ${Me.Encounter}>=${FeignDeathEncounters}
@@ -1056,7 +1076,7 @@ function Endowment_Life()
 	;; this is where we want to make sure we set the DTarget to whom we want to get the benefits of this, ie the Tank
 	if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 	{
-		if ${EndowmentStep} == 1 && ${Me.HealthPct}>80
+		if ${EndowmentStep} == 1
 		{
 			call BlessedWhirl
 			if ${Return}
@@ -1071,7 +1091,7 @@ function Endowment_Life()
 			}
 		}
 		
-		if ${EndowmentStep} == 2 && ${Me.HealthPct}>80
+		if ${EndowmentStep} == 2
 		{
 			call CycloneKick
 			if ${Return}
@@ -1085,7 +1105,7 @@ function Endowment_Life()
 				EndowmentStep:Set[3]
 			}
 		}
-		if ${EndowmentStep} == 3 && ${Me.HealthPct}>80
+		if ${EndowmentStep} == 3 
 		{
 			if !${Me.Effect[Endowment of Life](exists)}
 			{
@@ -1167,36 +1187,39 @@ function:bool Crit_DPS()
 {
 	if ${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}>=30
 	{
-		while ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} || ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} || ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} || ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} || ${Me.Ability[${FistOfDiscord}].TriggeredCountdown}
+		if ${Me.Ability[${FocusedSonicBlast}](exists)} || ${Me.Ability[${TouchOfDiscord}](exists)} || ${Me.Ability[${GraspOfDiscord}](exists)} || ${Me.Ability[${PalmOfDiscord}](exists)} || ${Me.Ability[${FistOfDiscord}](exists)}
 		{
-			Action:Set[Crit_DPS]
-			EchoIt "Action=${Action}"
-			call UseAbility "${FocusedSonicBlast}"
-			if ${Return} && ${Me.HealthPct}<80
+			while ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} || ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} || ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} || ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} || ${Me.Ability[${FistOfDiscord}].TriggeredCountdown}
 			{
-				return TRUE
+				Action:Set[Crit_DPS]
+				EchoIt "Action=${Action}"
+				call UseAbility "${FocusedSonicBlast}"
+				if ${Return} && ${Me.HealthPct}<80
+				{
+					return TRUE
+				}
+				call UseAbility "${TouchOfDiscord}"
+				if ${Return} && ${Me.HealthPct}<80
+				{
+					return TRUE
+				}
+				call UseAbility "${GraspOfDiscord}"
+				if ${Return} && ${Me.HealthPct}<80
+				{
+					return TRUE
+				}
+				call UseAbility "${PalmOfDiscord}"
+				if ${Return} && ${Me.HealthPct}<80
+				{
+					return TRUE
+				}
+				call UseAbility "${FistOfDiscord}"
+				if ${Return} && ${Me.HealthPct}<80
+				{
+					return TRUE
+				}
+				call GlobalCooldown
 			}
-			call UseAbility "${TouchOfDiscord}"
-			if ${Return} && ${Me.HealthPct}<80
-			{
-				return TRUE
-			}
-			call UseAbility "${GraspOfDiscord}"
-			if ${Return} && ${Me.HealthPct}<80
-			{
-				return TRUE
-			}
-			call UseAbility "${PalmOfDiscord}"
-			if ${Return} && ${Me.HealthPct}<80
-			{
-				return TRUE
-			}
-			call UseAbility "${FistOfDiscord}"
-			if ${Return} && ${Me.HealthPct}<80
-			{
-				return TRUE
-			}
-			call GlobalCooldown
 		}
 	}
 	return FALSE
@@ -1364,19 +1387,19 @@ function:bool UseAbility(string ABILITY)
 			;; check if we have enough Jin
 			if ${Me.Ability[${ABILITY}].JinCost}>${Me.Stat[Adventuring,Jin]}
 			{
-				EchoIt "1-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
+				;EchoIt "1-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 				return FALSE
 			}
 			;; check if we have enough endurance
 			if ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
 			{
-				EchoIt "2-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
+				;EchoIt "2-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 				return FALSE
 			}
 			;; check if we have enough energy
 			if ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
 			{
-				EchoIt "3-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
+				;EchoIt "3-${ABILITY}:  JinCost=${Me.Ability[${ABILITY}].JinCost}<=${Me.Stat[Adventuring,Jin]}, EnduranceCost=${Me.Ability[${ABILITY}].EnduranceCost}<=${Me.Endurance}, EnergyCost=${Me.Ability[${ABILITY}].EnergyCost}<=${Me.Energy}"
 				return FALSE
 			}
 		}
@@ -1423,7 +1446,7 @@ function IsCasting()
 function:bool AutoAttack()
 {
 	call OkayToAttack
-	if ${Return} && ${Me.Target.Distance}<5
+	if ${Return} && ${Me.Target.Distance}<5 && ${Me.InCombat}
 	{
 		;; turn on auto-attack
 		if !${GV[bool,bIsAutoAttacking]} || !${Me.Ability[Auto Attack].Toggled}
@@ -1477,7 +1500,7 @@ function MeleeAttackOff()
 }
 
 ;===================================================
-;===          OKAY TO ATTACK                    ====
+;===   OKAY TO ATTACK - No Waits or pauses      ====
 ;===================================================
 function:bool OkayToAttack()
 {
@@ -1487,7 +1510,8 @@ function:bool OkayToAttack()
 	{
 		if ${Me.Target.CombatState}==0 && ${Me.TargetHealth}==0
 		{
-			wait 10 ${Me.TargetHealth}>0
+			;wait 10 ${Me.TargetHealth}>0
+			return FALSE
 		}
 	}
 
@@ -1590,6 +1614,8 @@ atom(script) LoadXMLSettings(string aText)
 	
 	;; import Hunt variables
 	doCheckLineOfSight:Set[${Settings.FindSetting[doCheckLineOfSight,FALSE]}]
+	doNPC:Set[${Settings.FindSetting[doNPC,FALSE]}]
+	doAggroNPC:Set[${Settings.FindSetting[doAggroNPC,TRUE]}]
 	doCheckForAdds:Set[${Settings.FindSetting[doCheckForAdds,FALSE]}]
 	doCheckForObstacles:Set[${Settings.FindSetting[doCheckForObstacles,FALSE]}]
 	PullDistance:Set[${Settings.FindSetting[PullDistance,20]}]
@@ -1672,6 +1698,8 @@ atom(script) SaveXMLSettings(string aText)
 	
 	;; update our hunt variables
 	Settings:AddSetting[doCheckLineOfSight,${doCheckLineOfSight}]
+	Settings:AddSetting[doNPC,${doNPC}]
+	Settings:AddSetting[doAggroNPC,${doAggroNPC}]
 	Settings:AddSetting[doCheckForAdds,${doCheckForAdds}]
 	Settings:AddSetting[doCheckForObstacles,${doCheckForObstacles}]
 	Settings:AddSetting[PullDistance,${PullDistance}]
