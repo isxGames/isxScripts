@@ -35,6 +35,28 @@ function main()
 		OptionalTextEntryVar:Set[${_ref.FindSetting[OptionalTextEntryVar]}]
 		UIElement[OptionalTextEntry@bjauctionbot]:SetText[${_ref.FindSetting[OptionalTextEntryVar]}]
 	}
+	
+	;// Going Once Text
+	if ${_ref.FindSetting[GoingOncePhraseTextEntryVar](exists)}
+	{
+		GoingOncePhraseTextEntryVar:Set[${_ref.FindSetting[GoingOncePhraseTextEntryVar]}]
+		UIElement[GoingOncePhraseTextEntry@Settings_Frame@bjauctionsettings]:SetText[${_ref.FindSetting[GoingOncePhraseTextEntryVar]}]
+	}	
+	
+	;// Going Twice Text
+	if ${_ref.FindSetting[GoingTwicePhraseTextEntryVar](exists)}
+	{
+		GoingTwicePhraseTextEntryVar:Set[${_ref.FindSetting[GoingTwicePhraseTextEntryVar]}]
+		UIElement[GoingTwicePhraseTextEntry@Settings_Frame@bjauctionsettings]:SetText[${_ref.FindSetting[GoingTwicePhraseTextEntryVar]}]
+	}	
+	
+	;// Going Sold Text
+	if ${_ref.FindSetting[GoingSoldPhraseTextEntryVar](exists)}
+	{
+		GoingSoldPhraseTextEntryVar:Set[${_ref.FindSetting[GoingSoldPhraseTextEntryVar]}]
+		UIElement[GoingSoldPhraseTextEntry@Settings_Frame@bjauctionsettings]:SetText[${_ref.FindSetting[GoingSoldPhraseTextEntryVar]}]
+	}	
+	
 	;// Selling Phrase Combobox
 	if ${_ref.FindSetting[SellingTypeVar](exists)}
 	{

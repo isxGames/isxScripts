@@ -16,13 +16,18 @@ function SaveSettings()
 {
 	;// Save Settings
 	
-	
 	;// Channel Name
 		_ref:AddSetting[BJChannelName,${BJChannelName}]
 	;// Starting Bid
 		_ref:AddSetting[StartBidTextEntry,${StartBidTextEntry}]
 	;// Optional Text
 		_ref:AddSetting[OptionalTextEntryVar,${OptionalTextEntryVar}]
+	;// Going Once Text
+		_ref:AddSetting[GoingOncePhraseTextEntryVar,${GoingOncePhraseTextEntryVar}]
+	;// Going Twice Text
+		_ref:AddSetting[GoingTwicePhraseTextEntryVar,${GoingTwicePhraseTextEntryVar}]
+	;// Going Sold Text
+		_ref:AddSetting[GoingSoldPhraseTextEntryVar,${GoingSoldPhraseTextEntryVar}]		
 		
 	;// Selling Phrase Combobox
 		_ref:AddSetting[SellingTypeVar,${SellingTypeVar}]
@@ -48,6 +53,8 @@ function main()
 	
 	while 1
 	{
+		call RunningTimer
+		
 		if ${QueuedCommands}
 			ExecuteQueued
 	}
@@ -303,18 +310,18 @@ function Update()
 
 function GoingOnce()
 {
-	if ${BJChannelName.NotEqual[ ]} && ${SellingTypeVar.NotEqual["Please Choose..."]} && ${Item1BidTextEntryVar.NotEqual[ ]}
+	if ${BJChannelName.NotEqual[ ]} && ${SellingTypeVar.NotEqual["Please Choose..."]} && ${Item1BidTextEntryVar.NotEqual[ ]} && ${GoingOncePhraseTextEntryVar.NotEqual[ ]}
 	{	
 		if ${Item2Linkvar.Equal[None]}
 		{
-			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} -- GOING ONCE
+			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${GoingOncePhraseTextEntryVar}
 			statusvar:Set["Update sent to channel ${BJChannelName}."]
 			wait 30
 			statusvar:Set["Idle..."]
 		}
 		elseif ${Item2Linkvar.NotEqual[None]} && ${Item2BidTextEntry.NotEqual[ ]}
 		{
-			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${Item2Linkvar} @ ${Item2BidTextEntry} -- GOING ONCE
+			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${Item2Linkvar} @ ${Item2BidTextEntry} ${GoingOncePhraseTextEntryVar}
 			statusvar:Set["Update sent to channel ${BJChannelName}."]
 			wait 30
 			statusvar:Set["Idle..."]
@@ -341,24 +348,29 @@ function GoingOnce()
 		{
 			echo Please enter a bid amount for item 1.
 			statusvar:Set["Please enter a bid amount for item 1."]
+		}
+		elseif ${GoingOncePhraseTextEntryVar.Equal[ ]}
+		{
+			echo Please enter a custom Going Once phrase.
+			statusvar:Set["Please enter a custom Going Once phrase."]
 		}
 	}
 }
 
 function GoingTwice()
 {
-	if ${BJChannelName.NotEqual[ ]} && ${SellingTypeVar.NotEqual["Please Choose..."]} && ${Item1BidTextEntryVar.NotEqual[ ]}
+	if ${BJChannelName.NotEqual[ ]} && ${SellingTypeVar.NotEqual["Please Choose..."]} && ${Item1BidTextEntryVar.NotEqual[ ]} && ${GoingTwicePhraseTextEntryVar.NotEqual[ ]}
 	{	
 		if ${Item2Linkvar.Equal[None]}
 		{
-			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} -- GOING TWICE
+			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${GoingTwicePhraseTextEntryVar}
 			statusvar:Set["Update sent to channel ${BJChannelName}."]
 			wait 30
 			statusvar:Set["Idle..."]
 		}
 		elseif ${Item2Linkvar.NotEqual[None]} && ${Item2BidTextEntry.NotEqual[ ]}
 		{
-			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${Item2Linkvar} @ ${Item2BidTextEntry} -- GOING TWICE
+			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${Item2Linkvar} @ ${Item2BidTextEntry} ${GoingTwicePhraseTextEntryVar}
 			statusvar:Set["Update sent to channel ${BJChannelName}."]
 			wait 30
 			statusvar:Set["Idle..."]
@@ -386,23 +398,28 @@ function GoingTwice()
 			echo Please enter a bid amount for item 1.
 			statusvar:Set["Please enter a bid amount for item 1."]
 		}
+		elseif ${GoingTwicePhraseTextEntryVar.Equal[ ]}
+		{
+			echo Please enter a custom Going Twice phrase.
+			statusvar:Set["Please enter a custom Going Twice phrase."]
+		}		
 	}
 }
 
 function GoingSold()
 {
-	if ${BJChannelName.NotEqual[ ]} && ${SellingTypeVar.NotEqual["Please Choose..."]} && ${Item1BidTextEntryVar.NotEqual[ ]}
+	if ${BJChannelName.NotEqual[ ]} && ${SellingTypeVar.NotEqual["Please Choose..."]} && ${Item1BidTextEntryVar.NotEqual[ ]} && ${GoingSoldPhraseTextEntryVar.NotEqual[ ]}
 	{	
 		if ${Item2Linkvar.Equal[None]}
 		{
-			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} -- SOLD
+			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${GoingSoldPhraseTextEntryVar}
 			statusvar:Set["Update sent to channel ${BJChannelName}."]
 			wait 30
 			statusvar:Set["Idle..."]
 		}
 		elseif ${Item2Linkvar.NotEqual[None]} && ${Item2BidTextEntry.NotEqual[ ]}
 		{
-			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${Item2Linkvar} @ ${Item2BidTextEntry} -- SOLD
+			eq2execute tellchannel ${BJChannelName} ${SellingTypeVar} ${item1Linkvar} @ ${Item1BidTextEntryVar} ${Item2Linkvar} @ ${Item2BidTextEntry} ${GoingSoldPhraseTextEntryVar}
 			statusvar:Set["Update sent to channel ${BJChannelName}."]
 			wait 30
 			statusvar:Set["Idle..."]
@@ -430,11 +447,29 @@ function GoingSold()
 			echo Please enter a bid amount for item 1.
 			statusvar:Set["Please enter a bid amount for item 1."]
 		}
+		elseif ${GoingSoldPhraseTextEntryVar.Equal[ ]}
+		{
+			echo Please enter a custom Sold phrase.
+			statusvar:Set["Please enter a custom Sold phrase."]
+		}		
 	}
+}
+
+function RunningTimer()
+{
+		StartTimeRunning:Set[${Math.Calc64[${Script.RunningTime}/1000]}]
+		DisplaySecondsRunning:Set[${Math.Calc64[${StartTimeRunning}%60]}]
+		DisplayMinutesRunning:Set[${Math.Calc64[${StartTimeRunning}/60%60]}]
+		DisplayHoursRunning:Set[${Math.Calc64[${StartTimeRunning}/60\\60]}]
+;;		echo ${DisplayHours.LeadingZeroes[2]}:${DisplayMinutes.LeadingZeroes[2]}:${DisplaySeconds.LeadingZeroes[2]}
 }
 
 function atexit()
 {
 	call SaveSettings
 	echo ${Time}: Stopping BJ Auction Bot
+	if ${Script[bjauctiontimer](exists)}
+	{	
+		endscript bjauctiontimer
+	} 
 }
