@@ -3,11 +3,11 @@
 	<Window Name='bjauctionbot' Template='Window'>
 		<X>20</X>
 		<Y>20</Y>
-		<Width>450</Width>
-		<Height>280</Height>
+		<Width>460</Width>
+		<Height>360</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>BJ Auction Bot        Version BETA</Title> 
+		<Title>BJ Auction Bot               Version 1.00</Title> 
 		<OnLoad>
 		declarevariable statusvar string global
 		declarevariable item1textvar string global
@@ -16,11 +16,24 @@
 		declarevariable Item2Linkvar string global
 		declarevariable Item1BidTextEntryVar string global
 		declarevariable OptionalTextEntryVar string global
+		
+		declarevariable StartTimeRunning int global
+		declarevariable DisplaySecondsRunning int global
+		declarevariable DisplayMinutesRunning int global
+		declarevariable DisplayHoursRunning int global
+		
+		declarevariable StartTime int global
+		declarevariable DisplaySeconds int global
+		declarevariable DisplayMinutes int global
+		declarevariable DisplayHours int global
+
 		echo ${Time}: Loading BJ Auction Bot
 		statusvar:Set["Idle..."]
 		item1Linkvar:Set["None"]
 		Item2Linkvar:Set[None]
 		Item1BidTextEntryVar:Set[ ]
+		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionsettingsXML.xml"
+		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionpreviewXML.xml"
 		</OnLoad>
 		<OnUnLoad>
 		echo ${Time}: Unloading BJ Auction Bot
@@ -30,8 +43,8 @@
 		<TitleBar Template="Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
-			<Width>99%</Width>
-			<Height>10%</Height>
+			<Width>100%</Width>
+			<Height>5%</Height>
 			<Children>
 				<Text Name="Title" Template="Window.TitleBar.Title">
 					<Alignment>Left</Alignment>
@@ -50,6 +63,8 @@
 						if ${Script[bjauction](exists)}
 							endscript bjauction
 						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionXML.xml"
+						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionsettingsXML.xml"
+						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionpreviewXML.xml"
 					</OnLeftClick>
 				</CommandButton>
 			</Children>
@@ -465,6 +480,11 @@
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			Script[BJAuction]:QueueCommand[call GoingOnce]
+			if ${Script[bjauctiontimer](exists)}
+			{	
+				endscript bjauctiontimer
+			} 
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctiontimer"
 		</OnLeftClick>
 		<OnLoad>
 			declarevariable goingoncebuttonvar int global ${This.ID}
@@ -480,6 +500,11 @@
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			Script[BJAuction]:QueueCommand[call GoingTwice]
+			if ${Script[bjauctiontimer](exists)}
+			{	
+				endscript bjauctiontimer
+			} 
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctiontimer"
 		</OnLeftClick>
 		<OnLoad>
 			declarevariable goingtwicebuttonvar int global ${This.ID}
@@ -495,6 +520,11 @@
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			Script[BJAuction]:QueueCommand[call GoingSold]
+			if ${Script[bjauctiontimer](exists)}
+			{	
+				endscript bjauctiontimer
+			} 
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctiontimer"
 		</OnLeftClick>
 		<OnLoad>
 			declarevariable goingsoldbuttonvar int global ${This.ID}
@@ -544,16 +574,96 @@
 		<OnLoad>
 			declarevariable goingsoldbuttonfakevar int global ${This.ID}
 		</OnLoad>
-		</CommandButton>		
-		<CommandButton Name="StartButton" template='Button'>
-		<X>20</X>
+		</CommandButton>
+		<Text name='AuctionRunningTimerText1' template='Text'>
+		<X>40</X>
 		<Y>230</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+		<Font>
+			<Color>FFFFFF00</Color>
+			<Size>24</Size>
+		</Font>
+		<Text>Auction Running</Text>
+		</Text>	
+		<Text name='AuctionRunningTimerText2' template='Text'>
+		<X>40</X>
+		<Y>250</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+		<Font>
+			<Color>FFFFFF00</Color>
+			<Size>24</Size>
+		</Font>
+		<Text>Time</Text>
+		</Text>	
+		<Text name='AuctionRunningTimerVariable' template='Text'>
+		<X>40</X>
+		<Y>280</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+		<Font>
+			<Color>FFFFFF00</Color>
+			<Size>20</Size>
+		</Font>
+		<OnRender>
+		This:SetText[${DisplayHoursRunning.LeadingZeroes[2]}:${DisplayMinutesRunning.LeadingZeroes[2]}:${DisplaySecondsRunning.LeadingZeroes[2]}]
+		</OnRender>
+		<OnLoad>
+		
+		</OnLoad>
+		</Text>
+		<Text name='AuctionUpdateTimerText1' template='Text'>
+		<X>250</X>
+		<Y>230</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+		<Font>
+			<Color>FFFFFF00</Color>
+			<Size>24</Size>
+		</Font>
+		<Text>Time Since</Text>
+		</Text>
+		<Text name='AuctionUpdateTimerText2' template='Text'>
+		<X>250</X>
+		<Y>250</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+		<Font>
+			<Color>FFFFFF00</Color>
+			<Size>24</Size>
+		</Font>
+		<Text>Last Update</Text>
+		</Text>	
+		<Text name='AuctionUpdateTimerVariable' template='Text'>
+		<X>250</X>
+		<Y>280</Y>
+		<Width>150</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+		<Font>
+			<Color>FFFFFF00</Color>
+			<Size>20</Size>
+		</Font>
+		<OnRender>
+		This:SetText[${DisplayHours.LeadingZeroes[2]}:${DisplayMinutes.LeadingZeroes[2]}:${DisplaySeconds.LeadingZeroes[2]}]
+		</OnRender>
+		</Text>		
+		<CommandButton Name="StartButton" template='Button'>
+		<X>10</X>
+		<Y>310</Y>
 		<Width>110</Width>
 		<Height>20</Height>
 		<Text>Start</Text>
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauction"
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctiontimer"
 			echo ${Time}: Starting BJ Auction Bot
 			This.Parent.FindChild[StopButton]:Show
 			This.Parent.FindChild[UpdateButton]:Show
@@ -572,8 +682,8 @@
 		</OnLoad>
 		</CommandButton>
 		<CommandButton Name="StopButton" template='Button'>
-		<X>20</X>
-		<Y>230</Y>
+		<X>10</X>
+		<Y>310</Y>
 		<Width>110</Width>
 		<Height>20</Height>
 		<Text>Stop</Text>
@@ -602,8 +712,8 @@
 		</OnLoad>
 		</CommandButton>
 		<CommandButton Name="UpdateButton" template='Button'>
-		<X>170</X>
-		<Y>230</Y>
+		<X>120</X>
+		<Y>310</Y>
 		<Width>110</Width>
 		<Height>20</Height>
 		<visible>0</visible>
@@ -611,14 +721,19 @@
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
 			Script[BJAuction]:QueueCommand[call Update]
+			if ${Script[bjauctiontimer](exists)}
+			{	
+				endscript bjauctiontimer
+			} 
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctiontimer"
 		</OnLeftClick>
 		<OnLoad>
 			declarevariable updatebuttonvar int global ${This.ID}
 		</OnLoad>
 		</CommandButton>
 		<CommandButton Name="UpdateButtonFake" template='Button'>
-		<X>170</X>
-		<Y>230</Y>
+		<X>120</X>
+		<Y>310</Y>
 		<Width>110</Width>
 		<Height>20</Height>
 		<Text>Update</Text>
@@ -631,25 +746,74 @@
 			declarevariable updatebuttonfakevar int global ${This.ID}
 		</OnLoad>
 		</CommandButton>		
-		<CommandButton Name="SettingsButton" template='Button'>
-		<X>320</X>
-		<Y>230</Y>
+		<CommandButton Name="ShowSettingsButton" template='Button'>
+		<X>230</X>
+		<Y>310</Y>
 		<Width>110</Width>
 		<Height>20</Height>
-		<Text>Settings</Text>
+		<Text>Show Settings</Text>
+		
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			UIElement[${bjauctionsettingsvar}]:Show
+			This.Parent.FindChild[HideSettingsButton]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable showsettingsbuttonvar int global ${This.ID}
+		</OnLoad>
+		</CommandButton>
+		<CommandButton Name="HideSettingsButton" template='Button'>
+		<X>230</X>
+		<Y>310</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Hide Settings</Text>
 		<Visible>0</Visible>
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
-			
+			UIElement[${bjauctionsettingsvar}]:Hide
+			This.Parent.FindChild[ShowSettingsButton]:Show
+			This:Hide
 		</OnLeftClick>
 		<OnLoad>
-			declarevariable settingsbuttonvar int global ${This.ID}
+			declarevariable hidesettingsbuttonvar int global ${This.ID}
 		</OnLoad>
 		</CommandButton>
+		<CommandButton Name="ShowPreviewButton" template='Button'>
+		<X>340</X>
+		<Y>310</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Show Preview</Text>
 		
-
-
-	
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			UIElement[${bjauctionpreviewvar}]:Show
+			This.Parent.FindChild[HidePreviewButton]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable showpreviewbuttonvar int global ${This.ID}
+		</OnLoad>
+		</CommandButton>
+		<CommandButton Name="HidePreviewButton" template='Button'>
+		<X>340</X>
+		<Y>310</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Hide Preview</Text>
+		<Visible>0</Visible>
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			UIElement[${bjauctionpreviewvar}]:Hide
+			This.Parent.FindChild[ShowPreviewButton]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable hidepreviewbuttonvar int global ${This.ID}
+		</OnLoad>
+		</CommandButton>		
 	</Children>			
   </Window>
 </ISUI>
