@@ -972,7 +972,6 @@ function:bool BlessedWhirl()
 	;; higher version
 	if ${Me.Ability[${BlessedWhirl}](exists)}
 	{
-		call Form_ImmortalJadeDragon
 		call UseAbility "${BlessedWhirl}"
 		if ${Return}
 		{
@@ -1897,6 +1896,21 @@ function LootCorpse()
 					{
 						Loot:EndLooting
 					}
+					
+					;; delete these items
+					Me.Inventory[ExactName,"Quality Bag"]:Delete[all]
+					Me.Inventory[ExactName,"Jagged Shard of Battle"]:Delete[all]
+					Me.Inventory[ExactName,"Jagged Shard of Brilliance"]:Delete[all]
+					Me.Inventory[ExactName,"Jagged Shard of Wisdom"]:Delete[all]
+					Me.Inventory[ExactName,"Cracked Shard of Battle"]:Delete[all]
+					Me.Inventory[ExactName,"Cracked Shard of Brilliance"]:Delete[all]
+					Me.Inventory[ExactName,"Cracked Shard of Wisdom"]:Delete[all]
+					Me.Inventory[ExactName,"Glowing Shard of Battle"]:Delete[all]
+					Me.Inventory[ExactName,"Glowing Shard of Brilliance"]:Delete[all]
+					Me.Inventory[ExactName,"Glowing Shard of Wisdom"]:Delete[all]
+					Me.Inventory[ExactName,"Mangled Rag of War"]:Delete[all]
+					Me.Inventory[ExactName,"Bloodied Rag of War"]:Delete[all]
+					Me.Inventory[ExactName,"Frayed Rag of War"]:Delete[all]
 				}
 			}
 		}
