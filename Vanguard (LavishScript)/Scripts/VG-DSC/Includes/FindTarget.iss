@@ -30,19 +30,19 @@ function FindTarget(int Distance)
 	{
 		Distance:Set[100]
 	}
-	
+
 	variable int i
 	variable string leftofname
 	variable bool CorrectType
-	
+
 	variable int TotalPawns
 	variable index:pawn CurrentPawns
-	
+
 	;-------------------------------------------
 	; Populate our CurrentPawns variable
 	;-------------------------------------------
 	TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
-	
+
 	;-------------------------------------------
 	; Cycle through 30 nearest Pawns in area that are AggroNPC
 	;-------------------------------------------
@@ -62,7 +62,13 @@ function FindTarget(int Distance)
 		{
 			continue
 		}
-	
+
+		;; we do not want to retarget same target twice
+		if ${BlackListTarget.Element[${CurrentPawns.Get[${i}].ID}](exists)}
+		{
+			continue
+		}
+
 		;; find a target that is within our level range
 		if ${CurrentPawns.Get[${i}].Level}<${MinimumLevel} || ${CurrentPawns.Get[${i}].Level}>${MaximumLevel}
 		{
@@ -74,7 +80,7 @@ function FindTarget(int Distance)
 		{
 			continue
 		}
-		
+
 		;; we only want targets we can see
 		if ${doCheckLineOfSight}
 		{
@@ -101,14 +107,16 @@ function FindTarget(int Distance)
 				;; Say we found a target
 				if ${Me.Target.HaveLineOfSightTo}
 				{
-					vgecho "FindTarget - (${Me.Target.Type}/HaveLineOfSight) - ${Me.Target.Name}"
+					EchoIt "FindTarget - (${Me.Target.Type}/HaveLineOfSight) - ${Me.Target.Name}"
 				}
 				else
 				{
-					vgecho "FindTarget - (${Me.Target.Type}) - ${Me.Target.Name}"
+					EchoIt "FindTarget - (${Me.Target.Type}/NoLineOfSight) - ${Me.Target.Name}"
 				}
 				return
 			}
 		}
 	}
 }
+
+
