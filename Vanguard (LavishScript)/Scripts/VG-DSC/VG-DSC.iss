@@ -648,29 +648,32 @@ function Buff_ResilientGrasshopper()
 ;===================================================
 function Buff_AuraOfRulers()
 {
-	variable string DiplomacyHeldItem
-	variable bool doEquipDiplomacyHeldItem = FALSE
-
-	ExecutedAbility:Set[Item... Scepter of the Forgotten]
-
-	;; check to see if we have an item in the Diplomacy Held Item slot
-	if ${Me.Inventory[CurrentEquipSlot,Diplomacy Held Item](exists)}
+	if ${Me.Level}>=45
 	{
-		DiplomacyHeldItem:Set[${Me.Inventory[CurrentEquipSlot,Diplomacy Held Item]}]
-		doEquipDiplomacyHeldItem:Set[TRUE]
-	}
+		variable string DiplomacyHeldItem
+		variable bool doEquipDiplomacyHeldItem = FALSE
 
-	;; now equip it and use it
-	Me.Inventory[Scepter of the Forgotten]:Equip
-	wait 3
-	Me.Inventory[Scepter of the Forgotten]:Use
-	wait 3
+		ExecutedAbility:Set[Item... Scepter of the Forgotten]
 
-	;; restore previous item
-	if ${doEquipDiplomacyHeldItem}
-	{
-		Me.Inventory[${DiplomacyHeldItem}]:Equip[Diplomacy Held Item]
+		;; check to see if we have an item in the Diplomacy Held Item slot
+		if ${Me.Inventory[CurrentEquipSlot,Diplomacy Held Item](exists)}
+		{
+			DiplomacyHeldItem:Set[${Me.Inventory[CurrentEquipSlot,Diplomacy Held Item]}]
+			doEquipDiplomacyHeldItem:Set[TRUE]
+		}
+
+		;; now equip it and use it
+		Me.Inventory[Scepter of the Forgotten]:Equip
 		wait 3
+		Me.Inventory[Scepter of the Forgotten]:Use
+		wait 3
+
+		;; restore previous item
+		if ${doEquipDiplomacyHeldItem}
+		{
+			Me.Inventory[${DiplomacyHeldItem}]:Equip[Diplomacy Held Item]
+			wait 3
+		}
 	}
 }
 
