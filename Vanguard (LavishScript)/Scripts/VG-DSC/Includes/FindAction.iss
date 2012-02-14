@@ -87,7 +87,7 @@ atom(script) FindAction()
 		Action:Set[Buff_ResilientGrasshopper]
 		return
 	}
-	if !${Me.Effect[Aura of Rulers](exists)} && ${Me.InCombat} && ${Me.Inventory[Scepter of the Forgotten].IsReady}
+	if !${Me.Effect[Aura of Rulers](exists)} && ${Me.InCombat} && ${Me.Inventory[Scepter of the Forgotten].IsReady} && ${Me.Level}>=45
 	{
 		Action:Set[Buff_AuraOfRulers]
 		return
