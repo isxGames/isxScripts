@@ -1,0 +1,1114 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Template Name='VG.Font'>
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+		<template name='VG.Text.Font' Template='VG.Font' />
+	<template name='VG.Text'>
+		<Font Template='VG.Text.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name='VG.BoldText'>
+		<Font Template='VG.BoldFont' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<Window Name='VG2Dot' Template='VG.Window'>
+		<StorePosition>1</StorePosition>
+		<Title>     VG2Dot  </Title>
+		<TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>200</Width>
+		<Height>230</Height>
+		<StorePosition>1</StorePosition>
+		<Title>VG Sorc</Title>
+			<TitleBar template='VG.window.TitleBar'>
+			<X>0</X>
+			<Y>0</Y>
+			<Width>100%</Width>
+			<Height>18</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>12</Width>
+					<Height>12</Height>
+				</Button>
+				<commandbutton name='Custom Close Button' template='VG.Window.TitleBar.Close'>
+                                        <Command>ui -unload "&filename;";endscript VG2Dot</Command>
+                                </commandbutton>
+			</Children>
+		</TitleBar>
+		<Client Template="VG.Window.Client">
+			<Y>18</Y>
+			<Height>r18</Height>
+			<Texture Template="VG.TabControl.FrameTexture" />
+		</Client>
+<Children>
+<!--main tab control-->
+      <TabControl name='VGT' Template='VG.Tabcontrol'>
+        <X>0</X>
+        <Y>3</Y>
+        <Font>
+          <Name>Arial</Name>
+          <Size>12</Size>
+        </Font>
+        <TabHeight>18</TabHeight>
+        <TabBorder>2</TabBorder>
+        <Height>99%</Height>
+        <Width>99%</Width>
+             <OnSelect>
+                    switch ${This.SelectedTab}
+                    {
+                    Case Soc
+						UIElement[VG2Dot]:SetWidth[280]
+						UIElement[VG2Dot]:SetHeight[270]
+						break
+                    Case Mobs
+						UIElement[VG2Dot]:SetWidth[400]
+						UIElement[VG2Dot]:SetHeight[640]
+						break
+                    Case Misc
+						UIElement[VG2Dot]:SetWidth[280]
+						UIElement[VG2Dot]:SetHeight[280]
+						break
+                   Case Loot
+						UIElement[VG2Dot]:SetWidth[280]
+						UIElement[VG2Dot]:SetHeight[280]
+						break
+					Case Items
+						UIElement[VG2Dot]:SetWidth[320]
+						UIElement[VG2Dot]:SetHeight[300]
+						break
+					Case Hunt
+						UIElement[VG2Dot]:SetWidth[280]
+						UIElement[VG2Dot]:SetHeight[340]
+						break
+					}
+                  </OnSelect>
+	<Tabs>
+                    <Tab name='Soc'>
+                      <Frame name='SocCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children>
+			<checkbox Name='chkDo1' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>10</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>FIRE Elementals</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do1}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do1:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo2' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>30</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>ICE Elementals</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do2}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do2:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo3' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>50</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>ARCANE Elementals</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do3}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do3:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo4' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>70</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>EARTH Elementals</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do4}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do4:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo5' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>90</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Loot Targets </Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do5}
+                              {
+								This:SetChecked
+                              }
+                              Script[VG2Dot].VariableScope.BlackListTarget:Clear
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do5:Set[${This.Checked}]
+                              Script[VG2Dot].VariableScope.BlackListTarget:Clear
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo6' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>110</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Hunt Targets </Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do6}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do6:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo7' Template='VG.BlueCheckbox'>
+                            <visible>4</visible>
+                            <X>10</X>
+                            <Y>130</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Gather Energy</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do7}
+                              {
+                              This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do7:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo8' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>10</X>
+                            <Y>150</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Identify Immunities</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do8}
+                              {
+								This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do8:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo10' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>10</X>
+                            <Y>170</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>Auto Accept Rez</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do10}
+                              {
+								This:SetChecked
+                              }
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do10:Set[${This.Checked}]
+                            </OnLeftClick>
+                          </checkbox>
+			<checkbox Name='chkDo11' Template='VG.BlueCheckbox'>
+                            <visible>1</visible>
+                            <X>10</X>
+                            <Y>190</Y>
+                            <Width>15</Width>
+                            <Height>20</Height>
+                            <Text>No mobs, navigate to next waypoint</Text>
+                            <OnLoad>
+                              if ${Script[VG2Dot].VariableScope.Do11}
+                              {
+								This:SetChecked
+                              }
+                              Script[VG2Dot].VariableScope.HomeX:Set[${Me.X}]
+                              Script[VG2Dot].VariableScope.HomeY:Set[${Me.Y}]
+                            </OnLoad>
+                            <OnLeftClick>
+                              Script[VG2Dot].VariableScope.Do11:Set[${This.Checked}]
+                              Script[VG2Dot].VariableScope.HomeX:Set[${Me.X}]
+                              Script[VG2Dot].VariableScope.HomeY:Set[${Me.Y}]
+                            </OnLeftClick>
+                          </checkbox>
+
+		     </Children>
+                      </Frame>
+                    </Tab>
+                    <Tab name='Mobs'>
+                      <Frame name='MobsCFrm'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children>
+                <Text Name='txtAbilityTarget' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>13</Y>
+                  <Width>95%</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Your Target</Text>
+                  <OnLoad>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnLoad>
+                  <OnRender>
+                    if ${Me.Target(exists)}
+                    {
+                    This:SetText[${Me.Target}]
+                    }
+                  </OnRender>
+                </Text>
+                <Text Name='txtaddTarget' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>33</Y>
+                  <Width>50</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Add to:</Text>
+                </Text>
+                <Button Name="ArcaneButton" Template="VG.GreenButton">
+                  <X>75</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Arcane</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddArcane "${Me.Target.Name}"
+                    BuildArcane
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Button Name="FireButton" Template="VG.GreenButton">
+                  <X>150</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Fire</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddFire "${Me.Target.Name}"
+                    BuildFire
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Button Name="ColdIceButton" Template="VG.GreenButton">
+                  <X>225</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Cold/Ice</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddColdIce "${Me.Target.Name}"
+                    BuildColdIce
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Button Name="PhysicalButton" Template="VG.GreenButton">
+                  <visible>1</visible>
+                  <X>300</X>
+                  <Y>30</Y>
+                  <Width>70</Width>
+                  <Height>20</Height>
+                  <Text>Physical</Text>
+                  <Alignment>Center</Alignment>
+                  <OnLeftClick>
+                    AddPhysical "${Me.Target.Name}"
+                    BuildPhysical
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnLeftClick>
+                </Button>
+                <Text Name='txtArcaneList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>50</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Arcane Pawns:</Text>
+                </Text>
+                <Listbox Name="ArcaneList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>65</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildArcane
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveArcane "${This.SelectedItem}"
+                    BuildArcane
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+                <Text Name='txtFireList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>140</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Fire Pawns: </Text>
+                </Text>
+                <Listbox Name="FireList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>160</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildFire
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveFire "${This.SelectedItem}"
+                    BuildFire
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+				<Text Name='txtColdIceList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>235</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Cold/Ice Pawns: </Text>
+                </Text>
+                <Listbox Name="ColdIceList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>255</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildColdIce
+                  </OnLoad>
+                  <OnRightClick>
+                    RemoveColdIce "${This.SelectedItem}"
+                    BuildColdIce
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+                <Text Name='txtPhysicalList' Template='VG.BoldText'>
+                  <X>13</X>
+                  <Y>330</Y>
+                  <Width>150</Width>
+                  <Height>20</Height>
+                  <Alignment>Left</Alignment>
+                  <Text>Physical Pawns: </Text>
+                </Text>
+                <Listbox Name="PhysicalList" Template="VG.ListBox">
+                  <X>13</X>
+                  <Y>350</Y>
+                  <Width>95%</Width>
+                  <Height>70</Height>
+                  <AutoSort>TRUE</AutoSort>
+                  <Sort>Text</Sort>
+                  <OnLoad>
+                    BuildPhysical
+                  </OnLoad>
+                  <OnRightClick>
+                    RemovePhysical "${This.SelectedItem}"
+                    BuildPhysical
+                    Script[VG2Dot]:QueueCommand[call LavishSave]
+                  </OnRightClick>
+                </Listbox>
+		     </Children>
+           </Frame>
+         </Tab>
+				
+					
+					<Tab name='Misc'>
+						<Frame name='Miscfrm'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>
+								<Text Name="ClassText" Template="VG.BoldText">
+									<X>3%</X>
+									<Y>7%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>TOGGLES:</Text>
+								</Text>
+								<checkbox Name="DoForget" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>15%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Forget</Text>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doForget}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doForget:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name="doCheckLineOfSight" Template="VG.GreenCheckbox">
+									<visible>0</visible>
+									<X>30%</X>
+									<Y>15%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Check LineOfSight while hunting</Text>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doCheckLineOfSight}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doCheckLineOfSight:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<Text Name="BarrierMode" Template="VG.BoldText">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>25%</Y>
+									<Width>40%</Width>
+									<Height>20</Height>
+									<Text>Barrier Type:</Text>
+								</Text>
+								<ComboBox name="BarrierType" template="VG.ComboBox">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>32%</Y>
+									<Width>95%</Width>
+									<Height>18</Height>
+									<Sort>None</Sort>
+									<Items>
+										<Item value='1'> FORCE - Absorb 1 attack and Stun</Item>
+										<Item value='2'> FIRE - 10 percent Spell haste and energy regen</Item>
+										<Item value='3'> CHROMATIC - Reflect 1 spell</Item>
+									</Items>
+									<OnSelect>
+										if ${This.Selection}==1
+										{
+											Script[VG2Dot].Variable[BarrierType]:Set[Force]
+										}
+										if ${This.Selection}==2
+										{
+											Script[VG2Dot].Variable[BarrierType]:Set[Fire]
+										}
+										if ${This.Selection}==3
+										{
+											Script[VG2Dot].Variable[BarrierType]:Set[Chromatic]
+										}
+									</OnSelect>
+								</ComboBox>
+								<Text Name="FocusMode" Template="VG.BoldText">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>42%</Y>
+									<Width>42%</Width>
+									<Height>20</Height>
+									<Text>Focus Type:</Text>
+								</Text>
+								<ComboBox name="FocusType" template="VG.ComboBox">
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>49%</Y>
+									<Width>95%</Width>
+									<Height>18</Height>
+									<Sort>None</Sort>
+									<Items>
+										<Item value='1'> QUARTZ - See Invisibility</Item>
+										<Item value='2'> AQUAMARINE - Water Breathing</Item>
+										<Item value='3'> DIAMOND - Levitatation</Item>
+										<Item value='4'> QUICKSILVER - 25 percent Spell refresh and Movement</Item>
+										<Item value='5'> OPAL - Immunity to movement debuff</Item>
+									</Items>
+									<OnSelect>
+										if ${This.Selection}==1
+										{
+											Script[VG2Dot].Variable[FocusType]:Set[Quartz]
+										}
+										if ${This.Selection}==2
+										{
+											Script[VG2Dot].Variable[FocusType]:Set[Aquamarine]
+										}
+										if ${This.Selection}==3
+										{
+											Script[VG2Dot].Variable[FocusType]:Set[Diamond]
+										}
+										if ${This.Selection}==4
+										{
+											Script[VG2Dot].Variable[FocusType]:Set[Quicksilver]
+										}
+										if ${This.Selection}==5
+										{
+											Script[VG2Dot].Variable[FocusType]:Set[Opal]
+										}
+									</OnSelect>
+								</ComboBox>
+								
+								 <Text Name='txtBuffs' Template='VG.BoldText'>
+									<X>3%</X>
+									<Y>60%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Buffs:</Text>
+								</Text>
+								<ComboBox Name="BuffsCombo" Template="VG.ComboBox">
+									<X>3%</X>
+									<Y>67%</Y>
+									<Width>95%</Width>
+									<Height>20</Height>
+									<OnLoad>
+										This:AddItem[NONE]
+									</OnLoad>
+									<OnSelect>
+										if ${This.SelectedItem.Text(exists)}
+										{
+											AddBuff "${This.SelectedItem.Text}"
+											BuildBuffs
+										}
+									</OnSelect>
+								</ComboBox>
+								<Listbox Name="BuffsList" Template="VG.ListBox">
+									<X>3%</X>
+									<Y>75.5%</Y>
+									<Width>95%</Width>
+									<Height>50</Height>
+									<AutoSort>TRUE</AutoSort>
+									<Sort>User</Sort>
+									<OnLoad>
+										BuildBuffs
+									</OnLoad>
+									<OnRightClick>
+										RemoveBuff "${This.SelectedItem}"
+										This.SelectedItem:Remove
+										BuildBuffs
+									</OnRightClick>
+								</Listbox>
+								
+							</Children>
+						</Frame>
+					</Tab>
+					<Tab name='Loot'>
+						<Frame name='Frame'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>
+								<Textentry Name="LootNearRange" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>10%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.LootNearRange}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.LootNearRange:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[99]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.LootNearRange:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-LootNearRange" Template="VG.Text">
+									<X>23%</X>
+									<Y>10.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Near Range to must loot</Text>
+								</Text>
+								<Textentry Name="LootMaxRange" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>20%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.LootMaxRange}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.LootMaxRange:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[99]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.LootMaxRange:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-LootMaxRange" Template="VG.Text">
+									<X>23%</X>
+									<Y>20.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Max Range to scan for loot</Text>
+								</Text>
+								<Textentry Name="LootCheckForAggroRadius" Template="VG.TextEntry">
+									<X>6%</X>
+									<Y>30%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.LootCheckForAggroRadius}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.LootCheckForAggroRadius:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[99]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.LootCheckForAggroRadius:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-LootCheckForAggroRadius" Template="VG.Text">
+									<X>23%</X>
+									<Y>30.2%</Y>
+									<Width>200</Width>
+									<Height>20</Height>
+									<Alignment>Left</Alignment>
+									<Text>Radius around corpse to scan for mobs</Text>
+								</Text>
+							</Children>
+						</Frame>							
+					</Tab>
+					
+					<!-- Tab Name: (Items) -->
+					<Tab name='Items'>
+						<Frame name='Frame'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>					
+								<checkbox Name='doAutoSell' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>3.5%</X>
+									<Y>8%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Auto Sell</Text>
+									<AutoTooltip>  Sell items in list when targetting a Merchant </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doAutoSell}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doAutoSell:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name="doAutoDecon" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>50%</X>
+									<Y>8%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Auto Decon</Text>
+									<AutoTooltip> Use Decon Kit to decon your junk </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.Do9}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.Do9:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doDeleteSell' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>3.5%</X>
+									<Y>16%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Delete Sellable Items</Text>
+									<AutoTooltip>  Delete all sellable items in list</AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doDeleteSell}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doDeleteSell:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name="doDeleteNoSell" Template="VG.GreenCheckbox">
+									<visible>1</visible>
+									<X>50%</X>
+									<Y>16%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Delete NonSellable Items</Text>
+									<AutoTooltip> Delete Unique, No Trade, No Rent, No Sell, and Quest items in list</AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doDeleteNoSell}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doDeleteNoSell:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<Textentry Name="ItemEntry" Template="VG.TextEntry">
+									<X>3%</X>
+									<Y>24%</Y>
+									<Width>80%</Width>
+									<Height>20</Height>
+								</Textentry>
+								<CommandButton Name="ItemEntryButton" Template="VG.GreenCommandButton">
+									<X>87%</X>
+									<Y>23%</Y>
+									<Width>10%</Width>
+									<Height>20</Height>
+									<Text>Add</Text>
+									<Alignment>Center</Alignment>
+									<OnLeftClick>
+										AddItemList "${UIElement[ItemEntry@Frame@Items@VGT@VG2Dot].Text}"
+										PopulateItemList "ItemList@Frame@Items@VGT@VG2Dot"
+										UIElement[ItemEntry@Frame@Items@VGT@VG2Dot]:SetText[]
+									</OnLeftClick>
+								</CommandButton>
+								<Listbox Name="ItemList" Template="VG.ListBox">
+									<X>3%</X>
+									<Y>33%</Y>
+									<Width>94%</Width>
+									<Height>65%</Height>
+									<AutoSort>TRUE</AutoSort>
+									<Sort>Text</Sort>
+									<OnLoad>
+										PopulateItemList "ItemList@Frame@Items@VGT@VG2Dot"
+									</OnLoad>
+									<OnRightClick>
+										RemoveItemList "${This.SelectedItem}"
+										This.SelectedItem:Remove
+									</OnRightClick>
+								</Listbox>
+							</Children>
+						</Frame>							
+					</Tab>
+
+					<!-- Tab Name: (Hunt) -->
+					<Tab name='Hunt'>
+						<Frame name='Frame'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>1</Visible>
+							<Children>					
+								<checkbox Name='doHunt' Template='VG.GreenCheckbox'>
+									<visible>0</visible>
+									<X>3%</X>
+									<Y>5%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Auto Hunting</Text>
+									<AutoTooltip>  Begin hunting for targets to kill </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doHunt}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doHunt:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doCheckLineOfSight' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>13%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Line of Sight to target</Text>
+									<AutoTooltip>  Target only those that you have a direct line of sight to </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doCheckLineOfSight}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doCheckLineOfSight:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doAggroNPC' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>21%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Attack AggroNPC (red targets)</Text>
+									<AutoTooltip>  Turning this on will allow attacking AggroNPC  </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doAggroNPC}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doAggroNPC:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doNPC' Template='VG.GreenCheckbox'>
+									<visible>1</visible>
+									<X>3%</X>
+									<Y>29%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Attack NPC (yellow targets)</Text>
+									<AutoTooltip>  Turning this on will allow attacking any NPC  </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doNPC}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doNPC:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doCheckForObstacles' Template='VG.GreenCheckbox'>
+									<visible>0</visible>
+									<X>3%</X>
+									<Y>21%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Check for obstacles</Text>
+									<AutoTooltip>  Check for any obstacles while moving around </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doCheckForObstacles}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doCheckForObstacles:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<checkbox Name='doCheckForAdds' Template='VG.GreenCheckbox'>
+									<visible>0</visible>
+									<X>3%</X>
+									<Y>29%</Y>
+									<Width>15</Width>
+									<Height>15</Height>
+									<Text>Check for Adds</Text>
+									<AutoTooltip> try not to attack targets with adds next to it </AutoTooltip>
+									<OnLoad>
+										if ${Script[VG2Dot].VariableScope.doCheckForAdds}
+										{
+											This:SetChecked
+										}
+									</OnLoad>
+									<OnLeftClick>
+										Script[VG2Dot].VariableScope.doCheckForAdds:Set[${This.Checked}]
+									</OnLeftClick>
+								</checkbox>
+								<Textentry Name="PullDistance" Template="VG.TextEntry">
+									<X>3%</X>
+									<Y>37%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.PullDistance}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.PullDistance:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[100]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.PullDistance:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-PullDistance" Template="VG.Text">
+									<X>18%</X>
+									<Y>37.3%</Y>
+									<Width>200</Width>
+									<Height>15</Height>
+									<Alignment>Left</Alignment>
+									<Text>Pull Distance</Text>
+								</Text>
+								<Textentry Name="MinimumLevel" Template="VG.TextEntry">
+									<X>3%</X>
+									<Y>45%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.MinimumLevel}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.MinimumLevel:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[100]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.MinimumLevel:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-MinimumLevel" Template="VG.Text">
+									<X>18%</X>
+									<Y>45.3%</Y>
+									<Width>200</Width>
+									<Height>15</Height>
+									<Alignment>Left</Alignment>
+									<Text>Minimum level of target</Text>
+								</Text>
+								<Textentry Name="MaximumLevel" Template="VG.TextEntry">
+									<X>3%</X>
+									<Y>53%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.MaximumLevel}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.MaximumLevel:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[100]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.MaximumLevel:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-MaximumLevel" Template="VG.Text">
+									<X>18%</X>
+									<Y>53.3%</Y>
+									<Width>200</Width>
+									<Height>15</Height>
+									<Alignment>Left</Alignment>
+									<Text>Minimum level of target</Text>
+								</Text>
+								<button name='SetWaypoint' Template='VG.GreenCommandButton'>
+									<X>3%</X>
+									<Y>65%</Y>
+									<Width>45%</Width>
+									<Height>20</Height>
+									<AutoTooltip>Click here to set Waypoints</AutoTooltip>
+									<Text>Add Waypoint</Text>
+									<OnLeftClick>
+										Script[VG2Dot]:ExecuteAtom[AddWayPoint]
+									</OnLeftClick>
+								</button>
+								<button name='ClearWayPoints' Template='VG.GreenCommandButton'>
+									<X>52%</X>
+									<Y>65%</Y>
+									<Width>45%</Width>
+									<Height>20</Height>
+									<AutoTooltip>Clear All Waypoints</AutoTooltip>
+									<Text>Clear Waypoints</Text>
+									<OnLeftClick>
+										Script[VG2Dot]:ExecuteAtom[ClearWayPoints]
+									</OnLeftClick>
+								</button>
+
+
+							</Children>
+						</Frame>							
+					</Tab>
+				</Tabs>
+			</TabControl>
+		</Children>
+	</Window>
+</ISUI>
