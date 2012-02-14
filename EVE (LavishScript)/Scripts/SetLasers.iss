@@ -139,8 +139,9 @@ function main(... Args)
   {
     if (!${Lasers.Get[${j}].IsDeactivating} && !${Lasers.Get[${j}].IsActive})
     {
-      Ammo:Clear
-      AmmoCount:Set[${Lasers.Get[${j}].GetAvailableAmmo[Ammo]}]
+    	Ammo:Clear
+    	Lasers.Get[${j}]:GetAvailableAmmo[Ammo]
+      AmmoCount:Set[${Ammo.Used}]
       ;echo "-- ${AmmoCount} crystals available for ${Lasers.Get[${j}].ToItem.Name}..."
       i:Set[1]
       do
