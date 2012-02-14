@@ -28,15 +28,15 @@ atom(global) AddItemList(string AddItem)
 		{
 			;; add item to settings
 			LavishSettings[AddItem].FindSet[ItemList]:AddSetting[${AddItem}, ${AddItem}]
-				
+
 			;; save and clear settings
 			LavishSettings[AddItem]:Export[${Script.CurrentDirectory}/Saves/ItemList.xml]
 			LavishSettings[AddItem]:Clear
-		
+
 			;; don't forget to clear these
 			LavishSettings[SellItem]:Clear
 			LavishSettings[DeleteItem]:Clear
-			
+
 			;; repopulate our window
 			PopulateItemList "ItemList@Items@Tabs@VG-DSC"
 		}
@@ -65,7 +65,7 @@ atom(global) RemoveItemList(string RemoveItem)
 		{
 			;; remove item to settings
 			LavishSettings[RemoveItem].FindSet[ItemList].FindSetting[${RemoveItem}]:Remove
-					
+
 			;; save and clear settings
 			LavishSettings[RemoveItem]:Export[${Script.CurrentDirectory}/Saves/ItemList.xml]
 			LavishSettings[RemoveItem]:Clear
@@ -92,8 +92,8 @@ atom(global) PopulateItemList(string UIElementXML)
 	LavishSettings[AddItem]:Clear
 	LavishSettings:AddSet[AddItem]
 	LavishSettings[AddItem]:AddSet[ItemList]
-	LavishSettings[AddItem]:Import[${Script.CurrentDirectory}/Saves/ItemList.xml]	
-					
+	LavishSettings[AddItem]:Import[${Script.CurrentDirectory}/Saves/ItemList.xml]
+
 	;; Import ItemList into RemoveItem
 	LavishSettings[RemoveItem]:Clear
 	LavishSettings:AddSet[RemoveItem]
@@ -119,10 +119,10 @@ atom(global) PopulateItemList(string UIElementXML)
 	;; set our iterator to ItemList
 	variable iterator Iterator
 	ItemList:GetSettingIterator[Iterator]
-	
-	;; clear our UIElementXML ItemList 
+
+	;; clear our UIElementXML ItemList
 	UIElement[${UIElementXML}]:ClearItems
-	
+
 	;; iterate through ItemList
 	while ${Iterator.Key(exists)}
 	{
@@ -149,13 +149,13 @@ function SellItemList()
 			return
 		}
 	}
-	
+
 	;; Sell items only if Merchant is in BuySell dialog
 	if ${Me.Target.Type.Equal[Merchant]}
 	{
 		;; create a temp variable
 		variable string temp
-		
+
 		;; cut down on the loading times
 		if !${LavishSettings[SellItem].FindSet[ItemList](exists)}
 		{
@@ -165,7 +165,7 @@ function SellItemList()
 			LavishSettings[SellItem]:AddSet[ItemList]
 			LavishSettings[SellItem]:Import[${Script.CurrentDirectory}/Saves/ItemList.xml]
 		}
-							
+
 		;; set our settingsetref to ItemList
 		variable settingsetref ItemList
 		ItemList:Set[${LavishSettings[SellItem].FindSet[ItemList]}]
@@ -173,7 +173,7 @@ function SellItemList()
 		;; set our iterator to ItemList
 		variable iterator Iterator
 		ItemList:GetSettingIterator[Iterator]
-						
+
 		;; iterate through ItemList
 		while ${Iterator.Key(exists)} && ${Me.Target(exists)} && !${Me.InCombat}
 		{
@@ -199,7 +199,7 @@ function SellItemList()
 								;; get closer
 								call MoveCloser 4
 							}
-							
+
 							;; open BuySell dialog with merchant
 							Pawn[${Me.Target.Name}]:DoubleClick
 							wait 3
@@ -230,7 +230,7 @@ function DeleteItemList()
 {
 	;; create a temp variable
 	variable string temp
-		
+
 	;; cut down on the loading times
 	if !${LavishSettings[DeleteItem].FindSet[ItemList](exists)}
 	{
@@ -350,3 +350,4 @@ atom(script) PlaySound(string Filename)
 	echo "PlaySound: ${Filename}"
 	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
 }
+

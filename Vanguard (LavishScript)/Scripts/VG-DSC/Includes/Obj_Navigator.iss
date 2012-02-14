@@ -35,9 +35,9 @@ objectdef  Obj_Navigator
 	variable string CurrentChunk
 	variable point3f LastKnownSpot
 	variable int NextOnMapCheck
-	
-	
-	
+
+
+
 	;; define our object Face that's used within this script
 	;variable obj_Face Face
 
@@ -101,11 +101,11 @@ objectdef  Obj_Navigator
 				LNavRegion[${This.CurrentChunk}]:Export[-lso,${This.ChunkFilePath}/${This.CurrentChunk}.lso]
 				This:EchoIt["Saved paths to ${This.CurrentChunk}"]
 				This.CurrentChunk:Set[${Me.Chunk}]
-				
+
 			}
 		}
 	}
-	
+
 	;; keep loading chunks into memory (lso's are smaller and quicker to load)
 	method LoadMap(string MapToLoad)
 	{
@@ -137,7 +137,7 @@ objectdef  Obj_Navigator
 			}
 		}
 	}
-	
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - executed by Shutdown
 	method SavePaths()
@@ -177,8 +177,8 @@ objectdef  Obj_Navigator
 		This.doSave:Set[TRUE]
 		This.CurrentChunk:Set[${Me.Chunk}]
 	}
-	
-	;; 
+
+	;;
 	method StopMapping()
 	{
 		This.doMapping:Set[FALSE]
@@ -195,8 +195,8 @@ objectdef  Obj_Navigator
 			This.doMoveToPoint:Set[TRUE]
 			return
 		}
-	}	
-	
+	}
+
 	method StartDumpToFile()
 	{
 		This.doDumpToFile:Set[TRUE]
@@ -216,13 +216,13 @@ objectdef  Obj_Navigator
 		}
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; DO NOT CALL THIS - IT IS AN ATTACHED ATOM "OnFrame"
 	method HandleEvent()
 	{
 		;; Save current map
 		This:SaveMap
-	
+
 		;; Keep loading maps as we chunk
 		This:LoadMap["${Me.Chunk}"]
 
@@ -232,14 +232,14 @@ objectdef  Obj_Navigator
 			This:AutoBox
 			This:ConnectOnMove
 		}
-		
+
 		;; Start mapping if we are not moving to a point
 		if !${This.doMoveToPoint}
 		{
 			This:Stop
 			return
 		}
-		
+
 		;; Check to see if we are on the map
 		if !${This.IsMapped[${Me.X},${Me.Y},${Me.Z}]}
 		{
@@ -269,12 +269,12 @@ objectdef  Obj_Navigator
 			This:Stop
 			return
 		}
-		
+
 		;; Start moving
 		This:TakeNextHop
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; TO DO:  Pass it a destination that needs to check if on correct map - Do not call this from your routines
 	function:bool MoveToMappedArea()
 	{
@@ -289,8 +289,8 @@ objectdef  Obj_Navigator
 			This.doMoveToMappedArea:Set[TRUE]
 			return
 		}
-		
-		;; We are already moving onto the map 
+
+		;; We are already moving onto the map
 		if !${doMoveToMappedArea}
 		{
 			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextOnMapCheck}]}/1000]}<1
@@ -303,7 +303,7 @@ objectdef  Obj_Navigator
 
 		This:EchoIt["Moving back onto map"]
 
-		
+
 		This.doMoveToMappedArea:Set[FALSE]
 		variable index:lnavregionref SurroundingRegions
 		variable string Region
@@ -311,14 +311,14 @@ objectdef  Obj_Navigator
 		variable int Index = 1
 		variable int ClosetConnection = 10000000
 		variable int IndexTemp = 0
-		
+
 		Region:Set[${Me.Chunk}]
 
 		; We need to iterate through all the nearby regions and find the closest one that also has connections
 		RegionsFound:Set[${LNavRegion[${Region}].DescendantsWithin[SurroundingRegions,1000,${Me.Location}]}]
 
 		This:EchoIt["RegionsFound=${RegionsFound}"]
-		
+
 		if ${RegionsFound} > 0
 		{
 			;; find closest connection to us
@@ -340,9 +340,9 @@ objectdef  Obj_Navigator
 					}
 				}
 			}
-			
+
 			This:EchoIt["Index=${Index}, ClosetConnection=${ClosetConnection}"]
-			
+
 			;; if there is a connection closest to us, then face it and start moving
 			if ${SurroundingRegions.Get[${Index}].ConnectionCount} > 0
 			{
@@ -356,8 +356,8 @@ objectdef  Obj_Navigator
 		This:EchoIt["Not able to move back onto map"]
 		return FALSE
 	}
-	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - you may use this within your routine
 	member:bool IsMapped(float X, float Y, float Z)
 	{
@@ -370,18 +370,18 @@ objectdef  Obj_Navigator
 			;echo FALSE - ${LNavRegion[${Region}].Type} // ${LNavRegion[${Region}]}
 			return FALSE
 		}
-		
+
 		;; if it does not have any connections then we are not mapped
 		if ${LNavRegion[${Region}].ConnectionCount}==0
 		{
 			return FALSE
 		}
-		
+
 		;echo TRUE - ${LNavRegion[${Region}].Type} // ${LNavRegion[${Region}]}
 		return TRUE
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - you may use this within your routines
 	method AddNamedPoint(string pointname, string custom)
 	{
@@ -397,7 +397,7 @@ objectdef  Obj_Navigator
 		}
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - you may use this within your routines
 	method AddHuntPoint()
 	{
@@ -409,8 +409,8 @@ objectdef  Obj_Navigator
 		}
 	}
 
-		
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - Do not call this from your routines
 	method AutoBox()
 	{
@@ -430,7 +430,7 @@ objectdef  Obj_Navigator
 
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - Do not call this from your routines
 	method ConnectOnMove()
 	{
@@ -448,7 +448,7 @@ objectdef  Obj_Navigator
 		This.LastRegion:Set[${This.CurrentRegion}]
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - used by almost all routines
 	member CurrentREGION()
 	{
@@ -463,8 +463,8 @@ objectdef  Obj_Navigator
 		return ${LNavRegion[${Region}].ID}
 	}
 
-	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - Do not call this from your routines
 	function:bool FindPath(string destination)
 	{
@@ -472,7 +472,7 @@ objectdef  Obj_Navigator
 		variable string CPname
 		mypath:Clear
 		CPname:Set[${This.CurrentREGION}]
-		
+
 		; BUILD PATH - use dijkstrapathfinder version
 		This.PathFinderD:SelectPath[${LNavRegion[${CPname}]},${LNavRegion[${Me.Chunk}].FindRegion[${destination}]},mypath]
 		if ${mypath.Hops} <= 0
@@ -500,16 +500,16 @@ objectdef  Obj_Navigator
 			return TRUE
 		}
 		return FALSE
-		
+
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - Do not call this from your routines
 	method TakeNextHop()
 	{
 		variable float WPX
 		variable float WPY
-		
+
 		;; bpath is where we are on the path!
 		WPX:Set[${mypath.Region[${This.bpathindex}].CenterPoint.X}]
 		WPY:Set[${mypath.Region[${This.bpathindex}].CenterPoint.Y}]
@@ -535,32 +535,32 @@ objectdef  Obj_Navigator
 		}
 	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - Do not call this from your routines
 	member:bool CollisionTest(float FromX, float FromY, float FromZ, float ToX, float ToY, float ToZ)
 	{
 		variable point3f From
 		From:Set[${FromX}, ${FromY}, {$FromZ}]
-		
+
 		variable point3f To
 		To:Set[${ToX}, ${ToY}, {$ToZ}]
-		
+
 		variable point3f TEST1
 		TEST1:Set[${VG.CheckCollision[${To}, ${From}].Location}]
 
 		variable point3f TEST2
 		TEST2:Set[${VG.CheckCollision[${From}, ${To}].Location}]
-		
-		if	( ${${TEST1}(exists)} || ${${TEST2}(exists)} )			 	
-		;if	( ${${TEST1}(exists)} || ${${TEST2}(exists)} || ${VG.CheckCollision[${To.X},${To.Y},${To.Z}](exists)})			 	
+
+		if	( ${${TEST1}(exists)} || ${${TEST2}(exists)} )
+		;if	( ${${TEST1}(exists)} || ${${TEST2}(exists)} || ${VG.CheckCollision[${To.X},${To.Y},${To.Z}](exists)})
 		{
 			This:EchoIt["Collision = TRUE, Collision actor=${VG.CheckCollision[${To.X}, ${To.Y}, ${To.Z}]} at ${VG.CheckCollision[${To.X}, ${To.Y}, ${To.Z}].Location}"]
 			return TRUE
 		}
 		return FALSE
-	}	
+	}
 
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Good - used by AddHuntPoint - Do not call this from your routines
 	member:string getlvl()
 	{
@@ -615,3 +615,5 @@ atom Bump(string Name)
 		}
 	}
 }
+
+

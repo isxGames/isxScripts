@@ -6,7 +6,7 @@
 ;; variable "Action" to the name of what we want to execute.  Calling
 ;; this routine exucutes nothing while its sole purpose here is to identify
 ;; what we want to do and set the variable to be used in a different routine.
-;; One example of using the variable "Action" is by using the Switch command, and 
+;; One example of using the variable "Action" is by using the Switch command, and
 ;; another example is to treat it like a subroutine.
 
 variable string Action = "Idle"
@@ -23,14 +23,14 @@ atom(script) FindAction()
 		Action:Set[Initialize]
 		return
 	}
-	
+
 	;; check to see if we are dead
 	if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
 	{
 		Action:Set[WeAreDead]
 		return
 	}
-	
+
 	;; if we are feign death then get out of it
 	if ${Me.Effect[${FeignDeath}](exists)} && !${isPaused}
 	{
@@ -44,7 +44,7 @@ atom(script) FindAction()
 		Action:Set[WeChunked]
 		return
 	}
-	
+
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextFormCheck}]}/1000]}>8
 	{
 		;;;;;;;;;;
@@ -67,7 +67,7 @@ atom(script) FindAction()
 			return
 		}
 	}
-	
+
 	;;;;;;;;;;
 	;; We want to ensure we have Inner Light, Resilient Grasshopper,
 	;; and Aura of Rulers buffs are up at all times.  Mobs that stip buffs
@@ -94,6 +94,20 @@ atom(script) FindAction()
 	}
 
 	;;;;;;;;;;
+	;; Follow whomever you are following... it is a priority
+	if !${Me.FName.Find[${Follow}]}
+	{
+		if ${Pawn[name,${Follow}](exists)}
+		{
+			if ${Pawn[name,${Follow}].Distance}>=5 && ${Pawn[name,${Follow}].Distance}<45
+			{
+				Action:Set[FollowPlayer]
+				return
+			}
+		}
+	}
+
+	;;;;;;;;;;
 	;; If we are not in combat and have a target then we will check to see if
 	;; it is an AggroNPC.  If it is then go pull the target to us.  This is where
 	;; we should feign death if we pulled too many AggroNPC's.
@@ -111,7 +125,7 @@ atom(script) FindAction()
 					Action:Set[PullTarget]
 					return
 				}
-				
+
 				;; attack the target only if it is in range and we are not hunting
 				if !${doHunt}
 				{
@@ -140,9 +154,9 @@ atom(script) FindAction()
 		Action:Set[LootCorpse]
 		return
 	}
-	
+
 	;;;;;;;;;;
-	;; We need to ensure that we always assist the tank or change target 
+	;; We need to ensure that we always assist the tank or change target
 	;; to the first encounter if we are not fighting or do not have a target.
 	;; Sometimes, tanks die and do not release so there's a chance we do not
 	;; pickup the encounter unless we get hit.
@@ -154,9 +168,9 @@ atom(script) FindAction()
 			Action:Set[KissOfHeaven]
 			return
 		}
-		
-		
-		;; Assist the tank
+
+
+		;; Assist the tank as long as it isn't me
 		if ${Pawn[Name,${Tank}](exists)} && !${Tank.Find[${Me.FName}]}
 		{
 			if ${Pawn[Name,${Tank}].CombatState}>0 && ${Pawn[Name,${Tank}].Distance}<=50
@@ -165,7 +179,7 @@ atom(script) FindAction()
 				return
 			}
 		}
-		
+
 		;; Grab an encounter
 		if ${Me.Encounter}>0
 		{
@@ -197,7 +211,6 @@ atom(script) FindAction()
 						if !${Me.DTarget.Name.Equal[${Tank}]}
 						{
 							Pawn[exactname,${Tank}]:Target
-							
 						}
 					}
 					if ${Group[${i}].Health}>=${Me.HealthPct}
@@ -231,7 +244,7 @@ atom(script) FindAction()
 				return
 			}
 		}
-		
+
 		;;;;;;;;;;
 		;; Use Racial Ability if our health is below 30%
 		if ${Me.HealthPct}<${RacialAbilityPct}
@@ -259,7 +272,7 @@ atom(script) FindAction()
 				return
 			}
 		}
-		
+
 
 		;;;;;;;;;;
 		;; Breath of Life for a heal when our health is below 50%
@@ -292,7 +305,7 @@ atom(script) FindAction()
 				}
 			}
 		}
-		
+
 		;;;;;;;;;;
 		;; Kiss of Heaven for an instant HOT when our health is below 60%, lasts 32 second
 		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${KissOfHeavenPct}
@@ -319,7 +332,7 @@ atom(script) FindAction()
 				return
 			}
 		}
-		
+
 		;;;;;;;;;;
 		;; stay within melee distance
 		if ${Me.Target.Distance}<1 || ${Me.Target.Distance}>=5
@@ -360,7 +373,7 @@ atom(script) FindAction()
 			}
 
 			;;;;;;;;;;
-			;; Get our endurance leaching buff up so that we can have more 
+			;; Get our endurance leaching buff up so that we can have more
 			;; endurance during the fight
 			if ${Me.Ability[${LeechsGrasp}](exists)} && ${Me.Ability[${LeechsGrasp}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
@@ -440,7 +453,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			
+
 			;;;;;;;;;;
 			;; these will add Jin if we get too low
 			if ${Me.Stat[Adventuring,Jin]}<12
@@ -458,7 +471,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			
+
 			;;;;;;;;;;
 			;; Do we need this?  Not really, but could make a difference down the road
 			if ${Me.Stat[Adventuring,Jin]}>12
@@ -513,7 +526,7 @@ atom(script) FindAction()
 				Action:Set[Crit_DPS]
 				return
 			}
-			
+
 			;;;;;;;;;;
 			;; Use Ra'Jin Flare and turn Melee Attack Back On... Ranged Damage
 			if ${Me.Encounter}<2 && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
@@ -524,7 +537,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			
+
 			;;;;;;;;;;
 			;; lets build out health and jin by repeating Endowement of Life
 			if ${Me.Ability[${BlessedWind}](exists)} && ${Me.Ability[${CycloneKick}](exists)} && ${Me.Ability[${VoidHand}](exists)} && ${Me.Stat[Adventuring,Jin]}>=2
@@ -535,7 +548,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			
+
 			;;;;;;;;;;
 			;; Last ability to use... available at level 2
 			if ${Me.Ability[${BlessedWind}](exists)}
@@ -546,7 +559,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-			
+
 			;;;;;;;;;;
 			;; Last ability to use... available at level 1
 			if ${Me.Ability[${VoidHand}](exists)} && ${Me.EnergyPct}>20
@@ -557,9 +570,7 @@ atom(script) FindAction()
 					return
 				}
 			}
-
-			
-			
 		}
 	}
 }
+
