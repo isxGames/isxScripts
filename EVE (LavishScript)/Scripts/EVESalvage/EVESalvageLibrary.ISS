@@ -270,7 +270,7 @@ function DoGetLoot(bool InReachOnly)
 					while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
 					{
 
-						echo "LOOT -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} Targets Aquired/Aquiring of ${MaxTargets} max or ${Cans.Used} available."
+						echo "LOOT -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Cans.Used} available."
 
 						; Make sure we're not already targetting this wreck...
 						Me:GetTargets[Targets]
@@ -335,7 +335,7 @@ function DoGetLoot(bool InReachOnly)
 						if (!${Cans[${i}].ID(exists)})
 							break
 
-						echo "LOOT ---   LockTarget :: ${Cans[${i}].Name}... ${Wrecks[${i}].GroupID}"
+						echo "LOOT ---   LockTarget :: ${Cans[${i}].Name}... ${Cans[${i}].GroupID}"
 						Cans[${i}]:LockTarget
 						wait 10
 						i:Inc
@@ -346,7 +346,7 @@ function DoGetLoot(bool InReachOnly)
 						wait 10
 					}
 					while ${Me.TargetingCount} > 0
-					echo "**    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} Targets Aquired"
+					echo "**    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired"
 
 					;##################################################
 
@@ -580,7 +580,8 @@ function DoSalvage(bool LootCans)
   variable int l
 
 	call GetModulesInformation ${LootCans}
-	MaxTargets:Set[${Me.Ship.MaxLockedTargets}]
+	if (${MaxTargets} < 1)
+		MaxTargets:Set[${Me.Ship.MaxLockedTargets}]
 	wait 5
 	MaxTargetRange:Set[${Me.Ship.MaxTargetRange}]
 
@@ -595,6 +596,13 @@ function DoSalvage(bool LootCans)
 		EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186]
 		i:Set[1]
 		
+		;; FOR TESTING
+		;do
+		;{
+		;	echo "Wreck ${i}. ${Wrecks[${i}].Name} - Distance: ${Wrecks[${i}].Distance.Precision[2]}"
+		;}
+		;while ${i:Inc} < ${Wrecks.Used}
+		;return
 
 		if (${Wrecks.Used} == 0)
 		{
@@ -606,14 +614,13 @@ function DoSalvage(bool LootCans)
 			}
 			return
 		}
-		
-		
+	
 		echo "SALV -     ${Wrecks.Used} wrecks remain in this area."
 	
 		; Lock up to max targets
 		while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
 		{	
-			echo "SALV -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} Targets Aquired/Aquiring of ${MaxTargets} max or ${Wrecks.Used} available."
+			echo "SALV -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Wrecks.Used} available."
 
 			; Make sure we're not already targetting this wreck...
 			Me:GetTargets[Targets]
@@ -688,7 +695,7 @@ function DoSalvage(bool LootCans)
 		{
 			wait 10
 		}
-		echo "SALV **    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} Targets Aquired"
+		echo "SALV **    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
 		
 		;##################################################
 		
@@ -712,7 +719,7 @@ function DoSalvage(bool LootCans)
 			{
 				Targets[${k}]:MakeActiveTarget
 				;;;start salvager
-				echo "SALV ---   Wreck in range, Salvager starting ${Wrecks[${i}].Name}..."
+				echo "SALV ---   Wreck in range, Salvager starting ${Targets[${i}].Name}..."
 				;; Salvage ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				j:Set[1]
 				do
