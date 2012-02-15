@@ -117,7 +117,7 @@ function main(... Args)
   	echo "* Flags:   '-loot'  					[the script will loot all cans that are found in space]"
   	echo "*          '-stop'  					[the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
   	echo "*          '-here'  					[the script will only work at its current location]"
-  	echo "*          '-maxtargets #'  	[Indicates maximum number of targets YOU can handle (even if your ship is capable of more)]
+  	echo "*          '-maxtargets #'  	[Indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]
   	return
   }
 
