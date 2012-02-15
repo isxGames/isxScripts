@@ -581,7 +581,12 @@ function DoSalvage(bool LootCans)
 
 	call GetModulesInformation ${LootCans}
 	if (${MaxTargets} < 1)
-		MaxTargets:Set[${Me.Ship.MaxLockedTargets}]
+	{
+		if (${Me.MaxLockedTargets} <= ${Me.Ship.MaxLockedTargets})
+			MaxTargets:Set[${Me.MaxLockedTargets}]
+		else
+			MaxTargets:Set[${Me.Ship.MaxLockedTargets}]
+	}
 	wait 5
 	MaxTargetRange:Set[${Me.Ship.MaxTargetRange}]
 
@@ -677,7 +682,7 @@ function DoSalvage(bool LootCans)
 			    }
 			    else
 			    {
-						echo "SALV ---   ${Wrecks[${i}].Name} too far away to target :: Handeling current targets before moving..."
+						echo "SALV ---   ${Wrecks[${i}].Name} too far away to target :: Handling current targets before moving..."
 						break
 			    }
 			}
