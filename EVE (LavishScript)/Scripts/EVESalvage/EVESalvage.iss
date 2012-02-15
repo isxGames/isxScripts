@@ -114,9 +114,9 @@ function main(... Args)
   	echo "* Syntax:  'run EVESalvage [flags] <bookmarklabel1> <bookmarklabel2> ...'"
   	echo "*          'run EVESalvage -at <FleetMemberName>"
   	echo "*"
-  	echo "* Flags:   '-loot'  					[the script will loot all cans that are found in space)"
-  	echo "*          '-stop'  					[the script will stop after the last wreck is handled and will not return to the base/location from which you started)"
-  	echo "*          '-here'  					[the script will only work at its current location)"
+  	echo "* Flags:   '-loot'  					[the script will loot all cans that are found in space]"
+  	echo "*          '-stop'  					[the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
+  	echo "*          '-here'  					[the script will only work at its current location]"
   	echo "*          '-maxtaragets #'  	[Indicates maximum number of targets YOU can handle (even if your ship is capable of more)]
   	return
   }
