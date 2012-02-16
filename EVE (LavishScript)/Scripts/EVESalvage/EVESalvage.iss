@@ -388,7 +388,7 @@ function main(... Args)
 				;;; Dock, if applicable
 				if ${MyBookmarks[${j}].ToEntity(exists)}
 				{
-					if (${MyBookmarks[${j}].ToEntity.CategoryID} == 3)
+					if (${MyBookmarks[${j}].ToEntity.CategoryID.Equal[3]})
 					{
 						MyBookmarks[${j}].ToEntity:Approach
 						do

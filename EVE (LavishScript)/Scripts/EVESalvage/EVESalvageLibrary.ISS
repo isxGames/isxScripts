@@ -375,7 +375,7 @@ function DoGetLoot(bool InReachOnly)
 							{
 								if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
 								{
-									if (${TractorBeams[${j}].TargetID} == ${Targets[${k}].ID})
+									if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 									{
 										;;Already tractoring this...
 										alreadyTractoring:Set[TRUE]
@@ -442,7 +442,7 @@ function DoGetLoot(bool InReachOnly)
 							{
 								if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
 								{
-									if (${TractorBeams[${j}].TargetID} == ${Targets[${k}].ID})
+									if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 									{
 										;;Already tractoring this...
 										alreadyTractoring:Set[TRUE]
@@ -724,14 +724,14 @@ function DoSalvage(bool LootCans)
 			{
 				Targets[${k}]:MakeActiveTarget
 				;;;start salvager
-				echo "SALV ---   Wreck in range, Salvager starting ${Targets[${i}].Name}..."
+				echo "SALV ---   Wreck in range, Salvager starting ${Targets[${k}].Name}..."
 				;; Salvage ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				j:Set[1]
 				do
 				{
 					if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
 					{
-						if (${TractorBeams[${j}].TargetID} == ${Targets[${k}].ID})
+						if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 						{
 							;;Already tractoring this...
 							alreadyTractoring:Set[TRUE]
@@ -755,12 +755,12 @@ function DoSalvage(bool LootCans)
 		if (!${alreadyTractoring} )
 			wait 17
 				
-		;;;reset K to the begining again
+		;;;reset k to the begining again
 		k:Set[1]
 		while ${k} <= ${Targets.Used} 
 		{
 			wait 10
-			echo "SALV -     Checking target: ${Targets[${k}].Name} "
+			echo "SALV -     Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
 			
 			;;; Tractor...or else approach and wait for wreck to be in distance ;;;;;;;;
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
@@ -792,6 +792,7 @@ function DoSalvage(bool LootCans)
 			elseif (${Targets[${k}].Distance} <= ${MaxTractorRange})
 			{
 				Targets[${k}]:MakeActiveTarget
+				wait 2
 				;;;start Tractoring
 				echo "SALV --    Wreck in tractor range..."
 				
@@ -803,8 +804,10 @@ function DoSalvage(bool LootCans)
 				{
 					if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
 					{
-						if (${TractorBeams[${j}].TargetID} == ${Targets[${k}].ID})
+						;echo "SALV[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name} is active and is not deactivating"
+						if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 						{
+							;echo "SALV[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name}'s TargetID is ${TractorBeams[${j}].TargetID}"
 							;;Already tractoring this...
 							alreadyTractoring:Set[TRUE]
 							echo "SALV ---    ...already Tractoring"
@@ -1200,7 +1203,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 				;;; Dock, if applicable
 				if ${MyBookmarks[${j}].ToEntity(exists)}
 				{
-					if (${MyBookmarks[${j}].ToEntity.CategoryID} == 3)
+					if (${MyBookmarks[${j}].ToEntity.CategoryID.Equal[3]})
 					{
 						MyBookmarks[${j}].ToEntity:Approach
 						do
