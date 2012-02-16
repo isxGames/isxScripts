@@ -188,6 +188,7 @@ function main(... Args)
 	
 	  wait 10
 		call DoSalvage ${DoLoot}
+		call CloseCargo
 	
 		; Remove bookmark now that we're done
 		wait 2
@@ -323,6 +324,7 @@ function main(... Args)
 			    		wait 2
 			    		echo "- Salvage operation at '${SalvageLocationLabels[${i}]}' complete ... removing bookmark."
 			    		EVE.Bookmark[${SalvageLocationLabels[${i}]}]:Remove
+			    		call CloseCargo
 			    		wait 10
 			    }
         }
@@ -336,10 +338,14 @@ function main(... Args)
 	if (${SalvageHereOnly})
 	{
 		call DoSalvage ${DoLoot}
+		call CloseCargo
 	}
 
   if (${StopAfterSalvaging})
+  {
+  	call CloseCargo
     return
+  }
 
   ;;; Finished...returning home ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   echo "- Salvage operations completed .. returning to home base"

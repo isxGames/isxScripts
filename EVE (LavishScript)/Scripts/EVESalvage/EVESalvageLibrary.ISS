@@ -125,7 +125,7 @@ function CloseCargo()
 {
 	if ${EVEWindow[MyShipCargo](exists)}
 	{
-		echo "CLOS ----- Closing Ship Cargohold"
+		echo "CLOSE ----- Closing Ship Cargohold"
 		EVEWindow[MyShipCargo]:Close
 		wait 15
 		while ${EVEWindow[MyShipCargo](exists)}
@@ -175,7 +175,7 @@ function DoGetLoot(bool InReachOnly)
 			echo "LOOT ---   Stacking cargo..."
 			Me.Ship:StackAllCargo
 			wait 10				
-			Me.ToEntity:CloseCargo				
+			;call CloseCargo			
 			if ${NearbyCans[${i}](exists)}
 			{
 				NearbyCans[${i}]:CloseCargo
@@ -418,7 +418,7 @@ function DoGetLoot(bool InReachOnly)
 							echo "LOOT ---   Stacking cargo..."
 							Me.Ship:StackAllCargo
 							wait 10				
-							Me.ToEntity:CloseCargo				
+							;call CloseCargo		
 							if ${Targets[${k}](exists)}
 							{
 								Targets[${k}]:CloseCargo
@@ -983,11 +983,9 @@ function DoSalvage(bool LootCans)
 function TransferSalvagedItemsToHangar()
 {	
     wait 10
-		if (!${EVEWindow[MyShipCargo](exists)})
-		{
-			EVE:Execute[OpenCargoHoldOfActiveShip]
-			wait 30
-		}
+    call OpenCargo
+		wait 20
+
 		if !${EVEWindow[hangarFloor](exists)}
 		{
 			EVE:Execute[OpenHangarFloor]
@@ -997,10 +995,10 @@ function TransferSalvagedItemsToHangar()
 		Me.Ship:GetCargo[MyCargo]
 		if (${MyCargo.Used} == 0)
 		{
-			EVEWindow[MyShipCargo]:Close
+			call CloseCargo
 			wait 10
-			EVE:Execute[OpenCargoHoldOfActiveShip]
-			wait 20
+			call OpenCargo
+			wait 10
 			Me.Ship:GetCargo[MyCargo]
 		}					
 						
@@ -1061,11 +1059,8 @@ function TransferSalvagedItemsToHangar()
 function TransferLootToHangar()
 {	
     wait 10
-		if !${EVEWindow[MyShipCargo](exists)}
-		{
-			EVE:Execute[OpenCargoHoldOfActiveShip]
-			wait 30
-		}
+    call OpenCargo
+		wait 20
 		
 		if !${EVEWindow[hangarFloor](exists)}
 		{
@@ -1077,9 +1072,9 @@ function TransferLootToHangar()
 		Me.Ship:GetCargo[MyCargo]
 		if (${MyCargo.Used} == 0)
 		{
-			EVEWindow[MyShipCargo]:Close
+			call CloseCargo
 			wait 10
-			EVE:Execute[OpenCargoHoldOfActiveShip]
+			call OpenCargo
 			wait 20
 			Me.Ship:GetCargo[MyCargo]
 		}
@@ -1154,8 +1149,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 	  EVE:GetBookmarks[MyBookmarks]
 	  
 	  ; Close cargo hold!
-	  if (${EVEWindow[MyShipCargo](exists)})
-	  	EVEWindow[MyShipCargo]:Close
+	  call CloseCargo
 	  
 		j:Set[1]
 		do
@@ -1245,7 +1239,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 	 		echo "FULL ---   Unloading Looted Items..."
 	 		call TransferLootToHangar
 	 	}
-	 	Me.ToEntity:CloseCargo
+	 	call CloseCargo
 	 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
 	 
 		;;; Now it's time to head back out to the site
