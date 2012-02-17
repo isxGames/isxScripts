@@ -140,13 +140,27 @@ function SellItemList()
 	;; make sure we are out of bag space
 	if ${Me.InventorySlotsOpen}<=2
 	{
-		if !${Me.Target.Type.Equal[Merchant]}
+		PlaySound ALARM
+		EchoIt "NO MORE SPACE... Total space remaining is ${Me.InventorySlotsOpen}"
+		
+		if !${Pawn[Merchant](exists)} && ${Pawn[Merchant].Distance}<=5
 		{
-			PlaySound ALARM
-			wait 50
-			vgecho NO MORE SPACE TO LOOT, GO SELL SOMETHING
-			isRunning:Set[FALSE]
-			return
+			if ${Me.Inventory[Merchant Contract](exists)}
+			{
+				EchoIt "Popping a Merchant"
+				Me.Inventory[Merchant Contract]:Use
+				wait 20
+			}
+		}
+
+		if ${Pawn[Merchant](exists)} && ${Pawn[Merchant].Distance}<=5
+		{
+			EchoIt "Targeting Merchant"
+			Pawn[Merchant]:Target
+			wait 5
+			call RepairItemList
+			Pawn[Merchant]:Target
+			wait 5
 		}
 	}
 
@@ -174,8 +188,17 @@ function SellItemList()
 		variable iterator Iterator
 		ItemList:GetSettingIterator[Iterator]
 
+		variable int finishplat
+		variable int finishgold
+		variable int finishsilver
+		variable int finishcopper
+		variable int startmoney = ${Me.Copper}
+		startmoney:Inc[${Math.Calc[${Me.Silver}*100]}]
+		startmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
+		startmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
+		
 		;; iterate through ItemList
-		while ${Iterator.Key(exists)} && ${Me.Target(exists)} && !${Me.InCombat}
+		while ${Iterator.Key(exists)} && ${Me.Target(exists)} && !${Me.InCombat} && !${isPaused}
 		{
 			;; we only want to sell items existing in our inventory
 			if ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${doAutoSell}
@@ -194,7 +217,6 @@ function SellItemList()
 						{
 							if ${Me.Target.Distance}>4
 							{
-								vgecho MOVING
 								waitframe
 								;; get closer
 								call MoveCloser 4
@@ -219,6 +241,31 @@ function SellItemList()
 			}
 			;; get next iterator
 			Iterator:Next
+		}
+		variable int finishmoney
+		finishmoney:Inc[${Me.Copper}]
+		finishmoney:Inc[${Math.Calc[${Me.Silver}*100]}]
+		finishmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
+		finishmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
+		variable int diff
+		diff:Set[${startmoney} - ${finishmoney}]
+		finishplat:Set[${Math.Abs[${Math.Calc[${diff}/100/100/100]}].Int}]
+		diff:Dec[${Math.Abs[${Math.Calc[${finishplat}*100*100*100]}].Int}]
+		finishgold:Set[${Math.Abs[${Math.Calc[${diff}/100/100]}].Int}]
+		diff:Dec[${Math.Abs[${Math.Calc[${finishgold}*100*100]}].Int}]
+		finishsilver:Set[${Math.Abs[${Math.Calc[${diff}/100]}].Int}]
+		diff:Dec[${Math.Abs[${Math.Calc[${finishsilver}*100]}].Int}]
+		finishcopper:Set[${diff}]
+		if ${finishplat}>0 && ${finishgold}>0 && ${finishcopper}>0
+		{
+			EchoIt "Selling earned ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"
+			vgecho "Selling earned ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"	
+		}
+		if ${doHunt}
+		{
+			Merchant:End
+			VGExecute "/cleartargets"
+			waitframe
 		}
 	}
 }
@@ -267,7 +314,7 @@ function DeleteItemList()
 						while ${Me.Inventory[ExactName,${Iterator.Key}](exists)} && ${doDeleteNoSell} && !${Me.InCombat}
 						{
 							;; some items will not delete if you set the quantity to the reported quantity
-							Me.Inventory[exactname,${Iterator.Key}]:Delete[1]
+							Me.Inventory[exactname,${Iterator.Key}]:Delete[all]
 							wait 2
 						}
 					}
@@ -281,7 +328,7 @@ function DeleteItemList()
 						while ${Me.Inventory[ExactName,${temp}](exists)} && ${doDeleteSell} && !${Me.InCombat}
 						{
 							;; some items will not delete if you set the quantity to the reported quantity
-							Me.Inventory[exactname,${temp}]:Delete[1]
+							Me.Inventory[exactname,${temp}]:Delete[all]
 							wait 2
 						}
 					}
@@ -321,17 +368,20 @@ function AutoDecon()
 ;===================================================
 ;===       ATOM - Monitor Chat Event            ====
 ;===================================================
-atom(script) InventoryChatEvent(string aText, string ChannelNumber, string ChannelName)
+atom(script) InventoryChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
-	;echo [${ChannelNumber}][${doAutoSell}] ${aText}
+	variable filepath EventFilePath = "${Script.CurrentDirectory}/Saves"
+	mkdir "${EventFilePath}"
+	redirect -append "${EventFilePath}/Event-Inventory.txt" echo "[${Time}][InventoryChatEvent][Channel=${ChannelNumber}] ${Text}"
+	
 	if ${doAutoSell}
 	{
 		if ${ChannelNumber.Equal[0]}
 		{
-			if ${aText.Find[You sell]}
+			if ${Text.Find[You sell]}
 			{
 				variable string FindSell
-				FindSell:Set[${aText.Mid[9,${Math.Calc[${aText.Length}-9]}]}]
+				FindSell:Set[${Text.Mid[9,${Math.Calc[${Text.Length}-9]}]}]
 				if ( ${FindSell.Length} > 1 )
 				{
 					AddItemList "${FindSell}"
@@ -349,5 +399,108 @@ atom(script) PlaySound(string Filename)
 {
 	echo "PlaySound: ${Filename}"
 	System:APICall[${System.GetProcAddress[WinMM.dll,PlaySound].Hex},Filename.String,0,"Math.Dec[22001]"]
+}
+
+function RepairItemList(bool ForceRepairs=FALSE)
+{
+	;; find the lowest durable item
+	variable int LowestDurability = 100
+
+	;; total items in inventory
+	variable int TotalItems = 0
+	
+	;; define our index
+	variable index:item CurentItems
+		
+	;; populate our index and update total items in inventory
+	TotalItems:Set[${Me.GetInventory[CurentItems]}]
+
+	for (i:Set[1] ; ${CurentItems.Get[${i}].Name(exists)} ; i:Inc)
+	{
+		;; We want to ignore the following
+		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[None]}
+		continue
+		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Crafting]}
+		continue
+		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Harvesting]}
+		continue
+		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Diplomacy]}
+		continue
+		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Appearance]}
+		continue
+		if ${CurentItems.Get[${i}].Durability}<0
+		continue
+
+		
+		;; Set durability to the lowest
+		if ${CurentItems.Get[${i}].Durability}<${LowestDurability}
+		LowestDurability:Set[${CurentItems.Get[${i}].Durability}]
+	}
+	
+
+	;; return if no equipment needs repairing
+	if ${LowestDurability}>=99
+	return
+	
+	;; return if we are not forcing repairs
+	if !${ForceRepairs} && ${LowestDurability}>=50
+	return
+
+	variable int finishplat
+	variable int finishgold
+	variable int finishsilver
+	variable int finishcopper
+	variable int startmoney = ${Me.Copper}
+	startmoney:Inc[${Math.Calc[${Me.Silver}*100]}]
+	startmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
+	startmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
+
+	if !${Pawn[Merchant](exists)} && ${Pawn[Merchant].Distance}<=5
+	{
+		if ${Me.Inventory[Merchant Contract](exists)}
+		{
+			EchoIt "*Popping a Merchant"
+			Me.Inventory[Merchant Contract]:Use
+			wait 20
+		}
+	}
+
+	if ${Pawn[Merchant](exists)} && ${Pawn[Merchant].Distance}<=5
+	{
+		EchoIt "*Targeting Merchant"
+		Pawn[Merchant]:Target
+		wait 5
+	}
+	
+	if !${Me.Target.Type.Equal[Merchant]}
+	{
+		return
+	}
+	
+	Merchant:Begin[Repair]
+	wait 3
+	Merchant:RepairAll
+	wait 3
+	Merchant:End
+
+	variable int finishmoney
+	finishmoney:Inc[${Me.Copper}]
+	finishmoney:Inc[${Math.Calc[${Me.Silver}*100]}]
+	finishmoney:Inc[${Math.Calc[${Me.Gold}*100*100]}]
+	finishmoney:Inc[${Math.Calc[${Me.Platinum}*100*100*100]}]
+	variable int diff
+	diff:Set[${startmoney} - ${finishmoney}]
+	finishplat:Set[${Math.Abs[${Math.Calc[${diff}/100/100/100]}].Int}]
+	diff:Dec[${Math.Abs[${Math.Calc[${finishplat}*100*100*100]}].Int}]
+	finishgold:Set[${Math.Abs[${Math.Calc[${diff}/100/100]}].Int}]
+	diff:Dec[${Math.Abs[${Math.Calc[${finishgold}*100*100]}].Int}]
+	finishsilver:Set[${Math.Abs[${Math.Calc[${diff}/100]}].Int}]
+	diff:Dec[${Math.Abs[${Math.Calc[${finishsilver}*100]}].Int}]
+	finishcopper:Set[${diff}]
+	if ${finishplat}>0 && ${finishgold}>0 && ${finishcopper}>0
+	{
+		EchoIt "Repairs costed ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"
+		vgecho "Repairs costed ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"
+	}
 }
 

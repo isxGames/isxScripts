@@ -30,11 +30,18 @@ atom(script) FindAction()
 		Action:Set[WeAreDead]
 		return
 	}
-
+	
 	;; if we are feign death then get out of it
 	if ${Me.Effect[${FeignDeath}](exists)} && !${isPaused}
 	{
 		Action:Set[FeignDeath]
+		return
+	}
+	
+	;; flag is set to camp so lets camp
+	if ${doCamp} && !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
+	{
+		Action:Set[CampOut]
 		return
 	}
 
