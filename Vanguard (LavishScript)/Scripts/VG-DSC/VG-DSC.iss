@@ -47,6 +47,13 @@
 ; * Will now use "Varaelian Orb of the Moon and Stars" or "Queldoral, Bounty of the Gods" to
 ;   generate 2000 shurikens "Sun Strik of Vol Anari"
 ;
+; 20120216 (Zandros)
+; * Several new things added and fixed.  Feign Death will now break free after 5 seconds or when
+;   there are no AggroNPC within 10 meters.  You will now pop a Merchant to repair your gear when the 
+;   durability reaches 50% or when your bag space has 2 or less free spots.  If you are not rezzed
+;   when you die and teleported back to the Altar, it will summon your corpse and camp out.  It
+;   will also camp if it detects a server shutdown.
+;
 ;===================================================
 ;===            VARIABLES                       ====
 ;===================================================
@@ -56,6 +63,7 @@ variable int i
 variable bool isRunning = TRUE
 variable bool isPaused = FALSE
 variable bool isSitting = FALSE
+variable bool doCamp = FALSE
 variable bool doTankEndowementOfLife = TRUE
 variable bool doRangedWeapon = TRUE
 variable string Tank = ${Me.FName}
@@ -67,6 +75,7 @@ variable int NextFormCheck = ${Script.RunningTime}
 variable int NextItemListCheck = ${Script.RunningTime}
 variable int64 LastTargetID = 0
 variable int TotalKills = 0
+variable filepath DebugFilePath = "${Script.CurrentDirectory}/Saves"
 
 
 ;; create Shurikens
@@ -147,6 +156,7 @@ variable bool doSpiritual = TRUE
 #include ./VG-DSC/Includes/FindAction.iss
 #include ./VG-DSC/Includes/ItemListTools.iss
 #include ./VG-DSC/Includes/FindTarget.iss
+#include ./VG-DSC/Includes/Events.iss
 #include ./VG-DSC/Includes/Obj_Navigator.iss
 
 
@@ -186,10 +196,7 @@ function main()
 		;;;;;;;;;;
 		;; Calling this will update the variable "Action" based upon any
 		;; triggered events
-		if !${isPaused}
-		{
-			FindAction
-		}
+		FindAction
 
 		;;;;;;;;;;
 		;; The variable "Action" is set by the FindAction routine which is
@@ -215,16 +222,17 @@ function atexit()
 	;;;;;;;;;;
 	;; clear the VG-DSC settings from memory
 	LavishSettings[VG-DSC]:Clear
-
-	echo "[${Time}][VG-DSC]: Stopped Tools Script"
+	
+	echo "[${Time}][VG-DSC]: Stopped VG-DSC Script"
 }
 
 ;===================================================
 ;===     Display to console what we are doing   ====
 ;===================================================
-atom(script) EchoIt(string aText)
+atom(script) EchoIt(string Text)
 {
-	echo "[${Time}][VG-DSC]: ${aText}"
+	redirect -append "${DebugFilePath}/Debug.txt" echo "[${Time}] ${Text}"
+	echo "[${Time}][VG-DSC]: ${Text}"
 }
 
 ;===================================================
@@ -315,6 +323,9 @@ function Idle()
 				{
 					call AutoDecon
 				}
+				
+				call RepairItemList
+				
 				if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
 				{
 					call SellItemList
@@ -323,6 +334,7 @@ function Idle()
 				{
 					call DeleteItemList
 				}
+				
 			}
 			NextItemListCheck:Set[${Script.RunningTime}]
 		}
@@ -381,6 +393,33 @@ function Initialize()
 	wait 30 ${Me.Chunk(exists)} && ${Me.FName(exists)}
 	CurrentChunk:Set[${Me.Chunk}]
 
+	;-------------------------------------------
+	; Delete our debug file so that it doesn't get too big
+	;-------------------------------------------
+	if ${DebugFilePath.FileExists[/Debug.txt]}
+	{
+		rm "${DebugFilePath}/Debug.txt"
+	}
+	if ${DebugFilePath.FileExists[/Event-PawnStatusChange.txt]}
+	{
+		rm "${DebugFilePath}/Event-PawnStatusChange.txt"
+	}
+	if ${DebugFilePath.FileExists[/Event-Alert.txt]}
+	{
+		rm "${DebugFilePath}/Event-Alert.txt"
+	}
+	if ${DebugFilePath.FileExists[/Event-Chat.txt]}
+	{
+		rm "${DebugFilePath}/Event-Chat.txt"
+	}
+	if ${DebugFilePath.FileExists[/Event-Combat.txt]}
+	{
+		rm "${DebugFilePath}/Event-Chat.txt"
+	}
+	if ${DebugFilePath.FileExists[/Event-Inventory.txt]}
+	{
+		rm "${DebugFilePath}/Event-Inventory.txt"
+	}
 
 	EchoIt "Started VG-DSC Script"
 
@@ -507,7 +546,7 @@ function Initialize()
 	Event[VG_onPawnStatusChange]:AttachAtom[PawnStatusChange]
 	Event[VG_OnIncomingText]:AttachAtom[InventoryChatEvent]
 	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]
-	Event[VG_OnIncomingCombatText]:AttachAtom[ChatEvent]
+	Event[VG_OnIncomingCombatText]:AttachAtom[CombatEvent]
 	Event[VG_onAlertText]:AttachAtom[AlertEvent]
 
 	;;;;;;;;;;
@@ -577,7 +616,7 @@ function MoveToMeleeDistance()
 			}
 		}
 
-		if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0)
+		if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0 && ${Me.Target.Distance}<15)
 		{
 			if ${Me.Encounter}>0 || !${Me.InCombat} || ${Me.Target.CombatState}>0
 			{
@@ -775,17 +814,44 @@ function FeignDeath()
 
 		;; pretend we are dead
 		wait 10 ${Me.Ability[${FeignDeath}].IsReady}
-		call UseAbility "${FeignDeath}"
+		if ${Me.Ability[${FeignDeath}].IsReady}
+		{
+			call UseAbility "${FeignDeath}"
+			wait 10 ${Me.Effect[${FeignDeath}](exists)}
+		}
 	}
 	if ${Me.Effect[${FeignDeath}](exists)}
 	{
-		;; wait 5 seconds
+
+		wait 10 !${Me.InCombat}
 		VGExecute /cleartargets
-		wait 30
+		waitframe
+		
+		variable int FeignDeathCheck = ${Script.RunningTime}
+		FeignDeathCheck:Set[${Script.RunningTime}]
+		while ${Me.Effect[${FeignDeath}](exists)}
+		{
+			EchoIt "Feign Death - waiting: ${Pawn[AggroNPC].Name} is ${Pawn[AggroNPC].Distance} meters away"
+			vgecho "Feign Death - waiting"
+			if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}>=5 || ${Pawn[AggroNPC].Distance}>=10
+			{
+				EchoIt "Feign Death - breaking wait - Nearest AggronNPC is ${Pawn[AggroNPC].Distance} meters away - TargetExists=${Me.Target(exists)}, Encounters=${Me.Encounter}, Seconds=${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}"
+				vgecho "Feign Death - breaking wait"
+				break
+			}
+			wait 10
+		}
+		waitframe
 		VGExecute /stand
 		waitframe
+		VGExecute /stand
 
 		;; start healing self if we need it
+		if ${Me.HealthPct}<80
+		{
+			call LaoJinFlash
+		}
+		
 		if ${Me.HealthPct}<80
 		{
 			call BreathOfLife
@@ -906,7 +972,7 @@ function Crit_HealSeries()
 ;===================================================
 function Crit_KissOfTorment()
 {
-	while ${Me.Ability[${KissOfTorment}].TriggeredCountdown}
+	while ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && !${GV[bool,DeathReleasePopup]} && !${IsPaused}
 	{
 		ExecutedAbility:Set[/reactioncounter 2... KissOfTorment]
 		VGExecute "/reactioncounter 2"
@@ -922,7 +988,7 @@ function Crit_SunFist()
 {
 	;;;;;;;;;;
 	;; Use this when our Jin is low
-	while ${Me.Ability[${SuperiorSunFist}].TriggeredCountdown} && ${Me.Ability[${SunFist}].TriggeredCountdown}
+	while ${Me.Ability[${SuperiorSunFist}].TriggeredCountdown} && ${Me.Ability[${SunFist}].TriggeredCountdown} && !${GV[bool,DeathReleasePopup]} && !${IsPaused}
 	{
 		ExecutedAbility:Set[/reactioncounter 5... SunFist Series]
 		VGExecute "/reactioncounter 5"
@@ -997,7 +1063,6 @@ function:bool BlessedWhirl()
 function:bool BlessedWind()
 {
 	;; lower version
-	call Form_ImmortalJadeDragon	
 	call UseAbility "${BlessedWind}"
 	if ${Return}
 	{
@@ -1011,7 +1076,6 @@ function:bool BlessedWind()
 ;===================================================
 function:bool KissOfHeaven()
 {
-	call Form_ImmortalJadeDragon
 	call UseAbility "${KissOfHeaven}"
 	if ${Return}
 	{
@@ -1391,7 +1455,7 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 ;===================================================
 function:bool UseAbility(string ABILITY)
 {
-	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level} || ${Pawn[me].IsMounted}
+	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level} || ${Pawn[me].IsMounted} || ${Me.Effect[${FeignDeath}](exists)}
 	{
 		return FALSE
 	}
@@ -1410,6 +1474,7 @@ function:bool UseAbility(string ABILITY)
 	}
 
 	;; this will ensure the ability is ready to use
+	VGExecute /stand
 	call IsCasting
 
 	if ${Me.Ability[${ABILITY}].IsReady}
@@ -1689,7 +1754,7 @@ atom(script) LoadXMLSettings(string aText)
 atom(script) SaveXMLSettings(string aText)
 {
 	;; Create the Save directory incase it doesn't exist
-	variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/VG-DSC/Save"
+	variable string savePath = "${LavishScript.CurrentDirectory}/Scripts/VG-DSC/Saves"
 	mkdir "${savePath}"
 
 	;; cut down on the loading times
@@ -2200,63 +2265,6 @@ function(script) MoveToWayPoint()
 	}
 }
 
-;===================================================
-;===          ATOM - CHAT EVENT                 ====
-;===================================================
-atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
-{
-	;EchoIt "[${ChannelNumber}] ${Text}"
-
-	if ${ChannelNumber}==0 || ${ChannelNumber}==1
-	{
-		if ${Text.Find["You are not wielding the proper weapon type to use that ability"]}
-		{
-			EchoIt "Unable to use Ra'Jin Flare - No Shurikens in inventory"
-			doRangedWeapon:Set[FALSE]
-		}
-
-		if ${Text.Find["no line of sight to your target"]} || ${Text.Find[You can't see your target]}
-		{
-			if ${doHunt}
-			{
-				EchoIt "Face issue chatevent fired, facing target"
-				face ${Math.Calc[${Pawn[id,${Me.Target.ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
-				NoLineOfSight:Set[TRUE]
-			}
-		}
-	}
-}
-
-;===================================================
-;===         Monitor Status Alerts              ====
-;===================================================
-atom(script) AlertEvent(string Text, int ChannelNumber)
-{
-	EchoIt "[${ChannelNumber}] ${Text}"
-	if ${ChannelNumber}==22
-	{
-		if ${Text.Find[Invalid target]}
-		{
-			BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
-			VGExecute "/cleartargets"
-		}
-	}
-}
-
-
-;===================================================
-;===         Catch target death                 ====
-;===================================================
-atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
-{
-	if ${PawnID}==${LastTargetID} && ${ChangeType.Equal[NowDead]}
-	{
-		TotalKills:Inc
-		EchoIt "Total Kills = ${TotalKills}"
-		vgecho "Total Kills = ${TotalKills}"
-	}
-}
-
 
 variable int LoSRetries = 0
 function FixLineOfSight()
@@ -2380,7 +2388,7 @@ atom(script) CalculateAngles()
 ;===================================================
 function WeAreDead()
 {
-	isPaused:Set[TRUE]
+
 }
 
 ;===================================================
@@ -2447,6 +2455,55 @@ function FollowPlayer()
 	}
 }
 
+function CampOut()
+{
+	;; this wait is in case we just released the corpse
+	wait 50
+	
+	;; check the altar for any tombstones
+    Pawn[Altar]:DoubleClick
+	wait 7
+	if ${Me.Target.Name.Equal[Altar]}
+	{
+		Dialog[General,"I'd like to summon my earthly remains."]:Select 
+		wait 7
+		Altar[Corpse,1]:Summon
+		wait 7
+		Altar[Corpse,1]:Cancel
+	}
+	
+	;; allow time for the tombstone to appear
+	wait 10
 
+	;; target and loot our tombstone
+	if ${Pawn[Tombstone](exists)}
+	{
+		for (i:Set[0]; ${i:Inc} <= ${VG.PawnCount}; i:Inc)
+		{
+			if ${Pawn[${i}].Name.Find[Tombstone]} && ${Pawn[${i}].Name.Find[${Me}]}
+			{
+				VGExecute /targetm
+				wait 5
+				if ${Pawn[${i}].Distance}>5 && ${Pawn[${i}].Distance}<21
+				{
+					VGExecute /cor
+					waitframe
+				}
+				VGExecute /Lootall
+				waitframe
+				VGExecute "/cleartargets"
+			}
+		}
+	}	
 
-
+	EchoIt "CAMPING"
+	vgecho "Camping"
+	waitframe
+	VGExecute /camp
+	wait 152 ${Me.InCombat}
+	if !${Me.InCombat}
+	{
+		endscript VG-DSC
+		waitframe
+	}
+}
