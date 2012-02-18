@@ -17,6 +17,7 @@ variable string RacialAbility = "Racial Ability: Spirit of Jin"
 
 atom(script) FindAction()
 {
+	;;;;;;;;;;
 	;; Set everything up
 	if !${Initialized}
 	{
@@ -24,20 +25,23 @@ atom(script) FindAction()
 		return
 	}
 
+	;;;;;;;;;;
 	;; check to see if we are dead
 	if ${Me.HealthPct} <= 0 || ${GV[bool,DeathReleasePopup]}
 	{
 		Action:Set[WeAreDead]
 		return
 	}
-	
+
+	;;;;;;;;;;	
 	;; if we are feign death then get out of it
 	if ${Me.Effect[${FeignDeath}](exists)} && !${isPaused}
 	{
 		Action:Set[FeignDeath]
 		return
 	}
-	
+
+	;;;;;;;;;;
 	;; flag is set to camp so lets camp
 	if ${doCamp} && !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
 	{
@@ -45,20 +49,29 @@ atom(script) FindAction()
 		return
 	}
 
+	;;;;;;;;;;
 	;; we must have chunked so reload our settings
 	if !${CurrentChunk.Equal[${Me.Chunk}]}
 	{
 		Action:Set[WeChunked]
 		return
 	}
+	
+	;;;;;;;;
+	;; we can't do anything if we are stunned
+	if ${Me.ToPawn.IsStunned}
+	{
+		Action:Set[WeAreStunned]
+		return
+	}
 
+	;;;;;;;;;;
+	;; In theory, changing forms should work great if there are no cooldowns
+	;; but if there is then the script will appear to pause when your health
+	;; bounces above and below 60% while it waits to change forms
+	;; It is important to change forms now than later
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextFormCheck}]}/1000]}>8
 	{
-		;;;;;;;;;;
-		;; In theory, changing forms should work great if there are no cooldowns
-		;; but if there is then the script will appear to pause when your health
-		;; bounces above and below 60% while it waits to change forms
-		;; It is important to change forms now than later
 		if ${Me.HealthPct}>=${ChangeFormPct} && !${Me.CurrentForm.Name.Equal[Celestial Tiger]} && ${Me.CurrentForm.Name.Equal[Celestial Tiger](exists)}
 		{
 			;; DPS - Inner Light is more effective
@@ -170,7 +183,12 @@ atom(script) FindAction()
 	if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
 	{
 		;; get our health up if we are not in combat or target is dead
-		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<80 && ${Me.Ability[${KissOfHeaven}](exists)} && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${KissOfHeavenPct} && ${Me.Ability[${KissOfHeaven}](exists)} && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+		{
+			Action:Set[KissOfHeaven]
+			return
+		}
+		if ${Me.HealthPct}>0 && ${Me.HealthPct}<${KissOfHeavenPct} && ${Me.Ability[${KissOfHeaven}](exists)} && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 		{
 			Action:Set[KissOfHeaven]
 			return
@@ -269,7 +287,6 @@ atom(script) FindAction()
 		{
 			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
-				vgecho Action: LaoJinFlash at ${Me.HealthPct}
 				Action:Set[LaoJinFlash]
 				return
 			}
@@ -279,17 +296,31 @@ atom(script) FindAction()
 				return
 			}
 		}
+		if ${Me.HealthPct}>0 && ${Me.HealthPct}<${LaoJinFlashPct}
+		{
+			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
+				Action:Set[LaoJinFlash]
+				return
+			}
+			if !${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlare}].IsReady} && ${Me.Ability[${LaoJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
+				Action:Set[LaoJinFlare]
+				return
+			}
+		}
 
 
 		;;;;;;;;;;
 		;; Breath of Life for a heal when our health is below 50%
-		if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${BreathOfLifePct}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${BreathOfLifePct}
 		{
 			;;;;;;;;;;
 			;; Loa'Jin Flash/Flare are priority over other heals
 			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
-				vgecho Action: LaoJinFlash at ${Me.HealthPct}
 				Action:Set[LaoJinFlash]
 				return
 			}
@@ -312,6 +343,38 @@ atom(script) FindAction()
 				}
 			}
 		}
+		if ${Me.HealthPct}>0 && ${Me.HealthPct}<${BreathOfLifePct}
+		{
+			;;;;;;;;;;
+			;; Loa'Jin Flash/Flare are priority over other heals
+			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
+				Action:Set[LaoJinFlash]
+				return
+			}
+			if !${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlare}].IsReady} && ${Me.Ability[${LaoJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
+				Action:Set[LaoJinFlare]
+				return
+			}
+			if (${Me.Ability[${LaoJinFlash}](exists)} && !${Me.Ability[${LaoJinFlash}].IsReady}) || (${Me.Ability[${LaoJinFlare}](exists)} && !${Me.Ability[${LaoJinFlare}].IsReady})
+			{
+				if ${Me.Ability[${BreathOfLife}](exists)} && ${Me.Ability[${BreathOfLife}].IsReady} && ${Me.Ability[${BreathOfLife}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+				{
+					Pawn[me]:Target
+					Action:Set[BreathOfLife]
+					return
+				}
+				if !${Me.Ability[${BreathOfLife}](exists)} && ${Me.Ability[${BreathOfRenewal}].IsReady} && ${Me.Ability[${BreathOfRenewal}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+				{
+					Pawn[me]:Target
+					Action:Set[BreathOfRenewal]
+					return
+				}
+			}
+		}
 
 		;;;;;;;;;;
 		;; Kiss of Heaven for an instant HOT when our health is below 60%, lasts 32 second
@@ -323,10 +386,20 @@ atom(script) FindAction()
 				return
 			}
 		}
+		if ${Me.HealthPct}>0 && ${Me.HealthPct}<${KissOfHeavenPct}
+		{
+			if ${Me.Ability[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].IsReady} && !${Me.Effect[${KissOfHeaven}](exists)} && ${Me.Ability[${KissOfHeaven}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
+				Action:Set[KissOfHeaven]
+				return
+			}
+		}
+		
 
 		;;;;;;;;;;
 		;; Lao'Jin Flash for an instant heal without a cooldown when our health is below 50%, 15 second refresh
-		if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${LaoJinFlashPct}
+		if ${Me.DTarget(exists)} && ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${LaoJinFlashPct}
 		{
 			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
@@ -335,6 +408,21 @@ atom(script) FindAction()
 			}
 			if !${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlare}].IsReady} && ${Me.Ability[${LaoJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
+				Action:Set[LaoJinFlare]
+				return
+			}
+		}
+		if ${Me.HealthPct}>0 && ${Me.HealthPct}<${LaoJinFlashPct}
+		{
+			if ${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlash}].IsReady} && ${Me.Ability[${LaoJinFlash}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
+				Action:Set[LaoJinFlash]
+				return
+			}
+			if !${Me.Ability[${LaoJinFlash}](exists)} && ${Me.Ability[${LaoJinFlare}].IsReady} && ${Me.Ability[${LaoJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			{
+				Pawn[me]:Target
 				Action:Set[LaoJinFlare]
 				return
 			}
@@ -362,6 +450,27 @@ atom(script) FindAction()
 			{
 				if ${Me.Ability[${ConcordantSplendor}](exists)} && ${Me.Ability[${ConcordantSplendor}].TriggeredCountdown} && ${Me.Ability[${ConcordantSplendor}].TimeRemaining}==0
 				{
+					Action:Set[Crit_HealSeries]
+					return
+				}
+				if ${Me.Ability[${ConcordantPalm}](exists)} && ${Me.Ability[${ConcordantPalm}].TriggeredCountdown} && ${Me.Ability[${ConcordantPalm}].TimeRemaining}==0
+				{
+					Action:Set[Crit_HealSeries]
+					return
+				}
+				if ${Me.Ability[${ConcordantHand}](exists)} && ${Me.Ability[${ConcordantHand}].TriggeredCountdown} && ${Me.Ability[${ConcordantHand}].TimeRemaining}==0
+				{
+					Action:Set[Crit_HealSeries]
+					return
+				}
+				Action:Set[BuildCrit]
+				return
+			}
+			if ${Me.HealthPct}>0 && ${Me.HealthPct}<${Crit_HealPct} && ${Me.Target(exists)} && !${Me.Target.IsDead}
+			{
+				if ${Me.Ability[${ConcordantSplendor}](exists)} && ${Me.Ability[${ConcordantSplendor}].TriggeredCountdown} && ${Me.Ability[${ConcordantSplendor}].TimeRemaining}==0
+				{
+					Pawn[me]:Target
 					Action:Set[Crit_HealSeries]
 					return
 				}
@@ -569,7 +678,7 @@ atom(script) FindAction()
 
 			;;;;;;;;;;
 			;; Last ability to use... available at level 1
-			if ${Me.Ability[${VoidHand}](exists)} && ${Me.EnergyPct}>20
+			if ${Me.Ability[${VoidHand}](exists)} && ${Me.EndurancePct}>20
 			{
 				if ${Me.Ability[${VoidHand}].IsReady}
 				{

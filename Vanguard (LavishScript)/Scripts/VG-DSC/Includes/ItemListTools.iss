@@ -403,6 +403,8 @@ atom(script) PlaySound(string Filename)
 
 function RepairItemList(bool ForceRepairs=FALSE)
 {
+	EchoIt "Checking for Repairs"
+
 	;; find the lowest durable item
 	variable int LowestDurability = 100
 
@@ -411,6 +413,9 @@ function RepairItemList(bool ForceRepairs=FALSE)
 	
 	;; define our index
 	variable index:item CurentItems
+	
+	variable int temp2
+	variable string temp
 		
 	;; populate our index and update total items in inventory
 	TotalItems:Set[${Me.GetInventory[CurentItems]}]
@@ -418,23 +423,22 @@ function RepairItemList(bool ForceRepairs=FALSE)
 	for (i:Set[1] ; ${CurentItems.Get[${i}].Name(exists)} ; i:Inc)
 	{
 		;; We want to ignore the following
-		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[None]}
-		continue
-		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Crafting]}
-		continue
-		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Harvesting]}
-		continue
-		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Diplomacy]}
-		continue
-		if ${CurentItems.Get[${i}].CurrentEquipSlot.Find[Appearance]}
-		continue
-		if ${CurentItems.Get[${i}].Durability}<0
-		continue
-
+		temp:Set[${CurentItems.Get[${i}].CurrentEquipSlot}]
+		if ${temp.Find[None]} || ${temp.Find[Crafting]} || ${temp.Find[Harvesting]} || ${temp.Find[Diplomacy]} || ${temp.Find[Appearance]}
+		{
+			continue
+		}
+		temp2:Set[${CurentItems.Get[${i}].Durability}]
+		if ${temp2}<0
+		{
+			continue
+		}
 		
 		;; Set durability to the lowest
-		if ${CurentItems.Get[${i}].Durability}<${LowestDurability}
-		LowestDurability:Set[${CurentItems.Get[${i}].Durability}]
+		if ${temp2}<${LowestDurability}
+		{
+			LowestDurability:Set[${temp2}]
+		}
 	}
 	
 

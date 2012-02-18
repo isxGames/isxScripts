@@ -183,11 +183,28 @@ function main()
 			}
 		}
 
+		if ${Me.HealthPct}<80
+		{
+			;; target myself if we do not have the buff
+			if !${Me.DTarget.Name.Equal[${Me.FName}]}
+			{
+				Pawn[me]:Target
+			}
+		}
+		else
+		{
+			if !${Me.DTarget.Name.Equal[${Tank}]}
+			{
+				Pawn[${Tank}]:Target
+			}
+		}
+		
+
 		;;;;;;;;;;
 		;; Slow this script down.  By having this wait here
 		;; will improve FPS (when using the pawn command) and
 		;; allow AutoAttack to register.
-		wait 1
+		wait 2
 
 		;;;;;;;;;;
 		;; Default action will be "Idle"
@@ -315,7 +332,7 @@ function Idle()
 
 		;;;;;;;;;;
 		;; check only once every other second
-		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=1
+		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextItemListCheck}]}/1000]}>=2
 		{
 			if !${Me.InCombat} && ${Me.Encounter}==0
 			{
@@ -414,7 +431,7 @@ function Initialize()
 	}
 	if ${DebugFilePath.FileExists[/Event-Combat.txt]}
 	{
-		rm "${DebugFilePath}/Event-Chat.txt"
+		rm "${DebugFilePath}/Event-Combat.txt"
 	}
 	if ${DebugFilePath.FileExists[/Event-Inventory.txt]}
 	{
@@ -630,7 +647,7 @@ function MoveToMeleeDistance()
 				Me.Target:Face
 				if ${Me.Target.Distance}<1 && ${Me.Target(exists)}
 				{
-					while ${Me.Target.Distance}<1 && ${Me.Target(exists)} && !${isPaused}
+					while ${Me.Target.Distance}<1 && ${Me.Target(exists)} && !${isPaused} && !${Me.ToPawn.IsStunned}
 					{
 						VG:ExecBinding[movebackward]
 					}
@@ -778,9 +795,15 @@ function PullTarget()
 
 	;; attack with our ranged attack
 	call RaJinFlare
+	wait 10 ${Me.Ability[${RaJinFlare}].IsReady}
+	wait 1
+	call RaJinFlare
+	wait 10 ${Me.Ability[${RaJinFlare}].IsReady}
+	wait 1
+	call RaJinFlare
 	if ${Return}
 	{
-		wait 20 !${doRangedWeapon}
+		wait 5 !${doRangedWeapon}
 	}
 
 	if !${doRangedWeapon}
@@ -799,7 +822,6 @@ function PullTarget()
 		EchoIt "We pulled too many"
 		call FeignDeath
 	}
-
 }
 
 ;===================================================
@@ -833,7 +855,7 @@ function FeignDeath()
 		{
 			EchoIt "Feign Death - waiting: ${Pawn[AggroNPC].Name} is ${Pawn[AggroNPC].Distance} meters away"
 			vgecho "Feign Death - waiting"
-			if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}>=5 || ${Pawn[AggroNPC].Distance}>=10
+			if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}>=5 || ${Pawn[AggroNPC].Distance}>=10 || ${Me.ToPawn.IsStunned}
 			{
 				EchoIt "Feign Death - breaking wait - Nearest AggronNPC is ${Pawn[AggroNPC].Distance} meters away - TargetExists=${Me.Target(exists)}, Encounters=${Me.Encounter}, Seconds=${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}"
 				vgecho "Feign Death - breaking wait"
@@ -964,6 +986,10 @@ function Crit_HealSeries()
 		VGExecute "/reactionchain 1"
 		call GlobalCooldown
 		waitframe
+		if ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)} || !${Me.Target(exists)} || ${isPaused}
+		{
+			break
+		}
 	}
 }
 
@@ -978,6 +1004,10 @@ function Crit_KissOfTorment()
 		VGExecute "/reactioncounter 2"
 		call GlobalCooldown
 		waitframe
+		if ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)} || !${Me.Target(exists)} || ${isPaused}
+		{
+			break
+		}
 	}
 }
 
@@ -994,6 +1024,10 @@ function Crit_SunFist()
 		VGExecute "/reactioncounter 5"
 		call GlobalCooldown
 		waitframe
+		if ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)} || !${Me.Target(exists)} || ${isPaused}
+		{
+			break
+		}
 	}
 }
 
@@ -1273,7 +1307,11 @@ function Crit_PetalSeries()
 		;ExecutedAbility:Set[/reactionchain 2... Petal Series]
 		VGExecute "/reactionchain 2"
 		call GlobalCooldown
-		;waitframe
+		waitframe
+		if ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)} || !${Me.Target(exists)} || ${isPaused}
+		{
+			break
+		}
 	}
 }
 
@@ -1316,6 +1354,11 @@ function:bool Crit_DPS()
 					return TRUE
 				}
 				call GlobalCooldown
+				waitframe
+				if ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)} || !${Me.Target(exists)} || ${isPaused}
+				{
+					break
+				}
 			}
 		}
 	}
@@ -1533,10 +1576,13 @@ function IsCasting()
 		call FaceTarget
 		waitframe
 	}
-	while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
 	{
 		call FaceTarget
-		wait 2
+		while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+		{
+			wait 2
+		}
 	}
 }
 
@@ -1993,7 +2039,7 @@ function MoveCloser(int Distance=4)
 {
 	;;;;;;;;;;
 	;; we only want to move if target doesn't exist
-	if !${Me.Target(exists)} || !${doHunt}
+	if !${Me.Target(exists)} || !${doHunt} || ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)} 
 	{
 		return
 	}
@@ -2020,7 +2066,7 @@ function MoveCloser(int Distance=4)
 
 	;;;;;;;;;;
 	;; Loop this until we are within range of target or our timer has expired which is 10 seconds
-	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${LavishScript.RunningTime}<${bailOut}
+	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${isPaused}
 	{
 		;; face target and move forward
 		Me.Target:Face
@@ -2237,7 +2283,7 @@ function(script) MoveToWayPoint()
 		call FindTarget 80
 
 		;; stop moving if we paused or picked up an encounter
-		if ${isPaused} || ${Me.Encounter}>0 || ${Me.InCombat} || ${Me.Target(exists)} || !${doHunt}
+		if ${isPaused} || ${Me.Encounter}>0 || ${Me.InCombat} || ${Me.Target(exists)} || !${doHunt} || ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)}
 		{
 			Navigate:Stop
 			VG:ExecBinding[moveforward,release]
@@ -2325,20 +2371,22 @@ function FaceTarget()
 				if ${AngleDiff}>0
 				{
 					VG:ExecBinding[turnright]
-					while ${AngleDiff} > ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
+					while ${AngleDiff} > ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning} && !${Me.Effect[${FeignDeath}](exists)} && !${Me.ToPawn.IsStunned}
 					{
 						CalculateAngles
 					}
 					VG:ExecBinding[turnright,release]
+					VG:ExecBinding[turnleft,release]
 					return
 				}
 				if ${AngleDiff}<0
 				{
 					VG:ExecBinding[turnleft]
-					while ${AngleDiff} < ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
+					while ${AngleDiff} < ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning} && !${Me.Effect[${FeignDeath}](exists)} && !${Me.ToPawn.IsStunned}
 					{
 						CalculateAngles
 					}
+					VG:ExecBinding[turnright,release]
 					VG:ExecBinding[turnleft,release]
 					return
 				}
@@ -2348,7 +2396,6 @@ function FaceTarget()
 		}
 	}
 }
-
 variable int AngleDiff = 0
 variable int AngleDiffAbs = 0
 
@@ -2505,5 +2552,14 @@ function CampOut()
 	{
 		endscript VG-DSC
 		waitframe
+	}
+}
+
+function WeAreStunned()
+{
+	EchoIt "We are Stunned!"
+	while ${Me.ToPawn.IsStunned} && !${isPaused} && !${Me.Effect[${FeignDeath}](exists)}
+	{
+		wait 2
 	}
 }
