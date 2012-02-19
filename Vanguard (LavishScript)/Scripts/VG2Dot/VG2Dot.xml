@@ -1016,9 +1016,41 @@
 									<Alignment>Left</Alignment>
 									<Text>Pull Distance</Text>
 								</Text>
-								<Textentry Name="MinimumLevel" Template="VG.TextEntry">
+								<Textentry Name="MaxDistance" Template="VG.TextEntry">
 									<X>3%</X>
 									<Y>45%</Y>
+									<Width>28</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<OnLoad>
+										This:SetText[${Script[VG2Dot].VariableScope.MaxDistance}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} == 0
+										{
+											Script[VG2Dot].VariableScope.MaxDistance:Set[0]
+										}
+										if ${This.Text.Length} >= 3
+										{
+											This:SetText[100]
+										}
+										if ${This.Text.Length} > 0
+										{
+											Script[VG2Dot].VariableScope.MaxDistance:Set[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Text Name="Text-MaxDistance" Template="VG.Text">
+									<X>18%</X>
+									<Y>45.3%</Y>
+									<Width>80%</Width>
+									<Height>15</Height>
+									<Alignment>Left</Alignment>
+									<Text>Maximum distance to scan for target</Text>
+								</Text>
+								<Textentry Name="MinimumLevel" Template="VG.TextEntry">
+									<X>3%</X>
+									<Y>53%</Y>
 									<Width>28</Width>
 									<Height>15</Height>
 									<Color>FFDDBB00</Color>
@@ -1042,7 +1074,7 @@
 								</Textentry>
 								<Text Name="Text-MinimumLevel" Template="VG.Text">
 									<X>18%</X>
-									<Y>45.3%</Y>
+									<Y>53.3%</Y>
 									<Width>200</Width>
 									<Height>15</Height>
 									<Alignment>Left</Alignment>
@@ -1050,7 +1082,7 @@
 								</Text>
 								<Textentry Name="MaximumLevel" Template="VG.TextEntry">
 									<X>3%</X>
-									<Y>53%</Y>
+									<Y>61%</Y>
 									<Width>28</Width>
 									<Height>15</Height>
 									<Color>FFDDBB00</Color>
@@ -1074,15 +1106,15 @@
 								</Textentry>
 								<Text Name="Text-MaximumLevel" Template="VG.Text">
 									<X>18%</X>
-									<Y>53.3%</Y>
+									<Y>61.3%</Y>
 									<Width>200</Width>
 									<Height>15</Height>
 									<Alignment>Left</Alignment>
-									<Text>Minimum level of target</Text>
+									<Text>Maximum level of target</Text>
 								</Text>
 								<button name='SetWaypoint' Template='VG.GreenCommandButton'>
 									<X>3%</X>
-									<Y>65%</Y>
+									<Y>85%</Y>
 									<Width>45%</Width>
 									<Height>20</Height>
 									<AutoTooltip>Click here to set Waypoints</AutoTooltip>
@@ -1093,7 +1125,7 @@
 								</button>
 								<button name='ClearWayPoints' Template='VG.GreenCommandButton'>
 									<X>52%</X>
-									<Y>65%</Y>
+									<Y>85%</Y>
 									<Width>45%</Width>
 									<Height>20</Height>
 									<AutoTooltip>Clear All Waypoints</AutoTooltip>

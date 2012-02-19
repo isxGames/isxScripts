@@ -80,6 +80,7 @@ variable float HomeX
 variable float HomeY
 variable int NextItemListCheck = ${Script.RunningTime}
 variable bool doChaosVolley = FALSE
+variable filepath DebugFilePath = "${Script.CurrentDirectory}/Saves"
 
 
 ;; Loot variables
@@ -94,6 +95,7 @@ variable bool NoLineOfSight = FALSE
 variable bool doCheckForAdds = FALSE
 variable bool doCheckForObstacles = TRUE
 variable int PullDistance = 22
+variable int MaxDistance = 30
 variable int MinimumLevel = ${Me.Level}
 variable int MaximumLevel = ${Me.Level}
 variable int DifficultyLevel = 2
@@ -189,6 +191,13 @@ function Initialize()
 	echo "Started VG2Dot Script"
 	wait 30 ${Me.Chunk(exists)}
 
+	;-------------------------------------------
+	; Delete our debug file so that it doesn't get too big
+	;-------------------------------------------
+	if ${DebugFilePath.FileExists[/Debug.txt]}
+	{
+		rm "${DebugFilePath}/Debug.txt"
+	}
 
 	;-------------------------------------------
 	; Reload the UI
@@ -916,7 +925,7 @@ function Do6()
 			;; reset our flag
 			NeedMoreEnergy:Set[FALSE]
 
-			call FindTarget 80
+			call FindTarget ${MaxDistance}
 			if !${Me.Target(exists)}
 			{
 				call MoveToWayPoint
@@ -1082,6 +1091,7 @@ function executeability(string x_ability)
 ;===================================================
 function debug(string Text)
 {
+	redirect -append "${DebugFilePath}/Debug.txt" echo "[${Time}] ${Text}"
 	echo [${Time}][vg2dot] --> "${Text}"
 }
 
@@ -1147,6 +1157,7 @@ function loadxmls()
 	doCheckForAdds:Set[${options.FindSetting[doCheckForAdds,${doCheckForAdds}]}]
 	doCheckForObstacles:Set[${options.FindSetting[doCheckForObstacles,${doCheckForObstacles}]}]
 	PullDistance:Set[${options.FindSetting[PullDistance,${PullDistance}]}]
+	MaxDistance:Set[${options.FindSetting[MaxDistance,${MaxDistance}]}]
 	MinimumLevel:Set[${options.FindSetting[MinimumLevel,${Me.Level}]}]
 	MaximumLevel:Set[${options.FindSetting[MaximumLevel,${Me.Level}]}]
 
@@ -1239,6 +1250,7 @@ function LavishSave()
 	options:AddSetting[doCheckForAdds,${doCheckForAdds}]
 	options:AddSetting[doCheckForObstacles,${doCheckForObstacles}]
 	options:AddSetting[PullDistance,${PullDistance}]
+	options:AddSetting[MaxDistance,${MaxDistance}]
 	options:AddSetting[MinimumLevel,${MinimumLevel}]
 	options:AddSetting[MaximumLevel,${MaximumLevel}]
 
@@ -1488,7 +1500,7 @@ atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 	if ${PawnID}==${LastTargetID} && ${ChangeType.Equal[NowDead]}
 	{
 		TotalKills:Inc
-		call debug "Total Kills = ${TotalKills}"
+		EchoIt "Total Kills = ${TotalKills}"
 		vgecho "Total Kills = ${TotalKills}"
 	}
 }
@@ -1498,7 +1510,7 @@ atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 ;===================================================
 atom(script) AlertEvent(string Text, int ChannelNumber)
 {
-	;EchoIt "[${ChannelNumber}] ${Text}"
+	EchoIt "[Channel=${ChannelNumber}] ${Text}"
 	if ${ChannelNumber}==22
 	{
 		if ${Text.Find[Invalid target]}
@@ -1515,7 +1527,7 @@ atom(script) AlertEvent(string Text, int ChannelNumber)
 ;===================================================
 atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
-	;EchoIt "[${ChannelNumber}] ${Text}"
+	EchoIt "[Channel=${ChannelNumber}] ${Text}"
 
 	;; Accept Rez
 	if ${ChannelNumber}==32
@@ -1579,17 +1591,6 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 	}
 	
 }
-
-
-;===================================================
-;===          ATOM - CHAT EVENT                 ====
-;===================================================
-atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
-{
-
-}
-
-
 
 ;===================================================
 ;===   COUNTER IT - this will counter a spell   ====
@@ -2053,7 +2054,7 @@ function(script) MoveToWayPoint()
 		Action:Set[Moving to WP-${CurrentWayPoint}]
 
 		;; keep looking for a target
-		call FindTarget 80
+		call FindTarget ${MaxDistance}
 
 		;; stop moving if we paused or picked up an encounter
 		if ${isPaused} || ${Me.Encounter}>0 || ${Me.InCombat} || ${Me.Target(exists)} || !${Do6}
@@ -2225,6 +2226,7 @@ function WeAreDead()
 ;===================================================
 atom(script) EchoIt(string aText)
 {
+	redirect -append "${DebugFilePath}/Debug.txt" echo "[${Time}] ${aText}"
 	echo "[${Time}][VG2Dot]: ${aText}"
 }
 
