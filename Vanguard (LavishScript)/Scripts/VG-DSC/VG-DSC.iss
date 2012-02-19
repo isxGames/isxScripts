@@ -54,6 +54,11 @@
 ;   when you die and teleported back to the Altar, it will summon your corpse and camp out.  It
 ;   will also camp if it detects a server shutdown.
 ;
+; 20120218 (Zandros)
+; * Made a quick fix for selling your loot... it now sells quickly.  Added in the routine to
+;   replenish shurikens using "Tam Thi's Gift".  Updated the event log to show what channel the
+;   message belongs to.  
+;
 ;===================================================
 ;===            VARIABLES                       ====
 ;===================================================
@@ -183,19 +188,22 @@ function main()
 			}
 		}
 
-		if ${Me.HealthPct}<80
+		if !${isPaused}
 		{
-			;; target myself if we do not have the buff
-			if !${Me.DTarget.Name.Equal[${Me.FName}]}
+			if ${Me.HealthPct}<80
 			{
-				Pawn[me]:Target
+				;; target myself if we do not have the buff
+				if !${Me.DTarget.Name.Equal[${Me.FName}]}
+				{
+					Pawn[me]:Target
+				}
 			}
-		}
-		else
-		{
-			if !${Me.DTarget.Name.Equal[${Tank}]}
+			else
 			{
-				Pawn[${Tank}]:Target
+				if !${Me.DTarget.Name.Equal[${Tank}]}
+				{
+					Pawn[${Tank}]:Target
+				}
 			}
 		}
 		
@@ -572,6 +580,13 @@ function Initialize()
 
 	;;;;;;;;;;
 	;; Make sure any of these are on your hotbar!
+	if ${Me.Inventory[Tam Thi's Gift](exists)}
+	{
+		doCreateShurikens:Set[TRUE]
+		CreateShurikensItem:Set["Tam Thi's Gift"]
+		CreatedShurikens:Set["Emerald Leaf Shuriken"]
+		EchoIt "Found ${CreateShurikensItem}"
+	}
 	if ${Me.Inventory[Varaelian Orb of the Moon and Stars](exists)}
 	{
 		doCreateShurikens:Set[TRUE]
@@ -834,8 +849,10 @@ function FeignDeath()
 		;; get our HOT up
 		call KissOfHeaven
 
-		;; pretend we are dead
 		wait 10 ${Me.Ability[${FeignDeath}].IsReady}
+		waitframe
+
+		;; pretend we are dead
 		if ${Me.Ability[${FeignDeath}].IsReady}
 		{
 			call UseAbility "${FeignDeath}"
@@ -849,13 +866,14 @@ function FeignDeath()
 		VGExecute /cleartargets
 		waitframe
 		
+		variable int i = 5
 		variable int FeignDeathCheck = ${Script.RunningTime}
 		FeignDeathCheck:Set[${Script.RunningTime}]
 		while ${Me.Effect[${FeignDeath}](exists)}
 		{
 			EchoIt "Feign Death - waiting: ${Pawn[AggroNPC].Name} is ${Pawn[AggroNPC].Distance} meters away"
-			vgecho "Feign Death - waiting"
-			if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}>=5 || ${Pawn[AggroNPC].Distance}>=10 || ${Me.ToPawn.IsStunned}
+			vgecho "Feign Death - waiting ( ${Math.Calc[${i}-(${Script.RunningTime}-${FeignDeathCheck})/1000]} )"
+			if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000]}>=5 || ${Pawn[AggroNPC].Distance}>=10 || ${Me.ToPawn.IsStunned}
 			{
 				EchoIt "Feign Death - breaking wait - Nearest AggronNPC is ${Pawn[AggroNPC].Distance} meters away - TargetExists=${Me.Target(exists)}, Encounters=${Me.Encounter}, Seconds=${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}"
 				vgecho "Feign Death - breaking wait"
@@ -2447,6 +2465,25 @@ function CreateShurikens()
 	{
 		if ${Me.Inventory[${CreateShurikensItem}].IsReady}
 		{
+			if ${CreateShurikensItem.Equal["Tam Thi's Gift"]}
+			{
+				;; if we are out of shurikens then make some more
+				if ${Me.Inventory[Emerald Leaf Shuriken].Quantity}<=0
+				{
+					Me.Inventory[Tam Thi's Gift]:Use
+					vgecho "<Green=>Creating:  <Yellow=>${CreatedShurikens}"
+					wait 10
+				}
+				
+				;; this will always equip the stack with the highest amount of shurikens
+				if ${Me.Inventory[Emerald Leaf Shuriken](exists)}
+				{
+					Me.Inventory[Emerald Leaf Shuriken]:Equip
+					waitframe
+				}
+				return
+			}
+
 			;; total Shurikens
 			variable int Shurikens = 0
 

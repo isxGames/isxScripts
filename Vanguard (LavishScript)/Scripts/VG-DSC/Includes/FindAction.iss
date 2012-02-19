@@ -263,7 +263,7 @@ atom(script) FindAction()
 		if ${Me.HealthPct}<${FeignDeathPct} || ${Me.Encounter}>=${FeignDeathEncounters}
 		{
 			echo * MyHealth=${Me.HealthPct}, FeignDeathPct=${FeignDeathPct}, Encounters=${Me.Encounter}, FeignDeathEncounters=${FeignDeathEncounters}
-			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].IsReady} && ${Me.Ability[${FeignDeath}].TimeRemaining}==0
+			if ${Me.Ability[${FeignDeath}](exists)} && ${Me.Ability[${FeignDeath}].TimeRemaining}==0
 			{
 				Action:Set[FeignDeath]
 				return

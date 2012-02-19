@@ -235,6 +235,10 @@ function SellItemList()
 							;; some items will not sell if you set the quantity to the reported quantity
 							Me.Inventory[exactname,${temp}]:Sell[1]
 							wait 2
+							
+							;; due to bug... must reset iterator to ItemList
+							ItemList:Set[${LavishSettings[SellItem].FindSet[ItemList]}]
+							ItemList:GetSettingIterator[Iterator]
 						}
 					}
 				}
@@ -327,9 +331,11 @@ function DeleteItemList()
 						temp:Set[${Iterator.Key}]
 						while ${Me.Inventory[ExactName,${temp}](exists)} && ${doDeleteSell} && !${Me.InCombat}
 						{
+							vgecho Before-${Iterator.Key}
 							;; some items will not delete if you set the quantity to the reported quantity
 							Me.Inventory[exactname,${temp}]:Delete[all]
 							wait 2
+							vgecho After-${Iterator.Key}
 						}
 					}
 				}
@@ -403,8 +409,6 @@ atom(script) PlaySound(string Filename)
 
 function RepairItemList(bool ForceRepairs=FALSE)
 {
-	EchoIt "Checking for Repairs"
-
 	;; find the lowest durable item
 	variable int LowestDurability = 100
 
