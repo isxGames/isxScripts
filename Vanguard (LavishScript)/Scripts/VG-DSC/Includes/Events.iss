@@ -10,7 +10,7 @@ atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 {
 	variable filepath EventFilePath = "${Script.CurrentDirectory}/Saves"
 	mkdir "${EventFilePath}"
-	redirect -append "${EventFilePath}/Event-PawnStatusChange.txt" echo "[${Time}][PawnStatusChange] [ID=${PawnID}][${ChangeType}][Name=${PawnName}]"
+	redirect -append "${EventFilePath}/Event-PawnStatusChange.txt" echo "[${Time}][PawnStatusChange][${ChannelNumber}] [ID=${PawnID}][${ChangeType}][Name=${PawnName}]"
 
 	if ${PawnID}==${LastTargetID} && ${ChangeType.Equal[NowDead]}
 	{
@@ -28,18 +28,19 @@ atom(script) AlertEvent(string Text, int ChannelNumber)
 {
 	variable filepath EventFilePath = "${Script.CurrentDirectory}/Saves"
 	mkdir "${EventFilePath}"
-	redirect -append "${EventFilePath}/Event-Alert.txt" echo "[${Time}][AlertEvent] ${Text}"
+	redirect -append "${EventFilePath}/Event-Alert.txt" echo "[${Time}][AlertEvent][${ChannelNumber}] ${Text}"
 
 	if ${ChannelNumber}==2
 	{
 		if ${Text.Find[You died.]}
 		{
 			EchoIt "[AlertEvent] ----  You died ----"
-			for (i:Set[0]; ${i:Inc}<=${VG.PawnCount}; i:Inc)
+			variable int k
+			for (k:Set[0]; ${k:Inc}<=${VG.PawnCount}; i:Inc)
 			{
-				if ${Pawn[${i}].Distance}<30
+				if ${Pawn[${k}].Distance}<50
 				{
-					EchoIt "[${i}][Distance=${Pawn[${i}].Distance}][${Pawn[${i}].Type}] ${Pawn[${i}].Name}"
+					EchoIt "[${k}][Distance=${Pawn[${k}].Distance}][${Pawn[${k}].Type}] ${Pawn[${k}].Name}"
 				}
 			}
 		}
@@ -75,7 +76,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 {
 	variable filepath EventFilePath = "${Script.CurrentDirectory}/Saves"
 	mkdir "${EventFilePath}"
-	redirect -append "${EventFilePath}/Event-Chat.txt" echo "[${Time}][ChatEvent] ${Text}"
+	redirect -append "${EventFilePath}/Event-Chat.txt" echo "[${Time}][ChatEvent][${ChannelNumber}] ${Text}"
 
 
 	if ${ChannelNumber}==0
@@ -133,7 +134,7 @@ atom(script) CombatEvent(string Text, string ChannelNumber, string ChannelName)
 {
 	variable filepath EventFilePath = "${Script.CurrentDirectory}/Saves"
 	mkdir "${EventFilePath}"
-	redirect -append "${DebugFilePath}/Event-Combat.txt" echo "[${Time}][CombatEvent] ${Text}"
+	redirect -append "${DebugFilePath}/Event-Combat.txt" echo "[${Time}][CombatEvent][${ChannelNumber}] ${Text}"
 
 	if ${ChannelNumber}==42
 	{
