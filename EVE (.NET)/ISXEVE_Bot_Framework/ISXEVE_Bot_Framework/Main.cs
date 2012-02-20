@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EVE.ISXEVE;
 using LavishScriptAPI;
 using LavishVMAPI;
 
@@ -19,9 +18,9 @@ namespace ISXEVE_Bot_Framework
         event EventHandler<LSEventArgs> Frame;
 
         /* Login, CharSelect, and Me references */
-        Login _login;
-        CharSelect _charSelect;
-        Me _me;
+        EVE.ISXEVE.Login _login;
+		EVE.ISXEVE.CharSelect _charSelect;
+		EVE.ISXEVE.Me _me;
 
         public Main()
         {
@@ -62,8 +61,8 @@ namespace ISXEVE_Bot_Framework
         /* Attach our Frame event handler to the OnFrame event */
         internal void AttachEvent()
         {
-            LavishScript.Events.AttachEventTarget("OnFrame", Frame);
-            Logging.OnLogMessage(this, "AttachEvent(): Attaching Frame to OnFrame");
+            LavishScript.Events.AttachEventTarget("ISXEVE_OnFrame", Frame);
+			Logging.OnLogMessage(this, "AttachEvent(): Attaching Frame to ISXEVE_OnFrame");
         }
 
         /* Overload for AttachEvent */
@@ -75,8 +74,8 @@ namespace ISXEVE_Bot_Framework
         /* Detach our Frame event handler from the OnFrame event */
         internal void DetachEvent()
         {
-            LavishScript.Events.DetachEventTarget("OnFrame", Frame);
-            Logging.OnLogMessage(this, "DetachEvent(): Detaching Frame from OnFrame");
+			LavishScript.Events.DetachEventTarget("ISXEVE_OnFrame", Frame);
+			Logging.OnLogMessage(this, "DetachEvent(): Detaching Frame from ISXEVE_OnFrame");
         }
 
         /* The method that will execute OnFrame */
@@ -86,8 +85,8 @@ namespace ISXEVE_Bot_Framework
             using (new FrameLock(true))
             {
                 /* If Login exists, we're going to want to detach OnFrame so that we may do our login work */
-                _login = new Login();
-                _charSelect = new CharSelect();
+				_login = new EVE.ISXEVE.Login();
+				_charSelect = new EVE.ISXEVE.CharSelect();
                 
                 /* We must do this because trying to check Me validity when it isn't valid crashes, as does attempting
                  * to get a reference to any in-game object */
@@ -100,8 +99,8 @@ namespace ISXEVE_Bot_Framework
                 }
 
                 /* If we're not at login or char select, we can get a Me reference */
-                _me = new Me();
-                Logging.OnLogMessage(this, "Pulse(): Got new Me reference, Me.Corporation == " + _me.Corporation);
+				_me = new EVE.ISXEVE.Me();
+                Logging.OnLogMessage(this, "Pulse(): Got new Me reference, Me.Corporation == " + _me.Corp.ID);
             }
         }
     }
