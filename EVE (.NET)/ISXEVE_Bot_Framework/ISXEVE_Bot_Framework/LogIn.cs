@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using EVE.ISXEVE;
 using LavishVMAPI;
 
 namespace ISXEVE_Bot_Framework
@@ -58,8 +57,8 @@ namespace ISXEVE_Bot_Framework
             /* How long I'll wait between steps */
             int sleepTimer = 0;
             /* LogIn and CharSelect local variables */
-            CharSelect charSelect = new CharSelect();
-            Login login;
+			EVE.ISXEVE.CharSelect charSelect = new EVE.ISXEVE.CharSelect();
+			EVE.ISXEVE.Login login;
 
             while (shouldLoop)
             {
@@ -67,7 +66,7 @@ namespace ISXEVE_Bot_Framework
                 using (new FrameLock(true))
                 {
                     /* Update the login and reference */
-                    login = new Login();
+					login = new EVE.ISXEVE.Login();
                     /* If Login is valid, we're sitting at the login screen. */
                     if (login.IsValid)
                     {
@@ -84,7 +83,7 @@ namespace ISXEVE_Bot_Framework
                     else
                     {
                         /* Update CharSelect reference */
-                        charSelect = new CharSelect();
+						charSelect = new EVE.ISXEVE.CharSelect();
                         /* If CharSelect also isn't valid, we're either loading or ingame. */
                         if (!login.IsValid && (!charSelect.IsValid || !charSelect.CharExists(Settings.ActiveSettings.ActiveCharacter.CharId)))
                         {
@@ -109,7 +108,7 @@ namespace ISXEVE_Bot_Framework
                             {
                                 Logging.OnLogMessage(_logIn, "DoLogIn(): At CharSelect screen, entering game.");
                                 /* Click our characte */
-                                charSelect.ClickCharacter();
+                                charSelect.ClickCharacter((int)charSelect.SelectedCharID); //todo -- don't cast this after the wrapper is fixed
                                 /* Entering game could take up to 30 seconds */
                                 sleepTimer = -1;
                                 /* 30 seconds was too short, trying 40. */
