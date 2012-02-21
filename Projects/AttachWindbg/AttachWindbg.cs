@@ -27,12 +27,12 @@ namespace AttachWindbg
 			}
 			try
 			{
-				ProcessStartInfo startInfo = new ProcessStartInfo("C:\\Program Files (x86)\\Windows Kits\\8.0\\Debuggers\\x86\\windbg.exe", "-pb -loga d:\\windbg.log -pn " + args[0]);
+				ProcessStartInfo startInfo = new ProcessStartInfo("C:\\Program Files (x86)\\Windows Kits\\8.0\\Debuggers\\x86\\windbg.exe", "-pb -loga d:\\windbg.log -p " + args[0]);
 				System.Diagnostics.Process.Start(startInfo);
 			}
 			catch (Exception e)
 			{
-				ProcessStartInfo startInfo = new ProcessStartInfo("C:\\Program Files (x86)\\Debugging Tools for Windows (x86)\\windbg.exe", "-pb -loga d:\\windbg.log -pn " + args[0]);
+				ProcessStartInfo startInfo = new ProcessStartInfo("C:\\Program Files (x86)\\Debugging Tools for Windows (x86)\\windbg.exe", "-pb -loga d:\\windbg.log -p " + args[0]);
 				System.Diagnostics.Process.Start(startInfo);
 			}
 		}
