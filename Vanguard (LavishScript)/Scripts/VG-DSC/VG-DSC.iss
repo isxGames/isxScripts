@@ -68,9 +68,11 @@ variable int i
 variable bool isRunning = TRUE
 variable bool isPaused = FALSE
 variable bool isSitting = FALSE
-variable bool doCamp = FALSE
+variable bool doJustDied = FALSE
+variable bool doServerShutdown = FALSE
 variable bool doTankEndowementOfLife = TRUE
 variable bool doRangedWeapon = TRUE
+variable bool FeignDeathFailed = FALSE
 variable string Tank = ${Me.FName}
 variable string Follow = ${Me.FName}
 variable string temp
@@ -119,12 +121,16 @@ variable bool NoLineOfSight = FALSE
 variable bool doCheckForAdds = FALSE
 variable bool doCheckForObstacles = TRUE
 variable int PullDistance = 22
+variable int MaximumDistance = 40
 variable int MinimumLevel = ${Me.Level}
 variable int MaximumLevel = ${Me.Level}
 variable int DifficultyLevel = 2
 variable bool NeedMoreEnergy = FALSE
 variable bool doNPC = FALSE
 variable bool doAggroNPC = TRUE
+variable bool doLootMyTombstone = FALSE
+variable bool doCamp = FALSE
+
 
 
 ;; Navigator variables
@@ -184,6 +190,10 @@ function main()
 			call AutoAttack
 			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}
 			{
+				if ${Me.IsCasting}
+				{
+					ExecutedAbility:Set[${Me.Casting}]
+				}
 				call AutoAttack
 			}
 		}
@@ -192,7 +202,6 @@ function main()
 		{
 			if ${Me.HealthPct}<80
 			{
-				;; target myself if we do not have the buff
 				if !${Me.DTarget.Name.Equal[${Me.FName}]}
 				{
 					Pawn[me]:Target
@@ -316,25 +325,24 @@ function Idle()
 	{
 		;;;;;;;;;;
 		;; not in combat so get our Jin up!
-		if !${Me.InCombat} && ${Me.Encounter}==0 && ${Me.Stat[Adventuring,Jin]}<=2
+		if !${Me.Target(exists)} && !${Me.InCombat} && ${Me.Encounter}==0 && ${Me.Stat[Adventuring,Jin]}<=2
 		{
 			if !${Me.Effect[${Meditate}](exists)}
 			{
-				call UseAbility "${Meditate}"
-				isSitting:Set[TRUE]
-				wait 20 ${Me.Effect[${Meditate}](exists)}
-
-				;; Keep looping this until we have 20 Jin or exit out of Meditate
-				while !${Me.InCombat} && ${Me.Stat[Adventuring,Jin]}<20 && ${Me.Encounter}==0 && ${Me.Effect[${Meditate}](exists)}
+				Me.Ability[${Meditate}]:Use
+				wait 5
+				while ${Me.IsCasting}
 				{
 					waitframe
+					if ${Me.InCombat} || ${Me.Encounter}>0 || ${Me.Target(exists)}
+					{
+						VGExecute /stopcast
+						waitframe
+						return
+					}
 				}
-
-				if ${Me.Effect[${Meditate}](exists)}
-				{
-					VGExecute /stand
-					waitframe
-				}
+				wait 5 ${Me.Effect[${Meditate}](exists)}
+				return
 			}
 		}
 
@@ -344,22 +352,10 @@ function Idle()
 		{
 			if !${Me.InCombat} && ${Me.Encounter}==0
 			{
-				if ${doAutoDecon}
-				{
-					call AutoDecon
-				}
-				
-				call RepairItemList
-				
 				if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
 				{
 					call SellItemList
 				}
-				if ${doDeleteSell} || ${doDeleteNoSell}
-				{
-					call DeleteItemList
-				}
-				
 			}
 			NextItemListCheck:Set[${Script.RunningTime}]
 		}
@@ -855,10 +851,23 @@ function FeignDeath()
 		;; pretend we are dead
 		if ${Me.Ability[${FeignDeath}].IsReady}
 		{
+			FeignDeathFailed:Set[FALSE]
 			call UseAbility "${FeignDeath}"
 			wait 10 ${Me.Effect[${FeignDeath}](exists)}
 		}
 	}
+
+	if ${FeignDeathFailed}
+	{
+		EchoIt "Feign Death Failed!"
+		vgecho "Feign Death Failed!
+		waitframe
+		VGExecute /stand
+		waitframe
+		VGExecute /stand
+		return
+	}
+	
 	if ${Me.Effect[${FeignDeath}](exists)}
 	{
 
@@ -866,20 +875,19 @@ function FeignDeath()
 		VGExecute /cleartargets
 		waitframe
 		
-		variable int i = 5
 		variable int FeignDeathCheck = ${Script.RunningTime}
 		FeignDeathCheck:Set[${Script.RunningTime}]
 		while ${Me.Effect[${FeignDeath}](exists)}
 		{
+			wait 10
 			EchoIt "Feign Death - waiting: ${Pawn[AggroNPC].Name} is ${Pawn[AggroNPC].Distance} meters away"
-			vgecho "Feign Death - waiting ( ${Math.Calc[${i}-(${Script.RunningTime}-${FeignDeathCheck})/1000]} )"
-			if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000]}>=5 || ${Pawn[AggroNPC].Distance}>=10 || ${Me.ToPawn.IsStunned}
+			vgecho "Feign Death - waiting ( ${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000].Int} )"
+			if ${Me.Target(exists)} || ${Me.Encounter}>0 || (${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000]}>=10 && ${Me.HealthPct}>50 || ${Pawn[AggroNPC].Distance}>10 || ${Me.ToPawn.IsStunned}
 			{
-				EchoIt "Feign Death - breaking wait - Nearest AggronNPC is ${Pawn[AggroNPC].Distance} meters away - TargetExists=${Me.Target(exists)}, Encounters=${Me.Encounter}, Seconds=${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000]}"
+				EchoIt "Feign Death - breaking wait - Nearest AggronNPC is ${Pawn[AggroNPC].Distance} meters away - TargetExists=${Me.Target(exists)}, Encounters=${Me.Encounter}, Seconds=${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000].Int}"
 				vgecho "Feign Death - breaking wait"
 				break
 			}
-			wait 10
 		}
 		waitframe
 		VGExecute /stand
@@ -1783,8 +1791,11 @@ atom(script) LoadXMLSettings(string aText)
 	doCheckForAdds:Set[${Settings.FindSetting[doCheckForAdds,FALSE]}]
 	doCheckForObstacles:Set[${Settings.FindSetting[doCheckForObstacles,FALSE]}]
 	PullDistance:Set[${Settings.FindSetting[PullDistance,20]}]
+	MaximumDistance:Set[${Settings.FindSetting[MaximumDistance,40]}]
 	MinimumLevel:Set[${Settings.FindSetting[MinimumLevel,${Me.Level}]}]
 	MaximumLevel:Set[${Settings.FindSetting[MaximumLevel,${Me.Level}]}]
+	doLootMyTombstone:Set[${Settings.FindSetting[doLootMyTombstone,TRUE]}]
+	doCamp:Set[${Settings.FindSetting[doCamp,TRUE]}]
 
 	;; setup our paths
 	if ${Me.Chunk(exists)}
@@ -1867,8 +1878,11 @@ atom(script) SaveXMLSettings(string aText)
 	Settings:AddSetting[doCheckForAdds,${doCheckForAdds}]
 	Settings:AddSetting[doCheckForObstacles,${doCheckForObstacles}]
 	Settings:AddSetting[PullDistance,${PullDistance}]
+	Settings:AddSetting[MaximumDistance,${MaximumDistance}]
 	Settings:AddSetting[MinimumLevel,${MinimumLevel}]
 	Settings:AddSetting[MaximumLevel,${MaximumLevel}]
+	Settings:AddSetting[doLootMyTombstone,${doLootMyTombstone}]
+	Settings:AddSetting[doCamp,${doCamp}]
 
 	;; save settings
 	LavishSettings[VG-DSC]:Export[${Script.CurrentDirectory}/Saves/Settings.xml]
@@ -2025,25 +2039,54 @@ function LootCorpse()
 					{
 						Loot:EndLooting
 					}
-					
-					;; delete these items
-					Me.Inventory[ExactName,"Quality Bag"]:Delete[all]
-					Me.Inventory[ExactName,"Jagged Shard of Battle"]:Delete[all]
-					Me.Inventory[ExactName,"Jagged Shard of Brilliance"]:Delete[all]
-					Me.Inventory[ExactName,"Jagged Shard of Wisdom"]:Delete[all]
-					Me.Inventory[ExactName,"Cracked Shard of Battle"]:Delete[all]
-					Me.Inventory[ExactName,"Cracked Shard of Brilliance"]:Delete[all]
-					Me.Inventory[ExactName,"Cracked Shard of Wisdom"]:Delete[all]
-					Me.Inventory[ExactName,"Glowing Shard of Battle"]:Delete[all]
-					Me.Inventory[ExactName,"Glowing Shard of Brilliance"]:Delete[all]
-					Me.Inventory[ExactName,"Glowing Shard of Wisdom"]:Delete[all]
-					Me.Inventory[ExactName,"Mangled Rag of War"]:Delete[all]
-					Me.Inventory[ExactName,"Bloodied Rag of War"]:Delete[all]
-					Me.Inventory[ExactName,"Frayed Rag of War"]:Delete[all]
 				}
 			}
 		}
 
+		;; delete these items
+		Me.Inventory[ExactName,"Quality Bag"]:Delete[all]
+		Me.Inventory[ExactName,"Jagged Shard of Battle"]:Delete[all]
+		Me.Inventory[ExactName,"Jagged Shard of Brilliance"]:Delete[all]
+		Me.Inventory[ExactName,"Jagged Shard of Wisdom"]:Delete[all]
+		Me.Inventory[ExactName,"Cracked Shard of Battle"]:Delete[all]
+		Me.Inventory[ExactName,"Cracked Shard of Brilliance"]:Delete[all]
+		Me.Inventory[ExactName,"Cracked Shard of Wisdom"]:Delete[all]
+		Me.Inventory[ExactName,"Glowing Shard of Battle"]:Delete[all]
+		Me.Inventory[ExactName,"Glowing Shard of Brilliance"]:Delete[all]
+		Me.Inventory[ExactName,"Glowing Shard of Wisdom"]:Delete[all]
+		Me.Inventory[ExactName,"Mangled Rag of War"]:Delete[all]
+		Me.Inventory[ExactName,"Bloodied Rag of War"]:Delete[all]
+		Me.Inventory[ExactName,"Frayed Rag of War"]:Delete[all]
+		
+		;; now decon your junk, repair, and delete junk
+		if !${Me.InCombat} && ${Me.Encounter}==0
+		{
+			if ${doAutoDecon}
+			{
+				call AutoDecon
+			}
+			
+			call RepairItemList
+			
+			if !${Me.InCombat} && ${Me.Encounter}==0
+			{
+				if ${doAutoSell} 
+				{
+					if ${Pawn[Merchant](exists)} && ${Pawn[Merchant].Distance}<=5
+					{
+						EchoIt "*Targeting Merchant"
+						Pawn[Merchant]:Target
+						wait 5
+					}
+					call SellItemList
+				}
+				if ${doDeleteSell} || ${doDeleteNoSell}
+				{
+					call DeleteItemList
+				}
+			}
+		}
+		
 		;; No matter what, we are clearing our target because we no longer need it
 		VGExecute "/cleartargets"
 		wait 5
@@ -2459,7 +2502,7 @@ function WeAreDead()
 ;===================================================
 ;===       CREATE MORE SHURIKENS                ====
 ;===================================================
-function CreateShurikens()
+function:bool CreateShurikens()
 {
 	if ${doCreateShurikens}
 	{
@@ -2481,7 +2524,7 @@ function CreateShurikens()
 					Me.Inventory[Emerald Leaf Shuriken]:Equip
 					waitframe
 				}
-				return
+				return TRUE
 			}
 
 			;; total Shurikens
@@ -2514,8 +2557,14 @@ function CreateShurikens()
 				vgecho "<Green=>Creating:  <Yellow=>${CreatedShurikens}"
 				wait 20
 			}
+			if ${Shurikens}<2000
+			{
+				return TRUE
+			}
 		}
+		return FALSE
 	}
+	return TRUE
 }
 
 ;===================================================
@@ -2543,42 +2592,56 @@ function CampOut()
 {
 	;; this wait is in case we just released the corpse
 	wait 50
-	
-	;; check the altar for any tombstones
-    Pawn[Altar]:DoubleClick
-	wait 7
-	if ${Me.Target.Name.Equal[Altar]}
-	{
-		Dialog[General,"I'd like to summon my earthly remains."]:Select 
-		wait 7
-		Altar[Corpse,1]:Summon
-		wait 7
-		Altar[Corpse,1]:Cancel
-	}
-	
-	;; allow time for the tombstone to appear
-	wait 10
 
-	;; target and loot our tombstone
-	if ${Pawn[Tombstone](exists)}
+	if ${doJustDied}
 	{
-		for (i:Set[0]; ${i:Inc} <= ${VG.PawnCount}; i:Inc)
+	
+		;; check the altar for any tombstones
+		Pawn[Altar]:DoubleClick
+		wait 7
+		if ${Me.Target.Name.Equal[Altar]}
 		{
-			if ${Pawn[${i}].Name.Find[Tombstone]} && ${Pawn[${i}].Name.Find[${Me}]}
+			Dialog[General,"I'd like to summon my earthly remains."]:Select 
+			wait 7
+			Altar[Corpse,1]:Summon
+			wait 7
+			Altar[Corpse,1]:Cancel
+		}
+		
+		;; allow time for the tombstone to appear
+		wait 10
+
+		;; target and loot our tombstone
+		if ${Pawn[Tombstone](exists)}
+		{
+			for (i:Set[0]; ${i:Inc} <= ${VG.PawnCount}; i:Inc)
 			{
-				VGExecute /targetm
-				wait 5
-				if ${Pawn[${i}].Distance}>5 && ${Pawn[${i}].Distance}<21
+				if ${Pawn[${i}].Name.Find[Tombstone]} && ${Pawn[${i}].Name.Find[${Me}]}
 				{
-					VGExecute /cor
+					VGExecute /targetm
+					wait 5
+					if ${Pawn[${i}].Distance}>5 && ${Pawn[${i}].Distance}<21
+					{
+						VGExecute /cor
+						waitframe
+					}
+					VGExecute /Lootall
 					waitframe
+					VGExecute "/cleartargets"
 				}
-				VGExecute /Lootall
-				waitframe
-				VGExecute "/cleartargets"
 			}
 		}
-	}	
+		
+		while !${Me.InCombat} && ${Me.Encounter}==0 && !${isPaused}
+		{
+			call CreateShurikens
+			if ${Return}
+			{
+				break
+			}
+			wait 10
+		}
+	}
 
 	EchoIt "CAMPING"
 	vgecho "Camping"
@@ -2600,3 +2663,36 @@ function WeAreStunned()
 		wait 2
 	}
 }
+
+function WeAreMounted()
+{
+	EchoIt "We are on a Mount!"
+	while ${Me.ToPawn.IsMounted} && !${isPaused} && !${Me.Effect[${FeignDeath}](exists)}
+	{
+		wait 2
+	}
+}
+
+function Meditating()
+{
+	EchoIt "We are Meditating!"
+	waitframe
+	while ${Me.Effect[${Meditate}](exists)} && !${isPaused} && !${Me.Effect[${FeignDeath}](exists)}
+	{
+		isSitting:Set[TRUE]
+		;; Keep looping this until we have 20 Jin or exit out of Meditate
+		if ${Me.InCombat} || ${Me.Stat[Adventuring,Jin]}>=19 || ${Me.Encounter}>0 || ${isPaused}
+		{
+			EchoIt "Breaking out of Meditation"
+			break
+		}
+
+		wait 2
+	}
+	VGExecute /stand
+	waitframe
+	VGExecute /stand
+}
+
+
+

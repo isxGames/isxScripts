@@ -30,6 +30,19 @@ atom(script) AlertEvent(string Text, int ChannelNumber)
 	mkdir "${EventFilePath}"
 	redirect -append "${EventFilePath}/Event-Alert.txt" echo "[${Time}][AlertEvent][${ChannelNumber}] ${Text}"
 
+	if ${ChannelNumber}==0
+	{
+		if ${Text.Find["no line of sight"]} || ${Text.Find[can't see your target]} || ${Text.Find[Can't see target]}
+		{
+			if ${doHunt}
+			{
+				EchoIt "[ChatEvent] Face issue AlertEvent fired, facing target"
+				face ${Math.Calc[${Pawn[id,${Me.Target.ID}].HeadingTo}+${Math.Rand[6]}-${Math.Rand[12]}]}
+				NoLineOfSight:Set[TRUE]
+			}
+		}
+	}
+
 	if ${ChannelNumber}==2
 	{
 		if ${Text.Find[You died.]}
@@ -38,7 +51,7 @@ atom(script) AlertEvent(string Text, int ChannelNumber)
 			variable int k
 			for (k:Set[0]; ${k:Inc}<=${VG.PawnCount}; i:Inc)
 			{
-				if ${Pawn[${k}].Distance}<50
+				if ${Pawn[${k}].Distance}<100
 				{
 					EchoIt "[${k}][Distance=${Pawn[${k}].Distance}][${Pawn[${k}].Type}] ${Pawn[${k}].Name}"
 				}
@@ -52,7 +65,7 @@ atom(script) AlertEvent(string Text, int ChannelNumber)
 		if ${Text.Find[Returning you to the nearest outpost...]}
 		{
 			EchoIt "[AlertEvent] Teleported to Altar"
-			doCamp:Set[TRUE]
+			doJustDied:Set[TRUE]
 		}
 	}
 	
@@ -84,7 +97,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 		if ${Text.Find[Server is shutting down]}
 		{
 			EchoIt "[ChatEvent] SERVER SHUTDOWN"
-			doCamp:Set[TRUE]
+			doServerShutdown:Set[TRUE]
 		}
 	}
 	
@@ -93,7 +106,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 		if ${Text.Find[servers will be coming down]}
 		{
 			EchoIt "[ChatEvent] SERVER SHUTDOWN"
-			doCamp:Set[TRUE]
+			doServerShutdown:Set[TRUE]
 		}
 	}
 
@@ -102,7 +115,12 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 		if ${Text.Find[Returning you to the nearest outpost...]}
 		{
 			EchoIt "[ChatEvent] Teleported to Altar"
-			doCamp:Set[TRUE]
+			doJustDied:Set[TRUE]
+		}
+		if ${Text.Find[No one but you seems to think you're dead]}
+		{
+			EchoIt "[ChatEvent] Feign Death FAILED!"
+			FeignDeathFailed:Set[TRUE]
 		}
 	}
 
@@ -114,7 +132,7 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 			doRangedWeapon:Set[FALSE]
 		}
 
-		if ${Text.Find["no line of sight to your target"]} || ${Text.Find[You can't see your target]}
+		if ${Text.Find["no line of sight"]} || ${Text.Find[can't see your target]} || ${Text.Find[Can't see target]}
 		{
 			if ${doHunt}
 			{
@@ -141,7 +159,7 @@ atom(script) CombatEvent(string Text, string ChannelNumber, string ChannelName)
 		if ${Text.Find[Returning you to the nearest outpost...]}
 		{
 			EchoIt "[CombatEvent] Teleported to Altar"
-			doCamp:Set[TRUE]
+			doJustDied:Set[TRUE]
 		}
 	}
 

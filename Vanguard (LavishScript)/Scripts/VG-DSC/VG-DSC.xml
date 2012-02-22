@@ -928,6 +928,42 @@
 								Script[VG-DSC].VariableScope.doNPC:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
+						<checkbox Name='doLootMyTombstone' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>37%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Loot Tombstone</Text>
+							<AutoTooltip>  Turning this on will allow looting your tombstone from the altar  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doLootMyTombstone}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doLootMyTombstone:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='doCamp' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>3%</X>
+							<Y>45%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Camp after dying</Text>
+							<AutoTooltip>  Turning this on will allow camping if you die  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doCamp}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doCamp:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
 						<checkbox Name='doCheckForObstacles' Template='VG.GreenCheckbox'>
 							<visible>0</visible>
 							<X>3%</X>
@@ -966,7 +1002,7 @@
 						</checkbox>
 						<Textentry Name="PullDistance" Template="VG.TextEntry">
 							<X>3%</X>
-							<Y>37%</Y>
+							<Y>57%</Y>
 							<Width>28</Width>
 							<Height>15</Height>
 							<Color>FFDDBB00</Color>
@@ -990,15 +1026,47 @@
 						</Textentry>
 						<Text Name="Text-PullDistance" Template="VG.Text">
 							<X>18%</X>
-							<Y>37.3%</Y>
+							<Y>57.3%</Y>
 							<Width>200</Width>
 							<Height>15</Height>
 							<Alignment>Left</Alignment>
 							<Text>Pull Distance</Text>
 						</Text>
+						<Textentry Name="MaximumDistance" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>65%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.MaximumDistance}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-DSC].VariableScope.MaximumDistance:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.MaximumDistance:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-MaximumDistance" Template="VG.Text">
+							<X>18%</X>
+							<Y>65.3%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Maximum distance to scan for target</Text>
+						</Text>
 						<Textentry Name="MinimumLevel" Template="VG.TextEntry">
 							<X>3%</X>
-							<Y>45%</Y>
+							<Y>73%</Y>
 							<Width>28</Width>
 							<Height>15</Height>
 							<Color>FFDDBB00</Color>
@@ -1022,7 +1090,7 @@
 						</Textentry>
 						<Text Name="Text-MinimumLevel" Template="VG.Text">
 							<X>18%</X>
-							<Y>45.3%</Y>
+							<Y>73.3%</Y>
 							<Width>200</Width>
 							<Height>15</Height>
 							<Alignment>Left</Alignment>
@@ -1030,7 +1098,7 @@
 						</Text>
 						<Textentry Name="MaximumLevel" Template="VG.TextEntry">
 							<X>3%</X>
-							<Y>53%</Y>
+							<Y>81%</Y>
 							<Width>28</Width>
 							<Height>15</Height>
 							<Color>FFDDBB00</Color>
@@ -1054,15 +1122,15 @@
 						</Textentry>
 						<Text Name="Text-MaximumLevel" Template="VG.Text">
 							<X>18%</X>
-							<Y>53.3%</Y>
+							<Y>81.3%</Y>
 							<Width>200</Width>
 							<Height>15</Height>
 							<Alignment>Left</Alignment>
-							<Text>Minimum level of target</Text>
+							<Text>Maximum level of target</Text>
 						</Text>
 						<button name='SetWaypoint' Template='VG.GreenCommandButton'>
 							<X>3%</X>
-							<Y>65%</Y>
+							<Y>89%</Y>
 							<Width>45%</Width>
 							<Height>20</Height>
 							<AutoTooltip>Click here to set Waypoints</AutoTooltip>
@@ -1074,7 +1142,7 @@
 
 						<button name='ClearWayPoints' Template='VG.GreenCommandButton'>
 							<X>52%</X>
-							<Y>65%</Y>
+							<Y>89%</Y>
 							<Width>45%</Width>
 							<Height>20</Height>
 							<AutoTooltip>Clear All Waypoints</AutoTooltip>

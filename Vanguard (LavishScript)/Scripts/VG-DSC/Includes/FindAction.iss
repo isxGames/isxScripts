@@ -41,14 +41,30 @@ atom(script) FindAction()
 		return
 	}
 
+	;;;;;;;;;;	
+	;; if we are feign death then get out of it
+	if ${Me.Effect[${Meditate}](exists)} && !${isPaused}
+	{
+		Action:Set[Meditating]
+		return
+	}
+
 	;;;;;;;;;;
-	;; flag is set to camp so lets camp
-	if ${doCamp} && !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
+	;; Server reset
+	if ${doServerShutdown} && !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
 	{
 		Action:Set[CampOut]
 		return
 	}
 
+	;;;;;;;;;;
+	;; We just died so let's camp if we set the option to do so
+	if ${doJustDied} && ${doCamp}
+	{
+		Action:Set[CampOut]
+		return
+	}
+	
 	;;;;;;;;;;
 	;; we must have chunked so reload our settings
 	if !${CurrentChunk.Equal[${Me.Chunk}]}
@@ -62,6 +78,14 @@ atom(script) FindAction()
 	if ${Me.ToPawn.IsStunned}
 	{
 		Action:Set[WeAreStunned]
+		return
+	}
+
+	;;;;;;;;
+	;; we can't do anything if we are on a mount
+	if ${Me.ToPawn.IsMounted}
+	{
+		Action:Set[WeAreMounted]
 		return
 	}
 
@@ -491,7 +515,7 @@ atom(script) FindAction()
 			;;;;;;;;;;
 			;; Get our endurance leaching buff up so that we can have more
 			;; endurance during the fight
-			if ${Me.Ability[${LeechsGrasp}](exists)} && ${Me.Ability[${LeechsGrasp}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Ability[${LeechsGrasp}](exists)} && ${Me.Ability[${LeechsGrasp}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
 				if !${Me.Effect[${LeechsGrasp}](exists)} && !${Me.Effect[${LeechsGrasp}(Modified)](exists)} && !${Me.Effect[${LeechsGrasp} (Modified)](exists)}
 				{
@@ -576,13 +600,13 @@ atom(script) FindAction()
 			{
 				if !${Me.Effect[${SuperiorSunFist}](exists)} && ${Me.Ability[${SuperiorSunFist}].TriggeredCountdown} && ${Me.Ability[${SuperiorSunFist}].TimeRemaining}==0
 				{
-					echo SuperiorSunFist Ability=${Me.Ability[${SuperiorSunFist}](exists)}, Exist=${Me.Effect[${SuperiorSunFist}](exists)}, TimeRemaining=${Me.Ability[${SuperiorSunFist}].TimeRemaining}
+					;echo SuperiorSunFist Ability=${Me.Ability[${SuperiorSunFist}](exists)}, Exist=${Me.Effect[${SuperiorSunFist}](exists)}, TimeRemaining=${Me.Ability[${SuperiorSunFist}].TimeRemaining}
 					Action:Set[Crit_SunFist]
 					return
 				}
 				if ${Me.Stat[Adventuring,Jin]}<12 && !${Me.Effect[${SunFist}](exists)} && ${Me.Ability[${SunFist}].TriggeredCountdown} && ${Me.Ability[${SunFist}].TimeRemaining}==0
 				{
-					echo SunFist Ability=${Me.Ability[${SunFist}](exists)}, Exist=${Me.Effect[${SunFist}](exists)}, TimeRemaining=${Me.Ability[${SunFist}].TimeRemaining}
+					;echo SunFist Ability=${Me.Ability[${SunFist}](exists)}, Exist=${Me.Effect[${SunFist}](exists)}, TimeRemaining=${Me.Ability[${SunFist}].TimeRemaining}
 					Action:Set[Crit_SunFist]
 					return
 				}
