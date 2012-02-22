@@ -209,9 +209,6 @@ function SellItemList()
 					;; sell anything that is not Unique, No Trade, No Sell, No Rent, and Quest items in the list
 					if !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
 					{
-						echo "Selling: ${Iterator.Key}"
-						vgecho "Selling: ${Iterator.Key}"
-
 						;; if not in BuySell dialog then...
 						if !${Merchant.NumItemsForSale}>0
 						{
@@ -229,12 +226,17 @@ function SellItemList()
 							wait 5
 						}
 
-						temp:Set[${Iterator.Key}]
-						while ${Me.Inventory[exactname,${temp}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
+						while ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
 						{
+							echo "Before Selling = ${Iterator.Key}"
+							vgecho "Before Selling = ${Iterator.Key}"
+
 							;; some items will not sell if you set the quantity to the reported quantity
-							Me.Inventory[exactname,${temp}]:Sell[1]
+							Me.Inventory[exactname,${Iterator.Key}]:Sell[1]
 							wait 2
+
+							echo "After Selling = ${Iterator.Key}"
+							vgecho "After Selling = ${Iterator.Key}"
 							
 							;; due to bug... must reset iterator to ItemList
 							ItemList:Set[${LavishSettings[SellItem].FindSet[ItemList]}]
@@ -356,14 +358,31 @@ function AutoDecon()
 	{
 		if ${Me.Inventory[Deconstruction Kit](exists)}
 		{
-			if ${Me.Inventory[Shandrel's](exists)} && ${Me.Inventory[Shandrel's].Description.Find[This relic]}
+
+			;; total items in inventory
+			variable int TotalItems = 0
+
+			;; define our index
+			variable index:item CurrentItems
+
+			;; populate our index and update total items in inventory
+			TotalItems:Set[${Me.GetInventory[CurrentItems]}]
+
+			;; counter
+			variable int i = 0
+
+			;; loop through all items
+			for (i:Set[1] ; ${i}<=${TotalItems} && !${Me.InCombat} && ${Me.Encounter}==0 && !${isPaused} ; i:Inc)
 			{
-				echo "Deconstructing: ${Me.Inventory[Shandrel's].Name}"
-				vgecho "Deconstructing: ${Me.Inventory[Shandrel's].Name}"
-				Me.Inventory[Deconstruction Kit]:Use
-				wait 5
-				Me.Inventory[Shandrel's]:DeconstructToResource
-				wait 25
+				if  ${Me.Inventory[Deconstruction Kit](exists)} && ${CurrentItems.Get[${i}].Name.Find[Shandrel's](exists)} && ${CurrentItems.Get[${i}].Description.Find[This relic]}
+				{
+					echo "Deconstructing: ${Me.Inventory[Shandrel's].Name}"
+					vgecho "Deconstructing: ${Me.Inventory[Shandrel's].Name}"
+					Me.Inventory[Deconstruction Kit]:Use
+					wait 5
+					Me.Inventory[Shandrel's]:DeconstructToResource
+					wait 5
+				}
 			}
 		}
 	}
