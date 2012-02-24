@@ -377,12 +377,12 @@ function Idle()
 			}
 
 			;; go find an AggroNPC that is within 80 meters
-			if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat}
+			if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat} && ${Me.HealthPct}>=80
 			{
 				;; go find a target as long as we are not assisting someone else
 				if ${Tank.Find[${Me.FName}]}
 				{
-					call FindTarget 80
+					call FindTarget ${MaximumDistance}
 					if !${Me.Target(exists)} && ${Follow.Find[${Me.FName}]}
 					{
 						call MoveToWayPoint
@@ -2341,7 +2341,7 @@ function(script) MoveToWayPoint()
 		Action:Set[Moving to WP-${CurrentWayPoint}]
 
 		;; keep looking for a target
-		call FindTarget 80
+		call FindTarget ${MaximumDistance}
 
 		;; stop moving if we paused or picked up an encounter
 		if ${isPaused} || ${Me.Encounter}>0 || ${Me.InCombat} || ${Me.Target(exists)} || !${doHunt} || ${Me.ToPawn.IsStunned} || ${Me.Effect[${FeignDeath}](exists)}
