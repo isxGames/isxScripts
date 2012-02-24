@@ -182,7 +182,9 @@ function SellItemList()
 
 		;; set our settingsetref to ItemList
 		variable settingsetref ItemList
+		variable string sName
 		ItemList:Set[${LavishSettings[SellItem].FindSet[ItemList]}]
+		
 
 		;; set our iterator to ItemList
 		variable iterator Iterator
@@ -200,14 +202,18 @@ function SellItemList()
 		;; iterate through ItemList
 		while ${Iterator.Key(exists)} && ${Me.Target(exists)} && !${Me.InCombat} && !${isPaused}
 		{
+			sName:Set[${Iterator.Key}]
+			Iterator:Next
+
+		
 			;; we only want to sell items existing in our inventory
-			if ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${doAutoSell}
+			if ${Me.Inventory[exactname,${sName}](exists)} && ${doAutoSell}
 			{
 				;; skip diplo papers - that will be handled separately
-				if !${Me.Inventory[exactname,${Iterator.Key}].Description.Find[would have an interest in this]}>0
+				if !${Me.Inventory[exactname,${sName}].Description.Find[would have an interest in this]}>0
 				{
 					;; sell anything that is not Unique, No Trade, No Sell, No Rent, and Quest items in the list
-					if !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Unique]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Trade]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Rent]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[No Sell]}>0 && !${Me.Inventory[exactname,${Iterator.Key}].Flags.Find[Quest]}>0
+					if !${Me.Inventory[exactname,${sName}].Flags.Find[Unique]}>0 && !${Me.Inventory[exactname,${sName}].Flags.Find[No Trade]}>0 && !${Me.Inventory[exactname,${sName}].Flags.Find[No Rent]}>0 && !${Me.Inventory[exactname,${sName}].Flags.Find[No Sell]}>0 && !${Me.Inventory[exactname,${sName}].Flags.Find[Quest]}>0
 					{
 						;; if not in BuySell dialog then...
 						if !${Merchant.NumItemsForSale}>0
@@ -226,13 +232,13 @@ function SellItemList()
 							wait 5
 						}
 
-						while ${Me.Inventory[exactname,${Iterator.Key}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
+						while ${Me.Inventory[exactname,${sName}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
 						{
 							echo "Before Selling = ${Iterator.Key}"
 							vgecho "Before Selling = ${Iterator.Key}"
 
 							;; some items will not sell if you set the quantity to the reported quantity
-							Me.Inventory[exactname,${Iterator.Key}]:Sell[1]
+							Me.Inventory[exactname,${sName}]:Sell[1]
 							wait 2
 
 							echo "After Selling = ${Iterator.Key}"
@@ -245,8 +251,6 @@ function SellItemList()
 					}
 				}
 			}
-			;; get next iterator
-			Iterator:Next
 		}
 		variable int finishmoney
 		finishmoney:Inc[${Me.Copper}]
@@ -442,6 +446,7 @@ function RepairItemList(bool ForceRepairs=FALSE)
 		
 	;; populate our index and update total items in inventory
 	TotalItems:Set[${Me.GetInventory[CurentItems]}]
+	waitframe
 
 	for (i:Set[1] ; ${CurentItems.Get[${i}].Name(exists)} ; i:Inc)
 	{
