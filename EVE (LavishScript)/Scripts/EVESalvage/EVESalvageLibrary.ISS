@@ -125,6 +125,10 @@ function CloseCargo()
 {
 	if ${EVEWindow[MyShipCargo](exists)}
 	{
+		echo "CLOSE ----- Stacking cargo..."
+		Me.Ship:StackAllCargo
+		wait 10					
+		
 		echo "CLOSE ----- Closing Ship Cargohold"
 		EVEWindow[MyShipCargo]:Close
 		wait 15
@@ -172,10 +176,9 @@ function DoGetLoot(bool InReachOnly)
 			wait 30
 			call OpenCargo
 			call LootEntity ${NearbyCans[${i}].ID}
-			echo "LOOT ---   Stacking cargo..."
-			Me.Ship:StackAllCargo
-			wait 10				
-			;call CloseCargo			
+			;echo "LOOT ---   Stacking cargo..."
+			;Me.Ship:StackAllCargo
+			;wait 10				
 			if ${NearbyCans[${i}](exists)}
 			{
 				NearbyCans[${i}]:CloseCargo
@@ -415,10 +418,9 @@ function DoGetLoot(bool InReachOnly)
 							wait 30
 							call OpenCargo
 							call LootEntity ${Targets[${k}].ID}
-							echo "LOOT ---   Stacking cargo..."
-							Me.Ship:StackAllCargo
-							wait 10				
-							;call CloseCargo		
+							;echo "LOOT ---   Stacking cargo..."
+							;Me.Ship:StackAllCargo
+							;wait 10					
 							if ${Targets[${k}](exists)}
 							{
 								Targets[${k}]:CloseCargo
@@ -982,6 +984,12 @@ function DoSalvage(bool LootCans)
 
 function TransferSalvagedItemsToHangar()
 {	
+		; Currently, this function only supports unloading to a station hangar
+		if (!${Me.InStation})
+		{
+			return
+		}	
+	
     wait 10
     call OpenCargo
 		wait 20
@@ -1058,6 +1066,12 @@ function TransferSalvagedItemsToHangar()
 
 function TransferLootToHangar()
 {	
+		; Currently, this function only supports unloading to a station hangar
+		if (!${Me.InStation})
+		{
+			return
+		}	
+	
     wait 10
     call OpenCargo
 		wait 20
@@ -1067,8 +1081,17 @@ function TransferLootToHangar()
 			EVE:Execute[OpenHangarFloor]
 			wait 30
 		}
-						
-		echo "DEBUG: TransferLootToHangar: ${CargoholdLoot.Used}"		
+					
+		if (${CargoholdLoot.Used} < 1)
+		{
+			echo "UNLOAD ---    EVESalvage does not have a record of any 'loot' that needs to be transferred.  This is probably the result of the script having been started (or restarted)"
+			echo "              after the loot was acquired.   EVESalvage only moves items that it 'remembers' having looted."
+			return
+		}
+		else
+			echo "UNLOAD ---    Moving ${CargoholdLoot.Used} items"
+		
+		
 		Me.Ship:GetCargo[MyCargo]
 		if (${MyCargo.Used} == 0)
 		{
@@ -1122,7 +1145,6 @@ function TransferLootToHangar()
 
 function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 {
-		variable int j
 		variable int k
 		variable int UndockCounter
 		
@@ -1142,187 +1164,184 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 				return
 			}	   	
 	 	}
-	 	
-	 	; else, make a temp bookmark, return us to our salvage home, unload, and go back for more
-	 	echo "FULL -     Cargo Hold Full:  Returning to station to unload...
-		EVE:CreateBookmark["tmp-looting"]
-	  EVE:GetBookmarks[MyBookmarks]
 	  
-	  ; Close cargo hold!
-	  call CloseCargo
-	  
-		j:Set[1]
-		do
+		if (${EVE.Bookmark["Salvager Home Base"](exists)})
 		{
-			if (${MyBookmarks[${j}].Label.Find["Salvager Home Base"]} > 0)
+		 	; make a temp bookmark, return us to our salvage home, unload, and go back for more
+		 	echo "FULL -     Cargo Hold Full:  Returning to station to unload...
+			EVE:CreateBookmark["tmp-looting"]
+		  
+		  ; Close cargo hold!
+		  call CloseCargo
+			
+			if (!${EVE.Bookmark["Salvager Home Base"].SolarSystemID.Equal[${Me.SolarSystemID}]})
 			{
-				if (!${MyBookmarks[${j}].SolarSystemID.Equal[${Me.SolarSystemID}]})
-				{
-					echo "FULL --    Setting destination and activating auto pilot for return to home station"
-					MyBookmarks[${j}]:SetDestination
-					wait 5
-					EVE:Execute[CmdToggleAutopilot]
-					do
-					{
-					   wait 50
-					   if !${Me.AutoPilotOn(exists)}
-					   {
-					     do
-					     {
-					        wait 5
-					     }
-					     while !${Me.AutoPilotOn(exists)}
-					   }
-					}
-	 				while ${Me.AutoPilotOn}
-	 				wait 20
-	 				do
-	 				{
-	 				   wait 10
-	 				}
-	 				while !${Me.ToEntity.IsCloaked}
-				}
-	   			
-				;;; Warp to location
-				echo "FULL --     Warping to home base location"
-				MyBookmarks[${j}]:WarpTo
-				wait 120
+				echo "FULL --    Setting destination and activating auto pilot for return to home station"
+				EVE.Bookmark["Salvager Home Base"]:SetDestination
+				wait 5
+				EVE:Execute[CmdToggleAutopilot]
 				do
 				{
-					wait 20
+				   wait 50
+				   if !${Me.AutoPilotOn(exists)}
+				   {
+				     do
+				     {
+				        wait 5
+				     }
+				     while !${Me.AutoPilotOn(exists)}
+				   }
 				}
-				while (${Me.ToEntity.Mode} == 3)	
+ 				while ${Me.AutoPilotOn}
+ 				wait 20
+ 				do
+ 				{
+ 				   wait 10
+ 				}
+ 				while !${Me.ToEntity.IsCloaked}
+			}
+   			
+			;;; Warp to location
+			echo "FULL --     Warping to home base location"
+			EVE.Bookmark["Salvager Home Base"]:WarpTo
+			wait 120
+			do
+			{
 				wait 20
-				
-				;;; Dock, if applicable
-				if ${MyBookmarks[${j}].ToEntity(exists)}
+			}
+			while (${Me.ToEntity.Mode} == 3)	
+			wait 20
+			
+			;;; Dock, if applicable
+			if ${EVE.Bookmark["Salvager Home Base"].ToEntity(exists)}
+			{
+				if (${EVE.Bookmark["Salvager Home Base"].ToEntity.CategoryID.Equal[3]})
 				{
-					if (${MyBookmarks[${j}].ToEntity.CategoryID.Equal[3]})
+					EVE.Bookmark["Salvager Home Base"].ToEntity:Approach
+					do
 					{
-						MyBookmarks[${j}].ToEntity:Approach
-						do
-						{
-							wait 20
-						}
-						while (${MyBookmarks[${j}].ToEntity.Distance} > 50)
-						
-						MyBookmarks[${j}].ToEntity:Dock
-						Counter:Set[0]			
-						do
-						{
-						   wait 20
-						   Counter:Inc[20]
-						   if (${Counter} > 200)
-						   {
-						      echo "FULL ---   Docking atttempt failed ... trying again."
-						      ;EVE.Bookmark[${Destination}].ToEntity:Dock
-						      Entity[CategoryID = 3]:Dock
-						      Counter:Set[0]
-						   }
-						}
-						while (!${Me.InStation})					
+						wait 20
 					}
+					while (${EVE.Bookmark["Salvager Home Base"].ToEntity.Distance} > 50)
+					
+					EVE.Bookmark["Salvager Home Base"].ToEntity:Dock
+					Counter:Set[0]			
+					do
+					{
+					   wait 20
+					   Counter:Inc[20]
+					   if (${Counter} > 200)
+					   {
+					      echo "FULL ---   Docking atttempt failed ... trying again."
+					      ;EVE.Bookmark[${Destination}].ToEntity:Dock
+					      Entity[CategoryID = 3]:Dock
+					      Counter:Set[0]
+					   }
+					}
+					while (!${Me.InStation})					
 				}
 			}
-		}
-		while ${j:Inc} <= ${MyBookmarks.Used}
-	 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	 	
-	 	
-	 	;;; If we're in a station, unload all "salvaged" items and Loot ;;;;;;;;;;;;;;
-	 	wait 10
-	 	echo "FULL --    Unloading Salvaged Items..."
-	  		call TransferSalvagedItemsToHangar
-	 	wait 2
-	 	if ${LootCans}
-	 	{
-	 		echo "FULL ---   Unloading Looted Items..."
-	 		call TransferLootToHangar
-	 	}
-	 	call CloseCargo
-	 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
-	 
-		;;; Now it's time to head back out to the site
-		if ${Me.InStation}
-		{
-		   echo "FULL --    Undocking from station..."
-		   EVE:Execute[CmdExitStation]	
-		   wait 150
-		   UndockCounter:Set[0]
-		   if (${Me.InStation})
-		   {
-		   		do
-		   		{
-		   			wait 20
-		   			UndockCounter:Inc[20]
-		   			if (${UndockCounter} > 300)
-		   			{
-		   			  echo "FULL --    Undocking atttempt failed ... trying again." 
-		   				EVE:Execute[CmdExitStation]
-		   				UndockCounter:Set[0]
-		   			}	   			   			
-		   		}
-		   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
-		   }
-		   wait 5
-		   LeftStation:Set[TRUE]
-		}
-		
-		if (!${EVE.Bookmark["tmp-looting"](exists)})
-		{
-			do
+			
+		 	;;; If we're in a station, unload all "salvaged" items and Loot ;;;;;;;;;;;;;;
+		 	wait 10
+		 	echo "FULL --    Unloading Salvaged Items..."
+		  		call TransferSalvagedItemsToHangar
+		 	wait 2
+		 	if ${LootCans}
+		 	{
+		 		echo "FULL ---   Unloading Looted Items..."
+		 		call TransferLootToHangar
+		 	}
+		 	call CloseCargo
+		 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+		 
+			;;; Now it's time to head back out to the site
+			if ${Me.InStation}
 			{
-				wait 10
-			}
-			while !${EVE.Bookmark["tmp-looting"](exists)}
-		}
-		
-		;;; Set destination and then activate autopilot (if we're not in that system to begin with)    			
-		if (!${EVE.Bookmark["tmp-looting"].SolarSystemID.Equal[${Me.SolarSystemID}]})
-		{
-		  echo "FULL -    Setting Destination and activating auto pilot to resume salvage operation"
-		  wait 5
-			EVE.Bookmark["tmp-looting"]:SetDestination
-			wait 5
-			EVE:Execute[CmdToggleAutopilot]
-			do
-			{
-			   wait 50
-			   if !${Me.AutoPilotOn(exists)}
+			   echo "FULL --    Undocking from station..."
+			   EVE:Execute[CmdExitStation]	
+			   wait 150
+			   UndockCounter:Set[0]
+			   if (${Me.InStation})
 			   {
-			     do
-			     {
-			        wait 5
-			     }
-			     while !${Me.AutoPilotOn(exists)}
+			   		do
+			   		{
+			   			wait 20
+			   			UndockCounter:Inc[20]
+			   			if (${UndockCounter} > 300)
+			   			{
+			   			  echo "FULL --    Undocking atttempt failed ... trying again." 
+			   				EVE:Execute[CmdExitStation]
+			   				UndockCounter:Set[0]
+			   			}	   			   			
+			   		}
+			   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
 			   }
+			   wait 5
+			   LeftStation:Set[TRUE]
 			}
-			while ${Me.AutoPilotOn}
-			wait 20
+			
+			if (!${EVE.Bookmark["tmp-looting"](exists)})
+			{
+				do
+				{
+					wait 10
+				}
+				while !${EVE.Bookmark["tmp-looting"](exists)}
+			}
+			
+			;;; Set destination and then activate autopilot (if we're not in that system to begin with)    			
+			if (!${EVE.Bookmark["tmp-looting"].SolarSystemID.Equal[${Me.SolarSystemID}]})
+			{
+			  echo "FULL -    Setting Destination and activating auto pilot to resume salvage operation"
+			  wait 5
+				EVE.Bookmark["tmp-looting"]:SetDestination
+				wait 5
+				EVE:Execute[CmdToggleAutopilot]
+				do
+				{
+				   wait 50
+				   if !${Me.AutoPilotOn(exists)}
+				   {
+				     do
+				     {
+				        wait 5
+				     }
+				     while !${Me.AutoPilotOn(exists)}
+				   }
+				}
+				while ${Me.AutoPilotOn}
+				wait 20
+				do
+				{
+				   wait 10
+				}
+				while !${Me.ToEntity.IsCloaked}
+				wait 5
+			}
+			
+			;;; Warp to location
+			echo "FULL -     Warping to salvage location..."
+			EVE.Bookmark["tmp-looting"]:WarpTo
+			wait 120
 			do
 			{
-			   wait 10
+				wait 20
 			}
-			while !${Me.ToEntity.IsCloaked}
-			wait 5
-		}
+			while (${Me.ToEntity.Mode} == 3)			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-		;;; Warp to location
-		echo "FULL -     Warping to salvage location..."
-		EVE.Bookmark["tmp-looting"]:WarpTo
-		wait 120
-		do
-		{
-			wait 20
+		  ; delete tmp bookmark, and then we're ready to continue!
+		  EVE.Bookmark["tmp-looting"]:Remove
+		  
+		  echo "FULL -    Cargo Hold Empty: Resuming Operations..."
 		}
-		while (${Me.ToEntity.Mode} == 3)			
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	
-	  ; delete tmp bookmark, and then we're ready to continue!
-	  EVE.Bookmark["tmp-looting"]:Remove
-	  
-	  echo "FULL -    Cargo Hold Empty: Resuming Operations..."
-	
+		else
+		{
+			echo "FULL -    Cargo hold is full; however, you do not seem to have a 'Salvager Home Base' bookmark for unloading.   You're screwed."
+			Script:End
+			return
+		}
 }
 
 function LootEntity(int64 EntityID)
