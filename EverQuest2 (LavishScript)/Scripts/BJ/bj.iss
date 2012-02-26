@@ -74,6 +74,17 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjshuffle/bjshuffleSHELL.iss"
 		return
 	}
+	elseif ${LoginModifer.Equal[bjpetdance]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjpetdance/bjpetdance.iss"
+		return
+	}	
+	elseif ${LoginModifer.Equal[bjlooter]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjlooter/bjlooterSHELL.iss"
+		return
+	}
+	
 	
 	elseif ${LoginModifer.Equal[end]}
 	{
