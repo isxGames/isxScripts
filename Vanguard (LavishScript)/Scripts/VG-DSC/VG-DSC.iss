@@ -59,6 +59,12 @@
 ;   replenish shurikens using "Tam Thi's Gift".  Updated the event log to show what channel the
 ;   message belongs to.  
 ;
+; 20120225 (Zandros)
+; * Added ISXIM allowing you to use Yahoo Instant Messenger to receive messages as well as
+; send commands to your script.  Fixed a problem with what appears to be the script locking
+; up when you are not looting and the target dies... it now clears the target or fetch the next
+; encounter.
+;
 ;===================================================
 ;===            VARIABLES                       ====
 ;===================================================
@@ -104,6 +110,7 @@ variable int Crit_DPS_RaJinFlarePct = 80
 variable int StartAttack = 100
 variable string ExecutedAbility = None
 variable string TargetsTarget = "No Target"
+variable bool doBuffArea = TRUE
 
 
 ;; UI - Loot Tab
@@ -169,10 +176,12 @@ variable bool doSpiritual = TRUE
 #include ./VG-DSC/Includes/FindTarget.iss
 #include ./VG-DSC/Includes/Events.iss
 #include ./VG-DSC/Includes/Obj_Navigator.iss
+#include ./VG-DSC/Includes/Obj_YahooIM.iss
 
 
 ;; initialize our objects
 variable(global) Obj_Navigator Navigate
+variable(global) Obj_YahooIM YahooIM
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -367,6 +376,56 @@ function Idle()
 			call LootSomething
 		}
 
+		;;;;;;;;;;
+		;; if we are not looting then clear the target if it is dead
+		if !${doLoot} && !${isPaused}
+		{
+			if ${Me.Target.IsDead}
+			{
+				VGExecute /cleartargets
+				wait 3
+			}
+		}
+		
+		;;;;;;;;;;
+		;; if target doesn't exist or its dead then we will do one of these
+		if !${Me.Target(exists)} || ${Me.Target.IsDead}
+		{
+			;; Get next target if we have an encounter
+			if ${Me.Encounter}>0
+			{
+				Pawn[ID,${Me.Encounter[1].ID}]:Target
+				wait 5
+			}
+		}
+		
+		;;;;;;;;;;
+		;; BUFF AREA
+		if ${doBuffArea}
+		{
+			echo gonna buff area
+			if !${Me.Target(exists)} && !${Me.InCombat} && ${Me.Encounter}==0 
+			{
+				for (i:Set[1]; ${i} < ${VG.PawnCount}; i:Inc)
+				{
+					if ${Pawn[${i}].Distance}>20 
+					{
+						break
+					}
+					if ${Pawn[${i}].Type.Equal[PC]} && ${Pawn[${i}].HaveLineOfSightTo}
+					{
+						Pawn[${i}]:Target
+						wait 3
+						call UseAbility "${ResilientGrasshopper}"
+						waitframe
+					}
+				}
+				doBuffArea:Set[FALSE]
+			}
+		}
+
+		;;;;;;;;;;
+		;; HUNT
 		if ${doHunt}
 		{
 			;; we are dead so stop hunting
@@ -1796,6 +1855,15 @@ atom(script) LoadXMLSettings(string aText)
 	MaximumLevel:Set[${Settings.FindSetting[MaximumLevel,${Me.Level}]}]
 	doLootMyTombstone:Set[${Settings.FindSetting[doLootMyTombstone,TRUE]}]
 	doCamp:Set[${Settings.FindSetting[doCamp,TRUE]}]
+	
+	;; import our Yahoo settings
+	YahooHandle:Set[${Settings.FindSetting[YahooHandle,"Handle"]}]
+	YahooPassword:Set[${Settings.FindSetting[YahooPassword,"Password"]}]
+	YahooSendToHandle:Set[${Settings.FindSetting[YahooSendToHandle,"Send messages to"]}]
+	doYahooTells:Set[${Settings.FindSetting[doYahooTells,TRUE]}]
+	doYahooSays:Set[${Settings.FindSetting[doYahooSays,TRUE]}]
+	doYahooEmotes:Set[${Settings.FindSetting[doYahooEmotes,TRUE]}]
+	doYahooGM:Set[${Settings.FindSetting[doYahooGM,TRUE]}]
 
 	;; setup our paths
 	if ${Me.Chunk(exists)}
@@ -1883,6 +1951,15 @@ atom(script) SaveXMLSettings(string aText)
 	Settings:AddSetting[MaximumLevel,${MaximumLevel}]
 	Settings:AddSetting[doLootMyTombstone,${doLootMyTombstone}]
 	Settings:AddSetting[doCamp,${doCamp}]
+	
+	;; update our Yahoo vairables
+	Settings:AddSetting[YahooHandle,${YahooHandle}]
+	Settings:AddSetting[YahooPassword,${YahooPassword}]
+	Settings:AddSetting[YahooSendToHandle,${YahooSendToHandle}]
+	Settings:AddSetting[doYahooTells,${doYahooTells}]
+	Settings:AddSetting[doYahooSays,${doYahooSays}]
+	Settings:AddSetting[doYahooEmotes,${doYahooEmotes}]
+	Settings:AddSetting[doYahooGM,${doYahooGM}]
 
 	;; save settings
 	LavishSettings[VG-DSC]:Export[${Script.CurrentDirectory}/Saves/Settings.xml]

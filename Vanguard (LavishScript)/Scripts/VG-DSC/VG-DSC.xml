@@ -44,6 +44,27 @@
 		<TextureHover Template="vg.button.TextureHover" />
 		<TexturePressed Template="vg.button.TexturePressed" />
 	</Template>
+
+	<!-- HUD Window -->
+	<Template Name="CVG.Window.Client">
+		<Y>16</Y>
+		<Height>r16</Height>
+		<Width>100%</Width>
+	</Template>
+	<Template Name="CVG.Window">
+		<Border>0</Border>
+		<BorderColor>FF655025</BorderColor>
+		<Resizable>0</Resizable>
+		<CloseButton />
+		<MinimizeButton />
+		<WidthResizable>0</WidthResizable>
+		<HeightResizable>0</HeightResizable>
+		<TitleBar Template="VG.Window.TitleBar" />
+		<OffsetTitleBarHeight />
+		<Client Template="CVG.Window.Client" />
+		<BackgroundColor>FF000000</BackgroundColor>
+		<StorePosition>1</StorePosition>
+	</Template>
 	
 	<!-- Window Name: (VG-DSC) -->
 	<Window Name="VG-DSC" Template="VG.Window">
@@ -123,6 +144,10 @@
 							UIElement[VG-DSC]:SetHeight[300]
 							break
 						Case Hunt
+							UIElement[VG-DSC]:SetWidth[250]
+							UIElement[VG-DSC]:SetHeight[340]
+							break
+						Case Yahoo
 							UIElement[VG-DSC]:SetWidth[250]
 							UIElement[VG-DSC]:SetHeight[340]
 							break
@@ -1151,12 +1176,216 @@
 								Script[VG-DSC]:ExecuteAtom[ClearWayPoints]
 							</OnLeftClick>
 						</button>
-
-
-
 					</Tab>
 
+					<!-- Tab Name: (Yahoo) -->
+					<Tab name='Yahoo'>
+						<Text Name='txtYahoo' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>=== Yahoo Instant Messenger ===  </Text>
+						</Text>
+						<checkbox Name="doYahooTells" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>10%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forward Tells</Text>
+							<AutoTooltip> this will forward all tells to your Yahoo Instant Messenger </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doYahooTells}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doYahooTells:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
 
+						<checkbox Name="doYahooSays" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>18%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forward Says</Text>
+							<AutoTooltip> this will forward all says to your Yahoo Instant Messenger </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doYahooSays}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doYahooSays:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doYahooEmotes" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>26%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forward Emotes</Text>
+							<AutoTooltip> this will forward all Emotes to your Yahoo Instant Messenger </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doYahooEmotes}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doYahooEmotes:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doYahooGM" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>34%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Notify detection of a GM</Text>
+							<AutoTooltip> this will notify you that a GM was detected </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-DSC].VariableScope.doYahooGM}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-DSC].VariableScope.doYahooGM:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+			
+						<Text Name='txtYahooHandle' Template='VG.BoldText'>
+							<X>6%</X>
+							<Y>46%</Y>
+							<Width>35%</Width>
+							<Height>25</Height>
+							<Alignment>Right</Alignment>
+							<Text>Handle</Text>
+						</Text>
+						
+						<Textentry Name='YahooHandle' Template='VG.TextEntry'>
+							<X>43%</X>
+							<Y>45%</Y>
+							<Width>55%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.YahooHandle}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.YahooHandle:Set[${This.Text}]
+									;echo YahooHandle>0 == [${Script[VG-DSC].VariableScope.YahooHandle}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[VG-DSC].VariableScope.YahooHandle:Set[""]
+									;echo YahooHandle=0 == [${Script[VG-DSC].VariableScope.YahooHandle}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Text Name='txtYahooPassword' Template='VG.BoldText'>
+							<X>6%</X>
+							<Y>56%</Y>
+							<Width>35%</Width>
+							<Height>25</Height>
+							<Alignment>Right</Alignment>
+							<Text>Password</Text>
+						</Text>
+						
+						<Textentry Name='YahooPassword' Template='VG.TextEntry'>
+							<X>43%</X>
+							<Y>55%</Y>
+							<Width>55%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.YahooPassword}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.YahooPassword:Set[${This.Text}]
+									;echo YahooPassword>0 == [${Script[VG-DSC].VariableScope.YahooPassword}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[VG-DSC].VariableScope.YahooPassword:Set[""]
+									;echo YahooPassword=0 == [${Script[VG-DSC].VariableScope.YahooPassword}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Text Name='txtYahooSendToHandle' Template='VG.BoldText'>
+							<X>5%</X>
+							<Y>66%</Y>
+							<Width>36%</Width>
+							<Height>20</Height>
+							<Alignment>Right</Alignment>
+							<Text>Send to Handle</Text>
+						</Text>
+						
+						<Textentry Name='YahooSendToHandle' Template='VG.TextEntry'>
+							<X>43%</X>
+							<Y>65%</Y>
+							<Width>55%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[VG-DSC].VariableScope.YahooSendToHandle}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-DSC].VariableScope.YahooSendToHandle:Set[${This.Text}]
+									;echo YahooSendToHandle>0 == [${Script[VG-DSC].VariableScope.YahooSendToHandle}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[VG-DSC].VariableScope.YahooSendToHandle:Set[""]
+									;echo YahooSendToHandle=0 == [${Script[VG-DSC].VariableScope.YahooSendToHandle}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Commandbutton Name="LoginIntoYahoo" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>20%</X>
+							<Y>80%</Y>
+							<Width>26%</Width>
+							<Height>23</Height>
+							<Text>Login</Text>
+							<OnLeftClick>
+								YahooIM:Login
+							</OnLeftClick>
+						</Commandbutton>
+						
+						<Commandbutton Name="YahooHelp" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>55%</X>
+							<Y>80%</Y>
+							<Width>35%</Width>
+							<Height>23</Height>
+							<Text>H E L P</Text>
+							<OnLeftClick>
+								UIElement[CHUD]:ToggleVisible
+								<Command>UIElement[CHUD]:ToggleVisible</Command>
+							</OnLeftClick>
+						</Commandbutton>
+					</Tab>
 				</Tabs>
 			</TabControl>
 
@@ -1247,4 +1476,94 @@
 			
 		</Children>
 	</Window>
+	
+	
+	<Window Name='CHUD' Template='CVG.Window'>
+		<Title>Help</Title>
+		<X>30</X>
+		<Y>300</Y>
+		<Width>700</Width>
+		<Height>150</Height>
+		<Resizable>0</Resizable>
+		<Border>0</Border>
+		<StorePosition>1</StorePosition>
+		<BackgroundColor>FF000000</BackgroundColor>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>17</Height>
+			<OnLoad>
+				UIElement[CHUD]:ToggleVisible
+			</OnLoad>
+			<Children>
+				<!-- Centered -->
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<CommandButton Name="Toggle Background" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Command>UIElement[CHUD]:SetBackgroundColor[${If[${UIElement[CHUD].BackgroundColor}==0,FF000000,0]}]</Command>
+				</CommandButton>
+				<CommandButton Name="Custom Close Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Command>UIElement[CHUD]:ToggleVisible</Command>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		<Children>
+			<Text Name="T1" Template="CVG.Text">
+				<X>1%</X>
+				<Y>6%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>You can use any VG command available to you in the game such as:</Text>
+			</Text>
+			<Text Name="T2" Template="CVG.Text">
+				<X>1%</X>
+				<Y>16%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>/laugh      /say "hello"      /jump      /tell Zandros "hello"</Text>
+			</Text>
+			<Text Name="T3" Template="CVG.Text">
+				<X>1%</X>
+				<Y>30%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>Use the following to control the script:</Text>
+			</Text>
+			<Text Name="T4" Template="CVG.Text">
+				<X>1%</X>
+				<Y>40%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>#HuntON - Turn the hunt option ON</Text>
+			</Text>
+			<Text Name="T5" Template="CVG.Text">
+				<X>1%</X>
+				<Y>50%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>#HuntOFF - Turn the hunt option OFF</Text>
+			</Text>
+			<Text Name="T6" Template="CVG.Text">
+				<X>1%</X>
+				<Y>60%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>#Camp - camp and combat and exit script</Text>
+			</Text>
+			<Text Name="T7" Template="CVG.Text">
+				<X>1%</X>
+				<Y>70%</Y>
+				<Width>97%</Width>
+				<Height>16</Height>
+				<Text>#Status - sends a message saying total kills, in combat, nearest AggroNPC, nearest PC</Text>
+			</Text>
+		</Children>
+	</Window>
+	
+	
 </ISUI>
