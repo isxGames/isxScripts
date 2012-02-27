@@ -145,9 +145,10 @@ function DoGetLoot(bool InReachOnly)
 	variable int i = 1
 	variable int k
 	variable int j
+	variable bool alreadyTargeted
 	
-  
-  ;;; Get loot within reach no matter what, but get all of it before thinking about moving around!!
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Loot nearby cans before thinking about those that are out of "looting range"
 	i:Set[1]
 	EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
 	if ${NearbyCans.Used} > 0
@@ -155,30 +156,27 @@ function DoGetLoot(bool InReachOnly)
 		echo "LOOT -     Looting: ${NearbyCans.Used} cargo containers found, processing..."
 		do
 		{
+			echo "LOOT --    Processing: ${NearbyCans[${i}].Name}"
+			;; If we've already processed this can, then we want to ignore it.
+			if (${ProcessedEntities.Element[${NearbyCans[${i}].ID}](exists)})
+			{
+				i:Inc
+				continue
+			}
+			ProcessedEntities:Set[${NearbyCans[${i}].ID},1]
+			
+			;; Ignore cans for which we do not have loot rights
 			if (!${NearbyCans[${i}].HaveLootRights})
 			{
 				i:Inc
 				continue
 			}	 	
 
-			; If we've already processed this can, then we want to ignore it.
-			if (${ProcessedEntities.Element[${NearbyCans[${i}].ID}](exists)})
-			{
-				i:Inc
-				continue
-			}
-
-			ProcessedEntities:Set[${NearbyCans[${i}].ID},1]
-			echo "LOOT --    Processing: ${NearbyCans[${i}].Name}"
-
-			;; Loot! ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Loot!
 			NearbyCans[${i}]:OpenCargo
 			wait 30
 			call OpenCargo
-			call LootEntity ${NearbyCans[${i}].ID}
-			;echo "LOOT ---   Stacking cargo..."
-			;Me.Ship:StackAllCargo
-			;wait 10				
+			call LootEntity ${NearbyCans[${i}].ID}			
 			if ${NearbyCans[${i}](exists)}
 			{
 				NearbyCans[${i}]:CloseCargo
@@ -203,375 +201,451 @@ function DoGetLoot(bool InReachOnly)
 			i:Inc
 		}
 		while ${i} <= ${NearbyCans.Used}
-
-
-	
 	} 	
-  ;;; Now, are we getting loot out of reach too?
+	;; END LOOP (handling nearby cans)
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;; Handle ALL remaining cans if we have NOT set ${InReachOnly}
 	if (!${InReachOnly})
 	{
+		EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+		if (${Cans.Used} == 0)
+		{
+			echo "LOOT -     No cargo containers (loot) found in this area."
+			return
+		}
+		else
+			echo "LOOT --    ${Cans.Used} cargo containers found, processing..."
+		
 		;;;run until break
 		while 1 == 1
 		{
-			echo "LOOT ##### Start Looting Pulse..."
-	
-			;;;reload the list to make sure it stays fresh
+			echo echo "LOOT -     ##### Start Loot Pulse #####"
+			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Check to see if all of the cargo containers have been processed.  If so, then break
 			i:Set[1]
-			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
-			
-			if (${Cans.Used} == 0)
+			allCansProcessed:Set[TRUE]
+			do
 			{
-				echo "LOOT -     No Cans found in this area."
-				return
+				if (${ProcessedEntities.Element[${Cans[${i}].ID}](exists)})
+				{
+					i:Inc
+					continue
+				}
+				else
+				{
+					allCansProcessed:Set[FALSE]
+					;;;found one, no need to look for more, start processing!
+					break
+				}	
 			}
-			
-			if ${Cans.Used} > 0
+			while ${i} <= ${Cans.Used}
+
+			if ${allCansProcessed}
 			{
-				allCansProcessed:Set[TRUE]
-				do
+				echo "LOOT -     All cargo containers (loot) in this area have been processed."
+				return
+			}		
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;		
+			
+			
+			i:Set[1]
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Targeting Routine (lock targets until ${MaxTargets} is reached)
+			while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
+			{
+				echo "LOOT -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Cans.Used} available."
+
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; In case there are fewer cargo containers than our max targets  (otherwise this makes for a neverending loop)
+				if (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} >= ${Cans.Used})
 				{
-					if (${ProcessedEntities.Element[${Cans[${i}].ID}](exists)})
-					{
-						i:Inc
-						continue
-					}
-					else
-					{
-						allCansProcessed:Set[FALSE]
-						;;;found one, no need to look for more, start processing!
-						break
-					}	
+					echo "LOOT -     All remaining cargo containers have been targeted.  Processing..."
+					break
 				}
-				while ${i} <= ${Cans.Used}
 
-				if ${allCansProcessed}
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; Make sure we're not already targetting this cargo container...
+				Me:GetTargets[Targets]
+				k:Set[1]
+				alreadyTargeted:Set[FALSE]
+				if (${Targets.Used} > 0)
 				{
-					;;; all cans processed, break out
-					return
-				}
-
-				i:Set[1]
-
-				echo "LOOT --    Looting: ${Cans.Used} cargo containers found, processing..."
-				do
-				{
-					if (!${Cans[${i}].HaveLootRights})
-					{
-						i:Inc
-						continue
-					}	 	
-
-					if (${ProcessedEntities.Element[${Cans[${i}].ID}](exists)})
-					{
-						i:Inc
-						continue
-					}
-
-					;;;lock em up, and tractor them in, 
-
-					; Lock up to max targets
-					while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
-					{
-
-						echo "LOOT -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Cans.Used} available."
-
-						; Make sure we're not already targetting this wreck...
-						Me:GetTargets[Targets]
-						k:Set[1]
-
-						if (${Targets.Used} > 0)
-						{
-							do
-							{
-								if ${Targets[${k}].ID.Equal[${Cans[${i}].ID}]} 
-								{
-								   i:Inc
-								   continue
-								}		
-								wait 2
-							}
-							while ${k:Inc} <= ${Targets.Used}
-						}
-
-						;;; Target
-						if (${Cans[${i}].Distance} > ${MaxTargetRange})
-						{
-							;;; Before moving, lets deal with what we have locked/locking
-
-					    while ${Me.TargetingCount} > 0
-					    {
-								wait 10
-					    }
-
-					    if (${Me.TargetCount} == 0)
-					    {
-						    echo "LOOT ---   ${Wrecks[${i}].Name} too far away to target :: Approaching..."
-								Cans[${i}]:Approach
-								if (${AfterburnerCount} > 0)
-								{
-									if (${Afterburners[1].IsDeactivating})
-									{
-										while ${Afterburners[1].IsDeactivating}
-										{
-											wait 5
-										}
-									}			
-									if (!${Afterburners[1].IsActive})
-										Afterburners[1]:Click
-									wait 5
-								}			
-								while (${Cans[${i}].Distance} > ${MaxTargetRange})
-								{
-									wait 20
-								}
-
-							; EVE:Execute[CmdStopShip]
-							; wait 2
-						  }
-						 	else
-							{
-								echo "LOOT ---   ${Cans[${i}].Name} too far away to target :: Handeling current targets before moving..."
-								break
-						  }
-						}
-						
-						if (!${Cans[${i}].ID(exists)})
-							break
-
-						echo "LOOT ---   LockTarget :: ${Cans[${i}].Name}... ${Cans[${i}].GroupID}"
-						Cans[${i}]:LockTarget
-						wait 10
-						i:Inc
-					}
-					
 					do
 					{
-						wait 10
+						if ${Targets[${k}].ID.Equal[${Cans[${i}].ID}]} 
+						{
+						   alreadyTargeted:Set[TRUE]
+						   break
+						}		
+						wait 2
 					}
-					while ${Me.TargetingCount} > 0
-					echo "**    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired"
-
-					;##################################################
-
-					;;; TARGETS ALL LOCKED UP!
-
-					;##################################################
-
-
-					; lets process the locked targets and tractors on far cans
-					; if can is outside of tractor range AND no cans present, move in range
-					Me:GetTargets[Targets]
-					k:Set[1]
-					alreadyTractoring:Set[FALSE]
-					while ${k} <= ${Targets.Used} 
-					{
-						wait 12
-						;;; Start off by turning off all tractros for items that are already close enough  ;;;;;;;;
-						if (${Targets[${k}].Distance} <= 2500)
-						{
-							Targets[${k}]:MakeActiveTarget
-							;;;start salvager
-							echo "LOOT ---   Can in looting range..."
-							;; Loot Can ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-							j:Set[1]
-							do
-							{
-								if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
-								{
-									if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
-									{
-										;;Already tractoring this...
-										alreadyTractoring:Set[TRUE]
-										if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
-										{
-											echo "LOOT ----  Close enough now... stop Tractoring..."
-											TractorBeams[${j}]:Deactivate
-										}
-									}
-									wait 3
-								}	
-							}
-							while (${j:Inc} <= ${TractorBeamCount})
-						}
-						;;;move next
-						k:Inc 
-					}	
-
-					;;; If we shut any off, lets just wait a sec to be sure those are all off before we continue
-					if (!${alreadyTractoring} )
-						wait 25
-
-					;;;reset K to the begining again
-					k:Set[1]
-					while ${k} <= ${Targets.Used} 
-					{
-						wait 10
-						echo "LOOT -     Checking target: ${Targets[${k}].Name} "
-
-						;;; Tractor...or else approach and wait for wreck to be in distance ;;;;;;;;
-						if (${Targets[${k}].Distance} <= 2500)
-						{
-							Targets[${k}]:MakeActiveTarget
-							echo "LOOT --    Can in range, Start Looting..."
-							;; Loot! ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-							Targets[${k}]:OpenCargo
-							wait 30
-							call OpenCargo
-							call LootEntity ${Targets[${k}].ID}
-							;echo "LOOT ---   Stacking cargo..."
-							;Me.Ship:StackAllCargo
-							;wait 10					
-							if ${Targets[${k}](exists)}
-							{
-								Targets[${k}]:CloseCargo
-								wait 2
-								Targets[${k}]:UnlockTarget
-								wait 2
-							}
-							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-						}
-						elseif (${Targets[${k}].Distance} <= ${MaxTractorRange})
-						{
-							Targets[${k}]:MakeActiveTarget
-							;;;start Tractoring
-							echo "LOOT --    Can in tractor range..."
-
-							;;before turning in tractor, be sure you dont already have one on this target
-
-							j:Set[1]
-							alreadyTractoring:Set[FALSE]
-							do
-							{
-								if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
-								{
-									if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
-									{
-										;;Already tractoring this...
-										alreadyTractoring:Set[TRUE]
-										echo "            ...already Tractoring"
-										if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
-										{
-											echo "LOOT ---   Can close enough now... stop Tractoring..."
-											TractorBeams[${j}]:Deactivate
-										}
-									}
-									wait 1
-								}	
-							}
-							while (${j:Inc} <= ${TractorBeamCount})
-
-							if (!${alreadyTractoring})
-							{
-								echo "            ...start Tractoring"
-
-								;; Activate Tractor Beam...
-								j:Set[1]
-								do
-								{
-									if (!${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating} )
-									{
-									  echo "LOOT ----  Activating: ${TractorBeams[${j}].ToItem.Name}"
-										TractorBeams[${j}]:Click
-										wait 5
-										break
-									}	
-									wait 2
-								}
-								while (${j:Inc} <= ${TractorBeamCount})
-							}
-						}
-						elseif (${Targets[${k}].Distance} > ${MaxTractorRange})
-						{
-							ContinueOn:Set[TRUE]
-							echo "LOOT --    Can out of Tractor range..."
-
-							if (${ContinueOn})
-							{
-								  EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
-								  if ${NearbyCans.Used} > 0
-								  {
-										l:Set[1]
-	
-										do
-										{
-											if (!${NearbyCans[${l}].HaveLootRights})
-											{
-												l:Inc
-												continue
-											}	 
-											echo "LOOT ---   Can not approach while jet cans near by..."
-											ContinueOn:Set[FALSE]	
-											break
-											l:Inc
-										}
-										while ${l} <= ${NearbyCans.Used}
-								  }
-							}
-							echo "LOOT debug: ${ContinueOn}"
-							if (${ContinueOn})
-							{
-								echo "LOOT ---   Approaching ..."
-
-								Targets[${k}]:Approach
-								if (${AfterburnerCount} > 0)
-								{
-									if (${Targets[${k}].Distance} > ${MaxTractorRange})
-									{
-										if (${Afterburners[1].IsDeactivating})
-										{
-											do
-										 	{
-												wait 5
-											}
-											while ${Afterburners[1].IsDeactivating}
-										}
-
-										if (!${Afterburners[1].IsActive})
-										{
-											Afterburners[1]:Click
-											wait 5
-										}
-									}
-
-									do
-									{
-										wait 20
-									}
-									while (${Targets[${k}].Distance} > ${MaxTractorRange})
-
-									wait 2
-									EVE:Execute[CmdStopShip]
-
-									echo "LOOT ----  Can is now within tractor range..."
-
-									if (${AfterburnerCount} > 0)
-									{
-										if (${Afterburners[1].IsActive})
-										{
-											Afterburners[1]:Deactivate
-											wait 2
-										}
-									}
-								}
-							}
-						}
-						else
-						{
-							echo "LOOT ***** WHAT?!?"
-						}
-
-
-						;;;move next
-						k:Inc 
-
-					}
-					;;while ${k} <= ${Targets.Used} 		
-					i:Inc
+					while ${k:Inc} <= ${Targets.Used}
 				}
-				while ${i} <= ${Cans.Used}
+				
+				if ${alreadyTargeted}
+				{
+					i:Inc
+					continue
+				}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; cargo container is out of 'targeting range'
+				if (${Cans[${i}].Distance} > ${MaxTargetRange})
+				{
+				    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				    ;; Before moving, make sure we finish targeting
+				    while ${Me.TargetingCount} > 0
+				    {
+							wait 10
+				    }
+	
+						;;;;;;;;;;;;;;;;;;;;;;;;
+						;; Approach
+				    if (${Me.TargetCount} == 0)
+				    {
+				    	echo "LOOT ---   ${Cans[${i}].Name} too far away to target :: Approaching..."
+							Cans[${i}]:Approach
+							if (${AfterburnerCount} > 0)
+							{
+								if (${Afterburners[1].IsDeactivating})
+								{
+									while ${Afterburners[1].IsDeactivating}
+									{
+										wait 5
+									}
+								}			
+								if (!${Afterburners[1].IsActive})
+									Afterburners[1]:Click
+								wait 5
+							}			
+							while (${Cans[${i}].Distance} > ${MaxTargetRange})
+							{
+								wait 20
+							}
+							; EVE:Execute[CmdStopShip]
+							; wait 2
+				    }
+				    else
+				    {
+							echo "LOOT ---   ${Cans[${i}].Name} too far away to target :: Handling current targets before moving..."
+							break
+							; This 'break' takes us out of the 'targeting routine'
+				    }
+				}
+				;; END->cargo container out of 'targeting range'
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+				if (!${Cans[${i}].ID(exists)})
+				{
+					i:Inc
+					continue
+				}
+				
+				;;; Don't lock any targets for cargo containers we have already processed
+				if (${ProcessedEntities.Element[${Cans[${i}].ID}](exists)})
+				{
+					i:Inc
+					continue
+				}
+				ProcessedEntities:Set[${Cans[${i}].ID},1]
+					
+				;; Ignore cans for which we do not have loot rights
+				if (!${Cans[${i}].HaveLootRights})
+				{
+					i:Inc
+					continue
+				}	 			
+			
+				;; Otherwise, lock the target and go on to the next 'can' in the array!
+				echo "Loot ---   LockTarget :: ${Cans[${i}].Name}... ${Cans[${i}].GroupID}"
+				Cans[${i}]:LockTarget
+				wait 5
+				i:Inc
+			}   
+			;; Finished Targetting Routine  
+			;; This closing bracket is the end of the loop: "while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})"
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+			;; Wait until all targets are fully locked
+			while ${Me.TargetingCount} > 0
+			{
+				wait 10
 			}
+			echo "LOOT **    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
+			
+			;;;;;;;;;;;;;;
+			;##################################################
+			;;; TARGETS ALL LOCKED UP!
+			;##################################################
+			;;;;;;;;;;;;;;
+			;; Process all locked targets using the following logic:
+			;; 1. Disengage Tractors on cargo containers that are close enough to loot
+			;; 2. Engage Tractors on far cargo containers
+			;; 3. If cargo container is outside tractor range then move into range.
+			
+			wait 2
+			Me:GetTargets[Targets]
+			k:Set[1]
+			alreadyTractoring:Set[FALSE]
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Loop through all targets currently locked
+			;; NOTE: At this point, all targets should be "cargo containers"
+			;;
+			;; Disengage Tractors for cargo containers that are close enough and then loot
+			while ${k} <= ${Targets.Used} 
+			{
+				wait 12
+				if (!${Targets[${k}](exists)})
+				{
+					k:Inc
+					continue
+				}		
+			
+				if (${Targets[${k}].Distance} <= 2500)
+				{
+					Targets[${k}]:MakeActiveTarget
+					echo "LOOT ----  ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
+
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;; Go through tractor beams and turn off any tractors on this cargo container
+					j:Set[1]
+					do
+					{
+						if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
+						{
+							if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
+							{
+								alreadyTractoring:Set[TRUE]
+								TractorBeams[${j}]:Deactivate
+							}
+							wait 3
+						}	
+					}
+					while (${j:Inc} <= ${TractorBeamCount})
+					;; END LOOP [Disengaging tractor beams on this wreck]
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+					;; Loot!!
+					echo "LOOT --    ${Targets[${k}].Name} in range, Start Looting..."
+					Targets[${k}]:OpenCargo
+					wait 30
+					call OpenCargo
+					call LootEntity ${Targets[${k}].ID}				
+					if ${Targets[${k}](exists)}
+					{
+						Targets[${k}]:CloseCargo
+						wait 2
+						Targets[${k}]:UnlockTarget
+						wait 2
+					}
+					;; End Looting
+					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				}
+				k:Inc 
+				wait 1
+			}	
+			;; END LOOP (current locked targets)
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;			
+
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Loop through all targets currently locked
+			;; NOTE: At this point, all targets should be "cargo containers"
+			;;
+			;; cargo containers that are within 2500 should already have been looted
+			;; Engage Tractors on cargo containers that are far away
+			k:Set[1]
+			while ${k} <= ${Targets.Used} 
+			{
+				wait 10
+				if (!${Targets[${k}](exists)})
+				{
+					k:Inc
+					continue
+				}
+				echo "LOOT -     Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
+
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; (Note:  Cargo containers that are within Salvage Range were already handled)
+				if (${Targets[${k}].Distance} <= 2500)
+				{
+					echo "LOOT --    Cargo container already within loot range.  Looting should take place soon."
+					k:Inc
+					continue
+				}
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Tractor wreck if it's close enough to be tractored
+				if (${Targets[${k}].Distance} <= ${MaxTractorRange})
+				{
+					Targets[${k}]:MakeActiveTarget
+					wait 2
+					echo "LOOT --    Cargo container in tractor range..."
+
+					;;;;;;;;;;;;;;;;;;;;;;;
+					;; Before engaging tractor beam on this target, make sure that it doesn't already have one active on it.
+					j:Set[1]
+					alreadyTractoring:Set[FALSE]
+					do
+					{
+						if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
+						{
+							;echo "LOOT[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name} is active and is not deactivating"
+							if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
+							{
+								;echo "LOOT[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name}'s TargetID is ${TractorBeams[${j}].TargetID}"
+								;;Already tractoring this...
+								alreadyTractoring:Set[TRUE]
+								echo "LOOT ---    ...already Tractoring"
+								if (${Targets[${k}].Distance} <= 2500)
+								{
+									echo "LOOT ---    cargo container close enough now... stop Tractoring..."
+									TractorBeams[${j}]:Deactivate
+								}
+							}
+							wait 1
+						}	
+					}
+					while (${j:Inc} <= ${TractorBeamCount})
+					;; END LOOP (determine if cargo container is already being tractored)
+					;;;;;;;;;;;;;;;;;;;;;;;
+
+					;;;;;;;;;;;;;;;;;;;;;;;
+					;; if it was NOT already being tractored, then start tractoring
+					if (!${alreadyTractoring})
+					{
+						echo "LOOT ---    ...start Tractoring"
+									
+						;; Activate Tractor Beam...
+						j:Set[1]
+						do
+						{
+							if (!${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating} )
+							{
+							  echo "LOOT ----  Activating: ${TractorBeams[${j}].ToItem.Name}"
+								TractorBeams[${j}]:Click
+								wait 5
+								break
+							}	
+							wait 2
+						}
+						while (${j:Inc} <= ${TractorBeamCount})				
+					}
+				}
+				elseif (${Targets[${k}].Distance} > ${MaxTractorRange})
+				{
+					ContinueOn:Set[TRUE]
+					echo "LOOT --    cargo container out of tractor range..."
+					
+					;;;;;;;;;;;;;;;;;;;;;;;
+					;; Ensure that we do not move unless we're positive there are no other cargo containers that are within 2500 of our current location
+				  EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
+				  if ${NearbyCans.Used} > 0
+				  {
+						l:Set[1]
+						do
+						{
+							if (!${NearbyCans[${l}].HaveLootRights})
+							{
+								l:Inc
+								continue
+							}	 
+							echo "LOOT ---   Can not approach while jet cans near by..."
+							ContinueOn:Set[FALSE]	
+							break
+							l:Inc
+						}
+						while ${l} <= ${NearbyCans.Used}
+				  }
+					;;
+					;;;;;;;;;;;;;;;;;;;;;;;
+
+					if (${ContinueOn})
+					{
+						echo "LOOT ---   Approaching ..."
+
+						Targets[${k}]:Approach
+						if (${AfterburnerCount} > 0)
+						{
+							if (${Targets[${k}].Distance} > ${MaxTractorRange})
+							{
+								if (${Afterburners[1].IsDeactivating})
+								{
+									do
+								 	{
+										wait 5
+									}
+									while ${Afterburners[1].IsDeactivating}
+								}
+
+								if (!${Afterburners[1].IsActive})
+								{
+									Afterburners[1]:Click
+									wait 5
+								}
+							}
+
+							do
+							{
+								wait 20
+							}
+							while (${Targets[${k}].Distance} > ${MaxTractorRange})
+
+							wait 2
+							EVE:Execute[CmdStopShip]
+
+							echo "LOOT ----  Can is now within tractor range..."
+
+							if (${AfterburnerCount} > 0)
+							{
+								if (${Afterburners[1].IsActive})
+								{
+									Afterburners[1]:Deactivate
+									wait 2
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					;; This should never happen....
+					echo "LOOT ***** WHAT?!?"
+				}
+
+				;; Now we check the next locked target
+				k:Inc 
+			}
+			;; END LOOP (current locked targets)  ["while ${k} <= ${Targets.Used}"]
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			
+			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+			;; Repopulate Cans with updated data
+			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+			if (${Cans.Used} == 0)
+			{
+				echo "LOOT -     All cargo containers have been processed."
+				return
+			}	
+			;;
+			;; This is the end of the Main Looting Loop.  This will repeat over and over until there
+			;; are no more jet cans (cargo containers) in the area.  (which will cause the routine directly 
+			;; above to 'return', thereby ending the loop.)   
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;				
 		}
+		;; END LOOP (Main Looting Pulse routine) ["while 1 == 1"]
 	}
+	;; END LOOP (handle all remaining cans that are "out of reach")
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+	return
 }
 
 function DoSalvage(bool LootCans)
@@ -580,6 +654,8 @@ function DoSalvage(bool LootCans)
   variable int j
   variable int k
   variable int l
+  variable bool alreadyTargeted
+  variable bool FirstTime = TRUE
 
 	call GetModulesInformation ${LootCans}
 	if (${MaxTargets} < 1)
@@ -589,20 +665,27 @@ function DoSalvage(bool LootCans)
 		else
 			MaxTargets:Set[${Me.Ship.MaxLockedTargets}]
 	}
-	wait 5
 	MaxTargetRange:Set[${Me.Ship.MaxTargetRange}]
-
-	echo "SALV -     Salvager initialized ... "
-	wait 5
 	
-	;;;run until break
+	echo "SALV -     Salvager initialized ... "
+	EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186]
+	if (${Wrecks.Used} == 0)
+	{
+		echo "SALV -     No wrecks found in this area, looking for loot..."
+		if (${LootCans})
+			call DoGetLoot 0		
+		return
+	}
+	else
+		echo "SALV -     ${Wrecks.Used} wrecks remain in this area."
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; MAIN LOOP
 	while 1 == 1
 	{
-		echo "SALV ##### Start Salvage Pulse..."
-	
-		EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186]
+		echo "SALV -     ##### Start Salvage Pulse #####"
 		i:Set[1]
-		
+		;;;;;;;;;;;;;;;
 		;; FOR TESTING
 		;do
 		;{
@@ -610,53 +693,63 @@ function DoSalvage(bool LootCans)
 		;}
 		;while ${i:Inc} < ${Wrecks.Used}
 		;return
+		;;
+		;;;;;;;;;;;;;;;
 
-		if (${Wrecks.Used} == 0)
-		{
-			echo "SALV -     No wrecks found in this area, looking for loot..."
-			if (${LootCans})
-			{
-				;;; when there are no more ships, a final sweep with the long range loot collector
-				call DoGetLoot 0		
-			}
-			return
-		}
-	
-		echo "SALV -     ${Wrecks.Used} wrecks remain in this area."
-	
-		; Lock up to max targets
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Targeting Routine (lock targets until ${MaxTargets} is reached)
 		while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
 		{	
 			echo "SALV -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Wrecks.Used} available."
 
-			; Make sure we're not already targetting this wreck...
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; In case there are fewer wrecks than our max targets  (otherwise this makes for a neverending loop)
+			if (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} >= ${Wrecks.Used})
+			{
+				echo "SALV -     All remaining wrecks have been targeted.  Processing..."
+				break
+			}
+
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Make sure we're not already targetting this wreck...
 			Me:GetTargets[Targets]
+			alreadyTargeted:Set[FALSE]
 			k:Set[1]
-				
 			if (${Targets.Used} > 0)
 			{
 				do
 				{
 					if ${Targets[${k}].ID.Equal[${Wrecks[${i}].ID}]} 
 					{
-					   i:Inc
-					   continue
+					   alreadyTargeted:Set[TRUE]
+					   break
 					}		
 					wait 2
 				}
 				while ${k:Inc} <= ${Targets.Used}
 			}
 			
-			;;; Target
+			if ${alreadyTargeted}
+			{
+				i:Inc
+				continue
+			}
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Wreck is out of 'targeting range'
 			if (${Wrecks[${i}].Distance} > ${MaxTargetRange})
 			{
-			    ;;; Before moving, lets deal with what we have locked/locking
-
+			    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			    ;; Before moving, make sure we handle all wrecks that we are targetting or have targeted
 			    while ${Me.TargetingCount} > 0
 			    {
 						wait 10
 			    }
 
+					;;;;;;;;;;;;;;;;;;;;;;;;
+					;; Approach
 			    if (${Me.TargetCount} == 0)
 			    {
 			    	echo "SALV ---   ${Wrecks[${i}].Name} too far away to target :: Approaching..."
@@ -667,67 +760,86 @@ function DoSalvage(bool LootCans)
 							{
 								while ${Afterburners[1].IsDeactivating}
 								{
-								wait 5
+									wait 5
 								}
 							}			
 							if (!${Afterburners[1].IsActive})
 								Afterburners[1]:Click
-								wait 5
+							wait 5
 						}			
 						while (${Wrecks[${i}].Distance} > ${MaxTargetRange})
 						{
 							wait 20
 						}
-
-						; EVE:Execute[CmdStopShip]
-						; wait 2
 			    }
 			    else
 			    {
 						echo "SALV ---   ${Wrecks[${i}].Name} too far away to target :: Handling current targets before moving..."
-						break
+						i:Inc
+						continue
 			    }
 			}
+			;; END->Wreck out of 'targeting range'
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 			if (!${Wrecks[${i}].ID(exists)})
-				break
-				
+			{
+				i:Inc
+				continue
+			}
+			
 			echo "SALV ---   LockTarget :: ${Wrecks[${i}].Name}... ${Wrecks[${i}].GroupID}"
 			Wrecks[${i}]:LockTarget
 			wait 5
 			i:Inc
-		}
+		}   
+		;; Finished Targetting Routine  
+		;; This closing bracket is the end of the loop: "while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})"
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
+		;; Wait until all targets are fully locked
 		while ${Me.TargetingCount} > 0
 		{
 			wait 10
 		}
 		echo "SALV **    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
 		
+		;;;;;;;;;;;;;;
 		;##################################################
-		
 		;;; TARGETS ALL LOCKED UP!
-		
 		;##################################################
-		
-		
-		; lets process the locked targets, start by engaging salvagers on close wercks
-		; and tractors on far wrecks
-		; if wreck is outside of tractor range AND no salvagers active AND no cans present, move in range
-		
+		;;;;;;;;;;;;;;
+		;; Process all locked targets using the following logic:
+		;; 1. Disengage Tractors on wrecks that are close enough to salvage
+		;; 2. Engage Salvagers on close wrecks
+		;; 3. Engage Tractors on far wrecks
+		;; 4. If wreck is outside tractor range AND no salvagers are active AND no cans present -- then move into range.
+
 		wait 2
 		Me:GetTargets[Targets]
 		k:Set[1]
 		alreadyTractoring:Set[FALSE]
+		
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Loop through all targets currently locked
+		;; NOTE: At this point, all targets should be "wrecks"
+		;;
+		;; Disengage Tractors for wrecks that are close enough and then engage salvager
 		while ${k} <= ${Targets.Used} 
 		{
-			;;; Start off by turning off all tractros for items that are already close enough  ;;;;;;;;
+			if (!${Targets[${k}](exists)})
+			{
+				k:Inc
+				continue
+			}		
+			
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 			{
 				Targets[${k}]:MakeActiveTarget
-				;;;start salvager
-				echo "SALV ---   Wreck in range, Salvager starting ${Targets[${k}].Name}..."
-				;; Salvage ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				echo "SALV ----  ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
+				
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; Go through tractor beams and turn off any tractors on this wreck
 				j:Set[1]
 				do
 				{
@@ -735,71 +847,77 @@ function DoSalvage(bool LootCans)
 					{
 						if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 						{
-							;;Already tractoring this...
 							alreadyTractoring:Set[TRUE]
-							if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
-							{
-								echo "SALV ----  Close enough now... stop Tractoring..."
-								TractorBeams[${j}]:Deactivate
-							}
+							TractorBeams[${j}]:Deactivate
+							wait 4
 						}
 						wait 1
 					}	
 				}
 				while (${j:Inc} <= ${TractorBeamCount})
+				;; END LOOP [Disengaging tractor beams on this wreck]
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; Engage a Salvager (if one is available)
+				j:Set[1]
+				do
+				{
+					if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
+					{
+						echo "SALV ---   Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
+						Salvagers[${j}]:Click
+						wait 8
+						break
+					}
+				}
+				while ${j:Inc} <= ${SalvagerCount}
+				;; END LOOP [Activating a salvager on this wreck]
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			}
-			;;;move next
 			k:Inc 
 			wait 1
 		}	
+		;; END LOOP (current locked targets)
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-		;;; If we shut any off, lets just wait a sec to be sure those are all off before we continue
-		if (!${alreadyTractoring} )
-			wait 17
 				
-		;;;reset k to the begining again
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Loop through all targets currently locked
+		;; NOTE: At this point, all targets should be "wrecks"
+		;;
+		;; Salvagers should be engaged by this point (on items that are close enough to be salvaged)
+		;; Engage Tractors on wrecks that are far away
+		;; Engage Salvagers on wrecks that are close
 		k:Set[1]
 		while ${k} <= ${Targets.Used} 
 		{
 			wait 10
+			if (!${Targets[${k}](exists)})
+			{
+				k:Inc
+				continue
+			}			
 			echo "SALV -     Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
 			
-			;;; Tractor...or else approach and wait for wreck to be in distance ;;;;;;;;
+			;;;;;;;;;;;;;;;;;;;;;;;
+			;; (Note:  Wrecks that are within Salvage Range were already handled)
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 			{
-				Targets[${k}]:MakeActiveTarget
-				;;;start salvager
-				echo "SALV --    Wreck in range, Salvager starting..."
-				;; Salvage ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-				ContinueOn:Set[FALSE]
-				do
-				{	
-					j:Set[1]
-					do
-					{
-						if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating} && !${ContinueOn})
-						{
-						  echo "SALV ---   Activating: ${Salvagers[${j}].ToItem.Name}"
-							Salvagers[${j}]:Click
-							ContinueOn:Set[TRUE]
-							wait 3
-						}
-						wait 2
-					}
-					while ${j:Inc} <= ${SalvagerCount}
-				}
-				while !${ContinueOn}
-				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				echo "SALV --    Wreck already within salvage range.  Salvaging operation should complete soon."
+				k:Inc
+				continue
 			}
-			elseif (${Targets[${k}].Distance} <= ${MaxTractorRange})
+			;;;;;;;;;;;;;;;;;;;;;;;
+			;; Tractor wreck if it's close enough to be tractored
+			elseif (${Targets[${k}].Distance} <= ${MaxTractorRange} && ${Targets[${k}].Distance} > ${MaxSalvageRange})
 			{
 				Targets[${k}]:MakeActiveTarget
 				wait 2
-				;;;start Tractoring
 				echo "SALV --    Wreck in tractor range..."
 				
-				;;before turning in tractor, be sure you dont already have one on this target
-				
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Before engaging tractor beam on this target, make sure that it doesn't already have one active on it.
 				j:Set[1]
 				alreadyTractoring:Set[FALSE]
 				do
@@ -823,10 +941,13 @@ function DoSalvage(bool LootCans)
 					}	
 				}
 				while (${j:Inc} <= ${TractorBeamCount})
+				;; END LOOP (determine if wreck is already being tractored)
+				;;;;;;;;;;;;;;;;;;;;;;;
 				
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; if it was NOT already being tractored, then start tractoring
 				if (!${alreadyTractoring})
 				{
-						
 					echo "SALV ---    ...start Tractoring"
 								
 					;; Activate Tractor Beam...
@@ -837,7 +958,6 @@ function DoSalvage(bool LootCans)
 						{
 						  echo "SALV ----  Activating: ${TractorBeams[${j}].ToItem.Name}"
 							TractorBeams[${j}]:Click
-
 							wait 5
 							break
 						}	
@@ -848,49 +968,59 @@ function DoSalvage(bool LootCans)
 			}
 			elseif (${Targets[${k}].Distance} > ${MaxTractorRange})
 			{
-				ContinueOn:Set[TRUE]
 				echo "SALV --    Wreck out of Tractor range..."
 								
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Do not approach if any salvagers are actively running
+				ContinueOn:Set[TRUE]
 				j:Set[1]
 				do
 				{
 					if (${Salvagers[${j}].IsActive})
 					{
-						echo "SALV ---   Can not approach while salvagers running..."
+						echo "SALV ---   Can not approach while actively salvaging"
 						ContinueOn:Set[FALSE]
 						break
 					}
 					wait 2
 				}
 				while ${j:Inc} <= ${SalvagerCount}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;
 				
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Do not approach/move if any jet cans are close by
 				if (${ContinueOn})
 				{
 					  EVE:QueryEntities[Cans, Name =- "Cargo Container"]
 					  if ${Cans.Used} > 0
 					  {
-						l:Set[1]
-
-						do
-						{
-							if (!${Cans[${l}].HaveLootRights})
+							l:Set[1]
+	
+							do
 							{
+								if (!${Cans[${l}].HaveLootRights})
+								{
+									l:Inc
+									continue
+								}	 
+	
+								if (${Cans[${l}].Distance} <= 2500)
+								{		  	
+									echo "SALV ---   Can not approach while jet cans present..."
+									ContinueOn:Set[FALSE]	
+									break
+								}
 								l:Inc
-								continue
-							}	 
-
-							if (${Cans[${l}].Distance} <= 2500)
-							{		  	
-								echo "SALV ---   Can not approach while jet cans present..."
-								ContinueOn:Set[FALSE]	
-								break
 							}
-							l:Inc
-						}
-						while ${l} <= ${Cans.Used}
+							while ${l} <= ${Cans.Used}
 					  }
 				}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;
 				
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Approach Wreck
 				if (${ContinueOn})
 				{
 					echo "SALV ---    Approaching ..."
@@ -924,8 +1054,7 @@ function DoSalvage(bool LootCans)
 
 						wait 2
 						EVE:Execute[CmdStopShip]
-
-						echo "SALV ----  Wreck is now within tractor range -- Tractoring..."
+						echo "SALV ----  Wreck is now within tractor range..."
 
 						if (${AfterburnerCount} > 0)
 						{
@@ -943,27 +1072,22 @@ function DoSalvage(bool LootCans)
 				echo "SALV ----- WHAT?!?"
 			}
 			
-			
-			;;;move next
+			;; Now we check the next locked target
 			k:Inc 
-			
 		}
-		;;while ${k} <= ${Targets.Used} 
+		;; END LOOP (current locked targets)  ["while ${k} <= ${Targets.Used}"]
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-		;##################################################
-		;##################################################
-		
-		;;;all targets are being delt with, are there any other cargo containers nearby??
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Targets are all being handled.  Deal with any nearby jet cans
 		if ${LootCans}
 		{
 			call DoGetLoot 1
 		}
+		;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-
-		;##################################################
-		;##################################################
-	
-		
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Make sure we're not running low on capacitor
 		if (${Me.Ship.CapacitorPct} <= 22)
 		{
@@ -974,12 +1098,42 @@ function DoSalvage(bool LootCans)
 			}
 			while (${Me.Ship.CapacitorPct} <= 22)
 		}
-			
-		; Make sure we aren't out of cargo space
+		;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Make sure we aren't out of cargo space
 		call CheckShipIsFull ${LootCans} 0
+		;;
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		
+		
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Repopulate "Wrecks" with updated data
+		EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186]
+		if (${Wrecks.Used} == 0)
+		{
+			if (${LootCans})
+			{
+				echo "SALV -     Salvaging complete -- looking for loot..."
+				;; NOW we call DoGetLoot so that it will actually move to loot cans that are "out of reach"
+				wait 15
+				call DoGetLoot 0		
+			}
+			else
+				echo "SALV -     Salvaging complete"
+			return
+		}
+		else
+			echo "SALV -     ${Wrecks.Used} wrecks remain in this area."
+		;;
+		;; This is the end of the Main Salvaging Loop.  This will repeat over and over until there
+		;; are no more wrecks in the area.  (which will cause the routine directly above to 'return',
+		;; thereby ending the loop.)   
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	} 
 	
-	
+	return	
 }
 
 function TransferSalvagedItemsToHangar()
