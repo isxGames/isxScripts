@@ -47,7 +47,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.1 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.2 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.  Copying to an index just in case we have a desire at some point to add/remove elements.
 	if ${Args.Size} > 0
@@ -72,7 +72,7 @@ function main(... Args)
 
 				if ${MyFleetCount} <= 0
 				{
-				    echo "- CONFIG:  Sorry -- you cannot clear a field 'at' someone that is not in your fleet."
+				    echo "- CONFIG:  Sorry, you cannot clear a field 'at' someone that is not in your fleet."
 				    echo "- CONFIG:  Aborting script"
 				    return
 				}
