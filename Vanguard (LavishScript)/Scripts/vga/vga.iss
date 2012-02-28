@@ -199,6 +199,14 @@ I should Attack							|
 #include "${Script.CurrentDirectory}/GUI_Psionicist.iss"
 #include "${Script.CurrentDirectory}/GUI_Sorcerer.iss"
 
+
+;-------------------------------------------
+;***** Yahoo Instant Messenger Scripts *****
+;-------------------------------------------
+#include "${Script.CurrentDirectory}/Obj_YahooIM.iss"
+variable(global) Obj_YahooIM YahooIM
+
+
 ;===================================================
 ;===               Main Routine               ====
 ;===================================================
