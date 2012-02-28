@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------------------------------------
-; Obj_Yahoo
+; Obj_Yahoo - by Zandros
 ;
 ; Description - this file handles the Yahoo Instant Messenger
 ; --------------
@@ -10,10 +10,10 @@
 variable string YahooHandle = "Handle"
 variable string YahooPassword = "Password"
 variable string YahooSendToHandle = "Send messages to"
-variable string doYahooTells=FALSE
-variable string doYahooSays=FALSE
-variable string doYahooEmotes=FALSE
-variable string doYahooGM=FALSE
+variable bool doYahooTells = "TRUE"
+variable bool doYahooSays=TRUE
+variable bool doYahooEmotes=TRUE
+variable bool doYahooGM=TRUE
 
 objectdef  Obj_YahooIM
 {
@@ -290,8 +290,8 @@ objectdef  Obj_YahooIM
 			}
 			if "${Message.Left[1].Equal[/]}"
 			{
-				timedcommand 10 "${Message.Escape}"
-				VGExecute "${Message}"
+				timedcommand 10 "VGExecute ${Message.Escape}"
+				;VGExecute "${Message}"
 			}
 		}
 	}
@@ -349,8 +349,8 @@ objectdef  Obj_YahooIM
 			}
 			if "${Message.Left[1].Equal[/]}"
 			{
-				timedcommand 10 "${Message.Escape}"
-				VGExecute "${Message}"
+				timedcommand 10 "VGExecute ${Message.Escape}"
+				;VGExecute "${Message}"
 			}
 		}
 	}

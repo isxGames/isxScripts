@@ -173,14 +173,23 @@ atom(script) FindAction()
 				;; attack the target only if it is in range and we are not hunting
 				if !${doHunt}
 				{
-					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>=${Me.Target.Distance}
+					if ${Me.Ability[${EnfeeblingShuriken}](exists)} && ${Me.Ability[${EnfeeblingShuriken}].Range}>${Me.Target.Distance}
 					{
+						echo 1111
 						doTankEndowementOfLife:Set[TRUE]
 						Action:Set[PullTarget]
 						return
 					}
-					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Ability[${VoidHand}].Range}>=${Me.Target.Distance}
+					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>${Me.Target.Distance}
 					{
+						echo 2222
+						doTankEndowementOfLife:Set[TRUE]
+						Action:Set[PullTarget]
+						return
+					}
+					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Ability[${VoidHand}].Range}<=10
+					{
+						echo 3333
 						doTankEndowementOfLife:Set[TRUE]
 						Action:Set[PullTarget]
 						return
