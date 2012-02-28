@@ -114,7 +114,7 @@
                             <OnLeftClick>
                               Script[vga].VariableScope.tankpawn:Set[${Me.DTarget.Name}]
                               This:SetText[Tank: ${Me.DTarget.Name}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </Button>
                           <Button Name="assistButton" Template="VG.GreenButton">
@@ -133,7 +133,7 @@
                             <OnLeftClick>
                               Script[vga].VariableScope.assistpawn:Set[${Me.DTarget.Name}]
                               This:SetText[Assist: ${Me.DTarget.Name}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </Button>
                           <Button Name="followButton" Template="VG.GreenButton">
@@ -147,7 +147,7 @@
                             <OnLeftClick>
                               Script[vga].VariableScope.followpawn:Set[${Me.DTarget.Name}]
                               This:SetText[Follow: ${Me.DTarget.Name}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </Button>
                           <Button Name="RepairSell" Template="VG.RedButton">
@@ -158,8 +158,8 @@
                             <Text>Repair/Sell/Quest</Text>
                             <Alignment>Center</Alignment>
                             <OnLeftClick>
-                              Script[VGA]:QueueCommand[call merchant]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call merchant]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </Button>
                		 <Textentry Name="SpeedEntry" Template="VG.TextEntry">
@@ -205,7 +205,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doassistpawn:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='dofollowcheck' Template='VG.BlueCheckbox'>
@@ -223,7 +223,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.dofollowpawn:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoNaturalFollow' Template='VG.BlueCheckbox'>
@@ -241,7 +241,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoNaturalFollow:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtfollowdistance' Template='VG.BoldText'>
@@ -267,7 +267,7 @@
                               if ${This.Text.Length} > 0
                               {
                               Script[vga].VariableScope.followpawndist:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                               }
                             </OnChange>
                           </Textentry>
@@ -286,7 +286,7 @@
                               if ${This.Text.Length} > 0
                               {
                               Script[vga].VariableScope.AssistBattlePct:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                               }
                             </OnChange>
                           </Textentry>
@@ -313,7 +313,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doMoveToTarget:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='doFaceTarget' Template='VG.BlueCheckbox'>
@@ -331,7 +331,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doFaceTarget:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoAttackPosition' Template='VG.BlueCheckbox'>
@@ -349,7 +349,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAttackPosition:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoAttackPositionFront' Template='VG.BlueCheckbox'>
@@ -367,7 +367,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAttackPositionFront:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoAttackPositionBack' Template='VG.BlueCheckbox'>
@@ -385,7 +385,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAttackPositionBack:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoAttackPositionLeft' Template='VG.BlueCheckbox'>
@@ -403,7 +403,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAttackPositionLeft:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoAttackPositionRight' Template='VG.BlueCheckbox'>
@@ -421,7 +421,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAttackPositionRight:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtMoveToTargetPct' Template='VG.BoldText'>
@@ -449,7 +449,7 @@
                               if ${This.Text.Length} > 0
                               {
                               Script[vga].VariableScope.MoveToTargetPct:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                               }
                             </OnChange>
                           </Textentry>
@@ -478,7 +478,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoLoot:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                         <Textentry Name='LootDelay' Template='VG.TextEntry'>
@@ -498,7 +498,7 @@
                               if ${This.Text.Length} > 0
                               {
                               Script[vga].VariableScope.LootDelay:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                               }
                             </OnChange>
                           </Textentry>
@@ -542,7 +542,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoLootOnly:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                    	 <Textentry Name='LootOnly' Template='VG.TextEntry'>
@@ -560,7 +560,7 @@
                        	 if ${This.Text.Length} > 0
                        	 {
                        	 Script[vga].VariableScope.LootOnly:Set[${This.Text}]
-                       	 Script[VGA]:QueueCommand[call LavishSave]
+                       	 Script[vga]:QueueCommand[call LavishSave]
                       	  }
                       	</OnChange>
                     	</Textentry>
@@ -580,7 +580,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoMount:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoAutoAcceptGroupInvitechk' Template='VG.BlueCheckbox'>
@@ -598,7 +598,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAutoAcceptGroupInvite:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoLooseTarget' Template='VG.BlueCheckbox'>
@@ -616,7 +616,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoLooseTarget:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoFollowInCombat' Template='VG.BlueCheckbox'>
@@ -634,7 +634,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoFollowInCombat:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoHarvest' Template='VG.BlueCheckbox'>
@@ -652,7 +652,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doHarvest:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoChargeFollow' Template='VG.BlueCheckbox'>
@@ -670,7 +670,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoChargeFollow:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			<checkbox Name='DoAcceptRes' Template='VG.BlueCheckbox'>
@@ -688,7 +688,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoAcceptRes:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			<checkbox Name='DoResInCombat' Template='VG.BlueCheckbox'>
@@ -706,7 +706,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoResInCombat:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			<checkbox Name='DoResNotInCombat' Template='VG.BlueCheckbox'>
@@ -724,7 +724,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoResNotInCombat:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			<checkbox Name='DoResRaid' Template='VG.BlueCheckbox'>
@@ -742,7 +742,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoResRaid:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <Button Name="BuffButton" Template="VG.GreenButton">
@@ -753,7 +753,7 @@
                             <Text>Buff Group</Text>
                             <Alignment>Center</Alignment>
                             <OnLeftClick>
-                              Script[VGA]:QueueCommand[call BuffButton]
+                              Script[vga]:QueueCommand[call BuffButton]
                             </OnLeftClick>
                           </Button>
                           <Button Name="StoneButton" Template="VG.GreenButton">
@@ -764,7 +764,7 @@
                             <Text>Pass Out Stones</Text>
                             <Alignment>Center</Alignment>
                             <OnLeftClick>
-                              Script[VGA]:QueueCommand[call StoneButton]
+                              Script[vga]:QueueCommand[call StoneButton]
                             </OnLeftClick>
                           </Button>
 
@@ -791,7 +791,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doFurious:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassDownTime' Template='VG.BlueCheckbox'>
@@ -809,7 +809,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassDownTime:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='doSlowAttacks' Template='VG.BlueCheckbox'>
@@ -827,7 +827,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.doSlowAttacks:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassPreCombat' Template='VG.BlueCheckbox'>
@@ -845,7 +845,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassPreCombat:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <Text Name='txtSlowAttacksPct' Template='VG.BoldText'>
@@ -871,7 +871,7 @@
                               if ${This.Text.Length} > 0
                               {
                               Script[vga].VariableScope.SlowAttacks:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                               }
                             </OnChange>
                           </Textentry>
@@ -906,7 +906,7 @@
                               if ${This.Text.Length} > 0
                               {
                               Script[vga].VariableScope.SlowHeals:Set[${Math.Calc[${This.Text}].Int}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                               }
                             </OnChange>
                           </Textentry>
@@ -925,7 +925,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoByPassVGAHeals:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
 			   <checkbox Name='DoClassOpener' Template='VG.BlueCheckbox'>
@@ -943,7 +943,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassOpener:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoCountersASAP' Template='VG.BlueCheckbox'>
@@ -961,7 +961,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoCountersASAP:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassCombat' Template='VG.BlueCheckbox'>
@@ -979,7 +979,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassCombat:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <checkbox Name='DoChainsASAP' Template='VG.BlueCheckbox'>
@@ -997,7 +997,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoChainsASAP:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassPostCombat' Template='VG.BlueCheckbox'>
@@ -1015,7 +1015,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassPostCombat:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassEmergency' Template='VG.BlueCheckbox'>
@@ -1033,7 +1033,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassEmergency:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassPostCasting' Template='VG.BlueCheckbox'>
@@ -1051,7 +1051,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassPostCasting:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 			   <checkbox Name='DoClassBurst' Template='VG.BlueCheckbox'>
@@ -1069,7 +1069,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoClassBurst:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                           <Button Name="Quit" Template="VG.RedButton">
@@ -1151,7 +1151,7 @@
                   <OnLeftClick>
                     AddFire "${Me.Target}"
                     BuildFire
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Button Name="IceButton" Template="VG.GreenButton">
@@ -1164,7 +1164,7 @@
                   <OnLeftClick>
                     AddIce "${Me.Target}"
                     BuildIce
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Button Name="SpiritualButton" Template="VG.GreenButton">
@@ -1177,7 +1177,7 @@
                   <OnLeftClick>
                     AddSpiritual "${Me.Target}"
                     BuildSpiritual
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Button Name="PhysicalButton" Template="VG.GreenButton">
@@ -1190,7 +1190,7 @@
                   <OnLeftClick>
                     AddPhysical "${Me.Target}"
                     BuildPhysical
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Button Name="ArcaneButton" Template="VG.GreenButton">
@@ -1203,7 +1203,7 @@
                   <OnLeftClick>
                     AddArcane "${Me.Target}"
                     BuildArcane
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Text Name='txtFireList' Template='VG.BoldText'>
@@ -1227,7 +1227,7 @@
                   <OnRightClick>
                     RemoveFire "${This.SelectedItem}"
                     BuildFire
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtIceList' Template='VG.BoldText'>
@@ -1251,7 +1251,7 @@
                   <OnRightClick>
                     RemoveIce "${This.SelectedItem}"
                     BuildIce
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtSpiritualList' Template='VG.BoldText'>
@@ -1275,7 +1275,7 @@
                   <OnRightClick>
                     RemoveSpiritual "${This.SelectedItem}"
                     BuildSpiritual
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtPhysicalList' Template='VG.BoldText'>
@@ -1299,7 +1299,7 @@
                   <OnRightClick>
                     RemovePhysical "${This.SelectedItem}"
                     BuildPhysical
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtArcaneList' Template='VG.BoldText'>
@@ -1323,7 +1323,7 @@
                   <OnRightClick>
                     RemoveArcane "${This.SelectedItem}"
                     BuildArcane
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
               </Children>
@@ -1357,7 +1357,7 @@
                     {
                     AddTBW "${This.SelectedItem.Text}"
                     BuildTBW
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                     }
                   </OnSelect>
                 </ComboBox>
@@ -1375,7 +1375,7 @@
                     RemoveTBW "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildTBW
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtRTBWList' Template='VG.BoldText'>
@@ -1416,7 +1416,7 @@
                     {
                     AddDBW "${This.SelectedItem.Text}"
                     BuildDBW
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                     }
                   </OnSelect>
                 </ComboBox>
@@ -1434,7 +1434,7 @@
                     RemoveDBW "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildDBW
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtRDBWList' Template='VG.BoldText'>
@@ -1475,7 +1475,7 @@
                     {
                     AddBW "${This.SelectedItem.Text}"
                     BuildBW
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                     }
                   </OnSelect>
                 </ComboBox>
@@ -1493,7 +1493,7 @@
                     RemoveBW "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildBW
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
                 <Text Name='txtRBWList' Template='VG.BoldText'>
@@ -1522,7 +1522,7 @@
                   <Alignment>Center</Alignment>
                   <OnLeftClick>
                     UpdateBuffWatch
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
               </Children>
@@ -1550,7 +1550,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doSell:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <checkbox Name='doautoSellchk' Template='VG.BlueCheckbox'>
@@ -1568,7 +1568,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doAutoSell:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <checkbox Name='DoPopCrates' Template='VG.BlueCheckbox'>
@@ -1586,7 +1586,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.DoPopCrates:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <ComboBox Name="SellCombo" Template="VG.ComboBox">
@@ -1602,7 +1602,7 @@
                     {
                     AddSell "${This.SelectedItem.Text}"
                     BuildSell
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                     }
                   </OnSelect>
                 </ComboBox>
@@ -1620,7 +1620,7 @@
                     RemoveSell "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildSell
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
               </Children>
@@ -1648,7 +1648,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doTrash:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <Textentry Name="TrashEntry" Template="VG.TextEntry">
@@ -1727,7 +1727,7 @@
                   <OnLeftClick>
                     AddQuestNPCs "${Me.Target}"
                     BuildQuestNPCs
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Listbox Name="QuestNPCsList" Template="VG.ListBox">
@@ -1744,12 +1744,12 @@
                     RemoveQuestNPCs "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildQuestNPCs
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                   <OnLeftClick>
-                    Script[VGA]:QueueCommand[call FindQuestList "${This.SelectedItem}"] 
+                    Script[vga]:QueueCommand[call FindQuestList "${This.SelectedItem}"] 
 		    BuildQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Listbox>
                <Text Name='txtQuestLis' Template='VG.BoldText'>
@@ -1770,7 +1770,7 @@
                 </OnLoad>
                 <OnSelect>
 		  AddQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}" "${This.SelectedItem}"
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
 		  BuildQuests "${Me.Target}"
                 </OnSelect>
               </ComboBox>
@@ -1788,7 +1788,7 @@
                     RemoveQuests "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildQuests "${UIElement[QuestNPCsList@QuestsCFrm@Quests@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
 		  </Children>
@@ -1816,7 +1816,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoDiplo:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
                <Text Name='txtDiploTarget' Template='VG.BoldText'>
@@ -1849,7 +1849,7 @@
                   <OnLeftClick>
                     AddDiploNPCs "${Me.Target}"
                     BuildDiploNPCs
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
 		<checkbox Name='DoRemoveLowDiplo' Template='VG.BlueCheckbox'>
@@ -1867,7 +1867,7 @@
                             </OnLoad>
                             <OnLeftClick>
                               Script[vga].VariableScope.DoRemoveLowDiplo:Set[${This.Checked}]
-                              Script[VGA]:QueueCommand[call LavishSave]
+                              Script[vga]:QueueCommand[call LavishSave]
                             </OnLeftClick>
                           </checkbox>
 						             <ComboBox Name="diplogearCombo" Template="VG.ComboBox">
@@ -1924,12 +1924,12 @@
                     RemoveDiploNPCs "${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildDiploNPCs
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                   <OnLeftClick>
-                    Script[VGA]:QueueCommand[call FindDiploList "${This.SelectedItem}"] 
+                    Script[vga]:QueueCommand[call FindDiploList "${This.SelectedItem}"] 
 		    BuildDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Listbox>
                <Text Name='txtDiploLis' Template='VG.BoldText'>
@@ -1950,7 +1950,7 @@
                 </OnLoad>
                 <OnSelect>
 		  AddDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}" "${This.SelectedItem}"
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
 		  BuildDiplo "${Me.Target}"
                 </OnSelect>
               </ComboBox>
@@ -1968,7 +1968,7 @@
                     RemoveDiplo "${Me.Target} ${This.SelectedItem}"
                     This.SelectedItem:Remove
                     BuildDiplo "${UIElement[DiploNPCsList@DiploCFrm@Diplo@MainSubTab@MainFrm@Main@ABot@vga_gui].SelectedItem}"
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnRightClick>
                 </Listbox>
 		  </Children>
@@ -2015,7 +2015,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doDeBug:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <checkbox Name='doActionLog' Template='VG.BlueCheckbox'>
@@ -2033,7 +2033,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doActionLog:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <checkbox Name='doParser' Template='VG.BlueCheckbox'>
@@ -2051,7 +2051,7 @@
                   </OnLoad>
                   <OnLeftClick>
                     Script[vga].VariableScope.doParser:Set[${This.Checked}]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </checkbox>
                 <Button Name="ClearDebug" Template="VG.RedButton">
@@ -2063,7 +2063,7 @@
                   <Alignment>Center</Alignment>
                   <OnLeftClick>
                     Script[vga]:ExecuteAtom[cleardebug]
-                    Script[VGA]:QueueCommand[call LavishSave]
+                    Script[vga]:QueueCommand[call LavishSave]
                   </OnLeftClick>
                 </Button>
                 <Text Name='txtDebugList' Template='VG.BoldText'>
@@ -2134,7 +2134,7 @@
 				<Width>50</Width>
 				<Height>15</Height>
 				<OnRender>
-					This:SetText[${Script[VGA].Variable[TankHealPct]}]
+					This:SetText[${Script[vga].Variable[TankHealPct]}]
 				</OnRender>
 			</Text>
 			<Slider name='TankHealPctSlider' Template='VG.Slider'>
@@ -2145,11 +2145,11 @@
 				<Range>100</Range>
 				<Alignment>Center</Alignment>
 				<OnLoad>
-					This:SetValue[${Script[VGA].Variable[TankHealPct]}]
+					This:SetValue[${Script[vga].Variable[TankHealPct]}]
 				</OnLoad>
 				<OnChange>
-					Script[VGA].Variable[TankHealPct]:Set[${Math.Calc[${This.Value}].Int}]
-					Script[VGA]:QueueCommand[call LavishSave]
+					Script[vga].Variable[TankHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[vga]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
                     	<Text Name="TankEmerHealPcttxt" Template="VG.BoldText">
@@ -2165,7 +2165,7 @@
 				<Width>50</Width>
 				<Height>15</Height>
 				<OnRender>
-					This:SetText[${Script[VGA].Variable[TankEmerHealPct]}]
+					This:SetText[${Script[vga].Variable[TankEmerHealPct]}]
 				</OnRender>
 			</Text>
 			<Slider name='TankEmerHealPctSlider' Template='VG.Slider'>
@@ -2176,11 +2176,11 @@
 				<Range>100</Range>
 				<Alignment>Center</Alignment>
 				<OnLoad>
-					This:SetValue[${Script[VGA].Variable[TankEmerHealPct]}]
+					This:SetValue[${Script[vga].Variable[TankEmerHealPct]}]
 				</OnLoad>
 				<OnChange>
-					Script[VGA].Variable[TankEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
-					Script[VGA]:QueueCommand[call LavishSave]
+					Script[vga].Variable[TankEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[vga]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
 			<Text Name='MedHealPcttxt' Template="VG.BoldText">
@@ -2196,7 +2196,7 @@
 				<Width>50</Width>
 				<Height>15</Height>
 				<OnRender>
-					This:SetText[${Script[VGA].Variable[MedHealPct]}]
+					This:SetText[${Script[vga].Variable[MedHealPct]}]
 				</OnRender>
 			</Text>
 			<Slider name='MedPctSlider' Template='VG.Slider'>
@@ -2207,11 +2207,11 @@
 				<Range>100</Range>
 				<Alignment>Center</Alignment>
 				<OnLoad>
-					This:SetValue[${Script[VGA].Variable[MedHealPct]}]
+					This:SetValue[${Script[vga].Variable[MedHealPct]}]
 				</OnLoad>
 				<OnChange>
-					Script[VGA].Variable[MedHealPct]:Set[${Math.Calc[${This.Value}].Int}]
-					Script[VGA]:QueueCommand[call LavishSave]
+					Script[vga].Variable[MedHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[vga]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
 			<Text Name='MedEmerHealPcttxt' Template="VG.BoldText">
@@ -2227,7 +2227,7 @@
 				<Width>50</Width>
 				<Height>15</Height>
 				<OnRender>
-					This:SetText[${Script[VGA].Variable[MedEmerHealPct]}]
+					This:SetText[${Script[vga].Variable[MedEmerHealPct]}]
 				</OnRender>
 				</Text>
 			<Slider name='MedEmerPctSlider' Template='VG.Slider'>
@@ -2238,11 +2238,11 @@
 				<Range>100</Range>
 				<Alignment>Center</Alignment>
 				<OnLoad>
-					This:SetValue[${Script[VGA].Variable[MedEmerHealPct]}]
+					This:SetValue[${Script[vga].Variable[MedEmerHealPct]}]
 				</OnLoad>
 				<OnChange>
-					Script[VGA].Variable[MedEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
-					Script[VGA]:QueueCommand[call LavishSave]
+					Script[vga].Variable[MedEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[vga]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
 			<Text Name='SquishyHealPcttxt' Template="VG.BoldText">
@@ -2258,7 +2258,7 @@
 				<Width>50</Width>
 				<Height>15</Height>
 				<OnRender>
-					This:SetText[${Script[VGA].Variable[SquishyHealPct]}]
+					This:SetText[${Script[vga].Variable[SquishyHealPct]}]
 				</OnRender>
 			</Text>
 			<Slider name='SquishyPctSlider' Template='VG.Slider'>
@@ -2269,11 +2269,11 @@
 				<Range>100</Range>
 				<Alignment>Center</Alignment>
 				<OnLoad>
-					This:SetValue[${Script[VGA].Variable[SquishyHealPct]}]
+					This:SetValue[${Script[vga].Variable[SquishyHealPct]}]
 				</OnLoad>
 				<OnChange>
-					Script[VGA].Variable[SquishyHealPct]:Set[${Math.Calc[${This.Value}].Int}]
-					Script[VGA]:QueueCommand[call LavishSave]
+					Script[vga].Variable[SquishyHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[vga]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
 			<Text Name='SquishyEmerHealPcttxt' Template="VG.BoldText">
@@ -2289,7 +2289,7 @@
 				<Width>50</Width>
 				<Height>15</Height>
 				<OnRender>
-					This:SetText[${Script[VGA].Variable[SquishyEmerHealPct]}]
+					This:SetText[${Script[vga].Variable[SquishyEmerHealPct]}]
 				</OnRender>
 				</Text>
 			<Slider name='SquishyEmerPctSlider' Template='VG.Slider'>
@@ -2300,11 +2300,11 @@
 				<Range>100</Range>
 				<Alignment>Center</Alignment>
 				<OnLoad>
-					This:SetValue[${Script[VGA].Variable[SquishyEmerHealPct]}]
+					This:SetValue[${Script[vga].Variable[SquishyEmerHealPct]}]
 				</OnLoad>
 				<OnChange>
-					Script[VGA].Variable[SquishyEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
-					Script[VGA]:QueueCommand[call LavishSave]
+					Script[vga].Variable[SquishyEmerHealPct]:Set[${Math.Calc[${This.Value}].Int}]
+					Script[vga]:QueueCommand[call LavishSave]
 				</OnChange>
 			</Slider>
                           <Button Name="Set Group Members" Template="VG.RedButton">
@@ -2315,7 +2315,7 @@
                             <Text>Find My Group Members in this Raid</Text>
                             <Alignment>Center</Alignment>
                             <OnLeftClick>
-                              Script[VGA]:QueueCommand[call SetGroupMembers]
+                              Script[vga]:QueueCommand[call SetGroupMembers]
                             </OnLeftClick>
                           </Button>
                 	<Text Name='txtGroupRaidList' Template='VG.BoldText'>
@@ -2365,7 +2365,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.InstantHeal:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtinstant2soloheal' Template='VG.BoldText'>
@@ -2386,7 +2386,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.InstantHeal2:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtInstantHotHeal1' Template='VG.BoldText'>
@@ -2407,7 +2407,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.InstantHotHeal1:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtInstantHotHeal2' Template='VG.BoldText'>
@@ -2428,7 +2428,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.InstantHotHeal2:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtTapSoloHeal' Template='VG.BoldText'>
@@ -2449,7 +2449,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.TapSoloHeal:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtsmallsoloheal' Template='VG.BoldText'>
@@ -2470,7 +2470,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.SmallHeal:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtbigsoloheal' Template='VG.BoldText'>
@@ -2491,7 +2491,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.BigHeal:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtHealCrit1' Template='VG.BoldText'>
@@ -2512,7 +2512,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.HealCrit1:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtHealCrit2' Template='VG.BoldText'>
@@ -2533,7 +2533,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.HealCrit2:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtgroupheal' Template='VG.BoldText'>
@@ -2554,7 +2554,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.GroupHeal:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='LazyBuffText' Template='VG.BoldText'>
@@ -2576,7 +2576,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.LazyBuff:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='BuffText' Template='VG.BoldText'>
@@ -2600,7 +2600,7 @@
                         {
                         AddBuff "${This.SelectedItem.Text}"
                         BuildBuff
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -2617,7 +2617,7 @@
                         RemoveBuff "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildBuff
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='ResStoneText' Template='VG.BoldText'>
@@ -2639,7 +2639,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.ResStone:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='NonCombatResText' Template='VG.BoldText'>
@@ -2661,7 +2661,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.NonCombatRes:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='CombatResText' Template='VG.BoldText'>
@@ -2683,7 +2683,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.CombatRes:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doCombatStance' Template='VG.BlueCheckbox'>
@@ -2701,7 +2701,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doCombatStance:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="CombatStanceCombo" Template="VG.ComboBox">
@@ -2715,7 +2715,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.CombatStance:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doNonCombatStance' Template='VG.BlueCheckbox'>
@@ -2733,7 +2733,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doNonCombatStance:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="NonCombatStanceCombo" Template="VG.ComboBox">
@@ -2747,7 +2747,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.NonCombatStance:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doRestoreSpecial' Template='VG.BlueCheckbox'>
@@ -2765,7 +2765,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRestoreSpecial:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='RestoreSpecialtxt' Template='VG.TextEntry'>
@@ -2783,7 +2783,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RestoreSpecialint:Set[${Math.Calc[${This.Text}].Int}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -2798,7 +2798,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.RestoreSpecial:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='DoShiftingImagechk' Template='VG.BlueCheckbox'>
@@ -2816,7 +2816,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoShiftingImage:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="ShiftingImageCombo" Template="VG.ComboBox">
@@ -2830,7 +2830,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.ShiftingImage:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
 
@@ -2886,7 +2886,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doTurnOffAttack:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="TurnOffAttackEntry" Template="VG.TextEntry">
@@ -2906,7 +2906,7 @@
                       <OnLeftClick>
                         AddTurnOffAttack "${UIElement[TurnOffAttackEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Text}"
                         BuildTurnOffAttack
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="TurnOffAttackList" Template="VG.ListBox">
@@ -2923,7 +2923,7 @@
                         RemoveTurnOffAttack "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildTurnOffAttack
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doTurnOffDuringBuff' Template='VG.BlueCheckbox'>
@@ -2941,7 +2941,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doTurnOffDuringBuff:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="TurnOffDuringBuffEntry" Template="VG.TextEntry">
@@ -2961,7 +2961,7 @@
                       <OnLeftClick>
                         AddTurnOffDuringBuff "${UIElement[TurnOffDuringBuffEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Text}"
                         BuildTurnOffDuringBuff
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="TurnOffDuringBuffList" Template="VG.ListBox">
@@ -2978,7 +2978,7 @@
                         RemoveTurnOffDuringBuff "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildTurnOffDuringBuff
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doDispellchk' Template='VG.BlueCheckbox'>
@@ -2996,7 +2996,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doDispell:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="DispellEntry" Template="VG.TextEntry">
@@ -3017,7 +3017,7 @@
                         AddDispell "${UIElement[DispellEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Text}"
                         BuildDispell
                         UIElement[DispellEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SetText[]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="DispellList" Template="VG.ListBox">
@@ -3034,7 +3034,7 @@
                         RemoveDispell "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildDispell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doStancePushchk' Template='VG.BlueCheckbox'>
@@ -3052,7 +3052,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doStancePush:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="StancePushEntry" Template="VG.TextEntry">
@@ -3073,7 +3073,7 @@
                         AddStancePush "${UIElement[StancePushEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Text}"
                         BuildStancePush
                         UIElement[StancePushEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SetText[]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="StancePushList" Template="VG.ListBox">
@@ -3090,7 +3090,7 @@
                         RemoveStancePush "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildStancePush
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doClickieschk' Template='VG.BlueCheckbox'>
@@ -3108,7 +3108,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doClickies:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="ClickiesCombo" Template="VG.ComboBox">
@@ -3124,7 +3124,7 @@
                         {
                         AddClickies "${This.SelectedItem.Text}"
                         BuildClickies
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3142,7 +3142,7 @@
                         RemoveClickies "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildClickies
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doCounter' Template='VG.BlueCheckbox'>
@@ -3160,7 +3160,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doCounter:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="CounterEntry" Template="VG.TextEntry">
@@ -3181,7 +3181,7 @@
                         AddCounter "${UIElement[CounterEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui].Text}"
                         BuildCounter
                         UIElement[CounterEntry@CombatCFrm@CombatMain@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:SetText[]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="CounterList" Template="VG.ListBox">
@@ -3198,7 +3198,7 @@
                         RemoveCounter "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildCounter
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtDispellCombo' Template='VG.BoldText'>
@@ -3219,7 +3219,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.DispellSpell:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtPushStanceCombo' Template='VG.BoldText'>
@@ -3240,7 +3240,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.PushStanceSpell:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtCounterSpell1Combo' Template='VG.BoldText'>
@@ -3261,7 +3261,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.CounterSpell1:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <Text Name='txtCounterSpell2Combo' Template='VG.BoldText'>
@@ -3282,7 +3282,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.CounterSpell2:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                   </Children>
@@ -3310,7 +3310,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doOpeningSeqSpell:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="OpeningSpellSequenceCombo" Template="VG.ComboBox">
@@ -3326,7 +3326,7 @@
                         {
                         AddOpeningSpellSequence "${This.SelectedItem.Text}"
                         BuildOpeningSpellSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3344,7 +3344,7 @@
                         RemoveOpeningSpellSequence "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildOpeningSpellSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doCombatSpellSequencechk' Template='VG.BlueCheckbox'>
@@ -3362,7 +3362,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doCombatSeqSpell:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="CombatSpellSequenceCombo" Template="VG.ComboBox">
@@ -3378,7 +3378,7 @@
                         {
                         AddCombatSpellSequence "${This.SelectedItem.Text}"
                         BuildCombatSpellSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3396,7 +3396,7 @@
                         RemoveCombatSpellSequence "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildCombatSpellSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doAOESpellchk' Template='VG.BlueCheckbox'>
@@ -3414,7 +3414,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doAOESpell:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="AOESpellCombo" Template="VG.ComboBox">
@@ -3430,7 +3430,7 @@
                         {
                         AddAOESpell "${This.SelectedItem.Text}"
                         BuildAOESpell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3448,7 +3448,7 @@
                         RemoveAOESpell "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildAOESpell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doDotSpellchk' Template='VG.BlueCheckbox'>
@@ -3466,7 +3466,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doDotSpell:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="DotSpellCombo" Template="VG.ComboBox">
@@ -3482,7 +3482,7 @@
                         {
                         AddDotSpell "${This.SelectedItem.Text}"
                         BuildDotSpell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3500,7 +3500,7 @@
                         RemoveDotSpell "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildDotSpell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doDebuffSpellchk' Template='VG.BlueCheckbox'>
@@ -3518,7 +3518,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doDebuffSpell:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="DebuffSpellCombo" Template="VG.ComboBox">
@@ -3534,7 +3534,7 @@
                         {
                         AddDebuffSpell "${This.SelectedItem.Text}"
                         BuildDebuffSpell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3552,7 +3552,7 @@
                         RemoveDebuffSpell "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildDebuffSpell
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                   </Children>
@@ -3580,7 +3580,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doOpeningSeqMelee:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="OpeningMeleeSequenceCombo" Template="VG.ComboBox">
@@ -3596,7 +3596,7 @@
                         {
                         AddOpeningMeleeSequence "${This.SelectedItem.Text}"
                         BuildOpeningMeleeSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3614,7 +3614,7 @@
                         RemoveOpeningMeleeSequence "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildOpeningMeleeSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doCombatMeleeSequencechk' Template='VG.BlueCheckbox'>
@@ -3632,7 +3632,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doCombatSeqMelee:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="CombatMeleeSequenceCombo" Template="VG.ComboBox">
@@ -3648,7 +3648,7 @@
                         {
                         AddCombatMeleeSequence "${This.SelectedItem.Text}"
                         BuildCombatMeleeSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3666,7 +3666,7 @@
                         RemoveCombatMeleeSequence "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildCombatMeleeSequence
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doAOEMeleechk' Template='VG.BlueCheckbox'>
@@ -3684,7 +3684,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doAOEMelee:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="AOEMeleeCombo" Template="VG.ComboBox">
@@ -3700,7 +3700,7 @@
                         {
                         AddAOEMelee "${This.SelectedItem.Text}"
                         BuildAOEMelee
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3718,7 +3718,7 @@
                         RemoveAOEMelee "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildAOEMelee
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doDotMeleechk' Template='VG.BlueCheckbox'>
@@ -3736,7 +3736,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doDotMelee:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="DotMeleeCombo" Template="VG.ComboBox">
@@ -3752,7 +3752,7 @@
                         {
                         AddDotMelee "${This.SelectedItem.Text}"
                         BuildDotMelee
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3770,7 +3770,7 @@
                         RemoveDotMelee "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildDotMelee
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doDebuffMeleechk' Template='VG.BlueCheckbox'>
@@ -3788,7 +3788,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doDebuffMelee:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="DebuffMeleeCombo" Template="VG.ComboBox">
@@ -3804,7 +3804,7 @@
                         {
                         AddDebuffMelee "${This.SelectedItem.Text}"
                         BuildDebuffMelee
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3822,7 +3822,7 @@
                         RemoveDebuffMelee "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildDebuffMelee
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doKillingBlowchk' Template='VG.BlueCheckbox'>
@@ -3840,7 +3840,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doKillingBlow:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="cmbKillingBlow" Template="VG.ComboBox">
@@ -3853,7 +3853,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.KillingBlow:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                   </Children>
@@ -3882,7 +3882,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doCombatCrits:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="CombatCritsCombo" Template="VG.ComboBox">
@@ -3898,7 +3898,7 @@
                         {
                         AddCombatCrits "${This.SelectedItem.Text}"
                         BuildCombatCrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3916,7 +3916,7 @@
                         RemoveCombatCrits "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildCombatCrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doDotCrits' Template='VG.BlueCheckbox'>
@@ -3934,7 +3934,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doDotCrits:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="DotCritsCombo" Template="VG.ComboBox">
@@ -3950,7 +3950,7 @@
                         {
                         AddDotCrits "${This.SelectedItem.Text}"
                         BuildDotCrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -3968,7 +3968,7 @@
                         RemoveDotCrits "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildDotCrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doBuffCrits' Template='VG.BlueCheckbox'>
@@ -3986,7 +3986,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doBuffCrits:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="BuffCritsCombo" Template="VG.ComboBox">
@@ -4002,7 +4002,7 @@
                         {
                         AddBuffCrits "${This.SelectedItem.Text}"
                         BuildBuffCrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4020,7 +4020,7 @@
                         RemoveBuffCrits "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildBuffCrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doAOECritschk' Template='VG.BlueCheckbox'>
@@ -4038,7 +4038,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doAOECrits:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="AOECritsCombo" Template="VG.ComboBox">
@@ -4054,7 +4054,7 @@
                         {
                         AddAOECrits "${This.SelectedItem.Text}"
                         BuildAOECrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4072,7 +4072,7 @@
                         RemoveAOECrits "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildAOECrits
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doCounterAttackchk' Template='VG.BlueCheckbox'>
@@ -4090,7 +4090,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doCounterAttack:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="CounterAttackCombo" Template="VG.ComboBox">
@@ -4106,7 +4106,7 @@
                         {
                         AddCounterAttack "${This.SelectedItem.Text}"
                         BuildCounterAttack
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4124,7 +4124,7 @@
                         RemoveCounterAttack "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildCounterAttack
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                   </Children>
@@ -4152,7 +4152,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doEvade1:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="Evade1Combo" Template="VG.ComboBox">
@@ -4168,7 +4168,7 @@
                         {
                         AddEvade1 "${This.SelectedItem.Text}"
                         BuildEvade1
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4186,7 +4186,7 @@
                         RemoveEvade1 "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildEvade1
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doEvade2' Template='VG.BlueCheckbox'>
@@ -4204,7 +4204,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doEvade2:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="Evade2Combo" Template="VG.ComboBox">
@@ -4220,7 +4220,7 @@
                         {
                         AddEvade2 "${This.SelectedItem.Text}"
                         BuildEvade2
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4238,7 +4238,7 @@
                         RemoveEvade2 "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildEvade2
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doInvoln1' Template='VG.BlueCheckbox'>
@@ -4256,7 +4256,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doInvoln1:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtInvoln1' Template='VG.BoldText'>
@@ -4282,7 +4282,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.Involn1Pct:Set[${Math.Calc[${This.Text}].Int}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -4296,7 +4296,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.Involn1:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doInvoln2' Template='VG.BlueCheckbox'>
@@ -4314,7 +4314,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doInvoln2:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtInvoln2' Template='VG.BoldText'>
@@ -4340,7 +4340,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.Involn2Pct:Set[${Math.Calc[${This.Text}].Int}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -4354,7 +4354,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.Involn2:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doFD' Template='VG.BlueCheckbox'>
@@ -4372,7 +4372,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doFD:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtFD' Template='VG.BoldText'>
@@ -4398,7 +4398,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.FDPct:Set[${Math.Calc[${This.Text}].Int}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -4412,7 +4412,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.FD:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doPushAgro' Template='VG.BlueCheckbox'>
@@ -4430,7 +4430,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doPushAgro:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="pushagroCombo" Template="VG.ComboBox">
@@ -4443,7 +4443,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.agropush:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                     <checkbox Name='doRescue' Template='VG.BlueCheckbox'>
@@ -4461,7 +4461,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRescue:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRescue' Template='VG.BoldText'>
@@ -4485,7 +4485,7 @@
                         {
                         AddRescue "${This.SelectedItem.Text}"
                         BuildRescue
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4503,7 +4503,7 @@
                         RemoveRescue "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildRescue
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtForceRescue' Template='VG.BoldText'>
@@ -4527,7 +4527,7 @@
                         {
                         AddForceRescue "${This.SelectedItem.Text}"
                         BuildForceRescue
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4545,7 +4545,7 @@
                         RemoveForceRescue "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildForceRescue
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <checkbox Name='doClickieForce' Template='VG.BlueCheckbox'>
@@ -4563,7 +4563,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doClickieForce:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <ComboBox Name="ClickieForceCombo" Template="VG.ComboBox">
@@ -4576,7 +4576,7 @@
                       </OnLoad>
                       <OnSelect>
                         Script[vga].VariableScope.ClickieForce:Set[${This.SelectedItem.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnSelect>
                     </ComboBox>
                   </Children>
@@ -4610,7 +4610,7 @@
                         {
                         AddFireA "${This.SelectedItem.Text}"
                         BuildFireA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4628,7 +4628,7 @@
                         RemoveFireA "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildFireA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtIceA' Template='VG.BoldText'>
@@ -4652,7 +4652,7 @@
                         {
                         AddIceA "${This.SelectedItem.Text}"
                         BuildIceA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4670,7 +4670,7 @@
                         RemoveIceA "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildIceA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtSpiritualA' Template='VG.BoldText'>
@@ -4694,7 +4694,7 @@
                         {
                         AddSpiritualA "${This.SelectedItem.Text}"
                         BuildSpiritualA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4712,7 +4712,7 @@
                         RemoveSpiritualA "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildSpiritualA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtPhysicaleA' Template='VG.BoldText'>
@@ -4736,7 +4736,7 @@
                         {
                         AddPhysicalA "${This.SelectedItem.Text}"
                         BuildPhysicalA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4754,7 +4754,7 @@
                         RemovePhysicalA "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildPhysicalA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtArcaneA' Template='VG.BoldText'>
@@ -4778,7 +4778,7 @@
                         {
                         AddArcaneA "${This.SelectedItem.Text}"
                         BuildArcaneA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>
@@ -4796,7 +4796,7 @@
                         RemoveArcaneA "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         BuildArcaneA
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                   </Children>
@@ -4855,7 +4855,7 @@
                 </OnLoad>
                 <OnSelect>
                   Script[vga].VariableScope.BMHealthToEnergySpell:Set[${This.SelectedItem.Text}]
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
                 </OnSelect>
               </ComboBox>
               <Text Name='lbBMBloodUnionDumpDPSSpell' Template='VG.BoldText'>
@@ -4876,7 +4876,7 @@
                 </OnLoad>
                 <OnSelect>
                   Script[vga].VariableScope.BMBloodUnionDumpDPSSpell:Set[${This.SelectedItem.Text}]
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
                 </OnSelect>
               </ComboBox>
 
@@ -4899,7 +4899,7 @@
                 </OnLoad>
                 <OnSelect>
                   Script[vga].VariableScope.BMSingleTargetLifeTap1:Set[${This.SelectedItem.Text}]
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
                 </OnSelect>
               </ComboBox>
 
@@ -4922,7 +4922,7 @@
                 </OnLoad>
                 <OnSelect>
                   Script[vga].VariableScope.BMSingleTargetLifeTap2:Set[${This.SelectedItem.Text}]
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
                 </OnSelect>
               </ComboBox>
 
@@ -4945,7 +4945,7 @@
                 </OnLoad>
                 <OnSelect>
                   Script[vga].VariableScope.BMBloodUnionSingleTargetHOT:Set[${This.SelectedItem.Text}]
-                  Script[VGA]:QueueCommand[call LavishSave]
+                  Script[vga]:QueueCommand[call LavishSave]
                 </OnSelect>
               </ComboBox>
 
@@ -5032,7 +5032,7 @@
             </OnLoad>
             <OnSelect>
               Script[vga].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
-              Script[VGA]:QueueCommand[call LavishSave]
+              Script[vga]:QueueCommand[call LavishSave]
             </OnSelect>
           </ComboBox>
           <Text Name='txtsec' Template='VG.BoldText'>
@@ -5053,7 +5053,7 @@
             </OnLoad>
             <OnSelect>
               Script[vga].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
-              Script[VGA]:QueueCommand[call LavishSave]
+              Script[vga]:QueueCommand[call LavishSave]
             </OnSelect>
           </ComboBox>
           <Text Name='txtfightsong' Template='VG.BoldText'>
@@ -5074,7 +5074,7 @@
             </OnLoad>
             <OnSelect>
               Script[vga].VariableScope.FightSong:Set[${This.SelectedItem.Text}]
-              Script[VGA]:QueueCommand[call LavishSave]
+              Script[vga]:QueueCommand[call LavishSave]
             </OnSelect>
           </ComboBox>
           <Text Name='txtnocombat' Template='VG.BoldText'>
@@ -5103,7 +5103,7 @@
             </OnLoad>
             <OnSelect>
               Script[vga].VariableScope.Drum:Set[${This.SelectedItem.Text}]
-              Script[VGA]:QueueCommand[call LavishSave]
+              Script[vga]:QueueCommand[call LavishSave]
             </OnSelect>
           </ComboBox>
           <Text Name='txtnofightsong' Template='VG.BoldText'>
@@ -5124,7 +5124,7 @@
             </OnLoad>
             <OnSelect>
               Script[vga].VariableScope.RunSong:Set[${This.SelectedItem.Text}]
-              Script[VGA]:QueueCommand[call LavishSave]
+              Script[vga]:QueueCommand[call LavishSave]
             </OnSelect>
           </ComboBox>
         </Children>
@@ -5160,7 +5160,218 @@
       </Children>
       </Frame>
     </Tab>
-    <!--Top Level Interaction Tab-->
+ 
+					<!-- Top Level Tab Name: (Yahoo) -->
+					<Tab name='Yahoo'>
+						<Text Name='txtYahoo' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>=== Yahoo Instant Messenger ===  </Text>
+						</Text>
+						<checkbox Name="doYahooTells" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>10%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forward Tells</Text>
+							<AutoTooltip> this will forward all tells to your Yahoo Instant Messenger </AutoTooltip>
+							<OnLoad>
+								if ${Script[vga].VariableScope.doYahooTells}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[vga].VariableScope.doYahooTells:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doYahooSays" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>18%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forward Says</Text>
+							<AutoTooltip> this will forward all says to your Yahoo Instant Messenger </AutoTooltip>
+							<OnLoad>
+								if ${Script[vga].VariableScope.doYahooSays}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[vga].VariableScope.doYahooSays:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doYahooEmotes" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>26%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Forward Emotes</Text>
+							<AutoTooltip> this will forward all Emotes to your Yahoo Instant Messenger </AutoTooltip>
+							<OnLoad>
+								if ${Script[vga].VariableScope.doYahooEmotes}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[vga].VariableScope.doYahooEmotes:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name="doYahooGM" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>34%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Notify detection of a GM</Text>
+							<AutoTooltip> this will notify you that a GM was detected </AutoTooltip>
+							<OnLoad>
+								if ${Script[vga].VariableScope.doYahooGM}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[vga].VariableScope.doYahooGM:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<Text Name='txtYahooHandle' Template='VG.BoldText'>
+							<X>6%</X>
+							<Y>46%</Y>
+							<Width>35%</Width>
+							<Height>25</Height>
+							<Alignment>Right</Alignment>
+							<Text>Handle</Text>
+						</Text>
+						
+						<Textentry Name='YahooHandle' Template='VG.TextEntry'>
+							<X>43%</X>
+							<Y>45%</Y>
+							<Width>55%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[vga].VariableScope.YahooHandle}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[vga].VariableScope.YahooHandle:Set[${This.Text}]
+									;echo YahooHandle>0 == [${Script[vga].VariableScope.YahooHandle}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[vga].VariableScope.YahooHandle:Set[""]
+									;echo YahooHandle=0 == [${Script[vga].VariableScope.YahooHandle}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Text Name='txtYahooPassword' Template='VG.BoldText'>
+							<X>6%</X>
+							<Y>56%</Y>
+							<Width>35%</Width>
+							<Height>25</Height>
+							<Alignment>Right</Alignment>
+							<Text>Password</Text>
+						</Text>
+						
+						<Textentry Name='YahooPassword' Template='VG.TextEntry'>
+							<X>43%</X>
+							<Y>55%</Y>
+							<Width>55%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[vga].VariableScope.YahooPassword}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[vga].VariableScope.YahooPassword:Set[${This.Text}]
+									;echo YahooPassword>0 == [${Script[vga].VariableScope.YahooPassword}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[vga].VariableScope.YahooPassword:Set[""]
+									;echo YahooPassword=0 == [${Script[vga].VariableScope.YahooPassword}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Text Name='txtYahooSendToHandle' Template='VG.BoldText'>
+							<X>5%</X>
+							<Y>66%</Y>
+							<Width>36%</Width>
+							<Height>20</Height>
+							<Alignment>Right</Alignment>
+							<Text>Send to Handle</Text>
+						</Text>
+						
+						<Textentry Name='YahooSendToHandle' Template='VG.TextEntry'>
+							<X>43%</X>
+							<Y>65%</Y>
+							<Width>55%</Width>
+							<Height>18</Height>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[vga].VariableScope.YahooSendToHandle}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[vga].VariableScope.YahooSendToHandle:Set[${This.Text}]
+									;echo YahooSendToHandle>0 == [${Script[vga].VariableScope.YahooSendToHandle}]
+								}
+								elseif ${This.Text.Length}==0
+								{
+									Script[vga].VariableScope.YahooSendToHandle:Set[""]
+									;echo YahooSendToHandle=0 == [${Script[vga].VariableScope.YahooSendToHandle}]
+								}
+							</OnChange>
+						</Textentry>
+
+						<Commandbutton Name="LoginIntoYahoo" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>20%</X>
+							<Y>80%</Y>
+							<Width>26%</Width>
+							<Height>23</Height>
+							<Text>Login</Text>
+							<OnLeftClick>
+								YahooIM:Login
+							</OnLeftClick>
+						</Commandbutton>
+						
+						<Commandbutton Name="YahooHelp" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>55%</X>
+							<Y>80%</Y>
+							<Width>35%</Width>
+							<Height>23</Height>
+							<Text>H E L P</Text>
+							<OnLeftClick>
+								UIElement[CHUD]:ToggleVisible
+								<Command>UIElement[CHUD]:ToggleVisible</Command>
+							</OnLeftClick>
+						</Commandbutton>
+					</Tab>
+
+
+
+	<!--Top Level Interaction Tab-->
     <Tab name='Interaction'>
       <Frame name='InteractionFrm'>
         <Height>100%</Height>
@@ -5250,7 +5461,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoStopFollow:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='StopFollowing' Template='VG.TextEntry'>
@@ -5268,7 +5479,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.StopFollowtxt:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5287,7 +5498,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoStartFollow:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='StartFollowing' Template='VG.TextEntry'>
@@ -5305,7 +5516,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.StartFollowtxt:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5324,7 +5535,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoKillLevitate:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='KillingLevitate' Template='VG.TextEntry'>
@@ -5342,7 +5553,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.KillingLevitate:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5361,7 +5572,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoReassistTank:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='ReassistingTank' Template='VG.TextEntry'>
@@ -5379,7 +5590,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.ReassistingTank:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5398,7 +5609,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoPause:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='Pausetxt' Template='VG.TextEntry'>
@@ -5416,7 +5627,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.Pausetxt:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5435,7 +5646,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoResume:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='Resumetxt' Template='VG.TextEntry'>
@@ -5453,7 +5664,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.Resumetxt:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5472,7 +5683,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoBuffage:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='Buffagetxt' Template='VG.TextEntry'>
@@ -5490,7 +5701,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.Buffagetxt:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5509,7 +5720,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoLootToggle:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='LootToggletxt' Template='VG.TextEntry'>
@@ -5527,7 +5738,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.LootToggle:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5546,7 +5757,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoDiploToggle:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='DiploToggletxt' Template='VG.TextEntry'>
@@ -5564,7 +5775,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.DiploToggle:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5583,7 +5794,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoBurstCall:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name='BurstCalltxt' Template='VG.TextEntry'>
@@ -5601,7 +5812,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.BurstCalltxt:Set[${This.Text}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5630,7 +5841,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRequestBuffs[1]:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRequestBuff1' Template='VG.BoldText'>
@@ -5656,7 +5867,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuff[1]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5683,7 +5894,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuffPlayer[1]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5710,7 +5921,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellRequestBuffPlayer[1]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5729,7 +5940,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRequestBuffs[2]:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRequestBuff2' Template='VG.BoldText'>
@@ -5755,7 +5966,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuff[2]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5782,7 +5993,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuffPlayer[2]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5809,7 +6020,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellRequestBuffPlayer[2]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5828,7 +6039,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRequestBuffs[3]:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRequestBuff3' Template='VG.BoldText'>
@@ -5854,7 +6065,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuff[3]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5881,7 +6092,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuffPlayer[3]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5908,7 +6119,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellRequestBuffPlayer[3]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5927,7 +6138,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRequestBuffs[4]:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRequestBuff4' Template='VG.BoldText'>
@@ -5953,7 +6164,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuff[4]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -5980,7 +6191,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestBuffPlayer[4]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6007,7 +6218,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellRequestBuffPlayer[4]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6026,7 +6237,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRequestItems[1]:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRequestItems1' Template='VG.BoldText'>
@@ -6052,7 +6263,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestItems[1]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6079,7 +6290,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestItemsPlayer[1]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6106,7 +6317,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellRequestItemsPlayer[1]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6125,7 +6336,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.doRequestItems[2]:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txtRequestItems2' Template='VG.BoldText'>
@@ -6151,7 +6362,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestItems[2]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6178,7 +6389,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.RequestItemsPlayer[2]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6205,7 +6416,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellRequestItemsPlayer[2]:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6224,7 +6435,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoRequestCurePoison:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="RequestCurePoisonEntry" Template="VG.TextEntry">
@@ -6244,7 +6455,7 @@
                       <OnLeftClick>
                         ;AddRequestCurePoison "${UIElement[RequestCurePoisonEntry@RequestsCFrm@RequestsMain@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}"
                         ;BuildRequestCurePoison
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="RequestCurePoisonList" Template="VG.ListBox">
@@ -6261,7 +6472,7 @@
                         ;RemoveRequestCurePoison "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         ;BuildRequestCurePoison
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtCurePoisonPlayer' Template='VG.BoldText'>
@@ -6287,7 +6498,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.CurePoisonPlayer:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6314,7 +6525,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellCurePoisonPlayer:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6333,7 +6544,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoRequestCureDisease:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Textentry Name="RequestCureDiseaseEntry" Template="VG.TextEntry">
@@ -6353,7 +6564,7 @@
                       <OnLeftClick>
                         ;AddRequestCureDisease "${UIElement[RequestCureDiseaseEntry@RequestsCFrm@RequestsMain@InteractionSubTab@InteractionFrm@Interaction@ABot@vga_gui].Text}"
                         ;BuildRequestCureDisease
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </CommandButton>
                     <Listbox Name="RequestCureDiseaseList" Template="VG.ListBox">
@@ -6370,7 +6581,7 @@
                         ;RemoveRequestCureDisease "${This.SelectedItem}"
                         This.SelectedItem:Remove
                         ;BuildRequestCureDisease
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnRightClick>
                     </Listbox>
                     <Text Name='txtCureDiseasePlayer' Template='VG.BoldText'>
@@ -6396,7 +6607,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.CureDiseasePlayer:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6423,7 +6634,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellCureDiseasePlayer:Set[${This.Text}]]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6450,7 +6661,7 @@
                         if ${This.Text.Length} > 0
                         {
                         Script[vga].VariableScope.TellMinutes:Set[${Math.Calc[${This.Text}].Int}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnChange>
                     </Textentry>
@@ -6469,7 +6680,7 @@
                       </OnLoad>
                       <OnLeftClick>
                         Script[vga].VariableScope.DoTellRequestOutofBattle:Set[${This.Checked}]
-                        Script[VGA]:QueueCommand[call LavishSave]
+                        Script[vga]:QueueCommand[call LavishSave]
                       </OnLeftClick>
                     </checkbox>
                     <Text Name='txt-------' Template='VG.BoldText'>
