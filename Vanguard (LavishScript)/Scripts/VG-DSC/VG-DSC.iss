@@ -110,7 +110,7 @@ variable int Crit_DPS_RaJinFlarePct = 80
 variable int StartAttack = 100
 variable string ExecutedAbility = None
 variable string TargetsTarget = "No Target"
-variable bool doBuffArea = TRUE
+variable bool doBuffArea = FALSE
 
 
 ;; UI - Loot Tab
@@ -691,7 +691,7 @@ function WeChunked()
 ;===================================================
 function MoveToMeleeDistance()
 {
-	if ${doHunt}
+	if ${doHunt} || ${Me.IsGrouped}
 	{
 		;; target nearest target
 		if ${Me.Encounter}>0
@@ -863,23 +863,40 @@ function PullTarget()
 		call MoveCloser ${PullDistance}
 	}
 
-	;; attack with our ranged attack
-	call RaJinFlare
-	wait 10 ${Me.Ability[${RaJinFlare}].IsReady}
-	wait 1
-	call RaJinFlare
-	wait 10 ${Me.Ability[${RaJinFlare}].IsReady}
-	wait 1
-	call RaJinFlare
-	if ${Return}
+	;; slow this mob down
+	if ${Me.Ability[${EnfeeblingShuriken}](exists)}
 	{
-		wait 5 !${doRangedWeapon}
+		call EnfeeblingShuriken
+		if ${Return}
+		{
+			vgecho [${Time}] Enfeebling Shuriken, distance = ${Me.Target.Distance}
+		}
+	}
+	
+	;; try to get 3 ranged attacks in
+	if ${Me.Ability[${RaJinFlare}](exists)} && ${doRangedWeapon}
+	{
+		wait 90 ${Me.Ability[${RaJinFlare}](exists)}
+		wait 2
+		call RaJinFlare
+		if ${Return}
+		{
+			wait 2
+			call RaJinFlare
+			if ${Return}
+			{
+				wait 2
+				call RaJinFlare
+				if ${Return}
+				{
+					wait 2
+				}
+			}
+		}
 	}
 
-	if !${doRangedWeapon}
-	{
-		call MoveToMeleeDistance
-	}
+	;; for whatever reason... lets move closer to the target
+	call MoveToMeleeDistance
 
 	if !${Me.InCombat}
 	{
@@ -1445,6 +1462,22 @@ function:bool Crit_DPS()
 					break
 				}
 			}
+		}
+	}
+	return FALSE
+}
+
+;===================================================
+;===   RANGED DAMAGE:  Enfeebling Shuriken      ====
+;===================================================
+function:bool EnfeeblingShuriken()
+{
+	if ${doRangedWeapon}
+	{
+		call UseAbility "${EnfeeblingShuriken}"
+		if ${Return}
+		{
+			return TRUE
 		}
 	}
 	return FALSE
