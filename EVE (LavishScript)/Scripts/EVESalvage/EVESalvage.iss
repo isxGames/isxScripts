@@ -11,6 +11,8 @@ variable(script) int FleetIterator
 variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
+variable(script) bool IgnoreContraband
+variable(script) bool SalvageYellowWrecks
 
 
 ;; INCLUDE FUNCTION LIBRARY
@@ -35,6 +37,8 @@ function main(... Args)
   SalvageHereOnly:Set[FALSE]
   UsingAt:Set[FALSE]
   StopAfterSalvaging:Set[FALSE]
+  IgnoreContraband:Set[FALSE]
+  SalvageYellowWrecks:Set[FALSE]
 
   if !${ISXEVE(exists)}
   {
@@ -47,7 +51,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.2 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.3 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.  Copying to an index just in case we have a desire at some point to add/remove elements.
 	if ${Args.Size} > 0
@@ -58,6 +62,10 @@ function main(... Args)
 				DoLoot:Set[TRUE]
 			elseif (${Args[${Iterator}].Equal[-HERE]} || ${Args[${Iterator}].Equal[-here]})
 				SalvageHereOnly:Set[TRUE]				
+			elseif (${Args[${Iterator}].Equal[-IGNORECONTRABAND]} || ${Args[${Iterator}].Equal[-ignorecontraband]} || ${Args[${Iterator}].Equal[-IgnoreContraband]})
+				IgnoreContraband:Set[TRUE]		
+			elseif (${Args[${Iterator}].Equal[-SALVYELLOWWRECKS]} || ${Args[${Iterator}].Equal[-salvyellowwrecks]} || ${Args[${Iterator}].Equal[-SalvYellowWrecks]})
+				SalvageYellowWrecks:Set[TRUE]										
 			elseif (${Args[${Iterator}].Equal[-MAXTARGETS]} || ${Args[${Iterator}].Equal[-maxtargets]})
 			{
 				Iterator:Inc
@@ -110,10 +118,12 @@ function main(... Args)
   	echo "*           'run EVESalvage -at <FleetMemberName>'"
   	echo "*           'run EVESalvage -here'"
   	echo "*"
-  	echo "* Flags:    '-loot'  					[the script will loot all cans that are found in space]"
-  	echo "*           '-stop'  					[the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
-  	echo "*           '-here'  					[the script will only work at your current location (it will return to your 'home station' unless the -stop flag is used)]"
-  	echo "*           '-maxtargets #'  	[indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]"
+  	echo "* Flags:    '-loot'  					  [the script will loot all cans that are found in space]"
+  	echo "*           '-stop'  					  [the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
+  	echo "*           '-here'  					  [the script will only work at your current location (it will return to your 'home station' unless the -stop flag is used)]"
+  	echo "*           '-IgnoreContraband' [the script will not loot contraband (only applicable if the '-loot' flag is used)]"
+  	echo "*           '-SalvYellowWrecks' [the script will take the time to salvage yellow wrecks]"
+  	echo "*           '-maxTargets #'  	  [indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]"
   	echo "*"
   	echo "* Examples: 'run EVESalvage -loot -here -stop'"
   	echo "*           'run EVESalvage -loot -MaxTargets 6 Salvage1 Salvage2 Salvage3'"
@@ -127,14 +137,19 @@ function main(... Args)
 
 
   if ${DoLoot}
+  {
   	echo "- CONFIG:  The Salvager will loot cans as it goes."
+  	if ${IgnoreContraband}
+  		echo "- CONFIG:  When looting, the Salvager will ignore contraband items."
+  }
   else
   	echo "- CONFIG:  The Salvager will *NOT* loot cans as it goes."
   if ${SalvageHereOnly}
   	echo "- CONFIG:  The Salvager will only salvage at this location."
   if ${StopAfterSalvaging}
     echo "- CONFIG:  This script will immediately end after salvaging has finished."
-  	
+  if ${SalvageYellowWrecks}
+  	echo "- CONFIG:  The Salvager will take the time to salvage yellow wrecks (NOTE: Yellow wrecks are processed after all other wrecks have been handled.)"
 
   ;;; For use with the -at flag
   if ${UsingAt}
@@ -198,7 +213,7 @@ function main(... Args)
 	
 	  wait 10
 		call DoSalvage ${DoLoot}
-		call CloseCargo
+		call CloseShipCargo
 	
 		; Remove bookmark now that we're done
 		wait 2
@@ -305,7 +320,8 @@ function main(... Args)
 		    			while !${Me.ToEntity.IsCloaked}
 		    			wait 5
 		    		}
-						elseif (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Distance} > ${EVE.MinWarpDistance})
+		    		
+						if (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Distance} > ${EVE.MinWarpDistance})
 						{
 			    		;;; Warp to location
 			    		echo "- Warping to salvage location..."
@@ -325,7 +341,7 @@ function main(... Args)
 		    		wait 2
 		    		echo "- Salvage operation at '${SalvageLocationLabels[${i}]}' complete ... removing bookmark."
 		    		EVE.Bookmark[${SalvageLocationLabels[${i}]}]:Remove
-		    		call CloseCargo
+		    		call CloseShipCargo
 		    		wait 10
 		    }
       }
@@ -337,12 +353,12 @@ function main(... Args)
 	if (${SalvageHereOnly})
 	{
 		call DoSalvage ${DoLoot}
-		call CloseCargo
+		call CloseShipCargo
 	}
 
   if (${StopAfterSalvaging})
   {
-  	call CloseCargo
+  	call CloseShipCargo
     return
   }
 
