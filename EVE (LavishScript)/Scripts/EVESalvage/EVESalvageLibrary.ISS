@@ -25,6 +25,7 @@ variable(script) index:item EntityCargo
 variable(script) collection:int64 ProcessedEntities
 variable(script) collection:int64 CargoholdLoot
 variable(script) bool LibraryInitialized
+variable(script) index:entity Belts
 
 variable(script) string EVELootingFileName
 variable(script) bool CheckLootItemDB
@@ -150,7 +151,7 @@ function DoGetLoot(bool InReachOnly)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Loot nearby cans before thinking about those that are out of "looting range"
 	i:Set[1]
-	EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
+	EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && HaveLootRights = 1]
 	if ${NearbyCans.Used} > 0
 	{
 		echo "LOOT -     Looting: ${NearbyCans.Used} cargo containers found, processing..."
@@ -164,13 +165,17 @@ function DoGetLoot(bool InReachOnly)
 				continue
 			}
 			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; Ignore cans for which we do not have loot rights
+			;; NOTE:  This should no longer occur since we're now only acquiring the list of cargo containers for which we have loot rights.
 			if (!${NearbyCans[${i}].HaveLootRights})
 			{
 				i:Inc
 				ProcessedEntities:Set[${NearbyCans[${i}].ID},1]
 				continue
-			}	 	
+			}	
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 	
 	
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; Loot
@@ -190,7 +195,7 @@ function DoGetLoot(bool InReachOnly)
   ;;; Handle ALL remaining cans if we have NOT set ${InReachOnly}
 	if (!${InReachOnly})
 	{
-		EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+		EVE:QueryEntities[Cans, Name =- "Cargo Container" && HaveLootRights = 1]
 		if (${Cans.Used} == 0)
 		{
 			echo "LOOT -     No cargo containers (loot) found in this area."
@@ -337,14 +342,18 @@ function DoGetLoot(bool InReachOnly)
 					continue
 				}
 				
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;; Ignore cans for which we do not have loot rights
+				;; NOTE:  This should no longer occur since we're now only acquiring the list of cargo containers for which we have loot rights.
 				if (!${Cans[${i}].HaveLootRights})
 				{
 					echo "LOOT ---   You do not have loot rights for ${Cans[${i}].Name} -- skipping..."
 					i:Inc
 					ProcessedEntities:Set[${Cans[${i}].ID},1]
 					continue
-				}	 			
+				}	 		
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 			
 				;; Otherwise, lock the target and go on to the next 'can' in the array!
 				echo "Loot ---   LockTarget :: ${Cans[${i}].Name}... ${Cans[${i}].GroupID}"
@@ -974,9 +983,10 @@ function DoSalvage(bool LootCans)
 					while (${j:Inc} <= ${TractorBeamCount})				
 				}
 			}
-			elseif (${Targets[${k}].Distance} > ${MaxTractorRange})
+			elseif (${Targets[${k}].Distance} > ${MaxTractorRange} || ${SalvagingYellowWrecks})
 			{
-				echo "SALV --    Wreck out of Tractor range..."
+				if !${SalvagingYellowWrecks}
+					echo "SALV --    Wreck out of Tractor range..."
 								
 				;;;;;;;;;;;;;;;;;;;;;;;
 				;; Do not approach if any salvagers are actively running
@@ -1076,6 +1086,26 @@ function DoSalvage(bool LootCans)
 								wait 2
 							}
 						}
+						
+						if ${SalvagingYellowWrecks}
+						{
+							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+							;; Engage a Salvager (if one is available)
+							j:Set[1]
+							do
+							{
+								if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
+								{
+									echo "SALV ---   Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
+									Salvagers[${j}]:Click
+									wait 8
+									break
+								}
+							}
+							while ${j:Inc} <= ${SalvagerCount}
+							;; END LOOP [Activating a salvager on this wreck]
+							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;						
+						}
 					}
 				}
 			}
@@ -1160,6 +1190,8 @@ function DoSalvage(bool LootCans)
 
 function TransferSalvagedItemsToHangar()
 {	
+		variable iterator ThisCargo
+	
 		; Currently, this function only supports unloading to a station hangar
 		if (!${Me.InStation})
 		{
@@ -1186,7 +1218,6 @@ function TransferSalvagedItemsToHangar()
 			Me.Ship:GetCargo[MyCargo]
 		}					
 						
-		variable iterator ThisCargo
 		
 		NewCargoToTransfer:Clear[]
 		MyCargo:GetIterator[ThisCargo]
@@ -1242,6 +1273,8 @@ function TransferSalvagedItemsToHangar()
 
 function TransferLootToHangar()
 {	
+		variable iterator ThisCargo
+	
 		; Currently, this function only supports unloading to a station hangar
 		if (!${Me.InStation})
 		{
@@ -1277,9 +1310,7 @@ function TransferLootToHangar()
 			wait 20
 			Me.Ship:GetCargo[MyCargo]
 		}
-		
-		variable iterator ThisCargo
-		
+
 		NewCargoToTransfer:Clear
 		MyCargo:GetIterator[ThisCargo]
 		if ${ThisCargo:First(exists)}
@@ -1523,6 +1554,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 function LootCargoContainer(entity CargoContainer)
 {	
 		variable iterator ThisCargo
+		variable iterator CargoIterator
 		variable float64 TotalCargoVolume = 0
 		
 		;; Open Entity for looting
@@ -1610,7 +1642,6 @@ function LootCargoContainer(entity CargoContainer)
 		;; Adding loot to "CargoholdLoot" (which is used when unloading loot to the 'Scavenger Home Base' station)
 		if ${CargoToTransfer.Used} > 0
 		{
-			variable iterator CargoIterator
 			CargoToTransfer:GetIterator[CargoIterator]
 			
 			if ${CargoIterator:First(exists)}
@@ -1659,4 +1690,198 @@ function LootCargoContainer(entity CargoContainer)
 		*/
 
 		return
+}
+
+function ReturnToSalvagerHomeBase()
+{
+	
+  call CloseShipCargo
+  if (${EVE.Bookmark["Salvager Home Base"](exists)})
+	{
+		echo "- Salvage operations completed .. returning to home base"
+		if (!${EVE.Bookmark["Salvager Home Base"].SolarSystemID.Equal[${Me.SolarSystemID}]})
+		{
+			echo "- Setting destination and activating auto pilot for return to home base"
+			EVE.Bookmark["Salvager Home Base"]:SetDestination
+			wait 5
+			EVE:Execute[CmdToggleAutopilot]
+			do
+			{
+			   wait 50
+			   if !${Me.AutoPilotOn(exists)}
+			   {
+			     do
+			     {
+			        wait 5
+			     }
+			     while !${Me.AutoPilotOn(exists)}
+			   }
+			}
+			while ${Me.AutoPilotOn}
+			wait 20
+		}
+
+		if (!${Me.InStation})
+		{
+			;;; Warp to location
+			echo "- Warping to home base location"
+			EVE.Bookmark["Salvager Home Base"]:WarpTo
+			wait 120
+			do
+			{
+				wait 20
+			}
+			while (${Me.ToEntity.Mode} == 3)
+			wait 20
+	
+			;;; Dock, if applicable
+			if ${EVE.Bookmark["Salvager Home Base"].ToEntity(exists)}
+			{
+				if (${EVE.Bookmark["Salvager Home Base"].ToEntity.CategoryID.Equal[3]})
+				{
+					EVE.Bookmark["Salvager Home Base"].ToEntity:Approach
+					do
+					{
+						wait 20
+					}
+					while (${EVE.Bookmark["Salvager Home Base"].ToEntity.Distance} > 50)
+	
+					EVE.Bookmark["Salvager Home Base"].ToEntity:Dock
+					Counter:Set[0]
+					do
+					{
+					   wait 20
+					   Counter:Inc[20]
+					   if (${Counter} > 200)
+					   {
+					      echo " - Docking atttempt failed ... trying again."
+					      ;EVE.Bookmark[${Destination}].ToEntity:Dock
+					      Entity[CategoryID = 3]:Dock
+					      Counter:Set[0]
+					   }
+					}
+					while (!${Me.InStation})
+				}
+			}
+		}
+		
+		if (${Me.InStation})		
+		{
+			;;; unload all "salvaged" items to hangar ;;;;;;;;;;;;;;
+		  wait 10
+		  echo "- Unloading Salvaged Items..."
+		 	call TransferSalvagedItemsToHangar
+		 	wait 2
+		 	if (${DoLoot})
+		 	{
+		 		echo "- Unloading Looted Items..."
+		 		call TransferLootToHangar
+		 	}
+		}
+	}
+	
+	return
+}
+
+function LeaveStation()
+{
+	if !${LeftStation}
+	{
+		if ${Me.InStation}
+		{
+			   ;; First, make sure we have a bookmark labeled "Salvager Home Base" -- otherwise, create it ;;;;;;;;;;;;;
+
+			   if !${EVE.Bookmark["Salvager Home Base"](exists)}
+			   {
+			   		echo "- Creating 'Salvager Home Base' bookmark..."
+			  		EVE:CreateBookmark["Salvager Home Base"]
+			  		wait 10
+			 	 }
+
+		   echo "- Undocking from station..."
+		   EVE:Execute[CmdExitStation]
+		   wait 150
+		   Counter:Set[0]
+		   if (${Me.InStation})
+		   {
+		   		do
+		   		{
+		   			wait 20
+		   			Counter:Inc[20]
+			   			if (${Counter} > 300)
+			   			{
+			   			  echo "- Undocking attempt failed ... trying again."
+			   				EVE:Execute[CmdExitStation]
+			   				Counter:Set[0]
+			   			}
+		   		}
+		   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
+		   }
+		   wait 5
+		   LeftStation:Set[TRUE]
+		}
+		else
+		{
+			 if (!${StopAfterSalvaging} && !${EVE.Bookmark["Salvager Home Base"](exists)})
+			 {
+		   		echo "- WARNING: EVESalvage has detected that you are not in a station and that you do not have a bookmark labeled 'Salvager Home Base'.   This means that the"
+		   		echo "-          script will end without returning to a station to unload.  You can change this by starting in a station (the script will create the bookmark for you"
+		   		echo "-          or create the bookmark manually while in the station you want to use as your 'home base'"
+		   		StopAfterSalvaging:Set[TRUE]
+		   		echo "- CONFIG:  This script will immediately end after salvaging has finished."
+		   }				
+		}
+		wait 1
+	}	
+}
+
+function CycleBeltsAndSalvage()
+{
+	variable iterator AsteroidBelt
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; The caller should ensure that we are in space 
+	if ${Me.InStation}
+	{
+		echo "CycleBelts::  You must be in space to cycle asteroid belts for scavenging."
+		return
+	}
+
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Populate 'Belts' for this system  
+	EVE:QueryEntities[Belts, Name =- "Asteroid Belt"]
+	
+	if (${Belts.Used} < 1)
+	{
+		echo "CycleBelts::  There does not appear to be any asteroid belts in this system."
+		return
+	}
+	else
+		echo "CycleBelts::  There are ${Belts.Used} asteroid belts in this system."
+	
+	Belts:GetIterator[AsteroidBelt]
+	if ${AsteroidBelt:First(exists)}
+	do
+	{
+		echo "CycleBelts::  Traveling to ${AsteroidBelt.Value.Name}..."
+		
+		if (${AsteroidBelt.Value.Distance} > ${EVE.MinWarpDistance})
+		{
+  		;;; Warp to location
+  		echo "CycleBelts::  Warping to ${AsteroidBelt.Value.Name}..."
+  		AsteroidBelt.Value:WarpTo
+  		wait 120
+  		do
+  		{
+  			wait 20
+  		}
+  		while (${Me.ToEntity.Mode} == 3)
+  	}
+
+  	wait 10
+		call DoSalvage ${DoLoot}
+	}
+	while ${AsteroidBelt:Next(exists)}
+
 }
