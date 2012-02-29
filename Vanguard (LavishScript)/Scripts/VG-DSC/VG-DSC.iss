@@ -879,20 +879,20 @@ function PullTarget()
 		wait 90 ${Me.Ability[${RaJinFlare}](exists)}
 		wait 2
 		call RaJinFlare
-		if ${Return}
-		{
-			wait 2
-			call RaJinFlare
-			if ${Return}
-			{
-				wait 2
-				call RaJinFlare
-				if ${Return}
-				{
-					wait 2
-				}
-			}
-		}
+		;if ${Return}
+		;{
+		;	wait 2
+		;	call RaJinFlare
+		;	if ${Return}
+		;	{
+		;		wait 2
+		;		call RaJinFlare
+		;		if ${Return}
+		;		{
+		;			wait 2
+		;		}
+		;	}
+		;}
 	}
 
 	;; for whatever reason... lets move closer to the target
