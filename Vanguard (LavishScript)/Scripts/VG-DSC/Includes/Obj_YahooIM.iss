@@ -27,9 +27,9 @@ objectdef  Obj_YahooIM
 	method Initialize()
 	{
 		;; delete this file if it exists
-		if ${FilePath.FileExists[/InstantMessages.txt]}
+		if ${FilePath.FileExists[/InstantMessenger.txt]}
 		{
-			rm "${This.FilePath}/InstantMessages.txt"
+			rm "${This.FilePath}/InstantMessenger.txt"
 		}
 
 		;; if ISXIM isn't loaded then load it
@@ -244,80 +244,28 @@ objectdef  Obj_YahooIM
 		This:EchoIt["From ${From}, Message=${Message}"]
 	
 		;; This is here to protect others from sending commands to the script
-		if ${From.Equal[${YahooSendToHandle}]}
-		{
-			if "${Message.Left[1].Equal[#]}"
-			{
-				variable string Command
-				Command:Set[${Message.Right[-1]}]
-				switch ${Command}
-				{
-					case MyXP
-						Yahoo:IM[${YahooSendToHandle.Escape},"Level=${Me.Level} Exp=${Me.XP}"]
-						This:EchoIt["Level=${Me.Level} Exp=${Me.XP}"]
-						break
-					case MyStatus
-						Yahoo:IM[${YahooSendToHandle.Escape},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC}.Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}"]
-						This:EchoIt["InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC}.Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}"]
-						break
-					case HuntOn
-						doHunt:Set[TRUE]
-						Yahoo:IM[${YahooSendToHandle.Escape},"Hunting=${doHunt}"]
-						This:EchoIt["Hunting=${doHunt}"]
-						break
-					case HuntOff
-						doHunt:Set[FALSE]
-						Yahoo:IM[${YahooSendToHandle.Escape},"Hunting=${doHunt}"]
-						This:EchoIt["Hunting=${doHunt}"]
-						break
-					case Camp
-						doCamp:Set[TRUE]
-						Yahoo:IM[${YahooSendToHandle.Escape},"Camp after battle"]
-						This:EchoIt["Camp after battle"]
-						break
-					case BuffArea
-						doBuffArea:Set[TRUE]
-						Yahoo:IM[${YahooSendToHandle.Escape},"buff Area"]
-						This:EchoIt["Buff Area"]
-						break
-					case Help
-						Yahoo:IM[${YahooSendToHandle},"#MyXP - Level/XP\n#MyStatus - InCombat/Health/Nearest targets\n#HuntOn - turn Hunting on\n#HuntOff - turn Hunting off\n#Camp - camp\n#BuffArea - buff everyone"]
-						This:EchoIt["Help"]
-						break
-					case Default
-						break
-				}
-			}
-			if "${Message.Left[1].Equal[/]}"
-			{
-				timedcommand 10 "VGExecute ${Message.Escape}"
-				;VGExecute "${Message}"
-			}
-		}
-	}
-
-	;;;;;;;;;;
-	;; IM RECEIVED (OFFLINE) - what are we going to do if we receive an instant message
-	method Yahoo_onOfflineIMReceived(string From, string Message, string When)
-	{
-		This:EchoIt["From ${From}, Message=${Message}"]
-	
 		;; This is here to protect others from sending commands to the script
 		if ${From.Equal[${YahooSendToHandle}]}
 		{
+			if "${Message.Left[1].Equal[?]}"
+			{
+				Yahoo:IM[${YahooSendToHandle},"Any VG command such as /laugh, /tell Someone Hello\n#XP - Level/XP\n#Status - InCombat/Health/Nearest targets/Total Kills\n#HuntOn - turn Hunting on\n#HuntOff - turn Hunting off\n#Camp - camp\n#BuffArea - buff everyone"]
+				This:EchoIt["Help"]
+			}
+		
 			if "${Message.Left[1].Equal[#]}"
 			{
 				variable string Command
 				Command:Set[${Message.Right[-1]}]
 				switch ${Command}
 				{
-					case MyXP
+					case XP
 						Yahoo:IM[${YahooSendToHandle},"Level=${Me.Level} Exp=${Me.XP}"]
 						This:EchoIt["Level=${Me.Level} Exp=${Me.XP}"]
 						break
-					case MyStatus
-						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}"]
-						This:EchoIt["InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}"]
+					case Status
+						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotal Kills=${TotalKills}"]
+						This:EchoIt["InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotalKills=${TotalKills}"]
 						break
 					case HuntOn
 						doHunt:Set[TRUE]
@@ -340,7 +288,7 @@ objectdef  Obj_YahooIM
 						This:EchoIt["Buff Area"]
 						break
 					case Help
-						Yahoo:IM[${YahooSendToHandle},"#MyXP - Level/XP\n#MyStatus - InCombat/Health/Nearest targets\n#HuntOn - turn Hunting on\n#HuntOff - turn Hunting off\n#Camp - camp\n#BuffArea - buff everyone"]
+						Yahoo:IM[${YahooSendToHandle},"Any VG command such as /laugh, /tell Someone Hello\n#XP - Level/XP\n#Status - InCombat/Health/Nearest targets/Total Kills\n#HuntOn - turn Hunting on\n#HuntOff - turn Hunting off\n#Camp - camp\n#BuffArea - buff everyone"]
 						This:EchoIt["Help"]
 						break
 					case Default
@@ -350,7 +298,70 @@ objectdef  Obj_YahooIM
 			if "${Message.Left[1].Equal[/]}"
 			{
 				timedcommand 10 "VGExecute ${Message.Escape}"
-				;VGExecute "${Message}"
+			}
+		}
+	}
+
+	;;;;;;;;;;
+	;; IM RECEIVED (OFFLINE) - what are we going to do if we receive an instant message
+	method Yahoo_onOfflineIMReceived(string From, string Message, string When)
+	{
+		This:EchoIt["From ${From}, Message=${Message}"]
+	
+		;; This is here to protect others from sending commands to the script
+		if ${From.Equal[${YahooSendToHandle}]}
+		{
+			if "${Message.Left[1].Equal[?]}"
+			{
+				Yahoo:IM[${YahooSendToHandle},"Any VG command such as /laugh, /tell Someone Hello\n#XP - Level/XP\n#Status - InCombat/Health/Nearest targets/Total Kills\n#HuntOn - turn Hunting on\n#HuntOff - turn Hunting off\n#Camp - camp\n#BuffArea - buff everyone"]
+				This:EchoIt["Help"]
+			}
+		
+			if "${Message.Left[1].Equal[#]}"
+			{
+				variable string Command
+				Command:Set[${Message.Right[-1]}]
+				switch ${Command}
+				{
+					case XP
+						Yahoo:IM[${YahooSendToHandle},"Level=${Me.Level} Exp=${Me.XP}"]
+						This:EchoIt["Level=${Me.Level} Exp=${Me.XP}"]
+						break
+					case Status
+						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotal Kills=${TotalKills}"]
+						This:EchoIt["InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotalKills=${TotalKills}"]
+						break
+					case HuntOn
+						doHunt:Set[TRUE]
+						Yahoo:IM[${YahooSendToHandle},"Hunting=${doHunt}"]
+						This:EchoIt["Hunting=${doHunt}"]
+						break
+					case HuntOff
+						doHunt:Set[FALSE]
+						Yahoo:IM[${YahooSendToHandle},"Hunting=${doHunt}"]
+						This:EchoIt["Hunting=${doHunt}"]
+						break
+					case Camp
+						doCamp:Set[TRUE]
+						Yahoo:IM[${YahooSendToHandle},"Camp after battle"]
+						This:EchoIt["Camp after battle"]
+						break
+					case BuffArea
+						doBuffArea:Set[TRUE]
+						Yahoo:IM[${YahooSendToHandle},"buffing Area = ${doBuffArea}"]
+						This:EchoIt["Buff Area"]
+						break
+					case Help
+						Yahoo:IM[${YahooSendToHandle},"Any VG command such as /laugh, /tell Someone Hello\n#XP - Level/XP\n#Status - InCombat/Health/Nearest targets/Total Kills\n#HuntOn - turn Hunting on\n#HuntOff - turn Hunting off\n#Camp - camp\n#BuffArea - buff everyone"]
+						This:EchoIt["Help"]
+						break
+					case Default
+						break
+				}
+			}
+			if "${Message.Left[1].Equal[/]}"
+			{
+				timedcommand 10 "VGExecute ${Message.Escape}"
 			}
 		}
 	}

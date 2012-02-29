@@ -178,6 +178,8 @@ function SellItemList()
 			LavishSettings:AddSet[SellItem]
 			LavishSettings[SellItem]:AddSet[ItemList]
 			LavishSettings[SellItem]:Import[${Script.CurrentDirectory}/Saves/ItemList.xml]
+			wait 3
+			waitframe
 		}
 
 		;; set our settingsetref to ItemList
@@ -234,19 +236,12 @@ function SellItemList()
 
 						while ${Me.Inventory[exactname,${sName}](exists)} && ${Me.Target(exists)} && ${doAutoSell} && !${Me.InCombat}
 						{
-							echo "Before Selling = ${Iterator.Key}"
-							vgecho "Before Selling = ${Iterator.Key}"
-
 							;; some items will not sell if you set the quantity to the reported quantity
 							Me.Inventory[exactname,${sName}]:Sell[1]
 							wait 2
 
-							echo "After Selling = ${Iterator.Key}"
-							vgecho "After Selling = ${Iterator.Key}"
-							
-							;; due to bug... must reset iterator to ItemList
-							ItemList:Set[${LavishSettings[SellItem].FindSet[ItemList]}]
-							ItemList:GetSettingIterator[Iterator]
+							;ItemList:Set[${LavishSettings[SellItem].FindSet[ItemList]}]
+							;ItemList:GetSettingIterator[Iterator]
 						}
 					}
 				}
@@ -266,7 +261,7 @@ function SellItemList()
 		finishsilver:Set[${Math.Abs[${Math.Calc[${diff}/100]}].Int}]
 		diff:Dec[${Math.Abs[${Math.Calc[${finishsilver}*100]}].Int}]
 		finishcopper:Set[${diff}]
-		if ${finishplat}>0 && ${finishgold}>0 && ${finishcopper}>0
+		if ${finishplat}>0 || ${finishgold}>0 || ${finishcopper}>0
 		{
 			EchoIt "Selling earned ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"
 			vgecho "Selling earned ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"	
@@ -296,6 +291,8 @@ function DeleteItemList()
 		LavishSettings:AddSet[DeleteItem]
 		LavishSettings[DeleteItem]:AddSet[ItemList]
 		LavishSettings[DeleteItem]:Import[${Script.CurrentDirectory}/Saves/ItemList.xml]
+		wait 3
+		waitframe
 	}
 
 	;; set our settingsetref to ItemList
@@ -414,7 +411,7 @@ atom(script) InventoryChatEvent(string Text, string ChannelNumber, string Channe
 				if ( ${FindSell.Length} > 1 )
 				{
 					AddItemList "${FindSell}"
-					PopulateItemList "ItemList@Items@Tabs@VG-DSC"
+					;PopulateItemList "ItemList@Items@Tabs@VG-DSC"
 				}
 			}
 		}
@@ -529,7 +526,7 @@ function RepairItemList(bool ForceRepairs=FALSE)
 	finishsilver:Set[${Math.Abs[${Math.Calc[${diff}/100]}].Int}]
 	diff:Dec[${Math.Abs[${Math.Calc[${finishsilver}*100]}].Int}]
 	finishcopper:Set[${diff}]
-	if ${finishplat}>0 && ${finishgold}>0 && ${finishcopper}>0
+	if ${finishplat}>0 || ${finishgold}>0 || ${finishcopper}>0
 	{
 		EchoIt "Repairs costed ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"
 		vgecho "Repairs costed ${finishplat}p ${finishgold}g ${finishsilver}s ${finishcopper}c"
