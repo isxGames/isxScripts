@@ -1,5 +1,4 @@
 ;; Declare all script or global variables here
-variable(script) int NumSalvageLocations
 variable(script) bool LeftStation
 variable(script) int Counter
 variable(script) bool DoLoot
@@ -13,6 +12,8 @@ variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
 variable(script) bool IgnoreContraband
 variable(script) bool SalvageYellowWrecks
+variable(script) bool CycleBelts
+variable(script) int CycleBeltsCount
 
 
 ;; INCLUDE FUNCTION LIBRARY
@@ -39,6 +40,7 @@ function main(... Args)
   StopAfterSalvaging:Set[FALSE]
   IgnoreContraband:Set[FALSE]
   SalvageYellowWrecks:Set[FALSE]
+  CycleBelts:Set[FALSE]
 
   if !${ISXEVE(exists)}
   {
@@ -64,6 +66,12 @@ function main(... Args)
 				SalvageHereOnly:Set[TRUE]				
 			elseif (${Args[${Iterator}].Equal[-IGNORECONTRABAND]} || ${Args[${Iterator}].Equal[-ignorecontraband]} || ${Args[${Iterator}].Equal[-IgnoreContraband]})
 				IgnoreContraband:Set[TRUE]		
+			elseif (${Args[${Iterator}].Equal[-CYCLEBELTS]} || ${Args[${Iterator}].Equal[-cyclebelts]} || ${Args[${Iterator}].Equal[-CycleBelts]})
+			{
+				CycleBelts:Set[TRUE]						
+				Iterator:Inc
+				CycleBeltsCount:Set[${Args[${Iterator}]}]
+			}
 			elseif (${Args[${Iterator}].Equal[-SALVYELLOWWRECKS]} || ${Args[${Iterator}].Equal[-salvyellowwrecks]} || ${Args[${Iterator}].Equal[-SalvYellowWrecks]})
 				SalvageYellowWrecks:Set[TRUE]										
 			elseif (${Args[${Iterator}].Equal[-MAXTARGETS]} || ${Args[${Iterator}].Equal[-maxtargets]})
@@ -120,6 +128,7 @@ function main(... Args)
   	echo "*"
   	echo "* Flags:    '-loot'  					  [the script will loot all cans that are found in space]"
   	echo "*           '-stop'  					  [the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
+  	echo "*           '-cyclebelts #'			[after everything else is handled, the script will cycle through all asteroid belts in the current solar system # times]"
   	echo "*           '-here'  					  [the script will only work at your current location (it will return to your 'home station' unless the -stop flag is used)]"
   	echo "*           '-IgnoreContraband' [the script will not loot contraband (only applicable if the '-loot' flag is used)]"
   	echo "*           '-SalvYellowWrecks' [the script will take the time to salvage yellow wrecks]"
@@ -150,58 +159,29 @@ function main(... Args)
     echo "- CONFIG:  This script will immediately end after salvaging has finished."
   if ${SalvageYellowWrecks}
   	echo "- CONFIG:  The Salvager will take the time to salvage yellow wrecks (NOTE: Yellow wrecks are processed after all other wrecks have been handled.)"
+  if ${CycleBelts}
+  {
+	  echo "- CONFIG:  Once all other given commands have been processed (if applicable) the script will cycle through all asteroid belts ${CycleBeltsCount} times."
+	}
 
-  ;;; For use with the -at flag
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Salvage just this particular area, and then go home (or not)   [ '-here' flag used]
+	if (${SalvageHereOnly})
+	{
+		call DoSalvage ${DoLoot}
+		call CloseShipCargo
+		if (!${StopAfterSalvaging})
+			call ReturnToSalvagerHomeBase
+		return
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; if the '-at' flag is used
   if ${UsingAt}
   {
-		if !${LeftStation}
-		{
-			if ${Me.InStation}
-			{
-				   ;; First, make sure we have a bookmark labeled "Salvager Home Base" -- otherwise, create it ;;;;;;;;;;;;;
-
-				   if !${EVE.Bookmark["Salvager Home Base"](exists)}
-				   {
-				   		echo "- Creating 'Salvager Home Base' bookmark..."
-				  		EVE:CreateBookmark["Salvager Home Base"]
-				  		wait 10
-				 	 }
-	
-			   echo "- Undocking from station..."
-			   EVE:Execute[CmdExitStation]
-			   wait 150
-			   Counter:Set[0]
-			   if (${Me.InStation})
-			   {
-			   		do
-			   		{
-			   			wait 20
-			   			Counter:Inc[20]
-				   			if (${Counter} > 300)
-				   			{
-				   			  echo "- Undocking attempt failed ... trying again."
-				   				EVE:Execute[CmdExitStation]
-				   				Counter:Set[0]
-				   			}
-			   		}
-			   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
-			   }
-			   wait 5
-			   LeftStation:Set[TRUE]
-			}
-			else
-			{
- 				 if (!${StopAfterSalvaging} && !${EVE.Bookmark["Salvager Home Base"](exists)})
- 				 {
- 			   		echo "- WARNING: EVESalvage has detected that you are not in a station and that you do not have a bookmark labeled 'Salvager Home Base'.   This means that the"
- 			   		echo "-          script will end without returning to a station to unload.  You can change this by starting in a station (the script will create the bookmark for you"
- 			   		echo "-          or create the bookmark manually while in the station you want to use as your 'home base'"
- 			   		StopAfterSalvaging:Set[TRUE]
- 			   		echo "- CONFIG:  This script will immediately end after salvaging has finished."
- 			   }				
-			}
-			wait 1
-		}
+		call LeaveStation
 
 		echo "- Warping to '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' for salvage operation..."
 		MyFleet.Get[${FleetIterator}]:WarpTo
@@ -219,77 +199,22 @@ function main(... Args)
 		wait 2
 		echo "- Salvage operation at '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' complete..."
   }
+  ;; END '-at'
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ; Checks required for using bookmarks...
-  if (!${UsingAt} && !${SalvageHereOnly})
-  {
-      if (${SalvageLocationLabels.Used} < 1)
-      {
-        echo "- Sorry, you did not specify any valid bookmarks"
-        return
-      }
-  }
 
-  ;;; Loop for use with bookmarks...we skip this if using -at or -here ;;;;;;;
-  if (!${UsingAt} && !${SalvageHereOnly})
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Handle any BOOKMARKS provided as arguments
+  if (!${SalvageHereOnly} && ${SalvageLocationLabels.Used} > 0)
   {
-      NumSalvageLocations:Set[${SalvageLocationLabels.Used}]
-      echo "- ${NumSalvageLocations} salvage locations identified"
+      echo "- ${SalvageLocationLabels.Used} salvage locations identified"
       do
       {
 				if (${EVE.Bookmark[${SalvageLocationLabels[${i}]}](exists)})
     		{
     	      echo "- Salvage location found in bookmarks: (${SalvageLocationLabels[${i}]}) (${i})..."
 
-		    		;;; Leave station
-		    		if !${LeftStation}
-		    		{
-		       			if ${Me.InStation}
-		       			{
-		    				   ;; First, make sure we have a bookmark labeled "Salvager Home Base" -- otherwise, create it ;;;;;;;;;;;;;
-		
-		    				   if !${EVE.Bookmark["Salvager Home Base"](exists)}
-		    				   {
-		    				   		echo "- Creating 'Salvager Home Base' bookmark..."
-		    				  		EVE:CreateBookmark["Salvager Home Base"]
-		    				  		wait 10
-		    				   }
-		
-		       			   echo "- Undocking from station..."
-		       			   EVE:Execute[CmdExitStation]
-		       			   wait 150
-		       			   Counter:Set[0]
-		       			   if (${Me.InStation})
-		       			   {
-		       			   		do
-		       			   		{
-		       			   			wait 20
-		       			   			Counter:Inc[20]
-		    				   			if (${Counter} > 300)
-		    				   			{
-		    				   			  echo "- Undocking atttempt failed ... trying again."
-		    				   				EVE:Execute[CmdExitStation]
-		    				   				Counter:Set[0]
-		    				   			}
-		       			   		}
-		       			   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
-		       			   }
-		       			   wait 5
-		       			   LeftStation:Set[TRUE]
-		       			}
-		       			else
-		       			{
-					 				 if (!${StopAfterSalvaging} && !${EVE.Bookmark["Salvager Home Base"](exists)})
-					 				 {
-					 			   		echo "- WARNING: EVESalvage has detected that you are not in a station and that you do not have a bookmark labeled 'Salvager Home Base'.   This means that the"
-					 			   		echo "-          script will end without returning to a station to unload.  You can change this by starting in a station (the script will create the bookmark for you"
-					 			   		echo "-          or create the bookmark manually while in the station you want to use as your 'home base'"
-					 			   		StopAfterSalvaging:Set[TRUE]
-					 			   		echo "- CONFIG:  This script will immediately end after salvaging has finished."
-					 			   }	
-		       			}
-		       			wait 1
-		    		}
+						call LeaveStation
 
 		    		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
 		    		if (!${EVE.Bookmark[${SalvageLocationLabels[${i}]}].SolarSystemID.Equal[${Me.SolarSystemID}]})
@@ -345,110 +270,37 @@ function main(... Args)
 		    		wait 10
 		    }
       }
-      while ${i:Inc} <= ${NumSalvageLocations}
+      while ${i:Inc} <= ${SalvageLocationLabels.Used}
   }
-  ; Loop for use with bookmarks ENDS ;;;;;;;;;;;;;;;;;;;
-
-	;; Salvage just this particular area, and then go home (or not)
-	if (${SalvageHereOnly})
+  ;; Loop for use with bookmarks ENDS 
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; '-cyclebelts #'
+	if (${CycleBelts})
 	{
-		call DoSalvage ${DoLoot}
+		call LeaveStation
+		i:Set[1]
+		do
+		{
+			echo "- Beginning trip #${i} through asteroid belts in this system."
+			call CycleBeltsAndSalvage
+			echo "- Finished trip #${i} through the asteroid belts in this system."
+		}
+		while ${i:Inc} < ${CycleBeltsCount}
+		
 		call CloseShipCargo
 	}
-
-  if (${StopAfterSalvaging})
-  {
-  	call CloseShipCargo
-    return
-  }
-
-  ;;; Finished...returning home ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  echo "- Salvage operations completed .. returning to home base"
-  if (${EVEWindow[MyShipCargo](exists)})
-  	EVEWindow[MyShipCargo]:Close
-  	
-  if (${EVE.Bookmark["Salvager Home Base"](exists)})
-	{
-		if (!${EVE.Bookmark["Salvager Home Base"].SolarSystemID.Equal[${Me.SolarSystemID}]})
-		{
-			echo "- Setting destination and activating auto pilot for return to home base"
-			EVE.Bookmark["Salvager Home Base"]:SetDestination
-			wait 5
-			EVE:Execute[CmdToggleAutopilot]
-			do
-			{
-			   wait 50
-			   if !${Me.AutoPilotOn(exists)}
-			   {
-			     do
-			     {
-			        wait 5
-			     }
-			     while !${Me.AutoPilotOn(exists)}
-			   }
-			}
-			while ${Me.AutoPilotOn}
-			wait 20
-		}
-
-		if (!${Me.InStation})
-		{
-			;;; Warp to location
-			echo "- Warping to home base location"
-			EVE.Bookmark["Salvager Home Base"]:WarpTo
-			wait 120
-			do
-			{
-				wait 20
-			}
-			while (${Me.ToEntity.Mode} == 3)
-			wait 20
+	;; END '-cyclebelts #'
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
-			;;; Dock, if applicable
-			if ${EVE.Bookmark["Salvager Home Base"].ToEntity(exists)}
-			{
-				if (${EVE.Bookmark["Salvager Home Base"].ToEntity.CategoryID.Equal[3]})
-				{
-					EVE.Bookmark["Salvager Home Base"].ToEntity:Approach
-					do
-					{
-						wait 20
-					}
-					while (${EVE.Bookmark["Salvager Home Base"].ToEntity.Distance} > 50)
-	
-					EVE.Bookmark["Salvager Home Base"].ToEntity:Dock
-					Counter:Set[0]
-					do
-					{
-					   wait 20
-					   Counter:Inc[20]
-					   if (${Counter} > 200)
-					   {
-					      echo " - Docking atttempt failed ... trying again."
-					      ;EVE.Bookmark[${Destination}].ToEntity:Dock
-					      Entity[CategoryID = 3]:Dock
-					      Counter:Set[0]
-					   }
-					}
-					while (!${Me.InStation})
-				}
-			}
-		}
-		
-		if (${Me.InStation})		
-		{
-			;;; unload all "salvaged" items to hangar ;;;;;;;;;;;;;;
-		  wait 10
-		  echo "- Unloading Salvaged Items..."
-		 	call TransferSalvagedItemsToHangar
-		 	wait 2
-		 	if (${DoLoot})
-		 	{
-		 		echo "- Unloading Looted Items..."
-		 		call TransferLootToHangar
-		 	}
-		}
-	}
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Return to "Salvager Home Base" [if that bookmark exists]
+  if (!${StopAfterSalvaging})
+		call ReturnToSalvagerHomeBase
+	else
+		call CloseShipCargo
+	;; END [return to "Salvager Home Base"]
  	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   return
