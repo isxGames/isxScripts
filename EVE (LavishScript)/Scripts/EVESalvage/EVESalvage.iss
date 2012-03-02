@@ -147,7 +147,7 @@ function main(... Args)
   	echo "*"
   	echo "* Examples: 'run EVESalvage -loot -here -stop'"
   	echo "*           'run EVESalvage -loot Salvage1 Salvage2 Salvage3'"
-  	echo "*           'run EVESalvage -loot -IgnoreRightsOnWrecks -cyclebelts 999'
+  	echo "*           'run EVESalvage -loot -IgnoreRightsOnWrecks -cyclebelts 999'"
   	echo "*"
   	echo "* NOTES:"
   	echo "*           1.  EVESalvage will unload to a station with a bookmark labeled 'Salvager Home Base'.  If this bookmark does not exist, it will be created"
