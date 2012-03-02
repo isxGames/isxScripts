@@ -11,7 +11,8 @@ variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
 variable(script) bool IgnoreContraband
-variable(script) bool SalvageYellowWrecks
+variable(script) bool IgnoreRightsOnWrecks
+variable(script) bool IgnoreRightsOnCans
 variable(script) bool CycleBelts
 variable(script) int CycleBeltsCount
 
@@ -39,7 +40,8 @@ function main(... Args)
   UsingAt:Set[FALSE]
   StopAfterSalvaging:Set[FALSE]
   IgnoreContraband:Set[FALSE]
-  SalvageYellowWrecks:Set[FALSE]
+  IgnoreRightsOnWrecks:Set[FALSE]
+  IgnoreRightsOnCans:Set[FALSE]
   CycleBelts:Set[FALSE]
 
   if !${ISXEVE(exists)}
@@ -53,7 +55,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.3 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.4 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.  Copying to an index just in case we have a desire at some point to add/remove elements.
 	if ${Args.Size} > 0
@@ -71,9 +73,17 @@ function main(... Args)
 				CycleBelts:Set[TRUE]						
 				Iterator:Inc
 				CycleBeltsCount:Set[${Args[${Iterator}]}]
+				if ${CycleBeltsCount} == 0
+				{
+					echo "- CONFIG:  Bad Syntax used with '-CycleBelts'.  (Proper Syntax:  '-CycleBelts #')
+					echo "- CONFIG:  Aborting script"
+					return
+				}
 			}
-			elseif (${Args[${Iterator}].Equal[-SALVYELLOWWRECKS]} || ${Args[${Iterator}].Equal[-salvyellowwrecks]} || ${Args[${Iterator}].Equal[-SalvYellowWrecks]})
-				SalvageYellowWrecks:Set[TRUE]										
+			elseif (${Args[${Iterator}].Equal[-IGNORERIGHTSONCANS]} || ${Args[${Iterator}].Equal[-ignorerightsoncans]} || ${Args[${Iterator}].Equal[-IgnoreRightsOnCans]})
+				IgnoreRightsOnCans:Set[TRUE]		
+			elseif (${Args[${Iterator}].Equal[-IGNORERIGHTSONWRECKS]} || ${Args[${Iterator}].Equal[-ignorerightsonwrecks]} || ${Args[${Iterator}].Equal[-IgnoreRightsOnWrecks]})
+				IgnoreRightsOnWrecks:Set[TRUE]													
 			elseif (${Args[${Iterator}].Equal[-MAXTARGETS]} || ${Args[${Iterator}].Equal[-maxtargets]})
 			{
 				Iterator:Inc
@@ -88,7 +98,7 @@ function main(... Args)
 
 				if ${MyFleetCount} <= 0
 				{
-				    echo "- CONFIG:  Sorry, you cannot clear a field 'at' someone that is not in your fleet."
+				    echo "- CONFIG:  Sorry, you cannot clear a field 'at' someone who is not in your fleet."
 				    echo "- CONFIG:  Aborting script"
 				    return
 				}
@@ -126,21 +136,25 @@ function main(... Args)
   	echo "*           'run EVESalvage -at <FleetMemberName>'"
   	echo "*           'run EVESalvage -here'"
   	echo "*"
-  	echo "* Flags:    '-loot'  					  [the script will loot all cans that are found in space]"
-  	echo "*           '-stop'  					  [the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
-  	echo "*           '-cyclebelts #'			[after everything else is handled, the script will cycle through all asteroid belts in the current solar system # times]"
-  	echo "*           '-here'  					  [the script will only work at your current location (it will return to your 'home station' unless the -stop flag is used)]"
-  	echo "*           '-IgnoreContraband' [the script will not loot contraband (only applicable if the '-loot' flag is used)]"
-  	echo "*           '-SalvYellowWrecks' [the script will take the time to salvage yellow wrecks]"
-  	echo "*           '-maxTargets #'  	  [indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]"
+  	echo "* Flags:    '-loot'  					      [the script will loot all cans that are found in space]"
+  	echo "*           '-stop'  					      [the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
+  	echo "*           '-cyclebelts #'			    [after everything else is handled, the script will cycle through all asteroid belts in the current solar system # times]"
+  	echo "*           '-here'  					      [the script will only work at your current location (it will return to your 'home station' unless the -stop flag is used)]"
+  	echo "*           '-IgnoreContraband'     [the script will not loot contraband (only applicable if the '-loot' flag is used)]"
+  	echo "*           '-IgnoreRightsOnWrecks' [the script will take the time to salvage wrecks for which you do not have loot rights (after all other wrecks have been salvaged)]"
+  	echo "*           '-IgnoreRightsOnCans'   [when '-loot' is used, the script will attempt to loot all cans regardless of 'loot rights']"
+  	echo "*           '-maxTargets #'  	      [indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]"
   	echo "*"
   	echo "* Examples: 'run EVESalvage -loot -here -stop'"
-  	echo "*           'run EVESalvage -loot -MaxTargets 6 Salvage1 Salvage2 Salvage3'"
+  	echo "*           'run EVESalvage -loot Salvage1 Salvage2 Salvage3'"
+  	echo "*           'run EVESalvage -loot -IgnoreRightsOnWrecks -cyclebelts 999'
   	echo "*"
   	echo "* NOTES:"
   	echo "*           1.  EVESalvage will unload to a station with a bookmark labeled 'Salvager Home Base'.  If this bookmark does not exist, it will be created"
   	echo "*               if you start the script while in a station.   This bookmark is NOT deleted after the script ends.  So, if you want to set a new station"
   	echo "*               for unloading, you will need to delete the old bookmark."
+  	echo "*"
+  	echo "*           2.  The '-CycleBelts #' option will cycle through the belts in the system that is current once all other directives have been processed."
   	return
   }
 
@@ -150,6 +164,8 @@ function main(... Args)
   	echo "- CONFIG:  The Salvager will loot cans as it goes."
   	if ${IgnoreContraband}
   		echo "- CONFIG:  When looting, the Salvager will ignore contraband items."
+	  if ${IgnoreRightsOnCans}
+	  	echo "- CONFIG:  The Salvager will loot (or attempt to loot) all cans regardless of whether you have 'loot rights' or not."	
   }
   else
   	echo "- CONFIG:  The Salvager will *NOT* loot cans as it goes."
@@ -157,12 +173,10 @@ function main(... Args)
   	echo "- CONFIG:  The Salvager will only salvage at this location."
   if ${StopAfterSalvaging}
     echo "- CONFIG:  This script will immediately end after salvaging has finished."
-  if ${SalvageYellowWrecks}
-  	echo "- CONFIG:  The Salvager will take the time to salvage yellow wrecks (NOTE: Yellow wrecks are processed after all other wrecks have been handled.)"
+  if ${IgnoreRightsOnWrecks}
+  	echo "- CONFIG:  The Salvager will take the time to salvage wrecks for which you do not have loot rights (NOTE: These wrecks are processed after all other wrecks have been handled.)"
   if ${CycleBelts}
-  {
 	  echo "- CONFIG:  Once all other given commands have been processed (if applicable) the script will cycle through all asteroid belts ${CycleBeltsCount} times."
-	}
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Salvage just this particular area, and then go home (or not)   [ '-here' flag used]
