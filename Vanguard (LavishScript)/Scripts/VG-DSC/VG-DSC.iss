@@ -89,7 +89,7 @@ variable int NextItemListCheck = ${Script.RunningTime}
 variable int64 LastTargetID = 0
 variable int TotalKills = 0
 variable filepath DebugFilePath = "${Script.CurrentDirectory}/Saves"
-
+variable int HuntStartTime = ${Script.RunningTime}
 
 ;; create Shurikens
 variable bool doCreateShurikens = FALSE
@@ -188,9 +188,17 @@ variable(global) Obj_YahooIM YahooIM
 ;===================================================
 function main()
 {
+
 	;; keep looping this until we end the script
 	while ${isRunning}
 	{
+		;;;;;;;;;;
+		;; keep resetting this until we start hunting
+		if !${doHunt}
+		{
+			HuntStartTime:Set[${Script.RunningTime}]
+		}
+		
 		;;;;;;;;;;
 		;; Make sure autoAttack is turned on/off, this will catch those abilities you manually
 		;; tried executing
@@ -703,7 +711,7 @@ function MoveToMeleeDistance()
 			}
 		}
 
-		if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0 && ${Me.Target.Distance}<15)
+		if !${doRangedWeapon} || (${doRangedWeapon} && ${Me.Target.CombatState}>0 && ${Me.Target.Distance}<10)
 		{
 			if ${Me.Encounter}>0 || !${Me.InCombat} || ${Me.Target.CombatState}>0
 			{
@@ -861,8 +869,14 @@ function PullTarget()
 	{
 		call FaceTarget
 		call MoveCloser ${PullDistance}
+		if ${Me.Ability[${EnfeeblingShuriken}].Range}<=10 || ${Me.Ability[${RaJinFlare}].Range}<=10
+		{
+			call FaceTarget
+			call MoveCloser 3
+		}
 	}
 
+	
 	;; slow this mob down
 	if ${Me.Ability[${EnfeeblingShuriken}](exists)}
 	{
