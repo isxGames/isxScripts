@@ -22,7 +22,7 @@ variable(script) int CycleBeltsCount
 
 function atexit()
 {
- 	echo "EVE Salvager Script -- Ended"
+ 	echo "EVESalvage:: EVE Salvager Script -- Ended"
 	return
 }
 
@@ -46,7 +46,7 @@ function main(... Args)
 
   if !${ISXEVE(exists)}
   {
-     echo "- CONFIG:  ISXEVE must be loaded to use this script."
+     echo "EVESalvage.CONFIG::  ISXEVE must be loaded to use this script."
      return
   }
   do
@@ -55,7 +55,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.4 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.5 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.  Copying to an index just in case we have a desire at some point to add/remove elements.
 	if ${Args.Size} > 0
@@ -75,8 +75,8 @@ function main(... Args)
 				CycleBeltsCount:Set[${Args[${Iterator}]}]
 				if ${CycleBeltsCount} == 0
 				{
-					echo "- CONFIG:  Bad Syntax used with '-CycleBelts'.  (Proper Syntax:  '-CycleBelts #')
-					echo "- CONFIG:  Aborting script"
+					echo "EVESalvage.CONFIG::  Bad Syntax used with '-CycleBelts'.  (Proper Syntax:  '-CycleBelts #')
+					echo "EVESalvage.CONFIG::  Aborting script"
 					return
 				}
 			}
@@ -98,8 +98,8 @@ function main(... Args)
 
 				if ${MyFleetCount} <= 0
 				{
-				    echo "- CONFIG:  Sorry, you cannot clear a field 'at' someone who is not in your fleet."
-				    echo "- CONFIG:  Aborting script"
+				    echo "EVESalvage.CONFIG::  Sorry, you cannot clear a field 'at' someone who is not in your fleet."
+				    echo "EVESalvage.CONFIG::  Aborting script"
 				    return
 				}
 				FoundThem:Set[FALSE]
@@ -115,8 +115,8 @@ function main(... Args)
 
 			    if !${FoundThem}
 			    {
-			        echo "- CONFIG:  There does not seem to be a fleet member with the name '${Args[${Iterator}]}'..."
-			        echo "- CONFIG:  Aborting script"
+			        echo "EVESalvage.CONFIG::  There does not seem to be a fleet member with the name '${Args[${Iterator}]}'..."
+			        echo "EVESalvage.CONFIG::  Aborting script"
 			        return
 			    }
 
@@ -126,7 +126,7 @@ function main(... Args)
 			elseif ${EVE.Bookmark[${Args[${Iterator}]}](exists)}
 				SalvageLocationLabels:Insert[${Args[${Iterator}]}]
 			else
-				echo "- CONFIG: '${Args[${Iterator}]}' is not a valid Bookmark label or command line argument:  Ignoring..."
+				echo "EVESalvage.CONFIG::  '${Args[${Iterator}]}' is not a valid Bookmark label or command line argument:  Ignoring..."
 		}
 		while ${Iterator:Inc} <= ${Args.Size}
 	}
@@ -161,31 +161,31 @@ function main(... Args)
 
   if ${DoLoot}
   {
-  	echo "- CONFIG:  The Salvager will loot cans as it goes."
+  	echo "EVESalvage.CONFIG::  The Salvager will loot cans as it goes."
   	if ${IgnoreContraband}
-  		echo "- CONFIG:  When looting, the Salvager will ignore contraband items."
+  		echo "EVESalvage.CONFIG::  When looting, the Salvager will ignore contraband items."
 	  if ${IgnoreRightsOnCans}
-	  	echo "- CONFIG:  The Salvager will loot (or attempt to loot) all cans regardless of whether you have 'loot rights' or not."	
+	  	echo "EVESalvage.CONFIG::  The Salvager will loot (or attempt to loot) all cans regardless of whether you have 'loot rights' or not."	
   }
   else
-  	echo "- CONFIG:  The Salvager will *NOT* loot cans as it goes."
+  	echo "EVESalvage.CONFIG::  The Salvager will *NOT* loot cans as it goes."
   if ${SalvageHereOnly}
-  	echo "- CONFIG:  The Salvager will only salvage at this location."
+  	echo "EVESalvage.CONFIG::  The Salvager will only salvage at this location."
   if ${StopAfterSalvaging}
-    echo "- CONFIG:  This script will immediately end after salvaging has finished."
+    echo "EVESalvage.CONFIG::  This script will immediately end after salvaging has finished."
   if ${IgnoreRightsOnWrecks}
-  	echo "- CONFIG:  The Salvager will take the time to salvage wrecks for which you do not have loot rights (NOTE: These wrecks are processed after all other wrecks have been handled.)"
+  	echo "EVESalvage.CONFIG::  The Salvager will take the time to salvage wrecks for which you do not have loot rights (NOTE: These wrecks are processed after all other wrecks have been handled.)"
   if ${CycleBelts}
-	  echo "- CONFIG:  Once all other given commands have been processed (if applicable) the script will cycle through all asteroid belts ${CycleBeltsCount} times."
+	  echo "EVESalvage.CONFIG::  Once all other given commands have been processed (if applicable) the script will cycle through all asteroid belts ${CycleBeltsCount} times."
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Salvage just this particular area, and then go home (or not)   [ '-here' flag used]
 	if (${SalvageHereOnly})
 	{
-		call DoSalvage ${DoLoot}
+		call SalvageArea ${DoLoot}
 		call CloseShipCargo
 		if (!${StopAfterSalvaging})
-			call ReturnToSalvagerHomeBase
+			call ReturnToHomeBase
 		return
 	}
 	;;
@@ -197,7 +197,7 @@ function main(... Args)
   {
 		call LeaveStation
 
-		echo "- Warping to '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' for salvage operation..."
+		echo "EVESalvage::  Warping to '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' for salvage operation..."
 		MyFleet.Get[${FleetIterator}]:WarpTo
 		do
 		{
@@ -206,12 +206,12 @@ function main(... Args)
 		while (${Me.ToEntity.Mode} == 3)
 	
 	  wait 10
-		call DoSalvage ${DoLoot}
+		call SalvageArea ${DoLoot}
 		call CloseShipCargo
 	
 		; Remove bookmark now that we're done
 		wait 2
-		echo "- Salvage operation at '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' complete..."
+		echo "EVESalvage::  Salvage operation at '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' complete..."
   }
   ;; END '-at'
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,19 +221,19 @@ function main(... Args)
 	;; Handle any BOOKMARKS provided as arguments
   if (!${SalvageHereOnly} && ${SalvageLocationLabels.Used} > 0)
   {
-      echo "- ${SalvageLocationLabels.Used} salvage locations identified"
+      echo "EVESalvage::  ${SalvageLocationLabels.Used} salvage locations identified"
       do
       {
 				if (${EVE.Bookmark[${SalvageLocationLabels[${i}]}](exists)})
     		{
-    	      echo "- Salvage location found in bookmarks: (${SalvageLocationLabels[${i}]}) (${i})..."
+    	      echo "EVESalvage::  Salvage location found in bookmarks: (${SalvageLocationLabels[${i}]}) (${i})..."
 
 						call LeaveStation
 
 		    		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
 		    		if (!${EVE.Bookmark[${SalvageLocationLabels[${i}]}].SolarSystemID.Equal[${Me.SolarSystemID}]})
 		    		{
-		    		  echo "- Setting Destination and activating auto pilot for salvage operation ${i} (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Label})."
+		    		  echo "EVESalvage::  Setting Destination and activating auto pilot for salvage operation ${i} (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Label})."
 		    		  wait 5
 		    			EVE.Bookmark[${SalvageLocationLabels[${i}]}]:SetDestination
 		    			wait 5
@@ -263,7 +263,7 @@ function main(... Args)
 						if (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Distance} > ${EVE.MinWarpDistance})
 						{
 			    		;;; Warp to location
-			    		echo "- Warping to salvage location..."
+			    		echo "EVESalvage::  Warping to salvage location..."
 			    		EVE.Bookmark[${SalvageLocationLabels[${i}]}]:WarpTo
 			    		wait 120
 			    		do
@@ -274,11 +274,11 @@ function main(... Args)
 			    	}
 
           	wait 10
-  					call DoSalvage ${DoLoot}
+  					call SalvageArea ${DoLoot}
 
 		    		; Remove bookmark now that we're done
 		    		wait 2
-		    		echo "- Salvage operation at '${SalvageLocationLabels[${i}]}' complete ... removing bookmark."
+		    		echo "EVESalvage::  Salvage operation at '${SalvageLocationLabels[${i}]}' complete ... removing bookmark."
 		    		EVE.Bookmark[${SalvageLocationLabels[${i}]}]:Remove
 		    		call CloseShipCargo
 		    		wait 10
@@ -297,9 +297,9 @@ function main(... Args)
 		i:Set[1]
 		do
 		{
-			echo "- Beginning trip #${i} through asteroid belts in this system."
+			echo "EVESalvage::  Beginning trip #${i} through asteroid belts in this system."
 			call CycleBeltsAndSalvage
-			echo "- Finished trip #${i} through the asteroid belts in this system."
+			echo "EVESalvage::  Finished trip #${i} through the asteroid belts in this system."
 		}
 		while ${i:Inc} < ${CycleBeltsCount}
 		
@@ -311,7 +311,7 @@ function main(... Args)
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Return to "Salvager Home Base" [if that bookmark exists]
   if (!${StopAfterSalvaging})
-		call ReturnToSalvagerHomeBase
+		call ReturnToHomeBase
 	else
 		call CloseShipCargo
 	;; END [return to "Salvager Home Base"]

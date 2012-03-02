@@ -54,56 +54,61 @@ function InitializeLibrary(bool LootCans)
 
 function GetModulesInformation(bool LootCans)
 {
-	variable int k = 1
+	variable iterator iModule
+	
 	TractorBeams:Clear
 	Salvagers:Clear
 	Afterburners:Clear
-	
+
 	;; This function is always called when using the EVESalvageLibrary, so initialize it the first time it's called
 	if !${LibraryInitialized}
 		call InitializeLibrary ${LootCans}
 
 	;; Determine the modules at our disposal
-	echo "INFO - Acquiring Information about your ship's modules..."
+	echo "EVESalvage->GetModulesInformation::  Acquiring Information about your ship's modules..."
 	Me.Ship:GetModules[AllModules]
 	if (${AllModules.Used} <= 0)
 	{
 		echo ERROR -- Your ship does not appear to have any modules
 		return
 	}
-	do
+	AllModules:GetIterator[iModule]
+	if (${iModule:First(exists)})
 	{
-   	if (${AllModules[${k}].MaxTractorVelocity} > 0)
-   	{
-   	  ;echo "Adding ${AllModules[${k}].ToItem.Name} to 'TractorBeams'"
-			TractorBeams:Insert[${AllModules[${k}].ID}]
-			if ${MaxTractorRange} <= 0
-			{
-				MaxTractorRange:Set[${AllModules[${k}].OptimalRange}]
-				;echo "MaxTractorRange set to: ${MaxTractorRange}"
-			}
-   	}
-   	elseif (${AllModules[${k}].AccessDifficultyBonus} > 0)
-   	{
-   	  ;echo "Adding ${AllModules[${k}].ToItem.Name} to 'Salvagers'"
-   	  Salvagers:Insert[${AllModules[${k}].ID}]
-			if ${MaxSalvageRange} <= 0
-			{
-				MaxSalvageRange:Set[${AllModules[${k}].OptimalRange}]
-			}   	  
-   	}
-   	elseif (${AllModules[${k}].MaxVelocityBonus} > 0)
-   	{
-   	  ;echo "Adding ${AllModules[${k}].ToItem.Name} to 'Afterburners'"
-   	  Afterburners:Insert[${AllModules[${k}].ID}] 	  
-   	}   	
+		do
+		{
+	   	if (${iModule.Value.MaxTractorVelocity} > 0)
+	   	{
+	   	  ;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'TractorBeams'"
+				TractorBeams:Insert[${iModule.Value.ID}]
+				if ${MaxTractorRange} <= 0
+				{
+					MaxTractorRange:Set[${iModule.Value.OptimalRange}]
+					;echo "EVESalvage->GetModulesInformation::  MaxTractorRange set to: ${MaxTractorRange}"
+				}
+	   	}
+	   	elseif (${iModule.Value.AccessDifficultyBonus} > 0)
+	   	{
+	   	  ;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'Salvagers'"
+	   	  Salvagers:Insert[${iModule.Value.ID}]
+				if ${MaxSalvageRange} <= 0
+				{
+					MaxSalvageRange:Set[${iModule.Value.OptimalRange}]
+				}   	  
+	   	}
+	   	elseif (${iModule.Value.MaxVelocityBonus} > 0)
+	   	{
+	   	  ;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'Afterburners'"
+	   	  Afterburners:Insert[${iModule.Value.ID}] 	  
+	   	}   	
+		}
+		while (${iModule:Next(exists)})
 	}
-	while ${k:Inc} <= ${AllModules.Used}
 	
 	TractorBeamCount:Set[${TractorBeams.Used}]
 	SalvagerCount:Set[${Salvagers.Used}]
 	AfterburnerCount:Set[${Afterburners.Used}]
-  echo "INFO - Your ship has ${TractorBeamCount} Tractor Beams, ${SalvagerCount} Salvage Modules, and ${AfterburnerCount} Afterburner."
+  echo "EVESalvage->GetModulesInformation::  Your ship has ${TractorBeamCount} Tractor Beams, ${SalvagerCount} Salvage Modules, and ${AfterburnerCount} Afterburner."
 	return
 }
 
@@ -111,7 +116,7 @@ function OpenShipCargo()
 {
 	if !${EVEWindow[MyShipCargo](exists)}
 	{
-		echo "OPEN ----- Opening Ship Cargohold"
+		echo "EVESalvage->OpenShipCargo::  Opening Ship Cargohold"
 		EVE:Execute[OpenCargoHoldOfActiveShip]
 		wait 15
 		while !${EVEWindow[MyShipCargo](exists)}
@@ -126,11 +131,11 @@ function CloseShipCargo()
 {
 	if ${EVEWindow[MyShipCargo](exists)}
 	{
-		echo "CLOSE ----- Stacking cargo..."
+		echo "EVESalvage->CloseShipCargo::  Stacking cargo..."
 		Me.Ship:StackAllCargo
 		wait 10					
 		
-		echo "CLOSE ----- Closing Ship Cargohold"
+		echo "EVESalvage->CloseShipCargo::  Closing Ship Cargohold"
 		EVEWindow[MyShipCargo]:Close
 		wait 15
 		while ${EVEWindow[MyShipCargo](exists)}
@@ -141,7 +146,7 @@ function CloseShipCargo()
 	}
 }
 
-function DoGetLoot(bool InReachOnly)
+function CheckForLoot(bool InReachOnly)
 {
 	variable int i = 1
 	variable int k
@@ -158,10 +163,10 @@ function DoGetLoot(bool InReachOnly)
 		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && HaveLootRights = 1]
 	if ${NearbyCans.Used} > 0
 	{
-		echo "LOOT -     Looting: ${NearbyCans.Used} cargo containers found, processing..."
+		echo "EVESalvage->CheckForLoot::  ${NearbyCans.Used} cargo containers found, processing..."
 		do
 		{
-			echo "LOOT --    Processing: ${NearbyCans[${i}].Name}"
+			echo "EVESalvage->CheckForLoot::  Processing: ${NearbyCans[${i}].Name}"
 			;; If we've already processed this can, then we want to ignore it.
 			if (${ProcessedEntities.Element[${NearbyCans[${i}].ID}](exists)})
 			{
@@ -194,16 +199,16 @@ function DoGetLoot(bool InReachOnly)
 			
 		if (${Cans.Used} == 0)
 		{
-			echo "LOOT -     No cargo containers (loot) found in this area."
+			echo "EVESalvage->CheckForLoot::  No cargo containers found in this area."
 			return
 		}
 		else
-			echo "LOOT --    ${Cans.Used} cargo containers found, processing..."
+			echo "EVESalvage->CheckForLoot::  ${Cans.Used} cargo containers found, processing..."
 		
 		;;;run until break
 		while 1 == 1
 		{
-			echo echo "LOOT -     ##### Start Loot Pulse #####"
+			echo "EVESalvage->CheckForLoot::  Checking..."
 			
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; Check to see if all of the cargo containers have been processed.  If so, then break
@@ -227,7 +232,7 @@ function DoGetLoot(bool InReachOnly)
 
 			if ${allCansProcessed}
 			{
-				echo "LOOT -     All cargo containers (loot) in this area have been processed."
+				echo "EVESalvage->CheckForLoot::  - All cargo containers (loot) in this area have been processed."
 				return
 			}		
 			;;
@@ -247,13 +252,13 @@ function DoGetLoot(bool InReachOnly)
 					break
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-				echo "LOOT -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Cans.Used} available."
+				echo "EVESalvage->CheckForLoot::  - ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} of ${MaxTargets} targets acquired (${Cans.Used} available)"
 
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;; In case there are fewer cargo containers than our max targets  (otherwise this makes for a neverending loop)
 				if (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} >= ${Cans.Used})
 				{
-					echo "LOOT -     All remaining cargo containers have been targeted.  Processing..."
+					echo "EVESalvage->CheckForLoot::  - All remaining cargo containers have been targeted.  Processing..."
 					break
 				}
 
@@ -292,7 +297,7 @@ function DoGetLoot(bool InReachOnly)
 				    ;; Before moving, make sure we finish targeting
 				    while ${Me.TargetingCount} > 0
 				    {
-				    	echo "LOOT ---   Waiting for lock on all targets..."
+				    	echo "EVESalvage->CheckForLoot::  -- Waiting for lock on all targets..."
 							wait 5
 				    }
 	
@@ -300,7 +305,7 @@ function DoGetLoot(bool InReachOnly)
 						;; Approach
 				    if (${Me.TargetCount} == 0)
 				    {
-				    	echo "LOOT ---   ${Cans[${i}].Name} too far away to target :: Approaching..."
+				    	echo "EVESalvage->CheckForLoot::  -- ${Cans[${i}].Name} too far away to target :: Approaching..."
 							Cans[${i}]:Approach
 							if (${AfterburnerCount} > 0)
 							{
@@ -319,12 +324,10 @@ function DoGetLoot(bool InReachOnly)
 							{
 								wait 20
 							}
-							; EVE:Execute[CmdStopShip]
-							; wait 2
 				    }
 				    else
 				    {
-							echo "LOOT ---   ${Cans[${i}].Name} too far away to target :: Handling current targets before moving..."
+							echo "EVESalvage->CheckForLoot::  --- ${Cans[${i}].Name} too far away to target :: Handling current targets before moving..."
 							i:Inc
 							continue
 				    }
@@ -349,7 +352,7 @@ function DoGetLoot(bool InReachOnly)
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 			
 				;; Otherwise, lock the target and go on to the next 'can' in the array!
-				echo "Loot ---   LockTarget :: ${Cans[${i}].Name}... ${Cans[${i}].GroupID}"
+				echo "EVESalvage->CheckForLoot::  --- LockTarget :: ${Cans[${i}].Name}"
 				Cans[${i}]:LockTarget
 				wait 5
 				i:Inc
@@ -361,13 +364,13 @@ function DoGetLoot(bool InReachOnly)
 			;; Wait until all targets are fully locked
 			if (${Me.TargetingCount} > 0)
 			{
-				echo "LOOT ---   Waiting for lock on all targets..."
+				echo "EVESalvage->CheckForLoot::  -- Waiting for lock on all targets..."
 				while ${Me.TargetingCount} > 0
 				{
 					wait 5
 				}
 			}
-			echo "LOOT **    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
+			echo "EVESalvage->CheckForLoot::  -- ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
 			
 			;;;;;;;;;;;;;;
 			;##################################################
@@ -400,7 +403,7 @@ function DoGetLoot(bool InReachOnly)
 				if (${Targets[${k}].Distance} <= 2500)
 				{
 					Targets[${k}]:MakeActiveTarget
-					echo "LOOT ----  ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
+					echo "EVESalvage->CheckForLoot::  --- ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
 
 					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 					;; Go through tractor beams and turn off any tractors on this cargo container
@@ -423,7 +426,7 @@ function DoGetLoot(bool InReachOnly)
 					
 					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 					;; Loot!!
-					echo "LOOT --    ${Targets[${k}].Name} in range, Start Looting..."
+					echo "EVESalvage->CheckForLoot::  ---- ${Targets[${k}].Name} in range, Start Looting..."
 					ProcessedEntities:Set[${Targets[${k}].ID},1]
 					call LootCargoContainer ${Targets[${k}]}				
 
@@ -451,13 +454,13 @@ function DoGetLoot(bool InReachOnly)
 					k:Inc
 					continue
 				}
-				echo "LOOT -     Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
+				echo "EVESalvage->CheckForLoot::  --- Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
 
 				;;;;;;;;;;;;;;;;;;;;;;;
 				;; (Note:  Cargo containers that are within Salvage Range were already handled)
 				if (${Targets[${k}].Distance} <= 2500)
 				{
-					echo "LOOT --    Cargo container already within loot range.  Looting should take place soon."
+					echo "EVESalvage->CheckForLoot::  Cargo container already within loot range.  Looting should take place soon."
 					k:Inc
 					continue
 				}
@@ -467,7 +470,7 @@ function DoGetLoot(bool InReachOnly)
 				{
 					Targets[${k}]:MakeActiveTarget
 					wait 2
-					echo "LOOT --    Cargo container in tractor range..."
+					echo "EVESalvage->CheckForLoot::  --- Cargo container in tractor range..."
 
 					;;;;;;;;;;;;;;;;;;;;;;;
 					;; Before engaging tractor beam on this target, make sure that it doesn't already have one active on it.
@@ -477,16 +480,16 @@ function DoGetLoot(bool InReachOnly)
 					{
 						if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
 						{
-							;echo "LOOT[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name} is active and is not deactivating"
+							;echo "EVESalvage->CheckForLoot[DEBUG]::  Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name} is active and is not deactivating"
 							if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 							{
-								;echo "LOOT[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name}'s TargetID is ${TractorBeams[${j}].TargetID}"
+								;echo "EVESalvage->CheckForLoot[DEBUG]::  Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name}'s TargetID is ${TractorBeams[${j}].TargetID}"
 								;;Already tractoring this...
 								alreadyTractoring:Set[TRUE]
-								echo "LOOT ---    ...already Tractoring"
+								echo "EVESalvage->CheckForLoot::  ---- Already tractoring..."
 								if (${Targets[${k}].Distance} <= 2500)
 								{
-									echo "LOOT ---    cargo container close enough now... stop Tractoring..."
+									echo "EVESalvage->CheckForLoot::  ---- Cargo container close enough now... stop Tractoring..."
 									TractorBeams[${j}]:Deactivate
 								}
 							}
@@ -501,7 +504,7 @@ function DoGetLoot(bool InReachOnly)
 					;; if it was NOT already being tractored, then start tractoring
 					if (!${alreadyTractoring})
 					{
-						echo "LOOT ---    ...start Tractoring"
+						echo "EVESalvage->CheckForLoot::  ---- Start tractoring..."
 									
 						;; Activate Tractor Beam...
 						j:Set[1]
@@ -509,7 +512,7 @@ function DoGetLoot(bool InReachOnly)
 						{
 							if (!${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating} )
 							{
-							  echo "LOOT ----  Activating: ${TractorBeams[${j}].ToItem.Name}"
+							  echo "EVESalvage->CheckForLoot::  ----- Activating: ${TractorBeams[${j}].ToItem.Name}"
 								TractorBeams[${j}]:Click
 								wait 5
 								break
@@ -522,7 +525,7 @@ function DoGetLoot(bool InReachOnly)
 				elseif (${Targets[${k}].Distance} > ${MaxTractorRange})
 				{
 					ContinueOn:Set[TRUE]
-					echo "LOOT --    cargo container out of tractor range..."
+					echo "EVESalvage->CheckForLoot::  --- Cargo container out of tractor range..."
 					
 					;;;;;;;;;;;;;;;;;;;;;;;
 					;; Ensure that we do not move unless we're positive there are no other cargo containers that are within 2500 of our current location
@@ -537,7 +540,7 @@ function DoGetLoot(bool InReachOnly)
 								l:Inc
 								continue
 							}	 
-							echo "LOOT ---   Can not approach while jet cans near by..."
+							echo "EVESalvage->CheckForLoot::  --- Cannot approach while jet cans near by..."
 							ContinueOn:Set[FALSE]	
 							break
 							l:Inc
@@ -549,7 +552,7 @@ function DoGetLoot(bool InReachOnly)
 
 					if (${ContinueOn})
 					{
-						echo "LOOT ---   Approaching ..."
+						echo "EVESalvage->CheckForLoot::  --- Approaching ..."
 
 						Targets[${k}]:Approach
 						if (${AfterburnerCount} > 0)
@@ -581,7 +584,7 @@ function DoGetLoot(bool InReachOnly)
 							wait 2
 							EVE:Execute[CmdStopShip]
 
-							echo "LOOT ----  Can is now within tractor range..."
+							echo "EVESalvage->CheckForLoot::  --- Cargo container is now within tractor range..."
 
 							if (${AfterburnerCount} > 0)
 							{
@@ -597,7 +600,7 @@ function DoGetLoot(bool InReachOnly)
 				else
 				{
 					;; This should never happen....
-					echo "LOOT ***** WHAT?!?"
+					echo "EVESalvage->CheckForLoot::  **WHAT?!?**"
 				}
 
 				;; Now we check the next locked target
@@ -612,7 +615,7 @@ function DoGetLoot(bool InReachOnly)
 			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
 			if (${Cans.Used} == 0)
 			{
-				echo "LOOT -     All cargo containers have been processed."
+				echo "EVESalvage->CheckForLoot::  - All cargo containers have been processed."
 				return
 			}	
 			;;
@@ -629,7 +632,7 @@ function DoGetLoot(bool InReachOnly)
 	return
 }
 
-function DoSalvage(bool LootCans)
+function SalvageArea(bool LootCans)
 {
   variable int i = 1
   variable int j
@@ -650,7 +653,7 @@ function DoSalvage(bool LootCans)
 	}
 	MaxTargetRange:Set[${Me.Ship.MaxTargetRange}]
 	
-	echo "SALV -     Salvager initialized ... "
+	echo "EVESalvage->SalvageArea::  Salvager initialized ... "
 	EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 1]
 	if (${Wrecks.Used} == 0)
 	{
@@ -660,30 +663,30 @@ function DoSalvage(bool LootCans)
 			EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 0]
 			if (${Wrecks.Used} == 0)
 			{
-				echo "SALV -     No wrecks found in this area, looking for loot..."
+				echo "EVESalvage->SalvageArea::  No wrecks found in this area, looking for loot..."
 				if (${LootCans})
-					call DoGetLoot 0		
+					call CheckForLoot 0		
 				return
 			}
 			else
-				echo "SALV -     ${Wrecks.Used} YELLOW wrecks remain in this area."
+				echo "EVESalvage->SalvageArea::  ${Wrecks.Used} YELLOW wrecks remain in this area."
 		}
 		else
 		{
-			echo "SALV -     No wrecks found in this area, looking for loot..."
+			echo "EVESalvage->SalvageArea::  No wrecks found in this area, looking for loot..."
 			if (${LootCans})
-				call DoGetLoot 0		
+				call CheckForLoot 0		
 			return
 		}
 	}
 	else
-		echo "SALV -     ${Wrecks.Used} wrecks remain in this area."
+		echo "EVESalvage->SalvageArea::  ${Wrecks.Used} wrecks remain in this area."
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; MAIN LOOP
 	while 1 == 1
 	{
-		echo "SALV -     ##### Start Salvage Pulse #####"
+		echo "EVESalvage->SalvageArea::  Starting salvaging operation"
 		i:Set[1]
 		;;;;;;;;;;;;;;;
 		;; FOR TESTING
@@ -709,13 +712,13 @@ function DoSalvage(bool LootCans)
 			;;
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			
-			echo "SALV -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Wrecks.Used} available."
+			echo "EVESalvage->SalvageArea::  - ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} of ${MaxTargets} targets acquired (${Wrecks.Used} available)"
 
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; In case there are fewer wrecks than our max targets  (otherwise this makes for a neverending loop)
 			if (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} >= ${Wrecks.Used})
 			{
-				echo "SALV -     All remaining wrecks have been targeted.  Processing..."
+				echo "EVESalvage->SalvageArea::  - All remaining wrecks have been targeted.  Processing..."
 				break
 			}
 
@@ -757,7 +760,7 @@ function DoSalvage(bool LootCans)
 			    ;; Before moving, make sure we handle all wrecks that we are targetting or have targeted
 					if (${Me.TargetingCount} > 0)
 					{
-						echo "SALV ---   Waiting for lock on all targets..."
+						echo "EVESalvage->SalvageArea::  -- Waiting for lock on all targets..."
 						while ${Me.TargetingCount} > 0
 						{
 							wait 5
@@ -768,7 +771,7 @@ function DoSalvage(bool LootCans)
 					;; Approach
 			    if (${Me.TargetCount} == 0)
 			    {
-			    	echo "SALV ---   ${Wrecks[${i}].Name} too far away to target :: Approaching..."
+			    	echo "EVESalvage->SalvageArea::  -- ${Wrecks[${i}].Name} too far away to target :: Approaching..."
 						Wrecks[${i}]:Approach
 						if (${AfterburnerCount} > 0)
 						{
@@ -790,7 +793,7 @@ function DoSalvage(bool LootCans)
 			    }
 			    else
 			    {
-						echo "SALV ---   ${Wrecks[${i}].Name} too far away to target :: Handling current targets before moving..."
+						echo "EVESalvage->SalvageArea::  -- ${Wrecks[${i}].Name} too far away to target :: Handling current targets before moving..."
 						i:Inc
 						continue
 			    }
@@ -804,7 +807,7 @@ function DoSalvage(bool LootCans)
 				continue
 			}
 			
-			echo "SALV ---   LockTarget :: ${Wrecks[${i}].Name}... ${Wrecks[${i}].GroupID}"
+			echo "EVESalvage->SalvageArea::  --- LockTarget :: ${Wrecks[${i}].Name}"
 			Wrecks[${i}]:LockTarget
 			wait 5
 			i:Inc
@@ -816,13 +819,13 @@ function DoSalvage(bool LootCans)
 		;; Wait until all targets are fully locked
 		if (${Me.TargetingCount} > 0)
 		{
-			echo "SALV ---   Waiting for lock on all targets..."
+			echo "EVESalvage->SalvageArea::  -- Waiting for lock on all targets..."
 			while ${Me.TargetingCount} > 0
 			{
 				wait 5
 			}
 		}
-		echo "SALV **    ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
+		echo "EVESalvage->SalvageArea::  ** ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
 		
 		;;;;;;;;;;;;;;
 		;##################################################
@@ -856,7 +859,7 @@ function DoSalvage(bool LootCans)
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 			{
 				Targets[${k}]:MakeActiveTarget
-				echo "SALV ----  ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
+				echo "EVESalvage->SalvageArea::  --- ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
 				
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;; Go through tractor beams and turn off any tractors on this wreck
@@ -885,7 +888,7 @@ function DoSalvage(bool LootCans)
 				{
 					if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
 					{
-						echo "SALV ---   Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
+						echo "EVESalvage->SalvageArea::  ---- Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
 						Salvagers[${j}]:Click
 						wait 8
 						break
@@ -917,13 +920,13 @@ function DoSalvage(bool LootCans)
 				k:Inc
 				continue
 			}			
-			echo "SALV -     Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
+			echo "EVESalvage->SalvageArea::  --- Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
 			
 			;;;;;;;;;;;;;;;;;;;;;;;
 			;; (Note:  Wrecks that are within Salvage Range were already handled)
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 			{
-				echo "SALV --    Wreck already within salvage range.  Salvaging operation should complete soon."
+				echo "EVESalvage->SalvageArea::  ---- Wreck already within salvage range.  Salvaging operation should complete soon."
 				k:Inc
 				continue
 			}
@@ -933,7 +936,7 @@ function DoSalvage(bool LootCans)
 			{
 				Targets[${k}]:MakeActiveTarget
 				wait 2
-				echo "SALV --    Wreck in tractor range..."
+				echo "EVESalvage->SalvageArea::  ---- Wreck in tractor range..."
 				
 				;;;;;;;;;;;;;;;;;;;;;;;
 				;; Before engaging tractor beam on this target, make sure that it doesn't already have one active on it.
@@ -943,16 +946,16 @@ function DoSalvage(bool LootCans)
 				{
 					if (${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating})
 					{
-						;echo "SALV[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name} is active and is not deactivating"
+						;echo "EVESalvage->SalvageArea[DEBUG]::  Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name} is active and is not deactivating"
 						if (${TractorBeams[${j}].TargetID.Equal[${Targets[${k}].ID}]})
 						{
-							;echo "SALV[DEBUG] --    Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name}'s TargetID is ${TractorBeams[${j}].TargetID}"
+							;echo "EVESalvage->SalvageArea[DEBUG]::  Tractor Beam [${TractorBeams[${j}].ID}]-${TractorBeams[${j}].ToItem.Name}'s TargetID is ${TractorBeams[${j}].TargetID}"
 							;;Already tractoring this...
 							alreadyTractoring:Set[TRUE]
-							echo "SALV ---    ...already Tractoring"
+							echo "EVESalvage->SalvageArea::  ----- Already tractoring...."
 							if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 							{
-								echo "SALV ---    Wreck close enough now... stop Tractoring..."
+								echo "EVESalvage->SalvageArea::  ------ Wreck close enough now... stop tractoring..."
 								TractorBeams[${j}]:Deactivate
 							}
 						}
@@ -967,7 +970,7 @@ function DoSalvage(bool LootCans)
 				;; if it was NOT already being tractored, then start tractoring
 				if (!${alreadyTractoring})
 				{
-					echo "SALV ---    ...start Tractoring"
+					echo "EVESalvage->SalvageArea::  ---- Start tractoring...."
 								
 					;; Activate Tractor Beam...
 					j:Set[1]
@@ -975,7 +978,7 @@ function DoSalvage(bool LootCans)
 					{
 						if (!${TractorBeams[${j}].IsActive} && !${TractorBeams[${j}].IsDeactivating} )
 						{
-						  echo "SALV ----  Activating: ${TractorBeams[${j}].ToItem.Name}"
+						  echo "EVESalvage->SalvageArea::  ---- Activating: ${TractorBeams[${j}].ToItem.Name}"
 							TractorBeams[${j}]:Click
 							wait 5
 							break
@@ -988,7 +991,7 @@ function DoSalvage(bool LootCans)
 			elseif (${Targets[${k}].Distance} > ${MaxTractorRange} || ${SalvagingYellowWrecks})
 			{
 				if !${SalvagingYellowWrecks}
-					echo "SALV --    Wreck out of Tractor range..."
+					echo "EVESalvage->SalvageArea::  --- Wreck out of Tractor range..."
 								
 				;;;;;;;;;;;;;;;;;;;;;;;
 				;; Do not approach if any salvagers are actively running
@@ -998,7 +1001,7 @@ function DoSalvage(bool LootCans)
 				{
 					if (${Salvagers[${j}].IsActive})
 					{
-						echo "SALV ---   Can not approach while actively salvaging"
+						echo "EVESalvage->SalvageArea::  --- Can not approach while actively salvaging"
 						ContinueOn:Set[FALSE]
 						break
 					}
@@ -1027,7 +1030,7 @@ function DoSalvage(bool LootCans)
 	
 								if (${Cans[${l}].Distance} <= 2500)
 								{		  	
-									echo "SALV ---   Can not approach while jet cans present..."
+									echo "EVESalvage->SalvageArea::  --- Can not approach while jet cans present..."
 									ContinueOn:Set[FALSE]	
 									break
 								}
@@ -1047,7 +1050,7 @@ function DoSalvage(bool LootCans)
 						MoveWithinDistance:Set[${MaxSalvageRange}]
 					else
 						MoveWithinDistance:Set[${MaxTractorRange}]
-					echo "SALV ---    Approaching Wreck (to within ${MoveWithinDistance}m)..."
+					echo "EVESalvage->SalvageArea::  --- Approaching Wreck (to within ${MoveWithinDistance}m)..."
 					
 					Targets[${k}]:Approach
 					if (${AfterburnerCount} > 0)
@@ -1078,7 +1081,7 @@ function DoSalvage(bool LootCans)
 
 						wait 2
 						EVE:Execute[CmdStopShip]
-						echo "SALV ----  Wreck is now within ${MoveWithinDistance}m..."
+						echo "EVESalvage->SalvageArea::  ---- Wreck is now within ${MoveWithinDistance}m..."
 
 						if (${AfterburnerCount} > 0)
 						{
@@ -1098,7 +1101,7 @@ function DoSalvage(bool LootCans)
 							{
 								if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
 								{
-									echo "SALV ---   Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
+									echo "EVESalvage->SalvageArea::  ----- Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
 									Salvagers[${j}]:Click
 									wait 8
 									break
@@ -1113,7 +1116,7 @@ function DoSalvage(bool LootCans)
 			}
 			else
 			{
-				echo "SALV ----- WHAT?!?"
+				echo "EVESalvage->SalvageArea::  WHAT?!"
 			}
 			
 			;; Now we check the next locked target
@@ -1126,7 +1129,7 @@ function DoSalvage(bool LootCans)
 		;; Targets are all being handled.  Deal with any nearby jet cans
 		if ${LootCans}
 		{
-			call DoGetLoot 1
+			call CheckForLoot 1
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1135,7 +1138,7 @@ function DoSalvage(bool LootCans)
 		;; Make sure we're not running low on capacitor
 		if (${Me.Ship.CapacitorPct} <= 22)
 		{
-			echo "SALV !!!!! Running low on Capacitor:  Pausing...
+			echo "EVESalvage->SalvageArea::  !! Running low on Capacitor:  Pausing...
 			do
 			{
 			   wait 30
@@ -1162,24 +1165,24 @@ function DoSalvage(bool LootCans)
 				EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 0]
 				if (${Wrecks.Used} == 0)
 				{
-					echo "SALV -     Salvaging complete -- looking for loot..."
+					echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
 					if (${LootCans})
-						call DoGetLoot 0		
+						call CheckForLoot 0		
 					return
 				}
 				else
-					echo "SALV -     ${Wrecks.Used} YELLOW wrecks remain in this area."
+					echo "EVESalvage->SalvageArea::  - ${Wrecks.Used} YELLOW wrecks remain in this area."
 			}
 			else
 			{
-				echo "SALV -     Salvaging complete -- looking for loot..."
+				echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
 				if (${LootCans})
-					call DoGetLoot 0		
+					call CheckForLoot 0		
 				return
 			}
 		}
 		else
-			echo "SALV -     ${Wrecks.Used} wrecks remain in this area."
+			echo "EVESalvage->SalvageArea::  - ${Wrecks.Used} wrecks remain in this area."
 		;;
 		;; This is the end of the Main Salvaging Loop.  This will repeat over and over until there
 		;; are no more wrecks in the area.  (which will cause the routine directly above to 'return',
@@ -1232,7 +1235,7 @@ function TransferSalvagedItemsToHangar()
 			GroupID:Set[${ThisCargo.Value.GroupID}]
 			Name:Set[${ThisCargo.Value.Name}]
 
-			;echo "DEBUG: TransferSalvagedItemsToHangar: GroupID: ${GroupID} ${Name} - ${ThisCargo.Value.Quantity}"			
+			;echo "EVESalvage->UnloadSalvage[DEBUG]::  TransferSalvagedItemsToHangar: GroupID: ${GroupID} ${Name} - ${ThisCargo.Value.Quantity}"			
 			switch ${GroupID}
 			{
 				case 754
@@ -1248,23 +1251,6 @@ function TransferSalvagedItemsToHangar()
 		{
 			EVE:MoveItemsTo[NewCargoToTransfer,Hangar]
 		}
-
-		;; OLD METHOD
-		;
-		;if ${CargoToTransfer.Used} > 0
-		;{
-		;	variable iterator CargoIterator
-		;	CargoToTransfer:GetIterator[CargoIterator]
-		;	
-		;	if ${CargoIterator:First(exists)}
-		;	do
-		;	{
-		;		;echo "obj_Cargo:TransferToHangar: Unloading Cargo: ${CargoIterator.Value.Name}"
-		;		CargoIterator.Value:MoveTo[Hangar]
-		;		wait 30
-		;	}
-		;	while ${CargoIterator:Next(exists)}
-		;}
 
 		NewCargoToTransfer:Clear[]
  
@@ -1295,12 +1281,12 @@ function TransferLootToHangar()
 					
 		if (${CargoholdLoot.Used} < 1)
 		{
-			echo "UNLOAD ---    EVESalvage does not have a record of any 'loot' that needs to be transferred.  This is probably the result of the script having been started (or restarted)"
-			echo "              after the loot was acquired.   EVESalvage only moves items that it 'remembers' having looted."
+			echo "EVESalvage->UnloadLoot::  EVESalvage does not have a record of any 'loot' that needs to be transferred.  This is probably the result of the script having been started (or restarted)"
+			echo "                          after the loot was acquired.   EVESalvage only moves items that it 'remembers' having looted."
 			return
 		}
 		else
-			echo "UNLOAD ---    Moving ${CargoholdLoot.Used} items"
+			echo "EVESalvage->UnloadLoot::  Moving ${CargoholdLoot.Used} items"
 		
 		
 		Me.Ship:GetCargo[MyCargo]
@@ -1318,7 +1304,7 @@ function TransferLootToHangar()
 		if ${ThisCargo:First(exists)}
 		do
 		{
-			;echo "DEBUG: TransferLootToHanger: CargoholdLoot.Element[ThisCargo.Value.ID]: ${CargoholdLoot.Element[${ThisCargo.Value.ID}]}"
+			;echo "EVESalvage->UnloadLoot[DEBUG]::  TransferLootToHanger: CargoholdLoot.Element[ThisCargo.Value.ID]: ${CargoholdLoot.Element[${ThisCargo.Value.ID}]}"
 			if (${CargoholdLoot.Element[${ThisCargo.Value.ID}](exists)})
 				NewCargoToTransfer:Insert[${ThisCargo.Value.ID}]
 		}
@@ -1377,7 +1363,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 		if (${EVE.Bookmark["Salvager Home Base"](exists)})
 		{
 		 	; make a temp bookmark, return us to our salvage home, unload, and go back for more
-		 	echo "FULL -     Cargo Hold Full:  Returning to station to unload...
+		 	echo "EVESalvage->CheckShipIsFull::  Cargo Hold Full:  Returning to station to unload...
 			EVE:CreateBookmark["tmp-looting"]
 		  
 		  ; Close cargo hold!
@@ -1385,7 +1371,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			
 			if (!${EVE.Bookmark["Salvager Home Base"].SolarSystemID.Equal[${Me.SolarSystemID}]})
 			{
-				echo "FULL --    Setting destination and activating auto pilot for return to home station"
+				echo "EVESalvage->CheckShipIsFull::  - Setting destination and activating auto pilot for return to home station"
 				EVE.Bookmark["Salvager Home Base"]:SetDestination
 				wait 5
 				EVE:Execute[CmdToggleAutopilot]
@@ -1411,7 +1397,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			}
    			
 			;;; Warp to location
-			echo "FULL --     Warping to home base location"
+			echo "EVESalvage->CheckShipIsFull::  - Warping to home base location"
 			EVE.Bookmark["Salvager Home Base"]:WarpTo
 			wait 120
 			do
@@ -1441,7 +1427,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 					   Counter:Inc[20]
 					   if (${Counter} > 200)
 					   {
-					      echo "FULL ---   Docking atttempt failed ... trying again."
+					      echo "EVESalvage->CheckShipIsFull::  -- Docking atttempt failed ... trying again."
 					      ;EVE.Bookmark[${Destination}].ToEntity:Dock
 					      Entity[CategoryID = 3]:Dock
 					      Counter:Set[0]
@@ -1453,12 +1439,12 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			
 		 	;;; If we're in a station, unload all "salvaged" items and Loot ;;;;;;;;;;;;;;
 		 	wait 10
-		 	echo "FULL --    Unloading Salvaged Items..."
+		 	echo "EVESalvage->CheckShipIsFull::  -- Unloading Salvaged Items..."
 		  		call TransferSalvagedItemsToHangar
 		 	wait 2
 		 	if ${LootCans}
 		 	{
-		 		echo "FULL ---   Unloading Looted Items..."
+		 		echo "EVESalvage->CheckShipIsFull::  -- Unloading Looted Items..."
 		 		call TransferLootToHangar
 		 	}
 		 	call CloseShipCargo
@@ -1467,7 +1453,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			;;; Now it's time to head back out to the site
 			if ${Me.InStation}
 			{
-			   echo "FULL --    Undocking from station..."
+			   echo "EVESalvage->CheckShipIsFull::  -- Undocking from station..."
 			   EVE:Execute[CmdExitStation]	
 			   wait 150
 			   UndockCounter:Set[0]
@@ -1479,7 +1465,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			   			UndockCounter:Inc[20]
 			   			if (${UndockCounter} > 300)
 			   			{
-			   			  echo "FULL --    Undocking atttempt failed ... trying again." 
+			   			  echo "EVESalvage->CheckShipIsFull::  --- Undocking atttempt failed ... trying again." 
 			   				EVE:Execute[CmdExitStation]
 			   				UndockCounter:Set[0]
 			   			}	   			   			
@@ -1502,7 +1488,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			;;; Set destination and then activate autopilot (if we're not in that system to begin with)    			
 			if (!${EVE.Bookmark["tmp-looting"].SolarSystemID.Equal[${Me.SolarSystemID}]})
 			{
-			  echo "FULL -    Setting Destination and activating auto pilot to resume salvage operation"
+			  echo "EVESalvage->CheckShipIsFull::  - Setting Destination and activating auto pilot to resume salvage operation"
 			  wait 5
 				EVE.Bookmark["tmp-looting"]:SetDestination
 				wait 5
@@ -1530,7 +1516,7 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			}
 			
 			;;; Warp to location
-			echo "FULL -     Warping to salvage location..."
+			echo "EVESalvage->CheckShipIsFull::  - Warping to salvage location..."
 			EVE.Bookmark["tmp-looting"]:WarpTo
 			wait 120
 			do
@@ -1543,11 +1529,11 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 		  ; delete tmp bookmark, and then we're ready to continue!
 		  EVE.Bookmark["tmp-looting"]:Remove
 		  
-		  echo "FULL -    Cargo Hold Empty: Resuming Operations..."
+		  echo "EVESalvage->CheckShipIsFull::  Cargo Hold Empty: Resuming Operations..."
 		}
 		else
 		{
-			echo "FULL -    Cargo hold is full; however, you do not seem to have a 'Salvager Home Base' bookmark for unloading.   You're screwed."
+			echo "EVESalvage->CheckShipIsFull::  Cargo hold is full; however, you do not seem to have a 'Salvager Home Base' bookmark for unloading.   You're screwed."
 			Script:End
 			return
 		}
@@ -1590,16 +1576,16 @@ function LootCargoContainer(entity CargoContainer)
 					{
 						if (${ThisCargo.Value.IsContraband})
 						{
-							echo "LootCargoContainer::  Ignoring ${Name} (CONTRABAND)"
+							echo "EVESalvage->LootCargoContainer::  Ignoring ${Name} (CONTRABAND)"
 							continue
 						}
 					}
 					CargoToTransfer:Insert[${ThisCargo.Value.ID}]
 					TotalCargoVolume:Inc[${Math.Calc[${ThisCargo.Value.Quantity} * ${ThisCargo.Value.Volume}]}]
-					echo "LootCargoContainer::  Adding ${ThisCargo.Value.Name} (TotalCargoVolume: ${TotalCargoVolume.Precision[2]})"
+					echo "EVESalvage->LootCargoContainer::  - Adding ${ThisCargo.Value.Name} (TotalCargoVolume: ${TotalCargoVolume.Precision[2]})"
 				}
 				else
-					echo "LootCargoContainer::  Ignoring ${Name}"	
+					echo "EVESalvage->LootCargoContainer::  Ignoring ${Name}"	
 			}
 			while ${ThisCargo:Next(exists)}
 		}
@@ -1610,7 +1596,7 @@ function LootCargoContainer(entity CargoContainer)
 		;; Check to make sure the ship's cargo hold has room
 		if (${TotalCargoVolume} > ${Math.Calc[${Me.Ship.CargoCapacity} - ${Me.Ship.UsedCargoCapacity}]})
 		{
-			echo "LootCargoContainer::  Ship Cargo Hold is full."
+			echo "EVESalvage->LootCargoContainer::  Ship Cargo Hold is full."
 			CargoContainer:CloseCargo
 			wait 2
 			CargoContainer:UnlockTarget
@@ -1625,7 +1611,7 @@ function LootCargoContainer(entity CargoContainer)
 		;; Make sure there is loot we want to process
 		if (${CargoToTransfer.Used} <= 0)
 		{
-			echo "LootCargoContainer::  Entity either has no items, or else no item(s) pass(es) muster for looting"
+			echo "EVESalvage->LootCargoContainer::  Entity either has no items, or else no item(s) pass(es) muster for looting"
 			CargoContainer:CloseCargo
 			wait 2
 			CargoContainer:UnlockTarget
@@ -1633,7 +1619,7 @@ function LootCargoContainer(entity CargoContainer)
 			return
 		}
 		else
-			echo "LootCargoContainer::  Ready to transfer ${CargoToTransfer.Used} items."
+			echo "EVESalvage->LootCargoContainer::  -- Ready to transfer ${CargoToTransfer.Used} items."
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
@@ -1655,55 +1641,20 @@ function LootCargoContainer(entity CargoContainer)
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	
-	
-		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		;; TODO:  Is any of this still necessary?
-		/*
-		if ${NearbyCans[${i}](exists)}
-		{
-			NearbyCans[${i}]:CloseCargo
-			wait 2
-			Me:GetTargets[Targets]
-			k:Set[1]
-			if ${Targets.Used} > 0
-			{
-				do
-				{
-					if ${Targets[${k}].ID.Equal[${NearbyCans[${i}].ID}]} 
-					{
-						NearbyCans[${i}]:UnlockTarget
-						break
-					}		
-					wait 2
-				}
-				while ${k:Inc} <= ${Targets.Used}
-			}
-		}
-		
-	
-		if ${Targets[${k}](exists)}
-		{
-			Targets[${k}]:CloseCargo
-			wait 2
-			Targets[${k}]:UnlockTarget
-			wait 2
-		}
-		*/
 
 		return
 }
 
-function ReturnToSalvagerHomeBase()
+function ReturnToHomeBase()
 {
 	
   call CloseShipCargo
   if (${EVE.Bookmark["Salvager Home Base"](exists)})
 	{
-		echo "- Salvage operations completed .. returning to home base"
+		echo "EVESalvage->ReturnToHomeBase::  Salvage operations completed .. returning to home base"
 		if (!${EVE.Bookmark["Salvager Home Base"].SolarSystemID.Equal[${Me.SolarSystemID}]})
 		{
-			echo "- Setting destination and activating auto pilot for return to home base"
+			echo "EVESalvage->ReturnToHomeBase::  - Setting destination and activating auto pilot for return to home base"
 			EVE.Bookmark["Salvager Home Base"]:SetDestination
 			wait 5
 			EVE:Execute[CmdToggleAutopilot]
@@ -1726,7 +1677,7 @@ function ReturnToSalvagerHomeBase()
 		if (!${Me.InStation})
 		{
 			;;; Warp to location
-			echo "- Warping to home base location"
+			echo "EVESalvage->ReturnToHomeBase::  - Warping to home base location"
 			EVE.Bookmark["Salvager Home Base"]:WarpTo
 			wait 120
 			do
@@ -1756,7 +1707,7 @@ function ReturnToSalvagerHomeBase()
 					   Counter:Inc[20]
 					   if (${Counter} > 200)
 					   {
-					      echo " - Docking atttempt failed ... trying again."
+					      echo "EVESalvage->ReturnToHomeBase::  -- Docking atttempt failed ... trying again."
 					      ;EVE.Bookmark[${Destination}].ToEntity:Dock
 					      Entity[CategoryID = 3]:Dock
 					      Counter:Set[0]
@@ -1771,12 +1722,12 @@ function ReturnToSalvagerHomeBase()
 		{
 			;;; unload all "salvaged" items to hangar ;;;;;;;;;;;;;;
 		  wait 10
-		  echo "- Unloading Salvaged Items..."
+		  echo "EVESalvage->ReturnToHomeBase::  --- Unloading Salvaged Items..."
 		 	call TransferSalvagedItemsToHangar
 		 	wait 2
 		 	if (${DoLoot})
 		 	{
-		 		echo "- Unloading Looted Items..."
+		 		echo "EVESalvage->ReturnToHomeBase::  ----- Unloading Looted Items..."
 		 		call TransferLootToHangar
 		 	}
 		}
@@ -1795,12 +1746,12 @@ function LeaveStation()
 
 			   if !${EVE.Bookmark["Salvager Home Base"](exists)}
 			   {
-			   		echo "- Creating 'Salvager Home Base' bookmark..."
+			   		echo "EVESalvage->LeaveStation::  - Creating 'Salvager Home Base' bookmark..."
 			  		EVE:CreateBookmark["Salvager Home Base"]
 			  		wait 10
 			 	 }
 
-		   echo "- Undocking from station..."
+		   echo "EVESalvage->LeaveStation::  - Undocking from station..."
 		   EVE:Execute[CmdExitStation]
 		   wait 150
 		   Counter:Set[0]
@@ -1812,7 +1763,7 @@ function LeaveStation()
 		   			Counter:Inc[20]
 			   			if (${Counter} > 300)
 			   			{
-			   			  echo "- Undocking attempt failed ... trying again."
+			   			  echo "EVESalvage->LeaveStation::  - Undocking attempt failed ... trying again."
 			   				EVE:Execute[CmdExitStation]
 			   				Counter:Set[0]
 			   			}
@@ -1826,11 +1777,11 @@ function LeaveStation()
 		{
 			 if (!${StopAfterSalvaging} && !${EVE.Bookmark["Salvager Home Base"](exists)})
 			 {
-		   		echo "- WARNING: EVESalvage has detected that you are not in a station and that you do not have a bookmark labeled 'Salvager Home Base'.   This means that the"
-		   		echo "-          script will end without returning to a station to unload.  You can change this by starting in a station (the script will create the bookmark for you"
-		   		echo "-          or create the bookmark manually while in the station you want to use as your 'home base'"
+		   		echo "EVESalvage.CONFIG::  WARNING: EVESalvage has detected that you are not in a station and that you do not have a bookmark labeled 'Salvager Home Base'.   This means that the"
+		   		echo "EVESalvage.CONFIG::           script will end without returning to a station to unload.  You can change this by starting in a station (the script will create the bookmark for you"
+		   		echo "EVESalvage.CONFIG::           or create the bookmark manually while in the station you want to use as your 'home base'"
 		   		StopAfterSalvaging:Set[TRUE]
-		   		echo "- CONFIG:  This script will immediately end after salvaging has finished."
+		   		echo "EVESalvage.CONFIG::  This script will immediately end after salvaging has finished."
 		   }				
 		}
 		wait 1
@@ -1845,10 +1796,9 @@ function CycleBeltsAndSalvage()
 	;; The caller should ensure that we are in space 
 	if ${Me.InStation}
 	{
-		echo "CycleBelts::  You must be in space to cycle asteroid belts for scavenging."
+		echo "EVESalvage->CycleBelts::  You must be in space to cycle asteroid belts for scavenging."
 		return
 	}
-
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Populate 'Belts' for this system  
@@ -1856,34 +1806,35 @@ function CycleBeltsAndSalvage()
 	
 	if (${Belts.Used} < 1)
 	{
-		echo "CycleBelts::  There does not appear to be any asteroid belts in this system."
+		echo "EVESalvage->CycleBelts::  There does not appear to be any asteroid belts in this system."
 		return
 	}
 	else
-		echo "CycleBelts::  There are ${Belts.Used} asteroid belts in this system."
+		echo "EVESalvage->CycleBelts::  There are ${Belts.Used} asteroid belts in this system."
 	
 	Belts:GetIterator[AsteroidBelt]
 	if ${AsteroidBelt:First(exists)}
-	do
 	{
-		echo "CycleBelts::  Traveling to ${AsteroidBelt.Value.Name}..."
-		
-		if (${AsteroidBelt.Value.Distance} > ${EVE.MinWarpDistance})
+		do
 		{
-  		;;; Warp to location
-  		echo "CycleBelts::  Warping to ${AsteroidBelt.Value.Name}..."
-  		AsteroidBelt.Value:WarpTo
-  		wait 120
-  		do
-  		{
-  			wait 20
-  		}
-  		while (${Me.ToEntity.Mode} == 3)
-  	}
-
-  	wait 10
-		call DoSalvage ${DoLoot}
+			echo "EVESalvage->CycleBelts::  Traveling to ${AsteroidBelt.Value.Name}..."
+			
+			if (${AsteroidBelt.Value.Distance} > ${EVE.MinWarpDistance})
+			{
+	  		;;; Warp to location
+	  		echo "EVESalvage->CycleBelts::  Warping to ${AsteroidBelt.Value.Name}..."
+	  		AsteroidBelt.Value:WarpTo
+	  		wait 120
+	  		do
+	  		{
+	  			wait 20
+	  		}
+	  		while (${Me.ToEntity.Mode} == 3)
+	  	}
+	
+	  	wait 10
+			call SalvageArea ${DoLoot}
+		}
+		while ${AsteroidBelt:Next(exists)}
 	}
-	while ${AsteroidBelt:Next(exists)}
-
 }
