@@ -1,5 +1,6 @@
 
-
+;; Kills Per Hour
+variable int KPH
 
 
 
@@ -14,10 +15,31 @@ atom(script) PawnStatusChange(string ChangeType, int64 PawnID, string PawnName)
 
 	if ${PawnID}==${LastTargetID} && ${ChangeType.Equal[NowDead]}
 	{
-		TotalKills:Inc
 		EchoIt "[AlertEvent] Invalid Target - Blacklisting ${Me.Target.Name}"
-		EchoIt "Total Kills = ${TotalKills}"
-		vgecho "Total Kills = ${TotalKills}"
+
+		;; gonna calculatate total kills per hour
+		TotalKills:Inc
+		variable int RightNow
+		
+		if ${doHunt}
+		{
+			RightNow:Set[${Script.RunningTime}]
+			;echo RightNow=${RightNow}, HuntStartTime=${HuntStartTime}, TotalKills=${TotalKills}
+			KPH:Set[${Math.Calc[${RightNow}-${HuntStartTime}]}]
+			;echo RightNow-HuntStartTime = ${KPH}
+			KPH:Set[${Math.Calc[${KPH}/${TotalKills}]}]
+			;echo KPH / TotalKills = ${KPH}
+			KPH:Set[${Math.Calc[3600000/${KPH}].Int}]
+			;echo KPH = ${KPH}
+			
+			EchoIt "Total Kills = ${TotalKills}, Average Kills Per Hour = ${KPH}"
+			vgecho "Total Kills = ${TotalKills}, Average Kills Per Hour = ${KPH}"
+		}
+		else
+		{
+			EchoIt "Total Kills = ${TotalKills}"
+			vgecho "Total Kills = ${TotalKills}"
+		}
 	}
 }
 

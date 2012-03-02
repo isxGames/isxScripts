@@ -137,8 +137,8 @@ objectdef  Obj_YahooIM
 		{
 			if ${Text.Find[You died.]}
 			{
-				Yahoo:IM[${YahooSendToHandle.Escape},"${Me.FName} just died!\nNearest AggroNPC=Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name} "]
-				This:EchoIt["${Me.FName} just died! Nearest AggroNPC=Pawn[AggroNPC].Name}, Nearest PC=${Pawn[PC].Name}"]
+				Yahoo:IM[${YahooSendToHandle.Escape},"${Me.FName} just died!\nNearest AggroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name} "]
+				This:EchoIt["${Me.FName} just died! Nearest AggroNPC=${Pawn[AggroNPC].Name}, Nearest PC=${Pawn[PC].Name}"]
 			}
 		}
 	}
@@ -264,7 +264,7 @@ objectdef  Obj_YahooIM
 						This:EchoIt["Level=${Me.Level} Exp=${Me.XP}"]
 						break
 					case Status
-						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotal Kills=${TotalKills}"]
+						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotal Kills=${TotalKills}\nAverage Kills Per Hour=${KPH}"]
 						This:EchoIt["InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotalKills=${TotalKills}"]
 						break
 					case HuntOn
@@ -328,7 +328,7 @@ objectdef  Obj_YahooIM
 						This:EchoIt["Level=${Me.Level} Exp=${Me.XP}"]
 						break
 					case Status
-						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotal Kills=${TotalKills}"]
+						Yahoo:IM[${YahooSendToHandle},"InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotal Kills=${TotalKills}\nAverage Kills Per Hour=${KPH}"]
 						This:EchoIt["InCombat=${Me.InCombat}\nHealth=${Me.HealthPct}\nNearest AgrroNPC=${Pawn[AggroNPC].Name}\nNearest PC=${Pawn[PC].Name}\nHunting=${doHunt}\nTotalKills=${TotalKills}"]
 						break
 					case HuntOn
