@@ -147,11 +147,15 @@ function DoGetLoot(bool InReachOnly)
 	variable int k
 	variable int j
 	variable bool alreadyTargeted
+	variable int TargetLoopCounter = 0
 	
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Loot nearby cans before thinking about those that are out of "looting range"
 	i:Set[1]
-	EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && HaveLootRights = 1]
+	if (${IgnoreRightsOnCans})
+		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
+	else
+		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && HaveLootRights = 1]
 	if ${NearbyCans.Used} > 0
 	{
 		echo "LOOT -     Looting: ${NearbyCans.Used} cargo containers found, processing..."
@@ -165,18 +169,6 @@ function DoGetLoot(bool InReachOnly)
 				continue
 			}
 			
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			;; Ignore cans for which we do not have loot rights
-			;; NOTE:  This should no longer occur since we're now only acquiring the list of cargo containers for which we have loot rights.
-			if (!${NearbyCans[${i}].HaveLootRights})
-			{
-				i:Inc
-				ProcessedEntities:Set[${NearbyCans[${i}].ID},1]
-				continue
-			}	
-			;;
-			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 	
-	
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; Loot
 			ProcessedEntities:Set[${NearbyCans[${i}].ID},1]
@@ -195,7 +187,11 @@ function DoGetLoot(bool InReachOnly)
   ;;; Handle ALL remaining cans if we have NOT set ${InReachOnly}
 	if (!${InReachOnly})
 	{
-		EVE:QueryEntities[Cans, Name =- "Cargo Container" && HaveLootRights = 1]
+		if (${IgnoreRightsOnCans})
+			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+		else
+			EVE:QueryEntities[Cans, Name =- "Cargo Container" && HaveLootRights = 1]
+			
 		if (${Cans.Used} == 0)
 		{
 			echo "LOOT -     No cargo containers (loot) found in this area."
@@ -241,8 +237,16 @@ function DoGetLoot(bool InReachOnly)
 			i:Set[1]
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; Targeting Routine (lock targets until ${MaxTargets} is reached)
+			TargetLoopCounter:Set[0]
 			while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
 			{
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				;; Avoid endless loops in situations where Wrecks disappear midstream
+				TargetLoopCounter:Inc
+				if (${TargetLoopCounter} > ${Math.Calc[${MaxTargets}+3]})
+					break
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				echo "LOOT -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Cans.Used} available."
 
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -340,18 +344,7 @@ function DoGetLoot(bool InReachOnly)
 				{
 					i:Inc
 					continue
-				}
-				
-				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-				;; Ignore cans for which we do not have loot rights
-				;; NOTE:  This should no longer occur since we're now only acquiring the list of cargo containers for which we have loot rights.
-				if (!${Cans[${i}].HaveLootRights})
-				{
-					echo "LOOT ---   You do not have loot rights for ${Cans[${i}].Name} -- skipping..."
-					i:Inc
-					ProcessedEntities:Set[${Cans[${i}].ID},1]
-					continue
-				}	 		
+				}		
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 			
@@ -453,7 +446,7 @@ function DoGetLoot(bool InReachOnly)
 			while ${k} <= ${Targets.Used} 
 			{
 				wait 10
-				if (!${Targets[${k}](exists)})
+				if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
 				{
 					k:Inc
 					continue
@@ -539,7 +532,7 @@ function DoGetLoot(bool InReachOnly)
 						l:Set[1]
 						do
 						{
-							if (!${NearbyCans[${l}].HaveLootRights})
+							if (!${IgnoreRightsOnCans} && !${NearbyCans[${l}].HaveLootRights})
 							{
 								l:Inc
 								continue
@@ -645,6 +638,7 @@ function DoSalvage(bool LootCans)
   variable bool alreadyTargeted
   variable bool FirstTime = TRUE
   variable bool SalvagingYellowWrecks = FALSE
+  variable int TargetLoopCounter = 0
 
 	call GetModulesInformation ${LootCans}
 	if (${MaxTargets} < 1)
@@ -660,7 +654,7 @@ function DoSalvage(bool LootCans)
 	EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 1]
 	if (${Wrecks.Used} == 0)
 	{
-		if ${SalvageYellowWrecks}
+		if ${IgnoreRightsOnWrecks}
 		{
 			SalvagingYellowWrecks:Set[TRUE]
 			EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 0]
@@ -704,8 +698,17 @@ function DoSalvage(bool LootCans)
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Targeting Routine (lock targets until ${MaxTargets} is reached)
+		TargetLoopCounter:Set[0]
 		while (${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}]} < ${MaxTargets})
 		{	
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Avoid endless loops in situations where Wrecks disappear midstream
+			TargetLoopCounter:Inc
+			if ${TargetLoopCounter} > ${Math.Calc[${MaxTargets}+3]}
+				break
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			
 			echo "SALV -     ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Targets Acquired/Acquiring of ${MaxTargets} max or ${Wrecks.Used} available."
 
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -898,7 +901,6 @@ function DoSalvage(bool LootCans)
 		;; END LOOP (current locked targets)
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-				
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Loop through all targets currently locked
 		;; NOTE: At this point, all targets should be "wrecks"
@@ -910,7 +912,7 @@ function DoSalvage(bool LootCans)
 		while ${k} <= ${Targets.Used} 
 		{
 			wait 10
-			if (!${Targets[${k}](exists)})
+			if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
 			{
 				k:Inc
 				continue
@@ -1017,7 +1019,7 @@ function DoSalvage(bool LootCans)
 	
 							do
 							{
-								if (!${Cans[${l}].HaveLootRights})
+								if (!${IgnoreRightsOnCans} && !${Cans[${l}].HaveLootRights})
 								{
 									l:Inc
 									continue
@@ -1154,7 +1156,7 @@ function DoSalvage(bool LootCans)
 		EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 1]
 		if (${Wrecks.Used} == 0)
 		{
-			if ${SalvageYellowWrecks}
+			if ${IgnoreRightsOnWrecks}
 			{
 				SalvagingYellowWrecks:Set[TRUE]
 				EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 0]
