@@ -166,6 +166,12 @@ function CheckForLoot(bool InReachOnly)
 		echo "EVESalvage->CheckForLoot::  ${NearbyCans.Used} cargo containers found, processing..."
 		do
 		{
+			if (!${NearbyCans[${i}](exists)} || !${NearbyCans[${i}].Name(exists)})
+			{
+				i:Inc
+				continue
+			}
+			
 			echo "EVESalvage->CheckForLoot::  Processing: ${NearbyCans[${i}].Name}"
 			;; If we've already processed this can, then we want to ignore it.
 			if (${ProcessedEntities.Element[${NearbyCans[${i}].ID}](exists)})
@@ -173,11 +179,11 @@ function CheckForLoot(bool InReachOnly)
 				i:Inc
 				continue
 			}
-			
+		
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; Loot
 			ProcessedEntities:Set[${NearbyCans[${i}].ID},1]
-			call LootCargoContainer ${NearbyCans[${i}]}			
+			call LootCargoContainer ${NearbyCans[${i}]}
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			
 			i:Inc
@@ -335,7 +341,7 @@ function CheckForLoot(bool InReachOnly)
 				;; END->cargo container out of 'targeting range'
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-				if (!${Cans[${i}].ID(exists)})
+				if (!${Cans[${i}](exists)} || !${Cans[${i}].Name(exists)})
 				{
 					i:Inc
 					ProcessedEntities:Set[${Cans[${i}].ID},1]
@@ -393,13 +399,30 @@ function CheckForLoot(bool InReachOnly)
 			;; Disengage Tractors for cargo containers that are close enough and then loot
 			while ${k} <= ${Targets.Used} 
 			{
-				wait 12
-				if (!${Targets[${k}](exists)})
+				wait 8
+				
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Make sure the target (as an entity) still exists
+				if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
 				{
 					k:Inc
 					continue
 				}		
-			
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;
+				
+				;;;;;;;;;;;;;;;;;;;;;;;
+				;; Ensure that only 'wrecks' are targeted
+				if (${Targets[${k}].GroupID} != 12)
+				{
+					echo "EVESalvage->CheckForLoot::  --- ${Targets[${k}].Name} is not a cargo container.   Unlocking as target. (TURN OFF 'target back' OPTION IN EVE SETTINGS.)"
+					Targets[${k}]:UnlockTarget
+					k:Inc
+					continue
+				}
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;
+
 				if (${Targets[${k}].Distance} <= 2500)
 				{
 					Targets[${k}]:MakeActiveTarget
@@ -850,11 +873,27 @@ function SalvageArea(bool LootCans)
 		;; Disengage Tractors for wrecks that are close enough and then engage salvager
 		while ${k} <= ${Targets.Used} 
 		{
-			if (!${Targets[${k}](exists)})
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Make sure the target (as an entity) still exists
+			if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
 			{
 				k:Inc
 				continue
 			}		
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+			;; Ensure that only 'wrecks' are targeted
+			if (${Targets[${k}].GroupID} != 186)
+			{
+				echo "EVESalvage->SalvageArea::  --- ${Targets[${k}].Name} is not a wreck.   Unlocking as target. (TURN OFF 'target back' OPTION IN EVE SETTINGS.)"
+				Targets[${k}]:UnlockTarget
+				k:Inc
+				continue
+			}
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 			{
@@ -914,12 +953,28 @@ function SalvageArea(bool LootCans)
 		k:Set[1]
 		while ${k} <= ${Targets.Used} 
 		{
-			wait 10
+			wait 2
+			;;;;;;;;;;;;;;;;;;;;;;;
+			;; Make sure the target (as an entity) still exists
 			if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
 			{
 				k:Inc
 				continue
-			}			
+			}		
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;
+			
+			;;;;;;;;;;;;;;;;;;;;;;;
+			;; Ensure that only 'wrecks' are targeted
+			if (${Targets[${k}].GroupID} != 186)
+			{
+				echo "EVESalvage->SalvageArea::  --- ${Targets[${k}].Name} is not a wreck.   Unlocking as target. (TURN OFF 'target back' OPTION IN EVE SETTINGS.)"
+				Targets[${k}]:UnlockTarget
+				k:Inc
+				continue
+			}
+			;;
+			;;;;;;;;;;;;;;;;;;;;;;;
 			echo "EVESalvage->SalvageArea::  --- Checking target: ${Targets[${k}].Name} (ID: ${Targets[${k}].ID})"
 			
 			;;;;;;;;;;;;;;;;;;;;;;;
@@ -930,6 +985,7 @@ function SalvageArea(bool LootCans)
 				k:Inc
 				continue
 			}
+			;;
 			;;;;;;;;;;;;;;;;;;;;;;;
 			;; Tractor wreck if it's close enough to be tractored (and if it's not a yellow wreck)
 			elseif (${Targets[${k}].Distance} <= ${MaxTractorRange} && ${Targets[${k}].Distance} > ${MaxSalvageRange} && !${SalvagingYellowWrecks})

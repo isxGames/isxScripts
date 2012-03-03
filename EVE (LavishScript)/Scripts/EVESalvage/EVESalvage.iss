@@ -5,8 +5,7 @@ variable(script) bool DoLoot
 variable(script) bool SalvageHereOnly
 variable(script) index:string SalvageLocationLabels
 variable(script) index:fleetmember MyFleet
-variable(script) int MyFleetCount
-variable(script) int FleetIterator
+variable(script) iterator FleetMember
 variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
@@ -20,19 +19,12 @@ variable(script) int CycleBeltsCount
 ;; INCLUDE FUNCTION LIBRARY
 #include "EVESalvageLibrary.iss"
 
-function atexit()
-{
- 	echo "EVESalvage:: EVE Salvager Script -- Ended"
-	return
-}
-
 function main(... Args)
 {
   variable int i = 1
-  variable int j = 1
-  variable int k = 1
   variable int WaitCount = 0
   variable int Iterator = 1
+  variable iterator BMLabel
 
   LeftStation:Set[FALSE]
   DoLoot:Set[FALSE]
@@ -43,6 +35,7 @@ function main(... Args)
   IgnoreRightsOnWrecks:Set[FALSE]
   IgnoreRightsOnCans:Set[FALSE]
   CycleBelts:Set[FALSE]
+  FoundThem:Set[FALSE]
 
   if !${ISXEVE(exists)}
   {
@@ -55,9 +48,9 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.5 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.6 by Amadeus ** \n \n"
 
-  ; 'Args' is an array ... arrays are static.  Copying to an index just in case we have a desire at some point to add/remove elements.
+  ; 'Args' is an array ... arrays are static.
 	if ${Args.Size} > 0
 	{
 		do
@@ -66,7 +59,7 @@ function main(... Args)
 				DoLoot:Set[TRUE]
 			elseif (${Args[${Iterator}].Equal[-HERE]} || ${Args[${Iterator}].Equal[-here]})
 				SalvageHereOnly:Set[TRUE]				
-			elseif (${Args[${Iterator}].Equal[-IGNORECONTRABAND]} || ${Args[${Iterator}].Equal[-ignorecontraband]} || ${Args[${Iterator}].Equal[-IgnoreContraband]})
+			elseif (${Args[${Iterator}].Equal[-IGNORECONTRABAND]} || ${Args[${Iterator}].Equal[-ignorecontraband]} || ${Args[${Iterator}].Equal[-IgnoreContraband]} || ${Args[${Iterator}].Equal[-IC]})
 				IgnoreContraband:Set[TRUE]		
 			elseif (${Args[${Iterator}].Equal[-CYCLEBELTS]} || ${Args[${Iterator}].Equal[-cyclebelts]} || ${Args[${Iterator}].Equal[-CycleBelts]})
 			{
@@ -80,9 +73,9 @@ function main(... Args)
 					return
 				}
 			}
-			elseif (${Args[${Iterator}].Equal[-IGNORERIGHTSONCANS]} || ${Args[${Iterator}].Equal[-ignorerightsoncans]} || ${Args[${Iterator}].Equal[-IgnoreRightsOnCans]})
+			elseif (${Args[${Iterator}].Equal[-IGNORERIGHTSONCANS]} || ${Args[${Iterator}].Equal[-ignorerightsoncans]} || ${Args[${Iterator}].Equal[-IgnoreRightsOnCans]} || ${Args[${Iterator}].Equal[-IROC]})
 				IgnoreRightsOnCans:Set[TRUE]		
-			elseif (${Args[${Iterator}].Equal[-IGNORERIGHTSONWRECKS]} || ${Args[${Iterator}].Equal[-ignorerightsonwrecks]} || ${Args[${Iterator}].Equal[-IgnoreRightsOnWrecks]})
+			elseif (${Args[${Iterator}].Equal[-IGNORERIGHTSONWRECKS]} || ${Args[${Iterator}].Equal[-ignorerightsonwrecks]} || ${Args[${Iterator}].Equal[-IgnoreRightsOnWrecks]} || ${Args[${Iterator}].Equal[-IROW]})
 				IgnoreRightsOnWrecks:Set[TRUE]													
 			elseif (${Args[${Iterator}].Equal[-MAXTARGETS]} || ${Args[${Iterator}].Equal[-maxtargets]})
 			{
@@ -91,35 +84,35 @@ function main(... Args)
 			}
 			elseif (${Args[${Iterator}].Equal[-AT]} || ${Args[${Iterator}].Equal[-at]})
 			{
-				UsingAt:Set[TRUE]
 				Iterator:Inc
+				UsingAt:Set[TRUE]
 				Me.Fleet:GetMembers[MyFleet]
-				MyFleetCount:Set[${MyFleet.Used}]
-
-				if ${MyFleetCount} <= 0
+				if ${MyFleet.Used} <= 0
 				{
 				    echo "EVESalvage.CONFIG::  Sorry, you cannot clear a field 'at' someone who is not in your fleet."
 				    echo "EVESalvage.CONFIG::  Aborting script"
 				    return
 				}
-				FoundThem:Set[FALSE]
-				do
+				MyFleet:GetIterator[FleetMember]
+				if ${FleetMember:First(exists)}
+				{
+					do
 			    {
-			        if (${MyFleet.Get[${FleetIterator}].ToPilot.Name.Find[${Args[${Iterator}]}]} > 0)
-			        {
-			           FoundThem:Set[TRUE]
-			           break
-			        }
+		        if (${FleetMember.Value.ToPilot.Name.Find[${Args[${Iterator}]}]} > 0)
+		        {
+		           FoundThem:Set[TRUE]
+		           break
+		           ; "FleetMember" is a global variable and will still be available later in the script since we're stopping the iteration at this point
+		        }
 			    }
-			    while ${FleetIterator:Inc} <= ${MyFleetCount}
-
-			    if !${FoundThem}
-			    {
-			        echo "EVESalvage.CONFIG::  There does not seem to be a fleet member with the name '${Args[${Iterator}]}'..."
-			        echo "EVESalvage.CONFIG::  Aborting script"
-			        return
-			    }
-
+			    while ${FleetMember:Next(exists)}
+				}
+		    if !${FoundThem}
+		    {
+	        echo "EVESalvage.CONFIG::  There does not seem to be a fleet member with the name '${Args[${Iterator}]}'..."
+	        echo "EVESalvage.CONFIG::  Aborting script"
+	        return
+		    }
 			}
 			elseif (${Args[${Iterator}].Equal[-STOP]} || ${Args[${Iterator}].Equal[-stop]})
     			StopAfterSalvaging:Set[TRUE]
@@ -197,21 +190,24 @@ function main(... Args)
   {
 		call LeaveStation
 
-		echo "EVESalvage::  Warping to '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' for salvage operation..."
-		MyFleet.Get[${FleetIterator}]:WarpTo
-		do
+		echo "EVESalvage::  Warping to '${FleetMember.Value.ToPilot.Name}' for salvage operation..."
+		if (${FleetMember.Value(exists)} && ${FleetMember.Value.ToPilot(exists)})
 		{
-			wait 20
+			FleetMember.Value:WarpTo
+			do
+			{
+				wait 20
+			}
+			while (${Me.ToEntity.Mode} == 3)
+		
+		  wait 10
+			call SalvageArea ${DoLoot}
+			call CloseShipCargo
+		
+			; Remove bookmark now that we're done
+			wait 2
+			echo "EVESalvage::  Salvage operation at '${FleetMember.Value.ToPilot.Name}' complete..."
 		}
-		while (${Me.ToEntity.Mode} == 3)
-	
-	  wait 10
-		call SalvageArea ${DoLoot}
-		call CloseShipCargo
-	
-		; Remove bookmark now that we're done
-		wait 2
-		echo "EVESalvage::  Salvage operation at '${MyFleet.Get[${FleetIterator}].ToPilot.Name}' complete..."
   }
   ;; END '-at'
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,21 +217,24 @@ function main(... Args)
 	;; Handle any BOOKMARKS provided as arguments
   if (!${SalvageHereOnly} && ${SalvageLocationLabels.Used} > 0)
   {
-      echo "EVESalvage::  ${SalvageLocationLabels.Used} salvage locations identified"
-      do
-      {
-				if (${EVE.Bookmark[${SalvageLocationLabels[${i}]}](exists)})
-    		{
-    	      echo "EVESalvage::  Salvage location found in bookmarks: (${SalvageLocationLabels[${i}]}) (${i})..."
-
+  	SalvageLocationLabels:GetIterator[BMLabel]
+  	if ${BMLabel:First(exists)}
+  	{
+	    echo "EVESalvage::  ${SalvageLocationLabels.Used} salvage locations identified"
+	    do
+	    {
+				if (${EVE.Bookmark[${BMLabel.Value}](exists)})
+	  		{
+	  	      echo "EVESalvage::  Salvage location found in bookmarks: (${BMLabel.Value})..."
+	
 						call LeaveStation
-
+	
 		    		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
-		    		if (!${EVE.Bookmark[${SalvageLocationLabels[${i}]}].SolarSystemID.Equal[${Me.SolarSystemID}]})
+		    		if (!${EVE.Bookmark[${BMLabel.Value}].SolarSystemID.Equal[${Me.SolarSystemID}]})
 		    		{
-		    		  echo "EVESalvage::  Setting Destination and activating auto pilot for salvage operation ${i} (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Label})."
+		    		  echo "EVESalvage::  Setting Destination and activating auto pilot for salvage operation ${i} (${EVE.Bookmark[${BMLabel.Value}].Label})."
 		    		  wait 5
-		    			EVE.Bookmark[${SalvageLocationLabels[${i}]}]:SetDestination
+		    			EVE.Bookmark[${BMLabel.Value}]:SetDestination
 		    			wait 5
 		    			EVE:Execute[CmdToggleAutopilot]
 		    				do
@@ -260,11 +259,11 @@ function main(... Args)
 		    			wait 5
 		    		}
 		    		
-						if (${EVE.Bookmark[${SalvageLocationLabels[${i}]}].Distance} > ${EVE.MinWarpDistance})
+						if (${EVE.Bookmark[${BMLabel.Value}].Distance} > ${EVE.MinWarpDistance})
 						{
 			    		;;; Warp to location
 			    		echo "EVESalvage::  Warping to salvage location..."
-			    		EVE.Bookmark[${SalvageLocationLabels[${i}]}]:WarpTo
+			    		EVE.Bookmark[${BMLabel.Value}]:WarpTo
 			    		wait 120
 			    		do
 			    		{
@@ -272,19 +271,20 @@ function main(... Args)
 			    		}
 			    		while (${Me.ToEntity.Mode} == 3)
 			    	}
-
-          	wait 10
-  					call SalvageArea ${DoLoot}
-
+	
+	        	wait 10
+						call SalvageArea ${DoLoot}
+	
 		    		; Remove bookmark now that we're done
 		    		wait 2
-		    		echo "EVESalvage::  Salvage operation at '${SalvageLocationLabels[${i}]}' complete ... removing bookmark."
-		    		EVE.Bookmark[${SalvageLocationLabels[${i}]}]:Remove
+		    		echo "EVESalvage::  Salvage operation at '${EVE.Bookmark[${BMLabel.Value}]}' complete ... removing bookmark."
+		    		EVE.Bookmark[${BMLabel.Value}]:Remove
 		    		call CloseShipCargo
 		    		wait 10
 		    }
-      }
-      while ${i:Inc} <= ${SalvageLocationLabels.Used}
+	    }
+	    while ${BMLabel:Next(exists)}
+	  }
   }
   ;; Loop for use with bookmarks ENDS 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -297,9 +297,9 @@ function main(... Args)
 		i:Set[1]
 		do
 		{
-			echo "EVESalvage::  Beginning trip #${i} through asteroid belts in this system."
+			echo "EVESalvage::  Beginning trip ${i} of ${CycleBeltsCount} through asteroid belts in this system."
 			call CycleBeltsAndSalvage
-			echo "EVESalvage::  Finished trip #${i} through the asteroid belts in this system."
+			echo "EVESalvage::  Finished trip ${i} of ${CycleBeltsCount} through the asteroid belts in this system."
 		}
 		while ${i:Inc} < ${CycleBeltsCount}
 		
@@ -318,4 +318,32 @@ function main(... Args)
  	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   return
+}
+
+
+function atexit()
+{
+	variable iterator Target
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Unlock all remaining targets (if applicable)
+	Me:GetTargets[Targets]
+	if (${Targets.Used} > 0)
+	{
+		Targets:GetIterator[Target]
+		if ${Target:First(exists)}
+		{
+			do
+			{
+				Target.Value:UnlockTarget
+				echo "EVESalvage->atexit::  Unlocking target '${Target.Value.Name}'"
+			}
+			while ${Target:Next(exists)}
+		}
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+ 	echo "EVESalvage:: EVE Salvager Script -- Ended"
+	return
 }
