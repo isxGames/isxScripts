@@ -335,8 +335,8 @@ function atexit()
 		{
 			do
 			{
-				Target.Value:UnlockTarget
 				echo "EVESalvage->atexit::  Unlocking target '${Target.Value.Name}'"
+				Target.Value:UnlockTarget
 			}
 			while ${Target:Next(exists)}
 		}
