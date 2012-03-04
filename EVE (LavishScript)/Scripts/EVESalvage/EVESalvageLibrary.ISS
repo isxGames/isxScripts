@@ -1,3 +1,11 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; IMPORTANT NOTE:  This file is not a standalone script.  It simply includes 
+;;                  functions that can be used with multiple (salvage related)
+;;                  scripts.   See EVESalvage.iss for an example of how this
+;;                  file is (and its contents are) included and used.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Declare all script or global variables here
 variable(script) int TractorBeamCount
 variable(script) int SalvagerCount
@@ -25,13 +33,21 @@ variable(script) index:item EntityCargo
 variable(script) collection:int64 ProcessedEntities
 variable(script) collection:int64 CargoholdLoot
 variable(script) bool LibraryInitialized
+variable(script) bool ModuleInformationAcquired
 variable(script) index:entity Belts
 
 variable(script) string EVELootingFileName
 variable(script) bool CheckLootItemDB
 variable(script) settingsetref LootItemsDB
 variable(script) filepath EVELootingFilePath
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This function initializes various things that are used
+;; in the rest of this library.  You can call it manually
+;; at the beginning of your script, or allow it to be called
+;; by the SalvageArea() function
 function InitializeLibrary(bool LootCans)
 {
 	if (${LootCans})
@@ -51,10 +67,23 @@ function InitializeLibrary(bool LootCans)
 	LibraryInitialized:Set[TRUE]
 	return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This function gets informations about your modules for use
+;; in other routines in this library.  You will see it used
+;; in the function SalvageArea() below.
 function GetModulesInformation(bool LootCans)
 {
 	variable iterator iModule
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; We already have the information we need.
+	if ${ModuleInformationAcquired}
+		return
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
 	TractorBeams:Clear
 	Salvagers:Clear
@@ -109,9 +138,14 @@ function GetModulesInformation(bool LootCans)
 	SalvagerCount:Set[${Salvagers.Used}]
 	AfterburnerCount:Set[${Afterburners.Used}]
   echo "EVESalvage->GetModulesInformation::  Your ship has ${TractorBeamCount} Tractor Beams, ${SalvagerCount} Salvage Modules, and ${AfterburnerCount} Afterburner."
+  ModuleInformationAcquired:Set[TRUE]
 	return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Opens the player's ship cargo hold
 function OpenShipCargo()
 {
 	if !${EVEWindow[MyShipCargo](exists)}
@@ -126,7 +160,11 @@ function OpenShipCargo()
 		wait 10
 	}
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Closes the player's ship cargo hold
 function CloseShipCargo()
 {
 	if ${EVEWindow[MyShipCargo](exists)}
@@ -145,7 +183,11 @@ function CloseShipCargo()
 		wait 5
 	}
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Check for cargo containers in the area to loot
 function CheckForLoot(bool InReachOnly)
 {
 	variable int i = 1
@@ -654,7 +696,11 @@ function CheckForLoot(bool InReachOnly)
 	
 	return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Salvage wrecks in the current area
 function SalvageArea(bool LootCans)
 {
   variable int i = 1
@@ -1248,7 +1294,11 @@ function SalvageArea(bool LootCans)
 	
 	return	
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transfer all salvaged items to the station hanger present when this function is called
 function TransferSalvagedItemsToHangar()
 {	
 		variable iterator ThisCargo
@@ -1314,7 +1364,13 @@ function TransferSalvagedItemsToHangar()
     Me.Station:StackAllHangarItems
     wait 5
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Transfer all looted items to the station hanger present when this function is called
+;; (NOTE:  This function will only transfer those items looted since the library was initialized, 
+;;         not everything that is in the ship's cargo hold.)
 function TransferLootToHangar()
 {	
 		variable iterator ThisCargo
@@ -1393,7 +1449,12 @@ function TransferLootToHangar()
     Me.Station:StackAllHangarItems
     wait 5
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; If the ship's cargo hold is full, deal with it
+;; (NOTE:  This function is not very good right now.  Overhaul coming soon...)
 function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 {
 		variable int k
@@ -1594,7 +1655,12 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 			return
 		}
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Loot the cargo container passed as the argument "CargoContainer"
+;; (NOTE:  This function assumes that "CargoContainer" is within looting range.)
 function LootCargoContainer(entity CargoContainer)
 {	
 		variable iterator ThisCargo
@@ -1700,7 +1766,12 @@ function LootCargoContainer(entity CargoContainer)
 
 		return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; If the bookmark "Salvager Home Base" exists, return to it and transfer
+;; all salvaged and looted items to the hangar's cargo hold
 function ReturnToHomeBase()
 {
 	
@@ -1791,7 +1862,11 @@ function ReturnToHomeBase()
 	
 	return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Undock from the current space station
 function LeaveStation()
 {
 	if !${LeftStation}
@@ -1843,7 +1918,11 @@ function LeaveStation()
 		wait 1
 	}	
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Cycle through all of the asteroid belts in the CURRENT system and salvage
 function CycleBeltsAndSalvage()
 {
 	variable iterator AsteroidBelt
@@ -1894,3 +1973,5 @@ function CycleBeltsAndSalvage()
 		while ${AsteroidBelt:Next(exists)}
 	}
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
