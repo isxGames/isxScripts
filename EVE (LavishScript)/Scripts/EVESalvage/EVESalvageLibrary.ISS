@@ -202,7 +202,7 @@ function CheckForLoot(bool InReachOnly)
 	if (${IgnoreRightsOnCans})
 		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
 	else
-		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && HaveLootRights = 1]
+		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 	if ${NearbyCans.Used} > 0
 	{
 		echo "EVESalvage->CheckForLoot::  ${NearbyCans.Used} cargo containers found, processing..."
@@ -243,7 +243,7 @@ function CheckForLoot(bool InReachOnly)
 		if (${IgnoreRightsOnCans})
 			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
 		else
-			EVE:QueryEntities[Cans, Name =- "Cargo Container" && HaveLootRights = 1]
+			EVE:QueryEntities[Cans, Name =- "Cargo Container" && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 			
 		if (${Cans.Used} == 0)
 		{
@@ -594,7 +594,10 @@ function CheckForLoot(bool InReachOnly)
 					
 					;;;;;;;;;;;;;;;;;;;;;;;
 					;; Ensure that we do not move unless we're positive there are no other cargo containers that are within 2500 of our current location
-				  EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
+					if (${IgnoreRightsOnCans})
+						EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500]
+					else
+						EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= 2500 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 				  if ${NearbyCans.Used} > 0
 				  {
 						l:Set[1]
@@ -677,7 +680,10 @@ function CheckForLoot(bool InReachOnly)
 			
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 			;; Repopulate Cans with updated data
-			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+			if (${IgnoreRightsOnCans})
+				EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+			else
+				EVE:QueryEntities[Cans, Name =- "Cargo Container" && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 			if (${Cans.Used} == 0)
 			{
 				echo "EVESalvage->CheckForLoot::  - All cargo containers have been processed."
@@ -1117,29 +1123,15 @@ function SalvageArea(bool LootCans)
 				;; Do not approach/move if any jet cans are close by
 				if (${ContinueOn})
 				{
-					  EVE:QueryEntities[Cans, Name =- "Cargo Container"]
-					  if ${Cans.Used} > 0
-					  {
-							l:Set[1]
-	
-							do
-							{
-								if (!${IgnoreRightsOnCans} && !${Cans[${l}].HaveLootRights})
-								{
-									l:Inc
-									continue
-								}	 
-	
-								if (${Cans[${l}].Distance} <= 2500)
-								{		  	
-									echo "EVESalvage->SalvageArea::  --- Can not approach while jet cans present..."
-									ContinueOn:Set[FALSE]	
-									break
-								}
-								l:Inc
-							}
-							while ${l} <= ${Cans.Used}
-					  }
+					if (${IgnoreRightsOnCans})
+						EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= 2500]
+					else
+						EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= 2500 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+				  if ${Cans.Used} > 0
+				  {  	
+						echo "EVESalvage->SalvageArea::  --- Can not approach while jet cans present..."
+						ContinueOn:Set[FALSE]	
+				  }
 				}
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;
@@ -1258,13 +1250,13 @@ function SalvageArea(bool LootCans)
 		
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Repopulate "Wrecks" with updated data
-		EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 1]
+		EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 		if (${Wrecks.Used} == 0)
 		{
 			if ${IgnoreRightsOnWrecks}
 			{
 				SalvagingYellowWrecks:Set[TRUE]
-				EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 0]
+				EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186]
 				if (${Wrecks.Used} == 0)
 				{
 					echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
