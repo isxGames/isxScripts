@@ -1347,7 +1347,8 @@ function TransferSalvagedItemsToHangar()
 
 		if ${NewCargoToTransfer.Used} > 0
 		{
-			EVE:MoveItemsTo[NewCargoToTransfer,Hangar]
+			;; Note:  When moving to "Hangar" the ID# parameter is unused.  So, any positive integer will work.
+			EVE:MoveItemsTo[NewCargoToTransfer, 1, Hangar]
 		}
 
 		NewCargoToTransfer:Clear[]
@@ -1416,7 +1417,8 @@ function TransferLootToHangar()
 
 		if ${NewCargoToTransfer.Used} > 0
 		{
-     			EVE:MoveItemsTo[NewCargoToTransfer,Hangar]
+				;; Note:  When moving to "Hangar" the ID# parameter is unused.  So, any positive integer will work.
+     			EVE:MoveItemsTo[NewCargoToTransfer, 1, Hangar]
 		}
 
 		;; OLD METHOD
@@ -1737,7 +1739,7 @@ function LootCargoContainer(entity CargoContainer)
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-		EVE:MoveItemsTo[CargoToTransfer, MyShip]
+		EVE:MoveItemsTo[CargoToTransfer, ${MyShip.ID}, CargoHold]
 		wait 5
 		
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
