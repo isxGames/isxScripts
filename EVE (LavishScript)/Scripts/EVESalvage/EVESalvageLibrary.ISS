@@ -723,13 +723,13 @@ function SalvageArea(bool LootCans)
 	MaxTargetRange:Set[${MyShip.MaxTargetRange}]
 	
 	echo "EVESalvage->SalvageArea::  Salvager initialized ... "
-	EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 1]
+	EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 	if (${Wrecks.Used} == 0)
 	{
 		if ${IgnoreRightsOnWrecks}
 		{
 			SalvagingYellowWrecks:Set[TRUE]
-			EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 0]
+			EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186]
 			if (${Wrecks.Used} == 0)
 			{
 				echo "EVESalvage->SalvageArea::  No wrecks found in this area, looking for loot..."
@@ -738,7 +738,7 @@ function SalvageArea(bool LootCans)
 				return
 			}
 			else
-				echo "EVESalvage->SalvageArea::  ${Wrecks.Used} YELLOW wrecks remain in this area."
+				echo "EVESalvage->SalvageArea::  ${Wrecks.Used} wrecks remain in this area."
 		}
 		else
 		{
