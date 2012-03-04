@@ -1,3 +1,4 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Declare all script or global variables here
 variable(script) bool LeftStation
 variable(script) int Counter
@@ -14,11 +15,21 @@ variable(script) bool IgnoreRightsOnWrecks
 variable(script) bool IgnoreRightsOnCans
 variable(script) bool CycleBelts
 variable(script) int CycleBeltsCount
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; INCLUDE FUNCTION LIBRARY
+;; This means that the contents of EVESalvageLibrary.iss is 'inserted' 
+;; at this point as though it were part of THIS file.
 #include "EVESalvageLibrary.iss"
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; When a script is executed via the 'run' command, this is the 
+;; function that Lavishscript executes first.   Once this function
+;; ends, the script ends.
 function main(... Args)
 {
   variable int i = 1
@@ -48,7 +59,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.6 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.7 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.
 	if ${Args.Size} > 0
@@ -319,8 +330,12 @@ function main(... Args)
 
   return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Whenever a script ends, Lavishscript looks for a function called 
+;; 'atexit' and executes it.
 function atexit()
 {
 	variable iterator Target
@@ -347,3 +362,5 @@ function atexit()
  	echo "EVESalvage:: EVE Salvager Script -- Ended"
 	return
 }
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
