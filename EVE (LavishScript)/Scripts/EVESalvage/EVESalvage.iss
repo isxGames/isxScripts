@@ -312,7 +312,7 @@ function main(... Args)
 			call CycleBeltsAndSalvage
 			echo "EVESalvage::  Finished trip ${i} of ${CycleBeltsCount} through the asteroid belts in this system."
 		}
-		while ${i:Inc} < ${CycleBeltsCount}
+		while ${i:Inc} <= ${CycleBeltsCount}
 		
 		call CloseShipCargo
 	}

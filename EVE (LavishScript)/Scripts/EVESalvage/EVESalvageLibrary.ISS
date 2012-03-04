@@ -95,7 +95,7 @@ function GetModulesInformation(bool LootCans)
 
 	;; Determine the modules at our disposal
 	echo "EVESalvage->GetModulesInformation::  Acquiring Information about your ship's modules..."
-	Me.Ship:GetModules[AllModules]
+	MyShip:GetModules[AllModules]
 	if (${AllModules.Used} <= 0)
 	{
 		echo ERROR -- Your ship does not appear to have any modules
@@ -151,7 +151,7 @@ function OpenShipCargo()
 	if !${EVEWindow[MyShipCargo](exists)}
 	{
 		echo "EVESalvage->OpenShipCargo::  Opening Ship Cargohold"
-		EVE:Execute[OpenCargoHoldOfActiveShip]
+		MyShip:OpenCargo
 		wait 15
 		while !${EVEWindow[MyShipCargo](exists)}
 		{
@@ -170,7 +170,7 @@ function CloseShipCargo()
 	if ${EVEWindow[MyShipCargo](exists)}
 	{
 		echo "EVESalvage->CloseShipCargo::  Stacking cargo..."
-		Me.Ship:StackAllCargo
+		MyShip:StackAllCargo
 		wait 10					
 		
 		echo "EVESalvage->CloseShipCargo::  Closing Ship Cargohold"
@@ -715,12 +715,12 @@ function SalvageArea(bool LootCans)
 	call GetModulesInformation ${LootCans}
 	if (${MaxTargets} < 1)
 	{
-		if (${Me.MaxLockedTargets} <= ${Me.Ship.MaxLockedTargets})
+		if (${Me.MaxLockedTargets} <= ${MyShip.MaxLockedTargets})
 			MaxTargets:Set[${Me.MaxLockedTargets}]
 		else
-			MaxTargets:Set[${Me.Ship.MaxLockedTargets}]
+			MaxTargets:Set[${MyShip.MaxLockedTargets}]
 	}
-	MaxTargetRange:Set[${Me.Ship.MaxTargetRange}]
+	MaxTargetRange:Set[${MyShip.MaxTargetRange}]
 	
 	echo "EVESalvage->SalvageArea::  Salvager initialized ... "
 	EVE:QueryEntities[Wrecks,Name =- "wreck" && GroupID == 186 && HaveLootRights = 1]
@@ -1238,14 +1238,14 @@ function SalvageArea(bool LootCans)
 		
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Make sure we're not running low on capacitor
-		if (${Me.Ship.CapacitorPct} <= 22)
+		if (${MyShip.CapacitorPct} <= 22)
 		{
 			echo "EVESalvage->SalvageArea::  !! Running low on Capacitor:  Pausing...
 			do
 			{
 			   wait 30
 			}
-			while (${Me.Ship.CapacitorPct} <= 22)
+			while (${MyShip.CapacitorPct} <= 22)
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1319,14 +1319,14 @@ function TransferSalvagedItemsToHangar()
 			wait 30
 		}
 					
-		Me.Ship:GetCargo[MyCargo]
+		MyShip:GetCargo[MyCargo]
 		if (${MyCargo.Used} == 0)
 		{
 			call CloseShipCargo
 			wait 10
 			call OpenShipCargo
 			wait 10
-			Me.Ship:GetCargo[MyCargo]
+			MyShip:GetCargo[MyCargo]
 		}					
 						
 		
@@ -1401,14 +1401,14 @@ function TransferLootToHangar()
 			echo "EVESalvage->UnloadLoot::  Moving ${CargoholdLoot.Used} items"
 		
 		
-		Me.Ship:GetCargo[MyCargo]
+		MyShip:GetCargo[MyCargo]
 		if (${MyCargo.Used} == 0)
 		{
 			call CloseShipCargo
 			wait 10
 			call OpenShipCargo
 			wait 20
-			Me.Ship:GetCargo[MyCargo]
+			MyShip:GetCargo[MyCargo]
 		}
 
 		NewCargoToTransfer:Clear
@@ -1460,18 +1460,18 @@ function CheckShipIsFull(bool LootCans, bool IgnoreCapacity)
 		variable int k
 		variable int UndockCounter
 		
-		;echo "DEBUG: Math.Calc[Me.Ship.CargoCapacity-Me.Ship.UsedCargoCapacity: ${Math.Calc[${Me.Ship.CargoCapacity}-${Me.Ship.UsedCargoCapacity}]}"
-		;echo "DEBUG: Math.Calc[Me.Ship.CargoCapacity*0.01: ${Math.Calc[${Me.Ship.CargoCapacity}*0.01]}"
+		;echo "DEBUG: Math.Calc[MyShip.CargoCapacity-MyShip.UsedCargoCapacity: ${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]}"
+		;echo "DEBUG: Math.Calc[MyShip.CargoCapacity*0.01: ${Math.Calc[${MyShip.CargoCapacity}*0.01]}"
 		
 		if !${IgnoreCapacity}
 		{
 			/* 
 			; salvage operation requires a minimum of 40 m^3 free -- so, this is not useful 
-			if (${Math.Calc[${Me.Ship.CargoCapacity}-${Me.Ship.UsedCargoCapacity}]} > ${Math.Calc[${Me.Ship.CargoCapacity}*0.01]})
+			if (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} > ${Math.Calc[${MyShip.CargoCapacity}*0.01]})
 			return
 			*/
 	   	
-	 		if (${Math.Calc[${Me.Ship.CargoCapacity}-${Me.Ship.UsedCargoCapacity}]} > 40)
+	 		if (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} > 40)
 			{
 				return
 			}	   	
@@ -1716,7 +1716,7 @@ function LootCargoContainer(entity CargoContainer)
 			
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Check to make sure the ship's cargo hold has room
-		if (${TotalCargoVolume} > ${Math.Calc[${Me.Ship.CargoCapacity} - ${Me.Ship.UsedCargoCapacity}]})
+		if (${TotalCargoVolume} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]})
 		{
 			echo "EVESalvage->LootCargoContainer::  Ship Cargo Hold is full."
 			CargoContainer:CloseCargo
