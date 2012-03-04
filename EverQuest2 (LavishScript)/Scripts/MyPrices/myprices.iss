@@ -1157,6 +1157,7 @@ function BuyItems()
 	Declare tiersearch string local
 	Declare costsearch string local
 	Declare loopcount int local
+	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 
 	Call CheckFocus
 	if ${NameOnly}
@@ -3878,7 +3879,7 @@ atom(script) EQ2_onIncomingText(string Text)
 
 atom EQ2_ExamineItemWindowAppeared(string ItemName, string WindowID)
 {
-	if ${ExamineItemWindow[${WindowID}].TextVector} == 1
+	if ${ExamineItemWindow[${WindowID}].TextVector} == 2
 		NewCollection:Set[TRUE]
 	else
 		NewCollection:Set[FALSE]
