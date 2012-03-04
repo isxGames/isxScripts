@@ -342,18 +342,21 @@ function atexit()
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Unlock all remaining targets (if applicable)
-	Me:GetTargets[Targets]
-	if (${Targets.Used} > 0)
+	if (!${Me.InStation})
 	{
-		Targets:GetIterator[Target]
-		if ${Target:First(exists)}
+		Me:GetTargets[Targets]
+		if (${Targets.Used} > 0)
 		{
-			do
+			Targets:GetIterator[Target]
+			if ${Target:First(exists)}
 			{
-				echo "EVESalvage->atexit::  Unlocking target '${Target.Value.Name}'"
-				Target.Value:UnlockTarget
+				do
+				{
+					echo "EVESalvage->atexit::  Unlocking target '${Target.Value.Name}'"
+					Target.Value:UnlockTarget
+				}
+				while ${Target:Next(exists)}
 			}
-			while ${Target:Next(exists)}
 		}
 	}
 	;;
