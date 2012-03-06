@@ -59,7 +59,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.7 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.8 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.
 	if ${Args.Size} > 0
@@ -243,7 +243,7 @@ function main(... Args)
 		    		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
 		    		if (!${EVE.Bookmark[${BMLabel.Value}].SolarSystemID.Equal[${Me.SolarSystemID}]})
 		    		{
-		    		  echo "EVESalvage::  Setting Destination and activating auto pilot for salvage operation ${i} (${EVE.Bookmark[${BMLabel.Value}].Label})."
+		    		  echo "EVESalvage::  Setting Destination and activating auto pilot for salvage operation at '${BMLabel.Value}'..."
 		    		  wait 5
 		    			EVE.Bookmark[${BMLabel.Value}]:SetDestination
 		    			wait 5
@@ -288,7 +288,7 @@ function main(... Args)
 	
 		    		; Remove bookmark now that we're done
 		    		wait 2
-		    		echo "EVESalvage::  Salvage operation at '${EVE.Bookmark[${BMLabel.Value}]}' complete ... removing bookmark."
+		    		echo "EVESalvage::  Salvage operation at '${BMLabel.Value}' complete ... removing bookmark."
 		    		EVE.Bookmark[${BMLabel.Value}]:Remove
 		    		call CloseShipCargo
 		    		wait 10
