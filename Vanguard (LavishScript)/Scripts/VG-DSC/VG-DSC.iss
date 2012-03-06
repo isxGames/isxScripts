@@ -1166,6 +1166,44 @@ function:bool BuildCrit()
 }
 
 ;===================================================
+;===   This is where we want to force a crit    ====
+;===================================================
+function:bool BuildFastCrit()
+{
+	;;;;;;;;;;
+	;; Might as well get Purity up and then force a crit
+	;; if we are successful then cast Blessed Whirl,
+	;; otherwise, we will execute Void Hand
+	;; if all else fails then we will cast Breath of Life
+	wait 10 ${Me.Ability[${Clarity}].IsReady}
+	wait 1
+	call UseAbility "${Clarity}"
+	if ${Return}
+	{
+		call BlessedWhirl
+		if ${Return}
+		{
+			;; we should still have a crit up
+			return TRUE
+		}
+		call CycloneKick
+		if ${Return}
+		{
+			;; we should still have a crit up
+			return TRUE
+		}
+		call VoidHand
+		if ${Return}
+		{
+			;; we should still have a crit up
+			return TRUE
+		}
+		;; we should still have a crit up
+		return TRUE
+	}
+}
+
+;===================================================
 ;===        BLESSED WHIRL                       ====
 ;===================================================
 function:bool BlessedWhirl()
@@ -1250,6 +1288,7 @@ function Endowment_Mastery()
 			if ${Return}
 			{
 				EndowmentStep:Set[2]
+				wait 2
 			}
 		}
 		if ${EndowmentStep} == 2
@@ -1258,6 +1297,7 @@ function Endowment_Mastery()
 			if ${Return}
 			{
 				EndowmentStep:Set[3]
+				wait 2
 			}
 		}
 		if ${EndowmentStep} == 3
@@ -1287,6 +1327,7 @@ function Endowment_Enmity()
 			if ${Return}
 			{
 				EndowmentStep:Set[2]
+				wait 2
 			}
 		}
 		if ${EndowmentStep} == 2
@@ -1316,6 +1357,7 @@ function Endowment_Life()
 			if ${Return}
 			{
 				EndowmentStep:Set[2]
+				wait 2
 			}
 		}
 
@@ -1325,6 +1367,7 @@ function Endowment_Life()
 			if ${Return}
 			{
 				EndowmentStep:Set[3]
+				wait 2
 			}
 		}
 		if ${EndowmentStep} == 3
@@ -1691,6 +1734,7 @@ function GlobalCooldown()
 ;===================================================
 function IsCasting()
 {
+	call AutoAttack
 	while ${Me.IsCasting}
 	{
 		call FaceTarget

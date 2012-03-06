@@ -665,11 +665,19 @@ atom(script) FindAction()
 			}
 			
 			;;;;;;;;;;
+			;; Build a crit real fast to increase our Jin
+			if ${Me.Stat[Adventuring,Jin]}<=7 && ${Me.Ability[${Clarity}].TimeRemaining}==0
+			{
+				Action:Set[BuildFastCrit]
+				return
+			}
+			
+			;;;;;;;;;;
 			;; Use Ra'Jin Flare and turn Melee Attack Back On... Ranged Damage
 			;if ${Me.Encounter}< && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			if ${EndowementsAreUp}
 			{
-				if ${Me.Stat[Adventuring,Jin]}>=8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${doRangedWeapon}
+				if ${Me.Stat[Adventuring,Jin]}>=8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${doRangedWeapon} && !${Me.Effect[${Clarity}](exists)}
 				{
 					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>10 && ${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 					{
