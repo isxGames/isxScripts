@@ -478,6 +478,24 @@ atom(script) FindAction()
 		if ${Return}
 		{
 			;;;;;;;;;;
+			;; these will add Jin if we get too low
+			if ${Me.Stat[Adventuring,Jin]}<=13
+			{
+				if !${Me.Effect[${SuperiorSunFist}](exists)} && ${Me.Ability[${SuperiorSunFist}].TriggeredCountdown} && ${Me.Ability[${SuperiorSunFist}].TimeRemaining}==0
+				{
+					;echo SuperiorSunFist Ability=${Me.Ability[${SuperiorSunFist}](exists)}, Exist=${Me.Effect[${SuperiorSunFist}](exists)}, TimeRemaining=${Me.Ability[${SuperiorSunFist}].TimeRemaining}
+					Action:Set[Crit_SunFist]
+					return
+				}
+				if ${Me.Stat[Adventuring,Jin]}<=10 && !${Me.Effect[${SunFist}](exists)} && ${Me.Ability[${SunFist}].TriggeredCountdown} && ${Me.Ability[${SunFist}].TimeRemaining}==0
+				{
+					;echo SunFist Ability=${Me.Ability[${SunFist}](exists)}, Exist=${Me.Effect[${SunFist}](exists)}, TimeRemaining=${Me.Ability[${SunFist}].TimeRemaining}
+					Action:Set[Crit_SunFist]
+					return
+				}
+			}
+
+			;;;;;;;;;;
 			;; Big Crit Heal Chain if our health is below 40%, 1 minute cooldown
 			if ${Me.DTargetHealth}>0 && ${Me.DTargetHealth}<${Crit_HealPct} && ${Me.Target(exists)} && !${Me.Target.IsDead}
 			{
@@ -536,49 +554,65 @@ atom(script) FindAction()
 			;;;;;;;;;;
 			;; Start woking on our Falling Petal and White Lotus Crit Buff line:
 			;; within 10m it increases damage and healing for 5 minutes
-			if ${Me.Ability[${FallingPetal}].TriggeredCountdown} || ${Me.Ability[${PetalSplitsEarth}].TriggeredCountdown} || ${Me.Ability[${WhiteLotusStrike}].TriggeredCountdown}
+			variable bool PetalsAreUp = TRUE
+			if  ${Me.Ability[${FallingPetal}](exists)} && !${Me.Ability[${PetalSplitsEarth}](exists)}
 			{
-				;; if you do not have the updated ability then this routine applies
-				if  ${Me.Ability[${FallingPetal}](exists)} && !${Me.Ability[${PetalSplitsEarth}](exists)}
+				if (!${Me.Effect[${FallingPetal}](exists)} || ${Me.Effect[${FallingPetal}].TimeRemaining}<60)
 				{
-					if (!${Me.Effect[${FallingPetal}](exists)} || ${Me.Effect[${FallingPetal}].TimeRemaining}<60)
+					PetalsAreUp:Set[FALSE]
+					if ${Me.Ability[${FallingPetal}].TriggeredCountdown}
 					{
-						;echo FallingPetal Ability=${Me.Ability[${FallingPetal}](exists)}, Exist=${Me.Effect[${FallingPetal}](exists)}, TimeRemaining=${Me.Effect[${FallingPetal}].TimeRemaining}
 						ExecutedAbility:Set[${FallingPetal}]
 						Action:Set[Crit_PetalSeries]
 						return
 					}
 				}
-				;; this is the updated ability
-				if ${Me.Ability[${PetalSplitsEarth}](exists)}
+			}
+			if ${Me.Ability[${PetalSplitsEarth}](exists)}
+			{
+				if (!${Me.Effect[${PetalSplitsEarth}](exists)} || ${Me.Effect[${PetalSplitsEarth}].TimeRemaining}<60)
 				{
-					if (!${Me.Effect[${PetalSplitsEarth}](exists)} || ${Me.Effect[${PetalSplitsEarth}].TimeRemaining}<60)
+					PetalsAreUp:Set[FALSE]
+					if ${Me.Ability[${PetalSplitsEarth}].TriggeredCountdown}
 					{
-						;echo PetalSplitsEarth Ability=${Me.Ability[${PetalSplitsEarth}](exists)}, Exist=${Me.Effect[${PetalSplitsEarth}](exists)}, TimeRemaining=${Me.Effect[${PetalSplitsEarth}].TimeRemaining}
 						ExecutedAbility:Set[${PetalSplitsEarth}]
 						Action:Set[Crit_PetalSeries]
 						return
 					}
 				}
-				;; this doesn't change... it is the second set of the series
-				if ${Me.Ability[${WhiteLotusStrike}](exists)}
+			}
+			if ${Me.Ability[${WhiteLotusStrike}](exists)}
+			{
+				if (!${Me.Effect[${WhiteLotusStrike}](exists)} || ${Me.Effect[${WhiteLotusStrike}].TimeRemaining}<60)
 				{
-					if (!${Me.Effect[${WhiteLotusStrike}](exists)} || ${Me.Effect[${WhiteLotusStrike}].TimeRemaining}<60)
+					PetalsAreUp:Set[FALSE]
+					if ${Me.Ability[${WhiteLotusStrike}].TriggeredCountdown}
 					{
-						;echo WhiteLotusStrike Ability=${Me.Ability[${WhiteLotusStrike}](exists)}, Exist=${Me.Effect[${WhiteLotusStrike}](exists)}, TimeRemaining=${Me.Effect[${WhiteLotusStrike}].TimeRemaining}
 						ExecutedAbility:Set[${WhiteLotusStrike}]
 						Action:Set[Crit_PetalSeries]
 						return
 					}
 				}
 			}
+			
 
 			;;;;;;;;;;
 			;; Start woking on our Endowments:
 			;; Master = reduces 10% energy and endurance costs to all within 10m
 			;; Emnity = increase 10% damage for self
 			;; Life = increase DTarget's health and regenerates our jin
-			if !${Me.Effect["Endowment of Mastery"](exists)} && ${Me.Ability["Endowment of Mastery"](exists)} && ${Me.Effect["Endowment of Mastery"].TimeRemaining}<45
+			variable bool EndowementsAreUp = FALSE
+			if ${Me.Ability["Endowment of Mastery"](exists)} && ${Me.Effect["Endowment of Mastery"].TimeRemaining}>=45
+			{
+				if ${Me.Ability["Endowment of Enmity"](exists)} && ${Me.Effect["Endowment of Enmity"].TimeRemaining}>=45
+				{
+					if ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}>=45
+					{
+						EndowementsAreUp:Set[TRUE]
+					}
+				}
+			}
+			if ${Me.Ability["Endowment of Mastery"](exists)} && (!${Me.Effect["Endowment of Mastery"](exists)} || ${Me.Effect["Endowment of Mastery"].TimeRemaining}<45)
 			{
 				if ${Me.Ability[${SoulCutter}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Ability[${KnifeHand}].IsReady}
 				{
@@ -586,15 +620,15 @@ atom(script) FindAction()
 					return
 				}
 			}
-			if !${Me.Effect["Endowment of Enmity"](exists)} && ${Me.Ability["Endowment of Enmity"](exists)} && ${Me.Effect["Endowment of Enmity"].TimeRemaining}<45
+			if ${Me.Ability["Endowment of Enmity"](exists)} && (!${Me.Effect["Endowment of Enmity"](exists)} || ${Me.Effect["Endowment of Enmity"].TimeRemaining}<45) && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
 			{
-				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
 				{
 					Action:Set[Endowment_Enmity]
 					return
 				}
 			}
-			if !${Me.Effect["Endowment of Life"](exists)} && ${Me.Ability["Endowment of Life"](exists)} && ${Me.Effect["Endowment of Life"].TimeRemaining}<45 && ${Me.Stat[Adventuring,Jin]}>=2
+			if ${Me.Ability["Endowment of Life"](exists)} && (!${Me.Effect["Endowment of Life"](exists)} || ${Me.Effect["Endowment of Life"].TimeRemaining}<45) && ${Me.Stat[Adventuring,Jin]}>=2
 			{
 				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 				{
@@ -604,36 +638,18 @@ atom(script) FindAction()
 			}
 
 			;;;;;;;;;;
-			;; these will add Jin if we get too low
-			if ${Me.Stat[Adventuring,Jin]}<12
-			{
-				if !${Me.Effect[${SuperiorSunFist}](exists)} && ${Me.Ability[${SuperiorSunFist}].TriggeredCountdown} && ${Me.Ability[${SuperiorSunFist}].TimeRemaining}==0
-				{
-					;echo SuperiorSunFist Ability=${Me.Ability[${SuperiorSunFist}](exists)}, Exist=${Me.Effect[${SuperiorSunFist}](exists)}, TimeRemaining=${Me.Ability[${SuperiorSunFist}].TimeRemaining}
-					Action:Set[Crit_SunFist]
-					return
-				}
-				if ${Me.Stat[Adventuring,Jin]}<12 && !${Me.Effect[${SunFist}](exists)} && ${Me.Ability[${SunFist}].TriggeredCountdown} && ${Me.Ability[${SunFist}].TimeRemaining}==0
-				{
-					;echo SunFist Ability=${Me.Ability[${SunFist}](exists)}, Exist=${Me.Effect[${SunFist}](exists)}, TimeRemaining=${Me.Ability[${SunFist}].TimeRemaining}
-					Action:Set[Crit_SunFist]
-					return
-				}
-			}
-
-			;;;;;;;;;;
 			;; Do we need this?  Not really, but could make a difference down the road
-			if ${Me.Stat[Adventuring,Jin]}>12
+			if ${Me.Stat[Adventuring,Jin]}>=10
 			{
 				if ${Me.Ability[${BloomingRidgeHand}](exists)} && ${Me.Ability[${BloomingRidgeHand}].IsReady} && !${Me.TargetMyDebuff[${BloomingRidgeHand}](exists)}
 				{
-					Action:Set[BloomingRidgeHand]
-					return
+					;Action:Set[BloomingRidgeHand]
+					;return
 				}
 				if ${Me.Ability[${KissOfTorment}](exists)} && ${Me.Stat[Adventuring,Jin]}>12 && !${Me.Effect[${KissOfTorment}](exists)} && ${Me.Ability[${KissOfTorment}].TriggeredCountdown} && ${Me.Ability[${KissOfTorment}].TimeRemaining}==0
 				{
-					Action:Set[Crit_KissOfTorment]
-					return
+					;Action:Set[Crit_KissOfTorment]
+					;return
 				}
 			}
 
@@ -647,76 +663,89 @@ atom(script) FindAction()
 					return
 				}
 			}
-
-			;;;;;;;;;;
-			;; These do some serious damage so execute these whenever possible!
-			if ${Me.Ability[${FocusedSonicBlast}](exists)} && !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
-			{
-				Action:Set[Crit_DPS]
-				return
-			}
-			if ${Me.Ability[${TouchOfDiscord}](exists)} && !${Me.Effect[${TouchOfDiscord}](exists)} && ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} && ${Me.Ability[${TouchOfDiscord}].TimeRemaining}==0
-			{
-				Action:Set[Crit_DPS]
-				return
-			}
-			if ${Me.Ability[${GraspOfDiscord}](exists)} && !${Me.Effect[${GraspOfDiscord}](exists)} && ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} && ${Me.Ability[${GraspOfDiscord}].TimeRemaining}==0
-			{
-				Action:Set[Crit_DPS]
-				return
-			}
-			if ${Me.Ability[${PalmOfDiscord}](exists)} && !${Me.Effect[${PalmOfDiscord}](exists)} && ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} && ${Me.Ability[${PalmOfDiscord}].TimeRemaining}==0
-			{
-				Action:Set[Crit_DPS]
-				return
-			}
-			if ${Me.Ability[${FistOfDiscord}](exists)} && !${Me.Effect[${FistOfDiscord}](exists)} && ${Me.Ability[${FistOfDiscord}].TriggeredCountdown} && ${Me.Ability[${FistOfDiscord}].TimeRemaining}==0
-			{
-				Action:Set[Crit_DPS]
-				return
-			}
-
+			
 			;;;;;;;;;;
 			;; Use Ra'Jin Flare and turn Melee Attack Back On... Ranged Damage
-			if ${Me.Encounter}<2 && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			;if ${Me.Encounter}< && ${Me.Stat[Adventuring,Jin]}>8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+			if ${EndowementsAreUp}
 			{
-				if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]} && ${doRangedWeapon}
+				if ${Me.Stat[Adventuring,Jin]}>=8 && ${Me.HealthPct}>=${Crit_DPS_RaJinFlarePct} && ${doRangedWeapon}
 				{
-					Action:Set[RaJinFlare]
+					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>10 && ${Me.Ability[${RaJinFlare}].IsReady} && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+					{
+						Action:Set[RaJinFlare]
+						return
+					}
+					elseif ${Me.Ability[Ranged Attack].IsReady}
+					{
+						Action:Set[RangedAttack]
+						return
+					}
 					return
 				}
-			}
 
-			;;;;;;;;;;
-			;; lets build out health and jin by repeating Endowement of Life
-			if ${Me.Ability[${BlessedWind}](exists)} && ${Me.Ability[${CycloneKick}](exists)} && ${Me.Ability[${VoidHand}](exists)} && ${Me.Stat[Adventuring,Jin]}>=2
-			{
-				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
+				;;;;;;;;;;
+				;; These do some serious damage so execute these whenever possible!  It also builds jin
+				if ${PetalsAreUp}
 				{
-					Action:Set[Endowment_Life]
-					return
+					if ${Me.Ability[${FocusedSonicBlast}](exists)} && !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
+					{
+						Action:Set[Crit_DPS]
+						return
+					}
+					if ${Me.Ability[${TouchOfDiscord}](exists)} && !${Me.Effect[${TouchOfDiscord}](exists)} && ${Me.Ability[${TouchOfDiscord}].TriggeredCountdown} && ${Me.Ability[${TouchOfDiscord}].TimeRemaining}==0
+					{
+						Action:Set[Crit_DPS]
+						return
+					}
+					if ${Me.Ability[${GraspOfDiscord}](exists)} && !${Me.Effect[${GraspOfDiscord}](exists)} && ${Me.Ability[${GraspOfDiscord}].TriggeredCountdown} && ${Me.Ability[${GraspOfDiscord}].TimeRemaining}==0
+					{
+						Action:Set[Crit_DPS]
+						return
+					}
+					if ${Me.Ability[${PalmOfDiscord}](exists)} && !${Me.Effect[${PalmOfDiscord}](exists)} && ${Me.Ability[${PalmOfDiscord}].TriggeredCountdown} && ${Me.Ability[${PalmOfDiscord}].TimeRemaining}==0
+					{
+						Action:Set[Crit_DPS]
+						return
+					}
+					if ${Me.Ability[${FistOfDiscord}](exists)} && !${Me.Effect[${FistOfDiscord}](exists)} && ${Me.Ability[${FistOfDiscord}].TriggeredCountdown} && ${Me.Ability[${FistOfDiscord}].TimeRemaining}==0
+					{
+						Action:Set[Crit_DPS]
+						return
+					}
 				}
-			}
 
-			;;;;;;;;;;
-			;; Last ability to use... available at level 2
-			if ${Me.Ability[${BlessedWind}](exists)}
-			{
-				if ${Me.Ability[${BlessedWind}].IsReady}
+				;;;;;;;;;;
+				;; lets build out health and jin by repeating Endowement of Life
+				if ${Me.Ability[${BlessedWind}](exists)} && ${Me.Ability[${CycloneKick}](exists)} && ${Me.Ability[${VoidHand}](exists)} && ${Me.Stat[Adventuring,Jin]}>=2
 				{
-					Action:Set[BlessedWind]
-					return
+					if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
+					{
+						Action:Set[Endowment_Life]
+						return
+					}
 				}
-			}
-
-			;;;;;;;;;;
-			;; Last ability to use... available at level 1
-			if ${Me.Ability[${VoidHand}](exists)} && ${Me.EndurancePct}>20
-			{
-				if ${Me.Ability[${VoidHand}].IsReady}
+				
+				;;;;;;;;;;
+				;; Last ability to use... available at level 2
+				if ${Me.Ability[${BlessedWind}](exists)}
 				{
-					Action:Set[VoidHand]
-					return
+					if ${Me.Ability[${BlessedWind}].IsReady}
+					{
+						Action:Set[BlessedWind]
+						return
+					}
+				}
+
+				;;;;;;;;;;
+				;; Last ability to use... available at level 1
+				if ${Me.Ability[${VoidHand}](exists)} && ${Me.EndurancePct}>20
+				{
+					if ${Me.Ability[${VoidHand}].IsReady}
+					{
+						Action:Set[VoidHand]
+						return
+					}
 				}
 			}
 		}
