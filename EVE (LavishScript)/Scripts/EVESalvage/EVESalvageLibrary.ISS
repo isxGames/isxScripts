@@ -7,9 +7,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Declare all script or global variables here
-variable(script) int TractorBeamCount
-variable(script) int SalvagerCount
-variable(script) int AfterburnerCount
 variable(script) index:module AllModules
 variable(script) index:module TractorBeams
 variable(script) index:module Salvagers
@@ -134,10 +131,7 @@ function GetModulesInformation(bool LootCans)
 		while (${iModule:Next(exists)})
 	}
 	
-	TractorBeamCount:Set[${TractorBeams.Used}]
-	SalvagerCount:Set[${Salvagers.Used}]
-	AfterburnerCount:Set[${Afterburners.Used}]
-  echo "EVESalvage->GetModulesInformation::  Your ship has ${TractorBeamCount} Tractor Beams, ${SalvagerCount} Salvage Modules, and ${AfterburnerCount} Afterburner."
+  echo "EVESalvage->GetModulesInformation::  Your ship has ${TractorBeams.Used} Tractor Beam(s), ${Salvagers.Used} Salvage Module(s), and ${Afterburners.Used} Afterburner/MWD."
   ModuleInformationAcquired:Set[TRUE]
 	return
 }
@@ -343,9 +337,9 @@ function CheckForLoot(bool InReachOnly)
 				{
 				    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				    ;; Before moving, make sure we finish targeting
-				    while ${Me.TargetingCount} > 0
+				    while (${Me.TargetingCount} > 0 && ${Me.TargetCount} < 1)
 				    {
-				    	echo "EVESalvage->CheckForLoot::  -- Waiting for lock on all targets..."
+				    	echo "EVESalvage->CheckForLoot::  -- Waiting for a target lock..."
 							wait 5
 				    }
 	
@@ -355,7 +349,7 @@ function CheckForLoot(bool InReachOnly)
 				    {
 				    	echo "EVESalvage->CheckForLoot::  -- ${Cans[${i}].Name} too far away to target :: Approaching..."
 							Cans[${i}]:Approach
-							if (${AfterburnerCount} > 0)
+							if (${Afterburners.Used} > 0)
 							{
 								if (${Afterburners[1].IsDeactivating})
 								{
@@ -412,10 +406,10 @@ function CheckForLoot(bool InReachOnly)
 			;; Wait until all targets are fully locked
 			if (${Me.TargetingCount} > 0)
 			{
-				echo "EVESalvage->CheckForLoot::  -- Waiting for lock on all targets..."
-				while ${Me.TargetingCount} > 0
+				echo "EVESalvage->CheckForLoot::  -- Waiting for a target lock..."
+				while (${Me.TargetingCount} > 0 && ${Me.TargetCount} < 1)
 				{
-					wait 5
+					wait 2
 				}
 			}
 			echo "EVESalvage->CheckForLoot::  -- ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
@@ -485,7 +479,7 @@ function CheckForLoot(bool InReachOnly)
 							wait 3
 						}	
 					}
-					while (${j:Inc} <= ${TractorBeamCount})
+					while (${j:Inc} <= ${TractorBeams.Used})
 					;; END LOOP [Disengaging tractor beams on this wreck]
 					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 					
@@ -561,7 +555,7 @@ function CheckForLoot(bool InReachOnly)
 							wait 1
 						}	
 					}
-					while (${j:Inc} <= ${TractorBeamCount})
+					while (${j:Inc} <= ${TractorBeams.Used})
 					;; END LOOP (determine if cargo container is already being tractored)
 					;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -584,7 +578,7 @@ function CheckForLoot(bool InReachOnly)
 							}	
 							wait 2
 						}
-						while (${j:Inc} <= ${TractorBeamCount})				
+						while (${j:Inc} <= ${TractorBeams.Used})				
 					}
 				}
 				elseif (${Targets[${k}].Distance} > ${MaxTractorRange})
@@ -623,7 +617,7 @@ function CheckForLoot(bool InReachOnly)
 						echo "EVESalvage->CheckForLoot::  --- Approaching ..."
 
 						Targets[${k}]:Approach
-						if (${AfterburnerCount} > 0)
+						if (${Afterburners.Used} > 0)
 						{
 							if (${Targets[${k}].Distance} > ${MaxTractorRange})
 							{
@@ -654,7 +648,7 @@ function CheckForLoot(bool InReachOnly)
 
 							echo "EVESalvage->CheckForLoot::  --- Cargo container is now within tractor range..."
 
-							if (${AfterburnerCount} > 0)
+							if (${Afterburners.Used} > 0)
 							{
 								if (${Afterburners[1].IsActive})
 								{
@@ -835,10 +829,10 @@ function SalvageArea(bool LootCans)
 			    ;; Before moving, make sure we handle all wrecks that we are targetting or have targeted
 					if (${Me.TargetingCount} > 0)
 					{
-						echo "EVESalvage->SalvageArea::  -- Waiting for lock on all targets..."
-						while ${Me.TargetingCount} > 0
+						echo "EVESalvage->SalvageArea::  -- Waiting for a target lock..."
+						while (${Me.TargetingCount} > 0 && ${Me.TargetCount} < 1)
 						{
-							wait 5
+							wait 2
 						}
 					}
 
@@ -848,7 +842,7 @@ function SalvageArea(bool LootCans)
 			    {
 			    	echo "EVESalvage->SalvageArea::  -- ${Wrecks[${i}].Name} too far away to target :: Approaching..."
 						Wrecks[${i}]:Approach
-						if (${AfterburnerCount} > 0)
+						if (${Afterburners.Used} > 0)
 						{
 							if (${Afterburners[1].IsDeactivating})
 							{
@@ -894,10 +888,10 @@ function SalvageArea(bool LootCans)
 		;; Wait until all targets are fully locked
 		if (${Me.TargetingCount} > 0)
 		{
-			echo "EVESalvage->SalvageArea::  -- Waiting for lock on all targets..."
-			while ${Me.TargetingCount} > 0
+			echo "EVESalvage->SalvageArea::  -- Waiting for a target lock..."
+			while (${Me.TargetingCount} > 0 && ${Me.TargetCount} < 1)
 			{
-				wait 5
+				wait 2
 			}
 		}
 		echo "EVESalvage->SalvageArea::  ** ${Math.Calc[${Me.TargetCount} + ${Me.TargetingCount}].Precision[0]} Target(s) Acquired"
@@ -968,7 +962,7 @@ function SalvageArea(bool LootCans)
 						wait 1
 					}	
 				}
-				while (${j:Inc} <= ${TractorBeamCount})
+				while (${j:Inc} <= ${TractorBeams.Used})
 				;; END LOOP [Disengaging tractor beams on this wreck]
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				
@@ -985,7 +979,7 @@ function SalvageArea(bool LootCans)
 						break
 					}
 				}
-				while ${j:Inc} <= ${SalvagerCount}
+				while ${j:Inc} <= ${Salvagers.Used}
 				;; END LOOP [Activating a salvager on this wreck]
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			}
@@ -1070,7 +1064,7 @@ function SalvageArea(bool LootCans)
 						wait 1
 					}	
 				}
-				while (${j:Inc} <= ${TractorBeamCount})
+				while (${j:Inc} <= ${TractorBeams.Used})
 				;; END LOOP (determine if wreck is already being tractored)
 				;;;;;;;;;;;;;;;;;;;;;;;
 				
@@ -1093,7 +1087,7 @@ function SalvageArea(bool LootCans)
 						}	
 						wait 2
 					}
-					while (${j:Inc} <= ${TractorBeamCount})				
+					while (${j:Inc} <= ${TractorBeams.Used})				
 				}
 			}
 			elseif (${Targets[${k}].Distance} > ${MaxTractorRange} || ${SalvagingYellowWrecks})
@@ -1115,7 +1109,7 @@ function SalvageArea(bool LootCans)
 					}
 					wait 2
 				}
-				while ${j:Inc} <= ${SalvagerCount}
+				while ${j:Inc} <= ${Salvagers.Used}
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;
 				
@@ -1147,7 +1141,7 @@ function SalvageArea(bool LootCans)
 					echo "EVESalvage->SalvageArea::  --- Approaching Wreck (to within ${MoveWithinDistance}m)..."
 					
 					Targets[${k}]:Approach
-					if (${AfterburnerCount} > 0)
+					if (${Afterburners.Used} > 0)
 					{
 						if (${Targets[${k}].Distance} > ${MoveWithinDistance})
 						{
@@ -1177,7 +1171,7 @@ function SalvageArea(bool LootCans)
 						EVE:Execute[CmdStopShip]
 						echo "EVESalvage->SalvageArea::  ---- Wreck is now within ${MoveWithinDistance}m..."
 
-						if (${AfterburnerCount} > 0)
+						if (${Afterburners.Used} > 0)
 						{
 							if (${Afterburners[1].IsActive})
 							{
@@ -1201,7 +1195,7 @@ function SalvageArea(bool LootCans)
 									break
 								}
 							}
-							while ${j:Inc} <= ${SalvagerCount}
+							while ${j:Inc} <= ${Salvagers.Used}
 							;; END LOOP [Activating a salvager on this wreck]
 							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;						
 						}
