@@ -864,51 +864,36 @@ function PullTarget()
 		wait 2
 	}
 
-	;; move Closer to target
+	;; move Closer to target (Pull Distance or Melee Distance)
 	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99 && ${doHunt}
 	{
 		call FaceTarget
 		call MoveCloser ${PullDistance}
-		if ${Me.Ability[${EnfeeblingShuriken}].Range}<=10 || ${Me.Ability[${RaJinFlare}].Range}<=10
+		if (${Me.Ability[${EnfeeblingShuriken}](exists)} && ${Me.Ability[${EnfeeblingShuriken}].Range}<=10) || (${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}<=10)
 		{
 			call FaceTarget
 			call MoveCloser 3
 		}
 	}
-
 	
-	;; slow this mob down
-	if ${Me.Ability[${EnfeeblingShuriken}](exists)}
+	;; Try to use Ra'Jin Flare or Ranged Attack
+	if ${doRangedWeapon}
 	{
-		call EnfeeblingShuriken
-		if ${Return}
+		;; Use Ra'Jin Flare
+		if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>10
 		{
-			vgecho [${Time}] Enfeebling Shuriken, distance = ${Me.Target.Distance}
+			wait 10 ${Me.Ability[${RaJinFlare}].IsReady}
+			wait 2
+			call RaJinFlare
+		}
+		else
+		{
+			wait 10 ${Me.Ability[Ranged Attack].IsReady}
+			wait 2
+			call RangedAttack
 		}
 	}
 	
-	;; try to get 3 ranged attacks in
-	if ${Me.Ability[${RaJinFlare}](exists)} && ${doRangedWeapon}
-	{
-		wait 90 ${Me.Ability[${RaJinFlare}](exists)}
-		wait 2
-		call RaJinFlare
-		;if ${Return}
-		;{
-		;	wait 2
-		;	call RaJinFlare
-		;	if ${Return}
-		;	{
-		;		wait 2
-		;		call RaJinFlare
-		;		if ${Return}
-		;		{
-		;			wait 2
-		;		}
-		;	}
-		;}
-	}
-
 	;; for whatever reason... lets move closer to the target
 	call MoveToMeleeDistance
 
@@ -1330,12 +1315,6 @@ function Endowment_Life()
 			call BlessedWhirl
 			if ${Return}
 			{
-				call Crit_DPS
-				if ${Return}
-				{
-					EndowmentStep:Set[1]
-					return
-				}
 				EndowmentStep:Set[2]
 			}
 		}
@@ -1345,12 +1324,6 @@ function Endowment_Life()
 			call CycloneKick
 			if ${Return}
 			{
-				call Crit_DPS
-				if ${Return}
-				{
-					EndowmentStep:Set[1]
-					return
-				}
 				EndowmentStep:Set[3]
 			}
 		}
@@ -1378,7 +1351,6 @@ function Endowment_Life()
 			call VoidHand
 			if ${Return}
 			{
-				call Crit_DPS
 				EndowmentStep:Set[1]
 			}
 		}
@@ -1505,6 +1477,22 @@ function:bool RaJinFlare()
 	if ${doRangedWeapon}
 	{
 		call UseAbility "${RaJinFlare}"
+		if ${Return}
+		{
+			return TRUE
+		}
+	}
+	return FALSE
+}
+
+;===================================================
+;===   RANGED DAMAGE:  RANGED ATTACK            ====
+;===================================================
+function:bool RangedAttack()
+{
+	if ${doRangedWeapon}
+	{
+		call UseAbility "Ranged Attack"
 		if ${Return}
 		{
 			return TRUE
