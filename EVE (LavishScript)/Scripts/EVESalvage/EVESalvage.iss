@@ -362,6 +362,17 @@ function atexit()
 	;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Other Misc. Items
+	if (!${Me.InStation})
+	{
+		call ManipulateSensorBoosters "Off"
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	
+	
+	
  	echo "EVESalvage:: EVE Salvager Script -- Ended"
 	return
 }

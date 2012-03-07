@@ -11,6 +11,7 @@ variable(script) index:module AllModules
 variable(script) index:module TractorBeams
 variable(script) index:module Salvagers
 variable(script) index:module Afterburners
+variable(script) index:module SensorBoosters
 variable(script) index:item MyCargo
 variable(script) index:int64 CargoToTransfer
 variable(script) index:int64 NewCargoToTransfer
@@ -126,12 +127,17 @@ function GetModulesInformation(bool LootCans)
 	   	{
 	   	  ;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'Afterburners'"
 	   	  Afterburners:Insert[${iModule.Value.ID}] 	  
-	   	}   	
+	   	}  
+	   	elseif (${iModule.Value.ToItem.GroupID} == 212)
+	   	{
+	   		;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'SensorBoosters'"
+	   		SensorBoosters:Insert[${iModule.Value.ID}]
+	   	} 	
 		}
 		while (${iModule:Next(exists)})
 	}
 	
-  echo "EVESalvage->GetModulesInformation::  Your ship has ${TractorBeams.Used} Tractor Beam(s), ${Salvagers.Used} Salvage Module(s), and ${Afterburners.Used} Afterburner/MWD."
+  echo "EVESalvage->GetModulesInformation::  Your ship has ${TractorBeams.Used} Tractor Beam(s), ${Salvagers.Used} Salvage Module(s), ${SensorBoosters.Used} Sensor Booster(s), and ${Afterburners.Used} Afterburner/MWD."
   ModuleInformationAcquired:Set[TRUE]
 	return
 }
@@ -245,8 +251,7 @@ function CheckForLoot(bool InReachOnly)
 			return
 		}
 		else
-			echo "EVESalvage->CheckForLoot::  ${Cans.Used} cargo containers found, processing..."
-		
+			echo "EVESalvage->CheckForLoot::  ${Cans.Used} cargo containers found, processing..."	
 		;;;run until break
 		while 1 == 1
 		{
@@ -750,7 +755,13 @@ function SalvageArea(bool LootCans)
 	}
 	else
 		echo "EVESalvage->SalvageArea::  ${Wrecks.Used} wrecks remain in this area."
-	
+		
+		
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Activate Sensor Booster(s)
+	call ManipulateSensorBoosters "On"
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;		
+		
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; MAIN LOOP
 	while 1 == 1
@@ -1256,6 +1267,7 @@ function SalvageArea(bool LootCans)
 					echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
 					if (${LootCans})
 						call CheckForLoot 0		
+					call ManipulateSensorBoosters "Off"
 					return
 				}
 				else
@@ -1266,6 +1278,7 @@ function SalvageArea(bool LootCans)
 				echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
 				if (${LootCans})
 					call CheckForLoot 0		
+				call ManipulateSensorBoosters "Off"
 				return
 			}
 		}
@@ -1278,6 +1291,10 @@ function SalvageArea(bool LootCans)
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	} 
 	
+	;;;;;;;;
+	;; This part of the function should never be reached (the main loop should 'return' itself)
+	;; But, just in case...
+	call ManipulateSensorBoosters "Off"
 	return	
 }
 ;;
@@ -1960,6 +1977,56 @@ function CycleBeltsAndSalvage()
 		}
 		while ${AsteroidBelt:Next(exists)}
 	}
+}
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Click or Deactivate sensor booster
+function ManipulateSensorBoosters(string State)
+{
+	variable iterator SensorBooster
+	
+	if (${State.Equal["On"]})
+	{
+		if (${SensorBoosters.Used} > 0)
+		{
+			SensorBoosters:GetIterator[SensorBooster]
+			if ${SensorBooster:First(exists)}
+			{
+				do
+				{
+					if (!${SensorBooster.Value.IsActive} && !${SensorBooster.Value.IsDeactivating})
+					{
+						echo "EVESalvage->ManipulateSensorBoosters::  Activating Sensor Booster (${SensorBooster.Value.ToItem.Name})"
+						SensorBooster.Value:Click
+					}
+				}
+				while (${SensorBooster:Next(exists)})
+			}
+		}
+	}
+	elseif (${State.Equal["Off"]})
+	{
+		if (${SensorBoosters.Used} > 0)
+		{
+			SensorBoosters:GetIterator[SensorBooster]
+			if ${SensorBooster:First(exists)}
+			{
+				do
+				{
+					if (${SensorBooster.Value.IsActive} && !${SensorBooster.Value.IsDeactivating})
+					{
+						echo "EVESalvage->ManipulateSensorBoosters::  Deactivating Sensor Booster (${SensorBooster.Value.ToItem.Name})"
+						SensorBooster.Value:Deactivate
+					}
+				}
+				while (${SensorBooster:Next(exists)})
+			}
+		}
+	}
+	
+	return
 }
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
