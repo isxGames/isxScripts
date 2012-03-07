@@ -10,7 +10,7 @@ variable(script) iterator FleetMember
 variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
-variable(script) bool IgnoreContraband
+variable(script) bool LootContraband
 variable(script) bool IgnoreRightsOnWrecks
 variable(script) bool IgnoreRightsOnCans
 variable(script) bool CycleBelts
@@ -42,7 +42,7 @@ function main(... Args)
   SalvageHereOnly:Set[FALSE]
   UsingAt:Set[FALSE]
   StopAfterSalvaging:Set[FALSE]
-  IgnoreContraband:Set[FALSE]
+  LootContraband:Set[FALSE]
   IgnoreRightsOnWrecks:Set[FALSE]
   IgnoreRightsOnCans:Set[FALSE]
   CycleBelts:Set[FALSE]
@@ -70,8 +70,8 @@ function main(... Args)
 				DoLoot:Set[TRUE]
 			elseif (${Args[${Iterator}].Equal[-HERE]} || ${Args[${Iterator}].Equal[-here]})
 				SalvageHereOnly:Set[TRUE]				
-			elseif (${Args[${Iterator}].Equal[-IGNORECONTRABAND]} || ${Args[${Iterator}].Equal[-ignorecontraband]} || ${Args[${Iterator}].Equal[-IgnoreContraband]} || ${Args[${Iterator}].Equal[-IC]})
-				IgnoreContraband:Set[TRUE]		
+			elseif (${Args[${Iterator}].Equal[-LOOTCONTRABAND]} || ${Args[${Iterator}].Equal[-lootcontraband]} || ${Args[${Iterator}].Equal[-LootContraband]} || ${Args[${Iterator}].Equal[-LC]})
+				LootContraband:Set[TRUE]		
 			elseif (${Args[${Iterator}].Equal[-CYCLEBELTS]} || ${Args[${Iterator}].Equal[-cyclebelts]} || ${Args[${Iterator}].Equal[-CycleBelts]})
 			{
 				CycleBelts:Set[TRUE]						
@@ -144,7 +144,7 @@ function main(... Args)
   	echo "*           '-stop'  					      [the script will stop after the last wreck is handled and will not return to the base/location from which you started]"
   	echo "*           '-cyclebelts #'			    [after everything else is handled, the script will cycle through all asteroid belts in the current solar system # times]"
   	echo "*           '-here'  					      [the script will only work at your current location (it will return to your 'home station' unless the -stop flag is used)]"
-  	echo "*           '-IgnoreContraband'     [the script will not loot contraband (only applicable if the '-loot' flag is used)]"
+  	echo "*           '-LootContraband'       [the script *will* loot contraband (only applicable if the '-loot' flag is used)]"
   	echo "*           '-IgnoreRightsOnWrecks' [the script will take the time to salvage wrecks for which you do not have loot rights (after all other wrecks have been salvaged)]"
   	echo "*           '-IgnoreRightsOnCans'   [when '-loot' is used, the script will attempt to loot all cans regardless of 'loot rights']"
   	echo "*           '-maxTargets #'  	      [indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]"
@@ -166,8 +166,10 @@ function main(... Args)
   if ${DoLoot}
   {
   	echo "EVESalvage.CONFIG::  The Salvager will loot cans as it goes."
-  	if ${IgnoreContraband}
-  		echo "EVESalvage.CONFIG::  When looting, the Salvager will ignore contraband items."
+  	if ${LootContraband}
+  		echo "EVESalvage.CONFIG::  When looting, the Salvager *will* loot contraband items."
+  	else
+  		echo "EVESalvage.CONFIG::  The salvager will NOT loot contraband items."
 	  if ${IgnoreRightsOnCans}
 	  	echo "EVESalvage.CONFIG::  The Salvager will loot (or attempt to loot) all cans regardless of whether you have 'loot rights' or not."	
   }

@@ -1699,7 +1699,7 @@ function LootCargoContainer(entity CargoContainer)
 				; If the entry in the xml is FALSE, then we want to loot it.
 				if (!${CheckLootItemDB})
 				{
-					if (${IgnoreContraband})
+					if (!${LootContraband})
 					{
 						if (${ThisCargo.Value.IsContraband})
 						{
