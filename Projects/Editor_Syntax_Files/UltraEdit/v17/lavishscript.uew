@@ -24,10 +24,12 @@ Alias
 Arg
 Bind
 Cat
+ClipMouse
 Commands
 Console
 ConsoleClear
 ConsoleRedirect
+DIMouse
 DeleteAtom
 DeleteVariable
 Diagnostics
@@ -37,6 +39,7 @@ DotScript
 Echo
 Encode
 EndScript
+Events
 Execute
 ExecuteAtom
 Exit
@@ -51,6 +54,7 @@ HUD
 HUDGroup
 HUDSet
 Head
+INIRedirect
 InputBox
 LSType
 LSVersion
@@ -62,11 +66,13 @@ MaxFPS
 MessageBox
 Module
 MouseClick
+MouseCursor
 MouseTo
 MouseWheel
 NavPath
 NavPoint
 Navigation
+NoParse
 OSExecute
 Open
 PlaySound
@@ -92,6 +98,13 @@ UIElement
 Version
 Wait
 WaitFrame
+WindowFrame
+WindowPosition
+WindowScale
+WindowSize
+WindowTaskbar
+WindowText
+WindowVisibility
 Wireframe
 XMLSetting
 cd
