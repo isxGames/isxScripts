@@ -490,7 +490,7 @@ function CheckForLoot(bool InReachOnly)
 					
 					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 					;; Loot!!
-					echo "EVESalvage->CheckForLoot::  ---- ${Targets[${k}].Name} in range, Start Looting..."
+					echo "EVESalvage->CheckForLoot::  ---- ${Targets[${k}].Name} in range.  Looting..."
 					ProcessedEntities:Set[${Targets[${k}].ID},1]
 					call LootCargoContainer ${Targets[${k}]}				
 
@@ -1750,9 +1750,6 @@ function LootCargoContainer(entity CargoContainer)
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-		EVE:MoveItemsTo[CargoToTransfer, ${MyShip.ID}, CargoHold]
-		wait 5
-		
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Adding loot to "CargoholdLoot" (which is used when unloading loot to the 'Scavenger Home Base' station)
 		if ${CargoToTransfer.Used} > 0
@@ -1768,7 +1765,10 @@ function LootCargoContainer(entity CargoContainer)
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+		
+		EVE:MoveItemsTo[CargoToTransfer, ${MyShip.ID}, CargoHold]
+		wait 5
+		
 		return
 }
 ;;
