@@ -70,9 +70,9 @@ function main(... Args)
 		{
 			if (${Args[${Iterator}].Equal[-NOLOOT]} || ${Args[${Iterator}].Equal[-NoLoot]} || ${Args[${Iterator}].Equal[-NL]})
 				DoLoot:Set[FALSE]
-			if (${Args[${Iterator}].Equal[-LOOT]} || ${Args[${Iterator}].Equal[-loot]} || ${Args[${Iterator}].Equal[-NL]})
+			if (${Args[${Iterator}].Equal[-LOOT]} || ${Args[${Iterator}].Equal[-loot]})
 			{
-				echo "EVESalvage.CONFIG::  <DEPRECATED> The '-loot' flag is no longer necessary.  EVESalvage loots by default now."
+				echo "EVESalvage.CONFIG::  <DEPRECATED> The '-loot' flag is no longer necessary.  EVESalvage now loots by default."
 				DoLoot:Set[TRUE]				
 			}
 			elseif (${Args[${Iterator}].Equal[-HERE]} || ${Args[${Iterator}].Equal[-here]})
@@ -139,7 +139,7 @@ function main(... Args)
 		    }
 			}
 			elseif (${Args[${Iterator}].Equal[-STOP]} || ${Args[${Iterator}].Equal[-stop]})
-    			StopAfterSalvaging:Set[TRUE]
+    		StopAfterSalvaging:Set[TRUE]
 			elseif ${EVE.Bookmark[${Args[${Iterator}]}](exists)}
 				SalvageLocationLabels:Insert[${Args[${Iterator}]}]
 			else
