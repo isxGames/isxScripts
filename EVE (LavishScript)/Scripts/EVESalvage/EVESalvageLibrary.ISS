@@ -402,6 +402,7 @@ function CheckForLoot(bool InReachOnly)
 				;; Otherwise, lock the target and go on to the next 'can' in the array!
 				echo "EVESalvage->CheckForLoot::  --- LockTarget :: ${Cans[${i}].Name}"
 				Cans[${i}]:LockTarget
+				wait 6
 				i:Inc
 			}   
 			;; Finished Targetting Routine  
@@ -920,6 +921,7 @@ function SalvageArea(bool LootCans)
 			
 			echo "EVESalvage->SalvageArea::  --- LockTarget :: ${Wrecks[${i}].Name}"
 			Wrecks[${i}]:LockTarget
+			wait 6
 			i:Inc
 		}   
 		;; Finished Targetting Routine  
