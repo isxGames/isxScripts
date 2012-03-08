@@ -15,6 +15,7 @@ variable(script) bool IgnoreRightsOnWrecks
 variable(script) bool IgnoreRightsOnCans
 variable(script) bool CycleBelts
 variable(script) int CycleBeltsCount
+variable(script) int WaitTimeVariable
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -47,6 +48,7 @@ function main(... Args)
   IgnoreRightsOnCans:Set[FALSE]
   CycleBelts:Set[FALSE]
   FoundThem:Set[FALSE]
+  WaitTimeVariable:Set[3]
 
   if !${ISXEVE(exists)}
   {
@@ -75,6 +77,12 @@ function main(... Args)
 			}
 			elseif (${Args[${Iterator}].Equal[-HERE]} || ${Args[${Iterator}].Equal[-here]})
 				SalvageHereOnly:Set[TRUE]				
+			elseif (${Args[${Iterator}].Equal[-WAITTIMEVAR]} || ${Args[${Iterator}].Equal[-WaitTimeVar]} || ${Args[${Iterator}].Equal[-WTV]})
+			{
+				Iterator:Inc
+				WaitTimeVariable:Set[${Args[${Iterator}]}]		
+				echo "EVESalvage.CONFIG::  EVESalvage will now 'wait ${WaitTimeVariable}' while changing targets and when activating/deactivating modules"
+			}	
 			elseif (${Args[${Iterator}].Equal[-LOOTCONTRABAND]} || ${Args[${Iterator}].Equal[-lootcontraband]} || ${Args[${Iterator}].Equal[-LootContraband]} || ${Args[${Iterator}].Equal[-LC]})
 				LootContraband:Set[TRUE]		
 			elseif (${Args[${Iterator}].Equal[-CYCLEBELTS]} || ${Args[${Iterator}].Equal[-cyclebelts]} || ${Args[${Iterator}].Equal[-CycleBelts]})
@@ -153,6 +161,7 @@ function main(... Args)
   	echo "*           '-IgnoreRightsOnWrecks' [the script will take the time to salvage wrecks for which you do not have loot rights (after all other wrecks have been salvaged)]"
   	echo "*           '-IgnoreRightsOnCans'   [when '-loot' is used, the script will attempt to loot all cans regardless of 'loot rights']"
   	echo "*           '-maxTargets #'  	      [indicates maximum number of targets you wish to use (otherwise, default to the maximum you or your ship can handle)]"
+  	echo "*           '-WaitTimeVar #'        [The script will 'wait #' while changing targets and activating/deactivating modules  (Advanced topic; default is 3)]"
   	echo "*"
   	echo "* Examples: 'run EVESalvage -loot -here -stop'"
   	echo "*           'run EVESalvage -loot Salvage1 Salvage2 Salvage3'"
