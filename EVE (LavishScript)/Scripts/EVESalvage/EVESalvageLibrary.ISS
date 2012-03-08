@@ -18,12 +18,14 @@ variable(script) index:int64 NewCargoToTransfer
 variable(script) int MaxSalvageRange
 variable(script) int MaxTractorRange
 variable(script) int MoveWithinDistance
+variable(script) int WaitCounter
 variable(script) index:entity Wrecks
 variable(script) int MaxTargets
 variable(script) int MaxTargetRange
 variable(script) index:entity Targets
 variable(script) bool ContinueOn
 variable(script) bool alreadyTractoring
+variable(script) bool alreadySalvaging
 variable(script) bool allCansProcessed
 variable(script) index:entity Cans
 variable(script) index:entity NearbyCans
@@ -323,7 +325,6 @@ function CheckForLoot(bool InReachOnly)
 						   alreadyTargeted:Set[TRUE]
 						   break
 						}		
-						wait 2
 					}
 					while ${k:Inc} <= ${Targets.Used}
 				}
@@ -345,7 +346,7 @@ function CheckForLoot(bool InReachOnly)
 				    while (${Me.TargetingCount} > 0 && ${Me.TargetCount} < 1)
 				    {
 				    	echo "EVESalvage->CheckForLoot::  -- Waiting for a target lock..."
-							wait 5
+							wait 2
 				    }
 	
 						;;;;;;;;;;;;;;;;;;;;;;;;
@@ -369,7 +370,7 @@ function CheckForLoot(bool InReachOnly)
 							}			
 							while (${Cans[${i}].Distance} > ${MaxTargetRange})
 							{
-								wait 20
+								wait 10
 							}
 				    }
 				    else
@@ -401,7 +402,6 @@ function CheckForLoot(bool InReachOnly)
 				;; Otherwise, lock the target and go on to the next 'can' in the array!
 				echo "EVESalvage->CheckForLoot::  --- LockTarget :: ${Cans[${i}].Name}"
 				Cans[${i}]:LockTarget
-				wait 5
 				i:Inc
 			}   
 			;; Finished Targetting Routine  
@@ -429,7 +429,6 @@ function CheckForLoot(bool InReachOnly)
 			;; 2. Engage Tractors on far cargo containers
 			;; 3. If cargo container is outside tractor range then move into range.
 			
-			wait 2
 			Me:GetTargets[Targets]
 			k:Set[1]
 			alreadyTractoring:Set[FALSE]
@@ -440,8 +439,6 @@ function CheckForLoot(bool InReachOnly)
 			;; Disengage Tractors for cargo containers that are close enough and then loot
 			while ${k} <= ${Targets.Used} 
 			{
-				wait 8
-				
 				;;;;;;;;;;;;;;;;;;;;;;;
 				;; Make sure the target (as an entity) still exists
 				if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
@@ -467,6 +464,15 @@ function CheckForLoot(bool InReachOnly)
 				if (${Targets[${k}].Distance} <= 2500)
 				{
 					Targets[${k}]:MakeActiveTarget
+					WaitCounter:Set[0]
+					do
+					{
+						wait ${WaitTimeVariable}
+						if ${WaitCounter} > 20
+							break
+						WaitCounter:Inc[${WaitTimeVariable}]
+					}
+					while (!${Targets[${k}].ID.Equal[${Me.ActiveTarget.ID}]})
 					echo "EVESalvage->CheckForLoot::  --- ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
 
 					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -480,8 +486,16 @@ function CheckForLoot(bool InReachOnly)
 							{
 								alreadyTractoring:Set[TRUE]
 								TractorBeams[${j}]:Deactivate
+								WaitCounter:Set[0]
+								do
+								{
+									wait ${WaitTimeVariable}
+									if (${WaitCounter} > 20)
+										break
+									WaitCounter:Inc[${WaitTimeVariable}]
+								}
+								while !${TractorBeams[${j}].IsDeactivating}
 							}
-							wait 3
 						}	
 					}
 					while (${j:Inc} <= ${TractorBeams.Used})
@@ -498,7 +512,6 @@ function CheckForLoot(bool InReachOnly)
 					;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				}
 				k:Inc 
-				wait 1
 			}	
 			;; END LOOP (current locked targets)
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;			
@@ -512,7 +525,6 @@ function CheckForLoot(bool InReachOnly)
 			k:Set[1]
 			while ${k} <= ${Targets.Used} 
 			{
-				wait 10
 				if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
 				{
 					k:Inc
@@ -533,7 +545,15 @@ function CheckForLoot(bool InReachOnly)
 				if (${Targets[${k}].Distance} <= ${MaxTractorRange})
 				{
 					Targets[${k}]:MakeActiveTarget
-					wait 2
+					WaitCounter:Set[0]
+					do
+					{
+						wait ${WaitTimeVariable}
+						if (${WaitCounter} > 20)
+							break
+						WaitCounter:Inc[${WaitTimeVariable}]
+					}
+					while (!${Targets[${k}].ID.Equal[${Me.ActiveTarget.ID}]})
 					echo "EVESalvage->CheckForLoot::  --- Cargo container in tractor range..."
 
 					;;;;;;;;;;;;;;;;;;;;;;;
@@ -555,9 +575,17 @@ function CheckForLoot(bool InReachOnly)
 								{
 									echo "EVESalvage->CheckForLoot::  ---- Cargo container close enough now... stop Tractoring..."
 									TractorBeams[${j}]:Deactivate
+									WaitCounter:Set[0]
+									do
+									{
+										wait ${WaitTimeVariable}
+										if (${WaitCounter} > 20)
+											break
+										WaitCounter:Inc[${WaitTimeVariable}]
+									}
+									while !${TractorBeams[${j}].IsDeactivating}
 								}
 							}
-							wait 1
 						}	
 					}
 					while (${j:Inc} <= ${TractorBeams.Used})
@@ -578,10 +606,17 @@ function CheckForLoot(bool InReachOnly)
 							{
 							  echo "EVESalvage->CheckForLoot::  ----- Activating: ${TractorBeams[${j}].ToItem.Name}"
 								TractorBeams[${j}]:Click
-								wait 5
+								WaitCounter:Set[0]
+								do
+								{
+									wait ${WaitTimeVariable}
+									if (${WaitCounter} > 20)
+										break
+									WaitCounter:Inc[${WaitTimeVariable}]
+								}
+								while !${TractorBeams[${j}].IsActive}
 								break
 							}	
-							wait 2
 						}
 						while (${j:Inc} <= ${TractorBeams.Used})				
 					}
@@ -638,17 +673,15 @@ function CheckForLoot(bool InReachOnly)
 								if (!${Afterburners[1].IsActive})
 								{
 									Afterburners[1]:Click
-									wait 5
 								}
 							}
 
 							do
 							{
-								wait 20
+								wait 10
 							}
 							while (${Targets[${k}].Distance} > ${MaxTractorRange})
 
-							wait 2
 							EVE:Execute[CmdStopShip]
 
 							echo "EVESalvage->CheckForLoot::  --- Cargo container is now within tractor range..."
@@ -658,7 +691,6 @@ function CheckForLoot(bool InReachOnly)
 								if (${Afterburners[1].IsActive})
 								{
 									Afterburners[1]:Deactivate
-									wait 2
 								}
 							}
 						}
@@ -716,6 +748,7 @@ function SalvageArea(bool LootCans)
   variable bool FirstTime = TRUE
   variable bool SalvagingYellowWrecks = FALSE
   variable int TargetLoopCounter = 0
+  variable iterator Salvager
 
 	call GetModulesInformation ${LootCans}
 	if (${MaxTargets} < 1)
@@ -816,7 +849,6 @@ function SalvageArea(bool LootCans)
 					   alreadyTargeted:Set[TRUE]
 					   break
 					}		
-					wait 2
 				}
 				while ${k:Inc} <= ${Targets.Used}
 			}
@@ -864,11 +896,10 @@ function SalvageArea(bool LootCans)
 							}			
 							if (!${Afterburners[1].IsActive})
 								Afterburners[1]:Click
-							wait 5
 						}			
 						while (${Wrecks[${i}].Distance} > ${MaxTargetRange})
 						{
-							wait 20
+							wait 5
 						}
 			    }
 			    else
@@ -889,7 +920,6 @@ function SalvageArea(bool LootCans)
 			
 			echo "EVESalvage->SalvageArea::  --- LockTarget :: ${Wrecks[${i}].Name}"
 			Wrecks[${i}]:LockTarget
-			wait 5
 			i:Inc
 		}   
 		;; Finished Targetting Routine  
@@ -918,7 +948,6 @@ function SalvageArea(bool LootCans)
 		;; 3. Engage Tractors on far wrecks
 		;; 4. If wreck is outside tractor range AND no salvagers are active AND no cans present -- then move into range.
 
-		wait 2
 		Me:GetTargets[Targets]
 		k:Set[1]
 		alreadyTractoring:Set[FALSE]
@@ -955,6 +984,15 @@ function SalvageArea(bool LootCans)
 			if (${Targets[${k}].Distance} <= ${MaxSalvageRange})
 			{
 				Targets[${k}]:MakeActiveTarget
+				WaitCounter:Set[0]
+				do
+				{
+					wait ${WaitTimeVariable}
+					if (${WaitCounter} > 20)
+						break
+					WaitCounter:Inc[${WaitTimeVariable}]
+				}
+				while (!${Targets[${k}].ID.Equal[${Me.ActiveTarget.ID}]})
 				echo "EVESalvage->SalvageArea::  --- ${Targets[${k}].Name} is close enough now.  Disengaging tractor beams..."
 				
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -968,7 +1006,15 @@ function SalvageArea(bool LootCans)
 						{
 							alreadyTractoring:Set[TRUE]
 							TractorBeams[${j}]:Deactivate
-							wait 4
+							WaitCounter:Set[0]
+							do
+							{
+								wait ${WaitTimeVariable}
+								if (${WaitCounter} > 20)
+									break
+								WaitCounter:Inc[${WaitTimeVariable}]
+							}
+							while !${TractorBeams[${j}].IsDeactivating}
 						}
 						wait 1
 					}	
@@ -979,23 +1025,52 @@ function SalvageArea(bool LootCans)
 				
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;; Engage a Salvager (if one is available)
-				j:Set[1]
-				do
+				;;
+				;; First, make sure we don't already a salvager on this wreck
+				alreadySalvaging:Set[FALSE]
+				Salvagers:GetIterator[Salvager]
+				if (${Salvager:First(exists)})
 				{
-					if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
+					do
 					{
-						echo "EVESalvage->SalvageArea::  ---- Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
-						Salvagers[${j}]:Click
-						wait 8
-						break
+						if (${Salvager.Value.TargetID.Equal[${Me.ActiveTarget.ID}]})
+						{
+							alreadySalvaging:Set[TRUE]
+							break
+						}
 					}
+					while ${Salvager:Next(exists)}
 				}
-				while ${j:Inc} <= ${Salvagers.Used}
-				;; END LOOP [Activating a salvager on this wreck]
+				;;
+				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+				if (!${alreadySalvaging})
+				{
+					j:Set[1]
+					do
+					{
+						if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
+						{
+							echo "EVESalvage->SalvageArea::  ---- Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
+							Salvagers[${j}]:Click
+							WaitCounter:Set[0]
+							do
+							{
+								wait ${WaitTimeVariable}
+								if (${WaitCounter} > 20)
+									break
+								WaitCounter:Inc[${WaitTimeVariable}]
+							}
+							while !${Salvagers[${j}].IsActive}
+							break
+						}
+					}
+					while ${j:Inc} <= ${Salvagers.Used}
+				}
+				;; END [Activating a salvager on this wreck]
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			}
 			k:Inc 
-			wait 1
 		}	
 		;; END LOOP (current locked targets)
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1010,7 +1085,6 @@ function SalvageArea(bool LootCans)
 		k:Set[1]
 		while ${k} <= ${Targets.Used} 
 		{
-			wait 2
 			;;;;;;;;;;;;;;;;;;;;;;;
 			;; Make sure the target (as an entity) still exists
 			if (!${Targets[${k}](exists)} || !${Targets[${k}].Name(exists)})
@@ -1048,7 +1122,15 @@ function SalvageArea(bool LootCans)
 			elseif (${Targets[${k}].Distance} <= ${MaxTractorRange} && ${Targets[${k}].Distance} > ${MaxSalvageRange} && !${SalvagingYellowWrecks})
 			{
 				Targets[${k}]:MakeActiveTarget
-				wait 2
+				WaitCounter:Set[0]
+				do
+				{
+					wait ${WaitTimeVariable}
+					if (${WaitCounter} > 20)
+						break
+					WaitCounter:Inc[${WaitTimeVariable}]
+				}
+				while (!${Targets[${k}].ID.Equal[${Me.ActiveTarget.ID}]})
 				echo "EVESalvage->SalvageArea::  ---- Wreck in tractor range..."
 				
 				;;;;;;;;;;;;;;;;;;;;;;;
@@ -1070,9 +1152,17 @@ function SalvageArea(bool LootCans)
 							{
 								echo "EVESalvage->SalvageArea::  ------ Wreck close enough now... stop tractoring..."
 								TractorBeams[${j}]:Deactivate
+								WaitCounter:Set[0]
+								do
+								{
+									wait ${WaitTimeVariable}
+									if (${WaitCounter} > 20)
+										break
+									WaitCounter:Inc[${WaitTimeVariable}]
+								}
+								while !${TractorBeams[${j}].IsDeactivating}
 							}
 						}
-						wait 1
 					}	
 				}
 				while (${j:Inc} <= ${TractorBeams.Used})
@@ -1093,10 +1183,17 @@ function SalvageArea(bool LootCans)
 						{
 						  echo "EVESalvage->SalvageArea::  ---- Activating: ${TractorBeams[${j}].ToItem.Name}"
 							TractorBeams[${j}]:Click
-							wait 5
+							WaitCounter:Set[0]
+							do
+							{
+								wait ${WaitTimeVariable}
+								if (${WaitCounter} > 20)
+									break
+								WaitCounter:Inc[${WaitTimeVariable}]
+							}
+							while !${TractorBeams[${j}].IsActive}
 							break
 						}	
-						wait 2
 					}
 					while (${j:Inc} <= ${TractorBeams.Used})				
 				}
@@ -1118,7 +1215,6 @@ function SalvageArea(bool LootCans)
 						ContinueOn:Set[FALSE]
 						break
 					}
-					wait 2
 				}
 				while ${j:Inc} <= ${Salvagers.Used}
 				;;
@@ -1168,17 +1264,15 @@ function SalvageArea(bool LootCans)
 							if (!${Afterburners[1].IsActive})
 							{
 								Afterburners[1]:Click
-								wait 5
 							}
 						}
 
 						do
 						{
-							wait 20
+							wait 5
 						}
 						while (${Targets[${k}].Distance} > ${MoveWithinDistance})
 
-						wait 2
 						EVE:Execute[CmdStopShip]
 						echo "EVESalvage->SalvageArea::  ---- Wreck is now within ${MoveWithinDistance}m..."
 
@@ -1187,28 +1281,57 @@ function SalvageArea(bool LootCans)
 							if (${Afterburners[1].IsActive})
 							{
 								Afterburners[1]:Click
-								wait 2
 							}
 						}
 						
 						if ${SalvagingYellowWrecks}
 						{
-							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-							;; Engage a Salvager (if one is available)
-							j:Set[1]
-							do
+							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+							;; First, make sure we don't already a salvager on this wreck
+							alreadySalvaging:Set[FALSE]
+							Salvagers:GetIterator[Salvager]
+							if (${Salvager:First(exists)})
 							{
-								if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
+								do
 								{
-									echo "EVESalvage->SalvageArea::  ----- Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
-									Salvagers[${j}]:Click
-									wait 8
-									break
+									if (${Salvager.Value.TargetID.Equal[${Me.ActiveTarget.ID}]})
+									{
+										alreadySalvaging:Set[TRUE]
+										break
+									}
 								}
+								while ${Salvager:Next(exists)}
 							}
-							while ${j:Inc} <= ${Salvagers.Used}
-							;; END LOOP [Activating a salvager on this wreck]
-							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;						
+							;;
+							;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+							
+							if (!${alreadySalvaging})
+							{
+								;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+								;; Engage a Salvager (if one is available)
+								j:Set[1]
+								do
+								{
+									if (!${Salvagers[${j}].IsActive} && !${Salvagers[${j}].IsDeactivating})
+									{
+										echo "EVESalvage->SalvageArea::  ----- Wreck in range, Using ${Salvagers[${j}].ToItem.Name} (${Salvagers[${j}].ToItem.ID}) on ${Targets[${k}].Name}..."
+										Salvagers[${j}]:Click
+										WaitCounter:Set[0]
+										do
+										{
+											wait ${WaitTimeVariable}
+											if (${WaitCounter} > 20)
+												break
+											WaitCounter:Inc[${WaitTimeVariable}]
+										}
+										while !${Salvagers[${j}].IsActive}
+										break
+									}
+								}
+								while ${j:Inc} <= ${Salvagers.Used}
+								;; END LOOP [Activating a salvager on this wreck]
+								;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;			
+							}			
 						}
 					}
 				}
@@ -1240,7 +1363,7 @@ function SalvageArea(bool LootCans)
 			echo "EVESalvage->SalvageArea::  !! Running low on Capacitor:  Pausing...
 			do
 			{
-			   wait 30
+			   wait 20
 			}
 			while (${MyShip.CapacitorPct} <= 22)
 		}
@@ -1319,7 +1442,7 @@ function TransferSalvagedItemsToHangar()
 		if !${EVEWindow[hangarFloor](exists)}
 		{
 			EVE:Execute[OpenHangarFloor]
-			wait 30
+			wait 25
 		}
 					
 		MyShip:GetCargo[MyCargo]
@@ -1392,7 +1515,7 @@ function TransferLootToHangar()
 		if !${EVEWindow[hangarFloor](exists)}
 		{
 			EVE:Execute[OpenHangarFloor]
-			wait 30
+			wait 25
 		}
 					
 		if (${CargoholdLoot.Used} < 1)
@@ -1443,7 +1566,7 @@ function TransferLootToHangar()
 		;	{
 		;		;echo "TransferLootToHangar: Unloading Loot: ${CargoIterator.Value.Name}"
 		;		CargoIterator.Value:MoveTo[Hangar]
-		;		wait 30
+		;		wait 25
 		;	}
 		;	while ${CargoIterator:Next(exists)}
 		;}
