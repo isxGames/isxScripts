@@ -190,7 +190,7 @@ function CloseShipCargo()
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check for cargo containers in the area to loot
-function CheckForLoot(bool InReachOnly)
+function CheckForLoot(int WithinDistance)
 {
 	variable int i = 1
 	variable int k
@@ -239,13 +239,13 @@ function CheckForLoot(bool InReachOnly)
 	
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;; Handle ALL remaining cans if we have NOT set ${InReachOnly}
-	if (!${InReachOnly})
+  ;;; Handle ALL remaining cans that are within ${Distance}.  If ${Distance} is <=2500, then we have already handled them.
+	if (!${WithinDistance} > 2500)
 	{
 		if (${IgnoreRightsOnCans})
-			EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+			EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance}]
 		else
-			EVE:QueryEntities[Cans, Name =- "Cargo Container" && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+			EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance} && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 			
 		if (${Cans.Used} == 0)
 		{
@@ -713,9 +713,9 @@ function CheckForLoot(bool InReachOnly)
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 			;; Repopulate Cans with updated data
 			if (${IgnoreRightsOnCans})
-				EVE:QueryEntities[Cans, Name =- "Cargo Container"]
+				EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance}]
 			else
-				EVE:QueryEntities[Cans, Name =- "Cargo Container" && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+				EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance} && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 			if (${Cans.Used} == 0)
 			{
 				echo "EVESalvage->CheckForLoot::  - All cargo containers have been processed."
@@ -773,7 +773,7 @@ function SalvageArea(bool LootCans)
 			{
 				echo "EVESalvage->SalvageArea::  No wrecks found in this area, looking for loot..."
 				if (${LootCans})
-					call CheckForLoot 0		
+					call CheckForLoot ${EVE.MinWarpDistance}		
 				return
 			}
 			else
@@ -783,7 +783,7 @@ function SalvageArea(bool LootCans)
 		{
 			echo "EVESalvage->SalvageArea::  No wrecks found in this area, looking for loot..."
 			if (${LootCans})
-				call CheckForLoot 0		
+				call CheckForLoot ${EVE.MinWarpDistance}		
 			return
 		}
 	}
@@ -879,11 +879,16 @@ function SalvageArea(bool LootCans)
 							wait 2
 						}
 					}
-
+					
 					;;;;;;;;;;;;;;;;;;;;;;;;
 					;; Approach
 			    if (${Me.TargetCount} == 0)
 			    {
+				    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+				    ;; Deal with any loot that is within ${MaxTractorRange} before moving
+						if (${LootCans})
+							call CheckForLoot ${MaxTractorRange}
+			    	
 			    	echo "EVESalvage->SalvageArea::  -- ${Wrecks[${i}].Name} too far away to target :: Approaching..."
 						Wrecks[${i}]:Approach
 						if (${Afterburners.Used} > 0)
@@ -1353,7 +1358,7 @@ function SalvageArea(bool LootCans)
 		;; Targets are all being handled.  Deal with any nearby jet cans
 		if ${LootCans}
 		{
-			call CheckForLoot 1
+			call CheckForLoot 2500
 		}
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1391,7 +1396,7 @@ function SalvageArea(bool LootCans)
 				{
 					echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
 					if (${LootCans})
-						call CheckForLoot 0		
+						call CheckForLoot ${EVE.MinWarpDistance}	
 					call ManipulateSensorBoosters "Off"
 					return
 				}
@@ -1402,7 +1407,7 @@ function SalvageArea(bool LootCans)
 			{
 				echo "EVESalvage->SalvageArea::  - Salvaging complete -- looking for loot..."
 				if (${LootCans})
-					call CheckForLoot 0		
+					call CheckForLoot ${EVE.MinWarpDistance}		
 				call ManipulateSensorBoosters "Off"
 				return
 			}
