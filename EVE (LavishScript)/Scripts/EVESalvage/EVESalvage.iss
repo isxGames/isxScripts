@@ -175,7 +175,7 @@ function main(... Args)
 	else
   {
   	ui -reload "${LavishScript.HomeDirectory}/Extensions/isxevepopup.xml"
-  	UIElement[ISXEVE Popup]:SetTitle["EVESalvage Syntax"]
+  	UIElement[ISXEVE Popup]:SetTitle["EVESalvage"]
   	UIElement[status@ISXEVE Popup]:SetText["Ready..."]
   	
   	UIElement[output@ISXEVE Popup]:AddLine["* Syntax:"]
