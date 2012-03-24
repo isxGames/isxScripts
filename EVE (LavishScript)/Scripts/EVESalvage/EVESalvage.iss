@@ -203,7 +203,7 @@ function main(... Args)
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -here -stop'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks Salvage1 Salvage2 Salvage3'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks -cyclebelts 999'"]
-   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks -HomeBase \"Corp Tower\" -UnloadTo \"Corporation Hangar Array\" -UseCorpFolder 7 Salvage1 Salvage2 Salvage3'"]
+   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks -HomeBase \"Corp Tower\" -UnloadTo \"Corporate Hangar Array\" -UseCorpFolder 7 Salvage1 Salvage2 Salvage3'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*"]
   	UIElement[output@ISXEVE Popup]:AddLine["* NOTES:"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     1.  The '-CycleBelts #' option will cycle through the belts in the system that is current once all other directives have been processed."]
