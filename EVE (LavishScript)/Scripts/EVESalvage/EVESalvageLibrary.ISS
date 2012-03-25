@@ -2111,7 +2111,7 @@ function TransferSalvagedItemsAndLootToHangar()
 			}
 		}
 	}
-	Me.Station:StackAllHangarItems
+	EVEWindow[ByName,hangarFloor]:StackAll
 	EVEWindow[ByName,${MyShip.ID}]:StackAll
 }
 ;;
