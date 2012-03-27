@@ -187,7 +187,7 @@ function CloseShipCargo()
 	if ${EVEWindow[MyShipCargo](exists)}
 	{
 		echo "EVESalvage->CloseShipCargo::  Stacking cargo..."
-		MyShip:StackAllCargo
+		EVEWindow[ByName,${MyShip.ID}]:StackAll
 		wait 10					
 		
 		echo "EVESalvage->CloseShipCargo::  Closing Ship Cargohold"
@@ -1745,7 +1745,7 @@ function ReturnToHomeBase()
 			}
 			
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			;; The bookmark is an 'entity', handle it properly
+			;; The bookmark is an 'entity', handle it properly  [At the moment, only 'station' bookmarks should have a valid .ToEntity]
 			if ${EVE.Bookmark[${HomeBaseBookmarkName}].ToEntity(exists)}
 			{
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
