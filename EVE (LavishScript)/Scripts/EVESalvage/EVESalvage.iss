@@ -214,6 +214,7 @@ function main(... Args)
   	UIElement[output@ISXEVE Popup]:AddLine["*         bookmark name, then simply use the '-HomeBase <NAME>' parameter when starting the script.)"]
   	UIElement[output@ISXEVE Popup]:AddLine["*"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     3.  As of this version of EVESalvage, the script will unload to the following entity types:  A) Group = \"Corporate Hangar Array\""]
+  	UIElement[output@ISXEVE Popup]:AddLine["*         B) Group = \"Cargo Container\", C) Group = \"Secure Cargo Container\""]
   	return
   }
 
