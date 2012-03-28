@@ -11,6 +11,7 @@
 #define GROUPID_CORPORATE_HANGAR_ARRAY 		471
 #define GROUPID_CARGO_CONTAINER 					12
 #define GROUPID_WRECK 										186
+#define GROUPID_SECURE_CARGO_CONTAINER		340
 #define GROUPID_TRACTOR_BEAM 							650
 #define GROUPID_SALVAGER 									112
 #define GROUPID_SALVAGEDITEM							754
@@ -2126,8 +2127,49 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 {
 	variable int TimeOut
 	
+	
 	switch ${TheEntity.GroupID}
 	{
+		case GROUPID_CARGO_CONTAINER
+		case GROUPID_SECURE_CARGO_CONTAINER
+			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
+			if (!${EVEWindow[byName, ${TheEntity.ID}](exists)})
+				TheEntity:OpenCargo
+			wait 5
+			if !${EVEWindow[byName, ${TheEntity.ID}](exists)}
+			{
+				do
+				{
+					TimeOut:Inc[5]
+					wait 5
+					if ${TimeOut} > 50
+						break
+				}
+				while !${EVEWindow[byName, ${TheEntity.ID}](exists)}
+			}				
+			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Unloading Salvaged Items..."
+			call PopulateCargoToTransfer "Salvage"
+			if (${CargoToTransfer.Used} > 0)
+			{
+				echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
+				EVE:MoveItemsTo[CargoToTransfer, ${TheEntity.ID}, CargoHold]
+			}
+			if (${DoLoot})
+			{
+				echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Unloading Loot..."
+				call PopulateCargoToTransfer "Loot"
+				if (${CargoToTransfer.Used} > 0)
+				{
+					EVE:MoveItemsTo[CargoToTransfer, ${TheEntity.ID}, CargoHold]		
+					echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
+				}
+			}
+			EVEWindow[byName,${TheEntity.ID}]:StackAll
+			EVEWindow[ByName,${MyShip.ID}]:StackAll
+			break
+		
+		
+		
 		case GROUPID_CORPORATE_HANGAR_ARRAY
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
 			if (!${EVEWindow[byName, ${TheEntity.ID}](exists)})
