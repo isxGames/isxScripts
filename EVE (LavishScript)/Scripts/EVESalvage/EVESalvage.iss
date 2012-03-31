@@ -1,12 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Declare all script or global variables here
-variable(script) bool LeftStation
-variable(script) int Counter
-variable(script) bool DoLoot
-variable(script) bool SalvageHereOnly
 variable(script) index:string SalvageLocationLabels
 variable(script) index:fleetmember MyFleet
 variable(script) iterator FleetMember
+variable(script) bool LeftStation
 variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
@@ -14,12 +11,15 @@ variable(script) bool LootContraband
 variable(script) bool IgnoreRightsOnWrecks
 variable(script) bool IgnoreRightsOnCans
 variable(script) bool CycleBelts
+variable(script) bool DoLoot
+variable(script) bool SalvageHereOnly
+variable(script) bool UseCorpHangar
 variable(script) int CycleBeltsCount
 variable(script) int WaitTimeVariable
+variable(script) int Counter
 variable(script) string UnloadTo
 variable(script) string CorpFolderToUse
 variable(script) string HomeBaseBookmarkName
-variable(script) bool UseCorpHangar
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -180,7 +180,7 @@ function main(... Args)
   	
   	UIElement[output@ISXEVE Popup]:AddLine["* Syntax:"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage [parameters] [flags] <bookmarklabel1> <bookmarklabel2> ...'"]
-  	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage [parameters] [flags] -at  <FleetMemberName>'"]
+  	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage [parameters] [flags] -at <FleetMemberName>'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage [parameters] [flags] -here'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*"]
   	UIElement[output@ISXEVE Popup]:AddLine["* Parameters:"]
