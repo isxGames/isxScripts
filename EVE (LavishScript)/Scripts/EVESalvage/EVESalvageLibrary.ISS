@@ -1379,7 +1379,8 @@ function SalvageArea(bool LootCans)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; If the ship's cargo hold is full, deal with it
+;; If the ship's cargo hold is full, deal with it.  If 'IgnoreCapacity' is TRUE, then it returns to your 
+;; HomeBase and unloads whatever you have currently without doing any capacity checks.
 ;; 
 function CheckShipIsFull(bool IgnoreCapacity)
 {
@@ -1403,7 +1404,15 @@ function CheckShipIsFull(bool IgnoreCapacity)
 		}	   	
 	}
 	
-	echo "EVESalvage->CheckShipIsFull::  - Ship is Full. (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} remaining.)"
+	if (!${EVE.Bookmark[${HomeBaseBookmarkName}](exists)})
+	{
+		echo "EVESalvage->CheckShipIsFull::  -- Your ship is full; however, you did not have a 'HomeBase' bookmark."
+		echo "EVESalvage->CheckShipIsFull::  - Ending Script"
+		Script:End
+		return
+	}
+	
+	echo "EVESalvage->CheckShipIsFull::  - Ship is Full. (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} remaining)"
 	
 	echo "EVESalvage->CheckShipIsFull::  -- Creating temporary bookmark 'ContinueSalvagingHere'"
 	EVE:CreateBookmark["ContinueSalvagingHere"]
@@ -1594,7 +1603,7 @@ function ReturnToHomeBase()
 {
   call CloseShipCargo
   if (${EVE.Bookmark[${HomeBaseBookmarkName}](exists)})
-	{
+	 {
 		echo "EVESalvage->ReturnToHomeBase::  Salvage operations completed .. returning to home base"
 		
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
