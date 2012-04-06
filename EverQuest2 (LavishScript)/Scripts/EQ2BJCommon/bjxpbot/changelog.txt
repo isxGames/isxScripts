@@ -3,6 +3,7 @@ BJ XP Bot - Changelog
 First Created:  June 22, 2011
 Written By: bjcasey
 Many thanks to Kannkor for a TON of coding help.
+IRC Relay Script written by Hendrix and modified by bjcasey
 
 INSTRUCTIONS
 
@@ -25,33 +26,126 @@ Settings Page
 
 COMING SOON...
 
-- Exported log of potion consumption times and the name of the potion.  Sent to character files.
-		- Enabled via checkbox
-		- Can also be sent to an IRC channel.
-- Calculate levels gained per time in minutes or hours via checkbox
-- Display the amount of looted coin
-- Add a potion selection button
-	- Allow customizable priority list (Like Ogre CA's)
-- put 300 as the default value but then if a level xx/300 is leveling xp levels it won't work
-- Stats should no longer reset when pressing the stop button
-- Play a sound when a limit is reached
-- Leave group option when limit is reached
-- Convert xp gained to levels gained
-- Convert time running to hours and minutes
+- MAIN PAGE	
+	- Change Pause button to be greyed out if the script it not running		
 
-		
+-POTIONS TAB
+	- Add the use of Tradeskill Apprentice Reward Potions before the vitality routine starts	
+			
+- STATISTICS TAB
+	- Exported log of potion consumption times and the name of the potion.  Sent to character files.
+		- Enabled via checkbox
+	- Estimate how many experience/vitality potions you will need based on % xp earned per hour
+	- Keep track of how many vitality potions you have used
+		- By using an INC Count under the vitality potion consume function
+	- Change IRC posting to pass through OgreIRC
+	
+- SETTINGS PAGE
+	- Integrate BJLooter script into another tab
+	
+- MAIN SCRIPT
+	- Remove references to the following outdated UI pieces:
+		- timerunningvar
+		- timerunningvar2
+	
+
+- LIMITS TAB
+	
 KNOWN BUGS
 
-- TSxp does nothing (Future update)
-- Debugging information tab
-		- Experience Potion (Future Update - Does nothing.)
-		- Vitality Potion (Future Update - Does nothing.)
-- XP calculations script doesn't end properly some of the time	
-- All text entry fields seem to require being 1 space larger than is needed for them to display properly	
+- [BUG] Inventory check doesn't include SC bought potions if they are stacked, but does display them if they are separated out.
 
 REVISION HISTORY
 
-BJXPBot-2012.01.020, Version 2.02
+BJXPBot-2012.03.26, Version 3.02
+
+- SETUP TAB
+	- Enable self revive
+		- If you die perform the following actions:
+			- Wait for a rez
+			- Revive
+			- Quit to login
+
+BJXPBot-2012.03.13, Version 3.01
+
+- POTIONS TAB
+	- Added an inventory check button that will dump all heirloom, no-value items currently in your inventory into a listbox.  These items can be double-clicked to move them to the Potion Priority listbox on the right.  This allows you to set the potion priority list the way you want.
+		- Allow customizable priority list (Like Ogre CA's)
+
+- MAIN PAGE		
+	- [BUG] Resume button doesn't reset to Pause if the Stop button is pressed [FIXED]	
+
+- MAIN SCRIPT
+		- When the powerleveler dies and the Status is changed the Last Potion Consumed text will be changed to "Time of Death Listed Below" and Time of Last Potion Consumption will show the time of death.
+
+BJXPBot-2012.02.13, Version 3.00
+
+MUST DOWNLOAD AND INSTALL ISXIM FOR IRC FUNCTIONALITY FROM THE FOLLOWING LINK: http://www.isxgames.com/forums/forumdisplay.php/19-ISXIM
+
+- STATISTICS TAB
+	- IRC Channel Script
+		- Logs in to an irc channel and posts updates about ADV xp and AA xp earned
+		- Check box to enable
+		- Text fields for:
+			- IRC Server
+			- IRC Channel
+			- IRC Nickname Suffix
+	- Display the amount of looted coin		
+
+- LIMITS TAB
+	- Play a sound when a limit is reached
+			- Set AA slider bar to XX% when ADV limit is reached.
+			- Set AA slider bar to XX% when AA limit is reached.
+			- Dropbox choices
+					- Leave group option when limit is reached
+					- Camp to login screen when limit is reached
+					- Quit to login screen when limit is reached
+					- Disable potion consumption
+					- End entire script
+	- Split ADV and AA level limits
+		- Reworked how it determines if you have reached a limit or not (IE. At level 90 and 319 AA it should still let you run the script until you reach 320 AA)
+		- Perform a limit check outside of the potion script so that limits will work correctly				
+	- Time Limit Checkbox
+		- You are no longer forced to select an end time.  Instead you must have the time limit checkbox checked to enable a time limit.  If the checkbox is unchecked, the script will run forever ... (or until you lose EQ2 server connection)
+	- Tradeskill Level Limit
+		- Added a TS level limit text entry box
+		
+- SETUP TAB
+	- Used to set the current game caps so that the user can easily adapt the script to future SOE updates without having to sort through the code.
+		- Enter the current game max adventure level cap
+		- Enter the current game max AA cap	
+		- Enter the current game max tradeskill level cap
+	- Dropdown list of groupmembers
+		- Choose a group member to label as "powerleveler"
+		- Check to see if the "powerleveler" is still alive.  If not, perform a selected command.
+			- Play a sound
+			- Pause script
+			- Camp to login
+			- Quit to login
+
+- MAIN SCRIPT		
+	- Moved inventory potion scanning inside the main loop so that it is accessed every time it checks for potion usage		
+	- Stats should no longer reset when the stop button is pressed or the script is ended
+	- Consume a vitality item immediately when vitality = 0 instead of waiting for the next potion attempt
+
+- MAIN PAGE
+	- Converted times into hours, minutes and seconds format (HH:MM:SS)
+	- [BUG]Time until next attempt doesn't count down [FIXED]
+	- Monitor amount of ADV vitality and TS vitality and display it on the UI
+	- Ability to split xp being tracked (IE. track adv and aa xp at the same time)
+		- The following information has been added to the UI:
+			- XP Gained (%) has been renamed to ADV XP Gained
+			- XP Per Hour (%) has been renamed to ADV XP Per Hour
+			- AA XP Gained
+			- AA XP Per Hour
+			- TS XP Gained
+			- TS XP Per Hour
+	- XP Gained (%) and XP Per Hour (%) changed formatting to LL.PP
+		- L stands for level
+		- P stands for percent	
+	- Pause/Resume Button	
+
+BJXPBot-2012.01.02, Version 2.02
 
 - Updated AA cap to 320 to match the increase with Age of Destiny Expansion
 

@@ -3,19 +3,77 @@
 	<Window Name='bjxpbot' Template='Window'>
 		<X>20</X>
 		<Y>20</Y>
-		<Width>375</Width>
-		<Height>220</Height>
+		<Width>380</Width>
+		<Height>230</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>BJ XP Bot        Version 2.02</Title> 
+		<Title>BJ XP Bot            Version 3.02</Title> 
 		<OnLoad>
 		declarevariable statusvar string global
 		declarevariable lastpotion string global
 		declarevariable lastpotiontime string global
+		declarevariable PotionCount int global
+				
+		declarevariable PlaySoundBool bool global
+		declarevariable PlayPLSoundBool bool global
+		declarevariable BJXPBotPause bool global
+		
+		declarevariable totalxp float global
+		declarevariable totalxp1 float global
+		declarevariable totalAAxp float global
+		declarevariable totalAAxp1 float global
+		declarevariable totalTSxp float global
+		declarevariable totalTSxp1 float global
+		declarevariable timerunninghour float global
+		declarevariable timeuntilnext float global
+		
+		declarevariable DisplayADVLevels int global
+		declarevariable DisplayADVPercent int global
+		declarevariable DisplayADVLevels1 int global
+		declarevariable DisplayADVPercent1 int global
+		declarevariable DisplayADVLevelsPerHour int global
+		declarevariable DisplayADVPercentPerHour int global
+		declarevariable DisplayADVLevelsPerHour1 int global
+		declarevariable DisplayADVPercentPerHour1 int global
+		
+		declarevariable DisplayAALevels int global
+		declarevariable DisplayAAPercent int global
+		declarevariable DisplayAALevels1 int global
+		declarevariable DisplayAAPercent1 int global
+		declarevariable DisplayAALevelsPerHour int global
+		declarevariable DisplayAAPercentPerHour int global
+		declarevariable DisplayAALevelsPerHour1 int global
+		declarevariable DisplayAAPercentPerHour1 int global
+		
+		declarevariable DisplayTSLevels int global
+		declarevariable DisplayTSPercent int global
+		declarevariable DisplayTSLevels1 int global
+		declarevariable DisplayTSPercent1 int global
+		declarevariable DisplayTSLevelsPerHour int global
+		declarevariable DisplayTSPercentPerHour int global
+		declarevariable DisplayTSLevelsPerHour1 int global
+		declarevariable DisplayTSPercentPerHour1 int global
+				
+		declarevariable StartTime int global
+		declarevariable DisplaySeconds int global
+		declarevariable DisplayMinutes int global
+		declarevariable DisplayHours int global
+				
+		declarevariable StartNumberNext int global
+		declarevariable StartTimeNext int global
+		declarevariable DisplaySecondsNext int global
+		declarevariable DisplayMinutesNext int global
+		declarevariable DisplayHoursNext int global
+		
 		echo ${Time}: Loading BJ XP Bot
+		BJXPBotPause:Set[0]
 		lastpotion:Set["N/A"]
 		lastpotiontime:Set["N/A"]
 		statusvar:Set["Idle..."]
+		
+		if !${Script[bjxpbotinventory](exists)}
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbotinventory"
+		
 		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
 		</OnLoad>
 		<OnUnLoad>
@@ -26,7 +84,7 @@
 		<TitleBar Template="Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
-			<Width>99%</Width>
+			<Width>100%</Width>
 			<Height>10%</Height>
 			<Children>
 				<Text Name="Title" Template="Window.TitleBar.Title">
@@ -46,6 +104,12 @@
 							endscript bjxpbot
 						if ${Script[xpcalclevel](exists)}	
 							endscript xpcalclevel
+						if ${Script[ircrelay](exists)}	
+							endscript ircrelay	
+						if ${Script[lootedcoin](exists)}	
+							endscript lootedcoin
+						if ${Script[bjxpbotinventory](exists)}
+							endscript bjxpbotinventory			
 						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotXML.xml"
 						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
 					</OnLeftClick>
@@ -56,7 +120,7 @@
 	<!-- Start of layout -->
 	<Children>
 				<Text name='Status' template='Text'>
-				<X>30</X>
+				<X>20</X>
 				<Y>20</Y>
 				<Width>350</Width>
 				<Height>20</Height>
@@ -65,24 +129,13 @@
 					<Color>FFBE5522</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>Status:</Text>
-				</Text>
-				<Text name='StatusVariable' template='Text'>
-				<X>80</X>
-				<Y>20</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
+				<Text></Text>
 				<OnRender>
-				This:SetText[${statusvar}]
+				This:SetText[Status: ${statusvar}]
 				</OnRender>
 				</Text>
 				<Text name='LastPotionConsumed' template='Text'>
-				<X>30</X>
+				<X>20</X>
 				<Y>40</Y>
 				<Width>350</Width>
 				<Height>20</Height>
@@ -91,24 +144,13 @@
 					<Color>FFBE5522</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>Last Potion Consumed:</Text>
-				</Text>	
-				<Text name='LastPotionConsumedVariable' template='Text'>
-				<X>170</X>
-				<Y>40</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
+				<Text></Text>
 				<OnRender>
-					This:SetText[${lastpotion}]
+					This:SetText[Last Potion Consumed: ${lastpotion}]
 				</OnRender>
-				</Text>
+				</Text>	
 				<Text name='LastPotionConsumedTime' template='Text'>
-				<X>30</X>
+				<X>20</X>
 				<Y>60</Y>
 				<Width>350</Width>
 				<Height>20</Height>
@@ -117,24 +159,13 @@
 					<Color>FFBE5522</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>Time of Last Potion Consumption:</Text>
-				</Text>	
-				<Text name='LastPotionConsumedTimeVariable' template='Text'>
-				<X>240</X>
-				<Y>60</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
+				<Text></Text>
 				<OnRender>
-					This:SetText[${lastpotiontime}]
+					This:SetText[Time of Last Potion Consumption: ${lastpotiontime}]
 				</OnRender>
-				</Text>				
+				</Text>	
 				<Text name='TextTimeUntilNextMinute1' template='Text'>
-				<X>30</X>
+				<X>20</X>
 				<Y>80</Y>
 				<Width>350</Width>
 				<Height>20</Height>
@@ -143,37 +174,13 @@
 					<Color>FFBE5522</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>Timeleft until next attempt:</Text>
-				</Text>				
-				<Text name='TextTimeUntilNextMinuteVariable' template='Text'>
-				<X>200</X>
-				<Y>80</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
+				<Text></Text>
 				<OnRender>
-				This:SetText[${Math.Calc[(${timeuntilnextmilli.TimeLeft}/1000)/60].Centi}]
+					This:SetText[Timeleft until next attempt: ${DisplayMinutesNext.LeadingZeroes[2]}:${DisplaySecondsNext.LeadingZeroes[2]}]
 				</OnRender>
-				</Text>
-				<Text name='TextTimeUntilNextMinute2' template='Text'>
-				<X>250</X>
-				<Y>80</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
-				<Text>Minutes</Text>
-				</Text>	
-
+				</Text>				
 				<Text name='TimeRunning1' template='Text'>
-				<X>30</X>
+				<X>20</X>
 				<Y>100</Y>
 				<Width>350</Width>
 				<Height>20</Height>
@@ -182,146 +189,329 @@
 					<Color>FFBE5522</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>Time Running:</Text>
-				</Text>
-				<Text name='TimeRunningVar' template='Text'>
-				<X>130</X>
-				<Y>100</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
+				<Text></Text>
 				<OnRender>
-				This:SetText[${Math.Calc[(${Script[xpcalclevel].RunningTime}/1000)/60].Centi}]
+					This:SetText[Time Running: ${DisplayHours.LeadingZeroes[2]}:${DisplayMinutes.LeadingZeroes[2]}:${DisplaySeconds.LeadingZeroes[2]}]
 				</OnRender>
 				</Text>
-				<Text name='TimeRunning2' template='Text'>
-				<X>170</X>
-				<Y>100</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
-				<Text>Minutes</Text>
-				</Text>
-				<Text name='XPCalcText' template='Text'>
-				<X>30</X>
+				<Text name='ADVXPCalcText1' template='Text'>
+				<X>20</X>
 				<Y>120</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Alignment>Left</Alignment>
 				<Font>
-					<Color>FFBE5522</Color>
+					<Color>FFFFFFFF</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>XP Gained (%) :</Text>
-				</Text>				
-				<Text name='XpCalc' template='Text'>
-				<X>180</X>
-				<Y>120</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>16</Size>
-				</Font>
+				<Text></Text>
 				<OnRender>
-					This:SetText[${totalxp1.Centi}]
+
+						This:SetText[ADV XP Gained: ${DisplayADVLevels1.LeadingZeroes[1]}.${DisplayADVPercent1.LeadingZeroes[2]}]
+	
 				</OnRender>
+				<Visible>0</Visible>
 				<OnLoad>
-					declarevariable XpCalc int global ${This.ID}
+					declarevariable ADVXpCalcText1Var int global ${This.ID}
 				</OnLoad>
-				</Text>
-				<Text name='XpCalc2' template='Text'>
-				<X>180</X>
+				</Text>				
+				<Text name='ADVXPCalcText2' template='Text'>
+				<X>20</X>
 				<Y>120</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Alignment>Left</Alignment>
 				<Font>
-					<Color>FFBE5522</Color>
+					<Color>FFFFFFFF</Color>
 					<Size>16</Size>
 				</Font>
+				<Text></Text>
 				<Visible>0</Visible>
 				<OnRender>
-					This:SetText[${totalxp.Centi}]
+					This:SetText[ADV XP Gained: ${DisplayADVLevels.LeadingZeroes[1]}.${DisplayADVPercent.LeadingZeroes[2]}]
 				</OnRender>
 				<OnLoad>
-					declarevariable XpCalc2 int global ${This.ID}
-				</OnLoad>				
-				</Text>				
-				<Text name='XPCalcPerHourText' template='Text'>
-				<X>30</X>
+					declarevariable ADVXpCalcText2Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='ADVXPCalcPerHourText1' template='Text'>
+				<X>20</X>
 				<Y>140</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Alignment>Left</Alignment>
 				<Font>
-					<Color>FFBE5522</Color>
+					<Color>FFFFFFFF</Color>
 					<Size>16</Size>
 				</Font>
-				<Text>XP Per Hour (%) :</Text>
-				</Text>				
-				<Text name='XpCalcPerHour' template='Text'>
-				<X>200</X>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+				if ${timerunninghour} > 0
+				{	
+
+						This:SetText[ADV XP Per Hour: ${DisplayADVLevelsPerHour1.LeadingZeroes[2]}.${DisplayADVPercentPerHour1.LeadingZeroes[2]}]
+				}
+				else
+				{
+
+						This:SetText[ADV XP Per Hour: 00.00]	
+				}
+				</OnRender>
+				<OnLoad>
+					declarevariable ADVXPCalcPerHourText1Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='ADVXPCalcPerHourText2' template='Text'>
+				<X>20</X>
 				<Y>140</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Alignment>Left</Alignment>
 				<Font>
-					<Color>FFBE5522</Color>
+					<Color>FFFFFFFF</Color>
 					<Size>16</Size>
 				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
 				<OnRender>
 				if ${timerunninghour} > 0
 				{						
-						This:SetText[${Math.Calc[${totalxp1}/${timerunninghour}]}]
+					This:SetText[ADV XP Per Hour: ${DisplayADVLevelsPerHour.LeadingZeroes[2]}.${DisplayADVPercentPerHour.LeadingZeroes[2]}]
 				}
 				else
 				{
-				This:SetText[0]	
+					This:SetText[ADV XP Per Hour: 00.00]	
 				}
 				</OnRender>
 				<OnLoad>
-					declarevariable XpCalcPerHour int global ${This.ID}
-				</OnLoad>				
-				</Text>
-				<Text name='XpCalcPerHour2' template='Text'>
-				<X>200</X>
+					declarevariable ADVXPCalcPerHourText2Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='AAXPCalcText1' template='Text'>
+				<X>210</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFFFFF00</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+
+					This:SetText[AA XP Gained: ${DisplayAALevels1.LeadingZeroes[1]}.${DisplayAAPercent1.LeadingZeroes[2]}]
+				</OnRender>
+				<OnLoad>
+					declarevariable AAXpCalcText1Var int global ${This.ID}
+				</OnLoad>
+				</Text>				
+				<Text name='AAXPCalcText2' template='Text'>
+				<X>210</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFFFFF00</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+					This:SetText[AA XP Gained: ${DisplayAALevels.LeadingZeroes[1]}.${DisplayAAPercent.LeadingZeroes[2]}]
+				</OnRender>
+				<OnLoad>
+					declarevariable AAXpCalcText2Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='AAXPCalcPerHourText1' template='Text'>
+				<X>210</X>
 				<Y>140</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Alignment>Left</Alignment>
 				<Font>
-					<Color>FFBE5522</Color>
+					<Color>FFFFFF00</Color>
 					<Size>16</Size>
 				</Font>
+				<Text></Text>
 				<Visible>0</Visible>
 				<OnRender>
 				if ${timerunninghour} > 0
-				{
-				This:SetText[${Math.Calc[${totalxp}/${timerunninghour}]}]
+				{						
+	
+					This:SetText[AA XP Per Hour: ${DisplayAALevelsPerHour1.LeadingZeroes[2]}.${DisplayAAPercentPerHour1.LeadingZeroes[2]}]
 				}
 				else
 				{
-				This:SetText[0]
+	
+					This:SetText[AA XP Per Hour: 00.00]	
 				}
 				</OnRender>
 				<OnLoad>
-						declarevariable XpCalcPerHour2 int global ${This.ID}
-				</OnLoad>				
-				</Text>				
-
-				<CommandButton Name="StartClicker" template='Button'>
+					declarevariable AAXPCalcPerHourText1Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='AAXPCalcPerHourText2' template='Text'>
+				<X>210</X>
+				<Y>140</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFFFFF00</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+				if ${timerunninghour} > 0
+				{						
+					This:SetText[AA XP Per Hour: ${DisplayAALevelsPerHour.LeadingZeroes[2]}.${DisplayAAPercentPerHour.LeadingZeroes[2]}]
+				}
+				else
+				{
+					This:SetText[AA XP Per Hour: 00.00]	
+				}
+				</OnRender>
+				<OnLoad>
+					declarevariable AAXPCalcPerHourText2Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='TSXPCalcText1' template='Text'>
 				<X>20</X>
-				<Y>170</Y>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FF0099CC</Color>
+					<Size>16</Size>
+				</Font>
+				<Visible>0</Visible>
+				<Text></Text>
+				<OnRender>
+					This:SetText[TS XP Gained: ${DisplayTSLevels1.LeadingZeroes[1]}.${DisplayTSPercent1.LeadingZeroes[2]}]
+				</OnRender>
+				<OnLoad>
+					declarevariable TSXpCalcText1Var int global ${This.ID}
+				</OnLoad>
+				</Text>				
+				<Text name='TSXPCalcText2' template='Text'>
+				<X>20</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FF0099CC</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+					This:SetText[TS XP Gained: ${DisplayTSLevels.LeadingZeroes[1]}.${DisplayTSPercent.LeadingZeroes[2]}]
+				</OnRender>
+				<OnLoad>
+					declarevariable TSXpCalcText2Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='TSXPCalcPerHourText1' template='Text'>
+				<X>20</X>
+				<Y>140</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FF0099CC</Color>
+					<Size>16</Size>
+				</Font>
+				<Visible>0</Visible>
+				<Text></Text>
+				<OnRender>
+				if ${timerunninghour} > 0
+				{						
+					This:SetText[TS XP Per Hour: ${DisplayTSLevelsPerHour1.LeadingZeroes[2]}.${DisplayTSPercentPerHour1.LeadingZeroes[2]}]
+				}
+				else
+				{
+					This:SetText[TS XP Per Hour: 00.00]	
+				}
+				</OnRender>
+				<OnLoad>
+					declarevariable TSXPCalcPerHourText1Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='TSXPCalcPerHourText2' template='Text'>
+				<X>20</X>
+				<Y>140</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FF0099CC</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+				if ${timerunninghour} > 0
+				{						
+					This:SetText[TS XP Per Hour: ${DisplayTSLevelsPerHour.LeadingZeroes[2]}.${DisplayTSPercentPerHour.LeadingZeroes[2]}]
+				}
+				else
+				{
+					This:SetText[TS XP Per Hour: 00.00]	
+				}
+				</OnRender>
+				<OnLoad>
+					declarevariable TSXPCalcPerHourText2Var int global ${This.ID}
+				</OnLoad>
+				</Text>	
+				<Text name='VitalityText' template='Text'>
+				<X>20</X>
+				<Y>160</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FF9900FF</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<Visible>0</Visible>
+				<OnRender>
+					This:SetText[Vitality: ${Me.Vitality.Deci}]
+				</OnRender>
+				<OnLoad>
+					declarevariable VitalityTextVar int global ${This.ID}
+				</OnLoad>
+				</Text>
+				<Text name='TSVitalityText' template='Text'>
+				<X>20</X>
+				<Y>160</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFFF00FF</Color>
+					<Size>16</Size>
+				</Font>
+				<Visible>0</Visible>
+				<Text></Text>
+				<OnRender>
+					This:SetText[Vitality: ${Me.TSVitality.Deci}]
+				</OnRender>
+				<OnLoad>
+					declarevariable TSVitalityTextVar int global ${This.ID}
+				</OnLoad>
+				</Text>
+				<CommandButton Name="StartClicker" template='Button'>
+				<X>10</X>
+				<Y>180</Y>
 				<Width>110</Width>
 				<Height>20</Height>
 				<Text>Start</Text>
@@ -329,6 +519,12 @@
 				<OnLeftClick>
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbot"
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/xpcalclevel"
+					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/lootedcoin"
+					Script[bjxpbot]:QueueCommand[call SaveSettings]
+					if ${UIElement[${EnableIRCRelayCheckboxVar}].Checked}
+					{
+						runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ircrelay"
+					}	
 					This.Parent.FindChild[StopClicker]:Show
 					This:Hide
 				</OnLeftClick>
@@ -337,8 +533,8 @@
 				</OnLoad>
 				</CommandButton>
 				<CommandButton Name="StopClicker" template='Button'>
-					<X>20</X>
-					<Y>170</Y>
+					<X>10</X>
+					<Y>180</Y>
 					<Width>110</Width>
 					<Height>20</Height>
 					<Text>Stop</Text>
@@ -356,6 +552,14 @@
 							statusvar:Set["Idle..."]
 							endscript xpcalclevel
 						}	
+						if ${Script[ircrelay](exists)}
+							endscript ircrelay
+						if ${Script[lootedcoin](exists)}
+							endscript lootedcoin
+						BJXPBotPause:Set[0]
+						This.Parent.FindChild[ResumeBJXPBot]:Hide
+						This.Parent.FindChild[PauseBJXPBot]:Show
+						BJXPBotPause:Set[0]						
 						This.Parent.FindChild[StartClicker]:Show
 						This:Hide
 					</OnLeftClick>
@@ -363,9 +567,44 @@
 					declarevariable stopclickervar int global ${This.ID}
 				</OnLoad>
 				</CommandButton>
+				<CommandButton Name="PauseBJXPBot" template='Button'>
+				<X>135</X>
+				<Y>180</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Pause</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					BJXPBotPause:Set[1]
+					echo ${Time}: BJXPBot PAUSED
+					This.Parent.FindChild[ResumeBJXPBot]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable PauseBJXPBotVar int global ${This.ID}
+				</OnLoad>
+				</CommandButton>
+				<CommandButton Name="ResumeBJXPBot" template='Button'>
+				<X>135</X>
+				<Y>180</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Resume</Text>
+				<Visible>0</Visible>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					BJXPBotPause:Set[0]
+					echo ${Time}: BJXPBot RESUMED
+					This.Parent.FindChild[PauseBJXPBot]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable ResumeBJXPBotVar int global ${This.ID}
+				</OnLoad>
+				</CommandButton>
 				<CommandButton Name="ShowSettings" template='Button'>
-					<X>240</X>
-					<Y>170</Y>
+					<X>260</X>
+					<Y>180</Y>
 					<Width>110</Width>
 					<Height>20</Height>
 					<Text>Show Settings</Text>
@@ -377,8 +616,8 @@
 					</OnLeftClick>
 				</CommandButton>
 				<CommandButton Name="HideSettings" template='Button'>
-					<X>240</X>
-					<Y>170</Y>
+					<X>260</X>
+					<Y>180</Y>
 					<Width>110</Width>
 					<Height>20</Height>
 					<Text>Hide Settings</Text>
