@@ -15,7 +15,8 @@
 #define GROUPID_TRACTOR_BEAM 							650
 #define GROUPID_SALVAGER 									112
 #define GROUPID_SALVAGEDITEM							754
-#define GROUP_SENSORBOOSTER 							212
+#define GROUPID_INDUSTRIALCOMMANDSHIP			941
+#define GROUPID_SENSORBOOSTER 						212
 #define DOCKING_RANGE 										200
 #define LOOT_RANGE 												2490
 #define CORP_HANGAR_LOOT_RANGE 						3000
@@ -146,7 +147,7 @@ function GetModulesInformation(bool LootCans)
 	   	  ;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'Afterburners'"
 	   	  Afterburners:Insert[${iModule.Value.ID}] 	  
 	   	}  
-	   	elseif (${iModule.Value.ToItem.GroupID} == GROUP_SENSORBOOSTER)
+	   	elseif (${iModule.Value.ToItem.GroupID} == GROUPID_SENSORBOOSTER)
 	   	{
 	   		;echo "EVESalvage->GetModulesInformation::  Adding ${iModule.Value.ToItem.Name} to 'SensorBoosters'"
 	   		SensorBoosters:Insert[${iModule.Value.ID}]
@@ -1379,113 +1380,6 @@ function SalvageArea(bool LootCans)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; If the ship's cargo hold is full, deal with it.  If 'IgnoreCapacity' is TRUE, then it returns to your 
-;; HomeBase and unloads whatever you have currently without doing any capacity checks.
-;; 
-function CheckShipIsFull(bool IgnoreCapacity)
-{
-	variable int k
-	variable int UndockCounter
-	
-	;echo "DEBUG: Math.Calc[MyShip.CargoCapacity-MyShip.UsedCargoCapacity: ${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]}"
-	;echo "DEBUG: Math.Calc[MyShip.CargoCapacity*0.01: ${Math.Calc[${MyShip.CargoCapacity}*0.01]}"
-	
-	if !${IgnoreCapacity}
-	{
-		/* 
-		; salvage operation requires a minimum of 40 m^3 free -- so, this is not useful 
-		if (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} > ${Math.Calc[${MyShip.CargoCapacity}*0.01]})
-		return
-		*/
-	 	
-		if (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} > 40)
-		{
-			return
-		}	   	
-	}
-	
-	if (!${EVE.Bookmark[${HomeBaseBookmarkName}](exists)})
-	{
-		echo "EVESalvage->CheckShipIsFull::  -- Your ship is full; however, you did not have a 'HomeBase' bookmark."
-		echo "EVESalvage->CheckShipIsFull::  - Ending Script"
-		Script:End
-		return
-	}
-	
-	echo "EVESalvage->CheckShipIsFull::  - Ship is Full. (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} remaining)"
-	
-	echo "EVESalvage->CheckShipIsFull::  -- Creating temporary bookmark 'ContinueSalvagingHere'"
-	EVE:CreateBookmark["ContinueSalvagingHere"]
-	
-	echo "EVESalvage->CheckShipIsFull::  -- Returning to ${HomeBaseBookmarkName} for unloading."
-	call ReturnToHomeBase
-	 
-	echo "EVESalvage->CheckShipIsFull::  -- Cargo Unloaded, returning to previous location"
-	if (${EVE.Bookmark["ContinueSalvagingHere"](exists)})
-	{
-		LeftStation:Set[FALSE]
-		call LeaveStation
-
-		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
-		if (!${EVE.Bookmark["ContinueSalvagingHere"].SolarSystemID.Equal[${Me.SolarSystemID}]})
-		{
-		  echo "EVESalvage->CheckShipIsFull::  Setting Destination and activating auto pilot for salvage operation at 'ContinueSalvagingHere'..."
-		  wait 5
-			EVE.Bookmark["ContinueSalvagingHere"]:SetDestination
-			wait 5
-			EVE:Execute[CmdToggleAutopilot]
-				do
-				{
-				   wait 50
-				   if !${Me.AutoPilotOn(exists)}
-				   {
-				     do
-				     {
-				        wait 5
-				     }
-				     while !${Me.AutoPilotOn(exists)}
-				   }
-				}
-			while ${Me.AutoPilotOn}
-			wait 20
-			do
-			{
-			   wait 10
-			}
-			while !${Me.ToEntity.IsCloaked}
-			wait 5
-		}
-		
-		if (${EVE.Bookmark["ContinueSalvagingHere"].Distance} > ${EVE.MinWarpDistance})
-		{
-  		;;; Warp to location
-  		echo "EVESalvage->CheckShipIsFull::  Warping to salvage location..."
-  		EVE.Bookmark["ContinueSalvagingHere"]:WarpTo
-  		wait 120
-  		do
-  		{
-  			wait 20
-  		}
-  		while (${Me.ToEntity.Mode} == 3)
-  	}
-  }
-  else
-  {
-  	echo "EVESalvage->CheckShipIsFull::  -- CRITICAL ERROR ['ContinueSalvagingHere' bookmark did not exist!]"
-		Script:End
-		return
-	}
-
-	echo "EVESalvage->CheckShipIsFull::  -- Removing temporary bookmark 'ContinueSalvagingHere'"
-	EVE.Bookmark["ContinueSalvagingHere"]:Remove
-	
-  echo "EVESalvage->CheckShipIsFull::  - Cargo Hold Empty: Resuming Operations..."
-  return
-}
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loot the cargo container passed as the argument "CargoContainer"
 ;; (NOTE:  This function assumes that "CargoContainer" is within looting range.)
 function LootCargoContainer(entity CargoContainer)
@@ -1720,33 +1614,29 @@ function ReturnToHomeBase()
 ;; Undock from the current space station
 function LeaveStation()
 {
-	if !${LeftStation}
+	if ${Me.InStation}
 	{
-		if ${Me.InStation}
-		{
-		   echo "EVESalvage->LeaveStation::  - Undocking from station..."
-		   EVE:Execute[CmdExitStation]
-		   wait 150
-		   Counter:Set[0]
-		   if (${Me.InStation})
-		   {
-		   		do
-		   		{
-		   			wait 20
-		   			Counter:Inc[20]
-			   			if (${Counter} > 300)
-			   			{
-			   			  echo "EVESalvage->LeaveStation::  - Undocking attempt failed ... trying again."
-			   				EVE:Execute[CmdExitStation]
-			   				Counter:Set[0]
-			   			}
-		   		}
-		   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
-		   }
-		   wait 5
-		   LeftStation:Set[TRUE]
-		}
-	}	
+	   echo "EVESalvage->LeaveStation::  - Undocking from station..."
+	   EVE:Execute[CmdExitStation]
+	   wait 150
+	   Counter:Set[0]
+	   if (${Me.InStation})
+	   {
+	   		do
+	   		{
+	   			wait 20
+	   			Counter:Inc[20]
+		   			if (${Counter} > 300)
+		   			{
+		   			  echo "EVESalvage->LeaveStation::  - Undocking attempt failed ... trying again."
+		   				EVE:Execute[CmdExitStation]
+		   				Counter:Set[0]
+		   			}
+	   		}
+	   		while (${Me.InStation} || !${EVEWindow[Local](exists)} || !${Me.InStation(exists)})
+	   }
+	   wait 5
+	}
 }
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2077,6 +1967,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			EVEWindow[byName,${MyShip.ID}]:Close
 			break
 		
+		case GROUPID_INDUSTRIALCOMMANDSHIP
 		case GROUPID_CORPORATE_HANGAR_ARRAY
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
 			if (!${EVEWindow[byName, ${TheEntity.ID}](exists)})
@@ -2112,7 +2003,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			}
 			EVE:StackItems[${TheEntity.ID}, Hangar, ${CorpFolderToUse}]
 			EVEWindow[byName,${MyShip.ID}]:StackAll
-			EVEWindow[byName, ${TheEntity.ID}]:Close
+			EVEWindow[byName,${TheEntity.ID}]:Close
 			EVEWindow[byName,${MyShip.ID}]:Close
 			break
 		
@@ -2124,3 +2015,120 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 }
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; If the ship's cargo hold is full, deal with it.  If 'IgnoreCapacity' is TRUE, then it returns to your 
+;; HomeBase and unloads whatever you have currently without doing any capacity checks.
+;; 
+function CheckShipIsFull(bool IgnoreCapacity)
+{
+	variable int k
+	variable int UndockCounter
+	
+	;echo "DEBUG: Math.Calc[MyShip.CargoCapacity-MyShip.UsedCargoCapacity: ${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]}"
+	;echo "DEBUG: Math.Calc[MyShip.CargoCapacity*0.01: ${Math.Calc[${MyShip.CargoCapacity}*0.01]}"
+	
+	if !${IgnoreCapacity}
+	{
+		/* 
+		; salvage operation requires a minimum of 40 m^3 free -- so, this is not useful 
+		if (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} > ${Math.Calc[${MyShip.CargoCapacity}*0.01]})
+		return
+		*/
+	 	
+		if (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} > 40)
+		{
+			return
+		}	   	
+	}
+	
+	if (!${EVE.Bookmark[${HomeBaseBookmarkName}](exists)})
+	{
+		echo "EVESalvage->CheckShipIsFull::  -- Your ship is full; however, you do not have a 'HomeBase' bookmark."
+		echo "EVESalvage->CheckShipIsFull::  - Ending Script"
+		Script:End
+		return
+	}
+	
+	echo "EVESalvage->CheckShipIsFull::  - Ship is Full. (${Math.Calc[${MyShip.CargoCapacity}-${MyShip.UsedCargoCapacity}]} remaining)"
+	
+	echo "EVESalvage->CheckShipIsFull::  -- Creating temporary bookmark 'ContinueSalvagingHere'"
+	EVE:CreateBookmark["ContinueSalvagingHere"]
+	
+	echo "EVESalvage->CheckShipIsFull::  -- Returning to ${HomeBaseBookmarkName} for unloading."
+	; This function also "unloads"
+	call ReturnToHomeBase
+	 
+	echo "EVESalvage->CheckShipIsFull::  -- Cargo Unloaded, returning to previous location"
+	call TravelToBookmark "ContinueSalvagingHere"
+
+	echo "EVESalvage->CheckShipIsFull::  -- Removing temporary bookmark 'ContinueSalvagingHere'"
+	EVE.Bookmark["ContinueSalvagingHere"]:Remove
+	
+  echo "EVESalvage->CheckShipIsFull::  - Cargo Hold Empty: Resuming Operations..."
+  return
+}
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Travel to the given bookmark name
+function TravelToBookmark(string BookmarkName)
+{
+	if (${EVE.Bookmark["${BookmarkName}"](exists)})
+	{
+		call LeaveStation
+
+		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
+		if (!${EVE.Bookmark["${BookmarkName}"].SolarSystemID.Equal[${Me.SolarSystemID}]})
+		{
+		  echo "EVESalvage->TravelToBookmark::  - Setting Destination and activating auto pilot for '${BookmarkName}'..."
+		  wait 5
+			EVE.Bookmark["${BookmarkName}"]:SetDestination
+			wait 5
+			EVE:Execute[CmdToggleAutopilot]
+				do
+				{
+				   wait 50
+				   if !${Me.AutoPilotOn(exists)}
+				   {
+				     do
+				     {
+				        wait 5
+				     }
+				     while !${Me.AutoPilotOn(exists)}
+				   }
+				}
+			while ${Me.AutoPilotOn}
+			wait 20
+			do
+			{
+			   wait 10
+			}
+			while !${Me.ToEntity.IsCloaked}
+			wait 5
+		}
+		
+		if (${EVE.Bookmark["${BookmarkName}"].Distance} > ${EVE.MinWarpDistance})
+		{
+  		;;; Warp to location
+  		echo "EVESalvage->TravelToBookmark::  -- Warping to '${BookmarkName}'..."
+  		EVE.Bookmark["${BookmarkName}"]:WarpTo
+  		wait 120
+  		do
+  		{
+  			wait 20
+  		}
+  		while (${Me.ToEntity.Mode} == 3)
+  	}
+  }
+  else
+  {
+  	echo "EVESalvage->TravelToBookmark::  CRITICAL ERROR ['${BookmarkName}' bookmark did not exist!]"
+		Script:End
+		return
+	}
+	
+	return
+}
