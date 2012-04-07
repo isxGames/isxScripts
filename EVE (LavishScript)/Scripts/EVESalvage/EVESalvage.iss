@@ -3,7 +3,6 @@
 variable(script) index:string SalvageLocationLabels
 variable(script) index:fleetmember MyFleet
 variable(script) iterator FleetMember
-variable(script) bool LeftStation
 variable(script) bool FoundThem
 variable(script) bool UsingAt
 variable(script) bool StopAfterSalvaging
@@ -42,7 +41,6 @@ function main(... Args)
   variable int Iterator = 1
   variable iterator BMLabel
 
-  LeftStation:Set[FALSE]
   DoLoot:Set[TRUE]
   SalvageHereOnly:Set[FALSE]
   UsingAt:Set[FALSE]
@@ -204,6 +202,7 @@ function main(... Args)
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks Salvage1 Salvage2 Salvage3'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks -cyclebelts 999'"]
    	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks -HomeBase \"Corp Tower\" -UnloadTo \"Corporate Hangar Array\" -UseCorpFolder 7 Salvage1 Salvage2 Salvage3'"]
+   	UIElement[output@ISXEVE Popup]:AddLine["*     'run EVESalvage -IgnoreRightsOnWrecks -HomeBase \"Secret Location\" -UnloadTo \"Amadeus\" -UseCorpFolder 7 Salvage1 Salvage2 Salvage3'"]
   	UIElement[output@ISXEVE Popup]:AddLine["*"]
   	UIElement[output@ISXEVE Popup]:AddLine["* NOTES:"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     1.  The '-CycleBelts #' option will cycle through the belts in the system that is current once all other directives have been processed."]
@@ -214,7 +213,7 @@ function main(... Args)
   	UIElement[output@ISXEVE Popup]:AddLine["*         bookmark name, then simply use the '-HomeBase <NAME>' parameter when starting the script.)"]
   	UIElement[output@ISXEVE Popup]:AddLine["*"]
   	UIElement[output@ISXEVE Popup]:AddLine["*     3.  As of this version of EVESalvage, the script will unload to the following entity types:  A) Group = \"Corporate Hangar Array\""]
-  	UIElement[output@ISXEVE Popup]:AddLine["*         B) Group = \"Cargo Container\", C) Group = \"Secure Cargo Container\""]
+  	UIElement[output@ISXEVE Popup]:AddLine["*         B) Group = \"Cargo Container\", C) Group = \"Secure Cargo Container\", D) Group = \"Industrial Command Ship\""]
   	return
   }
 
@@ -342,52 +341,8 @@ function main(... Args)
 				if (${EVE.Bookmark[${BMLabel.Value}](exists)})
 	  		{
 	  	      echo "EVESalvage::  Salvage location found in bookmarks: (${BMLabel.Value})..."
-	
-						call LeaveStation
-	
-		    		;;; Set destination and then activate autopilot (if we're not in that system to begin with)
-		    		if (!${EVE.Bookmark[${BMLabel.Value}].SolarSystemID.Equal[${Me.SolarSystemID}]})
-		    		{
-		    		  echo "EVESalvage::  Setting Destination and activating auto pilot for salvage operation at '${BMLabel.Value}'..."
-		    		  wait 5
-		    			EVE.Bookmark[${BMLabel.Value}]:SetDestination
-		    			wait 5
-		    			EVE:Execute[CmdToggleAutopilot]
-		    				do
-		    				{
-		    				   wait 50
-		    				   if !${Me.AutoPilotOn(exists)}
-		    				   {
-		    				     do
-		    				     {
-		    				        wait 5
-		    				     }
-		    				     while !${Me.AutoPilotOn(exists)}
-		    				   }
-		    				}
-		    			while ${Me.AutoPilotOn}
-		    			wait 20
-		    			do
-		    			{
-		    			   wait 10
-		    			}
-		    			while !${Me.ToEntity.IsCloaked}
-		    			wait 5
-		    		}
+		    		call TravelToBookmark "${BMLabel.Value}"
 		    		
-						if (${EVE.Bookmark[${BMLabel.Value}].Distance} > ${EVE.MinWarpDistance})
-						{
-			    		;;; Warp to location
-			    		echo "EVESalvage::  Warping to salvage location..."
-			    		EVE.Bookmark[${BMLabel.Value}]:WarpTo
-			    		wait 120
-			    		do
-			    		{
-			    			wait 20
-			    		}
-			    		while (${Me.ToEntity.Mode} == 3)
-			    	}
-	
 	        	wait 10
 						call SalvageArea ${DoLoot}
 	
