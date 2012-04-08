@@ -1,4 +1,4 @@
-function main(string LoginModifer, string CharToLogin, string Arg3)
+function main(string LoginModifer, string c_status)
 {
 	if !${ISXEQ2(exists)}
 	{
@@ -31,6 +31,8 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		echo Run BJ BJCure -- Loads the script that forces OgreBot to interrupt whatever it is casting in order to cast a cure
 		echo Run BJ BJAuction -- Loads the script that assists in auction of loot
 		echo Run BJ BJShuffle -- Loads the script that shuffles your toons around so they are not all standing in one spot
+		echo Run BJ BJLooter -- Loads the script that will move to corpses or chests to loot them
+		echo Run BJ BJInventory -- Loads the script that manages the selling and trading of looted goods
 		echo                         -- Example: "Run Bj bjmagic" runs the clicker script, "run Bj end bjmagic" ends the clicker script
 		return
 	}
@@ -39,7 +41,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjmagic/bjmagicSHELL.iss"
 		return
 	}
-	elseif ${LoginModifer.Equal[bjxpbot]}
+	elseif ${LoginModifer.Equal[bjxpbot]} || ${LoginModifer.Equal[xpbot]}
 	{
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbotSHELL.iss"
 		return
@@ -64,7 +66,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjdecorin/bjdecorin.iss"
 		return
 	}	
-	elseif ${LoginModifer.Equal[bjauction]}
+	elseif ${LoginModifer.Equal[bjauction]} || ${LoginModifer.Equal[auction]}
 	{
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/bjauctionSHELL.iss"
 		return
@@ -79,9 +81,29 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjpetdance/bjpetdance.iss"
 		return
 	}	
-	elseif ${LoginModifer.Equal[bjlooter]}
+	elseif ${LoginModifer.Equal[bjlooter]} || ${LoginModifer.Equal[looter]}
 	{
 		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjlooter/bjlooterSHELL.iss"
+		return
+	}
+	elseif ${LoginModifer.Equal[bjinventory]} || ${LoginModifer.Equal[inventory]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjinventory/bjinventory.iss"
+		return
+	}
+	elseif ${LoginModifer.Equal[bjguildhall]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/private/bjguildhall/bjguildhall.iss"
+		return
+	}
+	elseif ${LoginModifer.Equal[reet]}
+	{
+		runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/reet.iss"
+		return
+	}
+	elseif ${LoginModifer.Equal[bjfood]}
+	{
+		runscript eq2bjcommon/private/bjfood/bjfood ${c_status}
 		return
 	}
 	
