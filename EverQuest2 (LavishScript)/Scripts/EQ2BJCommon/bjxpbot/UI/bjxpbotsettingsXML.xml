@@ -63,7 +63,7 @@
           declare BJXPBotSettingsXMLYPos int global
           declare BJXPBotSettingsXMLXInc int global
           declare BJXPBotSettingsXMLYInc int global
-          BJXPBotSettingsXMLPos:Set[5]
+          BJXPBotSettingsXMLXPos:Set[5]
           BJXPBotSettingsXMLYPos:Set[-10]
           BJXPBotSettingsXMLYInc:Set[25]
           BJXPBotSettingsXMLXInc:Set[55]
@@ -141,8 +141,20 @@
 		This.Parent.FindChild[Setup_Frame]:Hide	
 		This.Parent.FindChild[Statistics_Frame]:Hide		
 		</OnLeftClick>		
-       </Button>	 	
--->	 
+       </Button>
+ -->   <Button Name='SaveButton'>
+		<Text>Save</Text>
+		<X>5</X>
+		<Y>400</Y>
+		<Width>110</Width>
+		<Height>40</Height>
+		<OnLeftClick>
+			p_count:Set[1]
+			d_count:Set[1]
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/SaveSettings"
+		</OnLeftClick>
+      </Button>	   
+ 
 <!-- Frames -->
 	  <frame name='Potions_Frame'>
 		<X>15%</X>
@@ -165,6 +177,16 @@
 				declarevariable enablepotionscheckboxvar int global ${This.ID}
 				enablepotionscheckboxvar:Set[${This.ID}]
 				</OnLoad>
+				<OnLeftClick>
+					if ${UIElement[EnablePotionsCheckbox@Potions_Frame@bjxpbotsettings].Checked}
+					{
+						EnableConsumePotion:Set[1]
+					}
+					else
+					{
+						EnableConsumePotion:Set[0]
+					}
+				</OnLeftClick>
 			</checkbox>	
 			<Text name='EnablePotionsText' template='Text'>
 				<X>30</X>
@@ -192,6 +214,16 @@
 				declarevariable EnableVitalityPotionsCheckboxVar int global ${This.ID}
 				EnableVitalityPotionsCheckboxVar:Set[${This.ID}]
 				</OnLoad>
+				<OnLeftClick>
+					if ${UIElement[EnableVitalityPotionsCheckbox@Potions_Frame@bjxpbotsettings].Checked}
+					{
+						EnableConsumeVitalityPotion:Set[1]
+					}
+					else
+					{
+						EnableConsumeVitalityPotion:Set[0]
+					}
+				</OnLeftClick>
 			</checkbox>	
 			<Text name='EnableVitalityPotionsText' template='Text'>
 				<X>30</X>
@@ -914,6 +946,7 @@
 			</OnSelect>
 			<OnLoad>
 				declarevariable LimitReachedComboBoxVar string global ${This.ID}
+				LimitReachedComboBoxVar:Set[${UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings].SelectedItem.Text}]
 			</OnLoad>
 			</combobox>			
 		</Children>
@@ -1204,7 +1237,7 @@
 				   <FullHeight>110</FullHeight>
 				   <ButtonWidth>20</ButtonWidth>
 		  	<Items>
-			<Item Value='1' Default='1'> </Item>
+			<Item Value='1' Default='1'>Please choose...</Item>
 			
 			</Items>
 			<OnSelect>
@@ -1212,7 +1245,7 @@
 			</OnSelect>
 			<OnLoad>
 				declarevariable PowerlevelerComboBoxVar string global ${This.ID}
-					
+				PowerlevelerComboBoxVar:Set[${UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]	
 			</OnLoad>
 			<OnLeftClick>
 					This:ClearItems
@@ -1293,7 +1326,7 @@
 			</OnSelect>
 			<OnLoad>
 				declarevariable PowerlevelerOptionsComboBoxVar string global ${This.ID}
-					
+				PowerlevelerOptionsComboBoxVar:Set[${UIElement[PowerlevelerOptionsComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]	
 			</OnLoad>
 			<OnLeftClick>
 						
@@ -1356,7 +1389,7 @@
 			</OnSelect>
 			<OnLoad>
 				declarevariable SelfReviveOptionsComboBoxVar string global ${This.ID}
-					
+				SelfReviveOptionsComboBoxVar:Set[${UIElement[SelfReviveOptionsComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]	
 			</OnLoad>
 			<OnLeftClick>
 						

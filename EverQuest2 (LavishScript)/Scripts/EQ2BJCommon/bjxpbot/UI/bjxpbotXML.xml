@@ -7,12 +7,18 @@
 		<Height>230</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>BJ XP Bot            Version 3.02</Title> 
+		<Title>BJ XP Bot            Version 3.03</Title> 
 		<OnLoad>
 		declarevariable statusvar string global
 		declarevariable lastpotion string global
 		declarevariable lastpotiontime string global
 		declarevariable PotionCount int global
+		declarevariable p_count int global
+		declarevariable d_count int global
+		declarevariable PotionSpellName string global
+		declarevariable PotionDuration float global
+		declarevariable EnableConsumePotion bool global
+		declarevariable EnableConsumeVitalityPotion bool global
 				
 		declarevariable PlaySoundBool bool global
 		declarevariable PlayPLSoundBool bool global
@@ -70,6 +76,9 @@
 		lastpotion:Set["N/A"]
 		lastpotiontime:Set["N/A"]
 		statusvar:Set["Idle..."]
+		p_count:Set[1]
+		d_count:Set[1]
+		PotionCount:Set[1]
 		
 		if !${Script[bjxpbotinventory](exists)}
 			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbotinventory"
@@ -176,7 +185,7 @@
 				</Font>
 				<Text></Text>
 				<OnRender>
-					This:SetText[Timeleft until next attempt: ${DisplayMinutesNext.LeadingZeroes[2]}:${DisplaySecondsNext.LeadingZeroes[2]}]
+					This:SetText[Timeleft until next attempt: ${DisplayHoursNext.LeadingZeroes[2]}:${DisplayMinutesNext.LeadingZeroes[2]}:${DisplaySecondsNext.LeadingZeroes[2]}]
 				</OnRender>
 				</Text>				
 				<Text name='TimeRunning1' template='Text'>
@@ -520,7 +529,7 @@
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbot"
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/xpcalclevel"
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/lootedcoin"
-					Script[bjxpbot]:QueueCommand[call SaveSettings]
+					Script[bjxpbot]:QueueCommand[call SaveSettings]	
 					if ${UIElement[${EnableIRCRelayCheckboxVar}].Checked}
 					{
 						runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ircrelay"

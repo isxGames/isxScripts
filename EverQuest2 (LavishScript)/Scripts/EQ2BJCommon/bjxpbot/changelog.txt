@@ -47,15 +47,44 @@ COMING SOON...
 	- Remove references to the following outdated UI pieces:
 		- timerunningvar
 		- timerunningvar2
+		
+- Code in defaults for adv, aa and ts levels.
+		
 	
 
 - LIMITS TAB
 	
 KNOWN BUGS
 
-- [BUG] Inventory check doesn't include SC bought potions if they are stacked, but does display them if they are separated out.
+- [BUG] Displays the wrong xp gained and xp per hour sometimes after gaining a level resulting in a negative number being displayed.
 
 REVISION HISTORY
+
+BJXPBot-2012.04.07, Version 3.03
+
+- [BUG] Inventory check doesn't include SC bought potions if they are stacked, but does display them if they are separated out. [FIXED]
+- [BUG] If you are out of xp potions or have disabled the consumption of xp potions it will not consume vitality items regardless of if that option is enabled. [FIXED]
+- [BUG] If no selection is made for any combobox when the script saves it will save the combobox ID. [FIXED]
+
+- SETTINGS PAGE UI
+	- Fixed an issue with the frame buttons not being placed in the correct location
+	- Added a Save button
+		- Clicking this button will save all of the currently entered information.
+		- The script will also save when you press the Start and Stop buttons.
+		
+- MAIN SCRIPT
+	- The following UI elements will now save:
+		- Powerleveler Combobox
+		- Powerleveler Options Combobox
+		- Enable Self Revival Options Checkbox
+		- Self Revival Combobox
+		- Potion Priority List Listbox
+	- Fixed a small 3 second pulse that occurred in the time until next attempt timer
+	- Time until next attempt has been revamped.  The script will read the duration of the potion it just consumed and set the next attempt time accordingly.  If a potion was already active when the script was started it will continue attempts in 10 minute intervals until successful.
+	- Time Left Until Next Attempt has had hours added to it
+	
+- POTIONS Tab
+	- You can now re-enable potion consumption by clicking the enable potion consumption checkbox if you run out of potions or had disabled auto consumption without stopping and starting the script
 
 BJXPBot-2012.03.26, Version 3.02
 

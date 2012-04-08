@@ -23,7 +23,7 @@ function RefreshInventoryQueue()
 
 function RefreshInventory()
 {
-	variable int ArrayPosition=1
+	variable int ArrayPosition=0
 	UIElement[FullInventoryListBox@Potions_Frame@bjxpbotsettings]:ClearItems
 	call AddItemtoInvList 
 
