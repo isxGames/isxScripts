@@ -86,7 +86,12 @@ function main()
 	if ${_ref.FindSetting[EnableIRCRelayCheckboxVar]}
 		UIElement[${EnableIRCRelayCheckboxVar}]:SetChecked
 	else
-		UIElement[${EnableIRCRelayCheckboxVar}]:UnsetChecked		
+		UIElement[${EnableIRCRelayCheckboxVar}]:UnsetChecked	
+	;// Enable Self Revive Checkbox
+	if ${_ref.FindSetting[EnableSelfReviveOptionsCheckboxVar]}
+		UIElement[${EnableSelfReviveOptionsCheckboxVar}]:SetChecked
+	else
+		UIElement[${EnableSelfReviveOptionsCheckboxVar}]:UnsetChecked		
 		
 ;// Text Entries	
 	;// AA Slider Bar 1 Text Entry
@@ -172,8 +177,36 @@ function main()
 	if ${_ref.FindSetting[LimitReachedComboBoxVar](exists)}
 	{
 		LimitReachedComboBoxVar:Set[${_ref.FindSetting[LimitReachedComboBoxVar]}]
-		UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings]:SetSelection[${UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings].ItemByText[${_ref.FindSetting[LimitReachedComboBoxVar]}].ID}]
+		UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings]:SelectItem[${UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings].ItemByText[${_ref.FindSetting[LimitReachedComboBoxVar]}].Text}]
 	}
-
-
+	;// Powerleveler Combobox Value
+	if ${_ref.FindSetting[PowerlevelerComboBoxVar](exists)}
+	{
+		if !${UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings].ItemByText[${_ref.FindSetting[PowerlevelerComboBoxVar]}](exists)}
+		{
+			UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings]:AddItem[${_ref.FindSetting[PowerlevelerComboBoxVar]}]
+			UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings]:SelectItem[${UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings].ItemByText[${_ref.FindSetting[PowerlevelerComboBoxVar]}].ID}]
+		}
+	}
+	;// Powerleveler Options Combobox Value
+	if ${_ref.FindSetting[PowerlevelerOptionsComboBoxVar](exists)}
+	{
+		PowerlevelerOptionsComboBoxVar:Set[${_ref.FindSetting[PowerlevelerOptionsComboBoxVar]}]
+		UIElement[PowerlevelerOptionsComboBox@Setup_Frame@bjxpbotsettings]:SetSelection[${UIElement[PowerlevelerOptionsComboBox@Setup_Frame@bjxpbotsettings].ItemByText[${_ref.FindSetting[PowerlevelerOptionsComboBoxVar]}].ID}]
+	}
+	;// Self Revive Options Combobox Value
+	if ${_ref.FindSetting[SelfReviveOptionsComboBoxVar](exists)}
+	{
+		SelfReviveOptionsComboBoxVar:Set[${_ref.FindSetting[SelfReviveOptionsComboBoxVar]}]
+		UIElement[SelfReviveOptionsComboBox@Setup_Frame@bjxpbotsettings]:SetSelection[${UIElement[SelfReviveOptionsComboBox@Setup_Frame@bjxpbotsettings].ItemByText[${_ref.FindSetting[SelfReviveOptionsComboBoxVar]}].ID}]
+	}
+	
+;// Listboxes
+	;// Priority Potion List
+	while ${_ref.FindSetting[PotionPriorityListBoxTextVar${p_count}](exists)}
+	{
+		UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings]:AddItem[${_ref.FindSetting[PotionPriorityListBoxTextVar${p_count}]}]
+		p_count:Inc
+	}
+	
 }

@@ -5,7 +5,6 @@
 
 ;// Auto Potion Consume Variables
 variable int StartTimeHour
-variable bool EnableConsumePotion
 variable bool TimeLimitReachedBool
 variable bool ADVLevelLimitReachedBool
 variable bool AALevelLimitReachedBool
@@ -29,7 +28,7 @@ function LoadSettings()
 
 function SaveSettings()
 {
-		echo Saving Settings
+	echo Saving Settings
 ;// Checkboxes		
 		;// Vitality Potions
 		if ${UIElement[EnableVitalityPotionsCheckbox@Potions_Frame@bjxpbotsettings].Checked}
@@ -95,7 +94,12 @@ function SaveSettings()
 		if ${UIElement[EnableIRCRelayCheckbox@Statistics_Frame@bjxpbotsettings].Checked}
 			_ref:AddSetting[EnableIRCRelayCheckboxVar,TRUE]
 		else
-			_ref:AddSetting[EnableIRCRelayCheckboxVar,FALSE]	
+			_ref:AddSetting[EnableIRCRelayCheckboxVar,FALSE]
+		;// Enable Self Revive
+		if ${UIElement[EnableSelfReviveOptionsCheckbox@Setup_Frame@bjxpbotsettings].Checked}
+			_ref:AddSetting[EnableSelfReviveOptionsCheckboxVar,TRUE]
+		else
+			_ref:AddSetting[EnableSelfReviveOptionsCheckboxVar,FALSE]		
 				
 ;// Text Entries		
 		;// Level Limit AA
@@ -126,9 +130,42 @@ function SaveSettings()
 ;// Comboboxes		
 		;// Limit Reached Combobox
 		_ref:AddSetting[LimitReachedComboBoxVar,${LimitReachedComboBoxVar}]	
-
+		;// Powerleveler Combobox
+		_ref:AddSetting[PowerlevelerComboBoxVar,${PowerlevelerComboBoxVar}]	
+		;// Powerleveler Options Combobox
+		_ref:AddSetting[PowerlevelerOptionsComboBoxVar,${PowerlevelerOptionsComboBoxVar}]	
+		;// Self Revive Options Combobox
+		_ref:AddSetting[SelfReviveOptionsComboBoxVar,${SelfReviveOptionsComboBoxVar}]
+		
+;// Listboxes
+		;// Priority Potion List
+		if ${_ref.FindSetting[PotionPriorityListBoxTextVar1](exists)}
+		{
+			while ${_ref.FindSetting[PotionPriorityListBoxTextVar${d_count}](exists)}
+			{
+				_ref.FindSetting[PotionPriorityListBoxTextVar${d_count}]:Remove
+				d_count:Inc
+			}	
+			while ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items} > 0 && ${PotionCount} <= ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items}
+			{
+				_ref:AddSetting[PotionPriorityListBoxTextVar${p_count},${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}]
+				PotionCount:Inc
+				p_count:Inc
+			}
+		}
+		else		
+		{
+			while ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items} > 0 && ${PotionCount} <= ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items}
+			{
+				_ref:AddSetting[PotionPriorityListBoxTextVar${p_count},${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}]
+				PotionCount:Inc
+				p_count:Inc
+			}
+		}
+		
 		LavishSettings[BJXPBot]:Export["${LavishScript.HomeDirectory}/Scripts/EQ2BJCommon/BJXPBot/Character Config/${EQ2.ServerName}_${Me.Name}_BJXPBotSettings.xml"]
-return
+		
+	return	
 }
 
 
@@ -149,6 +186,15 @@ function main()
 	AALevelLimitReachedBool:Set[1]
 	TSLevelLimitReachedBool:Set[1]
 	PotionCount:Set[1]
+	
+	if ${UIElement[EnableVitalityPotionsCheckbox@Potions_Frame@bjxpbotsettings].Checked}
+	{
+		EnableConsumeVitalityPotion:Set[1]
+	}
+	else
+	{
+		EnableConsumeVitalityPotion:Set[0]
+	}
 	
 	wait 10
 	
@@ -466,10 +512,12 @@ function main()
 	;// Main Loop
 		while ${BJXPBotPause} == 0
 		{
-	;//echo ${Time}: Loop 2
+	;// echo ${Time}: Loop 2
 			Me:CreateCustomInventoryArray[nonbankonly]
 			
 			call xpcalclevelnexttime
+			
+			ExecuteQueued
 			
 			if ${Me.Group[${PowerlevelerComboBoxVar}].ToActor.IsDead}
 			{
@@ -538,13 +586,12 @@ function main()
 
 function ConsumeVitalityItem()
 {
-	if ${EnableConsumePotion} == 1
+	if ${EnableConsumeVitalityPotion} == 1
 	{
 		wait !${Me.InCombat} && !${Me.CastingSpell}
 		
 		if ${UIElement[${EnableVitalityPotionsCheckboxVar}].Checked}
 		{						
-			wait 30
 			if ${Me.CustomInventory[Orb of Concentrated Memories](exists)}  && ${Me.CustomInventory[Orb of Concentrated Memories].IsReady} && ${Me.Vitality} == 0
 			{
 				echo ${Time}: Orb of Concentrated Memories Detected
@@ -593,18 +640,10 @@ function ConsumeVitalityItem()
 
 function ConsumePotion()
 {
-	wait 30
-	
 	if ${EnableConsumePotion} == 1
 	{
 		echo ${Time}: Consume Potion Function
-		
-		;// 300000 = 5 Minutes
-		;// 600000 = 10 Minutes
-		;// Time range is 10 Minutes to 15 Minutes.
-		
-		timeuntilnextmilli:Set[${Math.Rand[300000]:Inc[600000]}]
-		
+	
 		wait !${Me.InCombat} && !${Me.CastingSpell}
 		
 		if ${UIElement[${enablepotionscheckboxvar}].Checked}
@@ -641,6 +680,29 @@ function ConsumePotion()
 							statusvar:Set["${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]} Consumed"]
 							lastpotion:Set["${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}"]
 							lastpotiontime:Set[${Time}]
+														
+							PotionSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+;//							echo PotionSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+;//							echo ${PotionSpellName}
+							wait 110
+							PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo ${PotionDuration}
+							wait 30
+							PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo ${PotionDuration}
+							wait 30
+							PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo ${PotionDuration}
+							wait 30
+							PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+;//							echo ${PotionDuration}
+							timeuntilnextmilli:Set[${Math.Calc[(${PotionDuration}*1000)+90000]}]
+;//							echo timeuntilnextmilli:Set[${Math.Calc[(${PotionDuration}*1000)+90000]}]
+;//							echo ${timeuntilnextmilli}
 						}
 					}	
 					wait 30
@@ -677,6 +739,29 @@ function ConsumePotion()
 									statusvar:Set["${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]} Consumed"]
 									lastpotion:Set["${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}"]
 									lastpotiontime:Set[${Time}]
+									
+									PotionSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+		;//							echo PotionSpellName:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}]
+		;//							echo ${PotionSpellName}
+									wait 110
+									PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo ${PotionDuration}
+									wait 30
+									PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo ${PotionDuration}
+									wait 30
+									PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo ${PotionDuration}
+									wait 30
+									PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo PotionDuration:Set[${Me.Effect[${PotionSpellName}].Duration}]
+		;//							echo ${PotionDuration}
+									timeuntilnextmilli:Set[${Math.Calc[(${PotionDuration}*1000)+90000]}]
+		;//							echo timeuntilnextmilli:Set[${Math.Calc[(${PotionDuration}*1000)+90000]}]
+		;//							echo ${timeuntilnextmilli}
 								}
 							}	
 							wait 30
@@ -693,6 +778,7 @@ function ConsumePotion()
 						lastpotiontime:Set[${Time}]						
 						echo ${Time}: No XP potions detected in inventory.
 						EnableConsumePotion:Set[0]
+						UIElement[${enablepotionscheckboxvar}]:UnsetChecked
 					}
 				}
 			}
@@ -703,6 +789,7 @@ function ConsumePotion()
 				lastpotiontime:Set[${Time}]						
 				echo ${Time}: No XP potions detected in inventory.
 				EnableConsumePotion:Set[0]
+				UIElement[${enablepotionscheckboxvar}]:UnsetChecked
 			}
 			
 			if ${EnableConsumePotion} == 1
@@ -716,6 +803,7 @@ function ConsumePotion()
 			statusvar:Set["XP Potion script DISABLED. Calculating XP only."]
 			echo ${Time}: XP Potion script DISABLED. Calculating XP only.
 			EnableConsumePotion:Set[0]
+			UIElement[${enablepotionscheckboxvar}]:UnsetChecked
 		}
 	}	
 }
@@ -1064,7 +1152,7 @@ function xpcalclevelnexttime()
 ;//		echo DisplaySecondsNext: ${DisplaySecondsNext}
 		DisplayMinutesNext:Set[${Math.Calc64[${StartTimeNext}/60%60]}]
 ;//		echo DisplayMinutesNext: ${DisplayMinutesNext}
-;//		DisplayHoursNext:Set[${Math.Calc64[${StartTimeNext}/60\\60]}]
+		DisplayHoursNext:Set[${Math.Calc64[${StartTimeNext}/60\\60]}]
 }
 
 atom(script) EQ2_onIncomingText(string Message)
@@ -1075,6 +1163,7 @@ atom(script) EQ2_onIncomingText(string Message)
 	if ${Message.Find["You can only have one experience potion active at a time."](exists)}
 		{
 			echo Potion consumption failed due to an already existing active potion.
+			timeuntilnextmilli:Set[600000]
 		}
 }
 
