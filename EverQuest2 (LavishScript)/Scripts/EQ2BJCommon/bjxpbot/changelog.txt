@@ -41,6 +41,7 @@ STATISTICS TAB
 
 POTIONS TAB
 	- Added the ability to save/load the "Potion Priority List".  This will allow the user to save and share potion lists with other toons.
+		- Added a default potion priority list
 
 SETTINGS PAGE
 	- Added a new tab to the settings page (Looter Tab)
