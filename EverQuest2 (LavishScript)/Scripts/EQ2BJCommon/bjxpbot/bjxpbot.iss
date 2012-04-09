@@ -212,8 +212,6 @@ function main()
 			{
 				echo ${Time}: Please enter the current EQ2 max ADV level.
 				statusvar:Set["Please enter the current EQ2 max ADV level."]
-				UIElement[${timerunningvar}]:Hide
-				UIElement[${timerunningvar2}]:Show
 				UIElement[${startclickervar}]:Show
 				UIElement[${stopclickervar}]:Hide
 				endscript xpcalclevel
@@ -223,8 +221,6 @@ function main()
 			{
 				echo ${Time}: Please enter the current EQ2 max AA level.
 				statusvar:Set["Please enter the current EQ2 max AA level."]
-				UIElement[${timerunningvar}]:Hide
-				UIElement[${timerunningvar2}]:Show
 				UIElement[${startclickervar}]:Show
 				UIElement[${stopclickervar}]:Hide
 				endscript xpcalclevel
@@ -234,8 +230,6 @@ function main()
 			{
 				echo ${Time}: Please enter the current EQ2 max TS level.
 				statusvar:Set["Please enter the current EQ2 max TS level."]
-				UIElement[${timerunningvar}]:Hide
-				UIElement[${timerunningvar2}]:Show
 				UIElement[${startclickervar}]:Show
 				UIElement[${stopclickervar}]:Hide
 				endscript xpcalclevel
@@ -276,8 +270,6 @@ function main()
 				{	
 					echo ${Time}: Your end time can't be equal to your current time.
 					statusvar:Set["End time can't be equal to your current time."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -287,8 +279,6 @@ function main()
 				{
 					echo ${Time}: Please enter a valid end time.
 					statusvar:Set["Please enter a valid end time."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -307,8 +297,6 @@ function main()
 				{
 					echo ${Time}: Please enter a valid ADV limit.
 					statusvar:Set["Please enter a valid ADV limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -318,8 +306,6 @@ function main()
 				{
 					echo ${Time}: Start ADV level can't equal ADV limit.
 					statusvar:Set["Start ADV level can't equal ADV limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -329,8 +315,6 @@ function main()
 				{
 					echo ${Time}: Start ADV level can't be less than ADV limit.
 					statusvar:Set["Start ADV level can't be less than ADV limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -342,8 +326,6 @@ function main()
 					{
 						echo ${Time}: AA slider bar can't be more than 100.
 						statusvar:Set["AA slider bar can't be more than 100."]
-						UIElement[${timerunningvar}]:Hide
-						UIElement[${timerunningvar2}]:Show
 						UIElement[${startclickervar}]:Show
 						UIElement[${stopclickervar}]:Hide
 						endscript xpcalclevel
@@ -360,8 +342,6 @@ function main()
 				{
 					echo ${Time}: Please select a limit reached action.
 					statusvar:Set["Please select a limit reached action."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -380,8 +360,6 @@ function main()
 				{
 					echo ${Time}: Please enter a valid TS limit.
 					statusvar:Set["Please enter a valid TS limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -391,8 +369,6 @@ function main()
 				{
 					echo ${Time}: Start TS level can't equal TS limit.
 					statusvar:Set["Start TS level can't equal TS limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -402,8 +378,6 @@ function main()
 				{
 					echo ${Time}: Start TS level can't be less than TS limit.
 					statusvar:Set["Start TS level can't be less than TS limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -413,8 +387,6 @@ function main()
 				{
 					echo ${Time}: Please select a limit reached action.
 					statusvar:Set["Please select a limit reached action."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -433,8 +405,6 @@ function main()
 				{
 					echo ${Time}: Please enter a valid AA limit.
 					statusvar:Set["Please enter a valid AA limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -444,8 +414,6 @@ function main()
 				{
 					echo ${Time}: Start AA level can't equal AA limit.
 					statusvar:Set["Start AA level can't equal AA limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -455,8 +423,6 @@ function main()
 				{
 					echo ${Time}: Start AA level can't be less than AA limit.
 					statusvar:Set["Start AA level can't be less than AA limit."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -468,8 +434,6 @@ function main()
 					{
 						echo ${Time}: AA slider bar can't be more than 100.
 						statusvar:Set["AA slider bar can't be more than 100."]
-						UIElement[${timerunningvar}]:Hide
-						UIElement[${timerunningvar2}]:Show
 						UIElement[${startclickervar}]:Show
 						UIElement[${stopclickervar}]:Hide
 						endscript xpcalclevel
@@ -486,8 +450,6 @@ function main()
 				{
 					echo ${Time}: Please select a limit reached action.
 					statusvar:Set["Please select a limit reached action."]
-					UIElement[${timerunningvar}]:Hide
-					UIElement[${timerunningvar2}]:Show
 					UIElement[${startclickervar}]:Show
 					UIElement[${stopclickervar}]:Hide
 					endscript xpcalclevel
@@ -778,6 +740,7 @@ function ConsumePotion()
 						lastpotiontime:Set[${Time}]						
 						echo ${Time}: No XP potions detected in inventory.
 						EnableConsumePotion:Set[0]
+						PotionCount:Set[1]
 						UIElement[${enablepotionscheckboxvar}]:UnsetChecked
 					}
 				}
@@ -789,6 +752,7 @@ function ConsumePotion()
 				lastpotiontime:Set[${Time}]						
 				echo ${Time}: No XP potions detected in inventory.
 				EnableConsumePotion:Set[0]
+				PotionCount:Set[1]
 				UIElement[${enablepotionscheckboxvar}]:UnsetChecked
 			}
 			
@@ -803,6 +767,7 @@ function ConsumePotion()
 			statusvar:Set["XP Potion script DISABLED. Calculating XP only."]
 			echo ${Time}: XP Potion script DISABLED. Calculating XP only.
 			EnableConsumePotion:Set[0]
+			PotionCount:Set[1]
 			UIElement[${enablepotionscheckboxvar}]:UnsetChecked
 		}
 	}	
@@ -814,8 +779,6 @@ function LimitDropBoxReached()
 	{
 		echo Please choose an action to perform when any limit has been reached.
 		statusvar:Set["Please choose an action to perform..."]
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -826,8 +789,6 @@ function LimitDropBoxReached()
 		echo ${Time}: A limit has been reached.  Leaving group.
 		statusvar:Set["A limit has been reached. See console details."]
 		eq2execute leavegroup
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -838,8 +799,6 @@ function LimitDropBoxReached()
 		echo ${Time}: A limit has been reached.  Camping to login screen.
 		statusvar:Set["A limit has been reached. See console details."]
 		eq2execute camp login
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -850,8 +809,6 @@ function LimitDropBoxReached()
 		echo ${Time}: A limit has been reached.  Quitting to login screen.
 		statusvar:Set["A limit has been reached. See console details."]
 		eq2execute quit login
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -873,8 +830,6 @@ function LimitDropBoxReached()
 	{
 		echo ${Time}: A limit has been reached. Ending entire script.
 		statusvar:Set["A limit has been reached. See console details."]
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -1083,8 +1038,6 @@ function PowerlevelerDead()
 		lastpotion:Set["Time of death listed below"]
 		lastpotiontime:Set[${Time}]
 		eq2execute camp login
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -1097,8 +1050,6 @@ function PowerlevelerDead()
 		lastpotion:Set["Time of death listed below"]
 		lastpotiontime:Set[${Time}]
 		eq2execute quit login
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -1134,8 +1085,6 @@ function SelfRevival()
 		lastpotion:Set["Time of death listed below"]
 		lastpotiontime:Set[${Time}]
 		eq2execute quit login
-		UIElement[${timerunningvar}]:Hide
-		UIElement[${timerunningvar2}]:Show
 		UIElement[${startclickervar}]:Show
 		UIElement[${stopclickervar}]:Hide
 		endscript xpcalclevel
@@ -1187,8 +1136,6 @@ objectdef TimerObject
 
 function atexit()
 {
-	UIElement[${timerunningvar}]:Hide
-	UIElement[${timerunningvar2}]:Show
 	echo ${Time}: Stopping Auto XP Potion Script
 	call SaveSettings	
 }

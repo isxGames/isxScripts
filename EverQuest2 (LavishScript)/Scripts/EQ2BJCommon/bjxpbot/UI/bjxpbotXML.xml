@@ -7,7 +7,7 @@
 		<Height>230</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>BJ XP Bot            Version 3.03</Title> 
+		<Title>BJ XP Bot            Version 3.04</Title> 
 		<OnLoad>
 		declarevariable statusvar string global
 		declarevariable lastpotion string global
@@ -115,8 +115,6 @@
 							endscript xpcalclevel
 						if ${Script[ircrelay](exists)}	
 							endscript ircrelay	
-						if ${Script[lootedcoin](exists)}	
-							endscript lootedcoin
 						if ${Script[bjxpbotinventory](exists)}
 							endscript bjxpbotinventory			
 						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotXML.xml"
@@ -528,7 +526,6 @@
 				<OnLeftClick>
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbot"
 					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/xpcalclevel"
-					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/lootedcoin"
 					Script[bjxpbot]:QueueCommand[call SaveSettings]	
 					if ${UIElement[${EnableIRCRelayCheckboxVar}].Checked}
 					{
@@ -563,12 +560,10 @@
 						}	
 						if ${Script[ircrelay](exists)}
 							endscript ircrelay
-						if ${Script[lootedcoin](exists)}
-							endscript lootedcoin
 						BJXPBotPause:Set[0]
 						This.Parent.FindChild[ResumeBJXPBot]:Hide
 						This.Parent.FindChild[PauseBJXPBot]:Show
-						BJXPBotPause:Set[0]						
+						PotionCount:Set[1]					
 						This.Parent.FindChild[StartClicker]:Show
 						This:Hide
 					</OnLeftClick>
