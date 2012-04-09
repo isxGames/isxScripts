@@ -7,58 +7,59 @@ IRC Relay Script written by Hendrix and modified by bjcasey
 
 INSTRUCTIONS
 
-run bj bjxpbot
+run bj bjxpbot or run bj xpbot
 
-Main Page
-- Start/Stop script button
-- Settings button
-- Information is displayed
-- XP Calculations are always run
-
-Settings Page
-- Enable auto consumption of xp potions
-	- Will check your inventory for xp potions and attempt to use them every 10-15 mins
-	- Consumes vitality potions or Orb of Concentrated Memories when your vitality is zero
-- Choose a type of XP to track
-	- Toggles which type of XP to run the calculations on
-- Set an end time for the script
-	- This is the time on a 24-hour clock that the bot will end.  Will occur on it's next loop through.
+Click on the "Show Settings" button and fill in the desired information on each tab.
 
 COMING SOON...
 
 - MAIN PAGE	
-	- Change Pause button to be greyed out if the script it not running		
+	- Change Pause button to be greyed out if the script is not running		
 
 -POTIONS TAB
-	- Add the use of Tradeskill Apprentice Reward Potions before the vitality routine starts	
 			
 - STATISTICS TAB
-	- Exported log of potion consumption times and the name of the potion.  Sent to character files.
-		- Enabled via checkbox
-	- Estimate how many experience/vitality potions you will need based on % xp earned per hour
-	- Keep track of how many vitality potions you have used
-		- By using an INC Count under the vitality potion consume function
 	- Change IRC posting to pass through OgreIRC
 	
 - SETTINGS PAGE
-	- Integrate BJLooter script into another tab
 	
 - MAIN SCRIPT
-	- Remove references to the following outdated UI pieces:
-		- timerunningvar
-		- timerunningvar2
 		
-- Code in defaults for adv, aa and ts levels.
-		
-	
-
 - LIMITS TAB
+
 	
 KNOWN BUGS
 
 - [BUG] Displays the wrong xp gained and xp per hour sometimes after gaining a level resulting in a negative number being displayed.
 
 REVISION HISTORY
+
+BJXPBot-2012.04.08, Version 3.04
+
+STATISTICS TAB
+	- Removed the looted coin information.  It was redundant with the information on the looter tab.
+
+POTIONS TAB
+	- Added the ability to save/load the "Potion Priority List".  This will allow the user to save and share potion lists with other toons.
+
+SETTINGS PAGE
+	- Added a new tab to the settings page (Looter Tab)
+		- Integrated BJLooter script
+
+GENERAL
+	- Fixed a bug where if you ran out of potions in your potion list and then added more the script wouldn't start at the top of list to check for the new potions.
+	- Added an extra command to make running the script easier.  The script can now be run by typing the following into the console: run bj xpbot
+	
+SETUP TAB
+	- The following default values have been added:
+		- Current Max Adv Level = 90
+		- Current Max TS Level = 90
+		- Current Max AA Level = Dynamic data read from the eq2 server (Currently 320)
+
+MAIN SCRIPT
+	- Removed references to the following outdated UI pieces:
+		- timerunningvar
+		- timerunningvar2
 
 BJXPBot-2012.04.07, Version 3.03
 
