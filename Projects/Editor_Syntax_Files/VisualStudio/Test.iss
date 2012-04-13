@@ -20,6 +20,20 @@ function main()
   	echo ${Count}
   for (Count:Set[0] ; Count:Inc)
   	echo ${Count}
+  while ${Count:Inc}<=10
+  		echo ${Count}
+	do
+	{
+	  echo ${Count}
+	}
+	while ${Count:Inc}<=10
+	
+	while ${Count:Inc}<=10
+	{
+	  if ${Count}%2==1
+	    continue
+	  echo ${Count}
+	}
 	/*
 		Spaces are used to separate function call params.
 		Quotes are needed for any string that requires a space in this instance
