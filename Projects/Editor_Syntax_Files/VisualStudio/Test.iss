@@ -1,11 +1,7 @@
 
 /*Default param type is string*/
 /*Newlines are the line terminators*/
-/*
-	';' is a single line comment, but only if it isn't proceeded by another expression in which case it's 
-	a line terminator
-	No rules for the evil line comment yet which is why everything is in block comments!
-*/
+/*	';' is a single line comment, but only if it isn't proceeded by another expression in which case it's a line terminator No rules for the evil line comment yet which is why everything is in block comments!*/
 /* Code block curlys must be on their own line, whitespace doesn't matter*/
 function:bool argTest(int a,int b,c,d,string e)
 {

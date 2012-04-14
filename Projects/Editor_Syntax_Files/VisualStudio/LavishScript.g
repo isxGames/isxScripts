@@ -8,12 +8,27 @@ script	:	scriptStructure+
 	;
 
 dataSequence
+<<<<<<< .mine
+	:	Dollar LCurly name=accessor (((memberType+=Colon|memberType+=Dot) member+=accessor)*) RCurly
+		->^(Dollar $name ^($memberType $member)*)
+		
+=======
 	:	Dollar^ LCurly! accessor member* RCurly!
 	
+>>>>>>> .r3082
 	;
 member	:	(Colon^|Dot^) accessor
 	;
 scriptStructure
+<<<<<<< .mine
+	:	(newLine*)! (func^|variableDeclare^|objectDef^);
+	
+command	:
+	(
+		(dataCommand)=>dataCommand->^(Command dataCommand)
+	|	(ID ws spaceArgs)->^(Command ID spaceArgs?)
+	) 
+=======
 	:	newLine (func^|variableDeclare^|objectDef^);
 	
 command	:
@@ -21,16 +36,32 @@ command	:
 		(dataCommand)=>dataCommand->^(Command dataCommand)
 	|	(ID ws spaceArgs)->^(Command ID spaceArgs)
 	) 
+>>>>>>> .r3082
 	;
 	
 func
+<<<<<<< .mine
+	:	newLine? Function(Colon returnType=ID)? ws funcName=ID params newLine codeBlock
+			->^(Function $funcName ^(Returns $returnType?) ^(Params params?) codeBlock)
+		
+=======
 	:	Function(Colon returnType=ID)? ws funcName=ID params newLine codeBlock
 			->^(Function $funcName ^(Returns $returnType?) params codeBlock)
 		
+>>>>>>> .r3082
 	;
+<<<<<<< .mine
+fragment
+Params	:	
+	;
+atom	:	Atoms (Colon returnType=ID)? ws atomName=ID params newLine codeBlock
+			->^(Atoms ^($atomName ^(Returns $returnType?) params?)codeBlock)
+	;
+=======
 atom	:	Atoms (Colon returnType=ID)? ws atomName=ID params newLine codeBlock
 			->^(Atoms ^($atomName ^(Returns $returnType?) params)codeBlock)
 	;
+>>>>>>> .r3082
 
 objectDef
 	:	ObjectDef^ ws! ID (ws! Inherits ws! ID)? newLine!
@@ -53,22 +84,38 @@ objectMethod
 	;
 
 dataCommand
-	:	accessor ((Dot accessor)* Colon accessor)+
+	:	accessor ((Dot^ accessor)* Colon^ accessor)+
 	;
 decl	:	variableDeclare^
 	|	declVar^
 	;
+<<<<<<< .mine
+declVar	:	DeclareVariable ws name=ID ws indexer? ws type=ID (ws Scope ws spaceArgs)?
+		-> ^(VarDef ^(TYPE $type) indexer? ^(SCOPE Scope?) ^($name ^(ASSIGN (spaceArgs)?)))
+	;
+=======
 declVar	:	DeclareVariable ws name=ID ws indexer? ws type=ID (ws Scope ws spaceArgs)?
 		-> ^(VarDef ^(TYPE $type) ^(INDEX indexer?) ^(SCOPE Scope?) ^($name ^(ASSIGN (spaceArgs)?)))
 	;
+>>>>>>> .r3082
 variableDeclare
+<<<<<<< .mine
+	:	Variable (LParen Scope RParen)? ws type=ID ws name=ID ws indexer? ws(Assign ws spaceArgs)?
+		-> ^(VarDef ^(TYPE $type?) indexer? ^(SCOPE Scope?) ^($name ^(ASSIGN (spaceArgs)?)))
+=======
 	:	Variable (LParen Scope RParen)? ws type=ID ws name=ID ws indexer? ws(Assign ws spaceArgs)?
 		-> ^(VarDef ^(TYPE $type?) ^(INDEX indexer?) ^(SCOPE Scope?) ^($name ^(ASSIGN (spaceArgs)?)))
+>>>>>>> .r3082
 	;
 params	:	LParen 	ws
+<<<<<<< .mine
+				('...'ws name=ID ->^(TYPE'...') ID
+			|	commaArg (Comma commaArg)* ->commaArg*)?
+=======
 			(	'...'ws name=ID ->^(Param ^(TYPE'...') ID)
 			|	commaArg (Comma commaArg)* ->commaArg*
 			)? 
+>>>>>>> .r3082
 			ws
 		RParen
 	;
@@ -89,9 +136,18 @@ doWhileStatement
 	;
 	
 ifStatement
+<<<<<<< .mine
+	:	If ifCondition=condition  ifExpression=expression 
+		(((newLine ElseIf)=>newLine elseIfs+=ElseIf elseIfConditions+=condition elseIfExpressions+=expression))* 
+		((newLine Else)=>newLine Else elseExpression=expression)?
+		->^(If $ifCondition $ifExpression ^($elseIfs $elseIfConditions $elseIfExpressions)* ^(Else $elseExpression)?)
+=======
 	:	If condition  expression (elseIf)* (elseStatement)?
 		->^(If condition expression elseIf* elseStatement?)
+>>>>>>> .r3082
 	;
+<<<<<<< .mine
+=======
 elseStatement
 	:	(newLine Else)=>newLine Else expression
 		->^(Else expression)
@@ -99,6 +155,7 @@ elseStatement
 elseIf	:	(newLine ElseIf)=>newLine ElseIf condition expression
 		->^(ElseIf condition expression)
 	;
+>>>>>>> .r3082
 condition 
 	:	comparison^ ((And^|Or^)comparison)*
 	;
@@ -127,15 +184,24 @@ compareValue
 	;
 
 comparer:	EqualTo|NotEqualTo|GreaterThan|LessThan|LessThanEqual|GreaterThanEqual;
+
 switchStatement
 	:	Switch ws(newLineArg)newLine LCurly
 		newLine*
-		(newLine switchCase)*
-		(newLine defaultCase)?
+		(newLine cases+=switchCase)*
+		(newLine cases+=defaultCase)?
 		newLine
 		RCurly 
+<<<<<<< .mine
+		->^(Switch $cases*)newLineArg
+=======
 		->^(Switch switchCase* defaultCase?)newLineArg
+>>>>>>> .r3082
 	;
+<<<<<<< .mine
+	
+newLine	:	NewLine! (WS?)! (((';')=>lineComment)*)!
+=======
 	
 newLine	:	NewLine WS? ((';')=>lineComment)*
 	;
@@ -144,29 +210,47 @@ lineComment
 	;
 /*
 newLine	:	ws NewLine ws
+>>>>>>> .r3082
 	;
 	
 lineComment
+<<<<<<< .mine
+	:	(';'! newLineString! NewLine! (WS?)!)
+	;
+
+=======
 	:	';' ~NewLine*;
 	*/
+>>>>>>> .r3082
 switchCase
+<<<<<<< .mine
+	:	(Case^ ws!(newLineArg)|VariableCase^ ws! dataSequence) ws! expression+
+	;
+=======
 	:	Case^ ws!(newLineArg)expression+
 	|	VariableCase^ ws! dataSequence expression+
 	;
+>>>>>>> .r3082
 defaultCase
 	:	Default expression+
 		->^(Default expression+)
 	;
 
 expression
+<<<<<<< .mine
+	:	newLine! ((command|decl|switchStatement|ifStatement|forStatement|doWhileStatement|whileStatement|codeBlock)
+			(';'  (command|decl|switchStatement|ifStatement|forStatement|doWhileStatement|whileStatement))*)?
+=======
 	:	newLine ((command|decl|switchStatement|ifStatement|forStatement|doWhileStatement|whileStatement|codeBlock)
 			(';'  (command|decl|switchStatement|ifStatement|forStatement|doWhileStatement|whileStatement|codeBlock))*)?
+>>>>>>> .r3082
 
 	;	
 codeBlock
 	:	LCurly
 		(expression)+ 
 		RCurly
+		-> ^(CODEBLOCK expression+)
 	;
 newLineArg
 	:	
@@ -175,60 +259,84 @@ newLineArg
 		|	(INT (NewLine|WS))=>INT
 		|	(FLOAT (NewLine|WS))=>FLOAT
 		|	(dataSequence (NewLine|WS))=>dataSequence
-		|	newLineString
+		|	newLineString->^(String newLineString)
 	)
 	;
-value	:	STRING
-	|	INT
-	|	FLOAT
-	|	dataSequence
+value	:	STRING^
+	|	INT^
+	|	FLOAT^
+	|	dataSequence^
 	;
 typeCast:	LParen id RParen
+		->^(TYPECAST id)
 	;
-	
-id	:	ID|dataSequence
+fragment
+TYPECAST:	
 	;
+<<<<<<< .mine
+fragment
+CODEBLOCK:	
+=======
 spaceArgs:	(spaceArg (WS spaceArg)*->spaceArg+)?
+>>>>>>> .r3082
+	;
+id	:	(ID|dataSequence)
+	;
+spaceArgs:	(spaceArg (ws spaceArg)*->spaceArg+)? ws
 	;
 indexer
 	:	LSquare (commaRSquareArg (Comma commaRSquareArg)*)? RSquare
+<<<<<<< .mine
+		->^(INDEX commaRSquareArg*)
+=======
 		->commaRSquareArg*
+>>>>>>> .r3082
 	;
 	
 commaParenArg:	
 	(
-			(STRING (Comma|RParen))=>STRING 
-		|	(INT (Comma|RParen))=>INT 
+			(STRING (Comma|RParen))=>STRING
+		|	(INT (Comma|RParen))=>INT
 		|	(FLOAT (Comma|RParen))=>FLOAT
 		|	(dataSequence (Comma|RParen))=>dataSequence
-		|	commaParenString
+		|	commaParenString->^(String commaParenString)
 	)
 	;
 commaRSquareArg:	
 	(
-			(STRING (Comma|RSquare))=>STRING 
-		|	(INT (Comma|RSquare))=>INT 
-		|	(FLOAT (Comma|RSquare))=>FLOAT
-		|	(dataSequence (Comma|RSquare))=>dataSequence
-		|	commaSquareString
+			(STRING (Comma|RSquare))=>STRING->STRING
+		|	(INT (Comma|RSquare))=>INT->INT
+		|	(FLOAT (Comma|RSquare))=>FLOAT->FLOAT
+		|	(dataSequence (Comma|RSquare))=>dataSequence->dataSequence
+		|	commaSquareString->^(String commaSquareString)
 	)
 	;
 	
 spaceArg
 	:	
 	(
+<<<<<<< .mine
+			(STRING (WS|NewLine))=>STRING->STRING
+		|	(INT (WS|NewLine))=>INT->INT
+		|	(FLOAT (WS|NewLine))=>FLOAT->FLOAT
+		|	(dataSequence (WS|NewLine))=>dataSequence->dataSequence
+		|	spaceString->^(String spaceString)
+=======
 			(STRING (WS|NewLine))=>STRING 
 		|	(INT (WS|NewLine))=>INT
 		|	(FLOAT (WS|NewLine))=>FLOAT
 		|	(dataSequence (WS|NewLine))=>dataSequence
 		|	spaceString
+>>>>>>> .r3082
 	)
 	;
 
 //lineComment:	newLine ';' (~NewLine)* ;
 
-accessor:	id* indexer* typeCast*;
-
+accessor:	id (indexer|typeCast)*
+		
+	;
+ACCESSOR	:	;
 commaSquareString
 	:	~(Comma|RSquare)+
 	;
@@ -236,7 +344,7 @@ commaParenString
 	:	(~(Comma|RSquare|NewLine|LCurly))+
 	;
 spaceString
-	:	(~(NewLine|RParen|';'|WS))+
+	:	(~(NewLine|RParen|WS))+
 	;
 forStatement
 	:	(For (~(NewLine|';')* ';') (~(NewLine|';')* ';'))=>
@@ -248,9 +356,15 @@ forStatement
 	
 ws	:	WS?
 	;
-newLineString
-	:	(~(NewLine))+
+fragment
+String	:	
 	;
+newLineString
+	:	~(NewLine)+
+	;
+<<<<<<< .mine
+COMMENT	:	'/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;} ;
+
 fragment
 SCOPE	:	
 	;
@@ -269,6 +383,26 @@ ASSIGN	:
 fragment
 INDEX	:	
 	;
+=======
+fragment
+SCOPE	:	
+	;
+fragment
+Returns	:	
+	;
+fragment
+VarDef	:
+	;
+fragment
+Command	:
+	;
+fragment
+ASSIGN	:	
+	;
+fragment
+INDEX	:	
+	;
+>>>>>>> .r3082
 Assign	:	'=';
 EqualTo	:	'=='
 	;
@@ -323,7 +457,7 @@ RSquare	:	']'
 
 LSquare	:	'['
 	;
-NewLine	:	(/*{$channel=HIDDEN;}*/('\r\n'|'\n'))+// WS?
+NewLine	:	(('\r\n'|'\n'))+
 	;
 	
 Default
@@ -415,8 +549,6 @@ FLOAT
 	|	'.' ('0'..'9')+ EXPONENT?
 	|	('0'..'9')+ EXPONENT
 	;
-
-COMMENT	:	'/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;} ;
 
 WS	:	(' '|'\t')+//{$channel=HIDDEN;}
 	;
