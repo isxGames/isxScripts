@@ -9,9 +9,7 @@ variable int i
 function commentTest()
 {
 	/* only multiline atm*/
-	/* only
-	 multiline
-	  atm*/
+	/* only multiline atm*/
 	  ;linetest
 	  if 1 ;test
 	  ;linetest
@@ -72,7 +70,6 @@ function loopTest()
 {
 	for (Count:Set[0] ; ${Count}<=10 ; Count:Inc)
   	echo ${Count}
-  for (Count:Set[0]
   while ${Count:Inc}<=10
   	echo ${Count}
 	do
