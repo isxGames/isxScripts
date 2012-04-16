@@ -17,7 +17,7 @@ preProcessor
 	;
 unmac	:	'#unmac'^WS! ID
 	;
-define	:	'#define'^WS! ID WS! ID
+define	:	'#define'^WS! ID (WS!(ID|INT|string|FLOAT|(dataSequence)=>dataSequence|(dataCommand)=>dataCommand|condition))+
 	;
 macro	:	'#macro'^WS! ID ws LParen ws params ws RParen WS!?
 			(expression*)
