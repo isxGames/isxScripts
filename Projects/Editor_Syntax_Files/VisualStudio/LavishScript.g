@@ -13,9 +13,43 @@ scriptStructure
 	;
 
 preProcessor
-	:	(include)=>include|'#'^ ~NewLine*
+	:	(include)=>include|define|macro|preIf|ifDef|ifNDef|echo|error|unmac
 	;
-include	:	'#'^ 'include' string
+unmac	:	'#unmac'^WS! ID
+	;
+define	:	'#define'^WS! ID WS! ID
+	;
+macro	:	'#macro'^WS! ID ws LParen ws params ws RParen WS!?
+			(expression*)
+		'#endmac'
+	;
+preIf	:	'#if'^ WS! condition WS!?
+			expression*
+		 preElseIf*
+		 preElse?
+		 endIf
+		
+	;
+endIf	:	NewLine! '#endif'!
+	;
+preElse	:	NewLine! '#else'^ WS!? expression*
+	;
+preElseIf
+	:	NewLine! '#elseif'^ WS!? condition expression*
+	;
+ifDef	:	'#ifdef'^ WS! ID
+		preElse?
+		endIf
+	;
+ifNDef	:	'#ifndef'^ WS! ID
+		preElse?
+		endIf
+	;
+echo	:	'#echo'^WS! lineArg*
+	;
+error	:	'#error'^WS! lineArg*
+	;
+include	:	'#include'^WS! string
 	;
 string	:	Quote^
 			((dataSequence)=>dataSequence|~(Quote) )*
@@ -100,7 +134,7 @@ commandArg
 		|(~(NewLine|Semi))
 	;
 expression
-	:	(NewLine!)(command|declareVariable|variableDeclare|forStatement|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)?
+	:	(NewLine!)(command|declareVariable|preProcessor|variableDeclare|forStatement|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)?
 		((Semi)=>chainExpression)?
 	;
 chainExpression
@@ -353,7 +387,7 @@ ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
 INT :	'0'..'9'+
     ;
     
-NewLine	:	('\r'? '\n' WS?)+
+NewLine	:	('\\'?'\r'? '\n' WS?)+
 	;
 Semi	:	';'
 	;
