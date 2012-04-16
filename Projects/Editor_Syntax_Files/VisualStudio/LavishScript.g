@@ -1,9 +1,9 @@
-grammar test;
+grammar LavishScript;
 options{
 	output=AST;
 	ASTLabelType=CommonTree;
 }
-script	:	NewLine* scriptStructure (NewLine+ scriptStructure)* ->^(Script scriptStructure+)
+script	:	NewLine* scriptStructure (NewLine+ scriptStructure)* NewLine?->^(Script scriptStructure+)
 	;
 fragment
 Script	:	
@@ -13,9 +13,13 @@ scriptStructure
 	;
 
 preProcessor
-	:	include|'#' ~NewLine*
+	:	(include)=>include|'#'^ ~NewLine*
 	;
-include	:	'#'^ 'include' STRING
+include	:	'#'^ 'include' string
+	;
+string	:	Quote^
+			((dataSequence)=>dataSequence|~(Quote) )*
+		Quote!
 	;
 dataSequence
 	:	Dollar^ LCurly! accessor member? RCurly!
@@ -37,35 +41,36 @@ switchStatement
 		->^(Switch ^(Param lineArg+) switchCase* defaultCase?)
 	;
 switchCase
-	:	Case lineArg+ expression+ ->^(Case ^(Param lineArg+) expression+)
-	|	VariableCase dataSequence expression+->^(VariableCase dataSequence expression+)
+	:	Case lineArg+ expression* ->^(Case ^(Param lineArg+) expression*)
+	|	VariableCase dataSequence expression*->^(VariableCase dataSequence expression*)
 	;
 variableCase
 	:	
 	;
 defaultCase
-	:	Default^ expression+
+	:	Default^ expression*
 	;
 lineArg
 	:	(ID)=>ID|(dataSequence)=>dataSequence
-		|(STRING)=>STRING|(INT)=>INT|(FLOAT)=>FLOAT
+		|(string)=>string|(INT)=>INT|(FLOAT)=>FLOAT
 		|(math)=>math->^(MATH math)
 		|(~NewLine)
 	;
 commaArg
-	:	(ID (Comma|RSquare))=>ID|(dataSequence (Comma|RSquare))=>dataSequence|(STRING (Comma|RSquare))=>STRING
+	:	(ID (Comma|RSquare))=>ID|(dataSequence (Comma|RSquare))=>dataSequence|(string (Comma|RSquare))=>string
 		|(INT (Comma|RSquare))=>INT|(FLOAT (Comma|RSquare))=>FLOAT
 		|(math Comma|RSquare)=>math->^(MATH math)
 		|(~(Comma|RSquare))
 		
 	;
 objectDef
-	:	ObjectDef^ ID (Inherits ID)? NewLine!
-		LCurly!
-			(NewLine! (atom|objectMethod|objectMember|variableDeclare)?)+
-		RCurly!
+	:	ObjectDef WS ID WS (Inherits WS ID)? NewLine
+		LCurly
+			(NewLine+ (members+=function|members+=atom|members+=objectMethod|members+=objectMember|members+=variableDeclare)?)+
+		RCurly
+			->^(ObjectDef ^(ID $members*) ^(Inherits ID)?)
 	;
-function:	Function(Colon returnType=ID)? name=ID LParen params? RParen NewLine codeBlock
+function:	Function(Colon returnType=ID)?WS name=ID LParen params? RParen NewLine codeBlock
 			->^(Function $name ^(Returns $returnType?) ^(Params params?) codeBlock)
 	;
 atom	:	Atom(Colon returnType=ID)? name=ID LParen params? RParen NewLine codeBlock
@@ -80,9 +85,9 @@ objectMethod
 			->^(Method $name ^(Returns $returnType?) ^(Params params?) codeBlock)
 	;
 
-command	:	(dataCommand)=>dataCommand->^(DataCommand dataCommand)
-	|	(ID)=>(ID) commandArg*->^(COMMAND ^(ID commandArg*))
-	|	(dataSequence)=>(dataSequence) commandArg*->^(COMMAND ^(dataSequence commandArg*))
+command	:	(dataCommand)=>dataCommand->^(DataCommand dataCommand)|
+		(ID)=>(ID WS) commandArg*->^(COMMAND ^(ID commandArg*))
+	|	(dataSequence WS)=>(dataSequence) commandArg*->^(COMMAND ^(dataSequence commandArg*))
 	;
 fragment
 DataCommand
@@ -90,7 +95,7 @@ DataCommand
 	;
 commandArg
 	:	(ID)=>ID|(dataSequence)=>dataSequence
-		|(STRING)=>STRING|(INT)=>INT|(FLOAT)=>FLOAT
+		|(string)=>string|(INT)=>INT|(FLOAT)=>FLOAT
 		|(math)=>math->^(MATH math)
 		|(~(NewLine|Semi))
 	;
@@ -103,12 +108,12 @@ chainExpression
 		((Semi)=>chainExpression)?
 	;
 params	:	
-		(('...' ID)->^(Param ^(Type '...') ^(ID))
-		|param (Comma param)*->param*
+		(('...' WS ID)->^(Param ^(Type '...') ^(ID))
+		|param (ws Comma ws param)*->param*
 		)
 		
 	;
-param	:	((type=ID name=ID)|name=ID)(Assign value*)?
+param	:	((type=ID WS name=ID)|name=ID)(ws Assign ws value*)?
 			->^(Param ^(Type $type?)^($name ^(Assign value*)?))
 	;
 
@@ -122,7 +127,7 @@ fragment
 Type	:	
 	;
 ifStatement
-	:	If ifCondition=condition ifExpression=expression
+	:	If ws ifCondition=condition WS? ifExpression=expression
 		((NewLine ElseIf)=>NewLine elseIfs+=ElseIf elseifCondition+=condition elseifexpression+=expression)*
 		((NewLine Else)=>NewLine Else elseexpression+=expression)?
 			->^(If $ifCondition $ifExpression ^($elseIfs $elseifCondition $elseifexpression)* ^(Else $elseexpression)?)
@@ -134,11 +139,11 @@ whileStatement
 	:	While^ condition expression
 	;
 forStatement
-	:	(For LParen command ';' condition ';' command RParen)=>(For LParen command ';' condition ';' command RParen) expression
+	:	(For ws LParen ws command ws';'ws condition ws';'ws command RParen)=>(For ws LParen ws command ws';'ws condition ws';'ws command ws RParen)WS? expression
 			->^(For command condition command)
-	|	(For LParen condition ';' command RParen)=>(For LParen condition ';' command RParen)expression
+	|	(For ws LParen ws condition ws ';'ws command ws RParen)=>(For ws LParen ws condition ws';'ws command ws RParen)WS?expression
 			->^(For COMMAND ^(CONDITION condition) command)
-	|	(For LParen command';' command RParen)expression
+	|	(For ws LParen ws command ws ';'ws command ws RParen)WS? expression
 			->^(For command ^(CONDITION) command)
 	;
 fragment
@@ -146,12 +151,12 @@ CONDITION
 	:	
 	;
 conditionValue
-	:	(ID (Comparer|LParen|RParen|NewLine))=>ID
-		|(dataSequence (Comparer|LParen|RParen|NewLine))=>dataSequence
-		|(STRING (Comparer|LParen|RParen|NewLine))=>STRING
-		|(INT (Comparer|LParen|RParen|NewLine))=>INT
-		|(FLOAT (Comparer|LParen|RParen|NewLine))=>FLOAT
-		|(math (Comparer|LParen|RParen|NewLine))=>math->^(MATH math)
+	:	(ID)=>ID
+		|(dataSequence)=>dataSequence
+		|(string)=>string
+		|(INT)=>INT
+		|(FLOAT)=>FLOAT
+		|(math)=>math->^(MATH math)
 		|(~(Comparer|LParen|RParen|NewLine))
 	;
 math	:	expr (MathSymbol^ expr)+
@@ -162,10 +167,16 @@ fragment
 MATH	:	
 	;
 condition
-	:	(Negate?)^ (LParen! condition RParen!|conditionValue (Comparer^ conditionValue)?) ((And^|Or^) condition)?
+	:	Negate^? ws 
+		(
+			LParen! ws  condition ws RParen!
+		|	conditionValue (ws Comparer^ ws conditionValue)?
+		) (ws(And^|Or^)ws condition)?
+	;
+ws	:	NewLine!? WS!?
 	;
 variableDeclare
-	:	Variable(LParen Scope RParen)? type=ID name=ID indexer? (Assign lineArg*)?
+	:	Variable(LParen Scope RParen)? WS type=ID WS name=ID indexer? (ws Assign ws lineArg*)?
 			-> ^(Variable Scope?  ^($type indexer? ^($name  ^(Assign lineArg*)?)))
 	;
 codeBlock
@@ -177,7 +188,7 @@ declareVariable
 	:	DeclareVariable name=ID indexer? type=ID (Scope (lineArg*))?
 			-> ^(DeclareVariable Scope?  ^($type indexer? ^($name  ^(Assign lineArg*)?)))
 	;
-value	:	ID|dataSequence|STRING|INT|FLOAT
+value	:	ID|dataSequence|string|INT|FLOAT
 	;
 accessor:	id^ (indexer|typeCast)*
 	;
@@ -242,7 +253,8 @@ RCurly	:	'}';
 
 LParen	:	'('
 	;
-
+Quote	:	'"'
+	;
 RParen	:	')'
 	;
 ObjectDef
@@ -345,17 +357,18 @@ NewLine	:	('\r'? '\n' WS?)+
 	;
 Semi	:	';'
 	;
-WS	:	(' '|'\t')+{$channel=HIDDEN;}
+WS	:	(' '|'\t')+//{$channel=HIDDEN;}
 	;
 FLOAT
     :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
     |   '.' ('0'..'9')+ EXPONENT?
     |   ('0'..'9')+ EXPONENT
     ;
-
-STRING
-    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
-    ;
+fragment
+STRING	:	
+	;
+ //   ://  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+//    ;
 fragment
 EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
 
