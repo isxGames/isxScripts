@@ -1,17 +1,8 @@
-/* comment*/
-/*
-*
-* Hello
-*
-*/
 variable int i
-;singleLine test
+
 function commentTest()
 {
-	/* only multiline atm*/
-	/* only multiline atm*/
-	  ;linetest
-	  if 1 ;test
+	  if 1
 	  ;linetest
 	  echo test ;test
 }

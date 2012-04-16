@@ -5,7 +5,7 @@
 /* Code block curlys must be on their own line, whitespace doesn't matter*/
 function:bool argTest(int a,int b,c,d,string e)
 {
-	echo A: ${a} B: ${b} C: ${c} D: ${d} E: ${e}
+	echo A ${a} B ${b} C ${c} D ${d} E ${e}
 }
 
 function main()
