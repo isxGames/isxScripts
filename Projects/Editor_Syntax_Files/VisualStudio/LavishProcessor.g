@@ -13,25 +13,23 @@ scriptStructure
 	|	preProcessor
 	;
 objectDef
-	:	^(ObjectDef ^(ID (function|atom|objectMethod|objectMember|variableDeclare)*) (^(Inherits ID))?)
+	:	^(ObjectDef ^(ID (function|atom|objectMember|variableDeclare|objectMethod)*) (^(Inherits ID))?)
 	;
 variableDeclare
 	:	^(Variable Scope? ID indexer? ^(ID(^(Assign lineArg*))?))
 	;
-function:	^(Function ID ^(Returns ID?) ^(Params params?) codeBlock)
+function:	^(Function ID ^(Returns ID?) params codeBlock)
 	;
-atom	:	^(Atom ID ^(Returns ID?) ^(Params params?) codeBlock)
+atom	:	^(Atom ID ^(Returns ID?) params codeBlock)
 	;
 objectMember
-	:	^(Member ID ^(Returns ID?) ^(Params params?) codeBlock)
+	:	^(Member ID ^(Returns ID?) params codeBlock)
 	;
 objectMethod
-	:	^(Atom ID ^(Returns ID?) ^(Params params?) codeBlock)
+	:	^(Method ID ^(Returns ID?) params codeBlock)
 	;
-params	:	^(Param ^(Type Elipse) ID)
-	|	param*
-	;
-param	:	^(Param ^(Type ID?) ^(ID (^(Assign value*))?))
+params	:	^(Params ^(Param Elipse ID))
+	|	^(Params (^(Param ^(Type ID?)) ^(ID ^(Assign value)))*)
 	;
 value	:	ID|dataSequence|string|INT|FLOAT|(~(WS|NewLine))
 	;
@@ -97,7 +95,10 @@ commandArg
 	|	^(MATH math)
 	|	~(NewLine|Semi)
 	;
-indexer	:	^(LSquare (^(IndexerValue commaArg+))? (^(IndexerValue commaVals))*)
+indexer	:	^(LSquare commaValue*)
+	;
+commaValue
+	:	^(IndexerValue commaArg+)
 	;
 lineArg	:	ID
 	|	dataSequence
@@ -108,21 +109,40 @@ lineArg	:	ID
 	|	~NewLine
 	;
 codeBlock
-	:	^(CodeBlock expression+)
+	:	^(CodeBlock expression*)
 	;
 expression
-	:	(command|declareVariable|preProcessor|variableDeclare|forStatement
-				|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)?
+	:	command|declareVariable|preProcessor
+			|variableDeclare|forStatement
+				|doStatement|whileStatement|ifStatement|switchStatement|codeBlock
 	;
 declareVariable
 	:	^(DeclareVariable Scope?  ^(ID indexer? ^(ID  (^(Assign lineArg*))?)))
 	;
 preProcessor
-	:	include|define|macro|preIf|ifDef|ifNDef|echo|error|unmac
+	:	include
+	|	define
+	|	macro
+	|	preIf
+	|	ifDef
+	|	ifNDef
+	|	echo
+	|	error
+	|	unmac
 	;
-include	:	
+include	:	^(Include string)
 	;
-define	:	^(Define ID (ID|INT|string|FLOAT|dataSequence|dataCommand|condition)+)
+define	:	^(
+		Define 
+			(ID
+			|INT
+			|string
+			|FLOAT
+			|dataSequence
+			|command
+			|condition
+			)+
+		)
 	;
 condition
 	:	^(Negate condition) orCondition? andCondition?
@@ -155,7 +175,7 @@ orCondition
 andCondition
 	:	^(And condition)
 	;
-macro	:	^(Macro ID ^(Params params*) expression*)
+macro	:	^(Macro ID ^(Params params) expression*)
 	;
 preIf	:	^(PreIf condition expression* preElseIf* preElse?)
 	;
@@ -176,8 +196,6 @@ unmac	:	^(Unmac ID)
 	;
 forStatement
 	:	^(For command condition command)
-	|	^(For COMMAND condition command)
-	|	^(For command CONDITION command)
 	;
 doStatement
 	:	^(Do expression condition)
@@ -192,9 +210,9 @@ switchStatement
 	:	^(Switch ^(Param lineArg+) switchCase* defaultCase?)
 	;
 switchCase
-	:	^(Case ^(Param lineArg+) expression*)
-	|	^(VariableCase dataSequence expression*)
+	:	^(Case ^(Param lineArg+) expression)
+	|	^(VariableCase dataSequence expression)
 	;
 defaultCase
-	:	^(Default expression*)
+	:	^(Default expression)
 	;
