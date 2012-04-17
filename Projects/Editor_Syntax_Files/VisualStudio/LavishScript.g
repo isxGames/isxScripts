@@ -1,66 +1,72 @@
-grammar LavishScript;
+parser grammar LavishScript;
 options{
 	output=AST;
 	ASTLabelType=CommonTree;
+	tokenVocab=LavishTokens;
+	
 }
-script	:	NewLine* scriptStructure (NewLine+ scriptStructure)* NewLine?->^(Script scriptStructure+)
+script	:	NewLine* scriptStructure (NewLine+ scriptStructure)* NewLine?->scriptStructure+
 	;
-fragment
-Script	:	
-	;
+
 scriptStructure
-	:	(variableDeclare|function|atom|objectDef|preProcessor)
+	:	variableDeclare|function|atom|objectDef|preProcessor
 	;
 
 preProcessor
 	:	(include)=>include|define|macro|preIf|ifDef|ifNDef|echo|error|unmac
 	;
-unmac	:	'#unmac'^WS! ID
+unmac	:	Unmac WS ID->^(Unmac ID)
 	;
-define	:	'#define'^WS! ID (WS!(ID|INT|string|FLOAT|(dataSequence)=>dataSequence|(dataCommand)=>dataCommand|condition))+
+define	:	Define WS ID (WS vals+=(ID|INT|string|FLOAT|(dataSequence)=>dataSequence|(dataCommand)=>dataCommand|condition))+
+			->^(Define ID $vals+)
 	;
-macro	:	'#macro'^WS! ID ws LParen ws params ws RParen WS!?
+macro	:	Macro WS  ID ws LParen ws params ws RParen WS?
 			(expression*)
-		'#endmac'
+		EndMac ->^(Macro ID ^(Params params*) expression*)
 	;
-preIf	:	'#if'^ WS! condition WS!?
+preIf	:	PreIf WS condition WS?
 			expression*
 		 preElseIf*
 		 preElse?
-		 endIf
+		 endIf ->^(PreIf condition expression* preElseIf* preElse?)
 		
 	;
-endIf	:	NewLine! '#endif'!
+endIf	:	NewLine! EndIf!
 	;
-preElse	:	NewLine! '#else'^ WS!? expression*
+preElse	:	NewLine PreElse WS? expression* ->^(PreElse expression*)
 	;
 preElseIf
-	:	NewLine! '#elseif'^ WS!? condition expression*
+	:	NewLine PreElseIf WS? condition expression*->^(PreElse condition expression*)
 	;
-ifDef	:	'#ifdef'^ WS! ID
+ifDef	:	IfDef WS ID
 		preElse?
-		endIf
+		endIf ->^(IfDef ID preElse?)
 	;
-ifNDef	:	'#ifndef'^ WS! ID
+ifNDef	:	IfNDef WS ID
 		preElse?
-		endIf
+		endIf ->^(IfNDef ID preElse?)
 	;
-echo	:	'#echo'^WS! lineArg*
+echo	:	Echo WS lineArg*->^(Echo lineArg*)
 	;
-error	:	'#error'^WS! lineArg*
+error	:	Error WS lineArg*->^(Error lineArg*)
 	;
-include	:	'#include'^WS! string
+include	:	Include WS string->^(Include string)
 	;
-string	:	Quote^
-			((dataSequence)=>dataSequence|~(Quote) )*
-		Quote!
+string	:	(Quote 
+			val+=((dataSequence)=>dataSequence|quoteString)*
+		Quote)->^(STRING $val*)
+	;
+quoteString
+	:	~(Quote)
 	;
 dataSequence
-	:	Dollar^ LCurly! accessor member? RCurly!
+	:	Dollar LCurly accessor member? RCurly ->^(Dollar accessor member?)
 	;
-id	:	(ID^|dataSequence) id?
+id	:	ID id? ->^(ID id?)
+	|	dataSequence id?
 	;
-member	:	(Dot^|Colon^) accessor member?
+member	:	Dot accessor member? ->^(Dot accessor member?)
+	|	Colon accessor member?->^(Colon accessor member?)
 	;
 
 dataCommand
@@ -77,9 +83,6 @@ switchStatement
 switchCase
 	:	Case lineArg+ expression* ->^(Case ^(Param lineArg+) expression*)
 	|	VariableCase dataSequence expression*->^(VariableCase dataSequence expression*)
-	;
-variableCase
-	:	
 	;
 defaultCase
 	:	Default^ expression*
@@ -119,14 +122,12 @@ objectMethod
 			->^(Method $name ^(Returns $returnType?) ^(Params params?) codeBlock)
 	;
 
-command	:	(dataCommand)=>dataCommand->^(DataCommand dataCommand)|
-		(ID)=>(ID WS) commandArg*->^(COMMAND ^(ID commandArg*))
-	|	(dataSequence WS)=>(dataSequence) commandArg*->^(COMMAND ^(dataSequence commandArg*))
+command	:	(dataCommand)=>dataCommand (Semi command)?->^(DataCommand dataCommand)command?
+	|	(ID)=>(ID WS) commandArg* (Semi command)?->^(COMMAND ID commandArg*) command?
+	|	(dataSequence WS)=>(dataSequence) commandArg* (Semi command)?->^(COMMAND dataSequence commandArg*) command?
+		
 	;
-fragment
-DataCommand
-	:	 	
-	;
+
 commandArg
 	:	(ID)=>ID|(dataSequence)=>dataSequence
 		|(string)=>string|(INT)=>INT|(FLOAT)=>FLOAT
@@ -134,32 +135,19 @@ commandArg
 		|(~(NewLine|Semi))
 	;
 expression
-	:	(NewLine!)(command|declareVariable|preProcessor|variableDeclare|forStatement|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)?
-		((Semi)=>chainExpression)?
-	;
-chainExpression
-	:	Semi! (command|declareVariable|variableDeclare|forStatement|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)
-		((Semi)=>chainExpression)?
+	:	(NewLine!)(command|declareVariable|preProcessor|variableDeclare|forStatement
+				|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)?
 	;
 params	:	
-		(('...' WS ID)->^(Param ^(Type '...') ^(ID))
+		((Elipse WS ID)->^(Param ^(Type Elipse) ^(ID))
 		|param (ws Comma ws param)*->param*
 		)
 		
 	;
-param	:	((type=ID WS name=ID)|name=ID)(ws Assign ws value*)?
-			->^(Param ^(Type $type?)^($name ^(Assign value*)?))
+param	:	((type=ID WS name=ID)|name=ID)(ws Assign ws value)?
+			->^(Param ^(Type $type?)^($name ^(Assign value)?))
 	;
 
-fragment
-Param	:	
-	;
-fragment
-Params	:	
-	;
-fragment
-Type	:	
-	;
 ifStatement
 	:	If ws ifCondition=condition WS? ifExpression=expression
 		((NewLine ElseIf)=>NewLine elseIfs+=ElseIf elseifCondition+=condition elseifexpression+=expression)*
@@ -167,263 +155,107 @@ ifStatement
 			->^(If $ifCondition $ifExpression ^($elseIfs $elseifCondition $elseifexpression)* ^(Else $elseexpression)?)
 	;	
 doStatement
-	:	Do^ expression NewLine! While! condition
+	:	Do expression NewLine While condition->^(Do expression condition)
 	;
 whileStatement
-	:	While^ condition expression
+	:	While condition expression->^(While condition expression)
 	;
 forStatement
-	:	(For ws LParen ws command ws';'ws condition ws';'ws command RParen)=>(For ws LParen ws command ws';'ws condition ws';'ws command ws RParen)WS? expression
+	:	(For ws LParen ws command ws Semi ws condition ws Semi ws command RParen)=>(For ws LParen ws command ws Semi ws condition ws Semi ws command ws RParen)WS? expression
 			->^(For command condition command)
-	|	(For ws LParen ws condition ws ';'ws command ws RParen)=>(For ws LParen ws condition ws';'ws command ws RParen)WS?expression
-			->^(For COMMAND ^(CONDITION condition) command)
-	|	(For ws LParen ws command ws ';'ws command ws RParen)WS? expression
-			->^(For command ^(CONDITION) command)
+	|	(For ws LParen ws condition ws Semi ws command ws RParen)=>(For ws LParen ws condition ws Semi ws command ws RParen)WS?expression
+			->^(For COMMAND condition command)
+	|	(For ws LParen ws command ws Semi ws command ws RParen)WS? expression
+			->^(For command CONDITION command)
 	;
-fragment
-CONDITION
-	:	
-	;
+
 conditionValue
-	:	(ID)=>ID
-		|(dataSequence)=>dataSequence
-		|(string)=>string
-		|(INT)=>INT
-		|(FLOAT)=>FLOAT
-		|(math)=>math->^(MATH math)
-		|(~(Comparer|LParen|RParen|NewLine))
-	;
-math	:	expr (MathSymbol^ expr)+
-	;
-expr	:	(value)|LParen! math RParen!
-	;
-fragment
-MATH	:	
-	;
-condition
-	:	Negate^? ws 
+	:	(
+			(Negate
+			((ID)=>ID->^(Negate ID)
+			|(dataSequence)=>dataSequence->^(Negate dataSequence)
+			|(string)=>string->^(Negate string)
+			|(INT)=>INT->^(Negate INT)
+			|(FLOAT)=>FLOAT->^(Negate FLOAT)
+			|(math)=>math->^(Negate ^(MATH math))
+			| conditionString)->^(Negate conditionString))
+		)
+		|
 		(
-			LParen! ws  condition ws RParen!
-		|	conditionValue (ws Comparer^ ws conditionValue)?
-		) (ws(And^|Or^)ws condition)?
+			(ID)=>ID->ID
+			|(dataSequence)=>dataSequence->dataSequence
+			|(string)=>string->string
+			|(INT)=>INT->INT
+			|(FLOAT)=>FLOAT->FLOAT
+			|(math)=>math->^(MATH math)
+			| conditionString->conditionString
+		)
+	;
+conditionString
+	:	~(Comparer|LParen|RParen|NewLine)
+	;
+math	:	bitXor (Bor^ bitXor)*
+	;
+bitXor	:	bitAnd (Xor^ bitAnd)*
+	;
+bitAnd	:	shift (Band^ shift)*
+	;
+shift	:	addSub ((LeftShift^|RightShift^) addSub)*
+	;
+addSub	:	multDiv ((Plus^|Minus^) multDiv)*
+	;
+multDiv	:	bitNegate ((Mult^|Div^|Modu^) bitNegate)*
+	;
+bitNegate
+	:	mathVal (Bnegate^ mathVal)*
+	;
+mathVal	:	LParen! math RParen!
+	|	(INT|FLOAT|dataSequence)
 	;
 ws	:	NewLine!? WS!?
 	;
+	
+condition
+	:	ws 
+	(	LParen ws condition ws RParen (orCondition|andCondition)?
+			->condition orCondition? andCondition?
+	|	Negate ws LParen ws condition ws RParen (orCondition|andCondition)?
+			->^(Negate condition) orCondition? andCondition?
+	|	(conditionValue ws Comparer)=>conditionValue ws Comparer ws conditionValue (orCondition|andCondition)?
+			->^(CONDITION ^(Comparer conditionValue conditionValue) orCondition? andCondition?)
+	|	conditionValue (orCondition|andCondition)?->^(CONDITION conditionValue orCondition? andCondition?)
+	)
+	;
+orCondition
+	:	Or condition->^(Or condition)
+		
+	;
+andCondition
+	:	And condition->^(And condition)
+	;
+
 variableDeclare
-	:	Variable(LParen Scope RParen)? WS type=ID WS name=ID indexer? (ws Assign ws lineArg*)?
+	:	Variable(LParen Scope RParen)? WS type=ID WS name=ID indexer? (ws Assign ws lineArg (WS lineArg)*)?
 			-> ^(Variable Scope?  ^($type indexer? ^($name  ^(Assign lineArg*)?)))
 	;
 codeBlock
-	:	LCurly^
-		expression*
-		 RCurly!
+	:	LCurly
+		expression+
+		 RCurly->^(CodeBlock expression+)
 	;
 declareVariable
-	:	DeclareVariable name=ID indexer? type=ID (Scope (lineArg*))?
+	:	DeclareVariable WS name=ID indexer? WS type=ID WS(Scope (WS lineArg)*)?
 			-> ^(DeclareVariable Scope?  ^($type indexer? ^($name  ^(Assign lineArg*)?)))
 	;
 value	:	ID|dataSequence|string|INT|FLOAT
 	;
-accessor:	id^ (indexer|typeCast)*
+accessor:	id (indexer|typeCast)*
 	;
 indexer	:	LSquare (commaArg+ commaVals*)? RSquare->^(LSquare ^(IndexerValue commaArg+)? ^(IndexerValue commaVals)*)
 	;
 commaVals
-	:	Comma! commaArg+
-	;
-fragment
-IndexerValue
-	:	
-	;
-typeCast:	LParen^ id RParen!
+	:	(Comma commaArg+)->commaArg+
 	;
 
-fragment
-COMMAND	:		
+typeCast:	LParen id RParen -> ^(LParen id)
 	;
-Comparer:	EqualTo|NotEqualTo|GreaterThan|LessThan|LessThanEqual|GreaterThanEqual;
-
-COMMENT	:	'/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
-	|	NewLine WS? Semi ~('\r'|'\n')*{$channel=HIDDEN;}
-	;
-MathSymbol
-	:	'+'|'/'|'%'|'^'|'~'|'*'|'<<'|'>>'|'&'|'-'
-	;
-
-Assign	:	'=';
-fragment
-EqualTo	:	'=='
-	;
-fragment
-NotEqualTo
-	:	'!='
-	;
-fragment
-GreaterThan
-	:	'>'
-	;
-fragment
-LessThan
-	:	'<'
-	;
-fragment
-LessThanEqual
-	:	'<='
-	;
-fragment
-GreaterThanEqual
-	:	'>='
-	;
-fragment
-Returns	:	
-	;
-Negate	:	'!';
-
-Dollar	:	'$';
-
-LCurly	:	'{';
-
-RCurly	:	'}';
-
-LParen	:	'('
-	;
-Quote	:	'"'
-	;
-RParen	:	')'
-	;
-ObjectDef
-	:	'objectdef'
-	;
-Dot	:	'.'
-	;
-
-Colon	:	':'
-	;
-
-Comma	:	','
-	;
-
-RSquare	:	']'
-	;
-
-LSquare	:	'['
-	;	
-Default
-	:	'default'
-	;
-
-Case
-	:	'case'
-	;
-
-VariableCase
-	:	'variablecase'
-	;
-
-While
-	:	'while'
-	;
-
-Do
-	:	'do'
-	;
-
-For
-	:	'for'
-	;
-
-If
-	:	'if'
-	;
-
-ElseIf
-	:	'elseif'
-	;
-
-Else
-	:	'else'
-	;
-
-And
-	:	'&&'
-	;
-
-Or
-	:	'||'
-	;
-
-Variable
-	:	'variable'
-	;
-
-DeclareVariable
-	:	'declarevariable'
-	;
-	
-Switch
-	:	'switch'
-	;
-Function
-	:	'function'
-	;
-	
-Atom	:	'atom'
-	;
-	
-Method	:	'method'
-	;
-	
-Member	:	'member'
-	;
-
-Scope	:	'local'|'object'|'script'|'global'|'globalkeep';
-
-Inherits
-	:	'inherits'
-	;
-ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
-    ;
-
-INT :	'0'..'9'+
-    ;
-    
-NewLine	:	('\\'?'\r'? '\n' WS?)+
-	;
-Semi	:	';'
-	;
-WS	:	(' '|'\t')+//{$channel=HIDDEN;}
-	;
-FLOAT
-    :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
-    |   '.' ('0'..'9')+ EXPONENT?
-    |   ('0'..'9')+ EXPONENT
-    ;
-fragment
-STRING	:	
-	;
- //   ://  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
-//    ;
-fragment
-EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
-
-fragment
-HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
-
-fragment
-ESC_SEQ
-    :   '\\' ('b'|'t'|'n'|'$'|'f'|'r'|'\"'|'\''|'\\')
-    |   UNICODE_ESC
-    |   OCTAL_ESC
-    ;
-
-fragment
-OCTAL_ESC
-    :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
-    |   '\\' ('0'..'7') ('0'..'7')
-    |   '\\' ('0'..'7')
-    ;
-
-fragment
-UNICODE_ESC
-    :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-    ;
