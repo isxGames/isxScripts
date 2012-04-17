@@ -17,7 +17,7 @@ preProcessor
 	;
 unmac	:	Unmac WS ID->^(Unmac ID)
 	;
-define	:	Define WS ID (WS vals+=(ID|INT|string|FLOAT|(dataSequence)=>dataSequence|(dataCommand)=>dataCommand|condition))+
+define	:	Define WS ID (WS vals+=(ID|INT|string|FLOAT|(dataSequence)=>dataSequence|(command)=>command|condition))+
 			->^(Define ID $vals+)
 	;
 macro	:	Macro WS  ID ws LParen ws params ws RParen WS?
@@ -107,7 +107,7 @@ objectDef
 		RCurly
 			->^(ObjectDef ^(ID $members*) ^(Inherits ID)?)
 	;
-function:	Function(Colon returnType=ID)?WS name=ID LParen params? RParen NewLine codeBlock
+function:	Function(Colon returnType=ID)?WS name=ID params NewLine codeBlock
 			->^(Function $name ^(Returns $returnType?) ^(Params params?) codeBlock)
 	;
 atom	:	Atom(Colon returnType=ID)? name=ID LParen params? RParen NewLine codeBlock
@@ -138,10 +138,8 @@ expression
 	:	(NewLine!)(command|declareVariable|preProcessor|variableDeclare|forStatement
 				|doStatement|whileStatement|ifStatement|switchStatement|codeBlock)?
 	;
-params	:	
-		((Elipse WS ID)->^(Param ^(Type Elipse) ^(ID))
-		|param (ws Comma ws param)*->param*
-		)
+params	:	LParen ws Elipse WS ID ws RParen->^(Params ^(Param Elipse ID))
+	|	LParen ws (param (ws Comma ws param)*)? ws RParen->^(Params param*)
 		
 	;
 param	:	((type=ID WS name=ID)|name=ID)(ws Assign ws value)?
@@ -251,11 +249,10 @@ value	:	ID|dataSequence|string|INT|FLOAT
 	;
 accessor:	id (indexer|typeCast)*
 	;
-indexer	:	LSquare (commaArg+ commaVals*)? RSquare->^(LSquare ^(IndexerValue commaArg+)? ^(IndexerValue commaVals)*)
+indexer	:	LSquare (commaValue (Comma commaValue)*)? RSquare->^(LSquare commaValue*)
 	;
-commaVals
-	:	(Comma commaArg+)->commaArg+
+commaValue
+	:	commaArg+->^(IndexerValue commaArg+)
 	;
-
 typeCast:	LParen id RParen -> ^(LParen id)
 	;
