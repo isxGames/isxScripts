@@ -1546,7 +1546,7 @@ function ReturnToHomeBase()
 			}
 			else
 				echo "EVESalvage->ReturnToHomeBase::  - No need to warp (${EVE.Bookmark[${HomeBaseBookmarkName}].Distance} is not greater than ${EVE.MinWarpDistance})"
-			
+				
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; The bookmark is an 'entity', handle it properly  [At the moment, only 'station' bookmarks should have a valid .ToEntity]
 			if ${EVE.Bookmark[${HomeBaseBookmarkName}].ToEntity(exists)}
@@ -1755,7 +1755,8 @@ function ApproachEntity(entity TheEntity, int WithinDistance)
 {
 	if (${TheEntity.Distance} <= ${WithinDistance})
 		return
-	
+		
+	echo "EVESalvage->ApproachEntity::  Approaching '${TheEntity.Name}'"
 	TheEntity:Approach
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
