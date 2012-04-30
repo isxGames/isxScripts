@@ -1498,7 +1498,7 @@ function ReturnToHomeBase()
   call CloseShipCargo
   if (${EVE.Bookmark[${HomeBaseBookmarkName}](exists)})
 	 {
-		echo "EVESalvage->ReturnToHomeBase::  Salvage operations completed .. returning to home base"
+		echo "EVESalvage->ReturnToHomeBase::  Salvage operations completed .. returning to home base ('${HomeBaseBookmarkName}')"
 		
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; If it is in another solar system
@@ -1544,6 +1544,8 @@ function ReturnToHomeBase()
 				while (${Me.ToEntity.Mode} == 3)
 				wait 20
 			}
+			else
+				echo "EVESalvage->ReturnToHomeBase::  - No need to warp (${EVE.Bookmark[${HomeBaseBookmarkName}].Distance} is not greater than ${EVE.MinWarpDistance})"
 			
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 			;; The bookmark is an 'entity', handle it properly  [At the moment, only 'station' bookmarks should have a valid .ToEntity]
