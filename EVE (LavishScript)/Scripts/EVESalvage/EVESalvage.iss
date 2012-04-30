@@ -67,7 +67,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.9 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.95 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.
 	if ${Args.Size} > 0
