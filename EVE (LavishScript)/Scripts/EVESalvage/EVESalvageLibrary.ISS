@@ -1530,7 +1530,8 @@ function ReturnToHomeBase()
 		;; Otherwise, the bookmark is in the current solar system
 		if (!${Me.InStation})
 		{
-			if (${EVE.Bookmark[${HomeBaseBookmarkName}].Distance} > ${EVE.MinWarpDistance})
+			;; TODO:  .Distance is NULL sometimes.  This is a quick fix for now so that the script assumes that a warp is necessary if the .Distance is NULL/0
+			if (${EVE.Bookmark[${HomeBaseBookmarkName}].Distance} <= 0 || ${EVE.Bookmark[${HomeBaseBookmarkName}].Distance} > ${EVE.MinWarpDistance})
 			{
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 				;; Warp to location
@@ -2113,7 +2114,8 @@ function TravelToBookmark(string BookmarkName)
 			wait 5
 		}
 		
-		if (${EVE.Bookmark["${BookmarkName}"].Distance} > ${EVE.MinWarpDistance})
+		;; TODO:  .Distance is NULL sometimes.  This is a quick fix for now so that the script assumes that a warp is necessary if the .Distance is NULL/0
+		if (${EVE.Bookmark["${BookmarkName}"].Distance} <= 0 || ${EVE.Bookmark["${BookmarkName}"].Distance} > ${EVE.MinWarpDistance})
 		{
   		;;; Warp to location
   		echo "EVESalvage->TravelToBookmark::  -- Warping to '${BookmarkName}'..."
