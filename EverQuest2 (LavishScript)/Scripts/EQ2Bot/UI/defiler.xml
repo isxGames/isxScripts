@@ -140,55 +140,23 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Y>130</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Cure Curse (self)</Text>
+		<Text>Cure Curses </text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
 				Script[EQ2Bot].Variable[CureCurseSelfMode]:Set[TRUE]
-				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["CureCurseSelfMode",TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["CureCurseMode",TRUE]
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
 				Script[EQ2Bot].Variable[CureCurseSelfMode]:Set[FALSE]
-				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["CureCurseSelfMode",FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["CureCurseMode",FALSE]
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseMode]}</Data>
 	</Commandcheckbox>
-	
-	
-	<Text name='lblCureCurse'>
-	  <x>5%</x>
-	  <y>150</y>
-	  <Height>20</Height>
-		<Width>110</Width>
-		<Alignment>Left</Alignment>
-		<Text>Curse Curse (others):</Text>
-	</Text>
-
-	<combobox name='cbCureCurseGroupMember'>
-		<x>5%</x>
-		<y>170</y>
-		<Width>120</width>
-		<Height>20</height>
-		<AutoTooltip>Select the OTHER character to cure, select No One to disable curing others.</AutoTooltip>
-		<Items></items>
-		<OnLoad>
-				Script[EQ2Bot].Variable[CureCurseGroupMember]:Set[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]
-				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]
-				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]:Select
-		</OnLoad>
-		<OnSelect>
-				Script[EQ2Bot].Variable[CureCurseGroupMember]:Set[${This.SelectedItem.Text}]
-				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[CureCurseGroupMember,${This.SelectedItem.Text}]
-				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-		</OnSelect>
-		<OnLeftClick>
-		  	Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},CureCurseGroupMember,0,0,1]
-		</OnLeftClick>
-	</combobox>
 
 	<Commandcheckbox Name='AnnounceMode'>
 		<X>5%</X>
