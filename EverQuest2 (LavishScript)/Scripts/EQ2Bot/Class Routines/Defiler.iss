@@ -485,7 +485,7 @@ function Combat_Routine(int xAction)
 	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
 		return CombatComplete
 
-	spellmax:Set[1]
+	spellmax:Set[2]
 	spellsused:Set[0]
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
@@ -507,7 +507,7 @@ function Combat_Routine(int xAction)
 	call CheckHeals
 
 	;Maelstrom
-	if ${MaelstromMode}
+	if ${MaelstromMode} && ${Me.Ability[${SpellType[317]}].IsReady}
 	{
 		call CastSpellRange 317 0 0 ${KillTarget}
 		spellsused:Inc
@@ -1132,7 +1132,7 @@ function CheckHeals()
 	{
 		call GroupHeal
 		if ${Return}
-			break
+			return
 	}
 	
 	;now lets heal individual groupmembers if needed
