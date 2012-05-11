@@ -822,10 +822,10 @@ function CheckCures()
 	{
 		if ${Me.Ability[${SpellType[220]}].IsReady}
 		{
-			;Debug:Echo["CheckCures() - Mail of Souls READY!"]
-  		if (${Me.IsAfflicted}) && (${Me.Noxious} || ${Me.Arcane} || ${Me.Elemental} || ${Me.Trauma})
+			Debug:Echo["CheckCures() - Mail of Souls READY!"]
+  		if (${Me.IsAfflicted}) && (${Me.Noxious}>0 || ${Me.Arcane}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0)
   		{
-  			;Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
+  			Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
   			grpcure:Inc
   		}
 
@@ -834,9 +834,9 @@ function CheckCures()
 					
 				if (${Me.Group[${i}].ToActor(exists)} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].ToActor.Distance} <= 40)
 				{
-					if ${Me.Group[${i}].Noxious} || ${Me.Group[${i}].Arcane} || ${Me.Group[${i}].Elemental} || ${Me.Group[${i}].Trauma}
+					if ${Me.Group[${i}].Noxious}>0 || ${Me.Group[${i}].Arcane}>0 || ${Me.Group[${i}].Elemental}>0 || ${Me.Group[${i}].Trauma}>0
 					{
-						;Debug:Echo["Group member ${i}. ${Me.Group[${i}].ToActor.Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].ToActor.Distance}]"]
+						Debug:Echo["Group member ${i}. ${Me.Group[${i}].ToActor.Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].ToActor.Distance}]"]
 						grpcure:Inc
 					}
 				}
@@ -867,7 +867,7 @@ function CheckCures()
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
-	while ${Affcnt:Inc}<7 && ${Me.ToActor.Health}>10 && (${Me.Arcane}<1 && ${Me.Noxious}<1 && ${Me.Elemental}<1 && ${Me.Trauma}<1)
+	while ${Affcnt:Inc}<7 && ${Me.ToActor.Health}>10 
 	{
 		call CheckCurse
 		if ${Return}>0
