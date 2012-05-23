@@ -61,8 +61,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;     Windows
 #define AGENTWINDOW					${EVEWindow[ByCaption,Agent Conversation](exists)}
 #define JOURNALWINDOW				${EVEWindow[ByCaption,Journal](exists)}
-#define CARGOWINDOW					${EVEWindow[MyShipCargo](exists)}
-#define ITEMSWINDOW					${EVEWindow[hangarFloor](exists)}
+#define CARGOWINDOW					${EVEWindow[ByCaption,"active ship"](exists)}
+#define ITEMSWINDOW					${EVEWindow[ByCaption,"item hangar"](exists)}
 #define LOOTWINDOW					${If[${EVEWindow[ByCaption,Floating](exists)} || ${EVEWindow[ByCaption,Wreck](exists)},TRUE,FALSE]}
 #define FITTINGWINDOW				${If[${EVEWindow[ByCaption,Fitting](exists)} || ${EVEWindow[ByCaption,Wreck](exists)},TRUE,FALSE]}
 
