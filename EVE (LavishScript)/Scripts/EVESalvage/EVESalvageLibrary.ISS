@@ -170,7 +170,7 @@ function OpenShipCargo()
 	if !${EVEWindow[ByName,"active ship"](exists)}
 	{
 		echo "EVESalvage->OpenShipCargo::  Opening Ship Cargohold"
-		MyShip:OpenCargo
+		MyShip:Open
 		wait 15
 		while !${EVEWindow[ByName,"active ship"](exists)}
 		{
@@ -1389,7 +1389,7 @@ function LootCargoContainer(entity CargoContainer)
 		variable float64 TotalCargoVolume = 0
 		
 		;; Open Entity for looting
-		CargoContainer:OpenCargo
+		CargoContainer:Open
 		wait 20
 		call OpenShipCargo					
 
@@ -1934,7 +1934,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 		case GROUPID_SECURE_CARGO_CONTAINER
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
 			if (!${EVEWindow[ByItemID, ${TheEntity.ID}](exists)})
-				TheEntity:OpenCargo
+				TheEntity:Open
 			wait 5
 			if !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
 			{
@@ -1973,7 +1973,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 		case GROUPID_CORPORATE_HANGAR_ARRAY
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
 			if (!${EVEWindow[ByItemID, ${TheEntity.ID}](exists)})
-				TheEntity:OpenStorage
+				TheEntity:Open
 			wait 5
 			if !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
 			{
