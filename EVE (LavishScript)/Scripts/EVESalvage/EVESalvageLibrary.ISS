@@ -1908,7 +1908,7 @@ function TransferSalvagedItemsAndLootToHangar()
 			else
 			{
 				echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your personal hangar"
-				EVE:MoveItemsTo[NewCargoToTransfer, MyStationHangar]
+				EVE:MoveItemsTo[CargoToTransfer, MyStationHangar]
 			}
 		}
 	}
