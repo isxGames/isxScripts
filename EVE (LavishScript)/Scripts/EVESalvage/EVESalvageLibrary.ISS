@@ -167,12 +167,12 @@ function GetModulesInformation(bool LootCans)
 ;; Opens the player's ship cargo hold
 function OpenShipCargo()
 {
-	if !${EVEWindow[MyShipCargo](exists)}
+	if !${EVEWindow[ByName,"active ship"](exists)}
 	{
 		echo "EVESalvage->OpenShipCargo::  Opening Ship Cargohold"
 		MyShip:OpenCargo
 		wait 15
-		while !${EVEWindow[MyShipCargo](exists)}
+		while !${EVEWindow[ByName,"active ship"](exists)}
 		{
 			wait 0.5
 		}
@@ -186,16 +186,16 @@ function OpenShipCargo()
 ;; Closes the player's ship cargo hold
 function CloseShipCargo()
 {
-	if ${EVEWindow[MyShipCargo](exists)}
+	if ${EVEWindow[ByName,"active ship"](exists)}
 	{
 		echo "EVESalvage->CloseShipCargo::  Stacking cargo..."
-		EVEWindow[ByName,${MyShip.ID}]:StackAll
+		EVEWindow[ByName,"active ship"]:StackAll
 		wait 10					
 		
 		echo "EVESalvage->CloseShipCargo::  Closing Ship Cargohold"
-		EVEWindow[MyShipCargo]:Close
+		EVEWindow[byName, "Inventory"]:Close
 		wait 15
-		while ${EVEWindow[MyShipCargo](exists)}
+		while ${EVEWindow[byName, "Inventory"](exists)}
 		{
 			wait 0.5
 		}
@@ -1871,7 +1871,7 @@ function TransferSalvagedItemsAndLootToHangar()
 	}	
 	
 	echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  --- Opening Hangar..."
-	if !${EVEWindow[hangarFloor](exists)}
+	if !${EVEWindow[ByCaption,"item hangar"](exists)}
 	{
 		EVE:Execute[OpenHangarFloor]
 		wait 25
@@ -1912,10 +1912,9 @@ function TransferSalvagedItemsAndLootToHangar()
 			}
 		}
 	}
-	EVEWindow[byName,hangarFloor]:StackAll
-	EVEWindow[byName,${MyShip.ID}]:StackAll
-	EVEWindow[byName,hangarFloor]:Close
-	EVEWindow[byName,${MyShip.ID}]:Close
+	EVEWindow[ByCaption,"item hangar"]:StackAll
+	EVEWindow[ByCaption,"active ship"]:StackAll
+	EVEWindow[byName, "Inventory"]:Close
 }
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1934,10 +1933,10 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 		case GROUPID_CARGO_CONTAINER
 		case GROUPID_SECURE_CARGO_CONTAINER
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
-			if (!${EVEWindow[byName, ${TheEntity.ID}](exists)})
+			if (!${EVEWindow[ByItemID, ${TheEntity.ID}](exists)})
 				TheEntity:OpenCargo
 			wait 5
-			if !${EVEWindow[byName, ${TheEntity.ID}](exists)}
+			if !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
 			{
 				do
 				{
@@ -1946,7 +1945,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 					if ${TimeOut} > 50
 						break
 				}
-				while !${EVEWindow[byName, ${TheEntity.ID}](exists)}
+				while !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
 			}				
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Unloading Salvaged Items..."
 			call PopulateCargoToTransfer "Salvage"
@@ -1965,19 +1964,18 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 					echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
 				}
 			}
-			EVEWindow[byName,${TheEntity.ID}]:StackAll
-			EVEWindow[byName,${MyShip.ID}]:StackAll
-			EVEWindow[byName,${TheEntity.ID}]:Close
-			EVEWindow[byName,${MyShip.ID}]:Close
+			EVEWindow[ByItemID,${TheEntity.ID}]:StackAll
+			EVEWindow[ByCaption,"active ship"]:StackAll
+			EVEWindow[byName, "Inventory"]:Close
 			break
 		
 		case GROUPID_INDUSTRIALCOMMANDSHIP
 		case GROUPID_CORPORATE_HANGAR_ARRAY
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
-			if (!${EVEWindow[byName, ${TheEntity.ID}](exists)})
+			if (!${EVEWindow[ByItemID, ${TheEntity.ID}](exists)})
 				TheEntity:OpenStorage
 			wait 5
-			if !${EVEWindow[byName, ${TheEntity.ID}](exists)}
+			if !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
 			{
 				do
 				{
@@ -1986,7 +1984,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 					if ${TimeOut} > 50
 						break
 				}
-				while !${EVEWindow[byName, ${TheEntity.ID}](exists)}
+				while !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
 			}				
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Unloading Salvaged Items..."
 			call PopulateCargoToTransfer "Salvage"
@@ -2006,9 +2004,9 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 				}
 			}
 			EVE:StackItems[${TheEntity.ID}, Hangar, ${CorpFolderToUse}]
-			EVEWindow[byName,${MyShip.ID}]:StackAll
-			EVEWindow[byName,${TheEntity.ID}]:Close
-			EVEWindow[byName,${MyShip.ID}]:Close
+			EVEWindow[ByCaption,"active ship"]:StackAll
+			EVEWindow[byName, "Inventory"]:Close
+			
 			break
 		
 		Default
