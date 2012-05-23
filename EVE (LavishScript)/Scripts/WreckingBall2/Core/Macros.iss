@@ -265,7 +265,7 @@ EVE:DronesEngageMyTarget[a]
 
 
 #macro OPENLOOT(a)
-	Entity[a]:OpenCargo
+	Entity[a]:Open
 #endmac
 
 
