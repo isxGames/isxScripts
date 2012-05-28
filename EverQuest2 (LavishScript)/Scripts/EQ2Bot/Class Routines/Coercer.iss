@@ -390,7 +390,7 @@ function Combat_Routine(int xAction)
 	declare spellthreshold int local
 
 	spellsused:Set[0]
-	spellthreshold:Set[1]
+	spellthreshold:Set[3]
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
@@ -437,7 +437,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;;;; Make sure Mind's Eye is buffed, note: this is a 10 min buff.
-	if !${Me.Maintained[${SpellType[42]}](exists)}
+	if !${Me.Maintained[${SpellType[42]}](exists)} && ${Me.Ability[${SpellType[42]}].IsReady}
 	{
 		call CastSpellRange 42	
 		spellsused:Inc
@@ -505,16 +505,22 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 71 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
+	;;;;Psychic Trauma
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[504]}].IsReady} && !${Me.Maintained[${SpellType[504]}](exists)}
+	{
+		call CastSpellRange 504 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
 	;;;;Spell Curse
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
 	{
 		call CastSpellRange 92 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-	;;;;Psychic Trauma
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[504]}].IsReady} && !${Me.Maintained[${SpellType[504]}](exists)}
+	;;;;Sever Hate
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady} && !${Me.Maintained[${SpellType[505]}](exists)}
 	{
-		call CastSpellRange 92 0 0 0 ${KillTarget}
+		call CastSpellRange 505 0 0 0 ${Me.ID}
 		spellsused:Inc
 	}	
 	;Dump out if threshold met
@@ -720,7 +726,7 @@ function RefreshPower()
 		if ${Me.Raid[${MemberLowestPower}].ToActor(exists)} && ${Me.Raid[${MemberLowestPower}].ToActor.Distance}<30
 		{	
 			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
-			eq2execute em Flow to ${Me.Raid[${tempvar}].Name}
+			;eq2execute em Flow to ${Me.Raid[${tempvar}].Name}
 		}
 	}
 	
@@ -743,7 +749,8 @@ function RefreshPower()
 		if ${Me.Group[${MemberLowestPower}].ToActor(exists)} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<65 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[390]}].IsReady}
 		{
 			call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}	
-			eq2execute em Flow to ${Me.Raid[${tempvar}].Name}
+			if ${Me.Raid[${tempvar}].Name}
+				eq2execute em Flow to ${Me.Raid[${tempvar}].Name}
 		}
 	}
 		
