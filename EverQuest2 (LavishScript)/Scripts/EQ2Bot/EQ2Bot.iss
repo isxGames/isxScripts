@@ -4644,11 +4644,6 @@ function BotCommand(string line, string doCommand)
 	EQ2Execute /${doCommand}
 }
 
-function BotTell(string line, string tellSender, string tellMessage)
-{
-	uplink relay ${MasterSession} "EQ2Echo ${tellSender} tells ${Me.Name}, ${tellMessage}"
-}
-
 function BotAutoMeleeOn()
 {
 		if (${PauseBot} || !${StartBot})
@@ -5676,7 +5671,6 @@ objectdef EQ2BotObj
 		AddTrigger BotStop "EQ2Bot stop"
 		AddTrigger BotAbort "EQ2Bot end"
 		AddTrigger BotAbort "It will take about 20 more seconds to prepare your camp."
-		AddTrigger BotTell "@tellSender@ tells you,@tellMessage@"
 		AddTrigger BotCommand "EQ2Bot /@doCommand@"
 		AddTrigger BotAutoMeleeOn "EQ2Bot melee on"
 		AddTrigger BotAutoMeleeOff "EQ2Bot melee off"
