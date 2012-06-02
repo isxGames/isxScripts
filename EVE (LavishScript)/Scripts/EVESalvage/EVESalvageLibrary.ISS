@@ -1876,7 +1876,7 @@ function TransferSalvagedItemsAndLootToHangar()
 	echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  --- Opening Hangar..."
 	if !${EVEWindow[ByName,"Inventory"](exists)}
 	{
-		EVE:Execute[OpenHangarFloor]
+		EVE:Execute[OpenInventory]
 		wait 25
 	}	
 	
