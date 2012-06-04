@@ -1893,7 +1893,7 @@ function TransferSalvagedItemsAndLootToHangar()
 		else
 		{
 			echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your personal hangar"
-			EVE:MoveItemsTo[CargoToTransfer, MyStationHangar]
+			EVE:MoveItemsTo[CargoToTransfer, MyStationHangar, Hangar]
 		}
 	}
 	if (${DoLoot})
@@ -1911,7 +1911,7 @@ function TransferSalvagedItemsAndLootToHangar()
 			else
 			{
 				echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your personal hangar"
-				EVE:MoveItemsTo[CargoToTransfer, MyStationHangar]	
+				EVE:MoveItemsTo[CargoToTransfer, MyStationHangar, Hangar]	
 			}
 		}
 	}
