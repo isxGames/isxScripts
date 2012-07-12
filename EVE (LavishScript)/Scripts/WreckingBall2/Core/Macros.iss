@@ -270,7 +270,7 @@ EVE:DronesEngageMyTarget[a]
 
 
 #macro CLOSELOOT(a)
-	Entity[a]:CloseCargo
+	;Entity[a]:CloseCargo
 #endmac
 
 
