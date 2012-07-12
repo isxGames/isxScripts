@@ -1443,8 +1443,6 @@ function LootCargoContainer(entity CargoContainer)
 		if (${TotalCargoVolume} > ${Math.Calc[${MyShip.CargoCapacity} - ${MyShip.UsedCargoCapacity}]})
 		{
 			echo "EVESalvage->LootCargoContainer::  Ship Cargo Hold is full."
-			CargoContainer:CloseCargo
-			wait 2
 			CargoContainer:UnlockTarget
 			wait 2		
 			call CheckShipIsFull 1
@@ -1458,8 +1456,6 @@ function LootCargoContainer(entity CargoContainer)
 		if (${CargoToTransfer.Used} <= 0)
 		{
 			echo "EVESalvage->LootCargoContainer::  Entity either has no items, or else no item(s) pass(es) muster for looting"
-			CargoContainer:CloseCargo
-			wait 2
 			CargoContainer:UnlockTarget
 			wait 2			
 			return
