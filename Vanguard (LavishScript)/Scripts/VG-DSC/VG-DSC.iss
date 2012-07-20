@@ -205,7 +205,7 @@ function main()
 		if ${Me(exists)}
 		{
 			call AutoAttack
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady} || ${VG.InGlobalRecovery}
+			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 			{
 				if ${Me.IsCasting}
 				{
@@ -1723,7 +1723,7 @@ function:bool UseAbility(string ABILITY)
 function GlobalCooldown()
 {
 	wait 3
-	while ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+	while ${VG.InGlobalRecovery}
 	{
 		call AutoAttack
 	}
@@ -1740,10 +1740,10 @@ function IsCasting()
 		call FaceTarget
 		waitframe
 	}
-	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned}
 	{
 		call FaceTarget
-		while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+		while (${VG.InGlobalRecovery} || !${Me.Ability[Torch].IsReady})
 		{
 			wait 2
 		}
