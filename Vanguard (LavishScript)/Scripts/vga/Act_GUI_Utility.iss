@@ -536,7 +536,7 @@ function MeCasting(string CP)
 		waitframe
 	}
 
-	while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+	while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned}
 	{
 		wait 2
 		call CheckPosition

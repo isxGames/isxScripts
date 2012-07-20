@@ -96,7 +96,7 @@ function Psionicist_Combat()
 				call executeability "Mental Blast I" "attack" "Both"
 
 				;; Wait till ability finish casting
-				while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+				while ${VG.InGlobalRecovery}>0 || ${Me.IsCasting}
 				{
 					waitframe
 				}

@@ -127,7 +127,7 @@ function counteringfunct()
 				{
 					vgexecute /stopcasting
 				}
-				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned}
 				{
 					waitframe
 				}
@@ -173,7 +173,7 @@ function dispellfunct()
 		{
 			while ${Me.TargetBuff[${Iterator.Key}](exists)}
 			{
-				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned})
 				wait 1
 				while !${Me.Ability[${DispellSpell}].IsReady}
 				wait 1
@@ -198,7 +198,7 @@ function StancePushfunct()
 		{
 			while ${Me.TargetBuff[${Iterator.Key}](exists)}
 			{
-				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned})
 				{
 					waitframe
 				}
