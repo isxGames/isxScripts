@@ -1740,7 +1740,7 @@ function IsCasting()
 		call FaceTarget
 		waitframe
 	}
-	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned}
+	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned})
 	{
 		call FaceTarget
 		while (${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady})
