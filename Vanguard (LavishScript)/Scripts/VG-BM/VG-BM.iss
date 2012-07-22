@@ -254,14 +254,14 @@ function main()
 	while ${isRunning}
 	{
 		;; Wait until we are ready to cast and use an ability
-		if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		if ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 		{
 			;; Update our current action
 			;if ${Me.IsCasting}
 			;{
 			;	CurrentAction:Set[Casting ${Me.Casting}]
 			;}
-			;while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			;while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			;{
 			;	waitframe
 			;}
@@ -394,7 +394,7 @@ function WeChunked()
 function GlobalRecovery()
 {
 	wait 5
-	while ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+	while ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 	}
 }
@@ -405,7 +405,7 @@ function GlobalRecovery()
 function MeIsCasting()
 {
 	wait 5
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 	}
 }
@@ -590,7 +590,7 @@ function:bool RegenerateEnergy()
 {
 	if ${Me.EnergyPct}<80 && ${Me.HealthPct}>80
 	{
-		wait 5 ${Me.Ability["Torch"].IsReady}
+		wait 5 ${Me.Ability["Using Weaknesses"].IsReady}
 		call UseAbility "${MentalTransmutation}"
 		if ${Return}
 		{
@@ -1001,7 +1001,7 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 				waitframe
 			}
 		}
-		while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability[Torch].IsReady})
+		while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned} || !${Me.Ability["Using Weaknesses"].IsReady})
 		{
 			CurrentAction:Set[Instant ${ABILITY}]
 			wait 2

@@ -50,7 +50,7 @@ function main()
 	{
 		waitframe
 	}
-	while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
 	
 	if ${Me.Ability[${ConstructsAugmentation}](exists)}
 	{
@@ -424,7 +424,7 @@ function:bool UseAbility2(string ABILITY)
 		wait 5
 
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
 		{
 			waitframe
 		}

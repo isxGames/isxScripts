@@ -92,7 +92,7 @@ atom(script) FindAction()
 	;-------------------------------------------
 	; If we are not ready to do something then do nothing
 	;-------------------------------------------
-	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	if ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		PerformAction:Set[Default]
 		return

@@ -52,7 +52,7 @@ function SymbioteRequest()
 			if ${Me.DTarget.Name.Find[${PCName2}]}
 			{
 				;; Wait to ensure ready to cast symbiote
-				while !${Me.Ability[${Symbiote2}].IsReady} || !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]}
+				while !${Me.Ability[${Symbiote2}].IsReady} || !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]}
 				{
 					waitframe
 				}
@@ -62,7 +62,7 @@ function SymbioteRequest()
 				wait 30
 
 				;; Wait to ensure ready to cast symbiote
-				while !${Me.Ability[${Symbiote2}].IsReady} || !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]}
+				while !${Me.Ability[${Symbiote2}].IsReady} || !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0 || ${GV[bool,bHarvesting]}
 				{
 					waitframe
 				}

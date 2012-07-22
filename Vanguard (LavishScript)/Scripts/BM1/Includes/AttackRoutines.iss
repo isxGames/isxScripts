@@ -1205,7 +1205,7 @@ function VampireAbilities()
 		return
 	}
 
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}

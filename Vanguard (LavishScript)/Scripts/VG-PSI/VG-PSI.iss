@@ -386,7 +386,7 @@ function MainRoutines()
 	waitframe
 	
 	;; Return if we are still casting or abilities are not ready
-	if ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	if ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		return
 	}
@@ -453,12 +453,12 @@ function TargetOnMe()
 			if ${Me.Target.Distance}<10
 			{
 				;; Mass wipe aggro onto self
-				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+				while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
 				call UseAbility "${Defense3}"
-				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+				while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -466,14 +466,14 @@ function TargetOnMe()
 				if ${Me.ToT.Name.Find[${Me.FName}]}
 				{
 					;; get our barrier up!
-					while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+					while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 					{
 						waitframe
 					}
 					if !${Me.Effect[${Defense1}](exists)}
 					{
 						call UseAbility "${Defense1}"
-						while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+						while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 						{
 							waitframe
 						}
@@ -483,7 +483,7 @@ function TargetOnMe()
 					if !${Me.Effect[${Defense1}](exists)} && !${Me.Effect[${Defense2}](exists)}
 					{
 						call UseAbility "${Defense2}"
-						while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+						while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 						{
 							waitframe
 						}
@@ -506,7 +506,7 @@ function ScanAreaToBuff()
 	Pawn[Me]:Target
 	call UseAbility "True Sight"
 	wait 5
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -515,7 +515,7 @@ function ScanAreaToBuff()
 	Pawn[Me]:Target
 	call UseAbility "Union of Thought VI"
 	wait 5
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -524,7 +524,7 @@ function ScanAreaToBuff()
 	Pawn[Me]:Target
 	call UseAbility "Mass Mental Focus"
 	wait 5
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -562,7 +562,7 @@ function ScanAreaToBuff()
 						CurrentAction:Set[Buffing ${Me.DTarget.Name}]
 						call UseAbility "Favor of the Clairvoyant" "BUFFED ${Me.DTarget.Name}"
 						wait 5
-						while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+						while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 						{
 							waitframe
 						}
@@ -587,7 +587,7 @@ function ScanAreaToBuff()
 					CurrentAction:Set[Buffing ${Me.DTarget.Name}]
 					call UseAbility "Mass Mental Focus" "BUFFED ${Me.DTarget.Name}"
 					wait 5
-					while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+					while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 					{
 						waitframe
 					}
@@ -747,7 +747,7 @@ function Synchronize(int64 TargetID)
 	}
 	
 	;; wait till we are ready to cast
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -775,7 +775,7 @@ function SynchronizeTanksTarget()
 	}
 	
 	;; wait till we are ready to cast
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -798,7 +798,7 @@ function Mezmerize(int64 TargetID)
 	}
 	
 	;; wait till we are ready to cast
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -862,7 +862,7 @@ function HandleCounters()
 				VGExecute "/stopcasting"
 				wait 3
 			}
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -870,7 +870,7 @@ function HandleCounters()
 			EchoIt "${Counter1} COUNTERED ${Me.TargetCasting}"
 			VGExecute "/reactioncounter 1"
 			wait 4
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -890,7 +890,7 @@ function HandleCounters()
 				VGExecute "/stopcasting"
 				wait 4
 			}
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -898,7 +898,7 @@ function HandleCounters()
 			EchoIt "${Counter2} COUNTERED ${Me.TargetCasting}"
 			VGExecute "/reactioncounter 2"
 			wait 4
-			while !${Me.Ability["Torch"].IsReady}
+			while !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -919,7 +919,7 @@ function HandleChains()
 			call Check4Immunites "${Chain1}"
 			if !${Return}
 			{
-				while !${Me.Ability["Torch"].IsReady}
+				while !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -927,7 +927,7 @@ function HandleChains()
 				EchoIt "Chain - ${Chain1}"
 				VGExecute "/reactionchain 1"
 				wait 4
-				while !${Me.Ability["Torch"].IsReady}
+				while !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -943,7 +943,7 @@ function HandleChains()
 			call Check4Immunites "${Chain2}"
 			if !${Return}
 			{
-				while !${Me.Ability["Torch"].IsReady}
+				while !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -951,7 +951,7 @@ function HandleChains()
 				EchoIt "Chain - ${Chain2}"
 				VGExecute "/reactionchain 2"
 				wait 4
-				while !${Me.Ability["Torch"].IsReady}
+				while !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -967,7 +967,7 @@ function HandleChains()
 			call Check4Immunites "${Chain3}"
 			if !${Return}
 			{
-				while !${Me.Ability["Torch"].IsReady}
+				while !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -975,7 +975,7 @@ function HandleChains()
 				EchoIt "Chain - ${Chain3}"
 				VGExecute "/reactionchain 3"
 				wait 4
-				while !${Me.Ability["Torch"].IsReady}
+				while !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -1242,7 +1242,7 @@ function AttackTarget()
 						if ${Return}
 						{
 							wait 10 ${Me.TargetMyDebuff[${RegenDot1}](exists)}
-							while !${Me.Ability["Torch"].IsReady}
+							while !${Me.Ability["Using Weaknesses"].IsReady}
 							{
 								waitframe
 							}
@@ -1282,7 +1282,7 @@ function AttackTarget()
 						if ${Return}
 						{
 							wait 10 ${Me.TargetMyDebuff[${RegenDot2}](exists)}
-							while !${Me.Ability["Torch"].IsReady}
+							while !${Me.Ability["Using Weaknesses"].IsReady}
 							{
 								waitframe
 							}
@@ -1329,7 +1329,7 @@ function AttackTarget()
 				call UseAbility "${Nuke5}"
 					
 				;; Wait till ability finish casting
-				while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+				while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting}
 				{
 					waitframe
 				}
@@ -1605,7 +1605,7 @@ function:bool UseAbility(string ABILITY, TEXT=" ")
 		CurrentAction:Set[Casting ${ABILITY}]
 		Me.Ability[${ABILITY}]:Use
 		wait 5
-		;while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
+		;while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 		;{
 		;	waitframe
 		;}

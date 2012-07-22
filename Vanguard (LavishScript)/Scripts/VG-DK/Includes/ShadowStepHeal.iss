@@ -27,7 +27,7 @@ function:bool ShadowStepHeal()
 	call StopMeleeAttacks
 	
 	;; wait
-	while !${Me.Ability["Torch"].IsReady}
+	while !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}

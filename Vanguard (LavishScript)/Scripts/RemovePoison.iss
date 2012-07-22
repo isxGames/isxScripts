@@ -163,7 +163,7 @@ function:bool UseAbility(string ABILITY)
 		wait 3
 
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
 		{
 			waitframe
 		}
@@ -180,7 +180,7 @@ function:bool UseAbility(string ABILITY)
 ;===================================================
 function GlobalRecovery()
 {
-	while ${VG.InGlobalRecovery} || !${Me.Ability["Torch"].IsReady}
+	while ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
@@ -191,7 +191,7 @@ function GlobalRecovery()
 ;===================================================
 function MeIsCasting()
 {
-	while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		waitframe
 	}
