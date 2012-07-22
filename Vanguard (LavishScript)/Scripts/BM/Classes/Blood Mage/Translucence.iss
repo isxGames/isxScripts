@@ -30,7 +30,7 @@ function:bool Translucence()
 		if ${doEcho}
 			echo "[${Time}][VG:BM] --> Translucence: ${InvisAbility}"
 		Me.Ability[${InvisAbility}]:Use
-		wait 10 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+		wait 10 !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting}
 		return TRUE
 	}
 
@@ -41,7 +41,7 @@ function:bool Translucence()
 		if ${doEcho}
 			echo "[${Time}][VG:BM] --> Translucence: ${InvisAbility}"
 		Me.Ability[${InvisAbility}]:Use
-		wait 10 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+		wait 10 !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting}
 		InvisWearOff:Set[FALSE]
 		return TRUE
 	}

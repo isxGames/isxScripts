@@ -238,7 +238,7 @@ function AttackTarget()
 				CurrentAction:Set[Casting ${Bloodthinner}]
 				Me.Ability[${Bloodthinner}]:Use
 				wait 3
-				while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
+				while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 				{
 					waitframe
 				}
@@ -265,7 +265,7 @@ function AttackTarget()
 					CurrentAction:Set[Casting ${EntwiningVein}]
 					Me.Ability[${EntwiningVein}]:Use
 					wait 3
-					while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
+					while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 					{
 						waitframe
 					}

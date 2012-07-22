@@ -106,7 +106,7 @@ function StartRoutine(int Symbiotes=5)
 		}
 	
 		;; Catch till ready
-		while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+		while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 		{
 			waitframe
 		}
@@ -145,7 +145,7 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Siphon Blood]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -155,7 +155,7 @@ function Harvest(int Symbiotes)
 			{
 				Me.Ability[${TransfusionOfSerak}]:Use
 				wait 5
-				while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+				while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 				{
 					waitframe
 				}
@@ -171,14 +171,14 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[${Constrict}]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -193,14 +193,14 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Bursting Cyst I]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -215,14 +215,14 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Union of Blood I]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
@@ -237,14 +237,14 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Blood Letting Ritual I]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 			{
 				waitframe
 			}

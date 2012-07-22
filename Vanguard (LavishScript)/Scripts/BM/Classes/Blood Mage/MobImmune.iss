@@ -128,7 +128,7 @@ function Immunities()
 	;-------------------------------------------
 	; No Target then report No immunities
 	;-------------------------------------------
-	if !${Me.Target(exists)} || !${Me.Ability["Torch"].IsReady}
+	if !${Me.Target(exists)} || !${Me.Ability["Using Weaknesses"].IsReady}
 	{
 		Immunity:Set[None]
 		return

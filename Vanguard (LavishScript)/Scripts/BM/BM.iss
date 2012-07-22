@@ -238,7 +238,7 @@ function FunctionTimer(string FUNCTION)
 /* ISCASTING */
 function IsCasting()
 {
-	while !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting} || ${Pawn[me].IsMounted}
+	while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${Pawn[me].IsMounted}
 	{
 		;; Show ability if casting
 		if ${Me.IsCasting}
@@ -251,14 +251,14 @@ function IsCasting()
 		;; Show if we are mounted
 		if ${Pawn[me].IsMounted} && !${Me.IsCasting}
 		{
-			if ${Me.Ability["Torch"].IsReady}
+			if ${Me.Ability["Using Weaknesses"].IsReady}
 				Status:Set[Mounted - No Script Casting]
 			if ${Me.InCombat} || ${isPaused}
 				return
 		}
 		
 		;; Show if ability is not ready
-		if !${Me.Ability["Torch"].IsReady} && (${Status.Equal[Mounted - No Script Casting]} || ${Status.Equal[Waiting]}
+		if !${Me.Ability["Using Weaknesses"].IsReady} && (${Status.Equal[Mounted - No Script Casting]} || ${Status.Equal[Waiting]}
 			Status:Set[ABILITIES NOT READY]
  		wait 1
 		FlushQueued
@@ -355,7 +355,7 @@ function HandleQueuedCommands()
 		{
 			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 20
 			call MoveCloser ${Me.Target.X} ${Me.Target.Y} 20
-			while ${Me.IsCasting} || !${Me.Ability["Torch"].IsReady}
+			while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
 				wait 1
 			call UseAbility "${Despoil}" "Focus of Gelenia"
 			call UseAbility "${Despoil}" "Focus of Gelenia"

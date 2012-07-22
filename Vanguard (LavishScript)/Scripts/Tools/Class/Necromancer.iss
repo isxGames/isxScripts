@@ -118,7 +118,7 @@ function Necromancer()
 				{
 					;; must wait else Necropsy will get nothing
 					wait 10
-					wait 10 !${VG.InGlobalRecovery} && ${Me.Ability["Torch"].IsReady} && !${Me.IsCasting}
+					wait 10 !${VG.InGlobalRecovery} && ${Me.Ability["Using Weaknesses"].IsReady} && !${Me.IsCasting}
 					if !${Me.Target(exists)}
 					{
 						Pawn[Corpse]:Target
@@ -234,7 +234,7 @@ function NecroCrits()
 			wait 5
 		}
 	;	vgecho TARGET ON ME
-	;	wait 10 !${VG.InGlobalRecovery} && ${Me.Ability["Torch"].IsReady} && !${Me.IsCasting}
+	;	wait 10 !${VG.InGlobalRecovery} && ${Me.Ability["Using Weaknesses"].IsReady} && !${Me.IsCasting}
 	;	Me.Ability[Fear I]:Use
 	;	call IsCasting
 	}

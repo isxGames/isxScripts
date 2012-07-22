@@ -1743,7 +1743,7 @@ function IsCasting()
 	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned}
 	{
 		call FaceTarget
-		while (${VG.InGlobalRecovery} || !${Me.Ability[Torch].IsReady})
+		while (${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady})
 		{
 			wait 2
 		}

@@ -47,7 +47,7 @@ function:bool DisEnchant()
 			
 			;; Use the Ability
 			call UseAbility "${StripEnchantment}"
-			wait 5 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+			wait 5 !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting}
 
 			;; Wait till Enchantment is gone
 			wait 20 !${Me.TargetBuff[${TEST2}](exists)}
@@ -58,7 +58,7 @@ function:bool DisEnchant()
 				;; Try again
 				wait 15 ${Me.Ability["${StripEnchantment}"].IsReady}
 				call UseAbility "${StripEnchantment}"
-				wait 5 !${Me.Ability["Torch"].IsReady} || ${Me.IsCasting}
+				wait 5 !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting}
 
 				;; Wait till Enchantment is gone
 				wait 20 !${Me.TargetBuff[${TEST2}](exists)}
@@ -107,7 +107,7 @@ function:bool DisEnchant()
 			;-------------------------------------------
 			;Pawn[me]:Target
 			;wait 3
-			;while !${Me.Ability["Torch"].IsReady}
+			;while !${Me.Ability["Using Weaknesses"].IsReady}
 			;	waitframe
 			;
 			;Me.Ability[Cleansing Leech]:Use
