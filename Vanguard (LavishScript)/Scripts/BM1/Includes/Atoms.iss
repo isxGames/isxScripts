@@ -446,7 +446,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	
 	if !${Me.InCombat}
 	{
-		if ${ChannelNumber}==8 || ${ChannelNumber}==9 || ${ChannelNumber}==11 || ${ChannelNumber}==15
+		if ${ChannelNumber}==8 || ${ChannelNumber}==9 || ${ChannelNumber}==11 || ${ChannelNumber}==15 || ${ChannelNumber}==17
 		{
 			if ${aText.Find[buff]}
 			{
@@ -515,7 +515,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	}
 
 	;; Check for any Symbiote Requests
-	if ${ChannelNumber}==8 || ${ChannelNumber}==11 || ${ChannelNumber}==15
+	if ${ChannelNumber}==8 || ${ChannelNumber}==11 || ${ChannelNumber}==15 || ${ChannelNumber}==17
 	{
 		if ${aText.Find["conduc"]}
 		{

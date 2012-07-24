@@ -957,7 +957,7 @@ function FeignDeath()
 			wait 10
 			EchoIt "Feign Death - waiting: ${Pawn[AggroNPC].Name} is ${Pawn[AggroNPC].Distance} meters away"
 			vgecho "Feign Death - waiting ( ${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000].Int} )"
-			if ${Me.Target(exists)} || ${Me.Encounter}>0 || (${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000]}>=10 && ${Me.HealthPct}>50 || ${Pawn[AggroNPC].Distance}>10 || ${Me.ToPawn.IsStunned}
+			if ${Me.Target(exists)} || ${Me.Encounter}>0 || (${Math.Calc[(${Script.RunningTime}-${FeignDeathCheck})/1000]}>=10 && ${Me.HealthPct}>50) || ${Pawn[AggroNPC].Distance}>10 || ${Me.ToPawn.IsStunned}
 			{
 				EchoIt "Feign Death - breaking wait - Nearest AggronNPC is ${Pawn[AggroNPC].Distance} meters away - TargetExists=${Me.Target(exists)}, Encounters=${Me.Encounter}, Seconds=${Math.Calc[${Math.Calc[${Script.RunningTime}-${FeignDeathCheck}]}/1000].Int}"
 				vgecho "Feign Death - breaking wait"
@@ -1735,18 +1735,22 @@ function GlobalCooldown()
 function IsCasting()
 {
 	call AutoAttack
-	while ${Me.IsCasting}
+	if ${Me.IsCasting}
 	{
-		call FaceTarget
-		waitframe
+		while ${Me.IsCasting}
+		{
+			call FaceTarget
+			waitframe
+		}
 	}
 	if (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned})
 	{
 		call FaceTarget
-		while (${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady})
+		while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned})
 		{
-			wait 2
+			wait 1
 		}
+		wait 1
 	}
 }
 

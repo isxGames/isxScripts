@@ -341,7 +341,7 @@ function SprintCheck()
 ;===================================================
 function BuffRequests()
 {
-	if !${Me.Ability["Using Weaknesses"].IsReady}
+	if ${Me.IsCasting} || ${VG.InGlobalRecovery}
 	{
 		return
 	}
@@ -375,7 +375,7 @@ function BuffRequests()
 					{
 						waitframe
 					}
-					while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+					while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 					
 					if ${Me.Ability[${ConstructsAugmentation}](exists)}
 					{
@@ -492,7 +492,7 @@ function BuffRequests()
 ;===================================================
 function SymbioteRequest()
 {
-	if ${Me.Ability["Using Weaknesses"].IsReady}
+	if !${Me.IsCasting} && !${VG.InGlobalRecovery}
 	{
 		if ${SymbioteRequestList.FirstKey(exists)}
 		{
@@ -569,7 +569,7 @@ function ResetImmunities()
 function GlobalRecovery()
 {
 	wait 5
-	while ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${VG.InGlobalRecovery}
 	{
 		call MeleeAttackOn
 	}
@@ -581,7 +581,7 @@ function GlobalRecovery()
 function MeIsCasting()
 {
 	wait 5
-	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 	{
 		call MeleeAttackOn
 	}
@@ -696,7 +696,7 @@ function:bool UseAbility(string ABILITY)
 		wait 3
 
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 		{
 			call MeleeAttackOn
 		}

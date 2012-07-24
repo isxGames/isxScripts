@@ -19,7 +19,7 @@ function main()
 					vgecho "${Metamorphism}:  ${Me.TargetCasting}"
 					VGExecute "/reactioncounter 2"
 					wait 3
-					while ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+					while ${VG.InGlobalRecovery}
 					{
 						wait 1
 					}
@@ -30,7 +30,7 @@ function main()
 					vgecho "${Dissolve}:  ${Me.TargetCasting}"
 					VGExecute "/reactioncounter 1"
 					wait 3
-					while ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+					while ${VG.InGlobalRecovery}
 					{
 						wait 1
 					}
