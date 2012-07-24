@@ -187,7 +187,7 @@ atom(script) FindAction()
 						Action:Set[PullTarget]
 						return
 					}
-					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Ability[${VoidHand}].Range}<=10
+					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Ability[${VoidHand}].Range}<=${Me.Target.Distance}
 					{
 						echo 3333
 						doTankEndowementOfLife:Set[TRUE]

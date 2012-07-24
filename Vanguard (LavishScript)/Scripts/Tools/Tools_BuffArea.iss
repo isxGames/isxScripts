@@ -154,7 +154,7 @@ function main(bool CheckForBuff=TRUE)
 							}
 							waitframe
 						}
-						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+						while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 									
 						;-------------------------------------------
 						;; cast the buff
@@ -240,7 +240,7 @@ function:bool UseAbility2(string ABILITY)
 		wait 5
 
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 		{
 			waitframe
 		}

@@ -766,9 +766,13 @@ atom(script) PlaySound(string Filename)
 function GlobalCooldown()
 {
 	wait 5
-	while ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+	if ${VG.InGlobalRecovery}
 	{
-		call AutoAttack
+		while ${VG.InGlobalRecovery}
+		{
+			call AutoAttack
+		}
+		wait 1
 	}
 	call UseItems
 }
@@ -779,10 +783,14 @@ function GlobalCooldown()
 function IsCasting()
 {
 	wait 5
-	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady} || ${VG.InGlobalRecovery}
+	if ${Me.IsCasting} || ${VG.InGlobalRecovery}
 	{
-		call CounterIt
-		call AutoAttack
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery}
+		{
+			call CounterIt
+			call AutoAttack
+		}
+		wait 1
 	}
 	call UseItems
 }
@@ -1677,7 +1685,7 @@ function:bool UseAbility(string ABILITY)
 function UseItems()
 {
 	call OkayToAttack
-	if ${Return} && ${doUseItems} && !${isPaused} && ${isRunning} && ${Me.Ability["Using Weaknesses"].IsReady}
+	if ${Return} && ${doUseItems} && !${isPaused} && ${isRunning}
 	{	
 		;
 		; Make sure every item you plan on using is on one of your Hot Bars;
@@ -1847,7 +1855,7 @@ function ForceBuffArea()
 ;===================================================
 function BuffRequests()
 {
-	if !${Me.Ability["Using Weaknesses"].IsReady}
+	if ${Me.IsCasting} || ${VG.InGlobalRecovery}
 	{
 		return
 	}
@@ -1905,7 +1913,7 @@ function BuffRequests()
 								}
 								waitframe
 							}
-							while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+							while ${Me.IsCasting} || ${VG.InGlobalRecovery}
 									
 							;; cast the buff
 							if ${Me.Ability[${Iterator.Key}].IsReady}
