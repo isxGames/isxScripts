@@ -80,7 +80,7 @@ function main()
 		{
 			CurrentAction:Set[Casting ${Me.Casting}]
 		}
-		if !${Me.IsCasting} && ${Me.Ability["Using Weaknesses"].IsReady}
+		if !${Me.IsCasting} && ${VG.InGlobalRecovery}==0
 		{
 			if ${doHunt} && !${Me.InCombat} && (${Me.HealthPct}<80 || ${Me.EnergyPct}<80 || ${Me.EndurancePct}<80)
 			{
@@ -238,7 +238,7 @@ function InCombat()
 	if ${Me.Endurance}>=10 && ${Me.Endurance}<30 && !${Me.TargetMyDebuff[${RavagingDarkness}](exists)} && ${Me.Ability[${RavagingDarkness}].TimeRemaining}==0
 	{
 		;; wait to use next ability
-		while !${Me.Ability["Using Weaknesses"].IsReady}
+		while ${VG.InGlobalRecovery}>0
 		{
 			waitframe
 		}
@@ -520,7 +520,7 @@ function:bool BuildHatred()
 		if ${doScytheOfDoom} && ${Me.HealthPct}<70 && ${Me.EndurancePct}>48 && ${TotalPawnsNearby}>1 && ${Me.Ability[${ScytheOfDoom}].TimeRemaining}==0
 		{
 			;; wait to use next ability
-			while !${Me.Ability["Using Weaknesses"].IsReady}
+			while ${VG.InGlobalRecovery}>0
 			{
 				waitframe
 			}
@@ -876,7 +876,7 @@ function IsReady()
 	VGExecute "/reactionchain 4"
 
 	;; Make sure we have nothing that will interfere with the next ability
-	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 	{
 		waitframe
 	}
@@ -886,7 +886,7 @@ function IsReady()
 	VGExecute "/reactionchain 4"
 
 		;; Make sure we have nothing that will interfere with the next ability
-	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 	{
 		waitframe
 	}
