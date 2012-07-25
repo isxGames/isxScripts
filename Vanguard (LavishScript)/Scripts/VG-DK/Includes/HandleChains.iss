@@ -11,7 +11,7 @@ function HandleChains()
 	}
 
 	;; Chains/Finishers are up so lets wait till their ready and use them
-	while !${Me.Ability["Using Weaknesses"].IsReady} && (${Me.Ability[${Ruin}].TriggeredCountdown}>0 || ${Me.Ability[${Wrack}].TriggeredCountdown}>0 || ${Me.Ability[${SoulWrack}].TriggeredCountdown}>0)
+	while ${VG.InGlobalRecovery}>0 && (${Me.Ability[${Ruin}].TriggeredCountdown}>0 || ${Me.Ability[${Wrack}].TriggeredCountdown}>0 || ${Me.Ability[${SoulWrack}].TriggeredCountdown}>0)
 	{
 		waitframe
 	}
@@ -33,7 +33,7 @@ function HandleChains()
 	;; 2nd - make sure we restore some energy
 	if ${doVileStrike} && !${Me.Effect[${Anguish}](exists)} && ${Me.EndurancePct}>=10
 	{
-		while !${Me.Ability["Using Weaknesses"].IsReady} && ${Me.Ability[${RavagingDarkness}].TimeRemaining}==0
+		while ${VG.InGlobalRecovery}>0 && ${Me.Ability[${RavagingDarkness}].TimeRemaining}==0
 		{
 			waitframe
 		}

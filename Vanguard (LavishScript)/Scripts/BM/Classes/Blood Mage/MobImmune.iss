@@ -128,7 +128,7 @@ function Immunities()
 	;-------------------------------------------
 	; No Target then report No immunities
 	;-------------------------------------------
-	if !${Me.Target(exists)} || !${Me.Ability["Using Weaknesses"].IsReady}
+	if !${Me.Target(exists)} || ${VG.InGlobalRecovery}>0
 	{
 		Immunity:Set[None]
 		return

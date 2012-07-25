@@ -1257,7 +1257,7 @@ function:bool CastBuff(string ABILITY)
 			waitframe
 		}
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Me.Ability["Using Weaknesses"].IsReady}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 		{
 			waitframe
 		}

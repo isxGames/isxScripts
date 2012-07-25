@@ -915,7 +915,7 @@ function buffGroup()
 				{
 					waitframe
 				}
-				while !${Me.Ability["Using Weaknesses"].IsReady}
+				while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 				Me.Ability[${GroupBuff[${nextBuff}]}]:Use
 				call MeCasting
 			}
@@ -940,7 +940,7 @@ function buffPlayer(string player2buff)
 		if ${Me.Ability[${SpiritsBoutifulBlessing}](exists)}
 		{
 			;; 1st cast: Spirit Boutiful Blessing
-			while !${Me.Ability["Using Weaknesses"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
+			while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 			{
 				waitframe
 			}
@@ -948,7 +948,7 @@ function buffPlayer(string player2buff)
 			call MeCasting
 			
 			;; 2nd cast: Favor of the Flame
-			while !${Me.Ability["Using Weaknesses"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
+			while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 			{
 				waitframe
 			}
@@ -956,7 +956,7 @@ function buffPlayer(string player2buff)
 			call MeCasting
 			
 			;; 3rd cast: Acuity
-			while !${Me.Ability["Using Weaknesses"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
+			while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 			{
 				waitframe
 			}
@@ -973,7 +973,7 @@ function buffPlayer(string player2buff)
 		{
 			if ${Me.Ability[${Buff[${nextBuff}]}](exists)}
 			{
-				while !${Me.Ability["Using Weaknesses"].IsReady} && ${Pawn[name,${player2buff}].Distance}<25
+				while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 				{
 					waitframe
 				}
@@ -1026,7 +1026,7 @@ function shortbuffPlayer(string shortbuff2, string player2buff)
 			{
 				waitframe
 			}
-			while !${Me.Ability["Using Weaknesses"].IsReady}
+			while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 			Me.Ability[${shortbuff2}]:Use
 			call MeCasting
 		}
@@ -1065,7 +1065,7 @@ function stonePlayer(string player2buff)
 			{
 				waitframe
 			}
-			while !${Me.Ability["Using Weaknesses"].IsReady}
+			while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 			Me.Ability[${RezStone}]:Use
 			call MeCasting
 		}
@@ -1088,7 +1088,7 @@ function rezPlayer(string player2buff)
 				{
 					waitframe
 				}
-				while !${Me.Ability["Using Weaknesses"].IsReady}
+				while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 				Me.Ability[${CombatRez}]:Use
 				call MeCasting
 			}
@@ -1099,7 +1099,7 @@ function rezPlayer(string player2buff)
 				{
 					waitframe
 				}
-				while !${Me.Ability["Using Weaknesses"].IsReady}
+				while (${Me.IsCasting} || ${VG.InGlobalRecovery}>0) && ${Pawn[name,${player2buff}].Distance}<25
 				Me.Ability[${Rez}]:Use
 				call MeCasting
 			}

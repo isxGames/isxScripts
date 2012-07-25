@@ -27,7 +27,7 @@ function:bool ShadowStepHeal()
 	call StopMeleeAttacks
 	
 	;; wait
-	while !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${VG.InGlobalRecovery}>0
 	{
 		waitframe
 	}

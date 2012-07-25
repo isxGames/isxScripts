@@ -67,13 +67,13 @@ function RemoveEnchantment()
 		if ${do}
 		{
 			;; 1st try
-			wait 10 !${Me.Ability["Using Weaknesses"].IsReady}
+			wait 10 ${Me.Ability[${StripEnchantment}].IsReady}
 			if ${Me.Ability[${StripEnchantment}].IsReady}
 			{
 				CurrentAction:Set[Casting ${StripEnchantment}]
 				Me.Ability[${StripEnchantment}]:Use
 				wait 3
-				while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
+				while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 				{
 					waitframe
 				}
@@ -86,12 +86,12 @@ function RemoveEnchantment()
 			}
 
 			;; 2nd Try
-			wait 10 !${Me.Ability["Using Weaknesses"].IsReady}
+			wait 10 ${Me.Ability[${StripEnchantment}].IsReady}
 			if ${Me.Ability[${StripEnchantment}].IsReady}
 			{
 				Me.Ability[${StripEnchantment}]:Use
 				wait 3
-				while !${Me.Ability["Using Weaknesses"].IsReady} || ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
+				while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 				{
 					waitframe
 				}

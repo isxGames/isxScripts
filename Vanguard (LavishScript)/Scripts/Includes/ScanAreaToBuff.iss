@@ -36,7 +36,7 @@ function ScanAreaToBuff()
 						waitframe
 						CurrentAction:Set[Buffing ${Me.DTarget.Name}]
 						call UseAbility "${FavorOfTheLifeGiver}" "BUFFED ${Me.DTarget.Name}"
-						while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+						while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 						{
 							waitframe
 						}
@@ -61,7 +61,7 @@ function ScanAreaToBuff()
 					waitframe
 					CurrentAction:Set[Buffing ${Me.DTarget.Name}]
 					call UseAbility "${ConstructsAugmentation}" "BUFFED ${Me.DTarget.Name}"
-					while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+					while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 					{
 						waitframe
 					}
@@ -91,7 +91,7 @@ function ScanAreaToBuff()
 	Pawn[Me]:Target
 	CurrentAction:Set[Waiting]
 	call UseAbility "${SeraksMantle}"
-	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 	{
 		waitframe
 	}
@@ -100,7 +100,7 @@ function ScanAreaToBuff()
 	Pawn[Me]:Target
 	CurrentAction:Set[Waiting]
 	call UseAbility "${ConstructsAugmentation}"
-	while ${Me.IsCasting} || !${Me.Ability["Using Weaknesses"].IsReady}
+	while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
 	{
 		waitframe
 	}
