@@ -173,23 +173,22 @@ atom(script) FindAction()
 				;; attack the target only if it is in range and we are not hunting
 				if !${doHunt}
 				{
-					if ${Me.Ability[${EnfeeblingShuriken}](exists)} && ${Me.Ability[${EnfeeblingShuriken}].Range}>${Me.Target.Distance}
+					if ${Me.Ability[${EnfeeblingShuriken}](exists)} && ${Me.Target.Distance}<=${Me.Ability[${EnfeeblingShuriken}].Range}
 					{
-						echo 1111
+						;echo 1111
 						doTankEndowementOfLife:Set[TRUE]
 						Action:Set[PullTarget]
 						return
 					}
-					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Ability[${RaJinFlare}].Range}>${Me.Target.Distance}
+					if ${Me.Ability[${RaJinFlare}](exists)} && ${Me.Target.Distance}<=${Me.Ability[${RaJinFlare}].Range}
 					{
-						echo 2222
+						;echo 2222
 						doTankEndowementOfLife:Set[TRUE]
 						Action:Set[PullTarget]
 						return
 					}
-					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Ability[${VoidHand}].Range}<=${Me.Target.Distance}
+					if ${Me.Ability[${VoidHand}](exists)} && ${Me.Target.Distance}<=${Me.Ability[${VoidHand}].Range}
 					{
-						echo 3333
 						doTankEndowementOfLife:Set[TRUE]
 						Action:Set[PullTarget]
 						return
@@ -484,14 +483,20 @@ atom(script) FindAction()
 				if !${Me.Effect[${SuperiorSunFist}](exists)} && ${Me.Ability[${SuperiorSunFist}].TriggeredCountdown} && ${Me.Ability[${SuperiorSunFist}].TimeRemaining}==0
 				{
 					;echo SuperiorSunFist Ability=${Me.Ability[${SuperiorSunFist}](exists)}, Exist=${Me.Effect[${SuperiorSunFist}](exists)}, TimeRemaining=${Me.Ability[${SuperiorSunFist}].TimeRemaining}
-					Action:Set[Crit_SunFist]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${SuperiorSunFist}].Range}
+					{
+						Action:Set[Crit_SunFist]
+						return
+					}
 				}
 				if ${Me.Stat[Adventuring,Jin]}<=10 && !${Me.Effect[${SunFist}](exists)} && ${Me.Ability[${SunFist}].TriggeredCountdown} && ${Me.Ability[${SunFist}].TimeRemaining}==0
 				{
 					;echo SunFist Ability=${Me.Ability[${SunFist}](exists)}, Exist=${Me.Effect[${SunFist}](exists)}, TimeRemaining=${Me.Ability[${SunFist}].TimeRemaining}
-					Action:Set[Crit_SunFist]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${SunFist}].Range}
+					{
+						Action:Set[Crit_SunFist]
+						return
+					}
 				}
 			}
 
@@ -501,42 +506,66 @@ atom(script) FindAction()
 			{
 				if ${Me.Ability[${ConcordantSplendor}](exists)} && ${Me.Ability[${ConcordantSplendor}].TriggeredCountdown} && ${Me.Ability[${ConcordantSplendor}].TimeRemaining}==0
 				{
-					Action:Set[Crit_HealSeries]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${ConcordantSplendor}].Range}
+					{
+						Action:Set[Crit_HealSeries]
+						return
+					}
 				}
 				if ${Me.Ability[${ConcordantPalm}](exists)} && ${Me.Ability[${ConcordantPalm}].TriggeredCountdown} && ${Me.Ability[${ConcordantPalm}].TimeRemaining}==0
 				{
-					Action:Set[Crit_HealSeries]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${ConcordantPalm}].Range}
+					{
+						Action:Set[Crit_HealSeries]
+						return
+					}
 				}
 				if ${Me.Ability[${ConcordantHand}](exists)} && ${Me.Ability[${ConcordantHand}].TriggeredCountdown} && ${Me.Ability[${ConcordantHand}].TimeRemaining}==0
 				{
-					Action:Set[Crit_HealSeries]
+					if ${Me.Target.Distance}<=${Me.Ability[${ConcordantHand}].Range}
+					{
+						Action:Set[Crit_HealSeries]
+						return
+					}
+				}
+				if ${Me.Target.Distance}<=5
+				{
+					Action:Set[BuildCrit]
 					return
 				}
-				Action:Set[BuildCrit]
-				return
 			}
 			if ${Me.HealthPct}>0 && ${Me.HealthPct}<${Crit_HealPct} && ${Me.Target(exists)} && !${Me.Target.IsDead}
 			{
 				if ${Me.Ability[${ConcordantSplendor}](exists)} && ${Me.Ability[${ConcordantSplendor}].TriggeredCountdown} && ${Me.Ability[${ConcordantSplendor}].TimeRemaining}==0
 				{
-					Pawn[me]:Target
-					Action:Set[Crit_HealSeries]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${ConcordantSplendor}].Range}
+					{
+						Pawn[me]:Target
+						Action:Set[Crit_HealSeries]
+						return
+					}
 				}
 				if ${Me.Ability[${ConcordantPalm}](exists)} && ${Me.Ability[${ConcordantPalm}].TriggeredCountdown} && ${Me.Ability[${ConcordantPalm}].TimeRemaining}==0
 				{
-					Action:Set[Crit_HealSeries]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${ConcordantPalm}].Range}
+					{
+						Action:Set[Crit_HealSeries]
+						return
+					}
 				}
 				if ${Me.Ability[${ConcordantHand}](exists)} && ${Me.Ability[${ConcordantHand}].TriggeredCountdown} && ${Me.Ability[${ConcordantHand}].TimeRemaining}==0
 				{
-					Action:Set[Crit_HealSeries]
+					if ${Me.Target.Distance}<=${Me.Ability[${ConcordantHand}].Range}
+					{
+						Action:Set[Crit_HealSeries]
+						return
+					}
+				}
+				if ${Me.Target.Distance}<=5
+				{
+					Action:Set[BuildCrit]
 					return
 				}
-				Action:Set[BuildCrit]
-				return
 			}
 
 			;;;;;;;;;;
@@ -546,8 +575,11 @@ atom(script) FindAction()
 			{
 				if !${Me.Effect[${LeechsGrasp}](exists)} && !${Me.Effect[${LeechsGrasp}(Modified)](exists)} && !${Me.Effect[${LeechsGrasp} (Modified)](exists)}
 				{
-					Action:Set[LeechsGrasp]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${LeechsGrasp}].Range}
+					{
+						Action:Set[LeechsGrasp]
+						return
+					}
 				}
 			}
 
@@ -560,7 +592,7 @@ atom(script) FindAction()
 				if (!${Me.Effect[${FallingPetal}](exists)} || ${Me.Effect[${FallingPetal}].TimeRemaining}<60)
 				{
 					PetalsAreUp:Set[FALSE]
-					if ${Me.Ability[${FallingPetal}].TriggeredCountdown}
+					if ${Me.Ability[${FallingPetal}].TriggeredCountdown} && ${Me.Target.Distance}<=${Me.Ability[${FallingPetal}].Range}
 					{
 						ExecutedAbility:Set[${FallingPetal}]
 						Action:Set[Crit_PetalSeries]
@@ -573,7 +605,7 @@ atom(script) FindAction()
 				if (!${Me.Effect[${PetalSplitsEarth}](exists)} || ${Me.Effect[${PetalSplitsEarth}].TimeRemaining}<60)
 				{
 					PetalsAreUp:Set[FALSE]
-					if ${Me.Ability[${PetalSplitsEarth}].TriggeredCountdown}
+					if ${Me.Ability[${PetalSplitsEarth}].TriggeredCountdown} && ${Me.Target.Distance}<=${Me.Ability[${PetalSplitsEarth}].Range}
 					{
 						ExecutedAbility:Set[${PetalSplitsEarth}]
 						Action:Set[Crit_PetalSeries]
@@ -586,7 +618,7 @@ atom(script) FindAction()
 				if (!${Me.Effect[${WhiteLotusStrike}](exists)} || ${Me.Effect[${WhiteLotusStrike}].TimeRemaining}<60)
 				{
 					PetalsAreUp:Set[FALSE]
-					if ${Me.Ability[${WhiteLotusStrike}].TriggeredCountdown}
+					if ${Me.Ability[${WhiteLotusStrike}].TriggeredCountdown} && ${Me.Target.Distance}<=${Me.Ability[${WhiteLotusStrike}].Range}
 					{
 						ExecutedAbility:Set[${WhiteLotusStrike}]
 						Action:Set[Crit_PetalSeries]
@@ -594,7 +626,6 @@ atom(script) FindAction()
 					}
 				}
 			}
-			
 
 			;;;;;;;;;;
 			;; Start woking on our Endowments:
@@ -612,34 +643,45 @@ atom(script) FindAction()
 					}
 				}
 			}
-			if ${Me.Ability["Endowment of Mastery"](exists)} && (!${Me.Effect["Endowment of Mastery"](exists)} || ${Me.Effect["Endowment of Mastery"].TimeRemaining}<45)
+			if !${EndowementsAreUp}
 			{
-				if ${Me.Ability[${SoulCutter}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Ability[${KnifeHand}].IsReady}
+				if ${Me.Ability["Endowment of Mastery"](exists)} && (!${Me.Effect["Endowment of Mastery"](exists)} || ${Me.Effect["Endowment of Mastery"].TimeRemaining}<45)
 				{
-					Action:Set[Endowment_Mastery]
-					return
+					if ${Me.Ability[${SoulCutter}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Ability[${KnifeHand}].IsReady} && ${Me.Target.Distance}<=5
+					{
+						Action:Set[Endowment_Mastery]
+						return
+					}
+				}
+				if ${Me.Ability["Endowment of Enmity"](exists)} && (!${Me.Effect["Endowment of Enmity"](exists)} || ${Me.Effect["Endowment of Enmity"].TimeRemaining}<45) && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
+				{
+					if (${Me.Ability[${CycloneKick}].IsReady} && ${Me.Target.Distance}<=5) && ${Me.Ability[${RaJinFlare}].IsReady}
+					{
+						if ${doRangedWeapon}
+						{
+							Action:Set[Endowment_Enmity]
+							return
+						}
+						elseif !${doRangedWeapon} && ${Me.Target.Distance}<=5
+						{
+							Action:Set[Endowment_Enmity]
+							return
+						}
+					}
+				}
+				if ${Me.Ability["Endowment of Life"](exists)} && (!${Me.Effect["Endowment of Life"](exists)} || ${Me.Effect["Endowment of Life"].TimeRemaining}<45) && ${Me.Stat[Adventuring,Jin]}>=2
+				{
+					if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Target.Distance}<=5
+					{
+						Action:Set[Endowment_Life]
+						return
+					}
 				}
 			}
-			if ${Me.Ability["Endowment of Enmity"](exists)} && (!${Me.Effect["Endowment of Enmity"](exists)} || ${Me.Effect["Endowment of Enmity"].TimeRemaining}<45) && ${Me.Ability[${RaJinFlare}].JinCost}<=${Me.Stat[Adventuring,Jin]}
-			{
-				if ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
-				{
-					Action:Set[Endowment_Enmity]
-					return
-				}
-			}
-			if ${Me.Ability["Endowment of Life"](exists)} && (!${Me.Effect["Endowment of Life"](exists)} || ${Me.Effect["Endowment of Life"].TimeRemaining}<45) && ${Me.Stat[Adventuring,Jin]}>=2
-			{
-				if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
-				{
-					Action:Set[Endowment_Life]
-					return
-				}
-			}
-
+			
 			;;;;;;;;;;
 			;; Do we need this?  Not really, but could make a difference down the road
-			if ${Me.Stat[Adventuring,Jin]}>=10
+			if ${Me.Stat[Adventuring,Jin]}>=10 
 			{
 				if ${Me.Ability[${BloomingRidgeHand}](exists)} && ${Me.Ability[${BloomingRidgeHand}].IsReady} && !${Me.TargetMyDebuff[${BloomingRidgeHand}](exists)}
 				{
@@ -659,14 +701,17 @@ atom(script) FindAction()
 			{
 				if !${Me.TargetMyDebuff[${MindlessClutch}](exists)} && !${Me.Effect[${MindlessClutch}](exists)}
 				{
-					Action:Set[MindlessClutch]
-					return
+					if ${Me.Target.Distance}<=${Me.Ability[${MindlessClutch}].Range}
+					{
+						Action:Set[MindlessClutch]
+						return
+					}
 				}
 			}
 			
 			;;;;;;;;;;
 			;; Build a crit real fast to increase our Jin
-			if ${Me.Stat[Adventuring,Jin]}<=7 && ${Me.Ability[${Clarity}].TimeRemaining}==0
+			if ${Me.Stat[Adventuring,Jin]}<=7 && ${Me.Ability[${Clarity}].TimeRemaining}==0 && ${Me.Target.Distance}<=5
 			{
 				Action:Set[BuildFastCrit]
 				return
@@ -694,7 +739,7 @@ atom(script) FindAction()
 
 				;;;;;;;;;;
 				;; These do some serious damage so execute these whenever possible!  It also builds jin
-				if ${PetalsAreUp}
+				if ${PetalsAreUp} && ${Me.Target.Distance}<=5
 				{
 					if ${Me.Ability[${FocusedSonicBlast}](exists)} && !${Me.Effect[${FocusedSonicBlast}](exists)} && ${Me.Ability[${FocusedSonicBlast}].TriggeredCountdown} && ${Me.Ability[${FocusedSonicBlast}].TimeRemaining}==0
 					{
@@ -727,7 +772,7 @@ atom(script) FindAction()
 				;; lets build out health and jin by repeating Endowement of Life
 				if ${Me.Ability[${BlessedWind}](exists)} && ${Me.Ability[${CycloneKick}](exists)} && ${Me.Ability[${VoidHand}](exists)} && ${Me.Stat[Adventuring,Jin]}>=2
 				{
-					if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
+					if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Target.Distance}<=5
 					{
 						Action:Set[Endowment_Life]
 						return
@@ -738,7 +783,7 @@ atom(script) FindAction()
 				;; Last ability to use... available at level 2
 				if ${Me.Ability[${BlessedWind}](exists)}
 				{
-					if ${Me.Ability[${BlessedWind}].IsReady}
+					if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Target.Distance}<=5
 					{
 						Action:Set[BlessedWind]
 						return
@@ -749,7 +794,7 @@ atom(script) FindAction()
 				;; Last ability to use... available at level 1
 				if ${Me.Ability[${VoidHand}](exists)} && ${Me.EndurancePct}>20
 				{
-					if ${Me.Ability[${VoidHand}].IsReady}
+					if ${Me.Ability[${VoidHand}].IsReady} && ${Me.Target.Distance}<=5
 					{
 						Action:Set[VoidHand]
 						return
