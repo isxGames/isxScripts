@@ -1282,7 +1282,7 @@ function Endowment_Mastery()
 	;; this will ignore everything else while it is in this loop thus we risk dying or the tank might die
 	if !${Me.Effect[Endowment of Mastery](exists)} && ${Me.Ability[${SoulCutter}].IsReady} && ${Me.Ability[${VoidHand}].IsReady} && ${Me.Ability[${KnifeHand}].IsReady}
 	{
-		if ${EndowmentStep} == 1
+		if ${EndowmentStep} == 1 && ${Me.Target.Distance}<=5
 		{
 			call SoulCutter
 			if ${Return}
@@ -1291,7 +1291,7 @@ function Endowment_Mastery()
 				wait 2
 			}
 		}
-		if ${EndowmentStep} == 2
+		if ${EndowmentStep} == 2 && ${Me.Target.Distance}<=5
 		{
 			call VoidHand
 			if ${Return}
@@ -1300,7 +1300,7 @@ function Endowment_Mastery()
 				wait 2
 			}
 		}
-		if ${EndowmentStep} == 3
+		if ${EndowmentStep} == 3 && ${Me.Target.Distance}<=5
 		{
 			call KnifeHand
 			if ${Return}
@@ -1321,7 +1321,7 @@ function Endowment_Enmity()
 	;; this will ignore everything else while it is in this loop thus we risk dying or the tank might die
 	if !${Me.Effect[Endowment of Enmity](exists)} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${RaJinFlare}].IsReady} && ${doRangedWeapon}
 	{
-		if ${EndowmentStep} == 1
+		if ${EndowmentStep} == 1 && ${Me.Target.Distance}<=5
 		{
 			call CycloneKick
 			if ${Return}
@@ -1351,7 +1351,7 @@ function Endowment_Life()
 	;; this is where we want to make sure we set the DTarget to whom we want to get the benefits of this, ie the Tank
 	if ${Me.Ability[${BlessedWind}].IsReady} && ${Me.Ability[${CycloneKick}].IsReady} && ${Me.Ability[${VoidHand}].IsReady}
 	{
-		if ${EndowmentStep} == 1
+		if ${EndowmentStep} == 1 && ${Me.Target.Distance}<=5
 		{
 			call BlessedWhirl
 			if ${Return}
@@ -1361,7 +1361,7 @@ function Endowment_Life()
 			}
 		}
 
-		if ${EndowmentStep} == 2
+		if ${EndowmentStep} == 2 && ${Me.Target.Distance}<=5
 		{
 			call CycloneKick
 			if ${Return}
@@ -1370,7 +1370,7 @@ function Endowment_Life()
 				wait 2
 			}
 		}
-		if ${EndowmentStep} == 3
+		if ${EndowmentStep} == 3 && ${Me.Target.Distance}<=5
 		{
 			if !${Me.Effect[Endowment of Life](exists)}
 			{
@@ -2287,7 +2287,7 @@ function MoveCloser(int Distance=4)
 
 	;;;;;;;;;;
 	;; Loop this until we are within range of target or our timer has expired which is 10 seconds
-	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${isPaused}
+	while ${Me.Target(exists)} && ${Me.Target.Distance}>=${Distance} && ${LavishScript.RunningTime}<${bailOut} && !${isPaused} && ${doHunt}
 	{
 		;; face target and move forward
 		Me.Target:Face
