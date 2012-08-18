@@ -47,7 +47,7 @@ function main(string argv)
 
 	;extension -require isxeq2
 	;extension -require isxtts
-	squelch module -add lsmtts
+	;squelch module -add lsmtts
 
 		
 	declare	EQ2AFKAlarm_version_devel	bool	script	FALSE
@@ -232,9 +232,9 @@ function MySays(string Line, string speaker, string message)
 		if ${Return}
 			return
 		
-		if ${TTS.IsReady} && ${TTSSays} 
+		if ${TTSSays} 
 		{
-			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
+			uplink Speak "${EQ2String.CleanLinks["${Line.Escape}"]}"
 		}
 		else
 		{
@@ -258,10 +258,10 @@ function MyTells(string Line, string speaker, string message)
 		if ${Return}
 			return
 		
-		if ${TTS.IsReady} && ${TTSTells} 
+		if ${TTSTells} 
 		{
 			;Debug:Log["Calling CleanLinks = ${Line.Escape}"]
-			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
+			uplink Speak "${EQ2String.CleanLinks["${Line.Escape}"]}"
 		}
 		else
 		{
@@ -287,9 +287,9 @@ function MyGroup(string Line, string speaker, string message)
 		if ${Return}
 			return
 		
-		if ${TTS.IsReady} && ${TTSGroup} 
+		if ${TTSGroup} 
 		{
-			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
+			uplink Speak "${EQ2String.CleanLinks["${Line.Escape}"]}"
 		}
 		else
 		{
@@ -318,9 +318,9 @@ function MyRaid(string Line, string speaker, string message)
 		if ${Return}
 			return
 
-		if ${TTS.IsReady} && ${TTSRaid} 
+		if ${TTSRaid} 
 		{
-			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
+			uplink Speak "${EQ2String.CleanLinks["${Line.Escape}"]}"
 		}
 		else
 		{
@@ -349,9 +349,9 @@ function MyGuild(string Line, string speaker, string message)
 		if ${Return}
 			return
 
-		if ${TTS.IsReady} && ${TTSGuild} 
+		if ${TTSGuild} 
 		{
-			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
+			uplink Speak "${EQ2String.CleanLinks["${Line.Escape}"]}"
 		}
 		else
 		{
@@ -376,9 +376,9 @@ function MyOfficer(string Line, string speaker, string message)
 		if ${Return}
 			return
 
-		if ${TTS.IsReady} && ${TTSOfficer} 
+		if ${TTSOfficer} 
 		{
-			Speak ${EQ2String.CleanLinks["${Line.Escape}"]}
+			uplink Speak "${EQ2String.CleanLinks["${Line.Escape}"]}"
 		}
 		else
 		{
