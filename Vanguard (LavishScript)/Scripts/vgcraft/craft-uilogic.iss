@@ -18,7 +18,7 @@ atom(global) PauseBot()
 
 	This:SetText[Resume]
 	UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- PAUSED"] 
-	UIElement[Run Button@CraftBot]:SetText[Resume]
+	UIElement[RunButton@CraftBot]:SetText[Resume]
 
 	if ${doRefining}
 		UIElement[Title@TitleBar@CHUD]:SetText["HUD - Refining"]
