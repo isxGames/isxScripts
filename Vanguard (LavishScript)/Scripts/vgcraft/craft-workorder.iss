@@ -65,6 +65,8 @@ function:bool ChooseWorkOrder(int iCount, bool findAny, int woCount)
 
 	if ( ${doAnyWO} )
 		call MyOutput "VGCraft:: ChooseWorkOrder: doAnyWO TRUE"
+	elseif ( ${sDiff.Equal[Very Difficult]} )
+		return FALSE
 	elseif ( ${sDiff.Equal[Difficult]} && !${doDiffWO} )
 		return FALSE
 	elseif ( ${sDiff.Equal[Moderate]} && !${doModWO} )
