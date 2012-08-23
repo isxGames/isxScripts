@@ -1,5 +1,6 @@
 function Healcheck()
 {
+	echo "Healcheck()"
 	if ${ClassRole.healer}
 	{
 		if ${Group.Count} < 2 && ${HealTimer.TimeLeft} == 0

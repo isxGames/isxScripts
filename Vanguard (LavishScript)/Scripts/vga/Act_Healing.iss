@@ -31,6 +31,100 @@ function Healcheck()
 		{
 			call CheckGroupDamage
 		}
+		else
+		{
+			;echo "VGA.Healcheck() -- Solo Healer"
+
+			if ${Me.HealthPct} > 80
+				return
+				
+			if (!${Me.DTarget.Name.Equal[${Me.FName}]})
+				Me.ToPawn:Target
+
+			if ${Me.HealthPct} < 38 && ${Me.HealthPct} > 0
+			{
+				call checkabilitytocast "${InstantHeal}"
+				if ${Return}
+				{
+					call executeability "${InstantHeal}" "Heal" "Neither"
+				}
+				else
+				{
+					call checkabilitytocast "${InstantGroupHeal}"
+					if ${Return}
+					{
+						call executeability "${InstantGroupHeal}" "Heal" "Neither"
+					}
+					else
+					{
+						call checkabilitytocast "${SmallHeal}"
+						if ${Return}
+						{
+							call executeability "${SmallHeal}" "Heal" "Neither"
+						}
+					}
+				}
+
+			}
+			
+			if ${Me.HealthPct} < 45 && ${Me.HealthPct} > 0
+			{
+				call checkabilitytocast "${BigHeal}"
+				if ${Return}
+				{
+					call executeability "${BigHeal}" "Heal" "Neither"
+				}
+				else
+				{
+					call checkabilitytocast "${SmallHeal}"
+					if ${Return}
+					{
+						call executeability "${SmallHeal}" "Heal" "Neither"
+					}
+					else
+					{
+						call checkabilitytocast "${HotHeal}"
+						if ${Return}
+						{
+							call executeability "${HotHeal}" "Heal" "Neither"
+						}
+					}
+				}
+			}
+
+			if ${Me.HealthPct} < 60 && ${Me.HealthPct} > 0
+			{
+				call checkabilitytocast "${HotHeal}"
+				if ${Return}
+				{
+					call executeability "${HotHeal}" "Heal" "Neither"
+					return
+				}
+			}
+
+			if ${Me.HealthPct} < 60 && ${Me.HealthPct} > 0
+			{
+				call checkabilitytocast "${SmallHeal}"
+				if ${Return}
+				{
+					call executeability "${SmallHeal}" "Heal" "Neither"
+					return
+				}
+				call checkabilitytocast "${InstantHeal}"
+				if ${Return}
+				{
+					call executeability "${InstantHeal}" "Heal" "Neither"
+					return
+				}
+				call checkabilitytocast "${InstantGroupHeal}"
+				if ${Return}
+				{
+					call executeability "${InstantGroupHeal}" "Heal" "Neither"
+					return
+				}
+				return
+			}
+		}
 
 	}
 }
