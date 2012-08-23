@@ -333,6 +333,8 @@ variable int lastCraftXP = 0
 
 variable int GlobalPanicAttack = 0
 
+variable string CurrentWorkOrderName
+
 
 
 /* -------------------- Event Handlers ---------------------- */

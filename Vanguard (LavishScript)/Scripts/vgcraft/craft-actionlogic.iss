@@ -23,6 +23,7 @@ function:bool ChooseAction()
 	variable bool hasQualityStep = FALSE
 	variable bool lastStepDone = FALSE
 	variable bool isHard = FALSE
+	variable bool DifficultySet = FALSE
 	variable string aDiff
 	variable string sSkill
 	variable int iCount
@@ -254,106 +255,16 @@ function:bool ChooseAction()
 
 	; Get the difficulty of the current recipe
 	aDiff:Set[${TaskMaster[Crafting].CurrentWorkOrder[${Refining.CurrentRecipe.Name}].Difficulty}]
-
-	;
-	; Set the Limits based on # of Total AP available in this recipe
-	; This is to catch any that don't have a "Word" difficulty associated with them
-	if (${Refining.OrigActionPointsAvail} <= 2000)
+	
+	if (${aDiff.Equal[NULL]} || ${aDiff.Length} <= 0)
 	{
-		userMinQ:Set[${minQVEasy}]
-		userMaxQ:Set[${maxQVEasy}]
-
-		userAPLimit:Set[${apLimit2k}]
-
-		; Easy are set here, but Moderate and Difficult need help
-		if ${aDiff.Equal[Moderate]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 5]}]
-		}
-		elseif ${aDiff.Equal[Difficult]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 7]}]
-		}
-	}
-	elseif (${Refining.OrigActionPointsAvail} == 2500)
-	{
-		userMinQ:Set[${minQEasy}]
-		userMaxQ:Set[${maxQEasy}]
-
-		userAPLimit:Set[${apLimit25k}]
-
-		; Easy are set here, but Moderate and Difficult need help
-		if ${aDiff.Equal[Moderate]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 5]}]
-		}
-		elseif ${aDiff.Equal[Difficult]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 7]}]
-		}
-	}
-	elseif (${Refining.OrigActionPointsAvail} == 3000)
-	{
-		userMinQ:Set[${minQMod}]
-		userMaxQ:Set[${maxQMod}]
-
-		userAPLimit:Set[${apLimit3k}]
-
-		; Easy are set here, but Moderate and Difficult need help
-		if ${aDiff.Equal[Moderate]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 5]}]
-		}
-		elseif ${aDiff.Equal[Difficult]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 7]}]
-		}
-	}
-	elseif (${Refining.OrigActionPointsAvail} >= 3500)
-	{
-		userMinQ:Set[${minQDiff}]
-		userMaxQ:Set[${maxQDiff}]
-
-		userAPLimit:Set[${apLimit35k}]
-
-		isHard:Set[TRUE]
-
-		; Easy are set here, but Moderate and Difficult need help
-		if ${aDiff.Equal[Moderate]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 5]}]
-		}
-		elseif ${aDiff.Equal[Difficult]}
-		{
-			userAPLimit:Set[${Math.Calc[${userAPLimit} - 7]}]
-		}
-
-	}
-
-	; Set the Limits based on the Difficulty of this recipe
-	if ${aDiff.Equal[Very Easy]} || ${aDiff.Equal[Trivial]}
-	{
-		;call DebugOut "VGCraft:: minQVEasy: ${aDiff}"
-		userMinQ:Set[${minQVEasy}]
-		userMaxQ:Set[${maxQVEasy}]
-	}
-	elseif ${aDiff.Equal[Easy]}
-	{
-		;call DebugOut "VGCraft:: minQEasy: ${aDiff}"
-		userMinQ:Set[${minQEasy}]
-		userMaxQ:Set[${maxQEasy}]
-	}
-	elseif ${aDiff.Equal[Moderate]}
-	{
-		;call DebugOut "VGCraft:: minQMod: ${aDiff}"
-		userMinQ:Set[${minQMod}]
-		userMaxQ:Set[${maxQMod}]
-	}
-	elseif ${aDiff.Equal[Difficult]}
-	{
-		;call DebugOut "VGCraft:: minQDiff: ${aDiff}"
-		userMinQ:Set[${minQDiff}]
-		userMaxQ:Set[${maxQDiff}]
+		;echo "ActionLogic::ChooseAction:  Refining.CurrentRecipe.Name: '${Refining.CurrentRecipe.Name}' did not match any current work order names."
+		;echo "ActionLogic::ChooseAction:  The script thinks that the current work order is: ${CurrentWorkOrderName} -- using that name instead." 
+		call DebugOut "ActionLogic::ChooseAction:  Refining.CurrentRecipe.Name: '${Refining.CurrentRecipe.Name}' did not match any current work order names."
+		call DebugOut "ActionLogic::ChooseAction:  The script thinks that the current work order is: ${CurrentWorkOrderName} -- using that name instead." 
+		;; This is to catch when a work order name does not match any recipe names and then the script simply chooses to select the first work order recipe it finds!
+		;echo "CurrentWorkOrderName: ${CurrentWorkOrderName}"
+		aDiff:Set[${TaskMaster[Crafting].CurrentWorkOrder[${CurrentWorkOrderName}].Difficulty}]
 	}
 
 	;
@@ -366,6 +277,93 @@ function:bool ChooseAction()
 		userMaxQ:Set[${maxQRecipe}]
 		userAPLimit:Set[${apLimitRecipe}]
 	}
+	else
+	{
+		if (${Refining.OrigActionPointsAvail} <= 2000)
+		{
+			userAPLimit:Set[${apLimit2k}]
+		}
+		elseif (${Refining.OrigActionPointsAvail} == 2500)
+		{
+			userAPLimit:Set[${apLimit25k}]
+		}
+		elseif (${Refining.OrigActionPointsAvail} == 3000)
+		{
+			userAPLimit:Set[${apLimit3k}]
+		}
+		elseif (${Refining.OrigActionPointsAvail} >= 3500)
+		{
+			userAPLimit:Set[${apLimit35k}]
+			isHard:Set[TRUE]
+		}
+	
+
+		; Set the Limits based on the Difficulty of this recipe
+		if ${aDiff.Equal[Very Easy]} || ${aDiff.Equal[Trivial]}
+		{
+			;call DebugOut "VGCraft:: minQVEasy: ${aDiff}"
+			userMinQ:Set[${minQVEasy}]
+			userMaxQ:Set[${maxQVEasy}]
+			DifficultySet:Set[TRUE]
+		}
+		elseif ${aDiff.Equal[Easy]}
+		{
+			;call DebugOut "VGCraft:: minQEasy: ${aDiff}"
+			userMinQ:Set[${minQEasy}]
+			userMaxQ:Set[${maxQEasy}]
+			DifficultySet:Set[TRUE]
+		}
+		elseif ${aDiff.Equal[Moderate]}
+		{
+			;call DebugOut "VGCraft:: minQMod: ${aDiff}"
+			userMinQ:Set[${minQMod}]
+			userMaxQ:Set[${maxQMod}]
+			userAPLimit:Set[${Math.Calc[${userAPLimit} - 5]}]
+			DifficultySet:Set[TRUE]
+		}
+		elseif ${aDiff.Equal[Difficult]}
+		{
+			;call DebugOut "VGCraft:: minQDiff: ${aDiff}"
+			userMinQ:Set[${minQDiff}]
+			userMaxQ:Set[${maxQDiff}]
+			userAPLimit:Set[${Math.Calc[${userAPLimit} - 7]}]
+			DifficultySet:Set[TRUE]
+		}
+		
+		;
+		; Set the Limits based on # of Total AP available in this recipe
+		; This is to catch any that don't have a "Word" difficulty associated with them
+		if (!${DifficultySet})
+		{
+			if (${Refining.OrigActionPointsAvail} <= 2000)
+			{
+				userMinQ:Set[${minQVEasy}]
+				userMaxQ:Set[${maxQVEasy}]
+				userAPLimit:Set[${apLimit2k}]
+			}
+			elseif (${Refining.OrigActionPointsAvail} == 2500)
+			{
+				userMinQ:Set[${minQEasy}]
+				userMaxQ:Set[${maxQEasy}]
+				userAPLimit:Set[${apLimit25k}]
+			}
+			elseif (${Refining.OrigActionPointsAvail} == 3000)
+			{
+				userMinQ:Set[${minQMod}]
+				userMaxQ:Set[${maxQMod}]
+				userAPLimit:Set[${apLimit3k}]
+			}
+			elseif (${Refining.OrigActionPointsAvail} >= 3500)
+			{
+				userMinQ:Set[${minQDiff}]
+				userMaxQ:Set[${maxQDiff}]
+				userAPLimit:Set[${apLimit35k}]
+			}
+		}
+	}
+	;echo "ActionLogic::ChooseAction:  aDiff: ${aDiff} -- userMinQ: ${userMinQ} -- userMaxQ: ${userMaxQ} -- userAPLimit: ${userAPLimit}"
+	call DebugOut "ActionLogic::ChooseAction:  aDiff: ${aDiff} -- userMinQ: ${userMinQ} -- userMaxQ: ${userMaxQ} -- userAPLimit: ${userAPLimit}"
+
 
 	UIElement[APLimit@CHUD]:SetText["${userAPLimit} vs ${currentAPRatio.Int}"]
 
