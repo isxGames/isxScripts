@@ -109,11 +109,12 @@ function:bool StationRecipeSelect()
 			call DebugOut "VGCraft:: SRS: We have finished doing: ${Refining.Recipe[${RecipeName}].Name}"
 			continue
 		}
-
-		call DebugOut "VG:SRS:Set ${Refining.Recipe[${RecipeName}].Name} ::  ${Refining.Recipe[${RecipeName}].NumUses} :: ${Refining.Recipe[${RecipeName}].IsWorkOrder}"
+		
+		call DebugOut "VG:SRS:Set ${Refining.Recipe[${RecipeName}].Name} ::  ${Refining.Recipe[${RecipeName}].NumUses} :: ${Refining.Recipe[${RecipeName}].IsWorkOrder} [for Work Order: '${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}']"
 		call DebugOut "VG:Difficulty: ${TaskMaster[Crafting].CurrentWorkOrder[${rCount}].Difficulty}"
 
 		; Set the recipe... we should have already checked ingredients
+		CurrentWorkOrderName:Set[${TaskMaster[Crafting].CurrentWorkOrder[${rCount}]}]
 		Refining.Recipe["${RecipeName}"]:Select
 		BadRecipeName:Set[${Refining.Recipe["${RecipeName}"].Name}]
 
