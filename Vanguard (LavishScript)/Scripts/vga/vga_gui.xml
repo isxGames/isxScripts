@@ -2416,6 +2416,7 @@
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
+                      <AutoTooltip>Allev|AegsLf|Blom|TrSerk</AutoTooltip>
                       <Text>Allev|AegsLf|Blom|TrSerk</Text>
                     </Text>
                     <ComboBox Name="InstantHotHeal2Combo" Template="VG.ComboBox">
@@ -2458,6 +2459,7 @@
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
+                      <AutoTooltip>HealTch|Remedy|BrthRenew|InfHlth</AutoTooltip>
                       <Text>HealTch|Remedy|BrthRenew|InfHlth</Text>
                     </Text>
                     <ComboBox Name="smallsolohealCombo" Template="VG.ComboBox">
@@ -2479,6 +2481,7 @@
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
+                      <AutoTooltip>Rejuv|Restor|AstrWnd|BldGift</AutoTooltip>
                       <Text>Rejuv|Restor|AstrWnd|BldGift</Text>
                     </Text>
                     <ComboBox Name="bigsolohealCombo" Template="VG.ComboBox">
@@ -2500,6 +2503,7 @@
                       <Width>150</Width>
                       <Height>19</Height>
                       <Alignment>Left</Alignment>
+                      <AutoTooltip>LifeWard|ConcHand|BldTrib</AutoTooltip>
                       <Text>LifeWard|ConcHand|BldTrib</Text>
                     </Text>
                     <ComboBox Name="HealCrit1Combo" Template="VG.ComboBox">
