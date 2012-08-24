@@ -12,7 +12,7 @@ function solobuff()
 	variable iterator anIter
 	debuglog "Checking Buffs"
 	Buff:GetSettingIterator[anIter]
-	anIter:First
+	anIter:First 
 	variable string temp
 
 	while ( ${anIter.Key(exists)} )
