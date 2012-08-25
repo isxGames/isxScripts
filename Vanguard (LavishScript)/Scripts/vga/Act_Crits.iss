@@ -123,25 +123,41 @@ function functCounterAttacks()
 function functCombatCrits()
 {
 	variable iterator anIter
+	variable int SafeCounter
 
 	debuglog "Running Combat Crits"
+	;echo "functCombatCrits() :: ${doCombatCrits} - ${fight.ShouldIAttack}"
 	if ${doCombatCrits} && ${fight.ShouldIAttack}
 	{
-
+		;echo "functCombatCrits2()"
 		CombatCrits:GetSettingIterator[anIter]
 		anIter:First
 
 		while ( ${anIter.Key(exists)} )
 		{
-			if (!${Me.Ability[${anIter.Value}].IsReady})
+			;echo "functCombatCrits() -- checking ${anIter.Value} [${Me.Ability[${anIter.Value}].IsChain}] [${Me.Ability[${anIter.Value}].CountdownTimer}]"
+			if (${Me.Ability[${anIter.Value}].CountdownTimer} < 1)
 			{
 				anIter:Next
 				continue
 			}
 			if !${fight.ShouldIAttack}
-			return
+				return
 
-
+			if (!${Me.Ability[${anIter.Value}].IsReady})
+			{
+				SafeCounter:Set[0]
+				do
+				{
+					wait 2
+					;echo "waiting! [${Me.Ability[${anIter.Value}].CountdownTimer}]"
+					SafeCounter:Inc
+				}
+				while (!${Me.Ability[${anIter.Value}].IsReady} && ${Me.Ability[${anIter.Value}].CountdownTimer} > 0 && !${Me.Target.IsDead} && ${SafeCounter} < 7)
+				;; ${SafeCounter} == 7 would mean a total wait of approximately 1.5 seconds.  This is here only to make sure we don't get in any sort of unsafe "perpetual loop" situation.
+			}
+			
+			;echo "functCombatCrits() -- casting ${anIter.Value} [${Me.Ability[${anIter.Value}].IsChain}] (${Me.Ability[${anIter.Value}].IsReady})"
 			call checkabilitytocast "${anIter.Value}"
 			if ${Return}
 			{

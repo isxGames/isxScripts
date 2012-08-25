@@ -391,12 +391,12 @@ function combatfunction()
 	;************Main Combat Loop***************
 	;-------------------------------------------
 	if ${newattack}
-	  {
+	{
 		call changeformstance
 		call OpeningSpellSequence
 		if ${DoClassOpener}
 			call Class_Opener
-	   }
+	}
 	elseif !${newattack}
 	{
 		if !${Me.Target.Name.Equal[${tankpawn}]}
@@ -410,7 +410,7 @@ function combatfunction()
 		if ${doAOEMelee}
 			call AOEMelee
 		if ${doDotSpell}
-    			call DotSpells
+    	call DotSpells
 		if ${doDotMelee}
 			call DotMelee
 		if ${doDebuffSpell}
