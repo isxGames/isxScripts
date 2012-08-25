@@ -3900,9 +3900,9 @@
                       <OnSelect>
                         if ${This.SelectedItem.Text(exists)}
                         {
-                        AddCombatCrits "${This.SelectedItem.Text}"
-                        BuildCombatCrits
-                        Script[vga]:QueueCommand[call LavishSave]
+	                        AddCombatCrits "${This.SelectedItem.Text}"
+	                        BuildCombatCrits
+	                        Script[vga]:QueueCommand[call LavishSave]
                         }
                       </OnSelect>
                     </ComboBox>

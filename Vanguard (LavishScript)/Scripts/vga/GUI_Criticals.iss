@@ -5,6 +5,7 @@
 ;********************************************
 atom(global) AddCombatCrits(string aName)
 {
+	;echo "AddCombatCrits: '${aName}"
 	if ( ${aName.Length} > 1 )
 	{
 		LavishSettings[VGA].FindSet[CombatCrits]:AddSetting[${aName}, ${aName}]
@@ -33,6 +34,7 @@ atom(global) BuildCombatCrits()
 	UIElement[CombatCritsList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:ClearItems
 	while ( ${Iterator.Key(exists)} )
 	{
+		;echo "BuildCombatCrits() :: ${Iterator.Key}"
 		UIElement[CombatCritsList@CritsCFrm@Crits@CombatSubTab@CombatFrm@Combat@ABot@vga_gui]:AddItem[${Iterator.Key}]
 		Iterator:Next
 	}
