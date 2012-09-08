@@ -27,10 +27,14 @@ KNOWN BUGS
 
 REVISION HISTORY
 
+BJShuffle-2012.09.07, Version 1.01
+
+- Tweaked the movement a bit to better attempt to randomize who goes where
+
 BJShuffle-2012.01.24, Version 1.00
 
-- Will randomly choose a direction to face and run for up to 2 seconds in that direction.  After running it will choose another random direction to face.
+- Will randomly choose a direction to face and run for up to 5 seconds in that direction.  After running it will choose another random direction to face.
 	- Random directions between 0 and 350
-	- Random times between 0.3 and 2
+	- Random times between 1 and 5
 - Does not move fighters
 - If the character is a priest it will not look back at it's start point.  All other archetypes will turn and face their start point.	
