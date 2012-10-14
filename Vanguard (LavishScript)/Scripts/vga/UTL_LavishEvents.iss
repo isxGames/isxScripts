@@ -388,7 +388,6 @@ function PopulateGroupMemberClassType()
 }
 atom VG_onGroupMemberCountChange()
 {
-
 	call PopulateGroupMemberClassType
 	GroupNeedsBuffs:Set[TRUE]
 }
