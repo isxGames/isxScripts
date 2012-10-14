@@ -127,7 +127,7 @@ function counteringfunct()
 				{
 					vgexecute /stopcasting
 				}
-				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned}
+				while (${VG.InGlobalRecovery} || ${Me.ToPawn.IsStunned})
 				{
 					waitframe
 				}
