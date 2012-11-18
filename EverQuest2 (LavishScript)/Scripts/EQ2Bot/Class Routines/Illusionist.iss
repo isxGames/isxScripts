@@ -45,7 +45,7 @@ function Class_Declaration()
 	declare UseTouchOfEmpathy bool script FALSE
 	declare UseDoppleganger bool script FALSE
 	declare BuffEmpathicAura bool script FALSE
-	declare BuffEmpathicSoothing bool script FALSE
+	declare BuffEmpathicBreeze bool script FALSE
 	declare UseIlluminate bool script FALSE
 	declare BlinkMode bool script FALSE
 	declare HaveMythical bool script FALSE
@@ -84,7 +84,7 @@ function Class_Declaration()
 	UseTouchOfEmpathy:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseTouchOfEmpathy,FALSE]}]
 	UseDoppleganger:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseDoppleganger,FALSE]}]
 	BuffEmpathicAura:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEmpathicAura,FALSE]}]
-	BuffEmpathicSoothing:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEmpathicSoothing,FALSE]}]
+	BuffEmpathicBreeze:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffEmpathicBreeze,FALSE]}]
 	UseIlluminate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseIlluminate,FALSE]}]
 	BlinkMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BlinkMode,FALSE]}]
 	MakePetWhileInCombat:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[MakePetWhileInCombat,TRUE]}]
@@ -241,7 +241,7 @@ function Buff_Init()
 	PreAction[8]:Set[AA_Empathic_Aura]
 	PreSpellRange[8,1]:Set[391]
 
-	PreAction[9]:Set[AA_Empathic_Soothing]
+	PreAction[9]:Set[AA_Empathic_Breeze]
 	PreSpellRange[9,1]:Set[392]
 
 	PreAction[10]:Set[AA_Time_Compression]
@@ -285,8 +285,8 @@ function Combat_Init()
 	MobHealth[6,2]:Set[100]
 	Action[6]:Set[Master_Strike]
 
-	;; Construct
-	Action[7]:Set[Constructs]
+	;; Theorems
+	Action[7]:Set[Theorems]
 	SpellRange[7,1]:Set[51]
 
 	;;;;;;;;;;;;;;;;; STUNS ;;;;;;;;;;;;;;;;;
@@ -734,8 +734,8 @@ function Buff_Routine(int xAction)
 			}
 			break
 
-		case AA_Empathic_Soothing
-			if ${BuffEmpathicSoothing}
+		case AA_Empathic_Breeze
+			if ${BuffEmpathicBreeze}
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
@@ -1884,20 +1884,20 @@ function Combat_Routine(int xAction)
 			FlushQueued Mezmerise_Targets
 			break
 
-		case Constructs
-			if ${UltraDPSMode}
-			{
-				call CastSomething		
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
-					return CombatComplete
-				}					
-				ExecuteQueued Mezmerise_Targets
-				FlushQueued Mezmerise_Targets
-				break
-			}
+		case Theorems
+			;if ${UltraDPSMode}
+			;{
+			;	call CastSomething		
+			;	if ${Return.Equal[CombatComplete]}
+			;	{
+			;		if ${IllyDebugMode}
+			;			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+			;		return CombatComplete
+			;	}					
+			;	ExecuteQueued Mezmerise_Targets
+			;	FlushQueued Mezmerise_Targets
+			;	break
+			;}
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
 				break
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
@@ -2227,7 +2227,14 @@ function Have_Aggro()
 	;; Aggro Control...
 	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
 	{
-		if ${Me.Ability["Phase"].IsReady}
+		if ${Me.Ability["Sever Hate"].IsReady}
+		{
+			call CastSpellRange 506 0 0 0 ${Me.ID} 0 0 0 1
+			LastSpellCast:Set[506]
+			call CheckCastBeam
+			return
+		}
+		elseif ${Me.Ability["Phase"].IsReady}
 		{
 			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
 			LastSpellCast:Set[357]

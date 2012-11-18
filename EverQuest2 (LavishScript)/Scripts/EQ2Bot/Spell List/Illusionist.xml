@@ -30,7 +30,7 @@
 		<Setting name="10,382">Shrink Servant</Setting>
 		<Setting name="10,355">Personae Reflection II</Setting>
 		<Setting name="10,391">Empathic Aura</Setting>
-		<Setting name="10,392">Empathic Soothing</Setting>
+		<Setting name="10,392">Empathic Breeze</Setting>
 		<Setting name="10,386">Touch of Empathy</Setting>
 		<Setting name="10,398">Spellblade\'s Counter</Setting>
 		<Setting name="10,399">Counterblade</Setting>
@@ -38,6 +38,7 @@
 		<Setting name="10,503">Destructive Rampage</Setting>
 		<Setting name="10,504">Time Warp</Setting>
 		<Setting name="10,505">Arms of Imagination</Setting>
+		<Setting name="10,506">Sever Hate</Setting>
 		<Setting name="11,61">Aneurysm</Setting>
 		<Setting name="12,60">Ultraviolet Beam III</Setting>
 		<Setting name="12,20">Rune of Thought</Setting>
@@ -74,7 +75,7 @@
 		<Setting name="30,260">Speechless II</Setting>
 		<Setting name="30,191">Bewilderment II</Setting>
 		<Setting name="31,70">Brainburst IV</Setting>
-		<Setting name="32,51">Construct of Order</Setting>
+		<Setting name="32,51">Theorems</Setting>
 		<Setting name="33,230">Lockdown III</Setting>
 		<Setting name="33,22">Epiphany II</Setting>
 		<Setting name="33,355">Personae Reflection IV</Setting>
@@ -100,7 +101,7 @@
 		<Setting name="44,260">Speechless III</Setting>
 		<Setting name="44,191">Bewilderment III</Setting>
 		<Setting name="45,70">Brainburst V</Setting>
-		<Setting name="46,51">Construct of Order II</Setting>
+		<Setting name="46,51">Theorems II</Setting>
 		<Setting name="47,22">Epiphany III</Setting>
 		<Setting name="47,355">Personae Reflection V</Setting>
 		<Setting name="47,230">Lockdown IV</Setting>
@@ -129,7 +130,7 @@
 		<Setting name="58,260">Speechless IV</Setting>
 		<Setting name="58,191">Bewilderment IV</Setting>
 		<Setting name="59,70">Brainburst VI</Setting>
-		<Setting name="60,51">Construct of Order III</Setting>
+		<Setting name="60,51">Theorems III</Setting>
 		<Setting name="61,230">Lockdown V</Setting>
 		<Setting name="61,22">Epiphany IV</Setting>
 		<Setting name="61,355">Personae Reflection VI</Setting>
@@ -157,7 +158,7 @@
 		<Setting name="72,70">Brainburst VII</Setting>
 		<Setting name="72,260">Speechless V</Setting>
 		<Setting name="73,22">Epiphany V</Setting>
-		<Setting name="73,51">Construct of Order IV</Setting>
+		<Setting name="73,51">Theorems IV</Setting>
 		<Setting name="73,230">Lockdown VI</Setting>
 		<Setting name="74,192">Illusory Allies II</Setting>
 		<Setting name="74,355">Personae Reflection VII</Setting>
@@ -177,14 +178,14 @@
 		<Setting name="80,80">Nightmare VI</Setting>
 		<Setting name="80,72">Prismatic Chaos V</Setting>
 		<Setting name="80,388">Chromatic Shower III</Setting>
-		<Setting name="80,377">Doppleganger</Setting>
+		<Setting name="80,377">Doppelganger</Setting>
 		<Setting name="81,191">Bewilderment VI</Setting>
 		<Setting name="81,354">Mana Cloak IV</Setting>
 		<Setting name="81,60">Ultraviolet Beam IX</Setting>
 		<Setting name="82,70">Brainburst VIII</Setting>
 		<Setting name="82,260">Speechless VI</Setting>
 		<Setting name="83,22">Epiphany VI</Setting>
-		<Setting name="83,51">Construct of Order V</Setting>
+		<Setting name="83,51">Theorems V</Setting>
 		<Setting name="83,230">Lockdown VII</Setting>
 		<Setting name="84,192">Illusory Allies III</Setting>
 		<Setting name="84,355">Personae Reflection VIII</Setting>
@@ -204,6 +205,6 @@
 		<Setting name="90,80">Nightmare VII</Setting>
 		<Setting name="90,72">Prismatic Chaos VI</Setting>
 		<Setting name="90,388">Chromatic Shower IV</Setting>
-		<Setting name="90,377">Doppleganger II</Setting>
+		<Setting name="90,377">Doppelganger II</Setting>
 	</Set>
 </InnerSpaceSettings>
