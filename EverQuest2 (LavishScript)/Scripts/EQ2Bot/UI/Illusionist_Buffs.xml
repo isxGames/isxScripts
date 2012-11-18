@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
-	<Commandcheckbox Name='BuffEmpathicSoothing'>
+	<Commandcheckbox Name='BuffEmpathicBreeze'>
 		<X>10</X>
 		<Y>10</Y>
 		<Width>30</Width>
 		<Height>20</Height>
-		<Text>Buff Empathic Soothing</Text>
+		<Text>Buff Empathic Breeze</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
-				Script[EQ2Bot].Variable[BuffEmpathicSoothing]:Set[TRUE]
-				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffEmpathicSoothing",TRUE]
+				Script[EQ2Bot].Variable[BuffEmpathicBreeze]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffEmpathicBreeze",TRUE]
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 			else
 			{
-				Script[EQ2Bot].Variable[BuffEmpathicSoothing]:Set[FALSE]
-				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffEmpathicSoothing",FALSE]
+				Script[EQ2Bot].Variable[BuffEmpathicBreeze]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["BuffEmpathicBreeze",FALSE]
 				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 			}
 		</OnLeftClick>
-		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffEmpathicSoothing]}</Data>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffEmpathicBreeze]}</Data>
 	</Commandcheckbox>	
 	<Commandcheckbox Name='BuffEmpathicAura'>
 		<X>10</X>
