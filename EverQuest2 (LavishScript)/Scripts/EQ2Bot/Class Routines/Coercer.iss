@@ -547,14 +547,9 @@ function Combat_Routine(int xAction)
 	;;;; Master Strike
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
-		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-		;;;;;;;;;;
-		if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-		{
-			Target ${KillTarget}
-			Me.Ability[Master's Strike]:Use
-			spellsused:Inc
-		}
+		Target ${KillTarget}
+		Me.Ability[Master's Strike]:Use
+		spellsused:Inc
 	}							
 	;;;; Nullify Staff
 	if ${spellsused}<=${spellthreshold} && ${NullifyStaff} && ${Me.Ability[${SpellType[389]}].IsReady} && !${Me.Maintained[${SpellType[389]}](exists)}

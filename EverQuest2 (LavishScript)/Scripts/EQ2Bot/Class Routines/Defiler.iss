@@ -672,11 +672,6 @@ function Combat_Routine(int xAction)
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 				break
 			case Mastery
-				;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-				;;;;;;;;;;
-				if (${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-						break
-				;;;;;;;;;;;
 				if ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)} && ${OffenseMode}
 				{
 					Target ${KillTarget}

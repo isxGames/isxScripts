@@ -639,7 +639,7 @@ function Combat_Routine(int xAction)
 			}
 			break
 		case MasterStrike
-			if ${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} || ${MainTank} || ${Target.Target.ID}!=${Me.ID} || ${RangedAttackOnlyMode} || !${Mob.CheckActor[${KillTarget}]}
+			if ${MainTank} || ${Target.Target.ID}!=${Me.ID} || ${RangedAttackOnlyMode} || !${Mob.CheckActor[${KillTarget}]}
 			{
 				break
 			}
