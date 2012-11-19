@@ -1,7 +1,6 @@
 ;-----------------------------------------------------------------------------------------------
 ; EQ2Bot.iss
 ;
-; See /InnerSpace/Scripts/EQ2Bot/EQ2BotRelease_Notes.txt for changes
 ;-----------------------------------------------------------------------------------------------
 ;
 /* 	These can't be used during preprocessing (#includes, etc), not even if #defined -
