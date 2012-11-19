@@ -1251,14 +1251,9 @@ function Combat_Routine(int xAction)
 	;; Master Strike
 	if ${Me.Ability[Master's Smite].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
-		;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-		;;;;;;;;;;
-		if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-		{
-			Target ${KillTarget}
-			Me.Ability[Master's Smite]:Use
-			SpellCnt:Inc
-		}
+		Target ${KillTarget}
+		Me.Ability[Master's Smite]:Use
+		SpellCnt:Inc
 	}
 	if (${SpellCnt} >= ${SpellMax})
 	{

@@ -344,14 +344,9 @@ function Combat_Routine(int xAction)
 		;;;; Master Strike
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 		{
-			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-			;;;;;;;;;;
-			if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-			{
-				Target ${KillTarget}
-				Me.Ability[Master's Strike]:Use
-				spellsused:Inc
-			}
+			Target ${KillTarget}
+			Me.Ability[Master's Strike]:Use
+			spellsused:Inc
 		}
 		;Judgement
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
@@ -485,14 +480,9 @@ function Combat_Routine(int xAction)
 		;;;; Master Strike
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 		{
-			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-			;;;;;;;;;;
-			if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-			{
-				Target ${KillTarget}
-				Me.Ability[Master's Strike]:Use
-				spellsused:Inc
-			}
+			Target ${KillTarget}
+			Me.Ability[Master's Strike]:Use
+			spellsused:Inc
 		}
 		;Judgement
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}

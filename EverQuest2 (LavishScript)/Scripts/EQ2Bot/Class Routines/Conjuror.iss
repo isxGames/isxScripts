@@ -504,14 +504,9 @@ function Combat_Routine(int xAction)
 		case Master_Strike
 			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
 			{
-				;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-				;;;;;;;;;;
-				if (!${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)})
-				{
-					Target ${KillTarget}
-					Me.Ability[Master's Strike]:Use
-					spellsused:Inc
-				}
+				Target ${KillTarget}
+				Me.Ability[Master's Strike]:Use
+				spellsused:Inc
 			}
 			break
 		case Sunbolt

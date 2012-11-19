@@ -1,17 +1,6 @@
 ;*************************************************************
 ;Illusionist.iss
-;version 20100303
 ;by pygar & Amadeus
-;
-; - Update for SF:
-;   * Better handling of large AE encounters (ie, changes targets and resets spell order more efficiently)
-;   * More emphasis on short term buffs and power regen buffs/taps
-;   * bug fixes, etc.
-;   * Use the UI checkbox to turn on/off stuns.  They are not attached to dpsmode/ultradps mode and will only cast if the checkbox is activated.  (This may be changed in the future
-;     to turn on for specific types of mobs such as epic mobs, orange/red, named, etc.)
-;   * The dps and ultradps modes are basically nonfunctioning checkboxes at the moment.  That whole concept needs to be revisited.  For now, it's probably best to have both 'ticked' on 
-;     the UI.  The bot currently tries to be the most efficient Illusionist without relation to dps/ultradps.  Better logic is forthcoming.
-;   * The whole combat_routine() will be redone soon to be even more effective.
 ;*************************************************************
 
 
@@ -23,7 +12,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20100303
+	declare ClassFileVersion int script 20121118
 	;;;;
 
 	call EQ2BotLib_Init
@@ -1834,25 +1823,6 @@ function Combat_Routine(int xAction)
 				FlushQueued Mezmerise_Targets				
 				break
 			}
-			;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-			;;;;;;;;;;
-			if (${InvalidMasteryTargets.Element[${KillTarget}](exists)})
-			{
-				if ${spellsused} < 1 && !${MezzMode}
-				{
-					call CastSomething			
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
-						return CombatComplete
-					}
-				}	
-				ExecuteQueued Mezmerise_Targets
-				FlushQueued Mezmerise_Targets				
-				break
-			}
-			;;;;;;;;;;;
 
 			if ${Me.Ability["Master's Strike"].IsReady}
 			{

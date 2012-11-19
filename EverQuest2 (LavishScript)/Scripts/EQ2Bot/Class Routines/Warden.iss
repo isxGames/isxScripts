@@ -722,10 +722,6 @@ function Combat_Routine(int xAction)
 			break
 			case MasterSmite
 			{
-				if ${SpellMode} && ${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)}
-				{
-					break
-				}
 				if ${SpellMode} && ${Me.Ability[Master's Smite].IsReady} && ${Actor[${KillTarget}](exists)}
 				{
 					Target ${KillTarget}

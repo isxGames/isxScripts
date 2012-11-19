@@ -225,7 +225,6 @@ variable(script) collection:string ActorsLooted
 variable(script) collection:string DoNotPullList
 variable(script) collection:string TempDoNotPullList
 variable(script) int TempDoNotPullListTimer
-variable(script) collection:string InvalidMasteryTargets
 variable(script) bool IsMoving
 variable bool UseCustomRoutines=FALSE
 variable int gRtnCtr=1
@@ -4400,23 +4399,6 @@ atom(script) EQ2_onIncomingText(string Text)
 			DoNotPullList:Set[${Target.ID},${Target.Name}]
 
 			Debug:Echo["DoNotPullList now has ${DoNotPullList.Used} actors in it."]
-		}
-	}
-	elseif (${Text.Find[This attack cannot be used on this type of creature]} > 0)
-	{
-		;; Make sure the list does not get too big
-		if (${InvalidMasteryTargets.Used} > 100)
-		{
-			;Debug:Echo["InvalidMasteryTargets list too big (${InvalidMasteryTargets.Used} elements) -- Clearing..."]
-			InvalidMasteryTargets:Clear
-		}
-
-		if ${Actor[${KillTarget}](exists)}
-		{
-			;Debug:Echo["Adding (${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}) to the InvalidMasteryTargets list"]
-			InvalidMasteryTargets:Set[${Actor[${KillTarget}].ID},${Actor[${KillTarget}].Name}]
-
-			;Debug:Echo["InvalidMasteryTargets now has ${InvalidMasteryTargets.Used} actors in it."]
 		}
 	}
 	elseif (${Text.Find[Move closer!]} > 0)

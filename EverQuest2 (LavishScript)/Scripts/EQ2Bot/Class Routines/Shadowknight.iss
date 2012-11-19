@@ -855,22 +855,17 @@ function Combat_Routine(int xAction)
 
   if ${UseMastersRage}
   {
-    ;;;; Make sure that we do not spam the mastery spell for creatures invalid for use with our mastery spell
-    ;;;;;;;;;;
-    if (!${InvalidMasteryTargets.Element[${KillTarget}](exists)})
-    {
-  		if ${Me.Ability["Master's Rage"].IsReady}
-  		{
-  			Target ${KillTarget}
-  			Me.Ability["Master's Rage"]:Use
-  			do
-  			{
-  			 	waitframe
-  			}
-  			while ${Me.CastingSpell}
-  			wait 1
-  		}
-  	}
+		if ${Me.Ability["Master's Rage"].IsReady}
+		{
+			Target ${KillTarget}
+			Me.Ability["Master's Rage"]:Use
+			do
+			{
+			 	waitframe
+			}
+			while ${Me.CastingSpell}
+			wait 1
+		}
   }
 
   ;; Combat Leadership AA

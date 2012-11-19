@@ -282,7 +282,7 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}			
 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 	{
 		Target ${KillTarget}
 		call CheckPosition 1 1 ${KillTarget}
