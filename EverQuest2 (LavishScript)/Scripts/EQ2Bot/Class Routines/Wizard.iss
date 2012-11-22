@@ -1,5 +1,5 @@
 ;*************************************************************
-;Updated bob0builder
+;Updated Pygar
 ;
 ;*************************************************************
 
@@ -8,6 +8,10 @@
 	#include "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/EQ2BotLib.iss"
 #endif
 
+
+#ifndef _Moveto_
+	#include "${LavishScript.HomeDirectory}/Scripts/EQ2Common/moveto.iss"
+#endif
 
 function Class_Declaration()
 {
@@ -109,7 +113,10 @@ function Buff_Init()
 
 	PreAction[9]:Set[DeityPet]
 	
-	PreAction[10]:Set[MailOfFrost]	
+	PreAction[10]:Set[MailOfFrost]
+	
+	PreAction[11]:Set[Mystical_Overflow]
+	PreSpellRange[11,1]:Set[513]
 }
 
 function Combat_Init()
@@ -130,42 +137,31 @@ function Buff_Routine(int xAction)
 	declare BuffMember string local
 	declare BuffTarget string local
 
-if !${InitialBuffsDone}
-{
-	echo Starting eq2bot and starting one time initilization
-		
-	;UIElement[EQ2 Bot]:SetAlpha[0.3]		
-		
-	if !${Me.Equipment[Food].AutoConsumeOn}
-		Me.Equipment[Food]:ToggleAutoConsume
-		
-	if !${Me.Equipment[Drink].AutoConsumeOn}
-		Me.Equipment[Drink]:ToggleAutoConsume
-
-	if !${Me.Maintained[Hover](exists)} && !${Me.Maintained[Call Ykeshan Spellbear](exists)}
-		Me.Ability[Hover]:Use	
-
-	; Cast broken Myth buff
-	if ${Me.Ability[Focused Mind].IsReady} && !${Me.Maintained[Focused Mind](exists)}
-		eq2execute /useability "Focused Mind"
-
-	if !${Me.Maintained[Summon Animated Tome](exists)}
-		Me.Ability[Summon Animated Tome]:Use	
-		
-	InitialBuffsDone:Set[TRUE]		
-}
+	if !${InitialBuffsDone}
+	{
+		echo Starting eq2bot and starting one time initilization
+			
+		if !${Me.Maintained[Hover](exists)} && !${Me.Maintained[Call Ykeshan Spellbear](exists)}
+			Me.Ability[Hover]:Use	
+	
+		; Cast broken Myth buff
+		if ${Me.Ability[Focused Mind].IsReady} && !${Me.Maintained[Focused Mind](exists)}
+			eq2execute /useability "Focused Mind"
+	
+		InitialBuffsDone:Set[TRUE]		
+	}
 
 	call CheckHeals
 	call RefreshPower
 
-	if ${Me.Equipment[Food].AutoConsumeOn}
-		Me.Equipment[Food]:ToggleAutoConsume
-		
-	if ${Me.Equipment[Drink].AutoConsumeOn}
-		Me.Equipment[Drink]:ToggleAutoConsume
-
 	switch ${PreAction[${xAction}]}
 	{
+		case Mystical_Overflow
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			{
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
+			break
 		case Self_Buff
 			call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},3]}
 			break
@@ -310,8 +306,8 @@ if !${InitialBuffsDone}
 			call CastSpellRange 27
 			break			
 		Default
-			return Buff Complete
-			break
+			return BuffComplete
+			
 	}
 }
 
@@ -321,7 +317,7 @@ function Combat_Routine(int xAction)
 	declare spellthreshold int local
 
 	spellsused:Set[0]
-	spellthreshold:Set[2]		
+	spellthreshold:Set[1]		
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
@@ -349,139 +345,15 @@ function Combat_Routine(int xAction)
 ;; Freehand = 385
 ;; Catalyst = 389
 
-;;; Cast AOEs and PBAOEs	** May slow down regular single mob DPS **
-	if ${Mob.Count}>1
-	{
-		;Use Furnace of Ro (Blanket carpet on the ground, considered a pet?)
-		if ${spellsused}<=${spellthreshold} && ${PBAoEMode} && ${Actor[${KillTarget}].Distance}<=10 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Actor[${KillTarget}].Health}>50
-		{
-		;;;Fireshape and Surge of Ro
-			if ${Me.Ability[${SpellType[387]}].IsReady} && ${Me.Ability[${SpellType[361]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)}
-			{
-				call CastSpellRange 387
-				call CastSpellRange 361
-				;eq2execute /p "Surge of Ro and Fireshaper are up!"			
-			}
-			call CastSpellRange 95 0 1 0 ${KillTarget}
-			;eq2execute /p "Furnace of Ro is down, please move the mobs onto the fire blanket!"
-			spellsused:Inc
-		}	
-		;Hailstorm - Has an AOE component at the end
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[508]}].IsReady} && !${Me.Maintained[${SpellType[508]}](exists)}
-		{
-			call CastSpellRange 508 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		;Fire Storm
-		if ${spellsused}<=${spellthreshold} && ${PBAoEMode} && ${Mob.Count}>2 && ${Actor[${KillTarget}].Distance}<=10 && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)}
-		{
-			call CastSpellRange 96 0 1 0 ${KillTarget}
-			spellsused:Inc
-		}
-		;Glacial Wind
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)}
-		{
-			call CastSpellRange 91 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		;Storm of Lightning
-		if ${spellsused}<=${spellthreshold} && ${AoEMode} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
-		{
-			call CastSpellRange 92 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-	}
-	;Use Protoflame if PetMode is selected
-	if ${spellsused}<=${spellthreshold} && ${PetMode} && ${Me.Ability[${SpellType[324]}].IsReady} && ${Actor[${KillTarget}].Health}>85
-	{
-		call CastSpellRange 324 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
+  ;;If we're out of range of big spells, lets move
+  if ${Actor[${KillTarget}].Distance}>10
+  	call moveto ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 10 0 1 0
 
-	;;;Coldshape and Frigid Gift		
+	;;;Frigid Gift		
 	if ${Me.Ability[${SpellType[388]}].IsReady} && ${Me.Ability[${SpellType[360]}].IsReady} && !${Me.Maintained[${SpellType[387]}](exists)}
 	{
-		call CastSpellRange 388
 		call CastSpellRange 360
-		;eq2execute /p "Frigid Gift and Iceshaper are up!"
 	}
-	
-	;;;Fiery Blast	*Cast Fusion, IC, Rays, and BoD* First cast Catalyst + Freehand
-	if ${Me.Ability[${SpellType[396]}].IsReady} && (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>40
-	{
-		if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-		{
-			call CastSpellRange 385		
-			call CastSpellRange 389		
-		}	
-		call CastSpellRange 396 0 0 0 ${KillTarget}
-		;Fusion
-		if ${Me.Maintained[${SpellType[396]}](exists)} && ${PBAoEMode} && ${Actor[${KillTarget}].Distance}<=10 && ${Me.Ability[${SpellType[94]}].IsReady}
-			call CastSpellRange 94 0 0 0 ${KillTarget}
-		;Ice Comet
-		if ${Me.Maintained[${SpellType[396]}](exists)} && ${Me.Ability[${SpellType[60]}].IsReady} 
-			call CastSpellRange 60 0 0 0 ${KillTarget}
-		;Rays
-		if ${Me.Maintained[${SpellType[396]}](exists)} && ${RaysMode} && ${Me.Ability[${SpellType[500]}].IsReady}
-			call CastSpellRange 500 0 0 0 ${KillTarget}
-		;Blast of Devastation
-		if ${Me.Maintained[${SpellType[396]}](exists)} && ${PBAoEMode} && ${Actor[${KillTarget}].Distance}<=10 && ${Me.Ability[${SpellType[509]}].IsReady}
-			call CastSpellRange 509 0 0 0 ${KillTarget}
-	}	
-	
-	;Fusion + Catalyst + Freehand
-	if ${spellsused}<=${spellthreshold} && ${PBAoEMode} && ${Actor[${KillTarget}].Distance}<=10 && ${Me.Ability[${SpellType[94]}].IsReady}
-	{
-		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>5
-		{
-		if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 94 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		elseif ${Actor[${KillTarget}].Health}>35
-		{
-			if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 94 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-	}
-	;Blast of Devastation + Catalyst + Freehand
-	if ${spellsused}<=${spellthreshold} && ${PBAoEMode} && ${Actor[${KillTarget}].Distance}<=10 && ${Me.Ability[${SpellType[509]}].IsReady}
-	{
-		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>5
-		{
-		if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 509 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		elseif ${Actor[${KillTarget}].Health}>35
-		{
-			if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 509 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-	}
-	
 	;Ice Spears
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[73]}].IsReady}
 		{
@@ -495,94 +367,126 @@ function Combat_Routine(int xAction)
 				call CastSpellRange 73 0 0 0 ${KillTarget}
 				spellsused:Inc
 			}
-		}	
+		}
+	;;;Fiery Blast
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[511]}].IsReady} && !${Me.Maintained[${SpellType[511]}](exists)}
+	{
+		call CastSpellRange 511 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;Sanguine
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[514]}].IsReady} && !${Me.Maintained[${SpellType[514]}](exists)}
+	{
+		call CastSpellRange 514 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;Thunderclap
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[506]}].IsReady} && !${Me.Maintained[${SpellType[506]}](exists)}
+	{
+		call BigStuff
+		call CastSpellRange 506 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;;;Blast of Devestation
+	if ${spellsused}<=${spellthreshold} && ${Actor[${KillTarget}].Distance}<=17 && ${Me.Ability[${SpellType[510]}].IsReady} && !${Me.Maintained[${SpellType[510]}](exists)}
+	{
+		Actor[${KillTarget}]:DoFace
+		call BigStuff
+		call CastSpellRange 510 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;;;Fusion
+	if ${spellsused}<=${spellthreshold} && ${Actor[${KillTarget}].Distance}<=12 && ${Me.Ability[${SpellType[94]}].IsReady} && !${Me.Maintained[${SpellType[94]}](exists)}
+	{
+		Actor[${KillTarget}]:DoFace
+		call BigStuff
+		call CastSpellRange 94 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;; If Multiple Mobs Do more AEs - Comet
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Level}>92
+	{
+		call BigStuff
+		call CastSpellRange 60 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;; If Multiple Mobs Do more AEs - Firestorm
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[96]}].IsReady}
+	{
+		call CastSpellRange 96 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;; If Multiple Mobs Do more AEs - Wind
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)}
+	{
+		call CastSpellRange 91 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;; If Multiple Mobs Do more AEs - Storm
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
+	{
+		call CastSpellRange 92 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;Rays
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady} && !${Me.Maintained[${SpellType[500]}](exists)}
+	{
+		call BigStuff
+		call CastSpellRange 500 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;;;Manaburn
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[394]}].IsReady} && !${Me.Maintained[${SpellType[394]}](exists)}
+	{
+		call CastSpellRange 394 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;;;Comet
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} && !${Me.Maintained[${SpellType[60]}](exists)}
+	{
+		call BigStuff
+		call CastSpellRange 60 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;Hailstorm - Has an AOE component at the end
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[508]}].IsReady} && !${Me.Maintained[${SpellType[508]}](exists)}
+	{
+		call CastSpellRange 508 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;Use Protoflame if PetMode is selected
+	if ${spellsused}<=${spellthreshold} && ${PetMode} && ${Me.Ability[${SpellType[324]}].IsReady} && ${Actor[${KillTarget}].Health}>85
+	{
+		call CastSpellRange 324 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
 	;Storming Tempest
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[70]}].IsReady} 
-		{
+	{
 		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>10
-			{
-				call CastSpellRange 70 0 0 0 ${KillTarget}
-				spellsused:Inc
-			}
+		{
+			call CastSpellRange 70 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
 		elseif ${Actor[${KillTarget}].Health}>45
-			{
-				call CastSpellRange 70 0 0 0 ${KillTarget}
-				spellsused:Inc
-			}
-		}		
-	;Ice Comet + Catalyst + Freehand
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} 
-	{
-		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>5
 		{
-		if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 60 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-		elseif ${Actor[${KillTarget}].Health}>35
-		{
-			if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 60 0 0 0 ${KillTarget}
-			spellsused:Inc
-		}
-	}
-	;Rays + Catalyst + Freehand
-	if ${RaysMode} && ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[500]}].IsReady}
-	{
-		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>10
-		{
-			if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 500 0 0 0 ${KillTarget}
-			;eq2execute /p "~~~ Rays of Destruction ~~~"
-			spellsused:Inc
-		}
-		elseif ${Actor[${KillTarget}].Health}>35
-		{
-			if ${Me.Ability[${SpellType[385]}].IsReady} && ${Me.Ability[${SpellType[389]}].IsReady}
-			{
-				call CastSpellRange 385		
-				call CastSpellRange 389		
-				;eq2execute /p "Catalyst is being used, watch my health!"
-			}	
-			call CastSpellRange 500 0 0 0 ${KillTarget}
-			;eq2execute /p "~~~ Rays of Destruction ~~~"			
+			call CastSpellRange 70 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 	}
 	;Ball of Fire
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[62]}].IsReady} 
-		{
+	{
 		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>10
-			{
-				call CastSpellRange 62 0 0 0 ${KillTarget}
-				spellsused:Inc
-			}
-		elseif ${Actor[${KillTarget}].Health}>45
-			{
+		{
 			call CastSpellRange 62 0 0 0 ${KillTarget}
 			spellsused:Inc
-			}
 		}
-	;Thunderclap
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[506]}].IsReady}
-	{
-		call CastSpellRange 506 0 0 0 ${KillTarget}
+		elseif ${Actor[${KillTarget}].Health}>45
+		{
+		call CastSpellRange 62 0 0 0 ${KillTarget}
 		spellsused:Inc
+		}
 	}
 	;;;; Master Strike
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[Master's Strike].IsReady} && ${Mob.CheckActor[${KillTarget}]}
@@ -591,26 +495,20 @@ function Combat_Routine(int xAction)
 		Me.Ability[Master's Strike]:Use
 		spellsused:Inc
 	}
-	;Bewilderment 
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady}
-	{
-		call CastSpellRange 505 0 0 0 ${KillTarget}
-		spellsused:Inc
-	}
 	;Magma Chamber
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[181]}].IsReady}
-		{
+	{
 		if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}>10
-			{
-				call CastSpellRange 181 0 0 0 ${KillTarget}
-				spellsused:Inc
-			}
-		elseif ${Actor[${KillTarget}].Health}>45
-			{
+		{
 			call CastSpellRange 181 0 0 0 ${KillTarget}
 			spellsused:Inc
-			}
 		}
+		elseif ${Actor[${KillTarget}].Health}>45
+		{
+			call CastSpellRange 181 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+	}
 	;Flames of Velious
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[61]}].IsReady} && !${Me.Maintained[${SpellType[61]}](exists)}
 	{
@@ -634,7 +532,14 @@ function Combat_Routine(int xAction)
 	{
 		call CastSpellRange 72 0 0 0 ${KillTarget}
 		spellsused:Inc
-	}			
+	}		
+	;Bewilderment 
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady}
+	{
+		call CastSpellRange 505 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
 }
 
 function Post_Combat_Routine(int xAction)
@@ -651,10 +556,14 @@ function Post_Combat_Routine(int xAction)
 function Have_Aggro()
 {
 ;;;Cast Cease or Concussive
-	if ${Me.Ability[${SpellRange[180]}].IsReady}
+	if ${Me.Ability[${SpellRange[509]}].IsReady}
+		call CastSpellRange 509 0 0 0 ${KillTarget}
+	elseif ${Me.Ability[${SpellRange[393]}].IsReady}
+		call CastSpellRange 393 0 0 0 ${KillTarget}
+	elseif ${Me.Ability[${SpellRange[180]}].IsReady}
 		call CastSpellRange 180 0 0 0 ${KillTarget}
 	elseif ${Me.Ability[${SpellRange[330]}].IsReady}
-		call CastSpellRange 330 0 0 0 ${KillTarget}
+		call CastSpellRange 330 0 0 0 ${KillTarget}			
 }
 
 function Lost_Aggro()
@@ -671,6 +580,15 @@ function MA_Dead()
 {
 
 }
+
+function BigStuff()
+{
+	if ${Me.Ability[${SpellRange[385]}].IsReady}
+		call CastSpellRange 385
+	elseif ${Me.Ability[${SpellRange[393]}].IsReady}
+		call CastSpellRange 389 0 0 0 ${KillTarget}
+}
+
 
 function Cancel_Root()
 {

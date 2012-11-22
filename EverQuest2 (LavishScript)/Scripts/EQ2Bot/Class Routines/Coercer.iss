@@ -518,9 +518,9 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}
 	;;;;Sever Hate
-	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady} && !${Me.Maintained[${SpellType[505]}](exists)}
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[386]}].IsReady} && !${Me.Maintained[${SpellType[386]}](exists)}
 	{
-		call CastSpellRange 505 0 0 0 ${Me.ID}
+		call CastSpellRange 386 0 0 0 ${Me.ID}
 		spellsused:Inc
 	}	
 	;Dump out if threshold met
