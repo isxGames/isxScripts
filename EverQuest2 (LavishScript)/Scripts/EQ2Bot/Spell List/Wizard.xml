@@ -29,7 +29,7 @@
 		<Setting name="10,390">Static Discharge</Setting>
 		<Setting name="10,391">Ambidexterous Casting</Setting>
 		<Setting name="10,389">Catalyst</Setting>
-		<Setting name="10,392">Confounding Staff</Setting>
+		<Setting name="10,392">Confounding</Setting>
 		<Setting name="10,393">Concussive Blasts</Setting>
 		<Setting name="10,394">Manaburn</Setting>
 		<Setting name="10,395">Spell Reach</Setting>
@@ -37,6 +37,12 @@
 		<Setting name="10,506">Thunderclap</Setting>
 		<Setting name="10,507">Heat Mastery</Setting>
 		<Setting name="10,508">Hail Storm</Setting>
+		<Setting name="10,509">Arcane Bewilderment</Setting>
+		<Setting name="10,510">Blast of Devastation</Setting>
+		<Setting name="10,511">Fiery Blast</Setting>
+		<Setting name="10,512">Hail Storm</Setting>
+		<Setting name="10,513">Mystical Overflow</Setting>
+		<Setting name="10,514">Sanguine Sacrifice</Setting>
 		<Setting name="11,31">Ro\'s Blade</Setting>
 		<Setting name="12,20">Tyrant\'s Pact</Setting>
 		<Setting name="12,63">Solar Flare III</Setting>
@@ -182,7 +188,8 @@
 		<Setting name="82,181">Magma Chamber VII</Setting>
 		<Setting name="83,40">Converge VI</Setting>
 		<Setting name="83,230">Shackle VII</Setting>
-		<Setting name="83,361">Surge of Ro V </Setting>
+		<Setting name="83,361">Surge of Ro V</Setting>
+		<Setting name="84,95">Furnace of Ro III</Setting>
 		<Setting name="84,311">Mana Intromission V</Setting>
 		<Setting name="84,324">Protoflame IV</Setting>
 		<Setting name="85,360">Frigid Gift V</Setting>
@@ -205,5 +212,16 @@
 		<Setting name="90,500">Rays of Disintegration II</Setting>
 		<Setting name="90,96">Firestorm VII</Setting>
 		<Setting name="90,310">Harvest Mana VI</Setting>
+		<Setting name="91,60">E'ci's Frozen Wrath</Setting>
+		<Setting name="91,61">Flames of Velious V</Setting>
+		<Setting name="91,63">Solar Flare X</Setting>
+		<Setting name="92,72">Incinerate IX</Setting>
+		<Setting name="92,181">Magma Chamber VIII</Setting>
+		<Setting name="93,40">Converge VII</Setting>
+		<Setting name="93,230">Shackle VIII</Setting>
+		<Setting name="93,361">Surge of Ro VI</Setting>
+		<Setting name="94,95">Furnace of Ro IV</Setting>
+		<Setting name="94,311">Mana Intromission VI</Setting>
+		<Setting name="94,324">Protoflame V</Setting>
 	</Set>
 </InnerSpaceSettings>

@@ -274,7 +274,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 	<Commandcheckbox Name='PreBuffShield'>
 		<Visible>1</Visible>
 		<X>275</X>
-		<Y>130</Y>
+		<Y>140</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
 		<Text>PreBuff Dmg Shield</Text>
