@@ -174,7 +174,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MainWeapon]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MainWeapon]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MainWeapon]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[MainWeapon]:Set[${This.SelectedItem.Text}]
@@ -222,7 +222,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem["${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[OffHand]}"]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[OffHand]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[OffHand]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[OffHand]:Set[${This.SelectedItem.Text}]
@@ -270,7 +270,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Dagger]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Dagger]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Dagger]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponDagger]:Set[${This.SelectedItem.Text}]
@@ -317,7 +317,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Sword]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Sword]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Sword]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponSword]:Set[${This.SelectedItem.Text}]
@@ -364,7 +364,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Rapier]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Rapier]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Rapier]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponRapier]:Set[${This.SelectedItem.Text}]
@@ -412,7 +412,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem["${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Spear]}"]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Spear]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Spear]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[WeaponSpear]:Set[${This.SelectedItem.Text}]
@@ -438,7 +438,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Items></items>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShadowsGroupMember]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShadowsGroupMember]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShadowsGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffShadowsGroupMember,${This.SelectedItem.Text}]
@@ -465,7 +465,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<Items></items>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPoisonGroupMember]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPoisonGroupMember]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPoisonGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffPoisonGroupMember,${This.SelectedItem.Text}]

@@ -131,7 +131,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Items></items>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffProcGroupMember,${This.SelectedItem.Text}]
@@ -158,7 +158,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<Items></items>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Secondary_Assist]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Secondary_Assist]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Secondary_Assist]}]:Select
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Secondary_Assist,${This.SelectedItem.Text}]
@@ -185,7 +185,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<Items></items>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffAmendsGroupMember,${This.SelectedItem.Text}]

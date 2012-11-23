@@ -114,7 +114,7 @@
 			}
 		</OnLeftClick>
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting["UseRootSpells"]}</Data>
-	</Commandcheckbox>
+	</Commandcheckbox>
 	<Commandcheckbox Name='MeleeAAAttacksMode'>
 		<Visible>1</Visible>
 		<X>5%</X>
@@ -443,7 +443,8 @@
 		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Use Raid Heals]}</Data>
 	</Commandcheckbox>
 
-	
+
+	
 	<Commandcheckbox Name='CurseMode'>
 		<X>5%</X>
 		<Y>240</Y>
@@ -484,7 +485,7 @@
 		<OnLoad>
 				Script[EQ2Bot].Variable[CureCurseGroupMember]:Set[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]
 				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]
-				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]:Select
+				This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
 				Script[EQ2Bot].Variable[CureCurseGroupMember]:Set[${This.SelectedItem.Text}]

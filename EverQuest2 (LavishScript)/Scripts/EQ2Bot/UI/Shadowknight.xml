@@ -323,12 +323,12 @@
 		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember](exists)})
 		    {
                 This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]
-			    This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]:Select
+			    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]:Select
     		}
     		else
     		{
     		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
+    		    This.ItemByText["No one"]:Select
     		}			
 		</OnLoad>
 		<OnSelect>
@@ -358,12 +358,12 @@
 		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember](exists)})
 		    {
                 This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]
-			    This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]:Select
+			    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]:Select
     		}
     		else
     		{
     		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
+    		    This.ItemByText["No one"]:Select
     		}
 		</OnLoad>
 		<OnSelect>
@@ -393,12 +393,12 @@
 		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffDSGroupMember](exists)})
 		    {
                 This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffDSGroupMember]}]
-			    This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffDSGroupMember]}]:Select
+			    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffDSGroupMember]}]:Select
     		}
     		else
     		{
     		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
+    		    This.ItemByText["No one"]:Select
     		}
 		</OnLoad>
 		<OnSelect>

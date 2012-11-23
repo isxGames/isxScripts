@@ -19,7 +19,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestChalice1]:Set[${This.SelectedItem.Text}]
@@ -46,7 +46,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestChalice2]:Set[${This.SelectedItem.Text}]
@@ -73,7 +73,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHammer1]:Set[${This.SelectedItem.Text}]
@@ -100,7 +100,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHammer2]:Set[${This.SelectedItem.Text}]
@@ -127,7 +127,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestEye1]:Set[${This.SelectedItem.Text}]
@@ -154,7 +154,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestEye2]:Set[${This.SelectedItem.Text}]
@@ -181,7 +181,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestMoon1]:Set[${This.SelectedItem.Text}]
@@ -208,7 +208,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestMoon2]:Set[${This.SelectedItem.Text}]
@@ -235,7 +235,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHolySymbol1]:Set[${This.SelectedItem.Text}]
@@ -262,7 +262,7 @@
 		</OnLeftClick>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2]}]:Select
 		</OnLoad>
 		<OnSelect>
 			Script[EQ2Bot].Variable[PriestHolySymbol2]:Set[${This.SelectedItem.Text}]

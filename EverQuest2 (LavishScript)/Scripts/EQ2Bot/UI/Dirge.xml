@@ -277,12 +277,12 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff_AABattleCry](exists)})
 		    {
     			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff_AABattleCry]}]
-    			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff_AABattleCry]}]:Select
+    			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff_AABattleCry]}]:Select
     		}
     		else
     		{
     		    This:AddItem["No one"]
-    		    This.ItemByValue["No one"]:Select
+    		    This.ItemByText["No one"]:Select
     		}
         </OnLoad>
 		<OnSelect>
@@ -523,7 +523,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<Items></items>
 		<OnLoad>
 			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]
-			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]:Select
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffHateGroupMember]}]:Select
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffHateGroupMember,${This.SelectedItem.Text}]
