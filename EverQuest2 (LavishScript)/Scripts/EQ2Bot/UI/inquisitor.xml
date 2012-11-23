@@ -423,7 +423,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 				</items>
 				<OnLoad>
 					This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Stance]}]
-					This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Stance]}]:Select
+					This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Stance]}]:Select
 				</OnLoad>
 				<OnSelect>
 					Script[EQ2Bot].Variable[Stance]:Set[${This.SelectedItem.Value}]
@@ -449,7 +449,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
         <Items></Items>
         <OnLoad>
           This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAuraGroupMember]}]
-          This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAuraGroupMember]}]:Select
+          This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAuraGroupMember]}]:Select
         </OnLoad>
         <OnSelect>
           Script[EQ2Bot].Variable[BuffAuraGroupMember]:Set[${This.SelectedItem.Text}]
@@ -478,7 +478,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
         <Items></Items>
         <OnLoad>
           This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShieldAllyGroupMember]}]
-          This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShieldAllyGroupMember]}]:Select
+          This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShieldAllyGroupMember]}]:Select
         </OnLoad>
         <OnSelect>
           Script[EQ2Bot].Variable[BuffShieldAllyGroupMember]:Set[${This.SelectedItem.Text}]

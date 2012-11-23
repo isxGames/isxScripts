@@ -148,7 +148,7 @@
                     if ${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}](exists)}
                     {
                     This:AddItem[${Script[EQ2Bot].Variable[MainTankPC]}]
-                    This.ItemByValue[${Script[EQ2Bot].Variable[MainTankPC]}]:Select
+                    This.ItemByText[${Script[EQ2Bot].Variable[MainTankPC]}]:Select
                     }
                   </OnLoad>
                   <OnSelect>
@@ -341,7 +341,7 @@
                     if ${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}](exists)}
                     {
                     This:AddItem[${Script[EQ2Bot].Variable[MainAssist]}]
-                    This.ItemByValue[${Script[EQ2Bot].Variable[MainAssist]}]:Select
+                    This.ItemByText[${Script[EQ2Bot].Variable[MainAssist]}]:Select
                     }
                   </OnLoad>
                   <OnSelect>
@@ -490,7 +490,7 @@
                     if ${Actor[exactname,${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}](exists)}
                     {
                     This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]
-                    This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]:Select
+                    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]:Select
                     }
                   </OnLoad>
                   <OnSelect>

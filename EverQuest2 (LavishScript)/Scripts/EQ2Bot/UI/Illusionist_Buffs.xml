@@ -131,12 +131,12 @@
 	    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism](exists)})
 	    {
 				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]
-				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]:Select
+				This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPrism]}]:Select
 			}
 			else
 			{
 		    This:AddItem["No one"]
-		    This.ItemByValue["No one"]:Select
+		    This.ItemByText["No one"]:Select
 			}
     </OnLoad>        		
 		<OnSelect>
@@ -167,17 +167,17 @@
 		  if (!${Me.Ability[Time Compression](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}	
 	    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression](exists)})
 	    {
 				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]
-				This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]:Select
+				This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTime_Compression]}]:Select
 			}
 			else
 			{
 			    This:AddItem["No one"]
-			    This.ItemByValue["No one"]:Select
+			    This.ItemByText["No one"]:Select
 			}
     </OnLoad>        		
 		<OnSelect>
@@ -187,7 +187,7 @@
 		  if (!${Me.Ability[Time Compression](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}
 			else
 			  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTime_Compression,0,1,0]
@@ -214,17 +214,17 @@
 		  if (!${Me.Ability[Illusory Arm](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}
 	    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm](exists)})
 	    {
   			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]
-  			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]:Select
+  			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffIllusory_Arm]}]:Select
   		}
   		else
   		{
   		    This:AddItem["No one"]
-  		    This.ItemByValue["No one"]:Select
+  		    This.ItemByText["No one"]:Select
   		}
 		</OnLoad>
 		<OnSelect>
@@ -234,7 +234,7 @@
 			if (!${Me.Ability[Illusory Arm](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}			
 			else
 			  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffIllusory_Arm,1,1,0]
@@ -261,17 +261,17 @@
 		  if (!${Me.Ability[Arms of Imagination](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}
 	    elseif (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination](exists)})
 	    {
   			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]
-  			This.ItemByValue[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]:Select
+  			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArms_of_Imagination]}]:Select
   		}
   		else
   		{
   		    This:AddItem["No one"]
-  		    This.ItemByValue["No one"]:Select
+  		    This.ItemByText["No one"]:Select
   		}
 		</OnLoad>
 		<OnSelect>
@@ -281,7 +281,7 @@
 		  if (!${Me.Ability[Arms of Imagination](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}			
 		  else
 		  	Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffArms_of_Imagination,1,1,0]
@@ -430,7 +430,7 @@
 			if (!${Me.Ability[time warp](exists)})
 		  {
 				UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:AddItem["N/A"]			
-				UIElement[lbBuffTimeWarp@${This.Parent.FullName}].ItemByValue["N/A"]:Select
+				UIElement[lbBuffTimeWarp@${This.Parent.FullName}].ItemByText["N/A"]:Select
 			}	
 			else
 				 Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,1,0,0,1]
@@ -457,7 +457,7 @@
 			if (!${Me.Ability[time warp](exists)})
 		  {
 				This:AddItem["N/A"]			
-				This.ItemByValue["N/A"]:Select
+				This.ItemByText["N/A"]:Select
 			}	
 			else		
 				Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTimeWarp,1,0,0,1]	
