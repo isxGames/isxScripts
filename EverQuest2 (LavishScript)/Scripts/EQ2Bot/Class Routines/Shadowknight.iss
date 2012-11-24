@@ -1,10 +1,5 @@
 ;*************************************************************
 ;Shadowknight.iss
-;version 20100317
-;by Pygar
-;
-;20100317
-; * Major overhaul of Combat_Routine() -- should be much better.
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -14,7 +9,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20100317
+	declare ClassFileVersion int script 20121123
 	;;;;
 
 	declare PBAoEMode bool script FALSE
@@ -478,6 +473,9 @@ function Combat_Routine(int xAction)
 {
   declare BuffTarget string local
 	declare TankToTargetDistance float local
+	declare KillTargetIsSoloMob bool local
+	
+	KillTargetIsSoloMob:Set[${Actor[${KillTarget}].IsSolo}]
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
@@ -487,7 +485,7 @@ function Combat_Routine(int xAction)
 	}
 
 	if ${DoHOs}
-	objHeroicOp:DoHO
+		objHeroicOp:DoHO
 
   if ${StartHO}
   {
@@ -530,7 +528,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; AE Taunt and Debuff
-  if ${PBAoEMode} && !${Actor[${KillTarget}].IsSolo}
+  if ${PBAoEMode} && !${KillTargetIsSoloMob}
   {
     if ${MainTank}
     {
@@ -545,7 +543,7 @@ function Combat_Routine(int xAction)
   }
   
 	;; Siphon Strength (Always cast this when it is ready!)
-  if (!${Actor[${KillTarget}].IsSolo} && ${Me.Ability[${SpellType[80]}].IsReady})
+  if (!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[80]}].IsReady})
   {
     call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
@@ -756,7 +754,7 @@ function Combat_Routine(int xAction)
 	;;;;
 
   ;; Cast 5-Proc Damage Shield every time it is ready (And as long as we are fighting non-solo mobs)
-  if !${Actor[${KillTarget}].IsSolo}
+  if !${KillTargetIsSoloMob}
   {
   	;CurrentAction:Set[Combat :: Checking 'Damage Shield']
     if ${Actor[${KillTarget}].Health} > 25

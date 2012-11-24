@@ -164,7 +164,7 @@ function EQ2BotLib_Init()
 	;Triggers
 	AddTrigger AutoFollowTank "\\aPC @*@ @*@:@sender@\\/a tells@*@Follow Me@*@"
 	AddTrigger StopAutoFollowing "\\aPC @*@ @*@:@sender@\\/a tells@*@Wait Here@*@"
-	AddTrigger ToClose "@*@Your Target is too close! Move away!"
+	AddTrigger TooClose "@*@Your Target is too close! Move away!"
 	AddTrigger ReceivedTell "\\aPC @*@ @*@:@Sender@\\/a tells you,@Message@"
 
 	if ${ForwardGuildChat}
@@ -605,7 +605,7 @@ function Swap()
 		}
 		else
 		{
-			EQ2Echo I do not have a ${ItemToBeEquiped} or a  ${OriginalItem}
+			EQ2Echo "I do not have a ${ItemToBeEquiped} or a  ${OriginalItem}"
 		}
 
 	}
@@ -674,7 +674,6 @@ function IsMage(uint ID)
 	}
 }
 
-;; for the sake of EQ2bot (for now), we're going to say that a beastlord is a 'scout'
 function IsScout(uint ID)
 {
 	switch ${Actor[${ID}].Class}
@@ -816,9 +815,9 @@ function Shard(int sPower)
 	call CommonPower ${sPower}
 }
 
-function ToClose()
+function TooClose()
 {
-	; we are to close for a bow change to melee
+	; we are too close for a bow change to melee
 	if ${Me.RangedAutoAttackOn}
 	{
 		eq2execute /togglerangedattack
@@ -1151,7 +1150,6 @@ function CommonHeals(int Health)
 ;function returns the Actor ID from a ActorName.  It prioritzes PCs over pets and npcs
 function GetActorID(string ActorName)
 {
-	variable uint ActorID=0
 	variable int Counter=1
 
 	EQ2:CreateCustomActorArray[byDist,50]
@@ -1159,18 +1157,17 @@ function GetActorID(string ActorName)
 	{
 		if ${CustomActor[${Counter}].Name.Equal[${ActorName}]}
 		{
-			ActorID:Set[${CustomActor[${Counter}].ID}]
 			if ${CustomActor[${Counter}].Type.Equal[PC]}
 			{
 				;There is a PC by this name so return it
-				Return ${ActorID}
+				return ${CustomActor[${Counter}].ID}
 			}
 		}
 	}
 	while ${Counter:Inc}<=${EQ2.CustomActorArraySize}
 
 	;We either found no actor or a NPC so return that ID
-	Return ${ActorID}
+	return 0
 }
 
 
@@ -2881,6 +2878,7 @@ objectdef HeroicOp
 			case brigand
 			case ranger
 			case assasin
+			case beastlord
 				return scout
 				break
 			case default

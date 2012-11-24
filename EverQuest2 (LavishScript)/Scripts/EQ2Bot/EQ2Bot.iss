@@ -48,7 +48,7 @@ variable int Latest_MysticVersion = 0
 variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 20090623
 variable int Latest_RangerVersion = 0
-variable int Latest_ShadowknightVersion = 20100130
+variable int Latest_ShadowknightVersion = 20121123
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 20090619
@@ -1143,7 +1143,7 @@ function main(string Args)
 			}
 		}
 		;;;; This is not proper logic...does not seem to work correctly if you ding AA...TO DO:  Redo.
-		;elseif ${Me.TotalEarnedAPs} < 200
+		;elseif ${Me.TotalEarnedAPs} < 320
 		;{
 		;	if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
 		;	{
