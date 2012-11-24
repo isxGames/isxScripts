@@ -530,10 +530,11 @@ function Combat_Routine(int xAction)
 	}
 
 	;; AE Taunt and Debuff
-  if ${PBAoEMode}
+  if ${PBAoEMode} && !${Actor[${KillTarget}].IsSolo}
   {
     if ${MainTank}
     {
+    	;; Blasphemy
 	    if (${Me.Ability[${SpellType[170]}].IsReady})
 	    {
 	    	 call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
@@ -544,12 +545,13 @@ function Combat_Routine(int xAction)
   }
   
 	;; Siphon Strength (Always cast this when it is ready!)
-  if (${Me.Ability[${SpellType[80]}].IsReady})
+  if (!${Actor[${KillTarget}].IsSolo} && ${Me.Ability[${SpellType[80]}].IsReady})
   {
     call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
+	
 	;; Swift Attack
   if (${Me.Ability[${SpellType[381]}].IsReady})
   {
@@ -611,6 +613,13 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}  
+		elseif (${Me.Ability[${SpellType[170]}].IsReady})
+    {
+    	;; Blaphemy
+	    call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}
     
 	  ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
     if (${Me.Ability[${SpellType[55]}].IsReady})
@@ -727,38 +736,6 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 507
 
 
-	;; build aggro
-  if ${MainTank}
-  {
-  	;; Always try to cast fast casting Combat Arts aftewards to gain aggro (if tank)
-		; shield bash
-    if (${Me.Ability[${SpellType[240]}].IsReady})
-    {
-	    call _CastSpellRange 240 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-		}
-		; taunt
-		if (${Me.Ability[${SpellType[160]}].IsReady})
-    {
-	    call _CastSpellRange 160 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-		}
-  }
-  else
-  {
-    if !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 90
-    {
-	    if (${Me.Ability[${SpellType[170]}].IsReady})
-	    {
-		    call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
-				if ${Return.Equal[CombatComplete]}
-					return CombatComplete
-			}
-  	}
-  }
-	
   ;;;;;
 	;;; Quick Spells for aggro
 	; Hateful Slam (shield bash)
@@ -779,9 +756,9 @@ function Combat_Routine(int xAction)
 	;;;;
 
   ;; Cast 5-Proc Damage Shield every time it is ready (And as long as we are fighting non-solo mobs)
-  CurrentAction:Set[Combat :: Checking 'Damage Shield']
   if !${Actor[${KillTarget}].IsSolo}
   {
+  	;CurrentAction:Set[Combat :: Checking 'Damage Shield']
     if ${Actor[${KillTarget}].Health} > 25
     {
       BuffTarget:Set[${UIElement[cbBuffDSGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
@@ -815,44 +792,6 @@ function Combat_Routine(int xAction)
 
   ;call CheckHeals
 
-  ; If Kerran, use Physical Mitigation Debuff on Epic Mobs or Heroics that are yellow/orange/red cons
-  if ${Me.Race.Equal[Kerran]}
-  {
-    if ${Actor[${KillTarget}].IsEpic}
-    {
-			if ${Me.Ability[Claw].IsReady}
-			{
-				Target ${KillTarget}
-				Me.Ability[Claw]:Use
-				wait 1
-				do
-				{
-				    waitframe
-				}
-				while ${Me.CastingSpell}
-				wait 1
-			}
-		}
-    elseif ${Actor[${KillTarget}].IsHeroic}
-    {
-   		if ${Actor[${KillTarget}].Difficulty} > 2
-    	{
-				if ${Me.Ability[Claw].IsReady}
-				{
-					Target ${KillTarget}
-					Me.Ability[Claw]:Use
-					wait 1
-					do
-					{
-						waitframe
-					}
-					while ${Me.CastingSpell}
-					wait 1
-				}
-    	}
- 		}
-  }
-
   if ${UseMastersRage}
   {
 		if ${Me.Ability["Master's Rage"].IsReady}
@@ -880,6 +819,13 @@ function Combat_Routine(int xAction)
 	
 	
 	;;;; DPS Lineup
+	;; Shadow Coil (dmg + dot)
+	if (${Me.Ability[${SpellType[60]}].IsReady})
+  {
+    call _CastSpellRange 60 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+	}
 	;; Dreadful Wrath (dmg)
 	if (${Me.Ability[${SpellType[154]}].IsReady})
   {
@@ -908,13 +854,6 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}		
-	;; Cleave Flesh (WIS debuff + dmg)
-  if (${Me.Ability[${SpellType[152]}].IsReady})
-  {
-    call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
-			return CombatComplete
-  }
 	;; Malice (dmg)
 	if (${Me.Ability[${SpellType[62]}].IsReady})
   {
@@ -922,13 +861,6 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}	
-	;; Shadow Coil (dmg + dot)
-	if (${Me.Ability[${SpellType[60]}].IsReady})
-  {
-    call _CastSpellRange 60 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-			return CombatComplete
-	}
 	;; Siphon Strike (dmg, + dot)
 	if (${Me.Ability[${SpellType[61]}].IsReady})
   {
@@ -957,7 +889,14 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
-
+	;; Cleave Flesh (WIS debuff + dmg)
+  if (${Me.Ability[${SpellType[152]}].IsReady})
+  {
+    call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+  }
+  
 	CurrentAction:Set[Combat :: CombatComplete]
 	return CombatComplete
 }
@@ -1001,7 +940,7 @@ function CheckGroupOrRaidAggro()
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
-        	                call IsFighterOrScout ${MobTargetID}
+        	                call IsFighter ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
         	                    ;Debug:Echo["Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"]
@@ -1082,7 +1021,7 @@ function CheckGroupOrRaidAggro()
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
-        	                call IsFighterOrScout ${MobTargetID}
+        	                call IsFighter ${MobTargetID}
         	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
         	                {
         	                    ;Debug:Echo["Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"]
