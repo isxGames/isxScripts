@@ -196,9 +196,9 @@ function CloseShipCargo()
 		wait 10					
 		
 		echo "EVESalvage->CloseShipCargo::  Closing Ship Cargohold"
-		EVEWindow[ByCaption, "Inventory"]:Close
+		EVEWindow[ByCaption,"Inventory"]:Close
 		wait 15
-		while ${EVEWindow[ByCaption, "Inventory"](exists)}
+		while ${EVEWindow[ByCaption,"Inventory"](exists)}
 		{
 			wait 0.5
 		}
@@ -222,9 +222,9 @@ function CheckForLoot(int WithinDistance)
   ;; Loot nearby cans before thinking about those that are out of "looting range"
 	i:Set[1]
 	if (${IgnoreRightsOnCans})
-		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= LOOT_RANGE]
+		EVE:QueryEntities[NearbyCans,Name =- "Cargo Container" && Distance <= LOOT_RANGE]
 	else
-		EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= LOOT_RANGE && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+		EVE:QueryEntities[NearbyCans,Name =- "Cargo Container" && Distance <= LOOT_RANGE && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 	if ${NearbyCans.Used} > 0
 	{
 		echo "EVESalvage->CheckForLoot::  ${NearbyCans.Used} cargo containers found, processing..."
@@ -266,9 +266,9 @@ function CheckForLoot(int WithinDistance)
 	if (${WithinDistance} > LOOT_RANGE)
 	{
 		if (${IgnoreRightsOnCans})
-			EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance}]
+			EVE:QueryEntities[Cans,Name =- "Cargo Container" && Distance <= ${WithinDistance}]
 		else
-			EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance} && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+			EVE:QueryEntities[Cans,Name =- "Cargo Container" && Distance <= ${WithinDistance} && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 			
 		if (${Cans.Used} == 0)
 		{
@@ -644,9 +644,9 @@ function CheckForLoot(int WithinDistance)
 					;;;;;;;;;;;;;;;;;;;;;;;
 					;; Ensure that we do not move unless we're positive there are no other cargo containers that are within LOOT_RANGE of our current location
 					if (${IgnoreRightsOnCans})
-						EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= LOOT_RANGE]
+						EVE:QueryEntities[NearbyCans,Name =- "Cargo Container" && Distance <= LOOT_RANGE]
 					else
-						EVE:QueryEntities[NearbyCans, Name =- "Cargo Container" && Distance <= LOOT_RANGE && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+						EVE:QueryEntities[NearbyCans,Name =- "Cargo Container" && Distance <= LOOT_RANGE && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 				  if ${NearbyCans.Used} > 0
 				  {
 						l:Set[1]
@@ -696,9 +696,9 @@ function CheckForLoot(int WithinDistance)
 			;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
 			;; Repopulate Cans with updated data
 			if (${IgnoreRightsOnCans})
-				EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance}]
+				EVE:QueryEntities[Cans,Name =- "Cargo Container" && Distance <= ${WithinDistance}]
 			else
-				EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= ${WithinDistance} && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+				EVE:QueryEntities[Cans,Name =- "Cargo Container" && Distance <= ${WithinDistance} && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 			if (${Cans.Used} == 0)
 			{
 				echo "EVESalvage->CheckForLoot::  - All cargo containers have been processed."
@@ -1207,9 +1207,9 @@ function SalvageArea(bool LootCans)
 				if (${ContinueOn})
 				{
 					if (${IgnoreRightsOnCans})
-						EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= LOOT_RANGE]
+						EVE:QueryEntities[Cans,Name =- "Cargo Container" && Distance <= LOOT_RANGE]
 					else
-						EVE:QueryEntities[Cans, Name =- "Cargo Container" && Distance <= LOOT_RANGE && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
+						EVE:QueryEntities[Cans,Name =- "Cargo Container" && Distance <= LOOT_RANGE && (HaveLootRights = 1 || IsOwnedByCorpMember = 1)]
 				  if ${Cans.Used} > 0
 				  {  	
 						echo "EVESalvage->SalvageArea::  --- Can not approach while jet cans present..."
@@ -1481,7 +1481,7 @@ function LootCargoContainer(entity CargoContainer)
 		;;
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		
-		EVE:MoveItemsTo[CargoToTransfer, ${MyShip.ID}, CargoHold]
+		EVE:MoveItemsTo[CargoToTransfer,${MyShip.ID},CargoHold]
 		wait 5
 		
 		return
@@ -1659,7 +1659,7 @@ function CycleBeltsAndSalvage()
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Populate 'Belts' for this system  
-	EVE:QueryEntities[Belts, Name =- "Asteroid Belt"]
+	EVE:QueryEntities[Belts,Name =- "Asteroid Belt"]
 	
 	if (${Belts.Used} < 1)
 	{
@@ -1884,12 +1884,12 @@ function TransferSalvagedItemsAndLootToHangar()
 		if (${UseCorpHangar})
 		{
 			echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your corporation's hangar ['${CorpFolderToUse}']"
-			EVE:MoveItemsTo[CargoToTransfer, MyStationCorporateHangar, StationCorporateHangar, ${CorpFolderToUse}]
+			EVE:MoveItemsTo[CargoToTransfer,MyStationCorporateHangar,StationCorporateHangar,${CorpFolderToUse}]
 		}
 		else
 		{
 			echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your personal hangar"
-			EVE:MoveItemsTo[CargoToTransfer, MyStationHangar, Hangar]
+			EVE:MoveItemsTo[CargoToTransfer,MyStationHangar,Hangar]
 		}
 	}
 	if (${DoLoot})
@@ -1902,12 +1902,12 @@ function TransferSalvagedItemsAndLootToHangar()
 			if (${UseCorpHangar})
 			{
 				echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your corporation's hangar ['${CorpFolderToUse}']"
-				EVE:MoveItemsTo[CargoToTransfer, MyStationCorporateHangar, StationCorporateHangar, ${CorpFolderToUse}]
+				EVE:MoveItemsTo[CargoToTransfer,MyStationCorporateHangar,StationCorporateHangar,${CorpFolderToUse}]
 			}
 			else
 			{
 				echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  ----- Transferring items to your personal hangar"
-				EVE:MoveItemsTo[CargoToTransfer, MyStationHangar, Hangar]	
+				EVE:MoveItemsTo[CargoToTransfer,MyStationHangar,Hangar]	
 			}
 		}
 	}
@@ -1920,7 +1920,7 @@ function TransferSalvagedItemsAndLootToHangar()
 	wait 5
 	EVEWindow[ByCaption,"Inventory"]:StackAll
 	wait 5
-	EVEWindow[ByCaption, "Inventory"]:Close
+	EVEWindow[ByCaption,"Inventory"]:Close
 }
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1946,10 +1946,10 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			wait 10
 			;;
 			;;;;;;;
-			if (!${EVEWindow[ByItemID, ${TheEntity.ID}](exists)})
+			if (!${EVEWindow[ByItemID,${TheEntity.ID}](exists)})
 				TheEntity:Open
 			wait 5
-			if !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
+			if !${EVEWindow[ByItemID,${TheEntity.ID}](exists)}
 			{
 				do
 				{
@@ -1958,14 +1958,14 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 					if ${TimeOut} > 50
 						break
 				}
-				while !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
+				while !${EVEWindow[ByItemID,${TheEntity.ID}](exists)}
 			}				
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Unloading Salvaged Items..."
 			call PopulateCargoToTransfer "Salvage"
 			if (${CargoToTransfer.Used} > 0)
 			{
 				echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
-				EVE:MoveItemsTo[CargoToTransfer, ${TheEntity.ID}, CargoHold]
+				EVE:MoveItemsTo[CargoToTransfer,${TheEntity.ID},CargoHold]
 			}
 			if (${DoLoot})
 			{
@@ -1973,7 +1973,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 				call PopulateCargoToTransfer "Loot"
 				if (${CargoToTransfer.Used} > 0)
 				{
-					EVE:MoveItemsTo[CargoToTransfer, ${TheEntity.ID}, CargoHold]		
+					EVE:MoveItemsTo[CargoToTransfer,${TheEntity.ID},CargoHold]		
 					echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
 				}
 			}
@@ -1984,7 +1984,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			wait 5
 			EVEWindow[ByCaption,"Inventory"]:StackAll
 			wait 5
-			EVEWindow[ByCaption, "Inventory"]:Close
+			EVEWindow[ByCaption,"Inventory"]:Close
 			break
 		
 		case GROUPID_INDUSTRIALCOMMANDSHIP
@@ -1997,10 +1997,10 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			wait 10
 			;;
 			;;;;;;;
-			if (!${EVEWindow[ByItemID, ${TheEntity.ID}](exists)})
+			if (!${EVEWindow[ByItemID,${TheEntity.ID}](exists)})
 				TheEntity:Open
 			wait 5
-			if !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
+			if !${EVEWindow[ByItemID,${TheEntity.ID}](exists)}
 			{
 				do
 				{
@@ -2009,14 +2009,14 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 					if ${TimeOut} > 50
 						break
 				}
-				while !${EVEWindow[ByItemID, ${TheEntity.ID}](exists)}
+				while !${EVEWindow[ByItemID,${TheEntity.ID}](exists)}
 			}				
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Unloading Salvaged Items..."
 			call PopulateCargoToTransfer "Salvage"
 			if (${CargoToTransfer.Used} > 0)
 			{
 				echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
-				EVE:MoveItemsTo[CargoToTransfer, ${TheEntity.ID}, Hangar, ${CorpFolderToUse}]
+				EVE:MoveItemsTo[CargoToTransfer,${TheEntity.ID},Hangar,${CorpFolderToUse}]
 			}
 			if (${DoLoot})
 			{
@@ -2024,14 +2024,14 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 				call PopulateCargoToTransfer "Loot"
 				if (${CargoToTransfer.Used} > 0)
 				{
-					EVE:MoveItemsTo[CargoToTransfer, ${TheEntity.ID}, Hangar, ${CorpFolderToUse}]		
+					EVE:MoveItemsTo[CargoToTransfer,${TheEntity.ID},Hangar,${CorpFolderToUse}]		
 					echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  ---- ${CargoToTransfer.Used} items found..."
 				}
 			}
 			
 			;;;;;;
 			;; Does this still work?  (TODO:  Test it)
-			EVE:StackItems[${TheEntity.ID}, Hangar, ${CorpFolderToUse}]
+			EVE:StackItems[${TheEntity.ID},Hangar,${CorpFolderToUse}]
 			;;
 			;;;;;;
 			
@@ -2042,7 +2042,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			wait 5
 			EVEWindow[ByCaption,"Inventory"]:StackAll
 			wait 5
-			EVEWindow[ByCaption, "Inventory"]:Close
+			EVEWindow[ByCaption,"Inventory"]:Close
 			break
 		
 		Default
