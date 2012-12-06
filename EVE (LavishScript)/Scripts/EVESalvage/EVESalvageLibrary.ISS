@@ -167,12 +167,12 @@ function GetModulesInformation(bool LootCans)
 ;; Opens the player's ship cargo hold
 function OpenShipCargo()
 {
-	if !${EVEWindow[ByName,"Inventory"](exists)}
+	if !${EVEWindow[ByCaption,"Inventory"](exists)}
 	{
 		echo "EVESalvage->OpenShipCargo::  Opening Ship Cargohold"
 		MyShip:Open
 		wait 15
-		while !${EVEWindow[ByName,"Inventory"](exists)}
+		while !${EVEWindow[ByCaption,"Inventory"](exists)}
 		{
 			wait 0.5
 		}
@@ -186,19 +186,19 @@ function OpenShipCargo()
 ;; Closes the player's ship cargo hold
 function CloseShipCargo()
 {
-	if ${EVEWindow[ByName,"Inventory"](exists)}
+	if ${EVEWindow[ByCaption,"Inventory"](exists)}
 	{
-		EVEWindow[ByName,"Inventory"]:MakeChildActive[ShipCargo]
+		EVEWindow[ByCaption,"Inventory"]:MakeChildActive[ShipCargo]
 		wait 5
 		
 		echo "EVESalvage->CloseShipCargo::  Stacking cargo..."
-		EVEWindow[ByName,"Inventory"]:StackAll
+		EVEWindow[ByCaption,"Inventory"]:StackAll
 		wait 10					
 		
 		echo "EVESalvage->CloseShipCargo::  Closing Ship Cargohold"
-		EVEWindow[byName, "Inventory"]:Close
+		EVEWindow[ByCaption, "Inventory"]:Close
 		wait 15
-		while ${EVEWindow[byName, "Inventory"](exists)}
+		while ${EVEWindow[ByCaption, "Inventory"](exists)}
 		{
 			wait 0.5
 		}
@@ -1870,7 +1870,7 @@ function TransferSalvagedItemsAndLootToHangar()
 	}	
 	
 	echo "EVESalvage->TransferSalvagedItemsAndLootToHangar::  --- Opening Hangar..."
-	if !${EVEWindow[ByName,"Inventory"](exists)}
+	if !${EVEWindow[ByCaption,"Inventory"](exists)}
 	{
 		EVE:Execute[OpenInventory]
 		wait 25
@@ -1912,15 +1912,15 @@ function TransferSalvagedItemsAndLootToHangar()
 		}
 	}
 	
-	EVEWindow[ByName,"Inventory"]:MakeChildActive[StationItems]
+	EVEWindow[ByCaption,"Inventory"]:MakeChildActive[StationItems]
 	wait 5
-	EVEWindow[ByName,"Inventory"]:StackAll
+	EVEWindow[ByCaption,"Inventory"]:StackAll
 	wait 10
-	EVEWindow[ByName,"Inventory"]:MakeChildActive[ShipCargo]
+	EVEWindow[ByCaption,"Inventory"]:MakeChildActive[ShipCargo]
 	wait 5
-	EVEWindow[ByName,"Inventory"]:StackAll
+	EVEWindow[ByCaption,"Inventory"]:StackAll
 	wait 5
-	EVEWindow[byName, "Inventory"]:Close
+	EVEWindow[ByCaption, "Inventory"]:Close
 }
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1941,8 +1941,8 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
 			;;;;;;;
 			;; TODO -- Additional Testing so that this may not be necessary.  For now, just goign to make sure that the inventory window is closed if it happens to be open
-			if ${EVEWindow[ByName,"Inventory"](exists)}
-				EVEWindow[ByName,"Inventory"]:Close
+			if ${EVEWindow[ByCaption,"Inventory"](exists)}
+				EVEWindow[ByCaption,"Inventory"]:Close
 			wait 10
 			;;
 			;;;;;;;
@@ -1978,13 +1978,13 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 				}
 			}
 			
-			EVEWindow[ByName,"Inventory"]:StackAll
+			EVEWindow[ByCaption,"Inventory"]:StackAll
 			wait 10
-			EVEWindow[ByName,"Inventory"]:MakeChildActive[ShipCargo]
+			EVEWindow[ByCaption,"Inventory"]:MakeChildActive[ShipCargo]
 			wait 5
-			EVEWindow[ByName,"Inventory"]:StackAll
+			EVEWindow[ByCaption,"Inventory"]:StackAll
 			wait 5
-			EVEWindow[byName, "Inventory"]:Close
+			EVEWindow[ByCaption, "Inventory"]:Close
 			break
 		
 		case GROUPID_INDUSTRIALCOMMANDSHIP
@@ -1992,8 +1992,8 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			echo "EVESalvage->TransferSalvagedItemsAndLootToEntity::  --- Opening '${TheEntity.Name}'..."
 			;;;;;;;
 			;; TODO -- Additional Testing so that this may not be necessary.  For now, just goign to make sure that the inventory window is closed if it happens to be open
-			if ${EVEWindow[ByName,"Inventory"](exists)}
-				EVEWindow[ByName,"Inventory"]:Close
+			if ${EVEWindow[ByCaption,"Inventory"](exists)}
+				EVEWindow[ByCaption,"Inventory"]:Close
 			wait 10
 			;;
 			;;;;;;;
@@ -2036,13 +2036,13 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			;;;;;;
 			
 			
-			EVEWindow[ByName,"Inventory"]:StackAll
+			EVEWindow[ByCaption,"Inventory"]:StackAll
 			wait 10
-			EVEWindow[ByName,"Inventory"]:MakeChildActive[ShipCargo]
+			EVEWindow[ByCaption,"Inventory"]:MakeChildActive[ShipCargo]
 			wait 5
-			EVEWindow[ByName,"Inventory"]:StackAll
+			EVEWindow[ByCaption,"Inventory"]:StackAll
 			wait 5
-			EVEWindow[byName, "Inventory"]:Close
+			EVEWindow[ByCaption, "Inventory"]:Close
 			break
 		
 		Default
