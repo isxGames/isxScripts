@@ -188,7 +188,7 @@ function CloseShipCargo()
 {
 	if ${EVEWindow["Inventory"](exists)}
 	{
-		EVEWindow["Inventory"]:MakeChildActive[ShipCargo]
+		EVEWindow["Inventory"].ChildWindow[${Me.ShipID},ShipCargo]:MakeActive
 		wait 5
 		
 		echo "EVESalvage->CloseShipCargo::  Stacking cargo..."
@@ -1912,11 +1912,11 @@ function TransferSalvagedItemsAndLootToHangar()
 		}
 	}
 	
-	EVEWindow["Inventory"]:MakeChildActive[StationItems]
+	EVEWindow["Inventory"].ChildWindow[${Me.StationID},StationItems]:MakeActive
 	wait 5
 	EVEWindow["Inventory"]:StackAll
 	wait 10
-	EVEWindow["Inventory"]:MakeChildActive[ShipCargo]
+	EVEWindow["Inventory"].ChildWindow[${Me.ShipID},ShipCargo]:MakeActive
 	wait 5
 	EVEWindow["Inventory"]:StackAll
 	wait 5
@@ -1980,7 +1980,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			
 			EVEWindow["Inventory"]:StackAll
 			wait 10
-			EVEWindow["Inventory"]:MakeChildActive[ShipCargo]
+			EVEWindow["Inventory"].ChildWindow[${Me.ShipID},ShipCargo]:MakeActive
 			wait 5
 			EVEWindow["Inventory"]:StackAll
 			wait 5
@@ -2038,7 +2038,7 @@ function TransferSalvagedItemsAndLootToEntity(entity TheEntity)
 			
 			EVEWindow["Inventory"]:StackAll
 			wait 10
-			EVEWindow["Inventory"]:MakeChildActive[ShipCargo]
+			EVEWindow["Inventory"].ChildWindow[${Me.ShipID},ShipCargo]:MakeActive
 			wait 5
 			EVEWindow["Inventory"]:StackAll
 			wait 5
