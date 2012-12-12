@@ -289,7 +289,7 @@ function Buff_Routine(int xAction)
 			tempvar:Set[1]
 			
 			;First Check if we have red adornment and treat as group buff
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TargetType.Equal[Group]} && ${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}>0
+			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].TargetType.Equal[2]} && ${UIElement[EQ2 Bot].FindUsableChild[lbBuffDPS,listbox].SelectedItems}>0
 			{
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
