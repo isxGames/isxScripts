@@ -182,71 +182,15 @@ function Buff_Init()
 
 	PreAction[21]:Set[Buff_Health]
 	PreSpellRange[21,1]:Set[25]
+	
+	PreAction[22]:Set[Mamba]
+	PreSpellRange[22,1]:Set[410]
 
 }
 
 function Combat_Init()
 {
-	Action[1]:Set[AARhythm_Blade]
-	SpellRange[1,1]:Set[397]
 
-	Action[2]:Set[Combat_Buff]
-	SpellRange[2,1]:Set[155]
-
-	Action[3]:Set[Nuke2]
-	SpellRange[3,1]:Set[61]
-
-	Action[4]:Set[AoE1]
-	SpellRange[4,1]:Set[90]
-
-	Action[5]:Set[AoE2]
-	SpellRange[5,1]:Set[91]
-
-	Action[6]:Set[AoE3]
-	SpellRange[6,1]:Set[92]
-
-	Action[7]:Set[Mastery]
-	SpellRange[7,1]:Set[360]
-	SpellRange[7,2]:Set[379]
-
-	Action[8]:Set[Nuke1]
-	SpellRange[8,1]:Set[60]
-
-	Action[9]:Set[Melee_Attack1]
-	SpellRange[9,1]:Set[151]
-
-	Action[10]:Set[Flank_Attack]
-	SpellRange[10,1]:Set[110]
-
-	Action[11]:Set[Stealth_Attack]
-	SpellRange[11,1]:Set[391]
-	SpellRange[11,2]:Set[130]
-
-	Action[12]:Set[Melee_Attack2]
-	SpellRange[12,1]:Set[152]
-
-	Action[13]:Set[Evasive]
-	SpellRange[13,1]:Set[401]
-
-	Action[14]:Set[Nuke2]
-	SpellRange[14,1]:Set[61]
-
-
-
-;	Action[1]:Set[Bow_Attack]
-;	SpellRange[1,1]:Set[250];
-;
-;	Action[16]:Set[Stun]
-;	SpellRange[16,1]:Set[190];
-;
-;	Action[17]:Set[Debuff2]
-;	SpellRange[17,1]:Set[50]
-;
-;	Action[18]:Set[AAHarmonizing_Shot]
-;	SpellRange[18,1]:Set[386]
-;
-;	Action[19]:Set[AAMessenger]
-;	SpellRange[19,1]:Set[505]
 }
 
 
@@ -368,6 +312,7 @@ function Buff_Routine(int xAction)
 		case Buff_AAResonance
 		case Buff_AADontKillTheMessenger
 		case Buff_AAHeroicStoryTelling
+		case Mamba
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		Default
@@ -382,6 +327,13 @@ function Combat_Routine(int xAction)
 	declare tempvar int local
 	declare DebuffCnt int  0
 	declare range int 0
+
+	declare spellsused int local
+	declare spellthreshold int local
+
+	spellsused:Set[0]
+	spellthreshold:Set[1]
+
 
 	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
 	{
@@ -407,6 +359,9 @@ function Combat_Routine(int xAction)
 		}
 	}
 
+	CurrentAction:Set[Combat Checking Power]
+	call RefreshPower
+
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${DoHOs}
 		call CastSpellRange 303
 
@@ -420,192 +375,197 @@ function Combat_Routine(int xAction)
 
 	call DoJesterCap
 
+	; PoTM
+	if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
+	{
+		call CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
+
 	call CheckHeals
 
-
-	if ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
+  ;Rhythym Blade
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[397]}].IsReady} && !${Me.Maintained[${SpellType[397]}](exists)}
 	{
-		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady} && ${DebuffCnt}<1
+		call CastSpellRange 397 0 1 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
+
+  ;Cadence of Destruction
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[406]}].IsReady} && !${Me.Maintained[${SpellType[406]}](exists)}
+	{
+		call CastSpellRange 406 
+		spellsused:Inc
+	}
+	
+	;;;; Need VC here	
+  ;Victorious Concerto
+	if ${spellsused}<=${spellthreshold} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]}) && ${Me.Ability[${SpellType[407]}].IsReady} && !${Me.Maintained[${SpellType[407]}](exists)}
+	{
+		call CastSpellRange 407 
+		spellsused:Inc
+	}
+
+  ;Victorious Concerto
+	if ${spellsused}<=${spellthreshold} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]}) && ${Me.Ability[${SpellType[408]}].IsReady} && !${Me.Maintained[${SpellType[408]}](exists)}
+	{
+		call CastSpellRange 408 
+		spellsused:Inc
+	}
+
+  ;Painful Lamentation
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
+	{
+		call CastSpellRange 92 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
+
+  ;Perfect Shrill
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} && !${Me.Maintained[${SpellType[60]}](exists)}
+	{
+		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
+
+  ;Thunderous Overature
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[61]}].IsReady} && !${Me.Maintained[${SpellType[61]}](exists)}
+	{
+		call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
+  ;reverberation
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[405]}].IsReady} && !${Me.Maintained[${SpellType[405]}](exists)}
+	{
+		call CastSpellRange 405 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
+
+
+	if ${spellsused}<=${spellthreshold} && ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
+	{
+		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady}
 		{
 			call CastSpellRange 57 0 ${range} 0 ${KillTarget} 0 0 1
-			DebuffCnt:Inc
+			spellsused:Inc
 		}
-		if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && !${RangedAttackMode} && ${DebuffCnt}<1
+		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && !${RangedAttackMode}
 		{
 			call CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
-			DebuffCnt:Inc
+			spellsused:Inc
 		}
 	}
 
-	if (${DebuffMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]}) && ${DebuffCnt}<1
+	if ${spellsused}<=${spellthreshold} && (${DebuffMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
 	{
-		if !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady} && ${DebuffCnt}<1
+		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
 		{
 			call CastSpellRange 55 0 ${range} 0 ${KillTarget} 0 0 1
-			DebuffCnt:Inc
+			spellsused:Inc
 		}
-		if !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady} && ${DebuffCnt}<1
+		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady}
 		{
 			call CastSpellRange 56 0 ${range} 0 ${KillTarget} 0 0 1
-			DebuffCnt:Inc
+			spellsused:Inc
 		}
-		if !${Me.Maintained[${SpellType[58]}](exists)} && ${Me.Ability[${SpellType[58]}].IsReady} && ${DebuffCnt}<1
+		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[58]}](exists)} && ${Me.Ability[${SpellType[58]}].IsReady}
 		{
-			call CastSpellRange 56 0 ${range} 0 ${KillTarget} 0 0 0
-			DebuffCnt:Inc
+			call CastSpellRange 58 0 ${range} 0 ${KillTarget} 0 0 0
+			spellsused:Inc
 		}
 	}
+
+  ;Tap Essence
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
+	{
+		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
 
 	call ActionChecks
-
-	; PoTM
-	if !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
-	{
-		call CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 0
-		return
-	}
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-	if ${OffenseMode}
+  ;Ceremonial Blade
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady} && !${Me.Maintained[${SpellType[151]}](exists)}
 	{
-		; AoE+Dot
-		if !${Me.Maintained[${SpellType[91]}](exists)} && ${Me.Ability[${SpellType[91]}].IsReady}
-		{
-			call CastSpellRange 91 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Master Strike
-		if ${Me.Ability[Sinister Strike].IsReady} && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-		{
-			Target ${KillTarget}
-			call CheckPosition 1 1
-			Me.Ability[Sinister Strike]:Use
-			do
-			{
-				waitframe
-			}
-			while ${Me.CastingSpell}
-			wait 1
-		}
-
-		; Flank debuff
-		if ${Me.Ability[${SpellType[110]}].IsReady} && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-		{
-			call CastSpellRange 110 0 1 1 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Long casting AoE - Good for setting off proc gear
-		if ${Me.Ability[${SpellType[92]}].IsReady}
-		{
-			call CastSpellRange 92 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Stealth Attack Combo
-		; Check if we have the bump AA and use it to stealth us, if we do not, skip it entirely
-		echo stealth check
-		if ${Me.Ability[${SpellType[391]}](exists)} && ${Me.Ability[${SpellType[391]}].IsReady} && ${Me.Ability[${SpellType[130]}].TimeUntilReady}<.1 && !${RangedAttackMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-		{
-			echo use stealth
-			while ${Me.CastingSpell}
-			{
-				wait 2
-			}
-			eq2execute useability Bump
-			call CastSpellRange 130 0 1 1 ${KillTarget}
-			return
-		}
-
-
-		; Long Cast Nuke - Good for setting off proc gear - Mainstay of your damage
-		if ${Me.Ability[${SpellType[61]}].IsReady} && ${Actor[id, ${KillTarget}].Distance}<=${Me.Ability[${SpellType[61]}].Range}
-		{
-			call CastSpellRange 61 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Fast Cast Nuke
-		if ${Me.Ability[${SpellType[60]}].IsReady}
-		{
-			call CastSpellRange 60 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; Evasive Maneuvers
-		if ${Me.Ability[${SpellType[401]}].IsReady} && !${MainTank}
-		{
-			call CastSpellRange 401 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
-
-		; De-agro if not MainTank
-		if ${Me.Ability[${SpellType[180]}].IsReady} && !${MainTank}
-		{
-			call CastSpellRange 180 0 ${range} 0 ${KillTarget} 0 0 0
-			return
-		}
-
-		; Low Damage Power Tap
-		if ${Me.Ability[${SpellType[62]}].IsReady}
-		{
-			call CastSpellRange 62 0 ${range} 0 ${KillTarget} 0 0 0
-			return
-		}
-
-		; Moderate Melee Attack
-		if ${Me.Ability[${SpellType[151]}].IsReady} && !${RangedAttackMode}
-		{
-			call CastSpellRange 151 0 ${range} 0 ${KillTarget} 0 0 1
-			return
-		}
+		call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
 	}
 
-	switch ${Action[${xAction}]}
+  ;Night Strike
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
 	{
-		case AATurnstrike
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
+		eq2execute useability Bump
+		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
 
-		case AARhythm_Blade
-			if !${RangedAttackMode} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
+	; Master Strike
+	if  ${spellsused}<=${spellthreshold} && ${Me.Ability[Sinister Strike].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	{
+		Target ${KillTarget}
+		call CheckPosition 1 1
+		Me.Ability[Sinister Strike]:Use
+		do
+		{
+			waitframe
+		}
+		while ${Me.CastingSpell}
+		wait 1
+	}
 
-		case AAHarmonizing_Shot
-		case Bow_Attack
-		case AAMessenger
-			if ${BowAttacksMode} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
-			{
-				call CheckPosition 3 0 ${KillTarget}
-				while ${Me.CastingSpell}
-				{
-					wait 2
-				}
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1 0 1 0
-			}
-			break
+  ;Evasive Manuevors
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[401]}].IsReady} && !${Me.Maintained[${SpellType[401]}](exists)}
+	{
+		call CastSpellRange 401 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
 
-		case Stun
-			if !${RangedAttackMode} && !${Actor[${KillTarget}].IsEpic}
-			{
-				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
-			}
-			break
+  ;Singing Shot
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[250]}].IsReady} && !${Me.Maintained[${SpellType[250]}](exists)}
+	{
+		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
 
-		Default
+  ;Turn Strike
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.Maintained[${SpellType[387]}](exists)}
+	{
+		call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
+
+  ;Dancing Blade
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[110]}].IsReady} && !${Me.Maintained[${SpellType[110]}](exists)}
+	{
+		call CastSpellRange 110 0 1 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
+
+  ;Sandras Strike
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[152]}].IsReady} && !${Me.Maintained[${SpellType[152]}](exists)}
+	{
+		call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}
+	
+  ;Vexing Verses
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
+	{
+		call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
+
+  ;Mesenger
+	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady} && !${Me.Maintained[${SpellType[505]}](exists)}
+	{
+		call CastSpellRange 505 0 0 0 ${KillTarget} 0 0 1
+		spellsused:Inc
+	}	
+
 			return CombatComplete
-			break
-	}
-
+		
 
 
 }
@@ -658,6 +618,73 @@ function Have_Aggro()
 	}
 
 }
+
+function RefreshPower()
+{
+	declare tempvar int local
+	declare MemberLowestPower int local
+
+	if ${Me.Power}<10 && ${Me.ToActor.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+		Me.Inventory[${Manastone}]:Use
+
+	if ${ShardMode}
+		call Shard 10
+
+	;;;; Energizing Ballad
+	if ${Me.Raid} && ${Me.Ability[${SpellType[409]}].IsReady}
+	{
+		tempvar:Set[0]
+		MemberLowestPower:Set[0]
+		
+		do
+		{
+   		if ${Me.Raid[${tempvar}](exists)} && ${Me.Raid[${tempvar}].ToActor(exists)}
+   		{
+   		  if ${Me.Raid[${tempvar}].Name.NotEqual[${Me.Name}]}
+   			{
+					if ${Me.Raid[${tempvar}].ToActor.Power}<25 && !${Me.Raid[${tempvar}].ToActor.IsDead} && ${Me.Raid[${tempvar}].ToActor.Distance}<=${Me.Ability[${SpellType[409]}].Range}
+    			{
+    				if (${Me.Raid[${tempvar}].ToActor.Power} < ${Me.Raid[${MemberLowestPower}].ToActor.Health}) || ${MemberLowestPower}==0
+    					MemberLowestPower:Set[${tempvar}]
+    			}   				
+   			}
+   		}		
+		}
+		while ${tempvar:Inc}<=24
+
+		if ${Me.Raid[${MemberLowestPower}].ToActor(exists)} && ${Me.Raid[${MemberLowestPower}].ToActor.Distance}<30
+		{	
+			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
+			eq2execute em Energizing Ballad to ${Me.Raid[${MemberLowestPower}].Name}
+		}
+	}
+	
+	if ${Me.Grouped}
+	{
+		;Mana Flow the lowest group member
+		tempvar:Set[1]
+		MemberLowestPower:Set[0]
+		do
+		{
+			if ${Me.Group[${tempvar}].ToActor.Power}<25 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+			{
+				if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
+					MemberLowestPower:Set[${tempvar}]
+			}
+		}
+		while ${tempvar:Inc}<${Me.GroupCount}
+
+
+		if ${Me.Group[${MemberLowestPower}].ToActor(exists)} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<25 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[409]}].IsReady}
+		{
+			call CastSpellRange 409 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}	
+			if ${Me.Group[${MemberLowestPower}].ToActor(exists)}	
+				eq2execute em Energizing Ballad to ${Me.Group[${MemberLowestPower}].ToActor.Name}	
+		}
+	}
+		
+}
+
 
 function Lost_Aggro()
 {
