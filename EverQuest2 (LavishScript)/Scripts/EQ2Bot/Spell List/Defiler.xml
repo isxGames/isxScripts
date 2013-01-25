@@ -12,6 +12,7 @@
 		<Setting name="5,509">Master\'s Smite</Setting>
 		<Setting name="5,303">Divine Providence</Setting>
 		<Setting name="6,210">Cure</Setting>
+		<Setting name="6,56">Wrath</Setting>
 		<Setting name="7,4">Dire Balm II</Setting>
 		<Setting name="7,52">Abomination</Setting>
 		<Setting name="8,300">Revive</Setting>
@@ -43,6 +44,8 @@
 		<Setting name="10,506">Avenging Ancestors</Setting>
 		<Setting name="10,507">Totemic Protection</Setting>
 		<Setting name="10,508">Spirit Aegis</Setting>
+		<Setting name="10,510">Phantasmal Barrier</Setting>
+		<Setting name="10,511">Spiritwrath</Setting>
 		<Setting name="11,313">Spirit Guide</Setting>
 		<Setting name="11,71">Putrefy II</Setting>
 		<Setting name="12,7">Ancient Shroud</Setting>
@@ -115,7 +118,7 @@
 		<Setting name="49,52">Abomination IV</Setting>
 		<Setting name="49,40">Tendrils of Horror II</Setting>
 		<Setting name="50,317">Maelstrom</Setting>
-		<Setting name="50,300">Vivication</Setting>
+		<Setting name="50,304">Vivication</Setting>
 		<Setting name="51,51">Fuliginous Whip III</Setting>
 		<Setting name="52,72">Soul Cannibalize</Setting>
 		<Setting name="52,50">Atrophy V</Setting>
@@ -185,6 +188,8 @@
 		<Setting name="80,8">Deathward</Setting>
 		<Setting name="80,10">Wild Accretion VI</Setting>
 		<Setting name="80,211">Cure Curse</Setting>
+		<Setting name="80,93">Nightmares</Setting>
+		<Setting name="80,509">Tribal Spirit</Setting>
 		<Setting name="80,324">Ancestral Avenger IV</Setting>
 		<Setting name="81,4">Dire Balm IX</Setting>
 		<Setting name="81,283">Crystallize Soul V</Setting>
@@ -220,5 +225,12 @@
 		<Setting name="92,35">Harbinger VIII</Setting>
 		<Setting name="92,23">Noxious Efflux VII</Setting>
 		<Setting name="92,80">Imprecate IX</Setting>
+		<Setting name="93,41">Invective V</Setting>
+		<Setting name="93,1">Sacrificial Restoration IX</Setting>
+		<Setting name="93,20">Vehemence VII</Setting>
+		<Setting name="94,326">Voice of the Ancestors IV</Setting>
+		<Setting name="94,90">Absolute Corruption VI</Setting>
+		<Setting name="94,21">Shroud of Armor VIII</Setting>
+		<Setting name="95,53">Abhorrent Seal V</Setting>		
 	</Set>
 </InnerSpaceSettings>

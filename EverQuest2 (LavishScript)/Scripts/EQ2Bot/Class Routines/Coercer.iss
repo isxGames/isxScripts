@@ -721,7 +721,7 @@ function RefreshPower()
 		if ${Me.Raid[${MemberLowestPower}].ToActor(exists)} && ${Me.Raid[${MemberLowestPower}].ToActor.Distance}<30
 		{	
 			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
-			;eq2execute em Flow to ${Me.Raid[${tempvar}].Name}
+			eq2execute em Flow to ${Me.Raid[${raidlowest}].Name}
 		}
 	}
 	
@@ -744,8 +744,8 @@ function RefreshPower()
 		if ${Me.Group[${MemberLowestPower}].ToActor(exists)} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<65 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[390]}].IsReady}
 		{
 			call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}	
-			if ${Me.Raid[${tempvar}].Name}
-				eq2execute em Flow to ${Me.Raid[${tempvar}].Name}
+			if ${Me.Group[${MemberLowestPower}].ToActor.Name}
+				eq2execute em Flow to ${Me.Group[${MemberLowestPower}].ToActor.Name}
 		}
 	}
 		

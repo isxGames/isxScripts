@@ -212,6 +212,9 @@ function Buff_Init()
 	PreSpellRange[15,1]:Set[503]
 	PreSpellRange[15,2]:Set[502]
 
+	PreAction[16]:Set[BuffTribalSpirit]
+	PreSpellRange[16,1]:Set[509]
+
 }
 
 function Combat_Init()
@@ -460,6 +463,7 @@ function Buff_Routine(int xAction)
 		case AA_RitualisticAggression
 		case AA_RitualOfAbsolution
 		case AA_InfectiveBites
+		case BuffTribalSpirit
 			if ${Me.ToActor.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
@@ -540,26 +544,41 @@ function Combat_Routine(int xAction)
 		spellsused:Inc
 	}
 
-	if !${Me.CastingSpell} && ${Me.Equipment[Dream Scorcher](exists)} && ${Me.Equipment[Dream Scorcher].IsReady}
+	if ${spellsused}>=${spellmax}
+		return CombatComplete
+	call CheckGroupHealth 80
+
+	;aoe checks
+	;Avenging Ancesters
+	if ${spellsused}<${spellmax} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[506]}].IsReady} && !${Me.Maintained[${SpellType[506]}](exists)}
 	{
-		Target ${KillTarget}
-		Me.Equipment[Dream Scorcher]:Use
-		wait 5
+		call CastSpellRange 506 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}
-
-	if ${Me.Ability[Nightmares](exists)} && ${Me.Ability[Nightmares].IsReady}
+	;Defile
+	if ${spellsused}<${spellmax} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[506]}].IsReady} && !${Me.Maintained[${SpellType[506]}](exists)}
 	{
-		Target ${KillTarget}
-		eq2execute useability Nightmares
-		wait 5
+		call CastSpellRange 506 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+	;nightmares
+	if ${spellsused}<${spellmax} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[93]}].IsReady}
+	{
+		call CastSpellRange 93 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}	
+	;absolute corruption
+	if ${spellsused}<${spellmax} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[90]}].IsReady}
+	{
+		call CastSpellRange 90 0 0 0 ${KillTarget}
 		spellsused:Inc
 	}	
 
 	if ${spellsused}>=${spellmax}
 		return CombatComplete
-		
 	call CheckGroupHealth 80
+
+
 	if ${Return} && ${spellsused}<${spellmax} && ${DebuffMode} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsHeroic})
 	{
 		;Umbral Trap
@@ -573,6 +592,13 @@ function Combat_Routine(int xAction)
 		if ${spellsused}<${spellmax} && ${Me.Ability[${SpellType[322]}].IsReady} && !${Me.Maintained[${SpellType[322]}](exists)}
 		{
 			call CastSpellRange 322 0 0 0 ${KillTarget}
+			spellsused:Inc
+		}
+
+		;Spiritwrath
+		if ${spellsused}<${spellmax} && ${Me.Ability[${SpellType[511]}].IsReady}
+		{
+			call CastSpellRange 511 0 0 0 ${KillTarget}
 			spellsused:Inc
 		}
 
@@ -604,6 +630,10 @@ function Combat_Routine(int xAction)
 			spellsused:Inc
 		}
 	}
+	if ${spellsused}>=${spellmax}
+		return CombatComplete
+	call CheckGroupHealth 80
+
 
 	;keep Leg Bite up at all times if we have a pet
 	if ${Me.Maintained[${SpellType[385]}](exists)}
@@ -617,8 +647,13 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 
-	;Before we do our Action, check to make sure our group doesnt need healing
-	call CheckGroupHealth 80
+	;Wrath
+	if ${spellsused}<${spellmax} && ${Me.Ability[${SpellType[56]}].IsReady} && !${Me.Maintained[${SpellType[56]}](exists)}
+	{
+		call CastSpellRange 56 0 0 0 ${KillTarget}
+		spellsused:Inc
+	}
+
 	if ${Return} && ${spellsused}<${spellmax}
 	{
 		switch ${Action[${xAction}]}
@@ -1167,8 +1202,12 @@ function CheckHeals()
 			{
 				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
 					call CastSpellRange 500 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
-				else
-					call CastSpellRange 300 303 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				elseif ${Me.Ability[${SpellType[304]}].IsReady}
+					call CastSpellRange 304 0 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				elseif ${Me.Ability[${SpellType[301]}].IsReady}
+					call CastSpellRange 301 0 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
+				elseif ${Me.Ability[${SpellType[300]}].IsReady}
+					call CastSpellRange 300 0 1 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
@@ -1177,6 +1216,11 @@ function CheckHeals()
 
 function HealMT(int MTID, int MTInMyGroup)
 {
+	;Phantasmal Barrier
+	if ${Me.Ability[${SpellType[510]}].IsReady} && ${Actor[${MTID}].Health}<50
+	{
+		eq2execute useability Phantasmal Barrier
+	}
 		
 	;DeathWard Check
 	if ${Actor[${MTID}].Health}<50 && !${Actor[${MTID}].IsDead} && ${Actor[${MTID}](exists)} && ${Actor[${MTID}].Distance}<=${Me.Ability[${SpellType[8]}].Range}
@@ -1248,6 +1292,13 @@ function EmergencyHeal(int healtarget)
 	if ${Me.Maintained[${SpellType[380]}](exists)}
 		return
 
+	;Phantasmal Barrier
+	if ${Me.Ability[${SpellType[510]}].IsReady}
+	{
+		eq2execute useability Phantasmal Barrier
+		call GroupHeal
+	}
+	
 	;Avenger Death Save
 	call CastSpellRange 338 0 0 0 ${healtarget} 0 0 0 0 1 0
 

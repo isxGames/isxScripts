@@ -42,6 +42,12 @@
 		<Setting name="10,403">Dexterous Sonata</Setting>
 		<Setting name="10,404">Heroic Storytelling</Setting>
 		<Setting name="10,401">Evasive Maneuvers</Setting>
+		<Setting name="10,405">Reverberation</Setting>
+		<Setting name="10,406">Cadence of Destruction</Setting>
+		<Setting name="10,407">Victorious Concerto</Setting>
+		<Setting name="10,408">Rhythmic Overture</Setting>
+		<Setting name="10,409">Energizing Ballad</Setting>
+		<Setting name="10,410">Mamba of Blades</Setting>
 		<Setting name="11,151">Ceremonial Blade</Setting>
 		<Setting name="12,60">Perfect Shrill II</Setting>
 		<Setting name="13,381">Selo\'s Accelerando</Setting>
@@ -222,5 +228,23 @@
 		<Setting name="90,62">Tap Essence VI</Setting>
 		<Setting name="90,352">Lullaby IV</Setting>
 		<Setting name="90,24">Allegretto VII</Setting>
+		<Setting name="91,92">Painful Lamentations VII</Setting>
+		<Setting name="91,152">Sandra\'s Deafening Strike IX</Setting>
+		<Setting name="91,57">Zander\'s Choral Rebuff V</Setting>
+		<Setting name="91,250">Singing Shot VII</Setting>
+		<Setting name="92,23">Elemental Concerto V</Setting>
+		<Setting name="92,25">Rejuvenating Celebration VI</Setting>
+		<Setting name="92,29">Song of Magic VIII</Setting>
+		<Setting name="93,55">Disheartening Descant VII</Setting>
+		<Setting name="93,180">Evade VIII</Setting>
+		<Setting name="93,31">Graceful Avoidance VII</Setting>
+		<Setting name="93,91">Chaos Anthem VI</Setting>
+		<Setting name="94,351">Bria\'s Entrancing Sonnet VII</Setting>
+		<Setting name="94,110">Dancing Blade VII</Setting>
+		<Setting name="94,56">Demoralizing Processional IV</Setting>
+		<Setting name="94,22">Arcane Symphony VII</Setting>
+		<Setting name="95,50">Vexing Verses VIII</Setting>
+		<Setting name="95,27">Aria of Magic VII</Setting>
+		<Setting name="95,130">Night Strike IX</Setting>		
 	</Set>
 </InnerSpaceSettings>
