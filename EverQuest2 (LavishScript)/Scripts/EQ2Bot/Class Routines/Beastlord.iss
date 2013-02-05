@@ -44,7 +44,7 @@ function Class_Declaration()
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
 	PBAoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells,FALSE]}]
 	PetMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Pets,TRUE]}]
-	return 
+
 }
 
 function Pulse()
@@ -221,6 +221,8 @@ function Combat_Routine(int xAction)
 	declare spellsused int local
 	declare spellthreshold int local
 
+	echo Combat Use = ${CombatUse}
+
 	spellsused:Set[0]
 	; This is how many Spells it will cast per Combat Routine Call
 	spellthreshold:Set[${CombatUse}]
@@ -233,139 +235,157 @@ function Combat_Routine(int xAction)
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
-		wait 3
 	}	
 	
 	if ${Me.ToActor.Pet(exists)} && !${Me.ToActor.Pet.InCombatMode}
 	{
 		EQ2Execute /pet attack
-		wait 5
 	}
 
  	call Primals
+	call Advantages 		 
  
- 	if ${Me.ToActor.InCombatMode} && ${Me.ToActor.Pet.InCombatMode}
+ 	if ${Actor[${KillTarget}](exists)} && ${Me.ToActor.InCombatMode} && ${Me.ToActor.Pet.InCombatMode}
  	{
- 		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 		
- 		
-		;;;;Spinechiller Blood
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[152]}].IsReady} 
-		{
-			call CastSpellRange 152 0 0 0 ${KillTarget}
-			spellsused:Inc
-			wait 5
-		}	
-		
- 		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 		
-		
-		;;;;Sharpened Claws
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[153]}].IsReady} 
-		{
-			call CastSpellRange 153 0 0 0 ${KillTarget}
-			spellsused:Inc
-			wait 5
-		}	
-		
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 	
-		
-		;;;;Quick Swipe
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[150]}].IsReady} 
-		{
-			call CastSpellRange 150 0 0 0 ${KillTarget}
-			spellsused:Inc
-			wait 5
-		}			
-		
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 	
-		
-		;;;;Rush
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady} 
-		{
-			call CastSpellRange 151 0 0 0 ${KillTarget}
-			spellsused:Inc
-			wait 5
-		}	
-		
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 	
-		
-		;;;;Elnakii's Swipe
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[390]}].IsReady} 
-		{
-			call CastSpellRange 390 0 0 0 ${KillTarget}
-			spellsused:Inc
-			wait 5
-		}		
-		
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 	
-		
-		;;;;Buff Ralissj's Insight
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[392]}].IsReady} && !${Me.Maintained[${SpellType[392]}](exists)}
-		{
-			call CastSpellRange 392	
-			spellsused:Inc
-			wait 5
-		}
-		
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 	
-		
-		;;;;Glacial Lance
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[61]}].IsReady} &&!${Me.Maintained[${SpellType[61]}](exists)}
-		{
-			call CastSpellRange 61
-			spellsused:Inc
-			wait 5
-		}
-		
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 	
-		
-		;;;;Primal Consumption
-		if ${spellsused}<${spellthreshold} && ${Me.Ability[${SpellType[396]}].IsReady} &&!${Me.Maintained[${SpellType[396]}](exists)}
-		{
-			call CastSpellRange 396
-			spellsused:Inc
-			wait 5
-		}	
-			
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 		
-			
 		;;;;PBAOE
-		if ${spellsused}<${spellthreshold} && ${Mob.Count}>=1 && ${Me.Ability[${SpellType[394]}].IsReady} || ${Mob.Count}>2 && ${MainTank}
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[394]}].IsReady}
 		{
 			call CastSpellRange 394 0 0 0 ${KillTarget}
 			spellsused:Inc
-			wait 5
+			call Advantages
 		}
-	
-		if ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[405]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
- 			call Advantages 		
-	
-		if  ${spellsused}<${spellthreshold} && ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID})
+
+		;;;;Rush
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[151]}].IsReady} 
+		{
+			call CastSpellRange 151 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 
+		}	
+
+	;Dump out if threshold met
+	if ${spellsused}>=${spellthreshold}
+		return 1
+
+		;;;;Growl
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[397]}].IsReady} 
+		{
+			call CastSpellRange 397 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 	
+		}				
+		
+		;;;;Spinechiller Blood
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[152]}].IsReady} 
+		{
+			call CastSpellRange 152 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 	
+		}	
+
+	;Dump out if threshold met
+	if ${spellsused}>=${spellthreshold}
+		return 1
+
+		;;; Master Strike		
+		if  ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && !${InvalidMasteryTargets.Element[${Actor[${KillTarget}].ID}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID})
 		{
 			call CheckPosition 1 1 ${KillTarget}
 			Me.Ability[Sinister Strike]:Use
 			wait 5
+			spellsused:Inc
+			call Advantages 
 		}
-	
-		if !${MainTank} && ${spellsused}>=${spellthreshold}
+
+		;;;;Primal Consumption
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[396]}].IsReady} &&!${Me.Maintained[${SpellType[396]}](exists)}
+		{
+			call CastSpellRange 396
+			spellsused:Inc
+			call Advantages 	
+		}	
+
+	;Dump out if threshold met
+	if ${spellsused}>=${spellthreshold}
+		return 1
+
+		;;;;Evasive Manuevors
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[395]}].IsReady} 
+		{
+			call CastSpellRange 395 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 	
+		}			
+
+		;;;;Elnakii's Swipe
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[390]}].IsReady} 
+		{
+			call CastSpellRange 390 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 	
+		}		
+
+	;Dump out if threshold met
+	if ${spellsused}>=${spellthreshold}
+		return 1
+
+
+		;;;;;Glacial Lance
+		;if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[61]}].IsReady} &&!${Me.Maintained[${SpellType[61]}](exists)}
+		;{
+		;	call CastSpellRange 61 0 2 1 ${KillTarget}
+		;	spellsused:Inc
+		;	call Advantages 
+		;}
+
+		;;;;Quick Swipe
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[150]}].IsReady} 
+		{
+			call CastSpellRange 150 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 	
+		}			
+
+	;Dump out if threshold met
+	if ${spellsused}>=${spellthreshold}
+		return 1
+
+		
+		;;;;Sharpened Claws
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[153]}].IsReady} 
+		{
+			call CastSpellRange 153 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages
+		}	
+
+		;;;;BoneChiller Venom
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[394]}].IsReady} 
+		{
+			call CastSpellRange 394 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages 
+		}	
+
+	;Dump out if threshold met
+	if ${spellsused}>=${spellthreshold}
+		return 1
+
+		;;;;Blindside
+		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[100]}].IsReady} 
+		{
+			call CastSpellRange 100 0 0 0 ${KillTarget}
+			spellsused:Inc
+			call Advantages
+		}	
+
+		;;; Evade
+		if !${MainTank} && ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[185]}].IsReady}
 		{
 			call CastSpellRange 185 0 0 0 ${aggroid}
+			spellsused:Inc
 		}
-		if !${MainTank} && ${spellsused}==${spellthreshold} || ${MainTank} && ${spellsused}<=${spellthreshold}
-		{
-			call CastSpellRange 395 0 0 0 ${aggroid}
-		}
-		
-		wait 5
-	
+
 	}
 	return
 }
@@ -430,6 +450,23 @@ function CheckHeals()
 
 function Advantages()
 {
+	if ${Me.Ability[${SpellType[401]}].IsReady} || ${Me.Ability[${SpellType[402]}].IsReady} || ${Me.Ability[${SpellType[403]}].IsReady} || ${Me.Ability[${SpellType[404]}].IsReady} || ${Me.Ability[${SpellType[431]}].IsReady} || ${Me.Ability[${SpellType[435]}].IsReady}
+	{
+		;continue
+	}
+	else
+	{
+		echo No Advantages ready
+		return 0
+	}
+	
+	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${PrimalUse}
+		call Primals
+
+	;buff advantage gain if not at target savagery
+	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}<=${PrimalUse} && ${Me.Ability[${SpellType[392]}].IsReady}
+		call CastSpellRange 392
+		
 	declare counter int local
  ;; Loop for Advantages both Offensive and Defensive 
 	if ${Me.ToActor.Pet(exists)} && ${Actor[${KillTarget}].Type.Equal[NPC]}
@@ -439,94 +476,153 @@ function Advantages()
 			counter:Set[432]
 			do
 			{
-				if ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${Me.ToActor.Health}>=60 && ${FightType}!=1
+				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${Me.ToActor.Health}>=60 && ${FightType}!=1
 				{
-					call CastSpellRange ${counter} 1 0 0 ${KillTarget}
+					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 					wait 2
 			  }
-			  Elseif ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)}  && ${Me.ToActor.Health}<60 || ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)} && ${FightType}==1
+			  Elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)}  && ${Me.ToActor.Health}<60 || ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)} && ${FightType}==1
 			 	{
-					call CastSpellRange 434 1 0 0 ${KillTarget}
+					call CastSpellRange 434 0 0 0 ${KillTarget}
 					wait 2
 				}
-				Elseif ${Me.Ability[${SpellType[431]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[431]}].IsReady} && ${FightType}==1 || ${Me.Ability[${SpellType[435]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[435]}].IsReady} && ${FightType}==1
+				Elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[431]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[431]}].IsReady} && ${FightType}==1 || ${Me.Ability[${SpellType[435]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[435]}].IsReady} && ${FightType}==1
 			 	{
 			 		if ${Me.Ability[${SpellType[403]}].IsReady}
-						call CastSpellRange 431 1 0 0 ${KillTarget}
+						call CastSpellRange 431 0 0 0 ${KillTarget}
 					if ${Me.Ability[${SpellType[405]}].IsReady}
-						call CastSpellRange 435 1 0 0 ${KillTarget}
-					wait 2
+						call CastSpellRange 435 0 0 0 ${KillTarget}
 				}
 			}
 			while ${counter:Inc}<439
 		}
 		if ${Me.Maintained[Feral Stance](exists)}
 		{
-			counter:Set[401]
-			do
+			if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[402]}].IsReady} && !${Me.Maintained[${SpellType[402]}](exists)}
 			{
-				if ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${Me.ToActor.Health}>=40 && ${FightType}!=1
-				{
-					call CastSpellRange ${counter} 1 0 0 ${KillTarget}
-					wait 2
-			  }
-			  Elseif ${Me.Ability[${SpellType[403]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[403]}].IsReady} && ${FightType}==1 || ${Me.Ability[${SpellType[405]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[405]}].IsReady} && ${FightType}==1
-			 	{
-			 		if ${Me.Ability[${SpellType[403]}].IsReady}
-						call CastSpellRange 403 1 0 0 ${KillTarget}
-					if ${Me.Ability[${SpellType[405]}].IsReady}
-						call CastSpellRange 405 1 0 0 ${KillTarget}
-					
-					wait 2
-				}
+				echo cast Advantage ${SpellType[402]}
+				call CastSpellRange 402 0 1 0 ${KillTarget}
 			}
-			while ${counter:Inc}<409
-		}		
+			elseif ${Actor[${KillTarget}](exists)} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[404]}].IsReady}
+			{
+				echo cast Advantage ${SpellType[404]}
+				call CastSpellRange 404 0 1 0 ${KillTarget}
+			}
+			elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[401]}].IsReady}
+			{
+				echo cast Advantage ${SpellType[401]}
+				call CastSpellRange 401 0 1 1 ${KillTarget}
+			}
+			elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[403]}].IsReady}
+			{
+				echo cast Advantage ${SpellType[404]}
+				call CastSpellRange 403 0 1 1 ${KillTarget}
+			}
+		}	
 	}	
-	return
+	return 1
 }
 
 function Primals()
 {
+	;use Savage Blaze to raise savagery
+	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${Math.Calc[${PrimalUse}-2]} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}<=${PrimalUse} && ${Me.Ability[${SpellType[399]}].IsReady} && !${Me.Maintained[${SpellType[399]}](exists)}
+	{
+		call CastSpellRange 399
+		echo Blaze
+	}
+	;dump function if savagery not high enough
+	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}<${PrimalUse}
+	{
+		echo Not enough Savagery
+		echo ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}<=${PrimalUse}
+		return 0
+	}
+	else
+	{
+		echo Min Savagery Needed - Proceed to primals
+	}
+	
+	;Savagery Freeze
+	if ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].Health}>50 || ${Actor[${KillTarget}].IsEpic}) && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${PrimalUse} && ${Me.Ability[${SpellType[480]}].IsReady} && !${Me.Maintained[${SpellType[480]}](exists)}
+	{
+		echo Savagery Freeze
+		call CastSpellRange 480
+	}
+
+	;Primal Assault
+	if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[398]}].IsReady} && (${Actor[${KillTarget}].Health}>50 || ${Actor[${KillTarget}].IsEpic})
+	{
+		echo Primal Assault
+		call CastSpellRange 398
+	}
+		
 	declare counter int local
 	;; Loop for Primals both Offensive and Defensive
-	if ${Me.ToActor.Pet(exists)} && ${Actor[${KillTarget}].Type.Equal[NPC]}
+	if ${Me.ToActor.Pet(exists)}
 	{
 		if ${Me.Maintained[Spiritual Stance](exists)}
 		{
 			counter:Set[441]
 			do
 			{			
-				if ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${Math.Calc[${PrimalUse}-1]} && ${Me.ToActor.Health}>=50 
+				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${Math.Calc[${PrimalUse}-1]}
 				{
-					call CastSpellRange ${counter} 1 0 0 ${KillTarget}
-					wait 2
+					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 			  }
-			  Elseif ${Me.Ability[${SpellType[${counter}]}].IsReady} && ${Me.ToActor.Health}<=50
+			  elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && ${Me.ToActor.Health}<=50
 			 	{
-					call CastSpellRange ${counter} 1 0 0 ${KillTarget}
-					wait 2
+					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 				}			
 			}
-			while ${counter:Inc}<447
+			while ${Actor[${KillTarget}](exists)} && ${counter:Inc}<447
 		}
-		if ${Me.Maintained[Feral Stance](exists)}
+		elseif ${Me.Maintained[Feral Stance](exists)}
 		{
-			counter:Set[411]
 			do
 			{
-				if ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${PrimalUse} && ${Me.ToActor.Health}>=50 
+				counter:Set[0]
+				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[411]}].IsReady} && !${Me.Maintained[${SpellType[411]}](exists)}
 				{
-					call CastSpellRange ${counter} 1 0 0 ${KillTarget}
-					wait 2
-			  }
-			  Elseif ${Me.Ability[${SpellType[${counter}]}].IsReady} && ${Me.ToActor.Health}<=50
-			 	{
-					call CastSpellRange ${counter} 1 0 0 ${KillTarget}
-					wait 2
-				}			  
+					echo cast Primal ${SpellType[411]}
+					call CastSpellRange 411 0 1 0 ${KillTarget}
+					counter:Inc
+				}
+				elseif ${Actor[${KillTarget}](exists)} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[414]}].IsReady}
+				{
+					echo cast Advantage ${SpellType[414]}
+					call CastSpellRange 414 0 1 0 ${KillTarget}
+					counter:Inc
+				}
+				elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[412]}].IsReady}
+				{
+					echo cast Advantage ${SpellType[412]}
+					call CastSpellRange 412 0 1 1 ${KillTarget}
+					counter:Inc
+				}
+				elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[413]}].IsReady}
+				{
+					echo cast Advantage ${SpellType[413]}
+					call CastSpellRange 413 0 1 1 ${KillTarget}
+					counter:Inc
+				}
+				elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[415]}].IsReady}
+				{
+					echo cast Advantage ${SpellType[415]}
+					call CastSpellRange 415 0 1 1 ${KillTarget}
+					counter:Inc
+				}				
+				elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[416]}].IsReady}
+				{
+					echo cast Advantage ${SpellType[416]}
+					call CastSpellRange 416 0 1 1 ${KillTarget}
+					counter:Inc
+				}				
+
+				if ${counter}>0
+					call Advantages  
 			}
-			while ${counter:Inc}<420
+			while ${Actor[${KillTarget}](exists)} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].ShortLabel}>=${PrimalUse}
 		}			
 	}	
 	return
@@ -542,25 +638,25 @@ function SummonPet()
 		switch ${PetType}
 		{
 		case 1
-			call CastSpellRange 460 1
+			call CastSpellRange 460 
 			echo casting ${SpellType[460]}
 			ChangePet:Set[${PetType}]
 			wait 50 
 			break
 		case 2
-			call CastSpellRange 461 1
+			call CastSpellRange 461 
 			echo casting ${SpellType[461]}
 			ChangePet:Set[${PetType}]
 			wait 50 
 			break
 		case 3
-			call CastSpellRange 462 1
+			call CastSpellRange 462 
 			echo casting ${SpellType[462]}
 			ChangePet:Set[${PetType}]
 			wait 50 
 			break
 		case 4
-			call CastSpellRange 463 1
+			call CastSpellRange 463 
 			echo casting ${SpellType[463]}
 			ChangePet:Set[${PetType}]
 			wait 50 
