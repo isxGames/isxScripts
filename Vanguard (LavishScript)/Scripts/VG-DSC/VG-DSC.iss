@@ -188,7 +188,6 @@ variable(global) Obj_YahooIM YahooIM
 ;===================================================
 function main()
 {
-
 	;; keep looping this until we end the script
 	while ${isRunning}
 	{
@@ -478,6 +477,14 @@ function Initialize()
 		echo "Unable to load ISXVG, exiting script"
 		endscript VG-DSC
 	}
+	;; we are bailing out if ISXIM isn't loaded
+	if !${IM(exists)}
+	{
+		echo "ISXIM could not be loaded... you may need to reinstall it."
+		vgecho "ISXIM could not be loaded... you may need to reinstall it."
+		endscript VG-DSC
+	}
+	
 	wait 30 ${Me.Chunk(exists)} && ${Me.FName(exists)}
 	CurrentChunk:Set[${Me.Chunk}]
 
