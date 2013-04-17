@@ -18,6 +18,9 @@
 ;    the option to harvest only Nodes you identify... plus when adding the 
 ;    node you want to harvest just target it and click add.
 ;
+; 20130416 (Zandros)
+;  * Patched the considation of resources to work with the latest patch
+;
 ; 20111016 (Zandros)
 ;  * Fixed setting DTarget, Follow Routines, and Looting Routines
 ;
@@ -682,7 +685,7 @@ function Consolidate_Resources()
 	variable int i
 	for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
 	{
-		if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Quantity}>80
+		if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Quantity}>=9999
 		{
 			echo "Consolidate: ${Me.Inventory[${i}]}"
 			Me.Inventory[${i}]:StartConvert
