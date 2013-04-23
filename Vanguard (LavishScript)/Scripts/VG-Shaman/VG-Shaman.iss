@@ -1074,19 +1074,19 @@ function Startup()
 	
 	
 
-	Script:Squelch
+	;Script:Squelch
 	;declare	TotalKills	int	global	0
 	;declare	tempXPHour	int	global	0
 	;declare	TotalKillsHour	int	global	0
 	;TotalKills:Set[0]
 	;tempXPHour:Set[0]
 	;TotalKillsHour:Set[0]
-	HUD -add KillsHUD 850,855 		"  CoolDown: ${VG.InGlobalRecovery}"
-	HUD -add XPHUD 850,870 			"   Casting: ${Me.IsCasting}"
-	HUD -add IsDeadHUD 850,885	 	"AreWeReady: ${Check.AreWeReady}"
-	HUD -add TypeHUD 850,900		"    Eating: ${Check.AreWeEating}"
-	HUD -add FormHUD 850,915		"   Posture: ${Pawn[me].Posture}"
-	Script:Unsquelch
+	;HUD -add KillsHUD 850,855 		"  CoolDown: ${VG.InGlobalRecovery}"
+	;HUD -add XPHUD 850,870 			"   Casting: ${Me.IsCasting}"
+	;HUD -add IsDeadHUD 850,885	 	"AreWeReady: ${Check.AreWeReady}"
+	;HUD -add TypeHUD 850,900		"    Eating: ${Check.AreWeEating}"
+	;HUD -add FormHUD 850,915		"   Posture: ${Pawn[me].Posture}"
+	;Script:Unsquelch
 	
 	VGExecute "/setfog 444444, 999999, 100, 100, 240"
 }
