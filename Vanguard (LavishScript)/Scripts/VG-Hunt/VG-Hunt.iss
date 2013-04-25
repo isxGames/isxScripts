@@ -38,6 +38,9 @@
 ; 20130422 (Zandros)
 ; * Thank you Amadeus for fixing the Altar not able to be clicked
 ;
+; 20130424 (Zandros)
+; * Fixed an issue with classes not having any Energy or Endurance
+;
 ;===================================================
 ;===               Includes                     ====
 ;===================================================
@@ -349,12 +352,23 @@ function NoTargetRoutine()
 	if ${Me.Encounter}<1 && !${Me.InCombat}
 	{
 		;; echo that we need more health/energy
-		if (${Me.EnergyPct}<60 || ${Me.HealthPct}<60 || ${Me.EndurancePct}<=45) && !${NeedMoreEnergy}
+		if !${NeedMoreEnergy}
 		{
-			NeedMoreEnergy:Set[TRUE]
-			vgecho RESTING FOR MORE HEALTH/ENERGY BEFORE HUNTING
-			
-			if ${Me.EnergyPct}<60 || ${Me.HealthPct}<60
+			if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.EndurancePct}<=45
+			{
+				NeedMoreEnergy:Set[TRUE]
+				vgecho RESTING:  Endurance is below 45%
+			}
+			if (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<=60) || ${Me.HealthPct}<60
+			{
+				NeedMoreEnergy:Set[TRUE]
+				vgecho RESTING:  Health or Energy is below 60%
+			}
+		}
+		
+		if ${NeedMoreEnergy}
+		{
+			if (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<60) || ${Me.HealthPct}<60
 			{
 				variable string EatThis = None
 				if ${Me.Inventory[exactname,Fresh Berries](exists)}
@@ -379,19 +393,21 @@ function NoTargetRoutine()
 				Me.Inventory[${EatThis}]:Use
 				wait 50
 			}
-		}
 		
-		;; loop this to regain more energy
-		while !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat} && (${Me.EndurancePct}<=50 || ${Me.EnergyPct}<=90 || ${Me.HealthPct}<=90) && ${NeedMoreEnergy}
-		{
-			EchoIt "Resting- My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
-			vgecho "Resting- My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
-			wait 50 ${Me.Target(exists)} || ${Me.Encounter}>0
-			waitframe
-		}
+			;; loop this to regain more energy
+			while ${Me.HealthPct}<90 || (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<90) || (${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.EndurancePct}<50)
+			{
+				if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Me.InCombat}
+					break
+				EchoIt "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+				vgecho "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+				wait 50 ${Me.Target(exists)} || ${Me.Encounter}>0
+				waitframe
+			}
 
-		;; Always stand up
-		VGExecute "/stand"
+			;; Always stand up
+			VGExecute "/stand"
+		}
 		
 		;; Check Inventory - for now, we will camp if it is full
 		if ${Me.InventorySlotsOpen}<=5 && !${Me.Target(exists)}
@@ -408,8 +424,8 @@ function NoTargetRoutine()
 			}
 		}
 
-		;; Go find a target if our health and energy is high enough
-		if ${Me.EnergyPct}>=50 && ${Me.HealthPct}>=50
+		;; Go find a target if our health is high enough
+		if ${Me.HealthPct}>=90
 		{
 			;; reset our flag
 			NeedMoreEnergy:Set[FALSE]
