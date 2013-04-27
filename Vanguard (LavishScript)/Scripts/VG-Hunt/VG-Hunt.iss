@@ -231,13 +231,14 @@ function HaveTargetRoutine()
 
 		
 	;; Move closer if we have a target (we set the distance)
-	if ${Me.Target.Distance}>${PullDistance}
-	{
-		if ${doNPC} && ${Me.Target.Type.Equal[NPC]}
-			call MoveCloser ${PullDistance}
-		if ${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]}
-			call MoveCloser ${PullDistance}
-	}
+	if ${doNPC} && ${Me.Target.Type.Equal[NPC]} && ${Me.Target.Distance}>${PullDistance}
+		call MoveCloser ${PullDistance}
+	if ${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]} && ${Me.Target.Distance}>${PullDistance}
+		call MoveCloser ${PullDistance}
+	if ${doNPC} && ${Me.Target.Type.Equal[NPC]} && ${Me.Target.Distance}<11
+		call MoveCloser 4
+	if ${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]} && ${Me.Target.Distance}<11
+		call MoveCloser 4
 
 	
 	;; Backup if we are too close
@@ -370,7 +371,7 @@ function NoTargetRoutine()
 		{
 			if (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<60) || ${Me.HealthPct}<60
 			{
-				variable string EatThis = None
+				variable string EatThis = Nothing
 				if ${Me.Inventory[exactname,Fresh Berries](exists)}
 					EatThis:Set["Fresh Berries"]
 				if ${Me.Inventory[exactname,Fresh Fish](exists)}
@@ -385,13 +386,17 @@ function NoTargetRoutine()
 					EatThis:Set["Loaf of Honey Bread"]
 				if ${Me.Inventory[exactname,Hard Boiled Egg](exists)}
 					EatThis:Set["Hard Boiled Egg"]
+				if ${Me.Inventory[exactname,Var Stew](exists)}
+					EatThis:Set["Var Stew"]
 
-				VGExecute "/stand"
 				vgecho "Eating:  ${EatThis}"
-				wait 5
-				
-				Me.Inventory[${EatThis}]:Use
-				wait 50
+				if ${Me.Inventory[exactname,"${EatThis}"](exists)}
+				{
+					while !${Me.Inventory[exactname,"${EatThis}"].IsReady}
+						waitframe
+					Me.Inventory["${EatThis}"]:Use
+					wait 5
+				}
 			}
 		
 			;; loop this to regain more energy
