@@ -83,6 +83,10 @@
 ;   Removed the redundancy checks for AutoAttack and removes Shroud when
 ;   unchecked.  Also, included a check to see if you are eating.
 ;
+; 20130425 (Zandros)
+; * Crits now working; removed references to DTargetHealth in all healing
+;   routines; now checks immunities before fighting.
+;
 ;
 ;===================================================
 ;===               Includes                     ====
@@ -215,7 +219,7 @@ function main()
 ;===================================================
 function HandleCoolDown()
 {
-	if ${isPaused} || !${Check.AreWeReady} || ${Check.AreWeEating} || ${Me.IsCasting} || ${GV[bool,DeathReleasePopup]} || ${Pawn[me].IsMounted} || ${Me.Effect[Invulnerability Login Effect](exists)}
+	while ${isPaused} || !${Check.AreWeReady} || ${Check.AreWeEating} || ${Me.IsCasting} || ${GV[bool,DeathReleasePopup]} || ${Pawn[me].IsMounted} || ${Me.Effect[Invulnerability Login Effect](exists)}
 	{
 		if ${isPaused}
 			call MeleeAttackOff
@@ -236,8 +240,7 @@ function HandleCoolDown()
 				call MeleeAttackOff
 			}
 		}
-		
-		call ReadyCheck
+		wait ${DelayAttack}
 	}
 }
 
@@ -318,7 +321,7 @@ function AlwaysCheck()
 	}
 
 	;;;;;;;;;;
-	;; Set our variables
+	;; Set group variables
 	if ${Me.IsGrouped}
 	{
 		;; Scan everyone
@@ -355,23 +358,30 @@ function AlwaysCheck()
 			}
 		}
 	}
-
-	call ReadyCheck
-
-	;; Ensure tank is always set to our DTarget during combat
-	if ${Pawn[Name,${Tank}](exists)} && ${Pawn[Name,${Tank}].CombatState}>0
+	
+	;;;;;;;;;;
+	;; These abilities require the person to be in a group to work
+	;; DTarget does not need to be set
+	if ${isGroupMember} && ${Range}<10
 	{
-		if !${Me.DTarget.Name.Equal[${Tank}]}
+		;; Cast if health<=85, range<10, group members only
+		if ${doLifeWard} && ${LowestHealth}<${LifeWardPct}
+			call CastNow "${LifeWard}"
+		if ${doLifeWard} && ${Me.Pet(exists)} && ${Me.Pet.Health}<${LifeWardPct}
+			call CastNow "${LifeWard}"
+	}
+	
+	
+	;;;;;;;;;;
+	;; GROUP HEALING
+	if ${Me.IsGrouped}
+	{
+		;; Tank Healing
+		if !${Tank.Find[${Me.FName}]} && ${Tank.Find[${Group[${GroupNumber}].Name}]}
 		{
-			Pawn[name,${Tank}]:Target
-			wait 7 ${Me.DTargetHealth(exists)}
-		}
-		;; always cast Aegis of Life on the tank
-		if ${Me.DTarget.Name.Equal[${Tank}]}
-		{
-			if ${doAegisofLife} && ${Me.DTargetHealth}<${AegisofLifePct}
+			if ${doAegisofLife} && ${Group[${GroupNumber}].Health}<${AegisofLifePct}
 			{
-				;; ifAegis of Life is Ready then fire off the +10% Healing clickie
+				;; if Aegis of Life is Ready then fire off the +10% Healing clickie
 				if ${haveZephyrkinShield} && ${Me.Ability[${AegisofLife}].IsReady}
 				{
 					if ${Me.Inventory["Zephyrkin, Eye of the Mistral Storm"].IsReady}
@@ -386,66 +396,63 @@ function AlwaysCheck()
 						wait 3
 					}
 				}		
-				call UseAbility "${AegisofLife}"
+				;; cast Aegis of Life on the tank
+				call UseAbilityOther ${GroupNumber} "${AegisofLife}"
 			}
 			;; if tank is in our group
 			if ${doEmrgHeal} && ${isGroupMember}
 			{
-				if ${Pawn[Name,${Tank}].Distance}<30 && ${Me.DTargetHealth}<${PanaceaPct}
+				if ${Pawn[Name,${Tank}].Distance}<30 && ${Group[${GroupNumber}].Health}<${PanaceaPct}
+				{
+					if !${Me.DTarget.Name.Equal[${Group[${GroupNumber}].Name}]}
+					{
+						Pawn[name,"${Group[${GroupNumber}].Name}"]:Target
+						wait 3
+					}
 					call CastNow "${Panacea}"
-				if ${Pawn[Name,${Tank}].Distance}<10 && ${Me.DTargetHealth}<${EmrgHealPct}
+				}
+				if ${Pawn[Name,${Tank}].Distance}<10 && ${Group[${GroupNumber}].Health}<${EmrgHealPct}
 					call CastNow "${Intercession}"
 			}
 		}
-		;; Yourself
-		if ${doEmrgHeal} && ${Me.HealthPct}<${PanaceaPct}
-			call UseAbilitySelf "${Panacea}"
+	
+		;;;;;;;;;;
+		;; Small/Big Heal
+		if ${Range}<30
+		{
+			;; Cast if health<=55, range<30, anyone
+			if ${doSmallHeal} && ${LowestHealth}<${SmallHealPct}
+				call UseAbilityOther ${GroupNumber} "${Remedy}"
+
+			;; Cast if health<=55, range<30, anyone
+			if ${doBigHeal} && ${LowestHealth}<${BigHealPct}
+				call UseAbilityOther ${GroupNumber} "${Restoration}"
+		}
 	}
 	
 	;;;;;;;;;;
-	;; These abilities require the person to be in a group to work
-	;; DTarget does not need to be set
-	if ${isGroupMember} && ${Range}<10
+	;; SELF HEALING
+	if !${Me.IsGrouped}
 	{
-		;; Cast if health<=85, range<10, group members only
-		if ${doLifeWard} && ${LowestHealth}<${LifeWardPct}
-			call CastNow "${LifeWard}"
-		if ${doLifeWard} && ${Me.Pet(exists)} && ${Me.Pet.Health}<${LifeWardPct}
-			call CastNow "${LifeWard}"
 		;; Cast if health<=35, range<10, group members only
 		if ${doEmrgHeal} && ${LowestHealth}<${EmrgHealPct} && ${Me.InCombat}
 			call CastNow "${Intercession}"
-	}
-	
-	;;;;;;;;;;
-	;; Small/Big Heal
-	if ${Range}<30
-	{
-		;; Cast if health<=55, range<30, anyone
-		if ${doSmallHeal}
+		if ${doEmrgHeal}
 		{
-			if !${GroupNumber} && ${LowestHealth}<${SmallHealPct}
-				call UseAbilitySelf "${Remedy}"
-			if ${GroupNumber} && ${LowestHealth}<${SmallHealPct}
-				call UseAbilityOther ${GroupNumber} "${Remedy}"
-			if ${Me.DTarget(exists)} && !${Me.Pet.Name.Equal[${Me.DTarget.Name}]} && ${Me.DTargetHealth}<${SmallHealPct}
-				call UseAbility "${Remedy}"
-			if ${Me.Pet(exists)} && ${Me.Pet.Health}<${SmallHealPct}
-				call CastNow "${HealAttendant}"
+			if ${LowestHealth}<${PanaceaPct} 
+			{
+				if !${Me.DTarget.Name.Equal[${Me.FName}]}
+				{
+					Pawn[Me]:Target
+					wait 3
+				}
+				call CastNow "${Panacea}"
+			}
 		}
-
-		;; Cast if health<=55, range<30, anyone
-		if ${doBigHeal}
-		{
-			if !${GroupNumber} && ${LowestHealth}<${BigHealPct}
-				call UseAbilitySelf "${Restoration}"
-			if ${GroupNumber} && ${LowestHealth}<${BigHealPct}
-				call UseAbilityOther ${GroupNumber} "${Restoration}"
-			if ${Me.DTarget(exists)} && !${Me.Pet.Name.Equal[${Me.DTarget.Name}]} && ${Me.DTargetHealth}<${BigHealPct}
-				call UseAbility "${Restoration}"
-			if ${Me.Pet(exists)} && ${Me.Pet.Health}<${BigHealPct}
-				call CastNow "${HealAttendant}"
-		}
+		if ${doSmallHeal} && ${LowestHealth}<${SmallHealPct}
+			call UseAbilitySelf "${Remedy}"
+		if ${doBigHeal} && ${LowestHealth}<${BigHealPct}
+			call UseAbilitySelf "${Restoration}"
 	}
 
 	;;;;;;;;;;
@@ -456,12 +463,8 @@ function AlwaysCheck()
 		VGExecute /can \"${BosridsGift}\"
 		
 	;; Heal our pet
-	if ${Me.HavePet} && ${Me.Pet(exists)}
-	{
-		;; Heal the pet
-		if ${Me.Pet.Health}<55
-			call CastNow "${HealAttendant}"
-	}
+	if ${Me.HavePet} && ${Me.Pet(exists)} && ${Me.Pet.Health}<65
+		call CastNow "${HealAttendant}"
 
 	
 	;-------------------------------------------
@@ -478,7 +481,7 @@ function AlwaysCheck()
 				if !${Me.Target(exists)}
 				{
 					VGExecute /cleartargets
-					waitframe
+					wait 3
 					VGExecute "/assist ${Tank}"
 					wait 10 ${Me.TargetAsEncounter.Difficulty(exists)}
 				}
@@ -495,7 +498,7 @@ function AlwaysCheck()
 			if ${Pawn[Name,${Tank}].CombatState}==0 && ${Pawn[Name,${Tank}].Distance}<=50
 			{
 				VGExecute /cleartargets
-				waitframe
+				wait 5
 				Pawn[id,${Me.Encounter[1].ID}]:Target
 				wait 10 ${Me.TargetAsEncounter.Difficulty(exists)}
 			}
@@ -537,13 +540,9 @@ function DownTime()
 	for ( i:Set[1] ; ${i}<=${Me.Effect.Count} && ${Me.Effect[${i}].Name(exists)} ; i:Inc )
 	{
 		if ${Me.Effect[${i}].Name.Find[Poison]} || ${Me.Effect[${i}].Name.Find[Disease]}
-		{
 			call UseAbilitySelf "${Purge}"
-		}
 		if ${Me.Effect[${i}].Name.Find[Curse]}
-		{
 			call UseAbilitySelf "${RemoveCurse}"
-		}
 	}
 
 	;;;;;;;
@@ -604,10 +603,7 @@ function DownTime()
 		call UseAbility "${BosridsGift}"
 	;; toggle off our small heall every 4 seconds
 	if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
-	{
 		VGExecute /can \"${BosridsGift}\"
-		wait 10 ${VG.InGlobalRecovery} || ${Me.IsCasting}
-	}
 
 	;; Summon our Pet
 	call SummonPet "${SummonAttendantofRakurr}"
@@ -615,14 +611,16 @@ function DownTime()
 	;; Levitate
 	if ${doLevitate}
 		call UseAbilitySelf "${BoonofAlcipus}"
-	
+
 	;; Go Invis
 	if ${doHuntersShroud}
 		call UseAbilitySelf "${HuntersShroud}"
 	elseif ${Me.Ability[${HuntersShroud}].Toggled}
 		VGExecute /can \"${HuntersShroud}\"
-	
-	
+
+	;; Turn Melee Attacks off
+	call MeleeAttackOff
+
 }
 
 ;===================================================
@@ -692,12 +690,22 @@ function AttackTarget()
 			VGExecute /pet Attack
 
 			TempTimer:Set[${Script.RunningTime}]
-			while ${Math.Calc[${Math.Calc[${Script.RunningTime}-${TempTimer}]}/1000]}<3 && !${Me.InCombat} && ${Me.Target(exists)}
+			while ${Math.Calc[${Math.Calc[${Script.RunningTime}-${TempTimer}]}/1000]}<5 && !${Me.InCombat} && ${Me.Target(exists)}
 				call FaceTarget
+			
+			;TempTimer:Set[${Script.RunningTime}]
+			;while ${Math.Calc[${Math.Calc[${Script.RunningTime}-${TempTimer}]}/1000]}<3 && ${Me.Target(exists)} && ${Me.Target.Distance}>11
+			;{
+			;	VGExecute /pet Backoff
+			;	wait 1
+			;}
+			;
+			;VGExecute /pet Guard
+			;wait 10 ${Me.Target.Distance}<=11
 		}
 	}
 
-	call ReadyCheck
+	;call ReadyCheck
 	
 	
 	;; Reduce Hate - use only if you have a pet or in a group
