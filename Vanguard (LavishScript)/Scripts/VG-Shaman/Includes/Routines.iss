@@ -74,11 +74,14 @@ function UseAbility(string ABILITY)
 	}
 
 	
-	Me.Ability[${ABILITY}]:Use
-	EchoIt "[${Time}] UseAbility: ${ABILITY}"
-	wait 7
-	if !${Me.Ability[${ABILITY}].IsReady}
-		ExecutedAbility:Set[${ABILITY}]
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		Me.Ability[${ABILITY}]:Use
+		EchoIt " UseAbility: ${ABILITY}"
+		wait 7
+		if !${Me.Ability[${ABILITY}].IsReady}
+			ExecutedAbility:Set[${ABILITY}]
+	}
 }
 
 ;===================================================
@@ -122,11 +125,14 @@ function CastNow(string ABILITY)
 		wait 3
 	}
 	
-	Me.Ability[${ABILITY}]:Use
-	EchoIt "[${Time}] UseAbility: ${ABILITY}"
-	wait 7
-	if !${Me.Ability[${ABILITY}].IsReady}
-		ExecutedAbility:Set[${ABILITY}]
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		Me.Ability[${ABILITY}]:Use
+		EchoIt "[${Time}] UseAbility: ${ABILITY}"
+		wait 7
+		if !${Me.Ability[${ABILITY}].IsReady}
+			ExecutedAbility:Set[${ABILITY}]
+	}
 }
 
 ;===================================================
@@ -160,11 +166,14 @@ function UseAbilitySelf(string ABILITY)
 
 	VGExecute /stand
 
-	Me.Ability[${ABILITY}]:Use
-	EchoIt "[${Time}] UseAbilitySelf: ${ABILITY}"
-	wait 5
-	if !${Me.Ability[${ABILITY}].IsReady}
-		ExecutedAbility:Set[${ABILITY}]
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		Me.Ability[${ABILITY}]:Use
+		EchoIt "[${Time}] UseAbilitySelf: ${ABILITY}"
+		wait 5
+		if !${Me.Ability[${ABILITY}].IsReady}
+			ExecutedAbility:Set[${ABILITY}]
+	}
 }
 
 ;===================================================
@@ -199,11 +208,14 @@ function UseAbilityOther(int GroupNumber, string ABILITY)
 
 	VGExecute /stand
 
-	Me.Ability[${ABILITY}]:Use
-	EchoIt "[${Time}] UseAbilitySelf: ${ABILITY}"
-	wait 5
-	if !${Me.Ability[${ABILITY}].IsReady}
-		ExecutedAbility:Set[${ABILITY}]
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		Me.Ability[${ABILITY}]:Use
+		EchoIt "[${Time}] UseAbilitySelf: ${ABILITY}"
+		wait 5
+		if !${Me.Ability[${ABILITY}].IsReady}
+			ExecutedAbility:Set[${ABILITY}]
+	}
 }
 
 ;===================================================
@@ -219,7 +231,7 @@ function UsePetAbility(string ABILITY)
 	Me.Pet.Ability[${ABILITY}]:Use
 	EchoIt "[${Time}] UsePetAbility: ${ABILITY}"
 	wait 5
-	if !!${Me.Pet.Ability[${ABILITY}].IsReady}
+	if !${Me.Pet.Ability[${ABILITY}].IsReady}
 		ExecutedAbility:Set[${ABILITY}]
 }
 
@@ -255,11 +267,14 @@ function SummonPet(string ABILITY)
 
 	VGExecute /stand
 
-	Me.Ability[${ABILITY}]:Use
-	EchoIt "[${Time}] SummonPet: ${ABILITY}"
-	wait 5
-	if !${Me.Ability[${ABILITY}].IsReady}
-		ExecutedAbility:Set[${ABILITY}]
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		Me.Ability[${ABILITY}]:Use
+		EchoIt "[${Time}] SummonPet: ${ABILITY}"
+		wait 5
+		if !${Me.Ability[${ABILITY}].IsReady}
+			ExecutedAbility:Set[${ABILITY}]
+	}
 }
 
 ;===================================================
@@ -598,9 +613,6 @@ function:bool OkayToAttack(string ABILITY="None")
 			return FALSE
 		if ${Me.Target.Name.Equal[Corrupted Residue]}
 			return FALSE
-			
-			
-		return TRUE	
 			
 		;-------------------------------------------
 		; Check PHYSICAL resistances

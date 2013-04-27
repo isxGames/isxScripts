@@ -66,7 +66,7 @@ atom(script) SHA_AlwaysCheck()
 
 		if ${Me.Target(exists)}
 		{
-			if ${Me.Ability[${ReadyCheck}].IsReady}
+			if ${Check.AreWeReady}
 			{
 				if ${doMelee} && ${Me.Ability[${ThroatRip}].IsReady} && ${Me.Ability[${ThroatRip}].TriggeredCountdown}>0 && ${Me.Ability[${ThroatRip}].EnduranceCost}<${Me.Endurance}
 				{
@@ -76,7 +76,7 @@ atom(script) SHA_AlwaysCheck()
 					NextAction:Set[${Script.RunningTime}]
 					return
 				}
-				if ${doMelee} && ${Me.Ability[${SpearoftheAncestors}].IsReady} && ${Me.Ability[${SpearoftheAncestors}].TriggeredCountdown}>0 && ${Me.Ability[${SpearoftheAncestors}].EnduranceCost}<${Me.Endurance}
+				if ${doMelee} && ${Me.Ability[${SpearoftheAncestors}].IsReady} && ${Me.Ability[${SpearoftheAncestors}].TriggeredCountdown}>0 && ${Me.Ability[${SpearoftheAncestors}].EnduranceCost}<${Me.Endurance} && ${Me.Endurance}<50
 				{
 					EchoIt "[${Time}] Crit: ${SpearoftheAncestors}"
 					Me.Form[${MeleeForm}]:ChangeTo
