@@ -56,7 +56,7 @@ function main()
 		if !${Pawn[exactname,${temp}](exists)}
 			continue
 
-		call CastBuffs YES "${temp}"
+		call CastBuffs TRUE "${temp}"
 	}
 	
 	call CastBuffs FALSE "${Me.FName}"
@@ -79,10 +79,10 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 			if ${Me.TargetAsEncounter.Difficulty(exists)}
 			{
 				VGExecute "/cleartargets"
-				wait 10 !${Me.TargetAsEncounter.Difficulty(exists)} && !${Me.Target.Level(exists)}
+				wait 3
 			}
 			VGExecute "/targetoffensive ${Toon2Buff}"
-			wait 10 ${Me.TargetAsEncounter.Difficulty(exists)} && ${Me.Target.Level(exists)}
+			wait 3
 		}
 	
 		;; Spirit's Bountiful Blessing
@@ -223,7 +223,7 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 			if ${Me.TargetAsEncounter.Difficulty(exists)}
 			{
 				VGExecute "/cleartargets"
-				wait 10 !${Me.TargetAsEncounter.Difficulty(exists)} && !${Me.Target.Level(exists)}
+				wait 3
 			}
 		}
 
@@ -242,7 +242,7 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 			while "${SpellList.NextKey(exists)}"
 		}
 		VGExecute "/cleartargets"
-		wait 5
+		wait 3
 	}
 }
 

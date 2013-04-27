@@ -56,7 +56,7 @@ atom(script) SHA_AlwaysCheck()
 				return
 			}
 			
-			if ${Pawn[Tombstone,range,20](exists)}
+			if ${Pawn[Tombstone,range,20].Name.Find[${Me.FName}](exists)}
 			{
 				VGExecute "/targetmynearestcorpse"
 				NextAction:Set[${Script.RunningTime}]
