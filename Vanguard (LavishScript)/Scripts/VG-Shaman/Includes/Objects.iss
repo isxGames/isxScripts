@@ -33,7 +33,7 @@ objectdef Obj_Commands
 		{
 			if ${Me.Effect[${i}].IsBeneficial}
 			{
-				if ${Me.Effect[${i}].Description.Find[Health:]} && ${Me.Effect[${i}].Description.Find[Energy:]} && ${Me.Effect[${i}].Description.Find[seconds]}
+				if ${Me.Effect[${i}].Description.Find[Health:]} && ${Me.Effect[${i}].Description.Find[Energy:]} && ${Me.Effect[${i}].Description.Find[over]} && ${Me.Effect[${i}].Description.Find[seconds]}
 					return TRUE
 			}
 		}
