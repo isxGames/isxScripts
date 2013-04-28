@@ -355,12 +355,12 @@ function NoTargetRoutine()
 		;; echo that we need more health/energy
 		if !${NeedMoreEnergy}
 		{
-			if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.EndurancePct}<=45
+			if ${Me.Endurance(exists)} && ${Me.EndurancePct}<=45
 			{
 				NeedMoreEnergy:Set[TRUE]
 				vgecho RESTING:  Endurance is below 45%
 			}
-			if (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<=60) || ${Me.HealthPct}<60
+			if (${Me.Energy(exists)} && ${Me.EnergyPct}<=60) || ${Me.HealthPct}<60
 			{
 				NeedMoreEnergy:Set[TRUE]
 				vgecho RESTING:  Health or Energy is below 60%
@@ -369,7 +369,7 @@ function NoTargetRoutine()
 		
 		if ${NeedMoreEnergy}
 		{
-			if (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<60) || ${Me.HealthPct}<60
+			if (${Me.Energy(exists)} && ${Me.EnergyPct}<60) || ${Me.HealthPct}<60
 			{
 				variable string EatThis = Nothing
 				if ${Me.Inventory[exactname,Fresh Berries](exists)}
@@ -400,7 +400,7 @@ function NoTargetRoutine()
 			}
 		
 			;; loop this to regain more energy
-			while ${Me.HealthPct}<90 || (${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.EnergyPct}<90) || (${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.EndurancePct}<50)
+			while ${Me.HealthPct}<90 || (${Me.Energy(exists)} && ${Me.EnergyPct}<90) || (${Me.Endurance(exists)} && ${Me.EndurancePct}<50)
 			{
 				if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Me.InCombat}
 					break
@@ -430,7 +430,7 @@ function NoTargetRoutine()
 		}
 
 		;; Go find a target if our health is high enough
-		if ${Me.HealthPct}>=90
+		if ${Me.EnergyPct}>=90 && ${Me.HealthPct}>=90
 		{
 			;; reset our flag
 			NeedMoreEnergy:Set[FALSE]
@@ -446,8 +446,9 @@ function NoTargetRoutine()
 
 			if ${doScanAreaForTarget}
 				call FindTarget ${MaxDistance}
-				
+			return
 		}
+		NeedMoreEnergy:Set[TRUE]
 	}
 }
 
