@@ -299,6 +299,9 @@ function AlwaysCheck()
 		}
 	}
 	
+	if ${doFindGroupMembers}
+		call FindGroupMembers
+	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; The following are my heal routines
 	;; 
@@ -457,7 +460,7 @@ function AlwaysCheck()
 
 	;;;;;;;;;;
 	;; Toggle on/off our 4 second healing tick (turn off to regain endurance fast)
-	if ${Me.HealthPct}<=90 && !${Me.Ability[${BosridsGift}].Toggled}
+	if ${Me.HealthPct}<=88 && !${Me.Ability[${BosridsGift}].Toggled}
 		call UseAbilitySelf "${BosridsGift}"
 	if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
 		VGExecute /can \"${BosridsGift}\"
@@ -521,9 +524,6 @@ function DownTime()
 {
 	;; always reset this
 	doLethargy:Set[TRUE]
-	
-	if ${doFindGroupMembers}
-		call FindGroupMembers
 	
 	;; Ensure difficulty of target doesn't exist when you do not have a target
 	wait 5 !${Me.TargetAsEncounter.Difficulty(exists)}
@@ -830,7 +830,7 @@ function AttackTarget()
 					wait 2
 				}
 				while ${VG.InGlobalRecovery}
-				EchoIt "[${Time}] UseWeapon: ${LastPrimary}"
+				EchoIt "UseWeapon: ${LastPrimary}"
 				waitframe
 				;; reset the timer
 				UseWeaponTimer:Set[${Script.RunningTime}]

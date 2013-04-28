@@ -70,7 +70,7 @@ atom(script) SHA_AlwaysCheck()
 			{
 				if ${doMelee} && ${Me.Ability[${ThroatRip}].IsReady} && ${Me.Ability[${ThroatRip}].TriggeredCountdown}>0 && ${Me.Ability[${ThroatRip}].EnduranceCost}<${Me.Endurance}
 				{
-					EchoIt "[${Time}] Crit: ${ThroatRip}"
+					EchoIt "Crit: ${ThroatRip}"
 					;Me.Form[${MeleeForm}]:ChangeTo
 					Me.Ability[${ThroatRip}]:Use
 					NextAction:Set[${Script.RunningTime}]
@@ -78,28 +78,28 @@ atom(script) SHA_AlwaysCheck()
 				}
 				if ${doMelee} && ${Me.Ability[${SpearoftheAncestors}].IsReady} && ${Me.Ability[${SpearoftheAncestors}].TriggeredCountdown}>0 && ${Me.Ability[${SpearoftheAncestors}].EnduranceCost}<${Me.Endurance} && ${Me.Endurance}<50
 				{
-					EchoIt "[${Time}] Crit: ${SpearoftheAncestors}"
+					EchoIt "Crit: ${SpearoftheAncestors}"
 					Me.Form[${MeleeForm}]:ChangeTo
 					Me.Ability[${SpearoftheAncestors}]:Use
 					NextAction:Set[${Script.RunningTime}]
 				}
 				if ${doMelee} && ${Me.Ability[${FistoftheEarth}].IsReady} && ${Me.Ability[${FistoftheEarth}].TriggeredCountdown}>0 && ${Me.Ability[${FistoftheEarth}].EnduranceCost}<${Me.Endurance}
 				{
-					EchoIt "[${Time}] Crit: ${FistoftheEarth}"
+					EchoIt "Crit: ${FistoftheEarth}"
 					;Me.Form[${MeleeForm}]:ChangeTo
 					Me.Ability[${FistoftheEarth}]:Use
 					NextAction:Set[${Script.RunningTime}]
 				}
 				if ${doCold} && ${Me.Ability[${GelidBlast}].IsReady} && ${Me.Ability[${GelidBlast}].TriggeredCountdown}>0 && ${Me.Ability[${GelidBlast}].EnergyCost}<${Me.Energy}
 				{
-					EchoIt "[${Time}] Crit: ${GelidBlast}"
+					EchoIt "Crit: ${GelidBlast}"
 					;Me.Form[${SpellForm}]:ChangeTo
 					Me.Ability[${GelidBlast}]:Use
 					NextAction:Set[${Script.RunningTime}]
 				}
 				if ${doSpiritual} && ${Me.Ability[${UmbraBurst}].IsReady} && ${Me.Ability[${UmbraBurst}].TriggeredCountdown}>0 && ${Me.Ability[${UmbraBurst}].EnergyCost}<${Me.Energy}
 				{
-					EchoIt "[${Time}] Crit: ${UmbraBurst}"
+					EchoIt "Crit: ${UmbraBurst}"
 					;Me.Form[${SpellForm}]:ChangeTo
 					Me.Ability[${UmbraBurst}]:Use
 					NextAction:Set[${Script.RunningTime}]

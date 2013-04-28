@@ -77,7 +77,7 @@ function UseAbility(string ABILITY)
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		Me.Ability[${ABILITY}]:Use
-		EchoIt " UseAbility: ${ABILITY}"
+		EchoIt "UseAbility: ${ABILITY}"
 		wait 7
 		if !${Me.Ability[${ABILITY}].IsReady}
 			ExecutedAbility:Set[${ABILITY}]
@@ -128,7 +128,7 @@ function CastNow(string ABILITY)
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		Me.Ability[${ABILITY}]:Use
-		EchoIt "[${Time}] UseAbility: ${ABILITY}"
+		EchoIt "UseAbility: ${ABILITY}"
 		wait 7
 		if !${Me.Ability[${ABILITY}].IsReady}
 			ExecutedAbility:Set[${ABILITY}]
@@ -169,7 +169,7 @@ function UseAbilitySelf(string ABILITY)
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		Me.Ability[${ABILITY}]:Use
-		EchoIt "[${Time}] UseAbilitySelf: ${ABILITY}"
+		EchoIt "UseAbilitySelf: ${ABILITY}"
 		wait 5
 		if !${Me.Ability[${ABILITY}].IsReady}
 			ExecutedAbility:Set[${ABILITY}]
@@ -211,7 +211,7 @@ function UseAbilityOther(int GroupNumber, string ABILITY)
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		Me.Ability[${ABILITY}]:Use
-		EchoIt "[${Time}] UseAbilitySelf: ${ABILITY}"
+		EchoIt "UseAbilitySelf: ${ABILITY}"
 		wait 5
 		if !${Me.Ability[${ABILITY}].IsReady}
 			ExecutedAbility:Set[${ABILITY}]
@@ -229,7 +229,7 @@ function UsePetAbility(string ABILITY)
 	VGExecute /stand
 
 	Me.Pet.Ability[${ABILITY}]:Use
-	EchoIt "[${Time}] UsePetAbility: ${ABILITY}"
+	EchoIt "UsePetAbility: ${ABILITY}"
 	wait 5
 	if !${Me.Pet.Ability[${ABILITY}].IsReady}
 		ExecutedAbility:Set[${ABILITY}]
@@ -270,7 +270,7 @@ function SummonPet(string ABILITY)
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		Me.Ability[${ABILITY}]:Use
-		EchoIt "[${Time}] SummonPet: ${ABILITY}"
+		EchoIt "SummonPet: ${ABILITY}"
 		wait 5
 		if !${Me.Ability[${ABILITY}].IsReady}
 			ExecutedAbility:Set[${ABILITY}]
@@ -490,6 +490,8 @@ variable bool NoLineOfSight = FALSE
 ;===================================================
 function SetHighestAbility(string AbilityVariable, string AbilityName)
 {
+
+
 	declare L int local 8
 	declare ABILITY string local ${AbilityName}
 	declare AbilityLevels[8] string local
@@ -508,7 +510,7 @@ function SetHighestAbility(string AbilityVariable, string AbilityName)
 	;-------------------------------------------
 	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${ABILITY}].LevelGranted}<=${Me.Level}
 	{
-		EchoIt "[${Time}] --> ${AbilityVariable}: ${ABILITY} - Level=${Me.Ability[${ABILITY}].LevelGranted}"
+		EchoIt "--> ${AbilityVariable}: ${ABILITY} - Level=${Me.Ability[${ABILITY}].LevelGranted}"
 		declare	${AbilityVariable}	string	global "${ABILITY}"
 		return
 	}
@@ -525,13 +527,27 @@ function SetHighestAbility(string AbilityVariable, string AbilityName)
 		}
 	}
 	while (${L:Dec}>0)
+	
+	if !${Me.Ability["${ABILITY}"](exists)}
+	{
+		L:Set[8]
+		do
+		{
+			if ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]} "](exists)} && ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]} "].LevelGranted}<=${Me.Level}
+			{
+				ABILITY:Set["${AbilityName} ${AbilityLevels[${L}]} "]
+				break
+			}
+		}
+		while (${L:Dec}>0)
+	}
 
 	;-------------------------------------------
 	; If Ability exist then return
 	;-------------------------------------------
 	if ${Me.Ability["${ABILITY}"](exists)} && ${Me.Ability["${ABILITY}"].LevelGranted}<=${Me.Level}
 	{
-		EchoIt "[${Time}] --> ${AbilityVariable}: ${ABILITY} - Level=${Me.Ability[${ABILITY}].LevelGranted}"
+		EchoIt "--> ${AbilityVariable}: ${ABILITY} - Level=${Me.Ability[${ABILITY}].LevelGranted}"
 		declare	${AbilityVariable}	string	global "${ABILITY}"
 		return
 	}
@@ -539,7 +555,7 @@ function SetHighestAbility(string AbilityVariable, string AbilityName)
 	;-------------------------------------------
 	; Otherwise, new Ability is named "None"
 	;-------------------------------------------
-	EchoIt "[${Time}] --> ${AbilityVariable}: None"
+	EchoIt "--> ${AbilityVariable}: None"
 	declare	${AbilityVariable}	string	global "None"
 	return
 }

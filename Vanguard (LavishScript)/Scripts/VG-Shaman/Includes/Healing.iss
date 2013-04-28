@@ -29,11 +29,11 @@ function FindGroupMembers()
 			if ${Me.DTarget(exists)}
 			{
 				GroupMemberList:Set["${Me.DTarget.Name.Token[1," "]}", ${Me.DTarget.ID}]
-				vgecho "Group Member[${GN}] = ${Me.DTarget.Name}"
+				vgecho "Group Member[${i}] = ${Me.DTarget.Name}"
 			}
 			
 			if !${Me.DTarget(exists)}
-				vgecho "Group Member[${GN}] = does not exist"
+				vgecho "Group Member[${i}] = does not exist"
 		}
 	}
 }
