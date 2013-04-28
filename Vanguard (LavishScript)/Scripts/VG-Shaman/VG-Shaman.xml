@@ -1006,25 +1006,15 @@
 				<Text>Buff Area</Text>
 				<OnRender>
 					if ${Script[BuffArea](exists)}
-					{
 						This:SetAlpha[0.5]
-					}
 					else
-					{
 						This:SetAlpha[1]
-					}
 				</OnRender>
 				<OnLeftClick>
 					if ${Script[BuffArea](exists)}
-					{
-						echo exiting BuffArea
 						endscript BuffArea
-					}
 					elseif !${Script[BuffArea](exists)}
-					{
-						echo launching BuffArea
 						run ./VG-Shaman/BuffArea.iss
-					}					
 				</OnLeftClick>
 				<Data>${Script[BuffArea](exists)}</Data>
 			</Commandbutton>

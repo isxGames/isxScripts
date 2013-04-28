@@ -18,6 +18,7 @@
 	
 function main()
 {
+	echo "[${Time}] Buff Area Started"
 	if ${SHA.AreWeEating}
 	{
 		
@@ -25,8 +26,6 @@ function main()
 		wait 10 !${SHA.AreWeEating}
 	}
 
-	SpellList:Clear
-	
 	UIElement[BuffArea@VG-Shaman]:SetAlpha[0.5]
 	Script[VG-Shaman].Variable[isPaused]:Set[TRUE]
 
@@ -55,11 +54,10 @@ function main()
 		temp:Set[${PC[${i}]}]
 		if !${Pawn[exactname,${temp}](exists)}
 			continue
-
-		call CastBuffs TRUE "${temp}"
+		call CastBuffs TRUE "${temp}" ${Pawn[exactname,${temp}].Level}
 	}
 	
-	call CastBuffs FALSE "${Me.FName}"
+	call CastBuffs FALSE "${Me.FName}" ${Me.Level}
 
 }
 	
@@ -67,10 +65,12 @@ function atexit()
 {
 	UIElement[BuffArea@VG-Shaman]:SetAlpha[0.5]
 	Script[VG-Shaman].Variable[isPaused]:Set[${Saved_isPaused}]	
+	echo "[${Time}] Buff Area Ended"
 }	
 
-function CastBuffs(bool CheckForBuff, string Toon2Buff)
+function CastBuffs(bool CheckForBuff, string Toon2Buff, int LEVEL)
 {
+	SpellList:Clear
 	if ${Pawn[exactname,${Toon2Buff}](exists)} && ${Pawn[exactname,${Toon2Buff}].Distance}<25
 	{
 		if ${CheckForBuff}
@@ -86,8 +86,9 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 		}
 	
 		;; Spirit's Bountiful Blessing
-		if ${Me.Ability["Spirit's Bountiful Blessing"](exists)} && ${Me.Target.Level}>=40
+		if ${Me.Ability["Spirit's Bountiful Blessing"](exists)} && ${LEVEL}>=40
 		{
+			wait 1
 			if ${CheckForBuff}
 			{
 				SpellList:Set["Rakurr's Gift of Grace", ${Me.TargetBuff["Rakurr's Gift of Grace"](exists)}]
@@ -104,7 +105,7 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 			}
 		}
 		;; Favor of the Hunter	
-		elseif ${Me.Ability[Favor of the Hunter](exists)} && !${Me.TargetBuff["Spirit's Bountiful Blessing"](exists)} && ${Me.Target.Level}>=35
+		elseif ${Me.Ability[Favor of the Hunter](exists)} && !${Me.TargetBuff["Spirit's Bountiful Blessing"](exists)} && ${LEVEL}>=35
 		{
 			SpellList:Set["Favor of the Hunter", FALSE]
 		}
@@ -129,7 +130,7 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 				if ${CheckForBuff}
 				{
 					;; handle our Grace
-					if ${Me.Ability[${RakurrsGiftofGrace}](exists)} && ${Me.Target.Level}>=35
+					if ${Me.Ability[${RakurrsGiftofGrace}](exists)} && ${LEVEL}>=35
 					{
 						SpellList:Set["${RakurrsGiftofGrace}", ${Me.TargetBuff[${RakurrsGiftofGrace}](exists)}]
 					}
@@ -140,7 +141,7 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff)
 					}
 
 					;; handle our Speed
-					if ${Me.Ability[${RakurrsGiftofSpeed}](exists)} && ${Me.Target.Level}>=35
+					if ${Me.Ability[${RakurrsGiftofSpeed}](exists)} && ${LEVEL}>=35
 					{
 						SpellList:Set["${RakurrsGiftofSpeed}", ${Me.TargetBuff[${RakurrsGiftofSpeed}](exists)}]
 					}
@@ -269,7 +270,7 @@ function UseAbility(string ABILITY)
 		wait 4
 	}
 	
-	echo [${Time}] *Buffing: ${Me.DTarget.Name} -- ${ABILITY}
+	echo [${Time}] *Buffing: ${Me.DTarget.Name}(${Me.DTarget.Level}) -- ${ABILITY}
 	
 	Me.Ability[${ABILITY}]:Use
 	wait 10
