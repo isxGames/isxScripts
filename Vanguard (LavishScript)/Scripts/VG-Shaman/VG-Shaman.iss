@@ -87,6 +87,8 @@
 ; * Crits now working; removed references to DTargetHealth in all healing
 ;   routines; now checks immunities before fighting.
 ;
+; 20130428 (Zandros)
+; * Added in Tuurgin Totem abilities and routines
 ;
 ;===================================================
 ;===               Includes                     ====
@@ -492,25 +494,6 @@ function AlwaysCheck()
 		}
 	}
 
-	;; Grab that next encounter!
-	if ${Me.Encounter}
-	{
-		if ${Pawn[Name,${Tank}](exists)}
-		{
-			;; assist the tank only if the tank is in combat and less than 50 meters away
-			if ${Pawn[Name,${Tank}].CombatState}==0 && ${Pawn[Name,${Tank}].Distance}<=50
-			{
-				VGExecute /cleartargets
-				wait 5
-				Pawn[id,${Me.Encounter[1].ID}]:Target
-				wait 10 ${Me.TargetAsEncounter.Difficulty(exists)}
-			}
-			call FaceTarget
-			VGExecute "/pet Attack"
-			waitframe
-		}
-	}
-
 	;;;;;;;;;;
 	;; Follow the tank routine
 	call FollowTank	
@@ -536,6 +519,15 @@ function DownTime()
 		return
 	}
 
+	;; Grab that next encounter!
+	if ${Me.Encounter} && !${Me.IsGrouped}
+	{
+		VGExecute /cleartargets
+		wait 3
+		Pawn[id,${Me.Encounter[1].ID}]:Target
+		wait 3
+	}
+	
 	;; Remove Curses, Poisons, and Diseases
 	for ( i:Set[1] ; ${i}<=${Me.Effect.Count} && ${Me.Effect[${i}].Name(exists)} ; i:Inc )
 	{
@@ -552,9 +544,16 @@ function DownTime()
 		call UseAbilitySelf "${SpiritsBountifulBlessing}"
 		if ${Me.Effect[${SpiritsBountifulBlessing}](exists)}
 		{
+			;; these are Rakurr's Buffs
 			call UseAbilitySelf "${RakurrsGiftofGrace}"
 			call UseAbilitySelf "${RakurrsGiftofSpeed}"
 			call UseAbilitySelf "${BoonofRakurr}"
+			
+			;; these are Tuurgin's buffs
+			call UseAbilitySelf "${BoonofTuurgin}"
+			call UseAbilitySelf "${WarmthoftheGreatBear}"
+			call UseAbilitySelf "${TuurginsGiftofFury}"
+			call UseAbilitySelf "${SuperiorTuurginsVigor}"
 		}
 	}
 
@@ -577,25 +576,45 @@ function DownTime()
 
 	if ${doLesserBuff}
 	{
-		call UseAbilitySelf "${RakurrsGiftofGrace}"
-		call UseAbilitySelf "${RakurrsGiftofSpeed}"
-		call UseAbilitySelf "${BoonofRakurr}"
+		;; Default buffs
 		call UseAbilitySelf "${SpiritofRakurr}"
 		call UseAbilitySelf "${Infusion}"
 		call UseAbilitySelf "${OraclesSight}"
 		call UseAbilitySelf "${BoonofBoqobol}"
 		call UseAbilitySelf "${BoonofBosrid}"
+
+		;; Rakurr's buffs
+		call UseAbilitySelf "${RakurrsGiftofGrace}"
+		call UseAbilitySelf "${RakurrsGiftofSpeed}"
 		call UseAbilitySelf "${BoonofRakurr}"
 		if !${Me.Effect[${RakurrsGiftofSpeed}](exists)}	
 			call UseAbilitySelf "${SpeedofRakurr}"
 		if !${Me.Effect[${RakurrsGiftofGrace}](exists)}	
 			call UseAbilitySelf "${RakurrsGrace}"
+		
+		;; Tuurgin's buffs
+		call UseAbilitySelf "${BoonofTuurgin}"
+		if !${Me.Effect[${WarmthoftheGreatBear}](exists)}	
+			call UseAbilitySelf "${CoatoftheGreatbear}"
+		if !${Me.Effect[${TuurginsGiftofFury}](exists)}	
+			call UseAbilitySelf "${RageofTuurgin}"
+		if !${Me.Effect[${SuperiorTuurginsVigor}](exists)}	
+			call UseAbilitySelf "${TuurginsVigor}"
+		
 	}
 
+	;; Rakurr's Skin
 	call UseAbilitySelf "${SkinofRakurr}"
 	if ${Me.Effect["Rakurr Form: Illusion"](exists)}
 		VGExecute /can \"Rakurr Form: Illusion\"
 
+	;; Tuurgin's Skin
+	call UseAbilitySelf "${SkinofTuurgin}"
+	if ${Me.Effect["Tuurgin Form"](exists)}
+		VGExecute /can \"Tuurgin Form\"
+
+		
+	;; Default
 	call UseAbilitySelf "${LifeWard}"
 	
 	;; toggle on our small heall every 4 seconds
@@ -605,14 +624,15 @@ function DownTime()
 	if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
 		VGExecute /can \"${BosridsGift}\"
 
-	;; Summon our Pet
+	;; Summon our Pets
 	call SummonPet "${SummonAttendantofRakurr}"
+	call SummonPet "${SummonAttendantofTuurgin}"
 	
 	;; Levitate
 	if ${doLevitate}
 		call UseAbilitySelf "${BoonofAlcipus}"
 
-	;; Go Invis
+	;; Rakurr's Stealth/Invisibility
 	if ${doHuntersShroud}
 		call UseAbilitySelf "${HuntersShroud}"
 	elseif ${Me.Ability[${HuntersShroud}].Toggled}
@@ -710,7 +730,10 @@ function AttackTarget()
 	
 	;; Reduce Hate - use only if you have a pet or in a group
 	if ${doDeAggro} && ${Me.ToT.Name.Find[${Me.FName}]} && (${Me.Pet(exists)} || ${Me.IsGrouped})
+	{
 		call CastNow "${Snarl}"
+		call CastNow "${ShakeOff}"
+	}
 	
 	;; Cannibalize health for some energy every 3 seconds
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${RegenEnergyTimer}]}/1000]} > 4
@@ -755,38 +778,61 @@ function AttackTarget()
 	if ${Me.Target.Distance}<5
 	{
 		;; Auto Crit for 6 seconds!
-		if ${Me.Effect["Scent of Blood"](exists)}
+		if ${Me.Effect["Scent of Blood"](exists)} || ${Me.TargetHealth}<40
 		{
+			;; Rakurr
 			call CastNow "${AvataroftheHunter}"
 			call UseAbility "${Hamstring}"
+			;; Tuurgin
+			call CastNow "${AvataroftheGreatBear}"
+			call UseAbility "${Frenzy}"
+			
+			;; All Totems
 			call UseAbility "${BiteofNagSuul}"
 			call UseAbility "${HammerofKrigus}"
 			call UseAbility "${KissofNagSuul}"
 		}
+		
+		
 
 		;; save some Endurance for Crits
 		if ${Me.Endurance}>=45
 		{
+			;; =========   TUURGIN - Bear   =========
+			;; This exploits Armor Chink every 24 seconds
+			if !${Me.TargetWeakness["Armor Chink"](exists)}
+				call UseAbility "${SunderingClaw}"
+			if ${Me.TargetWeakness["Armor Chink"](exists)}
+				call UsePetAbility "Cruel Bite"
+			;; This exploits Mauled every 40 seconds
+			if ${Me.TargetWeakness["Mauled"](exists)}
+				call UsePetAbility "Devour"
+			;; Take advantage of the reduced 15% mitigation
+			if ${Me.TargetBuff["${SunderingClaw}"](exists)}
+			{
+				call UseAbility "${GnashingBite}"
+				call UseAbility "${DeafningRoar}"
+			}
+		
+			;; =========   RAKURR - Wolf   =========
 			;; This exploits Torn Throat every 20 seconds
 			if ${Me.TargetWeakness["Torn Throat"](exists)}
 				call UsePetAbility "Eviscerate"
-
 			;; This exploits Shaken every 20 seconds
 			if !${Me.TargetWeakness["Flesh Rend"](exists)}
 				call UseAbility "${TearingClaw}"
 			if ${Me.TargetWeakness["Flesh Rend"](exists)}
 				call UsePetAbility "Maim"
-
-			;; This exploits Bleeding every 20 seconds
-			if ${Me.TargetWeakness["Bleeding"](exists)}
-				call UseAbility "${StrikeofSkamadiz}"
-
 			;; This exploits Bitten every 10 seconds
 			if !${Me.TargetWeakness["Bitten "](exists)}
 				call UseAbility "${ViciousBite}"
 			if ${Me.TargetWeakness["Bitten "](exists)}
 				call UsePetAbility "Bloody Fang"
 
+			;; =========   ALL TOTEMS   =========
+			;; This exploits Bleeding every 20 seconds
+			if ${Me.TargetWeakness["Bleeding"](exists)}
+				call UseAbility "${StrikeofSkamadiz}"
 			call UseAbility "${BiteofNagSuul}"
 			call UseAbility "${HammerofKrigus}"
 		}
@@ -814,7 +860,10 @@ function AttackTarget()
 
 	;; Reduce Hate
 	if ${doDeAggro}
+	{
 		call CastNow "${Snarl}"
+		call CastNow "${ShakeOff}"
+	}
 	
 	;; USE WEAPON ABILITY
 	if ${doUseWeapon}
@@ -915,7 +964,7 @@ function Startup()
 {
 	EchoIt "Started Easy Script"
 
-	;; === HEALS ===
+	EchoIt "HEALS"
 	call SetHighestAbility "AegisofLife" "Aegis of Life"
 	call SetHighestAbility "BosridsGift" "Bosrid's Gift"
 	call SetHighestAbility "Panacea" "Panacea"
@@ -923,21 +972,31 @@ function Startup()
 	call SetHighestAbility "Restoration" "Restoration"
 	call SetHighestAbility "TotemicUnion" "Totemic Union"
 	call SetHighestAbility "Intercession" "Intercession"
-	;; === CRIT ===
-	call SetHighestAbility "ThroatRip" "Throat Rip"
+
+	EchoIt "FINISHER (all Totems)"
 	call SetHighestAbility "FistoftheEarth" "Fist of the Earth"
 	call SetHighestAbility "GelidBlast" "Gelid Blast"
 	call SetHighestAbility "UmbraBurst" "Umbra Burst"
-	call SetHighestAbility "ThroatRip" "Throat Rip"
 	call SetHighestAbility "SpearoftheAncestors" "Spear of the Ancestors"
+	EchoIt "FINISHER (Rakurr)
+	call SetHighestAbility "ThroatRip" "Throat Rip"
+	EchoIt "FINISHER (Tuurgin)
+	call SetHighestAbility "ClawofWinter" "Claw of Winter"
+
 	
-	;; === MELEE ===
+	EchoIt "MELEE (all Totems)"
 	call SetHighestAbility "BiteofNagSuul" "Bite of Nag-Suul"
 	call SetHighestAbility "HammerofKrigus" "Hammer of Krigus"
 	call SetHighestAbility "StrikeofSkamadiz" "Strike of Skamadiz"
+	EchoIt "MELEE (Rakurr)"
 	call SetHighestAbility "TearingClaw" "Tearing Claw"
 	call SetHighestAbility "ViciousBite" "Vicious Bite"
-	;; === DOTS ===
+	EchoIt "MELEE (Tuurgin)"
+	call SetHighestAbility "GnashingBite" "Gnashing Bite"
+	call SetHighestAbility "SunderingClaw" "Sundering Claw"
+
+
+	EchoIt "DOTS (all Totems)"
 	call SetHighestAbility "BaneofKrigus" "Bane of Krigus"
 	call SetHighestAbility "FleshRot" "Flesh Rot"
 	call SetHighestAbility "Hoarfrost" "Hoarfrost"
@@ -946,17 +1005,19 @@ function Startup()
 	call SetHighestAbility "WintersRoar" "Winter's Roar"
 	call SetHighestAbility "KissofNagSuul" "Kiss of Nag-Suul"
 
-	;; === NUKES ===
-	;; === BUFFS ===
+	EchoIt "BUFFS (all Totems)"
 	call SetHighestAbility "BoonofBoqobol" "Boon of Boqobol"
 	call SetHighestAbility "BoonofBosrid" "Boon of Bosrid"
 	call SetHighestAbility "BoonofAlcipus" "Boon of Alcipus"
 	call SetHighestAbility "Infusion" "Infusion"
 	call SetHighestAbility "LifeWard" "Life Ward"
 	call SetHighestAbility "OraclesSight" "Oracle's Sight"
+	call SetHighestAbility "SpiritofRakurr" "Spirit of Rakurr"
+	call SetHighestAbility "SpiritsBountifulBlessing" "Spirit's Bountiful Blessing"
+
+	EchoIt "BUFFS (Rakurr)"
 	call SetHighestAbility "RakurrsGrace" "Rakurr's Grace"
 	call SetHighestAbility "SkinofRakurr" "Skin of Rakurr"
-	call SetHighestAbility "SpiritofRakurr" "Spirit of Rakurr"
 	call SetHighestAbility "SpeedofRakurr" "Speed of Rakurr"
 	call SetHighestAbility "BoonofRakurr" "Boon of Rakurr"
 	call SetHighestAbility "RakurrsGiftofSpeed" "Rakurr's Gift of Speed"
@@ -964,21 +1025,40 @@ function Startup()
 	call SetHighestAbility "AvataroftheHunter" "Avatar of the Hunter"
 	call SetHighestAbility "AvataroftheMystic" "Avatar of the Mystic"
 	call SetHighestAbility "FavoroftheHunter" "Favor of the Hunter"
-	call SetHighestAbility "SpiritsBountifulBlessing" "Spirit's Bountiful Blessing"
 
+	EchoIt "BUFFS (Tuurgin)"
+	call SetHighestAbility "CoatoftheGreatBear" "Coat of the Great Bear"
+	call SetHighestAbility "RageofTuurgin" "Rage of Tuurgin"
+	call SetHighestAbility "TuurginsVigor" "Tuurgin's Vigor"
+	call SetHighestAbility "BoonofTuurgin" "Boon of Tuurgin"
+	call SetHighestAbility "WarmthoftheGreatBear" "Warmth of the Great Bear"
+	call SetHighestAbility "TuurginsGiftofFury" "Tuurgin's Gift of Fury"
+	call SetHighestAbility "SuperiorTuurginsVigor" "Superior Tuurgin's Vigor"
+	call SetHighestAbility "AvataroftheGreatBear" "Avatar of the Great Bear"
+	call SetHighestAbility "SkinofTuurgin" "Skin of Tuurgin"
 	
-	;; === PET STUFF ===
+	EchoIt "PET (Rakurr)"
 	call SetHighestAbility "SummonAttendantofRakurr" "Summon Attendant of Rakurr"
+	EchoIt "PET (Tuurgin)"
+	call SetHighestAbility "SummonAttendantofTuurgin" "Summon Attendant of Tuurgin"
+	
+	EchoIt "MISC (all Totems)"
 	call SetHighestAbility "HealAttendant" "Heal Attendant"
-	;; === MISC ===
 	call SetHighestAbility "GraspofGoromund" "Grasp of Goromund"
 	call SetHighestAbility "RitualofSacrifice" "Ritual of Sacrifice"
-	call SetHighestAbility "Snarl" "Snarl"
-	call SetHighestAbility "Hamstring" "Hamstring"
-	call SetHighestAbility "HuntersShroud" "Hunter's Shroud"
 	call SetHighestAbility "CurseofFrailty" "Curse of Frailty"
 	call SetHighestAbility "Purge" "Purge"
 	call SetHighestAbility "RemoveCurse" "Remove Curse"
+	
+	EchoIt "MISC (Rakurr)"
+	call SetHighestAbility "Snarl" "Snarl"
+	call SetHighestAbility "Hamstring" "Hamstring"
+	call SetHighestAbility "HuntersShroud" "Hunter's Shroud"
+
+	EchoIt "MISC (Tuurgin)"
+	call SetHighestAbility "ShakeOff" "Shake Off"
+	call SetHighestAbility "Frenzy" "Frenzy"
+
 	
 	;; Set Forms
 	if ${Me.Form["Strong Spirit Bond: Skamadiz"](exists)}
@@ -987,6 +1067,13 @@ function Startup()
 		EnergyForm:Set["Strong Spirit Bond: Krigus"]
 	if ${Me.Form["Strong Spirit Bond: Nag-Suul"](exists)}
 		SpellForm:Set["Strong Spirit Bond: Nag-Suul"]
+		
+	;; Set Totem
+	if ${Me.Inventory[Rakuur Totem](exists)}
+		Totem:Set[Rakurr]
+	if ${Me.Inventory[Tuurgin Totem](exists)}
+		Totem:Set[Tuurgin]
+		
 
 	;;;;;;;;;;;;;;
 	;; Put weapon checks here so that we do not crash the script.

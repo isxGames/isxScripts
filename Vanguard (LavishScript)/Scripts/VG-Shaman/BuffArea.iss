@@ -91,17 +91,29 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff, int LEVEL)
 			wait 1
 			if ${CheckForBuff}
 			{
+				SpellList:Set["Spirit's Bountiful Blessing", ${Me.TargetBuff["Spirit's Bountiful Blessing"](exists)}]
+				;; these are Rakurr's Buffs
 				SpellList:Set["Rakurr's Gift of Grace", ${Me.TargetBuff["Rakurr's Gift of Grace"](exists)}]
 				SpellList:Set["Rakurr's Gift of Speed", ${Me.TargetBuff["Rakurr's Gift of Speed"](exists)}]
 				SpellList:Set["Boon of Rakurr", ${Me.TargetBuff["Boon of Rakurr"](exists)}]
-				SpellList:Set["Spirit's Bountiful Blessing", ${Me.TargetBuff["Spirit's Bountiful Blessing"](exists)}]
+				;; these are Tuurgin's buffs
+				SpellList:Set["${WarmthoftheGreatBear}", ${Me.TargetBuff["${WarmthoftheGreatBear}"](exists)}]
+				SpellList:Set["${TuurginsGiftofFury}", ${Me.TargetBuff["${TuurginsGiftofFury}"](exists)}]
+				SpellList:Set["${SuperiorTuurginsVigor}", ${Me.TargetBuff["${SuperiorTuurginsVigor}"](exists)}]
+				SpellList:Set["${BoonofTuurgin}", ${Me.TargetBuff["${BoonofTuurgin}"](exists)}]
 			}
 			else
 			{
+				SpellList:Set["Spirit's Bountiful Blessing", FALSE]
+				;; these are Rakurr's Buffs
 				SpellList:Set["Rakurr's Gift of Grace", FALSE]
 				SpellList:Set["Rakurr's Gift of Speed", FALSE]
 				SpellList:Set["Boon of Rakurr", FALSE]
-				SpellList:Set["Spirit's Bountiful Blessing", FALSE]
+				;; these are Tuurgin's buffs
+				SpellList:Set["${WarmthoftheGreatBear}", FALSE]
+				SpellList:Set["${TuurginsGiftofFury}", FALSE]
+				SpellList:Set["${SuperiorTuurginsVigor}", FALSE]
+				SpellList:Set["${BoonofTuurgin}", FALSE]
 			}
 		}
 		;; Favor of the Hunter	
@@ -129,90 +141,154 @@ function CastBuffs(bool CheckForBuff, string Toon2Buff, int LEVEL)
 			{
 				if ${CheckForBuff}
 				{
-					;; handle our Grace
+					;; ==========   RAKURR BUFFS   ==========
 					if ${Me.Ability[${RakurrsGiftofGrace}](exists)} && ${LEVEL}>=35
 					{
 						SpellList:Set["${RakurrsGiftofGrace}", ${Me.TargetBuff[${RakurrsGiftofGrace}](exists)}]
 					}
 					else
 					{
-						call FindHighestLevel ${Me.Target.Level} "Rakurr's Grace"
+						call FindHighestLevel ${LEVEL} "Rakurr's Grace"
 						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
 					}
-
-					;; handle our Speed
 					if ${Me.Ability[${RakurrsGiftofSpeed}](exists)} && ${LEVEL}>=35
 					{
 						SpellList:Set["${RakurrsGiftofSpeed}", ${Me.TargetBuff[${RakurrsGiftofSpeed}](exists)}]
 					}
 					else
 					{
-						call FindHighestLevel ${Me.Target.Level} "Speed of Rakurr"
+						call FindHighestLevel ${LEVEL} "Speed of Rakurr"
 						if ${Me.Ability[${Return}](exists)}
 						{
 							SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
 						}
 						else
 						{
-							call FindHighestLevel ${Me.Target.Level} "Spirit of Rakurr"
+							call FindHighestLevel ${LEVEL} "Spirit of Rakurr"
 							if ${Me.Ability[${Return}](exists)}
 								SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
 						}
 					}
-					call FindHighestLevel ${Me.Target.Level} "Boon of Rakurr"
+					call FindHighestLevel ${LEVEL} "Boon of Rakurr"
 						SpellList:Set["${Return}", ${Me.TargetBuff["Boon of Rakurr"](exists)}]
-					call FindHighestLevel ${Me.Target.Level} "Boon of Boqobol"
+					
+					
+					;; ==========   TUURGIN BUFFS   ==========
+					if ${Me.Ability[${WarmthoftheGreatBear}](exists)} && ${LEVEL}>=35
+					{
+						SpellList:Set["${WarmthoftheGreatBear}", ${Me.TargetBuff[${WarmthoftheGreatBear}](exists)}]
+					}
+					else
+					{
+						call FindHighestLevel ${LEVEL} "${CoatoftheGreatBear}"
 						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
-					call FindHighestLevel ${Me.Target.Level} "Infusion"
+					}
+					if ${Me.Ability[${TuurginsGiftofFury}](exists)} && ${LEVEL}>=35
+					{
+						SpellList:Set["${TuurginsGiftofFury}", ${Me.TargetBuff[${TuurginsGiftofFury}](exists)}]
+					}
+					else
+					{
+						call FindHighestLevel ${LEVEL} "${RageofTuurgin}"
 						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
-					call FindHighestLevel ${Me.Target.Level} "Oracle's Sight"
+					}
+					if ${Me.Ability[${SuperiorTuurginsVigor}](exists)} && ${LEVEL}>=35
+					{
+						SpellList:Set["${SuperiorTuurginsVigor}", ${Me.TargetBuff[${SuperiorTuurginsVigor}](exists)}]
+					}
+					else
+					{
+						call FindHighestLevel ${LEVEL} "${TuurginsVigor}"
 						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
-					call FindHighestLevel ${Me.Target.Level} "Boon of Bosrid"
+					}
+					call FindHighestLevel ${LEVEL} "Boon of Tuurgin"
+						SpellList:Set["${Return}", ${Me.TargetBuff["Boon of Turgin"](exists)}]
+					
+					
+					;; ==========   ALL TOTEM BUFFS   ==========
+					call FindHighestLevel ${LEVEL} "Boon of Boqobol"
+						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
+					call FindHighestLevel ${LEVEL} "Infusion"
+						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
+					call FindHighestLevel ${LEVEL} "Oracle's Sight"
+						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
+					call FindHighestLevel ${LEVEL} "Boon of Bosrid"
 						SpellList:Set[${Return}, ${Me.TargetBuff[${Return}](exists)}]
 				}
 				else
 				{
-					;; handle our Grace
+					;; ==========   RAKURR BUFFS   ==========
 					if ${Me.Ability[${RakurrsGiftofGrace}](exists)}
 					{
 						SpellList:Set["${RakurrsGiftofGrace}", FALSE]
 					}
 					else
 					{
-						call FindHighestLevel ${Me.Level} "Rakurr's Grace"
+						call FindHighestLevel ${LEVEL} "Rakurr's Grace"
 						SpellList:Set[${Return}, FALSE]
 					}
-
-					;; handle our Speed
 					if ${Me.Ability[${RakurrsGiftofSpeed}](exists)}
 					{
 						SpellList:Set["${RakurrsGiftofSpeed}", FALSE]
 					}
 					else
 					{
-						call FindHighestLevel ${Me.Level} "Speed of Rakurr"
+						call FindHighestLevel ${LEVEL} "Speed of Rakurr"
 						if ${Me.Ability[${Return}](exists)}
 						{
 							SpellList:Set[${Return}, FALSE]
 						}
 						else
 						{
-							call FindHighestLevel ${Me.Level} "Spirit of Rakurr"
+							call FindHighestLevel ${LEVEL} "Spirit of Rakurr"
 							if ${Me.Ability[${Return}](exists)}
 								SpellList:Set[${Return}, FALSE]
 						}
 					}
-					call FindHighestLevel ${Me.Level} "Boon of Rakurr"
+					call FindHighestLevel ${LEVEL} "Boon of Rakurr"
 						SpellList:Set["${Return}", FALSE]
-					call FindHighestLevel ${Me.Level} "Boon of Boqobol"
+						
+					;; ==========   TUURGIN BUFFS   ==========
+					if ${Me.Ability[${WarmthoftheGreatBear}](exists)}
+					{
+						SpellList:Set["${WarmthoftheGreatBear}", FALSE]
+					}
+					else
+					{
+						call FindHighestLevel ${LEVEL} "${CoatoftheGreatBear}"
 						SpellList:Set[${Return}, FALSE]
-					call FindHighestLevel ${Me.Level} "Infusion"
+					}
+					if ${Me.Ability[${TuurginsGiftofFury}](exists)}
+					{
+						SpellList:Set["${TuurginsGiftofFury}", FALSE]
+					}
+					else
+					{
+						call FindHighestLevel ${LEVEL} "${RageofTuurgin}"
 						SpellList:Set[${Return}, FALSE]
-					call FindHighestLevel ${Me.Level} "Oracle's Sight"
+					}
+					if ${Me.Ability[${SuperiorTuurginsVigor}](exists)}
+					{
+						SpellList:Set["${SuperiorTuurginsVigor}", FALSE]
+					}
+					else
+					{
+						call FindHighestLevel ${LEVEL} "${TuurginsVigor}"
 						SpellList:Set[${Return}, FALSE]
-					call FindHighestLevel ${Me.Level} "Boon of Bosrid"
+					}
+					call FindHighestLevel ${LEVEL} "Boon of Tuurgin"
+						SpellList:Set["${Return}", FALSE]
+						
+					;; ==========   ALL TOTEM BUFFS   ==========
+					call FindHighestLevel ${LEVEL} "Boon of Boqobol"
 						SpellList:Set[${Return}, FALSE]
-					call FindHighestLevel ${Me.Level} "Life Ward"
+					call FindHighestLevel ${LEVEL} "Infusion"
+						SpellList:Set[${Return}, FALSE]
+					call FindHighestLevel ${LEVEL} "Oracle's Sight"
+						SpellList:Set[${Return}, FALSE]
+					call FindHighestLevel ${LEVEL} "Boon of Bosrid"
+						SpellList:Set[${Return}, FALSE]
+					call FindHighestLevel ${LEVEL} "Life Ward"
 						SpellList:Set[${Return}, FALSE]
 				}
 			}
