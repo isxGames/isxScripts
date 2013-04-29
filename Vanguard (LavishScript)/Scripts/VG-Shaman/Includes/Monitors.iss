@@ -76,6 +76,14 @@ atom(script) SHA_AlwaysCheck()
 					NextAction:Set[${Script.RunningTime}]
 					return
 				}
+				if ${doMelee} && ${Me.Ability[${ClawofWinter}].IsReady} && ${Me.Ability[${ClawofWinter}].TriggeredCountdown}>0 && ${Me.Ability[${ClawofWinter}].EnduranceCost}<${Me.Endurance}
+				{
+					EchoIt "Crit: ${ClawofWinter}"
+					;Me.Form[${MeleeForm}]:ChangeTo
+					Me.Ability[${ClawofWinter}]:Use
+					NextAction:Set[${Script.RunningTime}]
+					return
+				}
 				if ${doMelee} && ${Me.Ability[${SpearoftheAncestors}].IsReady} && ${Me.Ability[${SpearoftheAncestors}].TriggeredCountdown}>0 && ${Me.Ability[${SpearoftheAncestors}].EnduranceCost}<${Me.Endurance} && ${Me.Endurance}<50
 				{
 					EchoIt "Crit: ${SpearoftheAncestors}"
