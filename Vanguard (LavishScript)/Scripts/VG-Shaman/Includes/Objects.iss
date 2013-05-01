@@ -2,6 +2,7 @@ objectdef Obj_Commands
 {
 	;; identify the Passive Ability
 	variable string PassiveAbility = "Racial Inheritance:"
+	variable int TankGN
 
 	;; initialize when objectdef is created
 	method Initialize()
@@ -38,6 +39,29 @@ objectdef Obj_Commands
 			}
 		}
 		return FALSE
+	}
+	
+	member:int TankHealth(string Tank)
+	{
+		if ${Tank.Find[${Me.FName}]}
+			return ${Me.HealthPct}
+		
+		if ${Me.IsGrouped}
+		{
+			if ${Tank.Find[${Group[${This.TankGN}].Name}]}
+				return ${Group[${This.TankGN}].Health}
+			
+			variable int i
+			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+			{
+				if ${Tank.Find[${Group[${i}].Name}]}
+				{
+					This.TankGN:Set[${i}]
+					return ${Group[${This.TankGN}].Health}
+				}
+			}
+		}
+		return 100
 	}
 }
 	

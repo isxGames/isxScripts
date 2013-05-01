@@ -255,6 +255,10 @@ atom(script) SHA_ChatEvent(string aText, string ChannelNumber, string ChannelNam
 			break
 
 		case 42
+			if ${aText.Find[Following ]}
+				isFollowing:Set[TRUE]
+			if ${aText.Find[Your auto-follow target has moved too far away.]}
+				isFollowing:Set[FALSE]
 			if ${aText.Find[No one but you seems to think you're dead.]}
 				VGExecute "/Stand"
 			if ${aText.Find[You cannot use that item like that.]}
