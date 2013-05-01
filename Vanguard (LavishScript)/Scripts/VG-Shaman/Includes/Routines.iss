@@ -327,29 +327,61 @@ function FollowTank()
 {
 	if ${doFollow}
 	{
-		if ${Pawn[name,${Tank}](exists)}
+		if ${FollowDistance1}<1
+			FollowDistance1:Set[1]
+			
+		if ${FollowDistance2}<=${FollowDistance1}
+			FollowDistance2:Set[${Math.Calc[${FollowDistance1}+1]}]
+			
+		
+		if ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance2} && ${Pawn[name,${Tank}].Distance}<50
 		{
-			;; did target move out of rang?
-			if ${Pawn[name,${Tank}].Distance}>=${FollowDistance2}
+			if !${Tank.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[name,${Tank}]:Target
+				wait 3
+			}
+
+			variable float X = ${Me.X}
+			variable float Y = ${Me.Y}
+			variable bool isSprinting = FALSE
+			
+			isFollowing:Set[FALSE]
+			VGExecute /Follow
+			wait 3
+			if ${isFollowing}
+			{
+				while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}>0
+				{
+					X:Set[${Me.X}]
+					Y:Set[${Me.Y}]
+					if ${Me.DTarget.Name(exists)} && ${Pawn[name,${Tank}].Distance}<=${FollowDistance1} && ${isFollowing}
+					{
+						isFollowing:Set[FALSE]
+						VGExecute /Follow
+						break
+					}
+					wait 3
+				}
+			}
+
+			if ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1}
 			{
 				variable bool DidWeMove = FALSE
 				;; start moving until target is within range
-				while !${isPaused} && ${doFollow} && ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[name,${Tank}].Distance}<95
+				while !${isPaused} && ${doFollow} && ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1}
 				{
+					DidWeMove:Set[TRUE]
 					Pawn[name,${Tank}]:Face
 					VG:ExecBinding[moveforward]
-					DidWeMove:Set[TRUE]
 				}
 				;; if we moved then we want to stop moving
 				if ${DidWeMove}
-				{
 					VG:ExecBinding[moveforward,release]
-				}
 			}
 		}
 	}
 }
-
 
 ;===================================================
 ;===         FACE TARGET SUBROUTINE             ====

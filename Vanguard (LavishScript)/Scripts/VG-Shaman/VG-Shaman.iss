@@ -90,6 +90,9 @@
 ; 20130428 (Zandros)
 ; * Added in Tuurgin Totem abilities and routines
 ;
+; 20130428 (Zandros)
+; * Changed the follow routines so that it uses VG's command /follow
+;
 ;===================================================
 ;===               Includes                     ====
 ;===================================================
@@ -170,6 +173,7 @@ variable bool haveZephyrkinShield = FALSE
 
 ;; Follow variables
 variable bool doFollow = FALSE
+variable bool isFollowing = FALSE
 variable int FollowDistance1 = 3
 variable int FollowDistance2 = 5
 
@@ -186,6 +190,7 @@ variable int BigHealPct = 50
 variable int EmrgHealPct = 35
 variable int LifeWardPct = 85
 variable int AegisofLifePct = 80
+variable int PanaceaPct = 45
 
 ;; XML variables used to store and save data
 variable settingsetref General
@@ -193,7 +198,6 @@ variable settingsetref General
 variable(global) Obj_Commands Check
 
 #define ALARM "${Script.CurrentDirectory}/Sounds/ping.wav"
-
 
 
 ;===================================================
@@ -372,6 +376,8 @@ function AlwaysCheck()
 		;; Cast if health<=85, range<10, group members only
 		if ${doLifeWard} && ${LowestHealth}<${LifeWardPct}
 			call CastNow "${LifeWard}"
+		if ${doLifeWard} && ${Check.TankHealth[${Tank}]}<${LifeWardPct}
+			call CastNow "${LifeWard}"
 		if ${doLifeWard} && ${Me.Pet(exists)} && ${Me.Pet.Health}<${LifeWardPct}
 			call CastNow "${LifeWard}"
 	}
@@ -382,9 +388,9 @@ function AlwaysCheck()
 	if ${Me.IsGrouped}
 	{
 		;; Tank Healing
-		if !${Tank.Find[${Me.FName}]} && ${Tank.Find[${Group[${GroupNumber}].Name}]}
+		if !${Tank.Find[${Me.FName}]} && ${Me.InCombat}
 		{
-			if ${doAegisofLife} && ${Group[${GroupNumber}].Health}<${AegisofLifePct}
+			if ${doAegisofLife} && ${Check.TankHealth[${Tank}]}<${AegisofLifePct}
 			{
 				;; if Aegis of Life is Ready then fire off the +10% Healing clickie
 				if ${haveZephyrkinShield} && ${Me.Ability[${AegisofLife}].IsReady}
@@ -402,21 +408,26 @@ function AlwaysCheck()
 					}
 				}		
 				;; cast Aegis of Life on the tank
+				if !${Tank.Find[${Me.DTarget.Name}]}
+				{
+					Pawn[name,"${Tank}"]:Target
+					wait 3
+				}
 				call UseAbilityOther ${GroupNumber} "${AegisofLife}"
 			}
 			;; if tank is in our group
 			if ${doEmrgHeal} && ${isGroupMember}
 			{
-				if ${Pawn[Name,${Tank}].Distance}<30 && ${Group[${GroupNumber}].Health}<${PanaceaPct}
+				if ${Pawn[Name,${Tank}].Distance}<30 && ${Check.TankHealth[${Tank}]}<${PanaceaPct}
 				{
-					if !${Me.DTarget.Name.Equal[${Group[${GroupNumber}].Name}]}
+					if !${Tank.Find[${Me.DTarget.Name}]}
 					{
-						Pawn[name,"${Group[${GroupNumber}].Name}"]:Target
+						Pawn[name,"${Tank}"]:Target
 						wait 3
 					}
 					call CastNow "${Panacea}"
 				}
-				if ${Pawn[Name,${Tank}].Distance}<10 && ${Group[${GroupNumber}].Health}<${EmrgHealPct}
+				if ${Pawn[Name,${Tank}].Distance}<10 && ${Check.TankHealth[${Tank}]}<${EmrgHealPct}
 					call CastNow "${Intercession}"
 			}
 		}
@@ -669,7 +680,7 @@ function AttackTarget()
 	;; return if target's health is above our StartAttack
 	if ${Me.TargetHealth}>${StartAttack} && ${Pawn[id,${Me.Target.ID}].CombatState}==0
 		return
-		
+	
 	if ${Me.TargetHealth}>${StartAttack} && !${Me.ToT.Name.Find[${Me.FName}]}
 		return
 		
@@ -745,7 +756,7 @@ function AttackTarget()
 		}
 	}
 
-	if ${Me.HealthPct}<55 || (${Me.Pet(exists)} && ${Me.Pet.Health}<55)
+	if ${Me.HealthPct}<55 || (${Me.Pet(exists)} && ${Me.Pet.Health}<55) || ${Check.TankHealth[${Tank}]}<55
 		return
 
 	;; Remove Curses, Poisons, and Diseases
@@ -978,9 +989,9 @@ function Startup()
 	call SetHighestAbility "GelidBlast" "Gelid Blast"
 	call SetHighestAbility "UmbraBurst" "Umbra Burst"
 	call SetHighestAbility "SpearoftheAncestors" "Spear of the Ancestors"
-	EchoIt "FINISHER (Rakurr)
+	EchoIt "FINISHER (Rakurr)"
 	call SetHighestAbility "ThroatRip" "Throat Rip"
-	EchoIt "FINISHER (Tuurgin)
+	EchoIt "FINISHER (Tuurgin)"
 	call SetHighestAbility "ClawofWinter" "Claw of Winter"
 
 	
@@ -1059,7 +1070,6 @@ function Startup()
 	call SetHighestAbility "ShakeOff" "Shake Off"
 	call SetHighestAbility "Frenzy" "Frenzy"
 
-	
 	;; Set Forms
 	if ${Me.Form["Strong Spirit Bond: Skamadiz"](exists)}
 		MeleeForm:Set["Strong Spirit Bond: Skamadiz"]
@@ -1107,7 +1117,7 @@ function Startup()
 		TankID:Set[${Me.DTarget.ID}]
 	}
 		
-		
+
 	;-------------------------------------------
 	; Build and Import XML Data
 	;-------------------------------------------
@@ -1167,7 +1177,6 @@ function Startup()
 	ui -reload -skin VGSkin "${Script.CurrentDirectory}/VG-Shaman.xml"
 	wait 5
 	
-	
 
 	;Script:Squelch
 	;declare	TotalKills	int	global	0
@@ -1184,6 +1193,9 @@ function Startup()
 	;Script:Unsquelch
 	
 	VGExecute "/setfog 444444, 999999, 100, 100, 240"
+	
+	doFindGroupMembers:Set[TRUE]
+	call FindGroupMembers
 }
 
 
