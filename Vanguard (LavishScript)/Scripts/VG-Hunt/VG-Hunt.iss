@@ -343,7 +343,7 @@ function NoTargetRoutine()
 		wait 3
 	}
 	;; Raise Energy by eating Druid Berries
-	if ${Me.EnergyPct} < 50 && ${Me.Inventory[Large MottleBerries].IsReady}
+	if ${Me.Energy(exists)} && ${Me.EnergyPct}<50 && ${Me.Inventory[Large MottleBerries].IsReady}
 	{
 		Me.Inventory[Large MottleBerries]:Use
 		wait 3
@@ -430,7 +430,7 @@ function NoTargetRoutine()
 		}
 
 		;; Go find a target if our health is high enough
-		if ${Me.EnergyPct}>=90 && ${Me.HealthPct}>=90
+		if (${Me.Energy(exists)} && ${Me.EnergyPct}>=90) && ${Me.HealthPct}>=90) || (!${Me.Energy(exists)} && ${Me.HealthPct}>=90)
 		{
 			;; reset our flag
 			NeedMoreEnergy:Set[FALSE]
