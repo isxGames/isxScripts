@@ -334,8 +334,11 @@ function FollowTank()
 			FollowDistance2:Set[${Math.Calc[${FollowDistance1}+1]}]
 			
 		
-		if ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance2} && ${Pawn[name,${Tank}].Distance}<50
+		if ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance2} && ${Pawn[name,${Tank}].Distance}<70
 		{
+
+		
+/*		
 			if !${Tank.Find[${Me.DTarget.Name}]}
 			{
 				Pawn[name,${Tank}]:Target
@@ -364,6 +367,7 @@ function FollowTank()
 					wait 3
 				}
 			}
+*/
 
 			if ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1}
 			{

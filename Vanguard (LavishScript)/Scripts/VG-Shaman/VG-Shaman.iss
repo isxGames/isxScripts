@@ -93,6 +93,9 @@
 ; 20130428 (Zandros)
 ; * Changed the follow routines so that it uses VG's command /follow
 ;
+; 20130505 (Zandros)
+; * Moved the following routine to be active at all times, even when casting
+;
 ;===================================================
 ;===               Includes                     ====
 ;===================================================
@@ -245,6 +248,7 @@ function HandleCoolDown()
 				WeAreDead:Set[TRUE]
 				call MeleeAttackOff
 			}
+			call FollowTank
 		}
 		wait ${DelayAttack}
 	}
