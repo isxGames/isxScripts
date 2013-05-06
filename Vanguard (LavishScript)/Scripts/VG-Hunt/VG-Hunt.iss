@@ -254,16 +254,19 @@ function HaveTargetRoutine()
 
 	
 	;; Move closer if target has loot - must be less than 5 so anything less than that will work
-	if ${Me.Target.ContainsLoot}
+	if ${doLoot} && ${Me.Target.IsDead}
 	{
-		call MoveCloser 4
-		if ${doLoot} && ${Me.Target.ContainsLoot} && ${Me.Target.Distance}<=5
+		if ${Me.Target.ContainsLoot}
 		{
-			Loot:LootAll
-			waitframe
-			VGExecute "/cleartargets"
-			wait 30
+			call MoveCloser 4
+			if ${Me.Target.Distance}<=5
+			{
+				Loot:LootAll
+				waitframe
+			}
 		}
+		VGExecute "/cleartargets"
+		wait 30
 	}
 	
 	;; Hmmm, we are going to do nothing with the target because we only find targets!
@@ -343,7 +346,7 @@ function NoTargetRoutine()
 		wait 3
 	}
 	;; Raise Energy by eating Druid Berries
-	if ${Me.Energy(exists)} && ${Me.EnergyPct}<50 && ${Me.Inventory[Large MottleBerries].IsReady}
+	if ${Me.Energy}>0 && ${Me.EnergyPct}<50 && ${Me.Inventory[Large MottleBerries].IsReady}
 	{
 		Me.Inventory[Large MottleBerries]:Use
 		wait 3
@@ -355,12 +358,12 @@ function NoTargetRoutine()
 		;; echo that we need more health/energy
 		if !${NeedMoreEnergy}
 		{
-			if ${Me.Endurance(exists)} && ${Me.EndurancePct}<=45
+			if ${Me.Endurance}>0 && ${Me.EndurancePct}<=45
 			{
 				NeedMoreEnergy:Set[TRUE]
 				vgecho RESTING:  Endurance is below 45%
 			}
-			if (${Me.Energy(exists)} && ${Me.EnergyPct}<=60) || ${Me.HealthPct}<60
+			if (${Me.Energy}>0 && ${Me.EnergyPct}<=60) || ${Me.HealthPct}<60
 			{
 				NeedMoreEnergy:Set[TRUE]
 				vgecho RESTING:  Health or Energy is below 60%
@@ -369,7 +372,7 @@ function NoTargetRoutine()
 		
 		if ${NeedMoreEnergy}
 		{
-			if (${Me.Energy(exists)} && ${Me.EnergyPct}<60) || ${Me.HealthPct}<60
+			if (${Me.Energy}>0 && ${Me.EnergyPct}<60) || ${Me.HealthPct}<60
 			{
 				variable string EatThis = Nothing
 				if ${Me.Inventory[exactname,Fresh Berries](exists)}
@@ -400,12 +403,21 @@ function NoTargetRoutine()
 			}
 		
 			;; loop this to regain more energy
-			while ${Me.HealthPct}<90 || (${Me.Energy(exists)} && ${Me.EnergyPct}<90) || (${Me.Endurance(exists)} && ${Me.EndurancePct}<50)
+			while ${Me.HealthPct}<90 || (${Me.Energy}>0 && ${Me.EnergyPct}<90) || (${Me.Endurance}>0 && ${Me.EndurancePct}<50)
 			{
 				if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Me.InCombat}
 					break
-				EchoIt "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
-				vgecho "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+				if ${Me.Energy}>0
+				{
+					EchoIt "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+					vgecho "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+				}
+				else
+				{
+					EchoIt "Resting: My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+					vgecho "Resting: My Health=${Me.HealthPct}, My Enurance=${Me.EndurancePct}"
+				}
+				
 				wait 50 ${Me.Target(exists)} || ${Me.Encounter}>0
 				waitframe
 			}
@@ -430,7 +442,7 @@ function NoTargetRoutine()
 		}
 
 		;; Go find a target if our health is high enough
-		if (${Me.Energy(exists)} && ${Me.EnergyPct}>=90) && ${Me.HealthPct}>=90) || (!${Me.Energy(exists)} && ${Me.HealthPct}>=90)
+		if ((${Me.Energy}>0 && ${Me.EnergyPct}>=90) && ${Me.HealthPct}>=90) || (!${Me.Energy}>0 && ${Me.HealthPct}>=90)
 		{
 			;; reset our flag
 			NeedMoreEnergy:Set[FALSE]
