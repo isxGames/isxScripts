@@ -13,6 +13,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20130506 (Zandros)
+;  * Fixed the GlobalCooldown routine so that the script would function correctly
+;
 ; 20120112 (Zandros)
 ; * Added a tab called 'Counters' which now gives you full control which ability
 ;   you want to counter.  As you identify the target's ability, it will automatically
@@ -72,6 +75,7 @@
 ;
 ; 20111001 (Zandros)
 ;  * A simple script that handles counters and stripping enchantments
+;
 ;
 ;===================================================
 ;===            VARIABLES                       ====
@@ -766,9 +770,9 @@ atom(script) PlaySound(string Filename)
 function GlobalCooldown()
 {
 	wait 5
-	if ${VG.InGlobalRecovery}
+	if ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 	{
-		while ${VG.InGlobalRecovery}
+		while ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 		{
 			call AutoAttack
 		}
@@ -783,9 +787,9 @@ function GlobalCooldown()
 function IsCasting()
 {
 	wait 5
-	if ${Me.IsCasting} || ${VG.InGlobalRecovery}
+	if ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 	{
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 		{
 			call CounterIt
 			call AutoAttack
@@ -1671,9 +1675,16 @@ function:bool UseAbility(string ABILITY)
 			;echo "Not enought Endurance for ${ABILITY}"
 			return FALSE
 		}
+		if ${Me.Effect[${ABILITY}](exists)}
+			return FALSE
+		if ${Me.TargetMyDebuff[${ABILITY}](exists)}
+			return FALSE
+		if ${Pawn[me].IsMounted}
+			return FALSE
 
 		Me.Ability[${ABILITY}]:Use
 		call IsCasting
+		EchoIt "UseAbility (${ABILITY})"
 		return TRUE
 	}
 	return FALSE
@@ -1855,7 +1866,7 @@ function ForceBuffArea()
 ;===================================================
 function BuffRequests()
 {
-	if ${Me.IsCasting} || ${VG.InGlobalRecovery}
+	if ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 	{
 		return
 	}
@@ -1913,7 +1924,7 @@ function BuffRequests()
 								}
 								waitframe
 							}
-							while ${Me.IsCasting} || ${VG.InGlobalRecovery}
+							while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 									
 							;; cast the buff
 							if ${Me.Ability[${Iterator.Key}].IsReady}
@@ -2434,3 +2445,72 @@ atom(global) Tools_BuildCounter2()
 		LavishSettings[DPS].FindSet[Counters2-${Me.FName}]:AddSetting[${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}]
 	}
 }
+
+objectdef Obj_Commands
+{
+	;; identify the Passive Ability
+	variable string PassiveAbility = "Racial Inheritance:"
+	variable int TankGN
+
+	;; initialize when objectdef is created
+	method Initialize()
+	{
+		variable int i
+		for (i:Set[1] ; ${Me.Ability[${i}](exists)} ; i:Inc)
+		{
+			if ${Me.Ability[${i}].Name.Find[Racial Inheritance:]}
+				This.PassiveAbility:Set[${Me.Ability[${i}].Name}]
+		}
+	}
+
+	;; called when script is shut down
+	method Shutdown()
+	{
+	}
+
+	;; external command
+	member:bool AreWeReady()
+	{
+		if ${Me.Ability[${This.PassiveAbility}].IsReady}
+			return TRUE
+		return FALSE
+	}
+	
+	member:bool AreWeEating()
+	{
+		variable int i
+		for (i:Set[1]; ${Me.Effect[${i}](exists)}; i:Inc)
+		{
+			if ${Me.Effect[${i}].IsBeneficial}
+			{
+				if ${Me.Effect[${i}].Description.Find[Health:]} && ${Me.Effect[${i}].Description.Find[Energy:]} && ${Me.Effect[${i}].Description.Find[over]} && ${Me.Effect[${i}].Description.Find[seconds]}
+					return TRUE
+			}
+		}
+		return FALSE
+	}
+	
+	member:int TankHealth(string Tank)
+	{
+		if ${Tank.Find[${Me.FName}]}
+			return ${Me.HealthPct}
+		
+		if ${Me.IsGrouped}
+		{
+			if ${Tank.Find[${Group[${This.TankGN}].Name}]}
+				return ${Group[${This.TankGN}].Health}
+			
+			variable int i
+			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+			{
+				if ${Tank.Find[${Group[${i}].Name}]}
+				{
+					This.TankGN:Set[${i}]
+					return ${Group[${This.TankGN}].Health}
+				}
+			}
+		}
+		return 100
+	}
+}
+variable(global) Obj_Commands Tools

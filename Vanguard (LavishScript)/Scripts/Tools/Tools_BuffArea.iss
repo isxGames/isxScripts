@@ -154,7 +154,7 @@ function main(bool CheckForBuff=TRUE)
 							}
 							waitframe
 						}
-						while ${Me.IsCasting} || ${VG.InGlobalRecovery}
+						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${ToolBuff.AreWeReady}
 									
 						;-------------------------------------------
 						;; cast the buff
@@ -240,7 +240,7 @@ function:bool UseAbility2(string ABILITY)
 		wait 5
 
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery}
+		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${ToolBuff.AreWeReady}
 		{
 			waitframe
 		}
@@ -251,3 +251,48 @@ function:bool UseAbility2(string ABILITY)
 	;; say we did not execute the ability
 	return FALSE
 }
+
+objectdef Obj_Commands
+{
+	;; identify the Passive Ability
+	variable string PassiveAbility = "Racial Inheritance:"
+
+	;; initialize when objectdef is created
+	method Initialize()
+	{
+		variable int i
+		for (i:Set[1] ; ${Me.Ability[${i}](exists)} ; i:Inc)
+		{
+			if ${Me.Ability[${i}].Name.Find[Racial Inheritance:]}
+				This.PassiveAbility:Set[${Me.Ability[${i}].Name}]
+		}
+	}
+
+	;; called when script is shut down
+	method Shutdown()
+	{
+	}
+
+	;; external command
+	member:bool AreWeReady()
+	{
+		if ${Me.Ability[${This.PassiveAbility}].IsReady}
+			return TRUE
+		return FALSE
+	}
+	
+	member:bool AreWeEating()
+	{
+		variable int i
+		for (i:Set[1]; ${Me.Effect[${i}](exists)}; i:Inc)
+		{
+			if ${Me.Effect[${i}].IsBeneficial}
+			{
+				if ${Me.Effect[${i}].Description.Find[Health:]} && ${Me.Effect[${i}].Description.Find[Energy:]} && ${Me.Effect[${i}].Description.Find[over]} && ${Me.Effect[${i}].Description.Find[seconds]}
+					return TRUE
+			}
+		}
+		return FALSE
+	}
+}
+variable(global) Obj_Commands ToolBuff
