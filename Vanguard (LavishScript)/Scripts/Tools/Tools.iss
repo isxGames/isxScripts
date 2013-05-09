@@ -134,6 +134,17 @@ variable string RestInstrument = RestInstrument
 variable string TravelSong = TravelSong
 variable string TravelInstrument = TravelInstrument
 
+;; Healing Stuff
+variable collection:int GroupMemberList
+variable bool doFindGroupMembers = TRUE
+variable bool doGroupOnly = FALSE
+variable bool doSmallHeal = TRUE
+variable bool doBigHeal = TRUE
+variable bool doHoT = TRUE
+variable int BigHealPct = 50
+variable int SmallHealPct = 65
+variable int HoTPct = 80
+
 ;; Ability name variables
 variable string Counter1
 variable string Counter2
@@ -171,6 +182,7 @@ variable int FollowDistance2 = 5
 #include ./Tools/Class/Sorcerer.iss
 #include ./Tools/Class/Ranger.iss
 #include ./Tools/Class/Necromancer.iss
+#include ./Tools/Class/Cleric.iss
 
 ;; Defines - good within this script
 #define ALARM "${Script.CurrentDirectory}/ping.wav"
@@ -228,6 +240,7 @@ function main()
 			call Sorcerer
 			call Ranger
 			call Necromancer
+			call Cleric
 		
 			;; we only want targets that are not a Resource and not dead
 			if ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]})
@@ -246,6 +259,7 @@ function main()
 				;; our target is a Resource or is dead
 				call MeleeAttackOff
 				call CheckBuffs
+				call HarvestIt
 			}
 		}
 		else 
@@ -431,6 +445,14 @@ function Initialize()
 	RestInstrument:Set[${General.FindSetting[RestInstrument]}]
 	TravelSong:Set[${General.FindSetting[TravelSong]}]
 	TravelInstrument:Set[${General.FindSetting[TravelInstrument]}]
+	
+	;; Class Specific - Healers
+	doSmallHeal:Set[${General.FindSetting[doSmallHeal]}]
+	doBigHeal:Set[${General.FindSetting[doBigHeal]}]
+	doHoT:Set[${General.FindSetting[doHoT]}]
+	SmallHealPct:Set[${General.FindSetting[SmallHealPct]}]
+	BigHealPct:Set[${General.FindSetting[BigHealPct]}]
+	HoTPct:Set[${General.FindSetting[HoTPct]}]
 
 	;; Class Specific - Necromancer
 	AbominationName:Set[${General.FindSetting[AbominationName,"Stinky"]}]
@@ -633,6 +655,14 @@ function atexit()
 	General:AddSetting[RestInstrument,${RestInstrument}]
 	General:AddSetting[TravelSong,${TravelSong}]
 	General:AddSetting[TravelInstrument,${TravelInstrument}]
+	
+	;; update class specific - Healers
+	General:AddSetting[doSmallHeal,${doSmallHeal}]
+	General:AddSetting[doBigHeal,${doBigHeal}]
+	General:AddSetting[doHoT,${doHoT}]
+	General:AddSetting[SmallHealPct,${SmallHealPct}]
+	General:AddSetting[BigHealPct,${BigHealPct}]
+	General:AddSetting[HoTPct,${HoTPct}]
 
 	;; update class specific - Necromancer
 	General:AddSetting[AbominationName,${AbominationName}]
@@ -655,7 +685,7 @@ function atexit()
 ;===================================================
 atom(script) EchoIt(string aText)
 {
-	echo "[${Time}][Tools]: ${aText}"
+	echo "[${Time}][Tools] ${aText}"
 }
 
 ;===================================================
@@ -776,7 +806,7 @@ function GlobalCooldown()
 		{
 			call AutoAttack
 		}
-		wait 1
+		wait 2
 	}
 	call UseItems
 }
@@ -794,9 +824,19 @@ function IsCasting()
 			call CounterIt
 			call AutoAttack
 		}
-		wait 1
+		wait 2
 	}
 	call UseItems
+}
+
+function ReadyCheck()
+{
+	while !${Tools.AreWeReady}
+	{
+		while !${Tools.AreWeReady}
+			waitframe
+		wait 5
+	}
 }
 
 ;===================================================
@@ -1693,6 +1733,49 @@ function:bool UseAbility(string ABILITY)
 ;===================================================
 ;===               Use Items                    ====
 ;===================================================
+function:bool UseAbilityNoCoolDown(string ABILITY)
+{
+	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
+	{
+		echo "${ABILITY} does not exist or too high a level to use"
+		return FALSE
+	}
+	
+	;-------------------------------------------
+	; execute ability only if it is ready
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		;; return if we do not have enough energy
+		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
+		{
+			;echo "Not enought Energy for ${ABILITY}"
+			return FALSE
+		}
+		;; return if we do not have enough Endurance
+		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
+		{
+			;echo "Not enought Endurance for ${ABILITY}"
+			return FALSE
+		}
+		if ${Me.Effect[${ABILITY}](exists)}
+			return FALSE
+		if ${Me.TargetMyDebuff[${ABILITY}](exists)}
+			return FALSE
+		if ${Pawn[me].IsMounted}
+			return FALSE
+
+		Me.Ability[${ABILITY}]:Use
+		wait 5
+		EchoIt "UseAbility (${ABILITY})"
+		return TRUE
+	}
+	return FALSE
+}
+
+;===================================================
+;===               Use Items                    ====
+;===================================================
 function UseItems()
 {
 	call OkayToAttack
@@ -2146,6 +2229,12 @@ function FollowTank()
 	{
 		if ${Pawn[name,${Tank}](exists)}
 		{
+			if ${FollowDistance1}<1
+				FollowDistance1:Set[1]
+				
+			if ${FollowDistance2}<=${FollowDistance1}
+				FollowDistance2:Set[${Math.Calc[${FollowDistance1}+1]}]
+				
 			;; did target move out of rang?
 			if ${Pawn[name,${Tank}].Distance}>=${FollowDistance2}
 			{
@@ -2514,3 +2603,88 @@ objectdef Obj_Commands
 	}
 }
 variable(global) Obj_Commands Tools
+
+;===================================================
+;===   SUBROUTINE - FIND GROUP MEMBERS          ====
+;===================================================
+function FindGroupMembers()
+{
+	if !${doFindGroupMembers}
+		return
+		
+	;; reset our variables
+	GroupMemberList:Clear
+	doFindGroupMembers:Set[FALSE]
+	
+	if ${Me.IsGrouped}
+	{
+		for (i:Set[1]; ${i}<=6; i:Inc)
+		{
+			;; Clear our Target
+			VGExecute /cleartargets
+			wait 1 !${Me.DTarget(exists)}
+			
+			;; Target a Group Member (1-6)
+			VGExecute "/targetgroupmember ${i}"
+			wait 1 ${Me.DTarget(exists)}
+			
+			;; Add Name to GroupMemberList
+			if ${Me.DTarget(exists)}
+			{
+				GroupMemberList:Set["${Me.DTarget.Name.Token[1," "]}", ${Me.DTarget.ID}]
+				vgecho "Group Member[${i}] = ${Me.DTarget.Name}"
+			}
+			
+			if !${Me.DTarget(exists)}
+				vgecho "Group Member[${i}] = does not exist"
+		}
+	}
+}
+
+;===================================================
+;===   SUBROUTINE - Harvest Target              ====
+;===================================================
+function HarvestIt()
+{
+	if !${Me.Target.IsHarvestable} || ${Pawn[name,${Tank}].CombatState}==0
+		return
+	
+	;; we are going to move into harvesting range of target
+	if ${Me.Target.Distance}>=4
+	{
+		;; change posture to walking
+		VGExecute /walk
+
+		;; loop until target doesn't exist or inside 4 meters
+		while ${Me.Target.Distance}>=4
+		{
+			VG:ExecBinding[moveforward]
+			face ${Me.Target.X} ${Me.Target.Y}
+			if !${Me.Target(exists)} || !${isRunning} || ${isPaused}
+					break
+		}
+
+		;; stop moving forward
+		VG:ExecBinding[moveforward,release]
+
+		;; change our posture back to running
+		VGExecute /run
+	}
+	
+	while !${Me.InCombat} && ${Me.Target.Distance}<5 && (${Me.Target.Type.Equal[Resource]} || (${Me.Target.Type.Equal[Corpse]} && ${Me.Target.Name.Find["corpse of "]}))
+	{
+		Me.Ability[Auto Attack]:Use
+		wait 5
+	}
+
+	if ${Me.InCombat} && ${Me.Encounter}==0
+	{
+		while ${Me.InCombat} && ${Me.Encounter}==0
+			waitframe
+		wait 5 ${Me.Target.ContainsLoot}
+	}	
+
+	VGExecute "/hidewindow Harvesting"
+	VGExecute "/hidewindow Bonus Yield"
+	wait 20
+}

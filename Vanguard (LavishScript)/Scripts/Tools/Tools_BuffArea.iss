@@ -155,6 +155,7 @@ function main(bool CheckForBuff=TRUE)
 							waitframe
 						}
 						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${ToolBuff.AreWeReady}
+						wait 3
 									
 						;-------------------------------------------
 						;; cast the buff
@@ -244,6 +245,7 @@ function:bool UseAbility2(string ABILITY)
 		{
 			waitframe
 		}
+		wait 3
 
 		;; say we executed ability successfully
 		return TRUE
