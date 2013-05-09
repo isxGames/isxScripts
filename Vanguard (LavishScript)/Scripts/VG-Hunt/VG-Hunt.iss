@@ -64,6 +64,7 @@ variable float HomeX
 variable float HomeY
 variable filepath DebugFilePath = "${Script.CurrentDirectory}/Saves"
 variable bool NeedMoreEnergy = FALSE
+variable bool doFace = TRUE
 
 variable collection:int64 BlackListTarget
 
@@ -110,7 +111,7 @@ function main()
 	;-------------------------------------------
 	while ${isRunning} && ${Me(exists)}
 	{
-		if ${GV[bool,DeathReleasePopup]}
+		if ${GV[bool,DeathReleasePopup]} || ${Pawn[name,${Me}].IsDead}
 		{
 			EchoIt "We are dead! (wait for 10 minutes)"
 			WeAreDead:Set[TRUE]
@@ -134,7 +135,7 @@ function main()
 				waitframe
 			}
 			;; wait until we are teleported to the nearest altar (can be in a different chunk)
-			while ${GV[bool,DeathReleasePopup]}
+			while ${GV[bool,DeathReleasePopup]} || ${Pawn[name,${Me}].IsDead}
 				waitframe
 		}
 		
@@ -240,6 +241,7 @@ function HaveTargetRoutine()
 	if ${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]} && ${Me.Target.Distance}<11
 		call MoveCloser 4
 
+	call StartFacing
 	
 	;; Backup if we are too close
 	if ${Me.Target(exists)} && ${Me.Target.Distance}<1
@@ -426,6 +428,64 @@ function NoTargetRoutine()
 			VGExecute "/stand"
 		}
 		
+		
+		if ${Me.IsGrouped}
+		{
+			variable int LowestHealth = 100
+			variable int LowestEnergy = 100
+			variable int gn
+		
+			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+			{
+				if ${Group[${i}].Distance}<30 && ${Group[${i}].Health}>0
+				{
+					if ${Group[${i}].Health}<=${LowestHealth}
+					{
+						gn:Set[${i}]
+						LowestHealth:Set[${Group[${i}].Health}]
+					}
+					if ${Group[${i}].Energy}>0 && ${Group[${i}].Energy}<=${LowestEnergy}
+					{
+						gn:Set[${i}]
+						LowestEnergy:Set[${Group[${i}].Energy}]
+					}
+				}
+			}
+			
+			while ${LowestEnergy}<90 || ${LowestHealth}<90
+			{
+				EchoIt "Resting: ${Group[${gn}].Name}'s Health=${LowestHealth}, Energy=${LowestEnergy}"
+				vgecho "Resting: ${Group[${gn}].Name}'s Health=${LowestHealth}, Energy=${LowestEnergy}"
+				
+				wait 50 ${Me.Target(exists)} || ${Me.Encounter}>0
+				waitframe
+				if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Me.InCombat}
+					break
+
+				LowestHealth:Set[100]
+				LowestEnergy:Set[100]
+					
+				for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+				{
+					if ${Group[${i}].Distance}<30 && ${Group[${i}].Health}>0
+					{
+						if ${Group[${i}].Health}<=${LowestHealth}
+						{
+							gn:Set[${i}]
+							LowestHealth:Set[${Group[${i}].Health}]
+						}
+						if ${Group[${i}].Energy}>0 && ${Group[${i}].Energy}<=${LowestEnergy}
+						{
+							gn:Set[${i}]
+							LowestEnergy:Set[${Group[${i}].Energy}]
+						}
+					}
+				}
+			}
+		}
+
+				
+		
 		;; Check Inventory - for now, we will camp if it is full
 		if ${Me.InventorySlotsOpen}<=5 && !${Me.Target(exists)}
 		{
@@ -453,11 +513,11 @@ function NoTargetRoutine()
 			if ${doLoot}
 				call LootNearbyCorpses
 				
-			if !${Me.Target(exists)}
-				call MoveToWayPoint
-
 			if ${doScanAreaForTarget}
 				call FindTarget ${MaxDistance}
+
+			if !${Me.Target(exists)}
+				call MoveToWayPoint
 			return
 		}
 		NeedMoreEnergy:Set[TRUE]
@@ -716,7 +776,6 @@ function MoveCloser(int Distance=4)
 	
 	if ${Me.Target.Distance}>10
 		call StartFacing
-
 
 	if ${Distance}<1
 		Distance:Set[1]
@@ -1012,54 +1071,38 @@ function StartFacing()
 		return
 
 	CalculateAngles
-	if ${AngleDiffAbs} <= 10
-		return
-	
-	VGExecute /stand
-	wait 1
-
-	variable int i = ${Math.Calc[5-${Math.Rand[10]}]}
-	EchoIt "Facing within ${i} degrees of ${Me.Target.Name}"
-	CalculateAngles
-	if ${AngleDiff}>0
+	if ${AngleDiffAbs} > 20
 	{
-		VG:ExecBinding[turnright,release]
-		wait 1
-		VG:ExecBinding[turnleft,release]
-		wait 1
-		VG:ExecBinding[turnright]
-		while ${AngleDiff} > ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
+		VGExecute /stand
+		waitframe
+		
+		variable int i = 0
+		;variable int i = ${Math.Calc[10-${Math.Rand[20]}]}
+		if ${AngleDiff}>0
 		{
-			CalculateAngles
+			while ${AngleDiff} > ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning} && ${doFace}
+			{
+				VG:ExecBinding[turnright]
+				CalculateAngles
+			}
+			EchoIt "Turning right and stopped at ${AngleDiff} degrees of ${Me.Target.Name}"
+			VG:ExecBinding[turnright,release]
 		}
-		VG:ExecBinding[turnleft,release]
-		wait 1
-		VG:ExecBinding[turnright,release]
-		wait 1
-		return
-	}
-	CalculateAngles
-	if ${AngleDiff}<0
-	{
-		VG:ExecBinding[turnright,release]
-		wait 1
-		VG:ExecBinding[turnleft,release]
-		wait 1
-		VG:ExecBinding[turnleft]
-		while ${AngleDiff} < ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
+		elseif ${AngleDiff}<0
 		{
-			CalculateAngles
+			while ${AngleDiff} < ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning} && ${doFace}
+			{
+				VG:ExecBinding[turnleft]
+				CalculateAngles
+			}
+			EchoIt "Turning left and stopped at ${AngleDiff} degrees of ${Me.Target.Name}"
+			VG:ExecBinding[turnleft,release]
 		}
-		VG:ExecBinding[turnright,release]
 		wait 1
 		VG:ExecBinding[turnleft,release]
+		VG:ExecBinding[turnright,release]
 		wait 1
-		return
 	}
-	VG:ExecBinding[turnright,release]
-	wait 1
-	VG:ExecBinding[turnleft,release]
-	wait 1
 }
 
 variable int AngleDiff = 0
