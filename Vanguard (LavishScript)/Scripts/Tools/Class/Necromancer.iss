@@ -9,9 +9,7 @@ function Necromancer()
 {
 	;; return if your class is not a Bard
 	if !${Me.Class.Equal[Necromancer]}
-	{
 		return
-	}
 	
 	;; we only want to run this once
 	if ${NecroRunOnce}

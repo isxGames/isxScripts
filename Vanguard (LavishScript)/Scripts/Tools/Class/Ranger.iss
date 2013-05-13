@@ -2,6 +2,10 @@ variable bool RangerRunOnce = TRUE
 variable int NextRangerCheck = ${Script.RunningTime}
 function Ranger()
 {
+	;; return if your class is not a Bard
+	if !${Me.Class.Equal[Ranger]}
+		return
+
 	;; forces this only to run once every .2 seconds
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextRangerCheck}]}/100]}<2
 	{
@@ -9,11 +13,6 @@ function Ranger()
 	}
 	NextRangerCheck:Set[${Script.RunningTime}]
 
-	;; return if your class is not a Bard
-	if !${Me.Class.Equal[Ranger]}
-	{
-		return
-	}
 	
 	;; we only want to run this once
 	if ${RangerRunOnce}
