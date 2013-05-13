@@ -4,6 +4,10 @@ variable int NextBardCheck = ${Script.RunningTime}
 
 function Bard()
 {
+	;; return if your class is not a Bard
+	if !${Me.Class.Equal[Bard]}
+		return
+
 	;; forces this only to run once every 2 seconds
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextBardCheck}]}/1000]}<1
 	{
@@ -11,11 +15,6 @@ function Bard()
 	}
 	NextBardCheck:Set[${Script.RunningTime}]
 
-	;; return if your class is not a Bard
-	if !${Me.Class.Equal[Bard]}
-	{
-		return
-	}
 	
 	;; show the Bard tab in UI
 	UIElement[Bard@Class@DPS@Tools]:Show

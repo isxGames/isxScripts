@@ -5,19 +5,17 @@ variable int NextSorcLocCheck = ${Script.RunningTime}
 variable point3f SorcLocation = ${Me.Location}
 function Sorcerer()
 {
-	;; forces this only to run once every .2 seconds
+	;; return if your class is not a Bard
+	if !${Me.Class.Equal[Sorcerer]}
+		return
+
+		;; forces this only to run once every .2 seconds
 	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextSorcCheck}]}/100]}<2
 	{
 		return
 	}
 	NextSorcCheck:Set[${Script.RunningTime}]
 
-	;; return if your class is not a Bard
-	if !${Me.Class.Equal[Sorcerer]}
-	{
-		return
-	}
-	
 	;; we only want to run this once
 	if ${SorcRunOnce}
 	{

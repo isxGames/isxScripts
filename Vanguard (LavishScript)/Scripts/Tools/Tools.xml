@@ -800,8 +800,310 @@
 								Tools_BuildBuffs
 							</OnRightClick>
 						</Listbox>
-
 					</Tab>
+
+
+					<Tab name='Heals'>
+						<Text Name='txtAbilities' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>===== Heals =====  </Text>
+						</Text>
+
+						<checkbox Name="doSmallHeal" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>9%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>         Small Heal %</Text>
+							<AutoTooltip>   Use your small heal </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doSmallHeal}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doSmallHeal:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<Textentry Name="SmallHealPct" Template="VG.TextEntry">
+							<X>15%</X>
+							<Y>9%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.SmallHealPct}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.SmallHealPct:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.SmallHealPct:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<ComboBox Name="SmallHeal" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>13%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.SmallHeal:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						<checkbox Name="doBigHeal" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>24%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>         Big Heal %</Text>
+							<AutoTooltip>   Use your biggest heal</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doBigHeal}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doBigHeal:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<Textentry Name="BigHealPct" Template="VG.TextEntry">
+							<X>15%</X>
+							<Y>24%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.BigHealPct}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.BigHealPct:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.BigHealPct:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<ComboBox Name="BigHeal" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>28%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.BigHeal:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+
+						<checkbox Name="doGroupHeal" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>39%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>         Goup Heal %</Text>
+							<AutoTooltip>   Use your group heal healing members around you</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doGroupHeal}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doGroupHeal:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<Textentry Name="GroupHealPct" Template="VG.TextEntry">
+							<X>15%</X>
+							<Y>39%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.GroupHealPct}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.GroupHealPct:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.GroupHealPct:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<ComboBox Name="GroupHeal" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>44%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.GroupHeal:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						<checkbox Name="doInstantHeal" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>54%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>         Instant Heal %</Text>
+							<AutoTooltip>   Use your instant heal</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doInstantHeal}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doInstantHeal:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<Textentry Name="InstantHealPct" Template="VG.TextEntry">
+							<X>15%</X>
+							<Y>54%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.InstantHealPct}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.InstantHealPct:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.InstantHealPct:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<ComboBox Name="InstantHeal" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>59%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.InstantHeal:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						
+						<checkbox Name="doHoT" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>69%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>         Heal Over Time %</Text>
+							<AutoTooltip>   Use your heal over time</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doHoT}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doHoT:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<Textentry Name="HoTPct" Template="VG.TextEntry">
+							<X>15%</X>
+							<Y>69%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[Tools].VariableScope.HoTPct}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.HoTPct:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.HoTPct:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<ComboBox Name="HoT" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>74%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.HoT:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						
+						<Commandbutton Name="UpdateGroup" Template="VG.GreyCommandButton">
+							<visible>1</visible>
+							<X>35%</X>
+							<Y>86%</Y>
+							<Width>40%</Width>
+							<Height>23</Height>
+							<Text>Update Grp</Text>
+							<OnLeftClick>
+								vgecho "Updating Group Members"
+								Script[Tools].Variable[doFindGroupMembers]:Set[TRUE]
+							</OnLeftClick>
+						</Commandbutton>								
+					</Tab>
+
 					
 					<Tab name='Class'>
 						<Frame name='Bard'>
@@ -1005,148 +1307,6 @@
 									<Alignment>Center</Alignment>
 									<Text>==== Cleric Stuff ====  </Text>
 								</Text>
-								
-								<checkbox Name="doSmallHeal" Template="VG.GreenCheckbox">
-									<visible>1</visible>
-									<X>6%</X>
-									<Y>9%</Y>
-									<Width>7%</Width>
-									<Height>15</Height>
-									<Text>         Small Heal %</Text>
-									<AutoTooltip>   Use Healing Touch </AutoTooltip>
-									<OnLoad>
-										if ${Script[Tools].VariableScope.doSmallHeal}
-										{
-											This:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										Script[Tools].VariableScope.doSmallHeal:Set[${This.Checked}]
-									</OnLeftClick>
-								</checkbox>						
-								<Textentry Name="SmallHealPct" Template="VG.TextEntry">
-									<X>14%</X>
-									<Y>8.5%</Y>
-									<Width>28</Width>
-									<Height>15</Height>
-									<Color>FFDDBB00</Color>
-									<OnLoad>
-										This:SetText[${Script[Tools].VariableScope.SmallHealPct}]
-									</OnLoad>
-									<OnChange>
-										if ${This.Text.Length} == 0
-										{
-											Script[Tools].VariableScope.SmallHealPct:Set[0]
-										}
-										if ${This.Text.Length} >= 3
-										{
-											This:SetText[100]
-										}
-										if ${This.Text.Length} > 0
-										{
-											Script[Tools].VariableScope.SmallHealPct:Set[${Math.Calc[${This.Text}].Int}]
-										}
-									</OnChange>
-								</Textentry>
-								
-								<checkbox Name="doBigHeal" Template="VG.GreenCheckbox">
-									<visible>1</visible>
-									<X>6%</X>
-									<Y>16%</Y>
-									<Width>7%</Width>
-									<Height>15</Height>
-									<Text>         Big Heal %</Text>
-									<AutoTooltip>   Use Rejuvenate</AutoTooltip>
-									<OnLoad>
-										if ${Script[Tools].VariableScope.doBigHeal}
-										{
-											This:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										Script[Tools].VariableScope.doBigHeal:Set[${This.Checked}]
-									</OnLeftClick>
-								</checkbox>						
-								<Textentry Name="BigHealPct" Template="VG.TextEntry">
-									<X>14%</X>
-									<Y>15.5%</Y>
-									<Width>28</Width>
-									<Height>15</Height>
-									<Color>FFDDBB00</Color>
-									<OnLoad>
-										This:SetText[${Script[Tools].VariableScope.BigHealPct}]
-									</OnLoad>
-									<OnChange>
-										if ${This.Text.Length} == 0
-										{
-											Script[Tools].VariableScope.BigHealPct:Set[0]
-										}
-										if ${This.Text.Length} >= 3
-										{
-											This:SetText[100]
-										}
-										if ${This.Text.Length} > 0
-										{
-											Script[Tools].VariableScope.BigHealPct:Set[${Math.Calc[${This.Text}].Int}]
-										}
-									</OnChange>
-								</Textentry>
-								<checkbox Name="doHoT" Template="VG.GreenCheckbox">
-									<visible>1</visible>
-									<X>6%</X>
-									<Y>23%</Y>
-									<Width>7%</Width>
-									<Height>15</Height>
-									<Text>         Heal Over Time %</Text>
-									<AutoTooltip>   Use Alleviate</AutoTooltip>
-									<OnLoad>
-										if ${Script[Tools].VariableScope.doHoT}
-										{
-											This:SetChecked
-										}
-									</OnLoad>
-									<OnLeftClick>
-										Script[Tools].VariableScope.doHoT:Set[${This.Checked}]
-									</OnLeftClick>
-								</checkbox>						
-								<Textentry Name="HoTPct" Template="VG.TextEntry">
-									<X>14%</X>
-									<Y>22.5%</Y>
-									<Width>28</Width>
-									<Height>15</Height>
-									<Color>FFDDBB00</Color>
-									<OnLoad>
-										This:SetText[${Script[Tools].VariableScope.HoTPct}]
-									</OnLoad>
-									<OnChange>
-										if ${This.Text.Length} == 0
-										{
-											Script[Tools].VariableScope.HoTPct:Set[0]
-										}
-										if ${This.Text.Length} >= 3
-										{
-											This:SetText[100]
-										}
-										if ${This.Text.Length} > 0
-										{
-											Script[Tools].VariableScope.HoTPct:Set[${Math.Calc[${This.Text}].Int}]
-										}
-									</OnChange>
-								</Textentry>
-								
-								<Commandbutton Name="UpdateGroup" Template="VG.GreyCommandButton">
-									<visible>1</visible>
-									<X>35%</X>
-									<Y>86%</Y>
-									<Width>40%</Width>
-									<Height>23</Height>
-									<Text>Update Grp</Text>
-									<OnLeftClick>
-										vgecho "Updating Group Members"
-										Script[Tools].Variable[doFindGroupMembers]:Set[TRUE]
-									</OnLeftClick>
-								</Commandbutton>								
-								
 							</Children>
 						</Frame>
 

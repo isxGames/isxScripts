@@ -13,6 +13,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20130512 (Zandros)
+;  * Added a basic healing tab for healers.
+;
 ; 20130506 (Zandros)
 ;  * Fixed the GlobalCooldown routine so that the script would function correctly
 ;
@@ -136,14 +139,25 @@ variable string TravelInstrument = TravelInstrument
 
 ;; Healing Stuff
 variable collection:int GroupMemberList
+variable collection:int HoTMemberList
 variable bool doFindGroupMembers = TRUE
 variable bool doGroupOnly = FALSE
 variable bool doSmallHeal = TRUE
 variable bool doBigHeal = TRUE
+variable bool doGroupHeal = TRUE
+variable bool doInstantHeal = TRUE
 variable bool doHoT = TRUE
 variable int BigHealPct = 50
 variable int SmallHealPct = 65
+variable int GroupHealPct = 70
+variable int InstantHealPct = 70
 variable int HoTPct = 80
+variable string SmallHeal = None
+variable string BigHeal = None
+variable string GroupHeal = None
+variable string InstantHeal = None
+variable string HoT = None
+
 
 ;; Ability name variables
 variable string Counter1
@@ -183,6 +197,7 @@ variable int FollowDistance2 = 5
 #include ./Tools/Class/Ranger.iss
 #include ./Tools/Class/Necromancer.iss
 #include ./Tools/Class/Cleric.iss
+#include ./Tools/Class/Warrior.iss
 
 ;; Defines - good within this script
 #define ALARM "${Script.CurrentDirectory}/ping.wav"
@@ -203,18 +218,18 @@ function main()
 	;-------------------------------------------
 	; CLASS SPECIFIC Routines
 	;-------------------------------------------
-	call Bard
-	call Sorcerer
-	call Ranger
+	;call Bard
+	;call Sorcerer
+	;call Ranger
+	;call Necromancer
+	;call Cleric
+	;call Warrior
 	
 	;-------------------------------------------
 	; loop this until we exit the script
 	;-------------------------------------------
 	do
 	{
-		;; this allows AutoAttack to kick in
-		wait 1
-		
 		;; check and accept Rez
 		call RezAccept
 
@@ -228,22 +243,32 @@ function main()
 		if !${isPaused}
 		{
 			;; Always check these
-			call AssistTank
-			call ChangeForm
 			call FollowTank
-			call BuffRequests
-			call RepairEquipment
-			call Forage
+			call Heals
+			
+			;; check these once every second
+			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
+			{
+				;; Always check these
+				call AssistTank
+				call ChangeForm
+				call BuffRequests
+				call RepairEquipment
+				call Forage
+				call Tombstone
 
-			;; Class Specific Routines - do these first before doing combat stuff
-			call Bard
-			call Sorcerer
-			call Ranger
-			call Necromancer
-			call Cleric
+				;; Class Specific Routines - do these first before doing combat stuff
+				call Bard
+				call Sorcerer
+				call Ranger
+				call Necromancer
+				call Cleric
+				call Warrior
+				NextDelayCheck:Set[${Script.RunningTime}]
+			}
 		
 			;; we only want targets that are not a Resource and not dead
-			if ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Equal[NPC]} || ${Me.Target.Type.Equal[AggroNPC]})
+			if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]}
 			{
 				;; execute each of these
 				call CounterIt
@@ -449,10 +474,19 @@ function Initialize()
 	;; Class Specific - Healers
 	doSmallHeal:Set[${General.FindSetting[doSmallHeal]}]
 	doBigHeal:Set[${General.FindSetting[doBigHeal]}]
+	doGroupHeal:Set[${General.FindSetting[doGroupHeal]}]
+	doInstantHeal:Set[${General.FindSetting[doInstantHeal]}]
 	doHoT:Set[${General.FindSetting[doHoT]}]
 	SmallHealPct:Set[${General.FindSetting[SmallHealPct]}]
 	BigHealPct:Set[${General.FindSetting[BigHealPct]}]
+	GroupHealPct:Set[${General.FindSetting[GroupHealPct]}]
+	InstantHealPct:Set[${General.FindSetting[InstantHealPct]}]
 	HoTPct:Set[${General.FindSetting[HoTPct]}]
+	SmallHeal:Set[${General.FindSetting[SmallHeal]}]
+	BigHeal:Set[${General.FindSetting[BigHeal]}]
+	GroupHeal:Set[${General.FindSetting[GroupHeal]}]
+	InstantHeal:Set[${General.FindSetting[InstantHeal]}]
+	HoT:Set[${General.FindSetting[HoT]}]
 
 	;; Class Specific - Necromancer
 	AbominationName:Set[${General.FindSetting[AbominationName,"Stinky"]}]
@@ -478,10 +512,24 @@ function Initialize()
 		UIElement[AbilitiesCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
 		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
 		{
-			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Equal[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
+			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Find[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
 			{
 				UIElement[BuffsCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
 				UIElement[TriggerBuffsCombo@BuffBot@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+			}
+		}
+		if !${Me.Ability[${i}].IsOffensive} && ${Me.Ability[${i}].Type.Equal[Spell]}
+		{
+			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Find[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
+			{
+				if ${Me.Ability[${i}].Description.Find[Heal]} || ${Me.Ability[${i}].Description.Find[Restore]}
+				{
+					UIElement[SmallHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+					UIElement[BigHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+					UIElement[GroupHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+					UIElement[InstantHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+					UIElement[HoT@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+				}
 			}
 		}
 	}
@@ -591,6 +639,41 @@ function Initialize()
 			UIElement[TravelInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
 		}
 	}
+	for (i:Set[1] ; ${i} <= ${UIElement[SmallHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[SmallHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${SmallHeal}]}
+		{
+			UIElement[SmallHeal@Heals@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[BigHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[BigHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${BigHeal}]}
+		{
+			UIElement[BigHeal@Heals@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[GroupHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[GroupHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${GroupHeal}]}
+		{
+			UIElement[GroupHeal@Heals@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[HoT@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[HoT@Heals@DPS@Tools].Item[${i}].Text.Equal[${HoT}]}
+		{
+			UIElement[HoT@Heals@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[InstantHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[InstantHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${InstantHeal}]}
+		{
+			UIElement[InstantHeal@Heals@DPS@Tools]:SelectItem[${i}]
+		}
+	}
 	
 	;-------------------------------------------
 	; Enable Events - this event is automatically removed at shutdown
@@ -659,10 +742,19 @@ function atexit()
 	;; update class specific - Healers
 	General:AddSetting[doSmallHeal,${doSmallHeal}]
 	General:AddSetting[doBigHeal,${doBigHeal}]
+	General:AddSetting[doGroupHeal,${doGroupHeal}]
+	General:AddSetting[doInstantHeal,${doInstantHeal}]
 	General:AddSetting[doHoT,${doHoT}]
 	General:AddSetting[SmallHealPct,${SmallHealPct}]
 	General:AddSetting[BigHealPct,${BigHealPct}]
+	General:AddSetting[GroupHealPct,${GroupHealPct}]
+	General:AddSetting[InstantHealPct,${InstantHealPct}]
 	General:AddSetting[HoTPct,${HoTPct}]
+	General:AddSetting[SmallHeal,${SmallHeal}]
+	General:AddSetting[BigHeal,${BigHeal}]
+	General:AddSetting[GroupHeal,${GroupHeal}]
+	General:AddSetting[InstantHeal,${InstantHeal}]
+	General:AddSetting[HoT,${HoT}]
 
 	;; update class specific - Necromancer
 	General:AddSetting[AbominationName,${AbominationName}]
@@ -823,6 +915,7 @@ function IsCasting()
 		{
 			call CounterIt
 			call AutoAttack
+			call FollowTank
 		}
 		wait 2
 	}
@@ -835,7 +928,7 @@ function ReadyCheck()
 	{
 		while !${Tools.AreWeReady}
 			waitframe
-		wait 5
+		;wait 5
 	}
 }
 
@@ -864,6 +957,7 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${ABILITY}].LevelGranted}<=${Me.Level}
 	{
 		declare	${AbilityVariable}	string	script "${ABILITY}"
+		;echo "${AbilityVariable}=${ABILITY}"
 		return
 	}
 
@@ -875,6 +969,7 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 		if ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"](exists)} && ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"].LevelGranted}<=${Me.Level}
 		{
 			ABILITY:Set["${AbilityName} ${AbilityLevels[${L}]}"]
+			;echo "${AbilityVariable}=${ABILITY}"
 			break
 		}
 	}
@@ -886,6 +981,7 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 	if ${Me.Ability["${ABILITY}"](exists)} && ${Me.Ability["${ABILITY}"].LevelGranted}<=${Me.Level}
 	{
 		declare	${AbilityVariable} string script "${ABILITY}"
+		;echo "${AbilityVariable}=${ABILITY}"
 		return
 	}
 
@@ -893,6 +989,7 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 	; Otherwise, new Ability is named "None"
 	;-------------------------------------------
 	declare	${AbilityVariable} string script "None"
+	;echo "${AbilityVariable}=${ABILITY}"
 	return
 }
 
@@ -1143,12 +1240,13 @@ function PushStance()
 ;===================================================
 function:bool OkayToAttack(string ABILITY="None")
 {
-	if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
+	;if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
+	if ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 	{
-		if ${Me.TargetHealth}<1 || !${Me.TargetHealth(exists)}
-		{
-			return FALSE
-		}
+		;if ${Me.TargetHealth}<1 || !${Me.TargetHealth(exists)}
+		;{
+		;	return FALSE
+		;}
 		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
 		{
 			return FALSE
@@ -1622,23 +1720,27 @@ function CheckBuffs()
 function AssistTank()
 {
 	;; we want to assist the tank
-	if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
-	{
-		wait 5
+	;if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
+	;{
 		if ${Pawn[Name,${Tank}](exists)}
 		{
 			;; assist the tank only if the tank is in combat and less than 50 meters away
-			if ${Pawn[Name,${Tank}].CombatState}>0 && ${Pawn[Name,${Tank}].Distance}<=50
+			if ${Pawn[Name,${Tank}].CombatState}>0 && ${Pawn[Name,${Tank}].Distance}<=50 && !${Tank.Find[${Me.FName}]} && !${Pawn[Name,${Tank}].IsDead}
 			{
-				EchoIt "Assisting ${Tank}"
-				VGExecute /cleartargets
-				waitframe
+				;EchoIt "Assisting ${Tank}"
 				VGExecute "/assist ${Tank}"
 				waitframe
-				wait 20 ${Me.TargetHealth}>0
+			}
+			elseif ${Me.Encounter}>0 && (!${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead}))
+			{
+				EchoIt "Grabbing Next Encounter"
+				VGExecute /cleartargets
+				waitframe
+				Pawn[id,${Me.Encounter[1].ID}]:Target
+				wait 3
 			}
 		}
-	}
+	;}
 }
 
 ;===================================================
@@ -1758,8 +1860,6 @@ function:bool UseAbilityNoCoolDown(string ABILITY)
 			;echo "Not enought Endurance for ${ABILITY}"
 			return FALSE
 		}
-		if ${Me.Effect[${ABILITY}](exists)}
-			return FALSE
 		if ${Me.TargetMyDebuff[${ABILITY}](exists)}
 			return FALSE
 		if ${Pawn[me].IsMounted}
@@ -1768,6 +1868,10 @@ function:bool UseAbilityNoCoolDown(string ABILITY)
 		Me.Ability[${ABILITY}]:Use
 		wait 5
 		EchoIt "UseAbility (${ABILITY})"
+		
+		if ${ABILITY.Equal[${HoT}]}
+			HoTMemberList:Set["${Me.DTarget.Name.Token[1," "]}", ${Math.Calc[${Script.RunningTime}+17000]}]
+		
 		return TRUE
 	}
 	return FALSE
@@ -2227,7 +2331,7 @@ function FollowTank()
 {
 	if ${doFollow}
 	{
-		if ${Pawn[name,${Tank}](exists)}
+		if ${Pawn[exactname,${Tank}](exists)}
 		{
 			if ${FollowDistance1}<1
 				FollowDistance1:Set[1]
@@ -2236,21 +2340,23 @@ function FollowTank()
 				FollowDistance2:Set[${Math.Calc[${FollowDistance1}+1]}]
 				
 			;; did target move out of rang?
-			if ${Pawn[name,${Tank}].Distance}>=${FollowDistance2}
+			if ${Pawn[exactname,${Tank}].Distance}>${FollowDistance2}
 			{
 				variable bool DidWeMove = FALSE
+				
 				;; start moving until target is within range
-				while !${isPaused} && ${doFollow} && ${Pawn[name,${Tank}](exists)} && ${Pawn[name,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[name,${Tank}].Distance}<45
+				while !${isPaused} && ${doFollow} && ${Pawn[exactname,${Tank}](exists)} && ${Pawn[exactname,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[exactname,${Tank}].Distance}<45
 				{
-					Pawn[name,${Tank}]:Face
+					Pawn[exactname,${Tank}]:Face
 					VG:ExecBinding[moveforward]
 					DidWeMove:Set[TRUE]
-					wait .25
 				}
 				;; if we moved then we want to stop moving
 				if ${DidWeMove}
 				{
+					waitframe
 					VG:ExecBinding[moveforward,release]
+					waitframe
 				}
 			}
 		}
@@ -2688,3 +2794,191 @@ function HarvestIt()
 	VGExecute "/hidewindow Bonus Yield"
 	wait 20
 }
+
+function Tombstone()
+{
+	if ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
+	{
+		VGExecute "/targetmynearestcorpse"
+		wait 5
+	}
+	if ${Me.Target(exists)} && ${Me.Target.Name.Find[Tombstone]} && ${Me.Target.Name.Find[${Me.FName}]}
+	{
+		VGExecute "/corpsedrag"
+		VGExecute "/lootall"
+		wait 5
+	}
+}
+
+function Heals()
+{
+	;; update our group members
+	if ${doFindGroupMembers}
+		call FindGroupMembers
+	
+	;; This will force the ability to become ready before continuing
+	;; so that we do not miss a heal
+	call ReadyCheck	
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Group Healing
+	if ${Me.IsGrouped}
+	{
+		variable int GroupNumber = 0
+		variable int LowestHealth = 100
+		variable int Range = 0
+		variable int TotalWounded = 0
+		variable bool isGroupMember = FALSE
+		GroupNumber:Set[0]
+		LowestHealth:Set[100]
+		Range:Set[0]
+		isGroupMember:Set[FALSE]
+		TotalWounded:Set[0]
+
+
+		for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+		{
+			if ${GroupMemberList.Element["${Group[${i}].Name}"](exists)}
+			{
+				if ${Group[${i}].Distance}<10 && ${Group[${i}].Health}>0 && ${Group[${i}].Health}<=${GroupHealPct}
+				{
+					TotalWounded:Inc
+					isGroupMember:Set[TRUE]
+				}
+			}
+		}
+		
+		;; Scan only group members
+		if ${doGroupOnly}
+		{
+			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+			{
+				if ${GroupMemberList.Element["${Group[${i}].Name}"](exists)}
+				{
+					if ${Group[${i}].Distance}<30 && ${Group[${i}].Health}>0 && ${Group[${i}].Health}<=${LowestHealth}
+					{
+						GroupNumber:Set[${i}]
+						LowestHealth:Set[${Group[${i}].Health}]
+						Range:Set[${Group[${i}].Distance}]
+						isGroupMember:Set[TRUE]
+					}
+				}
+			}
+		}
+		else
+		{
+			for ( i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc )
+			{
+				if ${Group[${i}].Distance}<30 && ${Group[${i}].Health}>0 && ${Group[${i}].Health}<=${LowestHealth}
+				{
+					GroupNumber:Set[${i}]
+					LowestHealth:Set[${Group[${i}].Health}]
+					Range:Set[${Group[${i}].Distance}]
+					if ${GroupMemberList.Element["${Group[${i}].Name}"](exists)}
+						isGroupMember:Set[TRUE]
+				}
+			}
+		}
+		
+		if ${doGroupHeal} && ${TotalWounded}>3
+		{
+			call UseAbilityNoCoolDown "${GroupHeal}"
+			return
+		}
+		
+		if ${doBigHeal} && ${BigHealPct}>${LowestHealth}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[id,${Group[${GroupNumber}].ID}]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${BigHeal}"
+			return
+		}
+		
+		if ${doInstantHeal} && ${InstantHealPct}>${LowestHealth}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[id,${Group[${GroupNumber}].ID}]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${InstantHeal}"
+			return
+		}
+		
+		if ${doSmallHeal} && ${SmallHealPct}>${LowestHealth}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[id,${Group[${GroupNumber}].ID}]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${SmallHeal}"
+			return
+		}
+		
+		if ${doHoT} && ${HoTPct}>${LowestHealth}
+		{
+			if !${HoTMemberList.Element["${Group[${GroupNumber}].Name.Token[1," "]}"](exists)} || (${HoTMemberList.Element["${Group[${GroupNumber}].Name.Token[1," "]}"](exists)} && ${Script.RunningTime} > ${HoTMemberList.Element["${Group[${GroupNumber}].Name.Token[1," "]}"]})
+			{
+				if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+				{
+					Pawn[id,${Group[${GroupNumber}].ID}]:Target
+					waitframe
+				}
+				call UseAbilityNoCoolDown "${HoT}"
+				return
+			}
+		}
+	}
+	
+	if !${Me.IsGrouped}
+	{
+		if ${doBigHeal} && ${BigHealPct}>${Me.HealthPct}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[me]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${BigHeal}"
+			return
+		}
+		
+		if ${doInstantHeal} && ${InstantHealPct}>${Me.HealthPct}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[me]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${InstantHeal}"
+			return
+		}
+
+		if ${doSmallHeal} && ${SmallHealPct}>${Me.HealthPct}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[me]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${SmallHeal}"
+			return
+		}
+		
+		if ${doHoT} && ${HoTPct}>${Me.HealthPct}
+		{
+			if !${Group[${GroupNumber}].Name.Find[${Me.DTarget.Name}]}
+			{
+				Pawn[me]:Target
+				waitframe
+			}
+			call UseAbilityNoCoolDown "${HoT}"
+			return
+		}
+	}
+}
+
