@@ -2103,15 +2103,14 @@ function BuffRequests()
 						;; cycle through all our trigger buffs to ensure we casted them
 						while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
 						{
-							do
+							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
+								break
+							if !${ToolBuff.AreWeReady}
 							{
-								if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
-								{
-									break
-								}
-								waitframe
+								while !${ToolBuff.AreWeReady} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}<25
+									wait frame
+								wait 3
 							}
-							while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 									
 							;; cast the buff
 							if ${Me.Ability[${Iterator.Key}].IsReady}
