@@ -19,8 +19,10 @@ function main(bool CheckForBuff=TRUE)
 	variable index:pawn CurrentPawns
 	variable index:string PC
 	variable iterator Iterator
+	variable iterator Iterator2
 	variable bool WeBuffed
 	variable bool Okay2Buff
+	variable string buff
 
 	;-------------------------------------------
 	;; dim our button
@@ -77,7 +79,7 @@ function main(bool CheckForBuff=TRUE)
 			{
 				Okay2Buff:Set[TRUE]
 			}
-				
+			
 			;; cycle through all our BuffOnly checking if they exist by name or by guild
 			while ${Iterator.Key(exists)}
 			{
@@ -146,21 +148,22 @@ function main(bool CheckForBuff=TRUE)
 					;; cycle through all our trigger buffs to ensure we casted them
 					while ${Iterator.Key(exists)}
 					{
-						do
+						if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
+							break
+						if !${ToolBuff.AreWeReady}
 						{
-							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
-							{
-								break
-							}
-							waitframe
+							while !${ToolBuff.AreWeReady} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}<25
+								wait frame
+							wait 3
 						}
-						while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${ToolBuff.AreWeReady}
-						wait 3
+			
+						;buff:Set[${Me.Ability[${Iterator.Key}].Restrictions}]
+						;buff:Set[${buff.Right[${Math.Calc[${buff.Length}-20]}]}]
 									
 						;-------------------------------------------
 						;; cast the buff
 						;-------------------------------------------
-						if ${Me.Ability[${Iterator.Key}].IsReady} && !${HasBuff.Element[${Iterator.Key}](exists)}
+						if ${Me.Ability[${Iterator.Key}].IsReady} && !${HasBuff.Element[${Iterator.Key}](exists)} && ${Math.Calc[${Me.DTarget.Level}+15]}>=${Me.Ability[${Iterator.Key}].LevelGranted}
 						{
 							call UseAbility2 "${Iterator.Key}"
 							if ${Return}
@@ -187,6 +190,8 @@ function main(bool CheckForBuff=TRUE)
 	PC:Clear
 	HasBuff:Clear
 	UIElement[BuffArea@BuffBot@DPS@Tools]:SetAlpha[1]
+	VGExecute "/cleartargets"
+	wait 3
 }
 
 
@@ -225,19 +230,16 @@ function:bool UseAbility2(string ABILITY)
 			return FALSE
 		}
 
-		;; allow time for the ability to become ready
-		wait 5 ${Me.Ability[${ABILITY}].IsReady}
-		
 		;; now execute the ability
 		Me.Ability[${ABILITY}]:Use
-		wait 5
-
-		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${ToolBuff.AreWeReady}
+		
+		wait 2 !${ToolBuff.AreWeReady}
+		if !${ToolBuff.AreWeReady}
 		{
-			waitframe
+			while !${ToolBuff.AreWeReady}
+				wait frame
+			wait 3
 		}
-		wait 3
 
 		;; say we executed ability successfully
 		return TRUE
