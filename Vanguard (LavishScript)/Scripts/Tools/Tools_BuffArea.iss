@@ -162,17 +162,10 @@ function main(bool CheckForBuff=TRUE)
 						;-------------------------------------------
 						if ${Me.Ability[${Iterator.Key}].IsReady} && !${HasBuff.Element[${Iterator.Key}](exists)}
 						{
-							;; we do not want to buff someone else if the buff is for only your self
-							if !${temp.Find[${Me.FName}]} && ${Me.Ability[${Iterator.Key}].TargetType.Equal[Self]}
+							call UseAbility2 "${Iterator.Key}"
+							if ${Return}
 							{
-							}
-							else
-							{
-								call UseAbility2 "${Iterator.Key}"
-								if ${Return}
-								{
-									WeBuffed:Set[TRUE]
-								}
+								WeBuffed:Set[TRUE]
 							}
 						}
 						Iterator:Next
@@ -216,7 +209,7 @@ function:bool UseAbility2(string ABILITY)
 	;-------------------------------------------
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
-		;EchoIt2 "${ABILITY} does not exist"
+		EchoIt2 "${ABILITY} does not exist"
 		return FALSE
 	}
 
@@ -236,7 +229,6 @@ function:bool UseAbility2(string ABILITY)
 		wait 5 ${Me.Ability[${ABILITY}].IsReady}
 		
 		;; now execute the ability
-		;EchoIt2 "Used ${ABILITY}"
 		Me.Ability[${ABILITY}]:Use
 		wait 5
 
