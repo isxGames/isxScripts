@@ -2091,7 +2091,9 @@ function BuffRequests()
 				if ${Okay2Buff}
 				{
 					Pawn[name,${Tools_BuffRequestList.CurrentKey}]:Target
+					wait 3
 					wait 10 ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
+					
 					if ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
 					{
 						;; set out Iterator to TriggerBuffs
@@ -2099,15 +2101,16 @@ function BuffRequests()
 						
 						;; set our flagg to we have not buffed anyone
 						WeBuffed:Set[FALSE]
-								
+						
+							
 						;; cycle through all our trigger buffs to ensure we casted them
 						while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
 						{
 							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
 								break
-							if !${ToolBuff.AreWeReady}
+							if !${Tools.AreWeReady}
 							{
-								while !${ToolBuff.AreWeReady} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}<25
+								while !${Tools.AreWeReady} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}<25
 									wait frame
 								wait 3
 							}
