@@ -339,6 +339,44 @@
 							</OnLeftClick>
 						</checkbox>
 
+						<checkbox Name="doHate" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>53%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Use Hate Modifying Abilities</Text>
+							<AutoTooltip> Toggle using hate modifying abilities</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doHate}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doHate:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name="doLoot" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>57%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Auto Loot</Text>
+							<AutoTooltip> Automatically loots targets</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doLoot}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doLoot:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
 						<checkbox Name="doPhysical" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
@@ -1104,6 +1142,174 @@
 						</Commandbutton>								
 					</Tab>
 
+					<Tab name='Tanks'>
+						<Text Name='txtAbilities' Template='VG.BoldText'>
+							<X>8%</X>
+							<Y>2%</Y>
+							<Width>85%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Text>===== Tanks =====  </Text>
+						</Text>
+
+						<checkbox Name="doRescue1" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>9%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>Rescue #1</Text>
+							<AutoTooltip>   Use this rescue first </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doRescue1}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doRescue1:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<ComboBox Name="Rescue1" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>13%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.Rescue1:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						<checkbox Name="doRescue2" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>24%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>Rescue #2</Text>
+							<AutoTooltip>   Use this rescue if the first one is not available </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doRescue2}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doRescue2:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<ComboBox Name="Rescue2" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>28%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.Rescue2:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+
+						<checkbox Name="doRescue3" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>39%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>Rescue #3 </Text>
+							<AutoTooltip>   Use this rescue if the 2nd one is not available </AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doRescue3}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doRescue3:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>	
+						<ComboBox Name="Rescue3" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>43%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.Rescue3:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+
+						
+						<checkbox Name="doReduceHate" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>54%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>Reduce hate on your DTarget </Text>
+							<AutoTooltip>   Reduce the hate on your defensive target</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doReduceHate}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doReduceHate:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<ComboBox Name="ReduceHate" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>59%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.ReduceHate:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						<checkbox Name="doIncreaseHate" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>69%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>Increase hatred on your target</Text>
+							<AutoTooltip>   Increase the hate on your target</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doIncreaseHate}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doIncreaseHate:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+						<ComboBox Name="IncreaseHate" Template="VG.ComboBox">
+							<X>6%</X>
+							<Y>74%</Y>
+							<Width>200</Width>
+							<Height>20</Height>
+							<OnLoad>
+								This:AddItem[NONE]
+							</OnLoad>
+							<OnSelect>
+								Script[Tools].VariableScope.IncreaseHate:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+						
+						
+					</Tab>
 					
 					<Tab name='Class'>
 						<Frame name='Bard'>
@@ -1306,6 +1512,22 @@
 									<Height>20</Height>
 									<Alignment>Center</Alignment>
 									<Text>==== Cleric Stuff ====  </Text>
+								</Text>
+							</Children>
+						</Frame>
+
+						<Frame name='Warrior'>
+							<Height>100%</Height>
+							<Width>100%</Width>
+							<Visible>0</Visible>
+							<Children>
+								 <Text Name='txtLabel' Template='VG.BoldText'>
+									<X>6%</X>
+									<Y>2%</Y>
+									<Width>85%</Width>
+									<Height>20</Height>
+									<Alignment>Center</Alignment>
+									<Text>==== Warrior Stuff ====  </Text>
 								</Text>
 							</Children>
 						</Frame>

@@ -16,6 +16,13 @@ function Cleric()
 		SetHighestAbility "Alleviate" "Alleviate"
 		SetHighestAbility "HealingTouch" "Healing Touch"
 		SetHighestAbility "Rejuvenate" "Rejuvenate"
+		SetHighestAbility "Pacify" "Pacify"
 		
+	}
+	
+	if ${Me.Target(exists)} && ${Me.ToT(exists)}
+	{
+		if !${Me.Target.IsDead} && ${Me.ToT.Name.Find[${Me.FName}]}
+			call UseAbility "${Pacify}"			
 	}
 }

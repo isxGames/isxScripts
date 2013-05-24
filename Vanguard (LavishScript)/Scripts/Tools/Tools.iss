@@ -13,6 +13,10 @@
 ;
 ; Revision History
 ; ----------------
+; 20130523 (Zandros)
+;  * Added a basic tank tab for tanks (Rescues, reduce hate, and increase hate). 
+;    Also, added a toggle for all Hate modifying abilities as well as basic Loot.
+;
 ; 20130512 (Zandros)
 ;  * Added a basic healing tab for healers.
 ;
@@ -26,7 +30,7 @@
 ;   if you know in advance then you can manually type it in.
 ;
 ; 20120102 (Zandros)
-; * Added (Physical, Arcane, Mental, Fire, Cold/Ice, Spirictual), Foraging, and a
+; * Added (Physical, Arcane, Mental, Fire, Cold/Ice, Spiritual), Foraging, and a
 ;   new class tab... Necromancer.  Nothing fancy and still have a ways to go.
 ;
 ; 20111229 (Zandros)
@@ -55,7 +59,7 @@
 ;    those that just rifted.
 ;
 ; 20111028 (Zandros)
-;  * Added Buffs, Forms, and Randed Attack. Priority are Counters, Strip Enchantments,
+;  * Added Buffs, Forms, and Ranged Attack. Priority are Counters, Strip Enchantments,
 ;    and Push Stance.
 ;
 ; 20111027 (Zandros)
@@ -65,7 +69,7 @@
 ;    Once you are out of combat and someone is wounded then you you can establish
 ;    what Rest song and Instrument you want.  Finally, if everyone is fully healed,
 ;    then it will default to the song you identify for travel and equip the appropriate
-;    intrument.  
+;    instrument.  
 ;
 ; 20111008 (Zandros)
 ;  * Major work was done.  Recreated the UI to support adding your own abilities
@@ -108,6 +112,8 @@ variable bool doFace = FALSE
 variable bool doAutoRepairs = FALSE
 variable bool doAutoRez = FALSE
 variable bool doAcceptRez = FALSE
+variable bool doHate = FALSE
+variable bool doLoot = FALSE
 variable bool doGroupsay = FALSE
 variable bool doRaidsay = FALSE
 variable bool doTells = FALSE
@@ -116,8 +122,8 @@ variable bool doFollow = FALSE
 variable bool doMonotorTells = FALSE
 variable string TriggerBuffing = ""
 variable string Tank = Unknown
-variable string CombatForm = NONE
-variable string NonCombatForm = NONE
+variable string CombatForm = None
+variable string NonCombatForm = None
 variable int StartAttack = 99
 
 ;; Immunity variables
@@ -129,13 +135,13 @@ variable bool doSpiritual = TRUE
 variable bool doMental = TRUE
 
 ;; Bard stuff
-variable string CombatSong = CombatSong
-variable string PrimaryWeapon = PrimaryWeapon
-variable string SecondaryWeapon = SecondaryWeapon
-variable string RestSong = RestSong
-variable string RestInstrument = RestInstrument
-variable string TravelSong = TravelSong
-variable string TravelInstrument = TravelInstrument
+variable string CombatSong = None
+variable string PrimaryWeapon = None
+variable string SecondaryWeapon = None
+variable string RestSong = None
+variable string RestInstrument = None
+variable string TravelSong = None
+variable string TravelInstrument = None
 
 ;; Healing Stuff
 variable collection:int GroupMemberList
@@ -158,12 +164,23 @@ variable string GroupHeal = None
 variable string InstantHeal = None
 variable string HoT = None
 
+;; Tank Stuff
+variable bool doRescue1 = FALSE
+variable bool doRescue2 = FALSE
+variable bool doRescue3 = FALSE
+variable bool doReduceHate = FALSE
+variable bool doIncreaseHate = FALSE
+variable string Rescue1 = None
+variable string Rescue2 = None
+variable string Rescue3 = None
+variable string ReduceHate = None
+variable string IncreaseHate = None
 
 ;; Ability name variables
-variable string Counter1
-variable string Counter2
-variable string PushStance1
-variable string StripEnchantment1
+variable string Counter1 = None
+variable string Counter2 = None
+variable string PushStance1 = None
+variable string StripEnchantment1 = None
 variable string Forage = "Forage"
 
 ;; XML variables used to store and save data
@@ -177,13 +194,13 @@ variable settingsetref Counters1
 variable settingsetref Counters2
 
 ;; Equipment variables
-variable string LastPrimary
-variable string LastSecondary
-variable string LastItemUsed
+variable string LastPrimary = None
+variable string LastSecondary = None
+variable string LastItemUsed = None
 
 ;; BuffBot variables
-variable string PCName
-variable string PCNameFull
+variable string PCName = None
+variable string PCNameFull = None
 variable(global) collection:string Tools_BuffRequestList
 variable string BuffOnlyName = ""
 
@@ -243,8 +260,10 @@ function main()
 		if !${isPaused}
 		{
 			;; Always check these
+			call Loot
 			call FollowTank
-			call Heals
+			call ManageHeals
+			call ManageTanks
 			
 			;; check these once every second
 			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
@@ -444,6 +463,8 @@ function Initialize()
 	doFace:Set[${General.FindSetting[doFace,FALSE]}]
 	doAutoRepairs:Set[${General.FindSetting[doAutoRepairs,FALSE]}]
 	doAutoRez:Set[${General.FindSetting[doAutoRez,FALSE]}]
+	doHate:Set[${General.FindSetting[doHate,FALSE]}]
+	doLoot:Set[${General.FindSetting[doLoot,FALSE]}]
 	CombatForm:Set[${General.FindSetting[CombatForm,"NONE"]}]
 	NonCombatForm:Set[${General.FindSetting[NonCombatForm,"NONE"]}]
 	StartAttack:Set[${General.FindSetting[StartAttack,99]}]
@@ -463,13 +484,13 @@ function Initialize()
 	doMental:Set[${General.FindSetting[doMental,TRUE]}]
 	
 	;; Class Specific - Bard
-	CombatSong:Set[${General.FindSetting[CombatSong]}]
-	PrimaryWeapon:Set[${General.FindSetting[PrimaryWeapon]}]
-	SecondaryWeapon:Set[${General.FindSetting[SecondaryWeapon]}]
-	RestSong:Set[${General.FindSetting[RestSong]}]
-	RestInstrument:Set[${General.FindSetting[RestInstrument]}]
-	TravelSong:Set[${General.FindSetting[TravelSong]}]
-	TravelInstrument:Set[${General.FindSetting[TravelInstrument]}]
+	CombatSong:Set[${General.FindSetting[CombatSong,"NONE"]}]
+	PrimaryWeapon:Set[${General.FindSetting[PrimaryWeapon,"NONE"]}]
+	SecondaryWeapon:Set[${General.FindSetting[SecondaryWeapon,"NONE"]}]
+	RestSong:Set[${General.FindSetting[RestSong,"NONE"]}]
+	RestInstrument:Set[${General.FindSetting[RestInstrument,"NONE"]}]
+	TravelSong:Set[${General.FindSetting[TravelSong,"NONE"]}]
+	TravelInstrument:Set[${General.FindSetting[TravelInstrument,"NONE"]}]
 	
 	;; Class Specific - Healers
 	doSmallHeal:Set[${General.FindSetting[doSmallHeal]}]
@@ -482,11 +503,23 @@ function Initialize()
 	GroupHealPct:Set[${General.FindSetting[GroupHealPct]}]
 	InstantHealPct:Set[${General.FindSetting[InstantHealPct]}]
 	HoTPct:Set[${General.FindSetting[HoTPct]}]
-	SmallHeal:Set[${General.FindSetting[SmallHeal]}]
-	BigHeal:Set[${General.FindSetting[BigHeal]}]
-	GroupHeal:Set[${General.FindSetting[GroupHeal]}]
-	InstantHeal:Set[${General.FindSetting[InstantHeal]}]
-	HoT:Set[${General.FindSetting[HoT]}]
+	SmallHeal:Set[${General.FindSetting[SmallHeal,"NONE"]}]
+	BigHeal:Set[${General.FindSetting[BigHeal,"NONE"]}]
+	GroupHeal:Set[${General.FindSetting[GroupHeal,"NONE"]}]
+	InstantHeal:Set[${General.FindSetting[InstantHeal,"NONE"]}]
+	HoT:Set[${General.FindSetting[HoT,"NONE"]}]
+	
+	;; Class Specific - Tanks
+	doRescue1:Set[${General.FindSetting[doRescue1]}]
+	doRescue2:Set[${General.FindSetting[doRescue2]}]
+	doRescue3:Set[${General.FindSetting[doRescue3]}]
+	doReduceHate:Set[${General.FindSetting[doReduceHate]}]
+	doIncreaseHate:Set[${General.FindSetting[doIncreaseHate]}]
+	Rescue1:Set[${General.FindSetting[Rescue1,"NONE"]}]
+	Rescue2:Set[${General.FindSetting[Rescue2,"NONE"]}]
+	Rescue3:Set[${General.FindSetting[Rescue3,"NONE"]}]
+	ReduceHate:Set[${General.FindSetting[ReduceHate,"NONE"]}]
+	IncreaseHate:Set[${General.FindSetting[IncreaseHate,"NONE"]}]
 
 	;; Class Specific - Necromancer
 	AbominationName:Set[${General.FindSetting[AbominationName,"Stinky"]}]
@@ -532,6 +565,17 @@ function Initialize()
 				}
 			}
 		}
+		if ${Me.Ability[${i}].IsRescue} || ${Me.Ability[${i}].Description.Find[to target you]}
+		{
+			UIElement[Rescue1@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[Rescue2@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+			UIElement[Rescue3@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+		}
+		if ${Me.Ability[${i}].Description.Find[less hate]} || ${Me.Ability[${i}].Description.Find[decrease hate]} || ${Me.Ability[${i}].Description.Find[reduce hate]}
+			UIElement[ReduceHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+		elseif ${Me.Ability[${i}].Description.Find[hate]} || ${Me.Ability[${i}].Description.Find[hatred]}
+			UIElement[IncreaseHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+		
 	}
 	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
 	{
@@ -642,7 +686,7 @@ function Initialize()
 	for (i:Set[1] ; ${i} <= ${UIElement[SmallHeal@Heals@DPS@Tools].Items} ; i:Inc)
 	{
 		if ${UIElement[SmallHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${SmallHeal}]}
-		{
+		{	
 			UIElement[SmallHeal@Heals@DPS@Tools]:SelectItem[${i}]
 		}
 	}
@@ -672,6 +716,41 @@ function Initialize()
 		if ${UIElement[InstantHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${InstantHeal}]}
 		{
 			UIElement[InstantHeal@Heals@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[Rescue1@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[Rescue1@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue1}]}
+		{
+			UIElement[Rescue1@Tanks@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[Rescue2@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[Rescue2@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue2}]}
+		{
+			UIElement[Rescue2@Tanks@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[Rescue3@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[Rescue3@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue3}]}
+		{
+			UIElement[Rescue3@Tanks@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[ReduceHate@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[ReduceHate@Tanks@DPS@Tools].Item[${i}].Text.Equal[${ReduceHate}]}
+		{
+			UIElement[ReduceHate@Tanks@DPS@Tools]:SelectItem[${i}]
+		}
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[IncreaseHate@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[IncreaseHate@Tanks@DPS@Tools].Item[${i}].Text.Equal[${IncreaseHate}]}
+		{
+			UIElement[IncreaseHate@Tanks@DPS@Tools]:SelectItem[${i}]
 		}
 	}
 	
@@ -708,6 +787,8 @@ function atexit()
 	General:AddSetting[doFace,${doFace}]
 	General:AddSetting[doAutoRepairs,${doAutoRepairs}]
 	General:AddSetting[doAutoRez,${doAutoRez}]
+	General:AddSetting[doHate,${doHate}]
+	General:AddSetting[doLoot,${doLoot}]
 	General:AddSetting[CombatForm,${CombatForm}]
 	General:AddSetting[NonCombatForm,${NonCombatForm}]
 	General:AddSetting[StartAttack,${StartAttack}]
@@ -756,6 +837,18 @@ function atexit()
 	General:AddSetting[InstantHeal,${InstantHeal}]
 	General:AddSetting[HoT,${HoT}]
 
+	;; update class specific - Tanks
+	General:AddSetting[doRescue1,${doRescue1}]
+	General:AddSetting[doRescue2,${doRescue2}]
+	General:AddSetting[doRescue3,${doRescue3}]
+	General:AddSetting[doReduceHate,${doReduceHate}]
+	General:AddSetting[doIncreaseHate,${doIncreaseHate}]
+	General:AddSetting[Rescue1,${Rescue1}]
+	General:AddSetting[Rescue2,${Rescue2}]
+	General:AddSetting[Rescue3,${Rescue3}]
+	General:AddSetting[ReduceHate,${ReduceHate}]
+	General:AddSetting[IncreaseHate,${IncreaseHate}]
+	
 	;; update class specific - Necromancer
 	General:AddSetting[AbominationName,${AbominationName}]
 	General:AddSetting[doSummonAbomination,${doSummonAbomination}]
@@ -1247,6 +1340,10 @@ function:bool OkayToAttack(string ABILITY="None")
 		;{
 		;	return FALSE
 		;}
+		if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		{
+			return FALSE
+		}
 		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
 		{
 			return FALSE
@@ -1805,6 +1902,12 @@ function:bool UseAbility(string ABILITY)
 	;-------------------------------------------
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
+		;; no hate abilities
+		if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		{
+			return FALSE
+		}
+	
 		;; return if we do not have enough energy
 		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
 		{
@@ -2347,7 +2450,7 @@ function FollowTank()
 				variable bool DidWeMove = FALSE
 				
 				;; start moving until target is within range
-				while !${isPaused} && ${doFollow} && ${Pawn[exactname,${Tank}](exists)} && ${Pawn[exactname,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[exactname,${Tank}].Distance}<45
+				while !${isPaused} && ${doFollow} && ${Pawn[exactname,${Tank}](exists)} && ${Pawn[exactname,${Tank}].Distance}>=${FollowDistance1} && ${Pawn[exactname,${Tank}].Distance}<80
 				{
 					Pawn[exactname,${Tank}]:Face
 					VG:ExecBinding[moveforward]
@@ -2812,7 +2915,7 @@ function Tombstone()
 	}
 }
 
-function Heals()
+function ManageHeals()
 {
 	;; update our group members
 	if ${doFindGroupMembers}
@@ -2984,3 +3087,126 @@ function Heals()
 	}
 }
 
+function ManageTanks()
+{
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Grab Target's not on me
+	if ${Me.IsGrouped}
+	{
+		variable int j
+		variable string TargetOnWho
+		if ${Me.Encounter}>0
+		{
+			;;always grab encounters on any group members
+			for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+			{
+				;; is target on me
+				if !${Me.Encounter[${i}].Target.Find[${Me.FName}]}
+				{
+					;; double-check target
+					if !${Me.FName.Equal[${Me.ToT}]} && ${Me.Encounter[${i}].Health}>0 && ${Me.Encounter[${i}].Distance}<10
+					{
+						;; save this for reference later on
+						TargetOnWho:Set[${Me.Encounter[${i}].Target}]
+						
+						;; find the group member
+						for ( j:Set[1] ; ${Group[${j}].ID(exists)} ; j:Inc )
+						{
+							echo TargetOnWho=[${TargetOnWho}], Name=[${Group[${j}].Name}], Class=[${Group[${j}].Class}]
+							
+							;; is it a match
+							if ${Group[${j}].Name.Find[${TargetOnWho}]}
+							{
+								if !${Group[${j}].Class.Equal[Warrior]} && !${Group[${j}].Class.Equal[Dread Knight]} && !${Group[${j}].Class.Equal[Paladin]}
+								{
+									EchoIt "Grabbing: ${Me.Encounter[${i}].Name} who's on ${TargetOnWho} (${Group[${j}].Class})"
+
+									VGExecute /cleartargets
+									wait 1
+									Pawn[ID,${Me.Encounter[${i}].ID}]:Target
+									wait 3
+
+									Me.Target:Face
+									break
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if ${Me.Target(exists)} && ${Me.ToT(exists)}
+		{
+			;; force taunt for 4 seconds, 10m, cooldown 12s
+			if !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
+			{
+				if ${doRescue1} && ${Me.Ability[${Rescue1}].IsReady}
+				{
+					VGExecute /assistoffensive
+					wait 2
+					call ReadyCheck	
+					if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue1}].IsReady}
+						call UseAbility "${Rescue1}"
+				}
+				if ${doRescue2} && ${Me.Ability[${Rescue2}].IsReady}
+				{
+					VGExecute /assistoffensive
+					wait 2
+					call ReadyCheck	
+					if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue2}].IsReady}
+						call UseAbility "${Rescue2}"
+				}
+				if ${doRescue3} && ${Me.Ability[${Rescue3}].IsReady}
+				{
+					VGExecute /assistoffensive
+					wait 2
+					call ReadyCheck	
+					if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue3}].IsReady}
+						call UseAbility "${Rescue3}"
+				}
+			}
+
+			if ${doReduceHate} && !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]}
+			{
+				VGExecute /assistoffensive
+				wait 2
+				call ReadyCheck	
+				if ${Me.DTarget.Name(exists)} && ${Me.Ability[${ReduceHate}].IsReady}
+					call UseAbility "${ReduceHate}"
+			}
+				
+			if ${doIncreaseHate}
+				call UseAbility "${IncreaseHate}"
+		}
+	}
+}
+
+function Loot()
+{
+	if ${doLoot}
+	{
+		if ${Me.Target(exists)}
+		{
+			if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead}
+			{
+				if ${Me.Target.ContainsLoot}
+				{
+					VGExecute "/LootAll"
+					wait 3
+				}
+				if ${Pawn[Corpse,range,5](exists)} && ${Pawn[Corpse,range,5].ContainsLoot}
+				{
+					Pawn[Corpse,range,5]:Target
+					wait 3
+				}
+			}
+			return
+		}
+		if ${Pawn[Corpse,range,5](exists)} && ${Pawn[Corpse,range,5].ContainsLoot}
+		{
+			Pawn[Corpse,range,5]:Target
+			wait 3
+		}
+	}
+}
