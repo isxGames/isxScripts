@@ -13,6 +13,9 @@
 ;
 ; Revision History
 ; ----------------
+; 20130525 (Zandros)
+;  * Fixed tells because using a ".Key" in a find does not work, but saving to a variable does
+;
 ; 20130523 (Zandros)
 ;  * Added a basic tank tab for tanks (Rescues, reduce hate, and increase hate). 
 ;    Also, added a toggle for all Hate modifying abilities as well as basic Loot.
@@ -95,6 +98,7 @@ variable bool isPaused = FALSE
 variable int NextDelayCheck = ${Script.RunningTime}
 variable int RepairTimer = ${Script.RunningTime}
 variable int64 LastTargetID = 0
+variable collection:string Hate_Abilities
 
 ;; UI/Script toggle variables
 variable bool doUseAbilities = FALSE
@@ -231,6 +235,7 @@ function main()
 	; INITIALIZE - setup script
 	;-------------------------------------------
 	call Initialize
+	EchoIt "Ready"
 	
 	;-------------------------------------------
 	; CLASS SPECIFIC Routines
@@ -247,6 +252,8 @@ function main()
 	;-------------------------------------------
 	do
 	{
+		waitframe
+		
 		;; check and accept Rez
 		call RezAccept
 
@@ -574,7 +581,10 @@ function Initialize()
 		if ${Me.Ability[${i}].Description.Find[less hate]} || ${Me.Ability[${i}].Description.Find[decrease hate]} || ${Me.Ability[${i}].Description.Find[reduce hate]}
 			UIElement[ReduceHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
 		elseif ${Me.Ability[${i}].Description.Find[hate]} || ${Me.Ability[${i}].Description.Find[hatred]}
+		{
 			UIElement[IncreaseHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+			Hate_Abilities:Set["${Me.Ability[${i}].Name}", "${Me.Ability[${i}].Name}"]
+		}
 		
 	}
 	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
@@ -1340,7 +1350,8 @@ function:bool OkayToAttack(string ABILITY="None")
 		;{
 		;	return FALSE
 		;}
-		if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
 		{
 			return FALSE
 		}
@@ -1903,7 +1914,8 @@ function:bool UseAbility(string ABILITY)
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
 		;; no hate abilities
-		if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
 		{
 			return FALSE
 		}
@@ -2166,27 +2178,31 @@ function BuffRequests()
 		variable iterator Iterator
 		variable bool WeBuffed
 		variable bool Okay2Buff = FALSE
+		variable string Temp
 		
 		do
 		{
 			if ${Pawn[name,${Tools_BuffRequestList.CurrentKey}](exists)} && ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Distance}<25 && ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].HaveLineOfSightTo}
 			{
-
 				;; set our Iterator to BuffOnly
 				BuffOnly:GetSettingIterator[Iterator]
 
 				;; if nothing is in the buffonly list then might as well we buff everyone
 				if !${Iterator.Key(exists)}
 				{
+					echo BuffOnly does not exist
 					Okay2Buff:Set[TRUE]
 				}
 				
 				;; cycle through all our BuffOnly checking if they exist by name or by guild
 				while ${Iterator.Key(exists)}
 				{
-					if ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Name.Find[${Iterator.Key}]} || ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Title.Find[${Iterator.Key}]}
+					;; Using a Key in a find does not work, but saving to a variable does
+					Temp:Set[${Iterator.Key}]
+					if ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Name.Find[${Temp}]} || ${Pawn[name,${Tools_BuffRequestList.CurrentKey}].Title.Find[${Temp}]}
 					{
 						Okay2Buff:Set[TRUE]
+						break
 					}
 					Iterator:Next
 				}
