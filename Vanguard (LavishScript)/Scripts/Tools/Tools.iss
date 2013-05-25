@@ -1888,7 +1888,7 @@ function UseAbilities()
 
 
 ;===================================================
-;===               Use Items                    ====
+;===               Use Ability                  ====
 ;===================================================
 function:bool UseAbility(string ABILITY)
 {
@@ -1946,6 +1946,53 @@ function:bool UseAbility(string ABILITY)
 	}
 	return FALSE
 }
+
+;===================================================
+;===               Use Ability                  ====
+;===================================================
+function:bool ForceAbility(string ABILITY)
+{
+	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
+	{
+		echo "${ABILITY} does not exist or too high a level to use"
+		return FALSE
+	}
+	
+	;-------------------------------------------
+	; execute ability only if it is ready
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].IsReady}
+	{
+		;; no hate abilities
+		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
+		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
+		{
+			return FALSE
+		}
+	
+		;; return if we do not have enough energy
+		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
+		{
+			;echo "Not enought Energy for ${ABILITY}"
+			return FALSE
+		}
+		;; return if we do not have enough Endurance
+		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
+		{
+			;echo "Not enought Endurance for ${ABILITY}"
+			return FALSE
+		}
+		if ${Pawn[me].IsMounted}
+			return FALSE
+
+		Me.Ability[${ABILITY}]:Use
+		call IsCasting
+		EchoIt "UseAbility (${ABILITY})"
+		return TRUE
+	}
+	return FALSE
+}
+
 
 ;===================================================
 ;===               Use Items                    ====
@@ -2190,7 +2237,6 @@ function BuffRequests()
 				;; if nothing is in the buffonly list then might as well we buff everyone
 				if !${Iterator.Key(exists)}
 				{
-					echo BuffOnly does not exist
 					Okay2Buff:Set[TRUE]
 				}
 				
@@ -2225,6 +2271,7 @@ function BuffRequests()
 						;; cycle through all our trigger buffs to ensure we casted them
 						while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
 						{
+							Temp:Set[${Iterator.Key}]
 							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
 								break
 							if !${Tools.AreWeReady}
@@ -2233,11 +2280,13 @@ function BuffRequests()
 									wait frame
 								wait 3
 							}
+							
+							EchoIt "*Buffing ${Me.DTarget.Name} - ${Temp}"
 									
 							;; cast the buff
-							if ${Me.Ability[${Iterator.Key}].IsReady}
+							if ${Me.Ability[${Temp}].IsReady}
 							{
-								call UseAbility "${Iterator.Key}"
+								call ForceAbility "${Temp}"
 								if ${Return}
 								{
 									WeBuffed:Set[TRUE]
