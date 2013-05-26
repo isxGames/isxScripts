@@ -3,7 +3,7 @@
 ;
 ; Description - this file handles all navigating routines to include automapping and movement
 ; --------------
-; * automatically load settings everytime you chunk
+; * automatically load settings every time you chunk
 ; * will automap using box method
 ; * will plot a point
 ; * uses both dijkstra and astar in finding a path to destination
@@ -93,7 +93,7 @@ objectdef Obj_Navigator
 		;; if we turn on mapping then we need to save
 		if ${This.doSave}
 		{
-			;; save only if we chuncked
+			;; save only if we chunked
 			if !${This.CurrentChunk.Equal[${Me.Chunk}]}
 			{
 				mkdir "${This.ChunkFilePath}"
@@ -101,7 +101,6 @@ objectdef Obj_Navigator
 				LNavRegion[${This.CurrentChunk}]:Export[-lso,${This.ChunkFilePath}/${This.CurrentChunk}.lso]
 				This:EchoIt["Saved paths to ${This.CurrentChunk}"]
 				This.CurrentChunk:Set[${Me.Chunk}]
-
 			}
 		}
 	}
@@ -346,10 +345,17 @@ objectdef Obj_Navigator
 			;; if there is a connection closest to us, then face it and start moving
 			if ${SurroundingRegions.Get[${Index}].ConnectionCount} > 0
 			{
-				This:EchoIt["MoveToMappedArea called - Moving to nearest connector that is ${Math.Distance[${Me.X},${Me.Y},${SurroundingRegions.Get[${Index}].CenterPoint.X},${SurroundingRegions.Get[${Index}].CenterPoint.Y}].Int} distance away"]
-				face ${SurroundingRegions.Get[${Index}].CenterPoint.X} ${SurroundingRegions.Get[${Index}].CenterPoint.Y}
-				This:MoveForward
-				return TRUE
+				if ${Math.Distance[${Me.X},${Me.Y},${SurroundingRegions.Get[${Index}].CenterPoint.X},${SurroundingRegions.Get[${Index}].CenterPoint.Y}].Int}<3000
+				{
+					This:EchoIt["MoveToMappedArea called - Moving to nearest connector that is ${Math.Distance[${Me.X},${Me.Y},${SurroundingRegions.Get[${Index}].CenterPoint.X},${SurroundingRegions.Get[${Index}].CenterPoint.Y}].Int} distance away"]
+					face ${SurroundingRegions.Get[${Index}].CenterPoint.X} ${SurroundingRegions.Get[${Index}].CenterPoint.Y}
+					This:MoveForward
+					return TRUE
+				}
+				else
+				{
+					This:EchoIt["MoveToMappedArea called - Nearest connector is ${Math.Distance[${Me.X},${Me.Y},${SurroundingRegions.Get[${Index}].CenterPoint.X},${SurroundingRegions.Get[${Index}].CenterPoint.Y}].Int} distance away"]
+				}
 			}
 		}
 		; Could not find any good regions

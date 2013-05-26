@@ -111,7 +111,7 @@ function main()
 	;-------------------------------------------
 	while ${isRunning} && ${Me(exists)}
 	{
-		if ${GV[bool,DeathReleasePopup]} || ${Pawn[name,${Me}].IsDead}
+		if ${GV[bool,DeathReleasePopup]} || ${Pawn[Me].IsDead}
 		{
 			EchoIt "We are dead! (wait for 10 minutes)"
 			WeAreDead:Set[TRUE]
@@ -135,7 +135,7 @@ function main()
 				waitframe
 			}
 			;; wait until we are teleported to the nearest altar (can be in a different chunk)
-			while ${GV[bool,DeathReleasePopup]} || ${Pawn[name,${Me}].IsDead}
+			while ${GV[bool,DeathReleasePopup]} || ${Pawn[Me].IsDead}
 				waitframe
 		}
 		
@@ -240,6 +240,13 @@ function HaveTargetRoutine()
 		call MoveCloser 4
 	if ${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]} && ${Me.Target.Distance}<11
 		call MoveCloser 4
+		
+	if !${Me.Target.HaveLineOfSightTo}
+	{
+		VGExecute "/cleartargets"
+		wait 30
+		return
+	}
 
 	call StartFacing
 	
