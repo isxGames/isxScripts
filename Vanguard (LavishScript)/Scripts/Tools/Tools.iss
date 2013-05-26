@@ -270,7 +270,6 @@ function main()
 			call Loot
 			call FollowTank
 			call ManageHeals
-			call ManageTanks
 			
 			;; check these once every second
 			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
@@ -297,6 +296,7 @@ function main()
 			if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]}
 			{
 				;; execute each of these
+				call ManageTanks
 				call CounterIt
 				call StripIt
 				call PushStance
@@ -610,7 +610,7 @@ function Initialize()
 		if ${Me.Inventory[${i}].Type.Equal[Weapon]} || ${Me.Inventory[${i}].Type.Equal[Shield]}
 		{
 			;; Only Weapons here
-			if ${Me.Inventory[${i}].Type.Equal[Weapon]}
+			if ${Me.Inventory[${i}].Type.Equal[Weapon]} && !${Me.Inventory[${i}].DefaultEquipSlot.Equal[Secondary Hand]}
 			{
 				UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
 			}
@@ -1828,14 +1828,14 @@ function CheckBuffs()
 function AssistTank()
 {
 	;; we want to assist the tank
-	;if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
-	;{
+	if !${Me.Target(exists)} || (${Me.Target(exists)} && ${Me.Target.IsDead})
+	{
 		if ${Pawn[Name,${Tank}](exists)}
 		{
 			;; assist the tank only if the tank is in combat and less than 50 meters away
 			if ${Pawn[Name,${Tank}].CombatState}>0 && ${Pawn[Name,${Tank}].Distance}<=50 && !${Tank.Find[${Me.FName}]} && !${Pawn[Name,${Tank}].IsDead}
 			{
-				;EchoIt "Assisting ${Tank}"
+				EchoIt "Assisting ${Tank}"
 				VGExecute "/assist ${Tank}"
 				waitframe
 			}
@@ -1848,7 +1848,7 @@ function AssistTank()
 				wait 3
 			}
 		}
-	;}
+	}
 }
 
 ;===================================================
@@ -2967,7 +2967,7 @@ function HarvestIt()
 
 function Tombstone()
 {
-	if ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
+	if !${Me.Target(exists)} && ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
 	{
 		VGExecute "/targetmynearestcorpse"
 		wait 5
@@ -3154,95 +3154,129 @@ function ManageHeals()
 
 function ManageTanks()
 {
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Grab Target's not on me
-	if ${Me.IsGrouped}
+	call OkayToAttack
+	if !${Return}
+		return
+		
+	if ${Me.Class.Equal[Warrior]} || ${Me.Class.Equal[Paladin]} || ${Me.Class.Equal[Dread Knight]}
 	{
 		variable int j
 		variable string TargetOnWho
-		if ${Me.Encounter}>0
+		variable bool doRescue = FALSE
+
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Grab Target's not on me
+		if ${Me.IsGrouped}
 		{
-			;;always grab encounters on any group members
-			for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
+			if ${Me.Encounter}>0
 			{
-				;; is target on me
-				if !${Me.Encounter[${i}].Target.Find[${Me.FName}]}
+				;;always grab encounters on any group members
+				for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
 				{
-					;; double-check target
-					if !${Me.FName.Equal[${Me.ToT}]} && ${Me.Encounter[${i}].Health}>0 && ${Me.Encounter[${i}].Distance}<10
+					;; is target on me?
+					if !${Me.Encounter[${i}].Target.Find[${Me.FName}]}
 					{
-						;; save this for reference later on
-						TargetOnWho:Set[${Me.Encounter[${i}].Target}]
-						
-						;; find the group member
-						for ( j:Set[1] ; ${Group[${j}].ID(exists)} ; j:Inc )
+						;; is target within 10m of me?
+						if ${Me.Encounter[${i}].Health}>0 && ${Me.Encounter[${i}].Distance}<10
 						{
-							echo TargetOnWho=[${TargetOnWho}], Name=[${Group[${j}].Name}], Class=[${Group[${j}].Class}]
+							;; save who the target is on
+							TargetOnWho:Set[${Me.Encounter[${i}].Target}]
 							
-							;; is it a match
-							if ${Group[${j}].Name.Find[${TargetOnWho}]}
+							;; scan group members
+							for ( j:Set[1] ; ${Group[${j}].ID(exists)} ; j:Inc )
 							{
-								if !${Group[${j}].Class.Equal[Warrior]} && !${Group[${j}].Class.Equal[Dread Knight]} && !${Group[${j}].Class.Equal[Paladin]}
+								;; is there a match?
+								if ${Group[${j}].Name.Find[${TargetOnWho}]}
 								{
-									EchoIt "Grabbing: ${Me.Encounter[${i}].Name} who's on ${TargetOnWho} (${Group[${j}].Class})"
+									;; make sure it is not a tank
+									if !${Group[${j}].Class.Equal[Warrior]} && !${Group[${j}].Class.Equal[Dread Knight]} && !${Group[${j}].Class.Equal[Paladin]}
+									{
+										EchoIt "Grabbing: ${Me.Encounter[${i}].Name} who's on ${TargetOnWho} (${Group[${j}].Class})"
+										doRescue:Set[TRUE]
+										VGExecute /cleartargets
+										wait 1
+										Pawn[ID,${Me.Encounter[${i}].ID}]:Target
+										wait 3
 
-									VGExecute /cleartargets
-									wait 1
-									Pawn[ID,${Me.Encounter[${i}].ID}]:Target
-									wait 3
-
-									Me.Target:Face
-									break
+										Me.Target:Face
+										break
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-
-		if ${Me.Target(exists)} && ${Me.ToT(exists)}
-		{
-			;; force taunt for 4 seconds, 10m, cooldown 12s
-			if !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
+			
+			if ${Me.Target(exists)} && ${Me.ToT(exists)} && ${Me.Target.Distance}<10
 			{
-				if ${doRescue1} && ${Me.Ability[${Rescue1}].IsReady}
-				{
-					VGExecute /assistoffensive
-					wait 2
-					call ReadyCheck	
-					if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue1}].IsReady}
-						call UseAbility "${Rescue1}"
-				}
-				if ${doRescue2} && ${Me.Ability[${Rescue2}].IsReady}
-				{
-					VGExecute /assistoffensive
-					wait 2
-					call ReadyCheck	
-					if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue2}].IsReady}
-						call UseAbility "${Rescue2}"
-				}
-				if ${doRescue3} && ${Me.Ability[${Rescue3}].IsReady}
-				{
-					VGExecute /assistoffensive
-					wait 2
-					call ReadyCheck	
-					if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue3}].IsReady}
-						call UseAbility "${Rescue3}"
-				}
-			}
-
-			if ${doReduceHate} && !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]}
-			{
-				VGExecute /assistoffensive
-				wait 2
-				call ReadyCheck	
-				if ${Me.DTarget.Name(exists)} && ${Me.Ability[${ReduceHate}].IsReady}
-					call UseAbility "${ReduceHate}"
-			}
+				;; save who the target is on
+				TargetOnWho:Set[${Me.ToT}]
 				
-			if ${doIncreaseHate}
-				call UseAbility "${IncreaseHate}"
+				;; scan group members
+				for ( j:Set[1] ; ${Group[${j}].ID(exists)} ; j:Inc )
+				{
+					;; is there a match?
+					if ${Group[${j}].Name.Find[${TargetOnWho}]} && ${Me.Encounter[${i}].Distance}<10
+					{
+						;; make sure it is not a tank
+						if !${Group[${j}].Class.Equal[Warrior]} && !${Group[${j}].Class.Equal[Dread Knight]} && !${Group[${j}].Class.Equal[Paladin]}
+						{
+							EchoIt "RESCUE:  My target is on ${TargetOnWho} (${Group[${j}].Class})"
+							doRescue:Set[TRUE]
+							break
+						}
+					}
+				}
+
+				;; rescue our DTarget
+				if ${doRescue} && !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
+				{
+					;; set our DTarget
+					if ${doRescue1} || ${doRescue2} || ${doRescue3} || ${doReduceHate}
+					{
+						VGExecute /assistoffensive
+						wait 1
+						call ReadyCheck	
+					}
+					
+					;; reduce DTarget's hate
+					if ${doReduceHate}
+					{
+						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${ReduceHate}].IsReady}
+							call UseAbility "${ReduceHate}"
+					}
+
+					if ${doRescue1} && ${Me.Ability[${Rescue1}].IsReady}
+					{
+						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue1}].IsReady}
+						{
+							call UseAbility "${Rescue1}"
+							return
+						}
+					}
+					if ${doRescue2} && ${Me.Ability[${Rescue2}].IsReady}
+					{
+						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue2}].IsReady}
+						{
+							call UseAbility "${Rescue2}"
+							return
+						}
+					}
+					if ${doRescue3} && ${Me.Ability[${Rescue3}].IsReady}
+					{
+						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue3}].IsReady}
+						{
+							call UseAbility "${Rescue3}"
+							return
+						}
+					}
+				}
+				
+				;; increase our hate
+				if ${doIncreaseHate}
+					call UseAbility "${IncreaseHate}"
+			}
 		}
 	}
 }
@@ -3251,6 +3285,13 @@ function Loot()
 {
 	if ${doLoot}
 	{
+		if ${Me.IsLooting}
+		{
+			VGExecute "/LootAll"
+			wait 3
+			if ${Me.IsLooting}
+				Loot:EndLooting
+		}
 		if ${Me.Target(exists)}
 		{
 			if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead}
@@ -3259,6 +3300,8 @@ function Loot()
 				{
 					VGExecute "/LootAll"
 					wait 3
+					if ${Me.IsLooting}
+						Loot:EndLooting
 				}
 				if ${Pawn[Corpse,range,5](exists)} && ${Pawn[Corpse,range,5].ContainsLoot}
 				{

@@ -22,7 +22,7 @@ function Bard()
 	;; variables used in this script
 	variable bool doPlayCombatSong = FALSE
 	variable bool doPlayRestSong = FALSE
-	
+
 	;; Now figure out what we should do
 	if ${Me.IsGrouped}
 	{
@@ -43,7 +43,8 @@ function Bard()
 	}
 	else
 	{
-		if ${Me.InCombat}
+		call OkayToAttack
+		if ${Return} || ${Me.InCombat}
 		{
 			doPlayCombatSong:Set[TRUE]
 			doPlayRestSong:Set[FALSE]
@@ -81,6 +82,8 @@ function PlayCombatSong()
 	variable int i
 	if (${PrimaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}]}) || (${SecondaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}]})
 	{
+		vgecho PrimaryWeapon=[${PrimaryWeapon}], Primary Hand=[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}]
+		vgecho SecondaryWeapon=[${SecondaryWeapon}], Secondary Hand=[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}]
 		;first unequip any items
 		call unequipbarditems
 		Me.Inventory[ExactName,"${PrimaryWeapon}"]:Equip
@@ -108,12 +111,15 @@ function PlayCombatSong()
 
 function PlayTravelSong()
 {
-	if (${TravelInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
+	if ${Me.Inventory[${TravelInstrument}](exists)}
 	{
-		;first unequip any items
-		call unequipbarditems
-		Me.Inventory[ExactName,"${TravelInstrument}"]:Equip
-		wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+		if (${TravelInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
+		{
+			;first unequip any items
+			call unequipbarditems
+			Me.Inventory[ExactName,"${TravelInstrument}"]:Equip
+			wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+		}
 	}
 
 	;at this point proper weapons should be equipped, now play our song
@@ -122,12 +128,15 @@ function PlayTravelSong()
 
 function PlayRestSong()
 {
-	if (${RestInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
+	if ${Me.Inventory[${RestInstrument}](exists)}
 	{
-		;first unequip any items
-		call unequipbarditems
-		Me.Inventory[ExactName,"${RestInstrument}"]:Equip
-		wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+		if (${RestInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
+		{
+			;first unequip any items
+			call unequipbarditems
+			Me.Inventory[ExactName,"${RestInstrument}"]:Equip
+			wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+		}
 	}
 
 	;at this point proper weapons should be equipped, now play our song
