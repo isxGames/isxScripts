@@ -9,11 +9,11 @@ function Bard()
 		return
 
 	;; forces this only to run once every 2 seconds
-	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextBardCheck}]}/1000]}<1
-	{
-		return
-	}
-	NextBardCheck:Set[${Script.RunningTime}]
+	;if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextBardCheck}]}/1000]}<1
+	;{
+	;	return
+	;}
+	;NextBardCheck:Set[${Script.RunningTime}]
 
 	
 	;; show the Bard tab in UI
@@ -58,50 +58,68 @@ function Bard()
 	;; do we want to play our Combat Song?
 	if ${doPlayCombatSong}
 	{
-		LastSongPlayed:Set[CombatSong]
-		call PlayCombatSong
+		if ${LastSongPlayed.NotEqual[CombatSong]}
+		{
+			LastSongPlayed:Set[CombatSong]
+			call PlayCombatSong
+		}
 		return
 	}
 	
 	;; do we want to play our Rest Song?
 	if ${doPlayRestSong}
 	{
-		LastSongPlayed:Set[RestSong]
-		call PlayRestSong
+		if ${LastSongPlayed.NotEqual[RestSong]}
+		{
+			LastSongPlayed:Set[RestSong]
+			call PlayRestSong
+		}
 		return
 	}
 
 	;; lets play our Travel Song
-	LastSongPlayed:Set[TravelSong]
-	call PlayTravelSong
+	if ${LastSongPlayed.NotEqual[TravelSong]}
+	{
+		LastSongPlayed:Set[TravelSong]
+		call PlayTravelSong
+	}
 }
 
 ;================================================
 function PlayCombatSong()
 {
 	variable int i
-	if (${PrimaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}]}) || (${SecondaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}]})
+	if ${Me.Inventory[${PrimaryWeapon}](exists)}
 	{
-		vgecho PrimaryWeapon=[${PrimaryWeapon}], Primary Hand=[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}]
-		vgecho SecondaryWeapon=[${SecondaryWeapon}], Secondary Hand=[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}]
-		;first unequip any items
-		call unequipbarditems
-		Me.Inventory[ExactName,"${PrimaryWeapon}"]:Equip
-		wait 10 ${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)}
-		if ${PrimaryWeapon.Equal[${SecondaryWeapon}]}
+		if (${PrimaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}]}) || (${SecondaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}]})
 		{
-			;need to loop through and find this item that is 'not' in Primary Hand
-			for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
-			if (${SecondaryWeapon.Equal[${Me.Inventory[${i}].Name}]}) && (${String["Primary Hand"].NotEqual[${Me.Inventory[${i}].CurrentEquipSlot}]})
+			;vgecho PrimaryWeapon=[${PrimaryWeapon}], SecondaryWeapon=[${SecondaryWeapon}]
+			;vgecho Equiped: Primary=[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}], Secondary=[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}], Two Hands=[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]
+
+			;first unequip any items
+			;call unequipbarditems
+
+			Me.Inventory[ExactName,"${PrimaryWeapon}"]:Equip
+			;wait 1
+			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)}
+
+			if ${PrimaryWeapon.Equal[${SecondaryWeapon}]}
 			{
-				Me.Inventory[${i}]:Equip
-				wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+				;need to loop through and find this item that is 'not' in Primary Hand
+				for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+				if (${SecondaryWeapon.Equal[${Me.Inventory[${i}].Name}]}) && (${String["Primary Hand"].NotEqual[${Me.Inventory[${i}].CurrentEquipSlot}]})
+				{
+					Me.Inventory[${i}]:Equip
+					;wait 1
+					;wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+				}
 			}
-		}
-		else
-		{
-			Me.Inventory[ExactName,"${SecondaryWeapon}"]:Equip
-			wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+			else
+			{
+				Me.Inventory[ExactName,"${SecondaryWeapon}"]:Equip
+				;wait 1
+				;wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+			}
 		}
 	}
 
@@ -116,9 +134,10 @@ function PlayTravelSong()
 		if (${TravelInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
 		{
 			;first unequip any items
-			call unequipbarditems
+			;call unequipbarditems
 			Me.Inventory[ExactName,"${TravelInstrument}"]:Equip
-			wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+			;wait 1
+			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
 
@@ -133,9 +152,10 @@ function PlayRestSong()
 		if (${RestInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
 		{
 			;first unequip any items
-			call unequipbarditems
+			;call unequipbarditems
 			Me.Inventory[ExactName,"${RestInstrument}"]:Equip
-			wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+			;wait 1
+			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
 
