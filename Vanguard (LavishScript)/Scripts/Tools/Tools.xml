@@ -377,6 +377,48 @@
 							</OnLeftClick>
 						</checkbox>
 
+						<checkbox Name="doHarvest" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>61%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text> Harvest Range </Text>
+							<AutoTooltip> Automatically scans area for anything to harvest</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doHarvest}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doHarvest:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="HarvestRange" Template="VG.TextEntry">
+							<X>55%</X>
+							<Y>61%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+                            <OnLoad>
+								This:SetText[${Script[Tools].VariableScope.HarvestRange}]
+                            </OnLoad>
+                            <OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[Tools].VariableScope.HarvestRange:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[Tools].VariableScope.HarvestRange:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
 						<checkbox Name="doPhysical" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>6%</X>
@@ -1307,8 +1349,26 @@
 								Script[Tools].VariableScope.IncreaseHate:Set[${This.SelectedItem.Text}]
 							</OnSelect>
 						</ComboBox>
-						
-						
+
+						<checkbox Name="doCheckEncounters" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>6%</X>
+							<Y>84%</Y>
+							<Width>7%</Width>
+							<Height>15</Height>
+							<Text>Check Encounters to grab</Text>
+							<AutoTooltip>   Target any encounter that is targeting other group members</AutoTooltip>
+							<OnLoad>
+								if ${Script[Tools].VariableScope.doCheckEncounters}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[Tools].VariableScope.doCheckEncounters:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>						
+
 					</Tab>
 					
 					<Tab name='Class'>

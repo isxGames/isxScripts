@@ -101,6 +101,9 @@ variable int RepairTimer = ${Script.RunningTime}
 variable int64 LastTargetID = 0
 variable int64 LastLootID = 0
 variable collection:string Hate_Abilities
+variable collection:int64 HarvestBlackList
+variable collection:int64 LootBlackList
+
 
 ;; UI/Script toggle variables
 variable bool doUseAbilities = FALSE
@@ -126,6 +129,8 @@ variable bool doTells = FALSE
 variable bool doRift = FALSE
 variable bool doFollow = FALSE
 variable bool doMonotorTells = FALSE
+variable bool doHarvest = TRUE
+variable int HarvestRange = 10
 variable string TriggerBuffing = ""
 variable string Tank = Unknown
 variable string CombatForm = None
@@ -176,6 +181,7 @@ variable bool doRescue2 = FALSE
 variable bool doRescue3 = FALSE
 variable bool doReduceHate = FALSE
 variable bool doIncreaseHate = FALSE
+variable bool doCheckEncounters = TRUE
 variable string Rescue1 = None
 variable string Rescue2 = None
 variable string Rescue3 = None
@@ -255,8 +261,6 @@ function main()
 	;-------------------------------------------
 	do
 	{
-		waitframe
-		
 		;; check and accept Rez
 		call RezAccept
 
@@ -273,6 +277,7 @@ function main()
 			call Loot
 			call FollowTank
 			call ManageHeals
+			call HarvestIt
 			
 			;; check these once every second
 			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
@@ -296,7 +301,8 @@ function main()
 			call Warrior
 			
 			;; we only want targets that are not a Resource and not dead
-			if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]}
+			call OkayToAttack
+			if ${Return}
 			{
 				;; execute each of these
 				call CounterIt
@@ -312,7 +318,6 @@ function main()
 				;; our target is a Resource or is dead
 				call MeleeAttackOff
 				call CheckBuffs
-				call HarvestIt
 			}
 		}
 		else 
@@ -320,6 +325,8 @@ function main()
 			;; we are paused
 			call MeleeAttackOff
 			call ChangeForm
+			HarvestBlackList:Clear
+			LootBlackList:Clear
 		}
 	}
 	while ${isRunning}
@@ -491,6 +498,8 @@ function Initialize()
 	doIce:Set[${General.FindSetting[doIce,TRUE]}]
 	doSpiritual:Set[${General.FindSetting[doSpiritual,TRUE]}]
 	doMental:Set[${General.FindSetting[doMental,TRUE]}]
+	doHarvest:Set[${General.FindSetting[doHarvest,TRUE]}]
+	HarvestRange:Set[${General.FindSetting[HarvestRange,10]}]
 	
 	;; Class Specific - Bard
 	CombatSong:Set[${General.FindSetting[CombatSong,"NONE"]}]
@@ -524,6 +533,7 @@ function Initialize()
 	doRescue3:Set[${General.FindSetting[doRescue3]}]
 	doReduceHate:Set[${General.FindSetting[doReduceHate]}]
 	doIncreaseHate:Set[${General.FindSetting[doIncreaseHate]}]
+	doCheckEncounters:Set[${General.FindSetting[doCheckEncounters]}]
 	Rescue1:Set[${General.FindSetting[Rescue1,"NONE"]}]
 	Rescue2:Set[${General.FindSetting[Rescue2,"NONE"]}]
 	Rescue3:Set[${General.FindSetting[Rescue3,"NONE"]}]
@@ -803,6 +813,8 @@ function atexit()
 	General:AddSetting[doLoot,${doLoot}]
 	General:AddSetting[CombatForm,${CombatForm}]
 	General:AddSetting[NonCombatForm,${NonCombatForm}]
+	General:AddSetting[doHarvest,${doHarvest}]
+	General:AddSetting[HarvestRange,${HarvestRange}]
 	General:AddSetting[StartAttack,${StartAttack}]
 	General:AddSetting[doGroupsay,${doGroupsay}]
 	General:AddSetting[doRaidsay,${doRaidsay}]
@@ -860,6 +872,7 @@ function atexit()
 	General:AddSetting[Rescue3,${Rescue3}]
 	General:AddSetting[ReduceHate,${ReduceHate}]
 	General:AddSetting[IncreaseHate,${IncreaseHate}]
+	General:AddSetting[doCheckEncounters,${doCheckEncounters}]
 	
 	;; update class specific - Necromancer
 	General:AddSetting[AbominationName,${AbominationName}]
@@ -907,6 +920,8 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 ;===================================================
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
+	echo [${ChannelNumber}] ${aText}
+
 	;; Log all tells to a file and play a sound
 	if ${doMonotorTells} && ${ChannelNumber}==15
 	{
@@ -931,6 +946,22 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		}
 		;UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
 		vgecho "Melee Off - can't attack with that weapon"
+	}
+	
+	if ${ChannelNumber}==1
+	{
+		if ${aText.Equal[You do not have enough skill to begin harvesting this resource.]}
+		{
+			HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+			VGExecute /cleartargets
+			return
+		}
+		if ${aText.Equal[That resource has already been harvested]}
+		{
+			HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+			VGExecute /cleartargets
+			return
+		}
 	}
 
 	if ${ChannelNumber}==26
@@ -1033,7 +1064,7 @@ function ReadyCheck()
 	{
 		while !${Tools.AreWeReady}
 			waitframe
-		;wait 5
+		wait 4
 	}
 }
 
@@ -1345,12 +1376,15 @@ function PushStance()
 ;===================================================
 function:bool OkayToAttack(string ABILITY="None")
 {
+	if !${Me.Target(exists)}
+		return FALSE
+		
 	;; Delay only if we can't ID the target (lag does that)
 	if !${Me.TargetAsEncounter.Difficulty(exists)}
-		wait 25 ${Me.TargetAsEncounter.Difficulty(exists)} && ${Me.TargetHealth(exists)}
+		wait 10 ${Me.TargetAsEncounter.Difficulty(exists)} && ${Me.TargetHealth(exists)}
 
 	;if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
-	if ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
+	if !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
 	{
 		;if ${Me.TargetHealth}<1 || !${Me.TargetHealth(exists)}
 		;{
@@ -2938,15 +2972,145 @@ function FindGroupMembers()
 ;===================================================
 function HarvestIt()
 {
-	if !${Me.Target.IsHarvestable} || ${Pawn[name,${Tank}].CombatState}==0
+	if !${doHarvest}
 		return
-	
-	;; we are going to move into harvesting range of target
-	if ${Me.Target.Distance}>=4
+		
+	if !${Me.Target(exists)}
 	{
-		;; change posture to walking
-		VGExecute /walk
+		;-------------------------------------------
+		; Populate our CurrentPawns variable
+		;-------------------------------------------
+		variable int TotalPawns
+		variable index:pawn CurrentPawns
+		variable bool doHarvestItem = FALSE
+		variable int Distance = ${HarvestRange}
 
+		TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
+
+		;-------------------------------------------
+		; Cycle through 30 nearest Pawns in area that are AggroNPC
+		;-------------------------------------------
+		for (i:Set[1];  ${i}<=${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<${Distance};  i:Inc)
+		{
+			;vgecho [${i}] [Harvestable=${CurrentPawns.Get[${i}].IsHarvestable(exists)}] [Type=${CurrentPawns.Get[${i}].Type}] [Name=${CurrentPawns.Get[${i}].Name}]
+			;; next if we've blacklisted the target
+			if ${HarvestBlackList.Element[${CurrentPawns.Get[${i}].ID}](exists)}
+				continue
+	
+			;; next if it is not harvestable
+			if !${CurrentPawns.Get[${i}].IsHarvestable(exists)}
+				continue
+				
+			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} || ${CurrentPawns.Get[${i}].Type.Equal[Resource]}
+			{
+				;; Lumberjacking
+				if ${CurrentPawns.Get[${i}].Name.Find[Tree]} || ${CurrentPawns.Get[${i}].Name.Find[Root]}
+				{
+					if ${Me.Stat[Harvesting,Lumberjacking]}>0 && ${CurrentPawns.Get[${i}].Name.Find[Weakened]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Lumberjacking]}>=100 && ${CurrentPawns.Get[${i}].Name.Find[Barbed]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Lumberjacking]}>=200 && ${CurrentPawns.Get[${i}].Name.Find[Dry]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Lumberjacking]}>=300 && ${CurrentPawns.Get[${i}].Name.Find[Knotted]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Lumberjacking]}>=400 && ${CurrentPawns.Get[${i}].Name.Find[Dusky]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Lumberjacking]}>=500 && ${CurrentPawns.Get[${i}].Name.Find[Aged]}
+						doHarvestItem:Set[TRUE]
+				}
+				
+				;; Skinning
+				if ${Me.Stat[Harvesting,Skinning]}>0 && ${CurrentPawns.Get[${i}].Type.Equal[Corpse]}
+					doHarvestItem:Set[TRUE]
+					
+				;; Reaping
+				if ${CurrentPawns.Get[${i}].Name.Find[Plant]}
+				{
+					if ${Me.Stat[Harvesting,Reaping]}>0 && ${CurrentPawns.Get[${i}].Name.Find[Jute]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Reaping]}>=100 && ${CurrentPawns.Get[${i}].Name.Find[Cotton]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Reaping]}>=200 && ${CurrentPawns.Get[${i}].Name.Find[Firegrass]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Reaping]}>=300 && ${CurrentPawns.Get[${i}].Name.Find[Silkbloom]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Reaping]}>=400 && ${CurrentPawns.Get[${i}].Name.Find[Vielthread]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Reaping]}>=500 && ${CurrentPawns.Get[${i}].Name.Find[Steelweave]}
+						doHarvestItem:Set[TRUE]
+				}
+				
+				;; Mining
+				if ${CurrentPawns.Get[${i}].Name.Find[Node]} || ${CurrentPawns.Get[${i}].Name.Find[Vein]}
+				{
+					if ${Me.Stat[Harvesting,Mining]}>0 && ${CurrentPawns.Get[${i}].Name.Equal[Metal Node]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Mining]}>=100 && ${CurrentPawns.Get[${i}].Name.Equal[Large Metal Node]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Mining]}>=200 && ${CurrentPawns.Get[${i}].Name.Equal[Rich Metal Node]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Mining]}>=300 && ${CurrentPawns.Get[${i}].Name.Equal[Metal Vein]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Mining]}>=400 && ${CurrentPawns.Get[${i}].Name.Equal[Large Metal Vein]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Mining]}>=500 && ${CurrentPawns.Get[${i}].Name.Equal[Rich Metal Vein]}
+						doHarvestItem:Set[TRUE]
+				}
+				
+				;; Quarrying
+				if ${CurrentPawns.Get[${i}].Name.Find[Cluster]} || ${CurrentPawns.Get[${i}].Name.Find[Deposit]}
+				{
+					if ${Me.Stat[Harvesting,Quarrying]}>0 && ${CurrentPawns.Get[${i}].Name.Equal[Small Mineral Cluster]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Quarrying]}>=100 && ${CurrentPawns.Get[${i}].Name.Equal[Medium Mineral Cluster]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Quarrying]}>=200 && ${CurrentPawns.Get[${i}].Name.Equal[Large Mineral Cluster]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Quarrying]}>=300 && ${CurrentPawns.Get[${i}].Name.Equal[Small Mineral Deposit]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Quarrying]}>=400 && ${CurrentPawns.Get[${i}].Name.Equal[Medium Mineral Deposit]}
+						doHarvestItem:Set[TRUE]
+					if ${Me.Stat[Harvesting,Quarrying]}>=500 && ${CurrentPawns.Get[${i}].Name.Equal[Large Mineral Deposit]}
+						doHarvestItem:Set[TRUE]
+				}
+			}
+	
+				
+			;; we only want corpses or resources
+			if ${doHarvestItem}
+			{
+				;; target it and blacklist target from future scans
+				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
+				wait 3
+				HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+				break
+			}
+		}
+	}
+	
+	if !${Me.Target(exists)}
+		return
+		
+	if !${Me.Target.IsHarvestable}
+		return
+		
+	variable string leftofname
+	leftofname:Set[${Me.Target.Name.Left[6]}]
+	if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<${Distance} && ${Me.ToPawn.CombatState}==0 && !${leftofname.Equal[remain]}
+	{
+		while ${Me.Target.Distance}>=15
+		{
+			VG:ExecBinding[moveforward]
+			face ${Me.Target.X} ${Me.Target.Y}
+			if !${Me.Target(exists)} || !${isRunning} || ${isPaused}
+					break
+		}
+
+		;; change posture to walking
+		if ${Me.Target.Distance}>=4
+			VGExecute /walk
+		
 		;; loop until target doesn't exist or inside 4 meters
 		while ${Me.Target.Distance}>=4
 		{
@@ -2962,23 +3126,40 @@ function HarvestIt()
 		;; change our posture back to running
 		VGExecute /run
 	}
-	
-	while !${Me.InCombat} && ${Me.Target.Distance}<5 && (${Me.Target.Type.Equal[Resource]} || (${Me.Target.Type.Equal[Corpse]} && ${Me.Target.Name.Find["corpse of "]}))
+
+	if !${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<5 && ${Me.Target.IsHarvestable}
 	{
 		Me.Ability[Auto Attack]:Use
-		wait 5
+		wait 10
 	}
 
 	if ${Me.InCombat} && ${Me.Encounter}==0
 	{
+		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 		while ${Me.InCombat} && ${Me.Encounter}==0
 			waitframe
-		wait 5 ${Me.Target.ContainsLoot}
+		VGExecute "/cleartargets"
+		wait 3
 	}	
+
+	if !${GV[bool,bHarvesting]} && ${Me.Ability[Auto Attack].Toggled}
+	{
+		VGExecute /autoattack
+		wait 10
+		VGExecute "/cleartargets"
+	}
+	
+	;if ${Me.Target.ContainsLoot}
+	;{
+	;	VGExecute "/LootAll"
+	;	wait 3
+	;	if ${Me.IsLooting}
+	;		Loot:EndLooting
+	;	VGExecute "/cleartargets"
+	;}
 
 	VGExecute "/hidewindow Harvesting"
 	VGExecute "/hidewindow Bonus Yield"
-	wait 20
 }
 
 function Tombstone()
@@ -3184,7 +3365,7 @@ function ManageTanks()
 		;; Grab Targets not on me
 		if ${Me.IsGrouped} && (${doRescue1} || ${doRescue2} || ${doRescue3} || ${doReduceHate})
 		{
-			if ${Me.Encounter}>0
+			if ${doCheckEncounters} && ${Me.Encounter}>0
 			{
 				;;always grab encounters on any group members
 				for ( i:Set[1] ; ${i}<=${Me.Encounter} ; i:Inc )
@@ -3304,30 +3485,57 @@ function Loot()
 			wait 3
 			if ${Me.IsLooting}
 				Loot:EndLooting
-		}
-		if ${Me.Target(exists)} && ${LastLootID}!=${Me.Target.ID}
-		{
-			if ${Me.Target.Type.Equal[Corpse]} && ${Me.Target.IsDead} && ${Me.Target.Distance}<5
-			{
-				if ${Me.Target.ContainsLoot} || ${Me.Target.Name.Find[remains of corpse of]}
-				{
-					LastLootID:Set[${Me.Target.ID}]
-					VGExecute "/LootAll"
-					wait 3
-					if ${Me.IsLooting}
-						Loot:EndLooting
-				}
-				if ${Pawn[Corpse,range,5,notid,${LastLootID}](exists)} && ${Pawn[Corpse,range,5,notid,${LastLootID}].ContainsLoot}
-				{
-					Pawn[Corpse,range,5,notid,${LastLootID}]:Target
-					wait 3
-				}
-			}
+			VGExecute "/cleartargets"
+			wait 3
 			return
 		}
-		if ${Pawn[Corpse,range,5,notid,${LastLootID}](exists)} && ${Pawn[Corpse,range,5,notid,${LastLootID}].ContainsLoot}
+		
+		if !${Me.Target(exists)}
 		{
-			Pawn[Corpse,range,5,notid,${LastLootID}]:Target
+			;-------------------------------------------
+			; Populate our CurrentPawns variable
+			;-------------------------------------------
+			variable int TotalPawns
+			variable index:pawn CurrentPawns
+
+			TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
+
+			;-------------------------------------------
+			; Cycle through 30 nearest Pawns in area that are AggroNPC
+			;-------------------------------------------
+			for (i:Set[1];  ${i}<=${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<5;  i:Inc)
+			{
+				if ${LootBlackList.Element[${CurrentPawns.Get[${i}].ID}](exists)}
+					continue
+		
+				;; next if it is not harvestable
+				if ${CurrentPawns.Get[${i}].ContainsLoot} || ${CurrentPawns.Get[${i}].Name.Find["remains of"](exists)}
+				{
+					;; we only want corpses or resources
+					if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} || ${CurrentPawns.Get[${i}].Type.Equal[Resource]}
+					{
+						;; target it and blacklist target from future scans
+						Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
+						wait 3
+						LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+						break
+					}
+				}
+			}
+		}
+		
+		if ${Me.Target.ContainsLoot} || ${Me.Target.Name.Find["remains of"](exists)}
+		{
+			LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+			VGExecute "/LootAll"
+			wait 3
+			if ${Me.IsLooting}
+				Loot:EndLooting
+		}
+		
+		if ${Me.Target(exists)} && ${Me.Target.IsDead}
+		{
+			VGExecute "/cleartargets"
 			wait 3
 		}
 	}
