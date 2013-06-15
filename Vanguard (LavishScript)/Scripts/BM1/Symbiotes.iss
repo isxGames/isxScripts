@@ -85,10 +85,10 @@ function StartRoutine(int Symbiotes=5)
 	}
 
 	Pawn[ExactName,Sacrificial Beast]:Target
-	wait 5
+	wait 3
 	
 	Pawn[ExactName,Great Statue of Arakorr]:Target
-	wait 5
+	wait 3
 	
 	if !${Me.Target.Name.Equal[Sacrificial Beast]} && !${Me.Target.Name.Equal[Great statue of Arakorr]}
 	{
@@ -106,10 +106,7 @@ function StartRoutine(int Symbiotes=5)
 		}
 	
 		;; Catch till ready
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-		{
-			waitframe
-		}
+		call GetReady
 
 		;; Start our harvesting
 		if (${Me.Target.Name.Equal[Sacrificial Beast]} || ${Me.Target.Name.Equal[Great statue of Arakorr]}) && ${Me.TargetHealth}>0
@@ -145,20 +142,15 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Siphon Blood]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
-				
+			Pawn[me]:Target
+			call GetReady
+			
 			Pawn[me]:Target
 			if ${Me.Ability[${TransfusionOfSerak}].IsReady}
 			{
 				Me.Ability[${TransfusionOfSerak}]:Use
 				wait 5
-				while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-				{
-					waitframe
-				}
+				call GetReady
 			}
 			return
 		}
@@ -171,17 +163,11 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[${Constrict}]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 			return
 		}
 	}
@@ -193,17 +179,11 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Bursting Cyst I]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 			return
 		}
 	}
@@ -215,17 +195,11 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Union of Blood I]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 			return
 		}
 	}
@@ -237,17 +211,11 @@ function Harvest(int Symbiotes)
 		{
 			Me.Ability[Blood Letting Ritual I]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 				
 			Me.Ability[Grim Harvest]:Use
 			wait 5
-			while ${Me.IsCasting} || ${VG.InGlobalRecovery}
-			{
-				waitframe
-			}
+			call GetReady
 			return
 		}
 	}
@@ -283,3 +251,62 @@ function Loot()
 	}
 }
 
+objectdef Obj_Commands
+{
+	;; identify the Passive Ability
+	variable string PassiveAbility = "Racial Inheritance:"
+	variable int TankGN
+
+	;; initialize when objectdef is created
+	method Initialize()
+	{
+		variable int i
+		for (i:Set[1] ; ${Me.Ability[${i}](exists)} ; i:Inc)
+		{
+			if ${Me.Ability[${i}].Name.Find[Racial Inheritance:]}
+				This.PassiveAbility:Set[${Me.Ability[${i}].Name}]
+		}
+	}
+
+	;; called when script is shut down
+	method Shutdown()
+	{
+	}
+
+	;; external command
+	member:bool AreWeReady()
+	{
+		if ${Me.Ability[${This.PassiveAbility}].IsReady}
+			return TRUE
+		return FALSE
+	}
+	
+	member:bool AreWeEating()
+	{
+		variable int i
+		for (i:Set[1]; ${Me.Effect[${i}](exists)}; i:Inc)
+		{
+			if ${Me.Effect[${i}].IsBeneficial}
+			{
+				if ${Me.Effect[${i}].Description.Find[Health:]} && ${Me.Effect[${i}].Description.Find[Energy:]} && ${Me.Effect[${i}].Description.Find[over]} && ${Me.Effect[${i}].Description.Find[seconds]}
+					return TRUE
+			}
+		}
+		return FALSE
+	}
+	
+
+}
+variable(global) Obj_Commands SYMBIOTES
+
+function GetReady()
+{
+	if ${VG.InGlobalRecovery} || !${SYMBIOTES.AreWeReady}
+	{
+		while ${VG.InGlobalRecovery} || !${SYMBIOTES.AreWeReady}
+		{
+			waitframe
+		}
+		wait 3
+	}
+}
