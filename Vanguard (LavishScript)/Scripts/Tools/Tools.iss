@@ -3149,17 +3149,23 @@ function HarvestIt()
 		VGExecute "/cleartargets"
 	}
 	
-	;if ${Me.Target.ContainsLoot}
-	;{
-	;	VGExecute "/LootAll"
-	;	wait 3
-	;	if ${Me.IsLooting}
-	;		Loot:EndLooting
-	;	VGExecute "/cleartargets"
-	;}
-
 	VGExecute "/hidewindow Harvesting"
 	VGExecute "/hidewindow Bonus Yield"
+	
+	if ${Me.InCombat}
+		return
+
+	for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
+	{
+		if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
+		{
+			EchoIt "Consolidate: ${Me.Inventory[${i}]}"
+			Me.Inventory[${i}]:StartConvert
+			wait 10
+			VG:ConvertItem
+			wait 10
+		}
+	}
 }
 
 function Tombstone()
@@ -3523,6 +3529,9 @@ function Loot()
 				}
 			}
 		}
+
+		if !${Me.Target(exists)}
+			return
 		
 		if ${Me.Target.ContainsLoot} || ${Me.Target.Name.Find["remains of"](exists)}
 		{
@@ -3533,7 +3542,7 @@ function Loot()
 				Loot:EndLooting
 		}
 		
-		if ${Me.Target(exists)} && ${Me.Target.IsDead}
+		if ${Me.Target.IsDead}
 		{
 			VGExecute "/cleartargets"
 			wait 3
