@@ -203,6 +203,9 @@ function HaveTargetRoutine()
 	if !${Me.TargetAsEncounter.Difficulty(exists)}
 		wait 10 ${Me.TargetAsEncounter.Difficulty(exists)}
 		
+	if ${GV[bool,bHarvesting]}
+		return
+		
 	CurrentTargetID:Set[${Me.Target.ID}]
 
 	if ${Navigate.isMoving}
