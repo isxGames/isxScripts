@@ -261,6 +261,33 @@ function main()
 	;-------------------------------------------
 	do
 	{
+	
+		while ${isPaused} || !${Tools.AreWeReady} || ${Tools.AreWeEating} || ${Me.IsCasting} || ${GV[bool,DeathReleasePopup]} || ${Pawn[me].IsMounted} || ${Me.Effect[Invulnerability Login Effect](exists)}
+		{
+			if ${isPaused}
+			{
+				call MeleeAttackOff
+				HarvestBlackList:Clear
+				LootBlackList:Clear
+			}
+			while ${isPaused} || !${Tools.AreWeReady} || ${Tools.AreWeEating} || ${Me.IsCasting} || ${GV[bool,DeathReleasePopup]} || ${Pawn[me].IsMounted} || ${Me.Effect[Invulnerability Login Effect](exists)}
+			{
+				waitframe
+				if ${Me.IsCasting}
+					ExecutedAbility:Set[${Me.Casting}]
+				if ${Me.ToPawn.IsStunned}
+					call MeleeAttackOff
+				if ${Pawn[me].IsMounted}
+					call MeleeAttackOff
+				if ${Me.Effect[Invulnerability Login Effect](exists)}
+					call MeleeAttackOff
+				if ${GV[bool,DeathReleasePopup]}
+					call MeleeAttackOff
+				call FollowTank
+			}
+			wait 4
+		}
+	
 		;; check and accept Rez
 		call RezAccept
 
@@ -271,62 +298,51 @@ function main()
 			FlushQueued
 		}
 		
-		if !${isPaused}
+		;; Always check these
+		call Loot
+		call FollowTank
+		call ManageHeals
+		call HarvestIt
+		
+		;; check these once every second
+		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
 		{
 			;; Always check these
-			call Loot
-			call FollowTank
-			call ManageHeals
-			call HarvestIt
-			
-			;; check these once every second
-			if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
-			{
-				;; Always check these
-				call AssistTank
-				call ChangeForm
-				call BuffRequests
-				call RepairEquipment
-				call Forage
-				call Tombstone
-				NextDelayCheck:Set[${Script.RunningTime}]
-			}
-
-			;; Class Specific Routines - do these first before doing combat stuff
-			call Bard
-			call Sorcerer
-			call Ranger
-			call Necromancer
-			call Cleric
-			call Warrior
-			
-			;; we only want targets that are not a Resource and not dead
-			call OkayToAttack
-			if ${Return}
-			{
-				;; execute each of these
-				call CounterIt
-				call StripIt
-				call PushStance
-				call UseAbilities
-				call RangedAttack
-				call AutoAttack
-				call UseItems
-			}
-			else
-			{
-				;; our target is a Resource or is dead
-				call MeleeAttackOff
-				call CheckBuffs
-			}
-		}
-		else 
-		{
-			;; we are paused
-			call MeleeAttackOff
+			call AssistTank
 			call ChangeForm
-			HarvestBlackList:Clear
-			LootBlackList:Clear
+			call BuffRequests
+			call RepairEquipment
+			call Forage
+			call Tombstone
+			NextDelayCheck:Set[${Script.RunningTime}]
+		}
+
+		;; Class Specific Routines - do these first before doing combat stuff
+		call Bard
+		call Sorcerer
+		call Ranger
+		call Necromancer
+		call Cleric
+		call Warrior
+		
+		;; we only want targets that are not a Resource and not dead
+		call OkayToAttack
+		if ${Return}
+		{
+			;; execute each of these
+			call CounterIt
+			call StripIt
+			call PushStance
+			call UseAbilities
+			call RangedAttack
+			call AutoAttack
+			call UseItems
+		}
+		else
+		{
+			;; our target is a Resource or is dead
+			call MeleeAttackOff
+			call CheckBuffs
 		}
 	}
 	while ${isRunning}
@@ -591,7 +607,10 @@ function Initialize()
 			UIElement[Rescue3@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
 		}
 		if ${Me.Ability[${i}].Description.Find[less hate]} || ${Me.Ability[${i}].Description.Find[decrease hate]} || ${Me.Ability[${i}].Description.Find[reduce hate]}
+		{
 			UIElement[ReduceHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
+			Hate_Abilities:Set["${Me.Ability[${i}].Name}", "${Me.Ability[${i}].Name}"]
+		}
 		elseif ${Me.Ability[${i}].Description.Find[hate]} || ${Me.Ability[${i}].Description.Find[hatred]}
 		{
 			UIElement[IncreaseHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
@@ -1376,20 +1395,16 @@ function PushStance()
 ;===================================================
 function:bool OkayToAttack(string ABILITY="None")
 {
+	call AlwaysCheck
+
 	if !${Me.Target(exists)}
 		return FALSE
-		
-	;; Delay only if we can't ID the target (lag does that)
-	if !${Me.TargetAsEncounter.Difficulty(exists)}
-		wait 10 ${Me.TargetAsEncounter.Difficulty(exists)} && ${Me.TargetHealth(exists)}
+	if ${Me.Target.Name.Find[Tombstone]}
+		return FALSE
 
-	;if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
-	if !${Me.Target.IsDead} && (${Me.Target.Type.Find[NPC]} || ${Me.Target.Type.Equal[AggroNPC]}) && ${Me.TargetHealth}<=${StartAttack}
+	if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
+	;if !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
 	{
-		;if ${Me.TargetHealth}<1 || !${Me.TargetHealth(exists)}
-		;{
-		;	return FALSE
-		;}
 		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
 		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
 		{
@@ -1776,6 +1791,16 @@ function MeleeAttackOff()
 {
 	if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
 	{
+		if !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
+		{
+			if !${doWeaponCheck}
+			{
+				wait 20 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
+			}
+			doWeaponCheck:Set[TRUE]
+			return
+		}
+		
 		;; Turn off auto-attack if target is not a resource
 		if !${Me.Target.Type.Equal[Resource]}
 		{
@@ -1799,18 +1824,10 @@ function MeleeAttackOff()
 			vgecho "Turning AutoAttack OFF"
 
 			Me.Ability[Auto Attack]:Use
-			wait 15 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
+			wait 20 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 		}
 	}
 	
-	if !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
-	{
-		if !${doWeaponCheck}
-		{
-			wait 5
-		}
-		doWeaponCheck:Set[TRUE]
-	}
 }
 
 ;===================================================
@@ -3173,13 +3190,14 @@ function Tombstone()
 	if !${Me.Target(exists)} && ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
 	{
 		VGExecute "/targetmynearestcorpse"
-		wait 5
+		wait 10 ${Me.Target.Name.Find[${Me.FName}](exists)}
 	}
 	if ${Me.Target(exists)} && ${Me.Target.Name.Find[Tombstone]} && ${Me.Target.Name.Find[${Me.FName}]}
 	{
 		VGExecute "/corpsedrag"
+		wait 3
 		VGExecute "/lootall"
-		wait 5
+		wait 3
 	}
 }
 
@@ -3492,7 +3510,7 @@ function Loot()
 			if ${Me.IsLooting}
 				Loot:EndLooting
 			VGExecute "/cleartargets"
-			wait 3
+			wait 15 !${Me.IsLooting}
 			return
 		}
 		
@@ -3539,10 +3557,38 @@ function Loot()
 			VGExecute "/LootAll"
 			wait 3
 			if ${Me.IsLooting}
+			{
 				Loot:EndLooting
+				wait 5 !${Me.IsLooting}
+			}
 		}
 		
 		if ${Me.Target.IsDead}
+		{
+			VGExecute "/cleartargets"
+			wait 15 !${Me.Target(exists)}
+		}
+	}
+}
+
+;===================================================
+;===      ALWAYS CHECK ROUTINE                  ====
+;===================================================
+function AlwaysCheck()
+{
+	if ${Me.Target(exists)}
+		wait 5 ${Me.TargetAsEncounter.Difficulty(exists)}
+	
+	if !${Me.Target(exists)} && ${Me.InCombat}
+	{
+		VGExecute "/cleartargets"
+		wait 3
+	}
+
+	if ${Me.DTarget(exists)} && ${Me.DTargetHealth}<1
+	{
+		wait 5 ${Me.DTargetHealth}>0
+		if ${Me.DTargetHealth}<1
 		{
 			VGExecute "/cleartargets"
 			wait 3
