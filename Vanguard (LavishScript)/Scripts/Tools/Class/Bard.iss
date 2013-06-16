@@ -100,7 +100,7 @@ function PlayCombatSong()
 			;call unequipbarditems
 
 			Me.Inventory[ExactName,"${PrimaryWeapon}"]:Equip
-			;wait 1
+			;wait 2
 			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)}
 
 			if ${PrimaryWeapon.Equal[${SecondaryWeapon}]}
@@ -120,6 +120,7 @@ function PlayCombatSong()
 				;wait 1
 				;wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
 			}
+			wait 2
 		}
 	}
 
@@ -136,7 +137,7 @@ function PlayTravelSong()
 			;first unequip any items
 			;call unequipbarditems
 			Me.Inventory[ExactName,"${TravelInstrument}"]:Equip
-			;wait 1
+			wait 2
 			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
@@ -154,7 +155,7 @@ function PlayRestSong()
 			;first unequip any items
 			;call unequipbarditems
 			Me.Inventory[ExactName,"${RestInstrument}"]:Equip
-			;wait 1
+			wait 2
 			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
