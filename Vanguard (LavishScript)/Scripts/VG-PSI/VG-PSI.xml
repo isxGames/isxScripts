@@ -80,6 +80,7 @@
 						Script[VG-PSI].Variable[isRunning]:Set[FALSE]
 						endscript VG-PSI 
 					</OnLeftClick>
+					<Command>ui -unload "&filename;"</Command>					
 				</CommandButton>
 			</Children>
 		</TitleBar>
