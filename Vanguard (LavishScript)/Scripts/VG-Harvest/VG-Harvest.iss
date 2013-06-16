@@ -11,15 +11,18 @@
 ;
 ; Revision History
 ; ----------------
+; 20130616 (Zandros)
+;  * Consolidation routine now consolidates all types of resources.
+; 
+; 20130416 (Zandros)
+;  * Patched the considation of resources to work with the latest patch
+;
 ; 20120111 (Zandros)
 ;  * Now will harvest correctly and run through all the points.  It will 
 ;    always begin with point 1.  Fixed harvesting nodes you can't harvest.
 ;    It will continue harvesting even if the Yield window is up.  Implemented
 ;    the option to harvest only Nodes you identify... plus when adding the 
 ;    node you want to harvest just target it and click add.
-;
-; 20130416 (Zandros)
-;  * Patched the considation of resources to work with the latest patch
 ;
 ; 20111016 (Zandros)
 ;  * Fixed setting DTarget, Follow Routines, and Looting Routines
@@ -685,17 +688,30 @@ function Consolidate_Resources()
 	variable int i
 	for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
 	{
-		if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Quantity}>=9999
+		if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
 		{
-			echo "Consolidate: ${Me.Inventory[${i}]}"
+			EchoIt "Consolidate: ${Me.Inventory[${i}]}"
 			Me.Inventory[${i}]:StartConvert
 			wait 10
 			VG:ConvertItem
 			wait 10
-			return
 		}
 	}
-	return
+
+	;variable int i
+	;for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
+	;{
+	;	if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Quantity}>=9999
+	;	{
+	;		echo "Consolidate: ${Me.Inventory[${i}]}"
+	;		Me.Inventory[${i}]:StartConvert
+	;		wait 10
+	;		VG:ConvertItem
+	;		wait 10
+	;		return
+	;	}
+	;}
+	;return
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;======;;;;;;;;;;;;;;;;;;;;;;;======;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
