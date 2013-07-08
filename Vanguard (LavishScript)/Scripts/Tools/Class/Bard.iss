@@ -35,7 +35,7 @@ function Bard()
 				doPlayRestSong:Set[FALSE]
 				break
 			}
-			if ${Group[${i}].Health}<90
+			if ${Group[${i}].Health}<90 || ${Me.EnergyPct}<90
 			{
 				doPlayRestSong:Set[TRUE]
 			}
@@ -49,7 +49,7 @@ function Bard()
 			doPlayCombatSong:Set[TRUE]
 			doPlayRestSong:Set[FALSE]
 		}
-		if ${Me.HealthPct}<90
+		if ${Me.HealthPct}<90 || ${Me.EnergyPct}<90
 		{
 			doPlayRestSong:Set[TRUE]
 		}
@@ -58,12 +58,14 @@ function Bard()
 	;; do we want to play our Combat Song?
 	if ${doPlayCombatSong}
 	{
-		if ${LastSongPlayed.NotEqual[CombatSong]}
+		if ${LastSongPlayed.NotEqual[CombatSong]} && ${Me.EnergyPct}>35
 		{
 			LastSongPlayed:Set[CombatSong]
 			call PlayCombatSong
 		}
-		return
+		if ${Me.EnergyPct}>5
+			return
+		doPlayRestSong:Set[TRUE]
 	}
 	
 	;; do we want to play our Rest Song?
