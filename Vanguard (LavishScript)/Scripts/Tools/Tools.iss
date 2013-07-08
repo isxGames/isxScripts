@@ -104,6 +104,8 @@ variable collection:string Hate_Abilities
 variable collection:int64 HarvestBlackList
 variable collection:int64 LootBlackList
 
+;; 1/100th of the system's RoundTrip of a packet
+variable int Delay = 20
 
 ;; UI/Script toggle variables
 variable bool doUseAbilities = FALSE
@@ -130,6 +132,7 @@ variable bool doRift = FALSE
 variable bool doFollow = FALSE
 variable bool doMonotorTells = FALSE
 variable bool doHarvest = TRUE
+variable bool isHarvesting = FALSE
 variable int HarvestRange = 10
 variable string TriggerBuffing = ""
 variable string Tank = Unknown
@@ -245,107 +248,122 @@ function main()
 	;-------------------------------------------
 	call Initialize
 	EchoIt "Ready"
-	
-	;-------------------------------------------
-	; CLASS SPECIFIC Routines
-	;-------------------------------------------
-	;call Bard
-	;call Sorcerer
-	;call Ranger
-	;call Necromancer
-	;call Cleric
-	;call Warrior
-	
-	;-------------------------------------------
-	; loop this until we exit the script
-	;-------------------------------------------
-	do
-	{
-	
-		while ${isPaused} || !${Tools.AreWeReady} || ${Tools.AreWeEating} || ${Me.IsCasting} || ${GV[bool,DeathReleasePopup]} || ${Pawn[me].IsMounted} || ${Me.Effect[Invulnerability Login Effect](exists)}
-		{
-			if ${isPaused}
-			{
-				call MeleeAttackOff
-				HarvestBlackList:Clear
-				LootBlackList:Clear
-			}
-			while ${isPaused} || !${Tools.AreWeReady} || ${Tools.AreWeEating} || ${Me.IsCasting} || ${GV[bool,DeathReleasePopup]} || ${Pawn[me].IsMounted} || ${Me.Effect[Invulnerability Login Effect](exists)}
-			{
-				waitframe
-				if ${Me.IsCasting}
-					ExecutedAbility:Set[${Me.Casting}]
-				if ${Me.ToPawn.IsStunned}
-					call MeleeAttackOff
-				if ${Pawn[me].IsMounted}
-					call MeleeAttackOff
-				if ${Me.Effect[Invulnerability Login Effect](exists)}
-					call MeleeAttackOff
-				if ${GV[bool,DeathReleasePopup]}
-					call MeleeAttackOff
-				call FollowTank
-			}
-			wait 4
-		}
-	
-		;; check and accept Rez
-		call RezAccept
 
-		;; execute any queued commands
-		if ${QueuedCommands}
-		{
-			ExecuteQueued
-			FlushQueued
-		}
-		
-		;; Always check these
-		call Loot
-		call FollowTank
-		call ManageHeals
-		call HarvestIt
-		
-		;; check these once every second
-		if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
-		{
-			;; Always check these
-			call AssistTank
-			call ChangeForm
-			call BuffRequests
-			call RepairEquipment
-			call Forage
-			call Tombstone
-			NextDelayCheck:Set[${Script.RunningTime}]
-		}
-
-		;; Class Specific Routines - do these first before doing combat stuff
-		call Bard
-		call Sorcerer
-		call Ranger
-		call Necromancer
-		call Cleric
-		call Warrior
-		
-		;; we only want targets that are not a Resource and not dead
-		call OkayToAttack
-		if ${Return}
-		{
-			;; execute each of these
-			call CounterIt
-			call StripIt
-			call PushStance
-			call UseAbilities
-			call RangedAttack
-			call AutoAttack
-			call UseItems
-		}
-		else
-		{
-			;; our target is a Resource or is dead
-			call MeleeAttackOff
-			call CheckBuffs
-		}
-	}
 	while ${isRunning}
+		call DoSomething
+}
+
+;===================================================
+;===         FIND SOMETHING TO DO               ====
+;===================================================
+function DoSomething()
+{
+	;-------------------------------------------
+	; PAUSED - turn off melee attacks and reset variables
+	;-------------------------------------------
+	if ${isPaused}
+	{
+		call MeleeAttackOff
+		HarvestBlackList:Clear
+		LootBlackList:Clear
+		return
+	}
+
+	;-------------------------------------------
+	; WE ARE DEAD - check for Rez and do nothing
+	;-------------------------------------------
+	if ${doAcceptRez}
+		call RezAccept
+	if ${GV[bool,DeathReleasePopup]}
+		return
+	if ${Me.Effect[Invulnerability Login Effect](exists)}
+		return
+
+	;-------------------------------------------
+	; FOLLOW TANK - no matter what, always follow the tank
+	;-------------------------------------------
+	call FollowTank
+	
+	;-------------------------------------------
+	; CHECKS - return if we can't use any abilities
+	;-------------------------------------------
+	if !${Tools.AreWeReady}
+		return
+	if ${Tools.AreWeEating}
+		return
+	if ${Pawn[me].IsMounted}
+		return
+	if ${Me.ToPawn.IsStunned}
+		return
+
+	;-------------------------------------------
+	; VITAL HEALS - we need this delay so not to recast a heal
+	;-------------------------------------------
+	if ${JustHealed}
+		wait 15
+	JustHealed:Set[FALSE]
+		
+	;-------------------------------------------
+	; CLASS SPECIFIC ROUTINES - do these first
+	;-------------------------------------------
+	call Bard
+	call Sorcerer
+	call Ranger
+	call Necromancer
+	call Cleric
+	call Warrior
+	
+	;-------------------------------------------
+	; QUEUED COMMANDS - execute any 
+	;-------------------------------------------
+	if ${QueuedCommands}
+	{
+		ExecuteQueued
+		FlushQueued
+	}
+
+	;-------------------------------------------
+	; ALWAYS DO - must loot, heal, and harvest
+	;-------------------------------------------
+	call ManageHeals
+	call ManageTanks
+	call Loot
+	call HarvestIt
+		
+	;-------------------------------------------
+	; DELAYED ROUTINES - check these once every second
+	;-------------------------------------------
+	if ${Math.Calc[${Math.Calc[${Script.RunningTime}-${NextDelayCheck}]}/1000]}>1
+	{
+		;; Always check these
+		call AssistTank
+		call ChangeForm
+		call BuffRequests
+		call RepairEquipment
+		call Forage
+		call Tombstone
+		NextDelayCheck:Set[${Script.RunningTime}]
+	}
+
+	;-------------------------------------------
+	; COMBAT ROUTINES - attack targets that are not a Resource or Dead
+	;-------------------------------------------
+	call OkayToAttack
+	if ${Return}
+	{
+		call CounterIt
+		call StripIt
+		call PushStance
+		call UseAbilities
+		call RangedAttack
+		call AutoAttack
+		call UseItems
+	}
+	else
+	{
+		call MeleeAttackOff
+		call CheckBuffs
+	}
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -577,6 +595,8 @@ function Initialize()
 	variable int i
 	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
 	{
+		if ${Me.Ability[${i}].LevelGranted}>${Me.Level}
+			continue
 		UIElement[AbilitiesCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
 		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
 		{
@@ -939,7 +959,7 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 ;===================================================
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
-	echo [${ChannelNumber}] ${aText}
+	;echo [${ChannelNumber}] ${aText}
 
 	;; Log all tells to a file and play a sound
 	if ${doMonotorTells} && ${ChannelNumber}==15
@@ -955,16 +975,25 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		PlaySound ALARM
 	}
 
-	if ${ChannelNumber}==0 && ${aText.Find[You can't attack with that type of weapon.]}
+	if ${ChannelNumber}==0
 	{
-		EchoIt "[${ChannelNumber}]${aText}"
-		doWeaponCheck:Set[FALSE]
-		if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
-		{
+		if ${aText.Find[Harvesting has begun]}
+			isHarvesting:Set[TRUE]
+		if ${aText.Find[Harvesting has ended]}
+			isHarvesting:Set[FALSE]
+		if ${aText.Find[You don't have a target.]}
 			Me.Ability[Auto Attack]:Use
+		if ${aText.Find[You can't attack with that type of weapon.]}
+		{
+			EchoIt "[${ChannelNumber}]${aText}"
+			doWeaponCheck:Set[TRUE]
+			if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
+			{
+				Me.Ability[Auto Attack]:Use
+			}
+			;UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
+			vgecho "Melee Off - can't attack with that weapon"
 		}
-		;UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
-		vgecho "Melee Off - can't attack with that weapon"
 	}
 	
 	if ${ChannelNumber}==1
@@ -981,8 +1010,18 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			VGExecute /cleartargets
 			return
 		}
+		if ${aText.Equal[You already have one of that Unique item!]}
+			LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+		if ${aText.Equal[(Check space limits?)]}
+			LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 	}
 
+	if ${ChannelNumber}==17
+	{
+		if ${aText.Find[Harvesting is done]}
+			isHarvesting:Set[FALSE]
+	}
+	
 	if ${ChannelNumber}==26
 	{
 		;; this may be different for each class
@@ -1030,6 +1069,13 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			doAcceptRez:Set[TRUE]
 		}
 	}
+	if ${ChannelNumber}==63
+	{
+		if ${aText.Find[You stop autoattacking.]}
+			doWeaponCheck:Set[TRUE]
+		if ${aText.Find[You begin autoattacking.]}
+			doWeaponCheck:Set[FALSE]
+	}
 }
 
 
@@ -1063,7 +1109,8 @@ function GlobalCooldown()
 ;===================================================
 function IsCasting()
 {
-	wait 5
+	wait 1
+	;wait 20 !${Tools.AreWeReady}
 	if ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 	{
 		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
@@ -1072,9 +1119,16 @@ function IsCasting()
 			call AutoAttack
 			call FollowTank
 		}
-		wait 2
+		;
+		; The delay you want is anywhere from 3 to 7 tenths of a second.  Many factors
+		; are tied into it that affects how soon an ability can be used the moment
+		; after it is ready.  The following affects it:  AutoAttack, FPS, and if running
+		; in the background.
+		;
+		wait 3
+		waitframe
 	}
-	call UseItems
+	;call UseItems
 }
 
 function ReadyCheck()
@@ -1402,7 +1456,8 @@ function:bool OkayToAttack(string ABILITY="None")
 	if ${Me.Target.Name.Find[Tombstone]}
 		return FALSE
 
-	if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
+	if (${Tank.Find[${Me.FName}]} || !${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
+	;if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
 	;if !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
 	{
 		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
@@ -1756,7 +1811,7 @@ function:bool AutoAttack()
 			{
 				vgecho "Turning AutoAttack ON"
 				Me.Ability[Auto Attack]:Use
-				wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+				wait ${Delay} ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
 				return
 			}
 			
@@ -1769,7 +1824,7 @@ function:bool AutoAttack()
 					waitframe
 					vgecho "Turning AutoAttack ON"
 					Me.Ability[Auto Attack]:Use
-					wait 10 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
+					wait ${Delay} ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
 					return
 				}
 				doWeaponCheck:Set[FALSE]
@@ -1795,7 +1850,7 @@ function MeleeAttackOff()
 		{
 			if !${doWeaponCheck}
 			{
-				wait 20 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
+				wait ${Delay} !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 			}
 			doWeaponCheck:Set[TRUE]
 			return
@@ -1824,7 +1879,7 @@ function MeleeAttackOff()
 			vgecho "Turning AutoAttack OFF"
 
 			Me.Ability[Auto Attack]:Use
-			wait 20 !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
+			wait ${Delay} !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
 		}
 	}
 	
@@ -1961,9 +2016,12 @@ function:bool UseAbility(string ABILITY)
 {
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
-		echo "${ABILITY} does not exist or too high a level to use"
+		EchoIt "${ABILITY} does not exist or too high a level to use"
 		return FALSE
 	}
+
+	if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
+		return FALSE
 	
 	;-------------------------------------------
 	; These have priority over everything
@@ -1974,42 +2032,35 @@ function:bool UseAbility(string ABILITY)
 	call SorcCrits
 	call RangerCrits
 	call NecroCrits
+	call ManageTanks
 	
 	;-------------------------------------------
 	; execute ability only if it is ready
 	;-------------------------------------------
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
-		;; no hate abilities
-		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
-		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
-		{
-			return FALSE
-		}
-	
-		;; return if we do not have enough energy
-		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
-		{
-			;echo "Not enought Energy for ${ABILITY}"
-			return FALSE
-		}
-		;; return if we do not have enough Endurance
-		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
-		{
-			;echo "Not enought Endurance for ${ABILITY}"
-			return FALSE
-		}
+		if ${Pawn[me].IsMounted}
+			return
+		if ${Me.ToPawn.IsStunned}
+			return
 		if ${Me.Effect[${ABILITY}](exists)}
 			return FALSE
 		if ${Me.TargetMyDebuff[${ABILITY}](exists)}
 			return FALSE
-		if ${Pawn[me].IsMounted}
+		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance} && ${Me.Ability[${ABILITY}].IsOffensive}
 			return FALSE
 
-		Me.Ability[${ABILITY}]:Use
-		call IsCasting
-		EchoIt "UseAbility (${ABILITY})"
-		return TRUE
+		if ${Me.Ability[${ABILITY}].IsReady}
+		{
+			Me.Ability[${ABILITY}]:Use
+			call IsCasting
+			EchoIt "UseAbility: (${ABILITY})"
+			return TRUE
+		}
 	}
 	return FALSE
 }
@@ -2021,41 +2072,38 @@ function:bool ForceAbility(string ABILITY)
 {
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
-		echo "${ABILITY} does not exist or too high a level to use"
+		EchoIt "${ABILITY} does not exist or too high a level to use"
 		return FALSE
 	}
+
+	if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
+		return FALSE
 	
 	;-------------------------------------------
 	; execute ability only if it is ready
 	;-------------------------------------------
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
-		;; no hate abilities
-		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
-		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
-		{
-			return FALSE
-		}
-	
-		;; return if we do not have enough energy
-		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
-		{
-			;echo "Not enought Energy for ${ABILITY}"
-			return FALSE
-		}
-		;; return if we do not have enough Endurance
-		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
-		{
-			;echo "Not enought Endurance for ${ABILITY}"
-			return FALSE
-		}
 		if ${Pawn[me].IsMounted}
+			return
+		if ${Me.ToPawn.IsStunned}
+			return
+		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance} && ${Me.Ability[${ABILITY}].IsOffensive}
 			return FALSE
 
-		Me.Ability[${ABILITY}]:Use
-		call IsCasting
-		EchoIt "UseAbility (${ABILITY})"
-		return TRUE
+		if ${Me.Ability[${ABILITY}].IsReady}
+		{
+			Me.Ability[${ABILITY}]:Use
+			call IsCasting
+			EchoIt "ForceAbility: (${ABILITY})"
+			return TRUE
+		}
 	}
 	return FALSE
 }
@@ -2077,31 +2125,27 @@ function:bool UseAbilityNoCoolDown(string ABILITY)
 	;-------------------------------------------
 	if ${Me.Ability[${ABILITY}].IsReady}
 	{
-		;; return if we do not have enough energy
-		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
-		{
-			;echo "Not enought Energy for ${ABILITY}"
-			return FALSE
-		}
-		;; return if we do not have enough Endurance
-		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
-		{
-			;echo "Not enought Endurance for ${ABILITY}"
-			return FALSE
-		}
-		if ${Me.TargetMyDebuff[${ABILITY}](exists)}
-			return FALSE
 		if ${Pawn[me].IsMounted}
+			return
+		if ${Me.ToPawn.IsStunned}
+			return
+		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].EnergyCost(exists)} && ${Me.Ability[${ABILITY}].EnergyCost}>${Me.Energy}
+			return FALSE
+		if ${Me.Ability[${ABILITY}].EnduranceCost(exists)} && ${Me.Ability[${ABILITY}].EnduranceCost}>${Me.Endurance}
 			return FALSE
 
-		Me.Ability[${ABILITY}]:Use
-		wait 5
-		EchoIt "UseAbility (${ABILITY})"
+		if ${Me.Ability[${ABILITY}].IsReady}
+		{
+			Me.Ability[${ABILITY}]:Use
+			call IsCasting
+			EchoIt "UseAbility: (${ABILITY})"
 		
-		if ${ABILITY.Equal[${HoT}]}
-			HoTMemberList:Set["${Me.DTarget.Name.Token[1," "]}", ${Math.Calc[${Script.RunningTime}+17000]}]
-		
-		return TRUE
+			if ${ABILITY.Equal[${HoT}]}
+				HoTMemberList:Set["${Me.DTarget.Name.Token[1," "]}", ${Math.Calc[${Script.RunningTime}+17000]}]
+			return TRUE
+		}
 	}
 	return FALSE
 }
@@ -2324,7 +2368,7 @@ function BuffRequests()
 				{
 					Pawn[name,${Tools_BuffRequestList.CurrentKey}]:Target
 					wait 3
-					wait 10 ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
+					wait ${Delay} ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
 					
 					if ${Me.DTarget.Name.Find[${Tools_BuffRequestList.CurrentKey}]}
 					{
@@ -2344,7 +2388,7 @@ function BuffRequests()
 							if !${Tools.AreWeReady}
 							{
 								while !${Tools.AreWeReady} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}<25
-									wait frame
+									waitframe
 								wait 3
 							}
 							
@@ -2408,7 +2452,7 @@ function RezAccept()
 		VGExecute "/rezaccept"
 
 		;; allow time to relocate after accepting rez
-		wait 40
+		wait 60 ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
 		
 		;; target our nearest corpse
 		VGExecute "/targetmynearestcorpse"
@@ -2471,7 +2515,7 @@ function RepairEquipment()
 					if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
 					{
 						Pawn[Essence of Replenishment]:Target
-						wait 10 ${Me.Target.Name.Find[Replenishment]}
+						wait ${Delay} ${Me.Target.Name.Find[Replenishment]}
 						if ${Me.Target.Name.Find[Replenishment]}
 						{
 							Merchant:Begin[Repair]
@@ -2498,7 +2542,7 @@ function RepairEquipment()
 					if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
 					{
 						Pawn[Merchant Djinn]:Target
-						wait 10 ${Me.Target.Name.Find[Merchant Djinn]}
+						wait ${Delay} ${Me.Target.Name.Find[Merchant Djinn]}
 						if ${Me.Target.Name.Find[Merchant Djinn]}
 						{
 							Merchant:Begin[Repair]
@@ -2524,7 +2568,7 @@ function RepairEquipment()
 					if ${CurentItems.Get[${i}].Durability}>=0 && ${CurentItems.Get[${i}].Durability}<95
 					{
 						Pawn[Reparitron 5703]:Target
-						wait 10 ${Me.Target.Name.Find[Reparitron 5703]}
+						wait ${Delay} ${Me.Target.Name.Find[Reparitron 5703]}
 						if ${Me.Target.Name.Find[Reparitron 5703]}
 						{
 							Merchant:Begin[Repair]
@@ -2903,7 +2947,7 @@ objectdef Obj_Commands
 	;; external command
 	member:bool AreWeReady()
 	{
-		if ${Me.Ability[${This.PassiveAbility}].IsReady}
+		if ${Me.Ability[${This.PassiveAbility}].IsReady} && !${Me.IsCasting} && !${VG.InGlobalRecovery}
 			return TRUE
 		return FALSE
 	}
@@ -3099,8 +3143,7 @@ function HarvestIt()
 			{
 				;; target it and blacklist target from future scans
 				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
-				wait 3
-				HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+				wait 5
 				break
 			}
 		}
@@ -3108,6 +3151,10 @@ function HarvestIt()
 	
 	if !${Me.Target(exists)}
 		return
+
+	if ${HarvestBlackList.Element[${Me.Target.ID}](exists)}
+		return
+	HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 		
 	if !${Me.Target.IsHarvestable}
 		return
@@ -3147,23 +3194,24 @@ function HarvestIt()
 	if !${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<5 && ${Me.Target.IsHarvestable}
 	{
 		Me.Ability[Auto Attack]:Use
-		wait 10
+		wait 30
 	}
 
 	if ${Me.InCombat} && ${Me.Encounter}==0
 	{
 		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
-		while ${Me.InCombat} && ${Me.Encounter}==0
+		while ${Me.InCombat} && ${Me.Encounter}==0 && ${GV[bool,bHarvesting]} && ${isHarvesting}
 			waitframe
 		VGExecute "/cleartargets"
-		wait 3
+		wait ${Delay} 
 	}	
 
 	if !${GV[bool,bHarvesting]} && ${Me.Ability[Auto Attack].Toggled}
 	{
 		VGExecute /autoattack
-		wait 10
+		wait 5
 		VGExecute "/cleartargets"
+		wait ${Delay} 
 	}
 	
 	VGExecute "/hidewindow Harvesting"
@@ -3190,7 +3238,7 @@ function Tombstone()
 	if !${Me.Target(exists)} && ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
 	{
 		VGExecute "/targetmynearestcorpse"
-		wait 10 ${Me.Target.Name.Find[${Me.FName}](exists)}
+		wait ${Delay}  ${Me.Target.Name.Find[${Me.FName}](exists)}
 	}
 	if ${Me.Target(exists)} && ${Me.Target.Name.Find[Tombstone]} && ${Me.Target.Name.Find[${Me.FName}]}
 	{
@@ -3415,7 +3463,7 @@ function ManageTanks()
 										EchoIt "Grabbing: ${Me.Encounter[${i}].Name} who's on ${TargetOnWho} (${Group[${j}].Class})"
 										doRescue:Set[TRUE]
 										Pawn[ID,${Me.Encounter[${i}].ID}]:Target
-										wait 1
+										wait 2
 										VGExecute /assistoffensive
 										wait 1
 										Me.Target:Face
@@ -3452,122 +3500,137 @@ function ManageTanks()
 				}
 
 				;; rescue our DTarget
-				;if ${doRescue} && !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
-				if !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
+				if  ${doRescue} && !${Me.Target.IsDead} && !${Me.ToT.Name.Find[${Me.FName}]} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 				{
 					call ReadyCheck	
 					
 					;; reduce DTarget's hate
-					if ${doReduceHate}
+					if ${doReduceHate} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${ReduceHate}].IsReady}
-							call UseAbility "${ReduceHate}"
+						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${ReduceHate}].IsReady} && ${Me.Ability[${ReduceHate}].TimeRemaining}<2 && ${Me.Ability[${ReduceHate}].Range}<=${Me.Target.Distance}
+							waitframe
+						wait 3
+						call ForceAbility "${ReduceHate}"
 					}
-
-					if ${doRescue1} && ${Me.Ability[${Rescue1}].IsReady}
+					if ${doRescue1} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue1}].IsReady}
-						{
-							call UseAbility "${Rescue1}"
-							return
-						}
+						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${Rescue1}].IsReady} && ${Me.Ability[${Rescue1}].TimeRemaining}<2 && ${Me.Ability[${Rescue1}].Range}<=${Me.Target.Distance}
+							waitframe
+						wait 3
+						call ForceAbility "${Rescue1}"
 					}
-					if ${doRescue2} && ${Me.Ability[${Rescue2}].IsReady}
+					if ${doRescue2} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue2}].IsReady}
-						{
-							call UseAbility "${Rescue2}"
-							return
-						}
+						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${Rescue2}].IsReady} && ${Me.Ability[${Rescue2}].TimeRemaining}<2 && ${Me.Ability[${Rescue2}].Range}<=${Me.Target.Distance}
+							waitframe
+						wait 3
+						call ForceAbility "${Rescue2}"
 					}
-					if ${doRescue3} && ${Me.Ability[${Rescue3}].IsReady}
+					if ${doRescue3} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						if ${Me.DTarget.Name(exists)} && ${Me.Ability[${Rescue3}].IsReady}
-						{
-							call UseAbility "${Rescue3}"
-							return
-						}
+						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${Rescue3}].IsReady} && ${Me.Ability[${Rescue3}].TimeRemaining}<2 && ${Me.Ability[${Rescue3}].Range}<=${Me.Target.Distance}
+							waitframe
+						wait 3
+						call ForceAbility "${Rescue3}"
 					}
 				}
 				
 				;; increase our hate
 				if ${doIncreaseHate}
-					call UseAbility "${IncreaseHate}"
+					call ForceAbility "${IncreaseHate}"
 			}
 		}
 	}
 }
 
+;===================================================
+;===      LOOT and CLEAR TARGET ROUTINE         ====
+;===================================================
 function Loot()
 {
+	variable int i
 	if ${doLoot}
 	{
+		;-------------------------------------------
+		; Start looting 1 item at a time, this ensures we loot all lootable items
+		;-------------------------------------------
 		if ${Me.IsLooting}
 		{
-			LastLootID:Set[${Me.Target.ID}]
-			VGExecute "/LootAll"
-			wait 3
+			if ${Me.Target(exists)}
+				LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+			if ${Loot.NumItems}
+			{
+				for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
+				{
+					vgecho "*Looted: ${Loot.Item[${i}]}"
+					Loot.Item[${i}]:Loot
+					waitframe
+				}
+			}		
+			wait ${Delay} !${Me.IsLooting}
 			if ${Me.IsLooting}
+			{
 				Loot:EndLooting
-			VGExecute "/cleartargets"
-			wait 15 !${Me.IsLooting}
+				wait ${Delay} !${Me.IsLooting}
+			}
 			return
 		}
-		
+
+		;-------------------------------------------
+		; Scan and target the area for a lootable target
+		;-------------------------------------------
 		if !${Me.Target(exists)}
 		{
-			;-------------------------------------------
-			; Populate our CurrentPawns variable
-			;-------------------------------------------
 			variable int TotalPawns
 			variable index:pawn CurrentPawns
 
 			TotalPawns:Set[${VG.GetPawns[CurrentPawns]}]
 
-			;-------------------------------------------
-			; Cycle through 30 nearest Pawns in area that are AggroNPC
-			;-------------------------------------------
 			for (i:Set[1];  ${i}<=${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<5;  i:Inc)
 			{
 				if ${LootBlackList.Element[${CurrentPawns.Get[${i}].ID}](exists)}
 					continue
 		
-				;; next if it is not harvestable
 				if ${CurrentPawns.Get[${i}].ContainsLoot} || ${CurrentPawns.Get[${i}].Name.Find["remains of"](exists)}
 				{
-					;; we only want corpses or resources
 					if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} || ${CurrentPawns.Get[${i}].Type.Equal[Resource]}
 					{
-						;; target it and blacklist target from future scans
 						Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
-						wait 3
-						LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+						wait 5
 						break
 					}
 				}
 			}
 		}
 
+		;-------------------------------------------
+		; No need to do anthing if there is no target to loot
+		;-------------------------------------------
 		if !${Me.Target(exists)}
 			return
 		
+		;-------------------------------------------
+		; Initiate the loot process
+		;-------------------------------------------
 		if ${Me.Target.ContainsLoot} || ${Me.Target.Name.Find["remains of"](exists)}
 		{
-			LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
-			VGExecute "/LootAll"
-			wait 3
-			if ${Me.IsLooting}
+			if !${LootBlackList.Element[${Me.Target.ID}](exists)}
 			{
-				Loot:EndLooting
-				wait 5 !${Me.IsLooting}
+				Loot:BeginLooting
+				wait ${Delay} ${Loot.NumItems}
+				LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+				return
 			}
 		}
-		
-		if ${Me.Target.IsDead}
-		{
-			VGExecute "/cleartargets"
-			wait 15 !${Me.Target(exists)}
-		}
+	}
+	
+	;-------------------------------------------
+	; Clear our target if our target is dead
+	;-------------------------------------------
+	if ${Me.Target.IsDead}
+	{
+		VGExecute "/cleartargets"
+		wait ${Delay}
 	}
 }
 
@@ -3577,7 +3640,7 @@ function Loot()
 function AlwaysCheck()
 {
 	if ${Me.Target(exists)}
-		wait 5 ${Me.TargetAsEncounter.Difficulty(exists)}
+		wait ${Delay} ${Me.TargetAsEncounter.Difficulty(exists)}
 	
 	if !${Me.Target(exists)} && ${Me.InCombat}
 	{
@@ -3587,7 +3650,7 @@ function AlwaysCheck()
 
 	if ${Me.DTarget(exists)} && ${Me.DTargetHealth}<1
 	{
-		wait 5 ${Me.DTargetHealth}>0
+		wait ${Delay} ${Me.DTargetHealth}>0
 		if ${Me.DTargetHealth}<1
 		{
 			VGExecute "/cleartargets"
