@@ -80,6 +80,7 @@ variable bool doAggroNPC = FALSE
 variable bool doNPC = TRUE
 variable bool doLoot = TRUE
 variable bool doCamp = TRUE
+
 variable int PullDistance = 22
 variable int MaxDistance = 30
 variable int MinimumLevel = ${Me.Level}
@@ -246,6 +247,7 @@ function HaveTargetRoutine()
 		
 	if !${Me.Target.HaveLineOfSightTo}
 	{
+		BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 		VGExecute "/cleartargets"
 		wait 30
 		return
@@ -407,7 +409,7 @@ function NoTargetRoutine()
 				vgecho "Eating:  ${EatThis}"
 				if ${Me.Inventory[exactname,"${EatThis}"](exists)}
 				{
-					while !${Me.Inventory[exactname,"${EatThis}"].IsReady}
+					wait 30 ${Me.Inventory[exactname,"${EatThis}"].IsReady}
 						waitframe
 					Me.Inventory["${EatThis}"]:Use
 					wait 5
@@ -769,6 +771,7 @@ function MoveCloser(int Distance=4)
 	if ${Me.Target.X}==0 || ${Me.Target.Y}==0
 	{
 		;vgecho X and Y = 0
+		BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 		VGExecute /cleartargets
 		wait 15
 		return
@@ -848,6 +851,7 @@ function MoveCloser(int Distance=4)
 	;; we timed out so clear our target and try again
 	if ${BUMP} && ${Me.Encounter}>0
 	{
+		BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 		VGExecute /cleartargets
 		wait 30
 	}
@@ -1158,6 +1162,7 @@ function FixLineOfSight()
 	LoSRetries:Inc
 	if ${LoSRetries}>=3
 	{
+		BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 		VGExecute "/cleartargets"
 		wait 3
 	}

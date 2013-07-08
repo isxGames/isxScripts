@@ -76,14 +76,14 @@ function FindTarget(int Distance)
 
 		;; set our target
 		Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
-		wait 10 ${Me.TargetAsEncounter.Difficulty(exists)}
+		wait 20 ${Me.TargetAsEncounter.Difficulty(exists)}
 
 		;; check difficulty of our target
 		if ${Me.TargetAsEncounter.Difficulty}>${DifficultyLevel}
 		{
 				BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 				VGExecute "/cleartargets"
-				wait 10 !${Me.TargetAsEncounter.Difficulty(exists)}
+				wait 20 !${Me.TargetAsEncounter.Difficulty(exists)}
 				continue
 		}
 
@@ -93,10 +93,13 @@ function FindTarget(int Distance)
 			vgecho Cleared target
 			VGExecute "/cleartargets"
 			waitframe
-			VGExecute /minions backoff
-			waitframe
-			VGExecute /pet backoff
-			wait 10 !${Me.TargetAsEncounter.Difficulty(exists)}
+			if ${Me.Pet(exists)}
+			{
+				VGExecute /minions backoff
+				waitframe
+				VGExecute /pet backoff
+			}
+			wait 20 !${Me.TargetAsEncounter.Difficulty(exists)}
 			continue
 		}
 		vgecho "[Level=${Me.Target.Level}][Difficulty=${Me.TargetAsEncounter.Difficulty}][LoS=${Me.Target.HaveLineOfSightTo}][Name=${Me.Target.Name}]"
