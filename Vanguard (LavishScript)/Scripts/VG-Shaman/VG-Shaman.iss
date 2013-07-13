@@ -96,6 +96,9 @@
 ; 20130505 (Zandros)
 ; * Moved the following routine to be active at all times, even when casting
 ;
+; 20130712 (Zandros)
+; * Fixed a check to stop melee attacks and pet attacks during FURIOUS
+;
 ;===================================================
 ;===               Includes                     ====
 ;===================================================
@@ -219,6 +222,13 @@ function main()
 		call HandleCoolDown
 		call AlwaysCheck
 		call GoDoSomething
+		call OkayToAttack
+		if !${Return}
+		{
+			call MeleeAttackOff
+			if ${Me.HavePet}
+				VGExecute "/pet backoff"			
+		}
 	}
 }
 
@@ -248,6 +258,14 @@ function HandleCoolDown()
 				WeAreDead:Set[TRUE]
 				call MeleeAttackOff
 			}
+			call OkayToAttack
+			if !${Return}
+			{
+				call MeleeAttackOff
+				if ${Me.HavePet}
+					VGExecute "/pet backoff"			
+			}
+			
 			call FollowTank
 		}
 		wait ${DelayAttack}

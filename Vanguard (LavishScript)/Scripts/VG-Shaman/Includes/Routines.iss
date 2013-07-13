@@ -49,6 +49,10 @@ function UseAbility(string ABILITY)
 		if !${Return}
 		{
 			;vgecho "NotOkayToAttack=${ABILITY}"
+			
+			call MeleeAttackOff
+			if ${Me.HavePet}
+				VGExecute "/pet backoff"			
 			return
 		}
 
@@ -116,6 +120,18 @@ function CastNow(string ABILITY)
 			return
 		if !${doCold} && ${Me.Ability[${ABILITY}].School.Find[Cold]}
 			return
+
+		call OkayToAttack "${ABILITY}"
+		if !${Return}
+		{
+			;vgecho "NotOkayToAttack=${ABILITY}"
+			
+			call MeleeAttackOff
+			if ${Me.HavePet}
+				VGExecute "/pet backoff"			
+			return
+		}
+
 	}
 
 	;; Extra Healing Form
@@ -228,6 +244,15 @@ function UsePetAbility(string ABILITY)
 
 	VGExecute /stand
 
+	call OkayToAttack
+	if !${Return}
+	{
+		call MeleeAttackOff
+		if ${Me.HavePet}
+			VGExecute "/pet backoff"			
+		return
+	}
+	
 	Me.Pet.Ability[${ABILITY}]:Use
 	EchoIt "UsePetAbility: ${ABILITY}"
 	wait 5
