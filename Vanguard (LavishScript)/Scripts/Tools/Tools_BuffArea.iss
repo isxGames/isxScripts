@@ -153,7 +153,7 @@ function main(bool CheckForBuff=TRUE)
 						if !${ToolBuff.AreWeReady}
 						{
 							while !${ToolBuff.AreWeReady} && ${Me.DTarget(exists)} && ${Me.DTarget.Distance}<25
-								wait frame
+								waitframe
 							wait 3
 						}
 			
@@ -163,12 +163,16 @@ function main(bool CheckForBuff=TRUE)
 						;-------------------------------------------
 						;; cast the buff
 						;-------------------------------------------
-						if ${Me.Ability[${Iterator.Key}].IsReady} && !${HasBuff.Element[${Iterator.Key}](exists)} && ${Math.Calc[${Me.DTarget.Level}+15]}>=${Me.Ability[${Iterator.Key}].LevelGranted}
+						if !${HasBuff.Element[${Iterator.Key}](exists)} && ${Math.Calc[${Me.DTarget.Level}+15]}>=${Me.Ability[${Iterator.Key}].LevelGranted}
 						{
-							call UseAbility2 "${Iterator.Key}"
-							if ${Return}
+							wait 10 ${Me.Ability[${Iterator.Key}].IsReady}
+							if ${Me.Ability[${Iterator.Key}].IsReady}
 							{
-								WeBuffed:Set[TRUE]
+								call UseAbility2 "${Iterator.Key}"
+								if ${Return}
+								{
+									WeBuffed:Set[TRUE]
+								}
 							}
 						}
 						Iterator:Next
@@ -186,7 +190,7 @@ function main(bool CheckForBuff=TRUE)
 		}
 	}
 	
-	;; clear our veribles and undim our button
+	;; clear our variables and undim our button
 	PC:Clear
 	HasBuff:Clear
 	UIElement[BuffArea@BuffBot@DPS@Tools]:SetAlpha[1]
@@ -233,7 +237,7 @@ function:bool UseAbility2(string ABILITY)
 		;; now execute the ability
 		Me.Ability[${ABILITY}]:Use
 		
-		wait 2 !${ToolBuff.AreWeReady}
+		wait 10 !${ToolBuff.AreWeReady}
 		if !${ToolBuff.AreWeReady}
 		{
 			while !${ToolBuff.AreWeReady}

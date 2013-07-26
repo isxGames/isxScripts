@@ -2400,6 +2400,8 @@ function BuffRequests()
 								call ForceAbility "${Temp}"
 								if ${Return}
 								{
+									wait 10
+									call IsCasting
 									WeBuffed:Set[TRUE]
 								}
 							}
