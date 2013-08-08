@@ -48,7 +48,7 @@ variable int Latest_MysticVersion = 0
 variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 20090623
 variable int Latest_RangerVersion = 0
-variable int Latest_ShadowknightVersion = 20121123
+variable int Latest_ShadowknightVersion = 20100130
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 20090619
@@ -101,6 +101,7 @@ variable bool IgnoreWhiteCon
 variable bool IgnoreBlueCon
 variable bool IgnoreGreenCon
 variable bool IgnoreGreyCon
+variable bool IgnoreNPCs
 variable string spellfile
 variable string charfile
 variable string SpellType[600]
@@ -1143,7 +1144,7 @@ function main(string Args)
 			}
 		}
 		;;;; This is not proper logic...does not seem to work correctly if you ding AA...TO DO:  Redo.
-		;elseif ${Me.TotalEarnedAPs} < 320
+		;elseif ${Me.TotalEarnedAPs} < 200
 		;{
 		;	if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
 		;	{
@@ -1984,8 +1985,8 @@ function Combat(bool PVP=0)
 		do
 		{
 			;Hmmm....
-			if !${Actor[${KillTarget}].InCombatMode}
-				break
+			;if !${Actor[${KillTarget}].InCombatMode}
+			;	break
 
 			while ${Actor[${KillTarget}].Distance} > ${MARange}
 			{
@@ -5034,8 +5035,13 @@ objectdef ActorCheck
 				break
 
 			Default
-				Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} Type Does not Evaluate"]
-				return FALSE
+				if ${IgnoreNPCs}
+				{
+					Debug:Echo["ValidActor Return FALSE - Mob: ${Actor[${actorid}].Name} Type Does not Evaluate"]
+					return FALSE
+				} else {
+					break
+				}
 		}
 
 		;checks if mob is too far above or below us

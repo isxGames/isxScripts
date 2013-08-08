@@ -2108,7 +2108,7 @@
                     <OnLeftClick>
                       if ${This.Checked}
                       {
-                      Script[EQ2Bot].Variable[IgnoreRedCon]:Set[TRUE]
+                      Script[EQ2Bot].Variable[IgnoreOrangeCon]:Set[TRUE]
                       LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Orange Con Mobs?,TRUE]
                       Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                       }
@@ -2162,7 +2162,7 @@
                     <OnLeftClick>
                       if ${This.Checked}
                       {
-                      Script[EQ2Bot].Variable[IgnoreRedCon]:Set[TRUE]
+                      Script[EQ2Bot].Variable[IgnoreYellowCon]:Set[TRUE]
                       LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore Yellow Con Mobs?,TRUE]
                       Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                       }
@@ -2201,7 +2201,33 @@
                       }
                     </OnLeftClick>
                   </checkbox>
-
+                  <checkbox Name='IgnoreNPCs'>
+                    <X>5%</X>
+                    <Y>110</Y>
+                    <Width>30%</Width>
+                    <Height>20</Height>
+                    <Text>Ignore NPCs</Text>
+                    <OnLoad>
+                      if ${Script[EQ2Bot].Variable[IgnoreNPCs]}
+                      {
+                      This:SetChecked
+                      }
+                    </OnLoad>
+                    <OnLeftClick>
+                      if ${This.Checked}
+                      {
+                      Script[EQ2Bot].Variable[IgnoreNPCs]:Set[TRUE]
+                      LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore NPCs?,TRUE]
+                      Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                      }
+                      else
+                      {
+                      Script[EQ2Bot].Variable[IgnoreNPCs]:Set[FALSE]
+                      LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to Ignore NPCs?,FALSE]
+                      Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                      }
+                    </OnLeftClick>
+                  </checkbox>
                 </Tab>
               </Tabs>
             </Tabcontrol>
