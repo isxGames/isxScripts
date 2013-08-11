@@ -743,9 +743,12 @@ function RefreshPower()
 
 		if ${Me.Group[${MemberLowestPower}].ToActor(exists)} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<65 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[390]}].IsReady}
 		{
-			call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}	
-			if ${Me.Group[${MemberLowestPower}].ToActor.Name}
+			
+			if ${Me.Group[${MemberLowestPower}].ToActor.ID} > 0
+			{
 				eq2execute em Flow to ${Me.Group[${MemberLowestPower}].ToActor.Name}
+				call CastSpellRange 390 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}	
+			}
 		}
 	}
 		
