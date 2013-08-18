@@ -688,7 +688,7 @@ function Consolidate_Resources()
 	variable int i
 	for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
 	{
-		if ${Me.Inventory[${i}].Description.Find[resource]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
+		if ${Me.Inventory[${i}].Description.Find[Crafting:]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
 		{
 			EchoIt "Consolidate: ${Me.Inventory[${i}]}"
 			Me.Inventory[${i}]:StartConvert
