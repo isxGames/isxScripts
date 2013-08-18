@@ -51,44 +51,30 @@ function FindTarget(int Distance)
 		;; check if we want to hunt for AggroNPC and/or NPC
 		CorrectType:Set[FALSE]
 		if ${doNPC} && ${CurrentPawns.Get[${i}].Type.Equal[NPC]}
-		{
 			CorrectType:Set[TRUE]
-		}
 		if ${doAggroNPC} && ${CurrentPawns.Get[${i}].Type.Equal[AggroNPC]}
-		{
 			CorrectType:Set[TRUE]
-		}
 		if !${CorrectType}
-		{
 			continue
-		}
 
 		;; we do not want to retarget same target twice
 		if ${BlackListTarget.Element[${CurrentPawns.Get[${i}].ID}](exists)}
-		{
 			continue
-		}
 
 		;; find a target that is within our level range
 		if ${CurrentPawns.Get[${i}].Level}<${MinimumLevel} || ${CurrentPawns.Get[${i}].Level}>${MaximumLevel}
-		{
 			continue
-		}
 
 		;; most likely this target is fighting someone else
 		if ${Pawn[id,${CurrentPawns.Get[${i}].ID}].CombatState}>0
-		{
 			continue
-		}
 
 		;; we only want targets we can see
 		if ${doCheckLineOfSight}
 		{
 			;vgecho HaveLineOfSightTo=${CurrentPawns.Get[${i}].HaveLineOfSightTo}/${Pawn[id,${CurrentPawns.Get[${i}].ID}].HaveLineOfSightTo}
 			if !${Pawn[id,${CurrentPawns.Get[${i}].ID}].HaveLineOfSightTo} || !${CurrentPawns.Get[${i}].HaveLineOfSightTo}
-			{
 				continue
-			}
 		}
 
 		;echo [${i}] [${CurrentPawns.Get[${i}].Distance.Int}] [${CurrentPawns.Get[${i}].Name}]
@@ -107,13 +93,9 @@ function FindTarget(int Distance)
 
 				;; Say we found a target
 				if ${Me.Target.HaveLineOfSightTo}
-				{
 					EchoIt "FindTarget - (${Me.Target.Type}/HaveLineOfSight) - ${Me.Target.Name}"
-				}
 				else
-				{
 					EchoIt "FindTarget - (${Me.Target.Type}) - ${Me.Target.Name}"
-				}
 				return
 			}
 		}
