@@ -1,18 +1,18 @@
 ;-----------------------------------------------------------------------------------------------
 ; VG2Dot.iss
 ;
-; Description - a handy sorc tool for handling 2-dot elementals
+; Description - a handy sorc tool for handling 2-dot Elementals
 ; -----------
 ; * Loots
 ; * Hunts
 ; * Regen Energy
 ; * Identify Immunities
-; * Preconfigured to handl Rire, Ice, Arcane, and Earth Elementals
+; * Preconfigured to handle Fire, Ice, Arcane, and Earth Elementals
 ;
 ; Revision History
 ; ----------------
 ; 20120211 (Zandros)
-; * Renamed this from vgtwodot to VG2Dot.  Cleaned-up the folders and files and implimented
+; * Renamed this from vgtwodot to VG2Dot.  Cleaned-up the folders and files and implemented
 ;   the LavishNav hunting routines that will map the area and move to waypoints.  Also,
 ;   fixed several routines to ensure a smoother and better play.
 ;
@@ -195,9 +195,7 @@ function Initialize()
 	; Delete our debug file so that it doesn't get too big
 	;-------------------------------------------
 	if ${DebugFilePath.FileExists[/Debug.txt]}
-	{
 		rm "${DebugFilePath}/Debug.txt"
-	}
 
 	;-------------------------------------------
 	; Reload the UI
@@ -218,44 +216,25 @@ function Initialize()
 		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
 		{
 			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Equal[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
-			{
 				UIElement[BuffsCombo@Miscfrm@Misc@VGT@VG2Dot]:AddItem[${Me.Ability[${i}].Name}]
-			}
 		}
 	}
 	if ${BarrierType.Equal[Force]}
-	{
 		UIElement[BarrierType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[1]
-	}
 	if ${BarrierType.Equal[Fire]}
-	{
 		UIElement[BarrierType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[2]
-	}
 	if ${BarrierType.Equal[Chromatic]}
-	{
 		UIElement[BarrierType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[3]
-	}
-
 	if ${FocusType.Equal[Quartz]}
-	{
 		UIElement[FocusType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[1]
-	}
 	if ${FocusType.Equal[Aquamarine]}
-	{
 		UIElement[FocusType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[2]
-	}
 	if ${FocusType.Equal[Diamond]}
-	{
 		UIElement[FocusType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[3]
-	}
 	if ${FocusType.Equal[Quicksilver]}
-	{
 		UIElement[FocusType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[4]
-	}
 	if ${FocusType.Equal[Opal]}
-	{
 		UIElement[FocusType@Miscfrm@Misc@VGT@VG2Dot]:SelectItem[5]
-	}
 
 	BuildBuffs
 
@@ -294,30 +273,27 @@ function Initialize()
 	if ${Me.Ability[${ConjureQuartzFocus}](exists)}
 	{
 		if !${Me.Inventory[Quartz Focus](exists)}
-		{
 			call executeability "${ConjureQuartzFocus}"
-		}
 	}
 	if ${Me.Ability[${ConjureAquamarineFocus}](exists)}
 	{
 		if !${Me.Inventory[Aquamarine Focus](exists)}
-		{
 			call executeability "${ConjureAquamarineFocus}"
-		}
 	}
 	if ${Me.Ability[${ConjureDiamondFocus}](exists)}
 	{
 		if !${Me.Inventory[Diamond Focus](exists)}
-		{
 			call executeability "${ConjureDiamondFocus}"
-		}
 	}
 	if ${Me.Ability[${ConjureQuicksilverFocus}](exists)}
 	{
 		if !${Me.Inventory[Quicksilver Focus](exists)}
-		{
 			call executeability "${ConjureQuicksilverFocus}"
-		}
+	}
+	if ${Me.Ability[${ConjureOpalFocus}](exists)}
+	{
+		if !${Me.Inventory[Opal Focus](exists)}
+			call executeability "${ConjureOpalFocus}"
 	}
 
 	;; Add in our events
@@ -340,22 +316,16 @@ function GoDoSomething()
 {
 	;; return if we do not exist in the game
 	if !${Me(exists)}
-	{
 		return
-	}
 
 	;; increment our step
 	WhatStepWeOn:Inc
 	if ${WhatStepWeOn}>11
-	{
 		WhatStepWeOn:Set[1]
-	}
 
 	;; go call the routine Do1 thru Do7
 	if ${Do${WhatStepWeOn}}
-	{
 		call Do${WhatStepWeOn}
-	}
 }
 
 ;===================================================
@@ -365,9 +335,7 @@ function MandatoryChecks()
 {
 	;; return if we do not exist in the game
 	if !${Me(exists)}
-	{
 		return
-	}
 
 	waitframe
 
@@ -409,9 +377,7 @@ function MandatoryChecks()
 
 	;; Grab an encounter
 	if ${Me.Encounter}>0
-	{
 		call TargetEncounter
-	}
 
 	;; if we are not looting then clear the target if it is dead
 	if !${Do5}
@@ -429,13 +395,9 @@ function MandatoryChecks()
 		if !${Me.InCombat} && ${Me.Encounter}==0 && !${Me.Target.Type.Equal[AggroNPC]}
 		{
 			if ${doAutoSell} && ${Me.Target.Type.Equal[Merchant]}
-			{
 				call SellItemList
-			}
 			if ${doDeleteSell} || ${doDeleteNoSell}
-			{
 				call DeleteItemList
-			}
 		}
 		NextItemListCheck:Set[${Script.RunningTime}]
 	}
@@ -450,6 +412,14 @@ function MandatoryChecks()
 ;===================================================
 function SetImmunities()
 {
+	;; this will reset the target bug
+	if ${Me.InCombat} && !${Me.Target(exists)}
+	{
+		VGExecute "/cleartargets"
+		wait 5
+		return
+	}
+
 	;; Reset all immunities
 	doArcane:Set[TRUE]
 	doFire:Set[TRUE]
@@ -457,8 +427,11 @@ function SetImmunities()
 	doPhysical:Set[TRUE]
 
 	;; Now, toggle off which ability based upon the target's immunity
-	if ${Me.Target(exists)} && ${Me.TargetHealth(exists)}
+	if ${Me.Target(exists)}
 	{
+		;; Ensure difficulty of target doesn't exist when you do not have a target
+		wait 5 ${Me.TargetAsEncounter.Difficulty(exists)}
+
 		;
 		; Target Buffs usuly takes 1 second to register
 		; which is needed to determine what immunity it has
@@ -515,9 +488,7 @@ function Do1()
 {
 	;; we want a live target that is within range
 	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > ${Math.Calc[${PullDistance}+1]}
-	{
 		return
-	}
 
 	LastTargetID:Set[${Me.Target.ID}]
 
@@ -529,21 +500,13 @@ function Do1()
 			if ${doChaosVolley}
 			{
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && !${Me.Effect[Chaotic Feedback](exists)}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +2%"]}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +5%"]}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +10%"]} && ${Me.Effect[Chaotic Feedback].TimeRemaining} < 4
-				{
 					call executeability "Superior Chaos Volley"
-				}
 			}
 			if ${Me.Ability[Cold Wave VII].IsReady}
 			{
@@ -603,9 +566,7 @@ function Do2()
 {
 	;; we want a live target that is within range
 	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > ${Math.Calc[${PullDistance}+1]}
-	{
 		return
-	}
 
 	LastTargetID:Set[${Me.Target.ID}]
 
@@ -617,21 +578,13 @@ function Do2()
 			if ${doChaosVolley}
 			{
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && !${Me.Effect[Chaotic Feedback](exists)}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +2%"]}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +5%"]}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +10%"]} && ${Me.Effect[Chaotic Feedback].TimeRemaining} < 4
-				{
 					call executeability "Superior Chaos Volley"
-				}
 			}
 			if ${Me.Ability[Inidria's Inferno III].IsReady}
 			{
@@ -686,9 +639,7 @@ function Do3()
 {
 	;; we want a live target that is within range
 	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > ${Math.Calc[${PullDistance}+1]}
-	{
 		return
-	}
 
 	LastTargetID:Set[${Me.Target.ID}]
 
@@ -750,9 +701,7 @@ function Do4()
 {
 	;; we want a live target that is within range
 	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > ${Math.Calc[${PullDistance}+1]}
-	{
 		return
-	}
 
 	LastTargetID:Set[${Me.Target.ID}]
 
@@ -764,21 +713,13 @@ function Do4()
 			if ${doChaosVolley}
 			{
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && !${Me.Effect[Chaotic Feedback](exists)}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +2%"]}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +5%"]}
-				{
 					call executeability "Superior Chaos Volley"
-				}
 				if ${Me.Ability[Superior Chaos Volley].IsReady} && ${Me.Effect[Chaotic Feedback](exists)} && ${Me.Effect[Chaotic Feedback].Description.Equal["Spell Damage: +10%"]} && ${Me.Effect[Chaotic Feedback].TimeRemaining} < 4
-				{
 					call executeability "Superior Chaos Volley"
-				}
 			}
 			if ${Me.Ability[Inidria's Inferno III].IsReady}
 			{
@@ -884,6 +825,73 @@ function Do6()
 	if !${Me.Target(exists)} && ${Me.Encounter}<1 && !${Me.InCombat}
 	{
 		;; echo that we need more health/energy
+		if !${NeedMoreEnergy}
+		{
+			if (${Me.Energy}>0 && ${Me.EnergyPct}<=40) || ${Me.HealthPct}<80
+			{
+				NeedMoreEnergy:Set[TRUE]
+				vgecho RESTING:  Health or Energy is below 80%
+			}
+		}
+		
+		if ${NeedMoreEnergy}
+		{
+			if (${Me.Energy}>0 && ${Me.EnergyPct}<40) || ${Me.HealthPct}<40
+			{
+				variable string EatThis = Nothing
+				if ${Me.Inventory[exactname,Fresh Berries](exists)}
+					EatThis:Set["Fresh Berries"]
+				if ${Me.Inventory[exactname,Fresh Fish](exists)}
+					EatThis:Set["Fresh Fish"]
+				if ${Me.Inventory[exactname,Shiny Red Apple](exists)}
+					EatThis:Set["Shiny Red Apple"]
+				if ${Me.Inventory[exactname,Block of Cheese](exists)}
+					EatThis:Set["Block of Cheese"]
+				if ${Me.Inventory[exactname,Loaf of Honey](exists)}
+					EatThis:Set["Loaf of Honey"]
+				if ${Me.Inventory[exactname,Loaf of Honey Bread](exists)}
+					EatThis:Set["Loaf of Honey Bread"]
+				if ${Me.Inventory[exactname,Hard Boiled Egg](exists)}
+					EatThis:Set["Hard Boiled Egg"]
+				if ${Me.Inventory[exactname,Var Stew](exists)}
+					EatThis:Set["Var Stew"]
+
+				vgecho "Eating:  ${EatThis}"
+				if ${Me.Inventory[exactname,"${EatThis}"](exists)}
+				{
+					wait 30 ${Me.Inventory[exactname,"${EatThis}"].IsReady}
+						waitframe
+					Me.Inventory["${EatThis}"]:Use
+					wait 5
+				}
+			}
+		
+			;; loop this to regain more energy
+			while ${Me.HealthPct}<90 || (${Me.Energy}>0 && ${Me.EnergyPct}<90) || (${Me.Endurance}>0 && ${Me.EndurancePct}<50)
+			{
+				if ${Me.Target(exists)} || ${Me.Encounter}>0 || ${Me.InCombat}
+					break
+				if ${Me.Energy}>0
+				{
+					EchoIt "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Endurance=${Me.EndurancePct}"
+					vgecho "Resting: My Energy=${Me.EnergyPct}, My Health=${Me.HealthPct}, My Endurance=${Me.EndurancePct}"
+				}
+				else
+				{
+					EchoIt "Resting: My Health=${Me.HealthPct}, My Endurance=${Me.EndurancePct}"
+					vgecho "Resting: My Health=${Me.HealthPct}, My Endurance=${Me.EndurancePct}"
+				}
+				
+				wait 50 ${Me.Target(exists)} || ${Me.Encounter}>0
+				waitframe
+			}
+
+			;; Always stand up
+			VGExecute "/stand"
+		}
+	
+/*	
+		;; echo that we need more health/energy
 		if (${Me.EnergyPct}<30 || ${Me.HealthPct}<30) && !${NeedMoreEnergy}
 		{
 			NeedMoreEnergy:Set[TRUE]
@@ -891,17 +899,11 @@ function Do6()
 			
 			variable string EatThis = None
 			if ${Me.Inventory[Block of Cheese](exists)}
-			{
 				EatThis:Set["Block of Cheese"]
-			}
 			if ${Me.Inventory[Loaf of Honey](exists)}
-			{
 				EatThis:Set["Loaf of Honey"]
-			}
 			if ${Me.Inventory[Hard Boiled Egg](exists)}
-			{
 				EatThis:Set["Hard Boiled Egg"]
-			}
 			
 			vgecho "Eating:  ${EatThis}"
 			Me.Inventory[${EatThis}]:Use
@@ -918,18 +920,16 @@ function Do6()
 		}
 
 		VGExecute "/stand"
-		
-		;; some sorcs need mana to fight, especially back to back fighing
-		if ${Me.EnergyPct}>=30 && ${Me.HealthPct}>=30
+*/		
+		;; some sorcs need mana to fight, especially back to back fighting
+		if ${Me.EnergyPct}>=80 && ${Me.HealthPct}>=80
 		{
 			;; reset our flag
 			NeedMoreEnergy:Set[FALSE]
 
 			call FindTarget ${MaxDistance}
 			if !${Me.Target(exists)}
-			{
 				call MoveToWayPoint
-			}
 		}
 	}
 
@@ -937,9 +937,7 @@ function Do6()
 	if ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Distance}>${PullDistance} && ${Me.Target.Distance}<=99
 	{
 		if (${doNPC} && ${Me.Target.Type.Equal[NPC]}) || (${doAggroNPC} && ${Me.Target.Type.Equal[AggroNPC]})
-		{
 			call MoveCloser ${PullDistance}
-		}
 	}
 }
 
@@ -1070,20 +1068,15 @@ function executeability(string x_ability)
 		Me.Target:Face
 	}
 	Me.Ability[${x_ability}]:Use
-	wait 2
+	wait 3
 	call debug "Casting: ${x_ability}"
 	call FixLineOfSight
-	while ${Me.IsCasting}
+	while !${VG2Dot.AreWeReady}
 	{
 		call CounterIt
-		wait 1
+		waitframe
 	}
-	while ${VG.InGlobalRecovery}
-	{
-		call CounterIt
-		wait 1
-	}
-	wait 2
+	wait 3
 }
 
 ;===================================================
@@ -1179,9 +1172,7 @@ function loadxmls()
 			call FindNearestWayPoint
 			CurrentWayPoint:Set[${Return}]
 			if ${CurrentWayPoint}<1
-			{
 				CurrentWayPoint:Set[1]
-			}
 			EchoIt "TotalWayPoints Found in ${Me.Chunk}: ${TotalWayPoints}, Closest WayPoint is ${CurrentWayPoint}"
 		}
 	}
@@ -1276,15 +1267,11 @@ function CheckBuffs()
 {
 	;; always keep this toggled on even when in/out of combat
 	if ${Me.Ability[Chromatic Halo](exists)} && ${Me.Ability[Chromatic Halo].IsReady} && !${Me.Effect[Chromatic Halo](exists)}
-	{
 		call executeability "Chromatic Halo"
-	}
 
 	;; we do not want to continue if we are in combat
 	if ${Me.InCombat} || ${Me.Encounter}>0 || ${Me.Target(exists)}
-	{
 		return
-	}
 
 	;; loop through all our buffs and see which we need to cast
 	variable iterator Iterator
@@ -1294,9 +1281,7 @@ function CheckBuffs()
 	{
 		;; Use the ability if it is ready and does not exist on self
 		if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.Effect[${Iterator.Key}](exists)}
-		{
 			call executeability "${Iterator.Key}"
-		}
 		Iterator:Next
 	}
 
@@ -1371,10 +1356,8 @@ function:bool CastBuff(string ABILITY)
 			waitframe
 		}
 		;; loop this while checking for crits and furious
-		while ${Me.IsCasting} || ${VG.InGlobalRecovery}>0
-		{
+		while !${VG2Dot.AreWeReady}
 			waitframe
-		}
 		call executeability "${ABILITY}"
 		wait 100 ${Me.Effect[${ABILITY}](exists)}
 		wait 5
@@ -1446,15 +1429,11 @@ function Forget()
 {
 	;; we want a live target that is within range
 	if !${Me.Target(exists)} || ${Me.Target.IsDead} || ${Me.Target.Distance} > 23
-	{
 		return
-	}
 
 	;; deaggro the mob
 	if ${doForget} && ${Me.IsGrouped} && ${Me.TargetHealth}<70
-	{
 		call executeability "${Forget}"
-	}
 }
 
 ;===================================================
@@ -1463,16 +1442,12 @@ function Forget()
 atom(global) AddBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		LavishSettings[VG2Dot].FindSet[Buffs]:AddSetting[${aName}, ${aName}]
-	}
 }
 atom(global) RemoveBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		Buffs.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) BuildBuffs()
 {
@@ -1487,9 +1462,7 @@ atom(global) BuildBuffs()
 	variable int i = 0
 	Buffs:Clear
 	while ${i:Inc} <= ${UIElement[BuffsList@Miscfrm@Misc@VGT@VG2Dot].Items}
-	{
 		LavishSettings[VG2Dot].FindSet[Buffs]:AddSetting[${UIElement[BuffsList@Miscfrm@Misc@VGT@VG2Dot].Item[${i}].Text}, ${UIElement[BuffsList@Miscfrm@Misc@VGT@VG2Dot].Item[${i}].Text}]
-	}
 }
 
 ;===================================================
@@ -1565,16 +1538,12 @@ atom(script) ChatEvent(string Text, string ChannelNumber, string ChannelName)
 	if ${ChannelNumber}==38
 	{
 		if ${Text.Find["The corpse has nothing on it for you."]}
-		{
 			BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
-		}
 	}
 	if ${ChannelNumber}==0 || ${ChannelNumber}==1
 	{
 		if ${Text.Find["You must harvest this before you can loot it!"]}
-		{
 			BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
-		}
 	
 		if ${Text.Find["You are not wielding the proper weapon type to use that ability"]}
 		{
@@ -1605,20 +1574,16 @@ function CounterIt()
 			if ${Me.Ability[${Disperse}].IsReady} && ${Me.Ability[${Disperse}].TimeRemaining}==0
 			{
 				VGExecute "/reactioncounter 1"
-				wait 1
-				while ${VG.InGlobalRecovery}
-				{
+				wait 2
+				while !${VG2Dot.AreWeReady}
 					wait 1
-				}
 			}
 			if ${Me.Ability[${Reflect}].IsReady} && ${Me.Ability[${Reflect}].TimeRemaining}==0
 			{
 				VGExecute "/reactioncounter 2"
-				wait 1
-				while ${VG.InGlobalRecovery}
-				{
+				wait 2
+				while !${VG2Dot.AreWeReady}
 					wait 1
-				}
 			}
 		}
 	}
@@ -1641,15 +1606,11 @@ function LootSomething()
 	{
 		;; we do not want to try looting if our target is alive
 		if !${Me.Target.IsDead}
-		{
 			return
-		}
 	
 		;; Loot the corpse right now if it is in range!
 		if ${Me.Target.Distance}<5
-		{
 			call LootCorpse
-		}
 
 		;; Let's move closer to the corpse
 		elseif ${Me.Target.Distance}>=5 && ${Me.Target.Distance}<=${LootNearRange}
@@ -1694,20 +1655,14 @@ function LootSomething()
 			{
 				;; only target corpses if we are not hunting and within 5 meters of us
 				if !${Do6} && ${CurrentPawns.Get[${i}].Distance}>5
-				{
 					continue
-				}
 
 				;; we do not want to retarget same corpse twice
-				if ${BlackListTarget.Element[${CurrentPawns.Get[${i}].ID}](exists)} && !${CurrentPawns.Get[${i}].ContainsLoot}
-				{
+				if ${BlackListTarget.Element[${CurrentPawns.Get[${i}].ID}](exists)} || !${CurrentPawns.Get[${i}].ContainsLoot}
 					continue
-				}
 				
 				if !${Pawn[id,${CurrentPawns.Get[${i}].ID}].HaveLineOfSightTo}
-				{
 					continue
-				}
 
 				;; skip looting if there are any AggroNPC's near corpse and we are hunting
 				;if ${Do6} && ${Pawn[AggroNPC,from,${CurrentPawns.Get[${i}].X},${CurrentPawns.Get[${i}].Y},${CurrentPawns.Get[${i}].Z},radius,${LootCheckForAggroRadius}](exists)}
@@ -1755,16 +1710,19 @@ function LootCorpse()
 			;; start the loot process
 			Loot:BeginLooting
 			wait 5 ${Me.IsLooting} && ${Loot.NumItems}
-			BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 
 			;; start looting 1 item at a time, gaurantee to get all items
 			if ${Me.IsLooting}
 			{
+				BlackListTarget:Set[${Me.Target.ID},${Me.Target.ID}]
 				if ${Loot.NumItems}
 				{
 					;; start highest to lowest, last item will close loot
 					for ( i:Set[${Loot.NumItems}] ; ${i}>0 ; i:Dec )
 					{
+						if !${Loot.Item[${i}](exists)}
+							vgecho Item does not exist yet
+						wait 5 ${Loot.Item[${i}](exists)}
 						vgecho *Looting: ${Loot.Item[${i}]}
 						Loot.Item[${i}]:Loot
 					}
@@ -1779,9 +1737,7 @@ function LootCorpse()
 				;; End looting if we are still looting
 				wait 2
 				if ${Me.IsLooting}
-				{
 					Loot:EndLooting
-				}
 			}
 		}
 
@@ -1803,9 +1759,7 @@ function MoveCloser(int Distance=4)
 	if !${Me.Target.ContainsLoot}
 	{
 		if !${Me.Target(exists)} || !${Do6}
-		{
 			return
-		}
 	}
 
 	;;;;;;;;;;
@@ -1982,9 +1936,7 @@ function(script) MoveToWayPoint()
 	;;;;;;;;;;
 	;; do absolutely nothing until we get a waypoint
 	if !${Do6} || ${TotalWayPoints}==0
-	{
 		return
-	}
 
 	;;;;;;;;;;
 	;; reset waypoint if outside of range
@@ -2120,9 +2072,7 @@ function FixLineOfSight()
 		}
 	}
 	if !${NoLineOfSight}
-	{
 		LoSRetries:Set[0]
-	}
 }
 
 ;===================================================
@@ -2148,9 +2098,7 @@ function FaceTarget()
 				{
 					VG:ExecBinding[turnright]
 					while ${AngleDiff} > ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
-					{
 						CalculateAngles
-					}
 					VG:ExecBinding[turnleft,release]
 					wait 1
 					VG:ExecBinding[turnright,release]
@@ -2161,9 +2109,7 @@ function FaceTarget()
 				{
 					VG:ExecBinding[turnleft]
 					while ${AngleDiff} < ${i} && ${Me.Target(exists)} && !${isPaused} && ${isRunning}
-					{
 						CalculateAngles
-					}
 					VG:ExecBinding[turnright,release]
 					wait 1
 					VG:ExecBinding[turnleft,release]
@@ -2196,13 +2142,9 @@ atom(script) CalculateAngles()
 		result:Set[${Math.Calc[${result} + (${result} < 0) * 360]}]
 		result:Set[${Math.Calc[${result} - ${Me.Heading}]}]
 		while ${result} > 180
-		{
 			result:Set[${Math.Calc[${result} - 360]}]
-		}
 		while ${result} < -180
-		{
 			result:Set[${Math.Calc[${result} + 360]}]
-		}
 		AngleDiff:Set[${result}]
 		AngleDiffAbs:Set[${Math.Abs[${result}]}]
 	}
@@ -2275,3 +2217,29 @@ function TargetEncounter()
 	}
 }
 
+
+objectdef Obj_Commands
+{
+	variable string PassiveAbility = "Racial Inheritance:"
+
+	method Initialize()
+	{
+		variable int i
+		for (i:Set[1] ; ${Me.Ability[${i}](exists)} ; i:Inc)
+			if ${Me.Ability[${i}].Name.Find[Racial Inheritance:]}
+				This.PassiveAbility:Set[${Me.Ability[${i}].Name}]
+	}
+
+	method Shutdown()
+	{
+	}
+
+	member:bool AreWeReady()
+	{
+		if ${Me.Ability[${This.PassiveAbility}].IsReady} && !${Me.IsCasting} && !${VG.InGlobalRecovery}
+			return TRUE
+		return FALSE
+	}
+	
+}
+variable(global) Obj_Commands VG2Dot
