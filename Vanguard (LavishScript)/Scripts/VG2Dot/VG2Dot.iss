@@ -1650,11 +1650,15 @@ function LootSomething()
 
 		for (i:Set[1] ; ${i}<${TotalPawns} && ${CurrentPawns.Get[${i}].Distance}<=${LootMaxRange} && !${Me.InCombat} && ${Me.Encounter}==0 ; i:Inc)
 		{
-			;if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].ContainsLoot}
-			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]}
+			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].ContainsLoot} 
+			;if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]}
 			{
 				;; only target corpses if we are not hunting and within 5 meters of us
-				if !${Do6} && ${CurrentPawns.Get[${i}].Distance}>5
+				;if !${Do6} && ${CurrentPawns.Get[${i}].Distance}>5
+				;	continue
+				
+				;; loot only corpses that belongs to us
+				if !${CurrentPawns.Get[${i}].Owner.Find[${Me.FName}]}
 					continue
 
 				;; we do not want to retarget same corpse twice
