@@ -24,8 +24,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Bin\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Bin\Release\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
@@ -56,20 +56,23 @@
       <ImportLibrary>$(OutDir)LSMMySQL.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>"$(ProjectDir)"PostBuild.bat "$(ProjectDir)" "$(TargetDir)" "$(TargetFileName)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="LSMMySQL.cpp" />
-    <ClCompile Include="Commands.cpp" />
-    <ClCompile Include="DataTypes.cpp" />
-    <ClCompile Include="TopLevelObjects.cpp" />
+    <ClCompile Include="Source\LSMMySQL.cpp" />
+    <ClCompile Include="Source\Commands.cpp" />
+    <ClCompile Include="Source\DataTypes.cpp" />
+    <ClCompile Include="Source\TopLevelObjects.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Events.h" />
-    <ClInclude Include="LSMMySQL.h" />
-    <ClInclude Include="DataTypes.h" />
-    <ClInclude Include="Commands.h" />
-    <ClInclude Include="DataTypeList.h" />
-    <ClInclude Include="TopLevelObjects.h" />
+    <ClInclude Include="Source\Events.h" />
+    <ClInclude Include="Source\LSMMySQL.h" />
+    <ClInclude Include="Source\DataTypes.h" />
+    <ClInclude Include="Source\Commands.h" />
+    <ClInclude Include="Source\DataTypeList.h" />
+    <ClInclude Include="Source\TopLevelObjects.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
