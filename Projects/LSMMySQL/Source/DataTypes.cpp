@@ -71,10 +71,34 @@ bool LSMySQLType::GetMethod(LSOBJECTDATA &ObjectData, PLSTYPEMETHOD pMethod, int
 					pResult=(CMySQLResult *)Object.Ptr;
 			}
 			if (mysql_query(pMySQL,argv[0]))
+			{
+				printf("Query Failed: %s", argv[0]);
 				return false;
-			if (pResult)
-				pResult->InitializeResult(mysql_store_result(pMySQL));
-			return true;
+			}
+			else
+			{
+				MYSQL_RES *result;
+				result = mysql_store_result(pMySQL);
+
+				if (result)
+				{
+					if (pResult)
+						pResult->InitializeResult(mysql_store_result(pMySQL));
+					return true;
+				}
+				else  // mysql_store_result() returned nothing; should it have?
+				{
+					if (mysql_field_count(pMySQL) == 0) // Nope
+					{
+						return true;
+					}
+					else 
+					{
+						fprintf(stderr, "Error: %s\n", mysql_error(pMySQL));
+						return false;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -161,34 +185,32 @@ char *CMySQLResult::GetFieldByText(const char *Text)
 	return Row[nField];
 }
 
-
-#define pMySQLResult ((CMySQLResult*)ObjectData.Ptr)
 bool LSMySQLResultType::GetMember(LSOBJECTDATA ObjectData, PLSTYPEMEMBER pMember, int argc, char *argv[], LSOBJECT &Object)
 {
-	if (!pMySQLResult)
+	if (!(CMySQLResult*)ObjectData.Ptr)
 		return false;
 	switch(pMember->ID)
 	{
 	case Valid:
 		Object.Type=pBoolType;
-		Object.Ptr=pMySQLResult->Res;
+		Object.Ptr=((CMySQLResult*)ObjectData.Ptr)->Res;
 		return true;
 	case ValidRow:
 		Object.Type=pBoolType;
-		Object.Ptr=pMySQLResult->Row;
+		Object.Ptr=((CMySQLResult*)ObjectData.Ptr)->Row;
 		return true;
 	case Fields:
 		Object.Type=pUintType;
-		Object.DWord=pMySQLResult->nFields;
+		Object.DWord=((CMySQLResult*)ObjectData.Ptr)->nFields;
 		return true;
 	case Rows:
 		Object.Type=pUintType;
-		Object.DWord=pMySQLResult->nRows;
+		Object.DWord=((CMySQLResult*)ObjectData.Ptr)->nRows;
 		return true;
 	case GetString:
 		if (argc)
 		{
-			if (Object.CharPtr=pMySQLResult->GetFieldByText(argv[0]))
+			if (Object.CharPtr=((CMySQLResult*)ObjectData.Ptr)->GetFieldByText(argv[0]))
 			{
 				Object.Type=pStringType;
 				return true;
@@ -198,7 +220,7 @@ bool LSMySQLResultType::GetMember(LSOBJECTDATA ObjectData, PLSTYPEMEMBER pMember
 	case GetInt:
 		if (argc)
 		{
-			if (char *Field=pMySQLResult->GetFieldByText(argv[0]))
+			if (char *Field=((CMySQLResult*)ObjectData.Ptr)->GetFieldByText(argv[0]))
 			{
 				Object.Int=atoi(Field);
 				Object.Type=pIntType;
@@ -209,7 +231,7 @@ bool LSMySQLResultType::GetMember(LSOBJECTDATA ObjectData, PLSTYPEMEMBER pMember
 	case GetFloat:
 		if (argc)
 		{
-			if (char *Field=pMySQLResult->GetFieldByText(argv[0]))
+			if (char *Field=((CMySQLResult*)ObjectData.Ptr)->GetFieldByText(argv[0]))
 			{
 				Object.Float=(float)atof(Field);
 				Object.Type=pFloatType;
@@ -222,19 +244,19 @@ bool LSMySQLResultType::GetMember(LSOBJECTDATA ObjectData, PLSTYPEMEMBER pMember
 }
 bool LSMySQLResultType::GetMethod(LSOBJECTDATA &ObjectData, PLSTYPEMETHOD pMethod, int argc, char *argv[])
 {
-	if (!pMySQLResult)
+	if (!(CMySQLResult*)ObjectData.Ptr)
 		return false;
 	switch(pMethod->ID)
 	{
 	case Clear:
-		pMySQLResult->Clear();
+		((CMySQLResult*)ObjectData.Ptr)->Clear();
 		return true;
 	case FetchRow:
-		if (pMySQLResult->Res)
+		if (((CMySQLResult*)ObjectData.Ptr)->Res)
 		{
-			pMySQLResult->Row=mysql_fetch_row(pMySQLResult->Res);
+			((CMySQLResult*)ObjectData.Ptr)->Row=mysql_fetch_row(((CMySQLResult*)ObjectData.Ptr)->Res);
 
-			return pMySQLResult->Row!=0;
+			return ((CMySQLResult*)ObjectData.Ptr)->Row!=0;
 		}
 		return false;
 	}
@@ -250,10 +272,10 @@ bool LSMySQLResultType::InitVariable(LSOBJECTDATA &ObjectData, const char *SubTy
 }
 void LSMySQLResultType::FreeVariable(LSOBJECTDATA &ObjectData)
 {
-	if (pMySQLResult->Res)
+	if (((CMySQLResult*)ObjectData.Ptr)->Res)
 	{
-		mysql_free_result(pMySQLResult->Res);
-		delete pMySQLResult;
+		mysql_free_result(((CMySQLResult*)ObjectData.Ptr)->Res);
+		delete (CMySQLResult*)ObjectData.Ptr;
 	}
 }
 bool LSMySQLResultType::ToText(LSOBJECTDATA ObjectData, char *buf, unsigned int buflen)
@@ -267,4 +289,3 @@ bool LSMySQLResultType::FromText(LSOBJECTDATA &ObjectData, int argc, char *argv[
 	// ignore
 	return true;
 }
-#undef pMySQLResult
