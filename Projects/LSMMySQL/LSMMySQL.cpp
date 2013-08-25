@@ -5,7 +5,8 @@
 #include "LSMMySQL.h"
 #pragma comment(lib,"lsmodule.lib")
 #include <mysql.h>
-#pragma comment(lib,"libmysql.lib")
+#pragma comment(lib,"libmysql.lib") // DLL
+//#pragma comment(lib,"mysqlclient.lib") // Static 
 
 // The mandatory pre-setup function.  Our name is "LSMMySQL", and the class is LSMMySQL.
 // This sets up a "ModulePath" variable which contains the path to this module in case we want it,
