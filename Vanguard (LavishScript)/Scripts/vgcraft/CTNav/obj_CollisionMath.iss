@@ -170,10 +170,10 @@ objectdef obj_CollisionMath
 	member:bool CollisionTest(float FromX, float FromY, float FromZ, float ToX, float ToY, float ToZ)
 	{
 		variable point3f From
-		From:Set[${FromX},${FromY},{$FromZ}]
+		From:Set[${FromX},${FromY},${FromZ}]
 		
 		variable point3f To
-		To:Set[${ToX},${ToY},{$ToZ}]
+		To:Set[${ToX},${ToY},${ToZ}]
 		
 		variable point3f TEST1
 		TEST1:Set[${VG.CheckCollision[${To}, ${From}].Location}]
