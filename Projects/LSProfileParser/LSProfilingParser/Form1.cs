@@ -11,12 +11,12 @@ namespace LSProfilingParser
 {
     public partial class Form1 : Form
     {
-        string[] AllAtoms = new string[10000];
-        
-        public Form1()
-        {
-            InitializeComponent();
-        }
+        string[] AllAtoms = new string[50000];
+
+		public Form1()
+		{
+			InitializeComponent();
+		}
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -32,9 +32,9 @@ namespace LSProfilingParser
             string[] strAllLines = System.IO.File.ReadAllLines(openFileDialog1.FileName);
             string curatom = "";
             int j = 0;
-            long callCnt = 0;
-            long cpuTime = 0;
-            long memCnt = 0;
+            long ParsedCalls = 0;
+            long ParsedCPUTime = 0;
+            long ParsedMemCnt = 0;
             dataGridView1.Rows.Clear();
 
             for (int i = 0; i < strAllLines.Length; i++)
@@ -45,7 +45,7 @@ namespace LSProfilingParser
                     if (curatom.Length > 0)
                     { 
                         AllAtoms[j] = atomBody.ToString();
-                        dataGridView1.Rows.Add(j, curatom, addDots(callCnt), addDots(cpuTime), addDots(memCnt));
+						dataGridView1.Rows.Add(j, curatom, ParsedCalls, ParsedCalls > 0 ? ParsedCPUTime/ParsedCalls : ParsedCPUTime, ParsedCPUTime, ParsedMemCnt);
                         j++;
                     }
 
@@ -53,9 +53,9 @@ namespace LSProfilingParser
                     sb.Append("\r\n");
                     curatom = strAllLines[i].Replace("   Atom", "");
                     atomBody.Clear();
-                    callCnt = 0;
-                    cpuTime = 0;
-                    memCnt = 0;
+                    ParsedCalls = 0;
+                    ParsedCPUTime = 0;
+                    ParsedMemCnt = 0;
                 }
                 else if (strAllLines[i].StartsWith("      ["))
                 {
@@ -63,10 +63,9 @@ namespace LSProfilingParser
                     atomBody.Append("\r\n");
 
                     string[] split = strAllLines[i].Split(new Char[] { '[', ']', ':', '/'});
-                    callCnt += Convert.ToInt64(split[1]);
-                    //cpuTime += Convert.ToInt64(split[5].Replace("ms", "").Replace(".", ","));
-                    cpuTime += Convert.ToInt64(split[4]);
-                    memCnt += Convert.ToInt64(split[8].Replace("k", ""));
+                    ParsedCalls += Convert.ToInt64(split[1]);
+                    ParsedCPUTime += Convert.ToInt64(split[4]);
+                    ParsedMemCnt += Convert.ToInt64(split[8].Replace("k", ""));
                 }
 
             }
@@ -75,23 +74,6 @@ namespace LSProfilingParser
             //textBox1.Text = strAllLines[1];
             //textBox1.Text = "Select Atom";
             ShowAtom(0);
-        }
-
-        private string addDots(long value)
-        {
-            string sval = value.ToString();
-            string retval = "";
-            int j = 0;
-            for (int i = sval.Length-1; i >= 0 ; i--)
-            {
-                if (j % 3 == 0 && i < sval.Length-1)
-                {
-                    retval = "." + retval;
-                }
-                retval = sval[i]+retval;
-                j++;
-            }
-            return retval;
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -114,6 +96,7 @@ namespace LSProfilingParser
                 textBox1.Text = AllAtoms[indx];
                 tabControl1.SelectedIndex = 1;
                 dataGridView2.Rows.Clear();
+
                 string[] lines = AllAtoms[indx].Replace("\r", "").Split(new Char[] { '\n' });
                 for (int i = 0; i < lines.Length; i++)
                 {
@@ -156,8 +139,8 @@ namespace LSProfilingParser
             }
             else
             {
-                long i1 = Convert.ToInt64(s1.Replace(".", ""));
-                long i2 = Convert.ToInt64(s2.Replace(".", ""));
+				long i1 = Convert.ToInt64(s1);
+				long i2 = Convert.ToInt64(s2);
                 if (i1 > i2)
                 {
                     return 1;
@@ -171,6 +154,25 @@ namespace LSProfilingParser
                     return 0;
                 }
             }
-        }
+		}
+
+		private void LicenseLogo_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start("http://creativecommons.org/licenses/by-nc-sa/3.0/");
+			}
+			catch
+				(
+				 System.ComponentModel.Win32Exception noBrowser)
+			{
+				if (noBrowser.ErrorCode == -2147467259)
+					MessageBox.Show(noBrowser.Message);
+			}
+			catch (System.Exception other)
+			{
+				MessageBox.Show(other.Message);
+			}
+		}
     }
 }
