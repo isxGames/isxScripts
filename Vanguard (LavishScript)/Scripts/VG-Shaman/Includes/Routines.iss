@@ -427,7 +427,7 @@ function FaceTarget()
 		return
 
 	CalculateAngles
-	if ${AngleDiffAbs} > 30
+	if ${AngleDiffAbs} > 60 
 	{
 		VGExecute /stand
 		waitframe
