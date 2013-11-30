@@ -101,6 +101,7 @@
 						Script[VG-DSC].Variable[isRunning]:Set[FALSE]
 						endscript VG-DSC
 					</OnLeftClick>
+						<Command>ui -unload "&filename;"</Command>					
 				</CommandButton>
 			</Children>
 		</TitleBar>
