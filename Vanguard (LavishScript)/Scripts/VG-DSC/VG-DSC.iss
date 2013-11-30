@@ -482,7 +482,7 @@ function Initialize()
 	{
 		echo "ISXIM could not be loaded... you may need to reinstall it."
 		vgecho "ISXIM could not be loaded... you may need to reinstall it."
-		endscript VG-DSC
+		;endscript VG-DSC
 	}
 	
 	wait 30 ${Me.Chunk(exists)} && ${Me.FName(exists)}
