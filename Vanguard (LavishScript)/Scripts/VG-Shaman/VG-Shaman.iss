@@ -99,6 +99,9 @@
 ; 20130712 (Zandros)
 ; * Fixed a check to stop melee attacks and pet attacks during FURIOUS
 ;
+; 20131205 (Zandros)
+; * Added a toggle for Bosrid's Gift for always on
+;
 ;===================================================
 ;===               Includes                     ====
 ;===================================================
@@ -150,6 +153,7 @@ variable bool doLethargy = TRUE
 variable bool doCurseofFrailty = TRUE
 variable bool doHuntersShroud = FALSE
 variable bool doLevitate = FALSE
+variable bool doBosridsGiftAlwaysOn = FALSE
 
 variable string Tank = ${Me.FName}
 variable int64 TankID = ${Pawn[exactname,${Me.FName}].ID}
@@ -495,10 +499,19 @@ function AlwaysCheck()
 
 	;;;;;;;;;;
 	;; Toggle on/off our 4 second healing tick (turn off to regain endurance fast)
-	if ${Me.HealthPct}<=88 && !${Me.Ability[${BosridsGift}].Toggled}
-		call UseAbilitySelf "${BosridsGift}"
-	if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
-		VGExecute /can \"${BosridsGift}\"
+	
+	if ${doBosridsGiftAlwaysOn}
+	{
+		if !${Me.Ability[${BosridsGift}].Toggled}
+			call UseAbilitySelf "${BosridsGift}"
+	}
+	else
+	{
+		if ${Me.HealthPct}<=88 && !${Me.Ability[${BosridsGift}].Toggled}
+			call UseAbilitySelf "${BosridsGift}"
+		if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
+			VGExecute /can \"${BosridsGift}\"
+	}
 		
 	;; Heal our pet
 	if ${Me.HavePet} && ${Me.Pet(exists)} && ${Me.Pet.Health}<65
@@ -981,6 +994,7 @@ function atexit()
 	General:AddSetting[LifeWardPct,${LifeWardPct}]
 	General:AddSetting[AegisofLifePct,${AegisofLifePct}]
 	General:AddSetting[doFakeDeath,${doFakeDeath}]
+	General:AddSetting[doBosridsGiftAlwaysOn,${doBosridsGiftAlwaysOn}]
 	
 	;; save our settings to file
 	LavishSettings[SHA]:Export[${Script.CurrentDirectory}/Saves/SHA_Save.xml]
@@ -1183,7 +1197,7 @@ function Startup()
 	EmrgHealPct:Set[${General.FindSetting[EmrgHealPct,35]}]
 	LifeWardPct:Set[${General.FindSetting[LifeWardPct,85]}]
 	AegisofLifePct:Set[${General.FindSetting[AegisofLifePct,80]}]
-
+	doBosridsGiftAlwaysOn:Set[${General.FindSetting[doBosridsGiftAlwaysOn,TRUE]}]
 
 	;; Turn on our events
 	Event[OnFrame]:AttachAtom[SHA_AlwaysCheck]

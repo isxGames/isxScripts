@@ -72,7 +72,7 @@
 		<StorePosition>1</StorePosition>
 		<X>100</X>
 		<Y>100</Y>
-		<Width>280</Width>
+		<Width>290</Width>
 		<Height>400</Height>
 		<Title>VG-Shaman (${Script[VG-Shaman].VariableScope.Totem})</Title>
 		<TitleBar Template="VG.Window.TitleBar">
@@ -125,7 +125,7 @@
 					switch ${This.SelectedTab}
 					{
 						Case Main
-							UIElement[VG-Shaman]:SetWidth[280]
+							UIElement[VG-Shaman]:SetWidth[290]
 							UIElement[VG-Shaman]:SetHeight[400]
 							break
 						Case About
@@ -387,7 +387,26 @@
 								Script[VG-Shaman].VariableScope.doTankOnly:Set[${This.Checked}]
 							</OnLeftClick>
 						</checkbox>
-						
+
+						<checkbox Name="doBosridsGiftAlwaysOn" Template="VG.GreenCheckbox">
+							<visible>1</visible>
+							<X>59%</X>
+							<Y>30%</Y>
+							<Width>25%</Width>
+							<Height>15</Height>
+							<Text>Bosrid Always On</Text>
+							<AutoTooltip> Toggle on for Bosrids Gift always on</AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Shaman].VariableScope.doBosridsGiftAlwaysOn}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Shaman].VariableScope.doBosridsGiftAlwaysOn:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
 						<checkbox Name="doGroupOnly" Template="VG.GreenCheckbox">
 							<visible>1</visible>
 							<X>59%</X>
