@@ -22,6 +22,7 @@
 		-Equiping gear for appropriate presence shouldn't crash computer anymore
 		-Adjusted RateCard to be more aggressive
 		-Correctly identify all available parlays
+		-Faces the NPC only if the NPC has a parlay... 7 December 2013
 	
 	Future Project:
 		-Save data files to one centralized folder so that all scripts can access it
@@ -658,7 +659,7 @@ function TargetNPC()
 		EchoIt "Targeting ${dipNPCs[${curNPC}].NameID}"
 		Pawn[id,${dipNPCs[${curNPC}].ID}]:Target
 		wait 5
-		call FaceTarget
+		;call FaceTarget
 	}
 }
 
@@ -706,7 +707,7 @@ atom(script) OnFrame()
 
 function SelectParlay()
 {
-	call FaceTarget
+	;call FaceTarget
 	EchoIt "Assessing: ${Me.Target.Name}"
 	Parlay:AssessTarget[${dipNPCs[${curNPC}].NameID}]
 	wait 7
@@ -843,6 +844,7 @@ function SelectParlay()
 	}
 	if (${selectedConv})
 	{
+		call FaceTarget
 		needNewNPC:Set[FALSE]
 		if ${Pawn[id,${dipNPCs[${curNPC}].ID}].Distance} > 8
 		{
