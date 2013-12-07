@@ -662,13 +662,21 @@ function DownTime()
 		
 	;; Default
 	call UseAbilitySelf "${LifeWard}"
-	
-	;; toggle on our small heall every 4 seconds
-	if ${Me.HealthPct}<80 && !${Me.Ability[${BosridsGift}].Toggled}
-		call UseAbility "${BosridsGift}"
-	;; toggle off our small heall every 4 seconds
-	if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
-		VGExecute /can \"${BosridsGift}\"
+
+	if ${doBosridsGiftAlwaysOn}
+	{
+		if !${Me.Ability[${BosridsGift}].Toggled}
+			call UseAbilitySelf "${BosridsGift}"
+	}
+	else
+	{
+		;; toggle on our small heall every 4 seconds
+		if ${Me.HealthPct}<80 && !${Me.Ability[${BosridsGift}].Toggled}
+			call UseAbility "${BosridsGift}"
+		;; toggle off our small heall every 4 seconds
+		if ${Me.HealthPct}>=95 && ${Me.Ability[${BosridsGift}].Toggled}
+			VGExecute /can \"${BosridsGift}\"
+	}
 
 	;; Summon our Pets
 	call SummonPet "${SummonAttendantofRakurr}"
