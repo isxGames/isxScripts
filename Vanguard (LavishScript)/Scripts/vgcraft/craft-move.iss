@@ -39,8 +39,8 @@ function:bool TargetOrderNPC()
 	;; Go ahead and retarget Work Order NPC
 	Pawn[exactname,npc,${cWorkNPC}]:Target
 	wait 5
-
-	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 6) )
+	
+	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 7) )
 	{
 		call DebugOut "VG:TargetOrderNPC called"
 
@@ -51,7 +51,9 @@ function:bool TargetOrderNPC()
 
 		TaskMaster[Crafting]:Begin
 
-		wait 5
+		;; wait up to 3 seconds for work orders to appear in list
+		wait 30 ${TaskMaster[Crafting].AvailWorkOrderCount} >= 1
+		
 
 		return TRUE
 	}
