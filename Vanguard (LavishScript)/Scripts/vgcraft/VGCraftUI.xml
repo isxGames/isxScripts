@@ -90,7 +90,7 @@
 		<Height>350</Height>
 		<Client Template="VG.Window.Client" />
 		<StorePosition>0</StorePosition>
-		<Title>CraftBot</Title>
+		<Title>   CraftBot</Title>
 		<TitleBar Template="VG.Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
@@ -108,6 +108,7 @@
 					<Width>16</Width>
 					<Height>16</Height>
 					<OnLeftClick>endscript VGCraft</OnLeftClick>
+					<Command>ui -unload "&filename;"</Command>					
 				</CommandButton>
 			</Children>
 		</TitleBar>
@@ -2763,18 +2764,21 @@
 		<X>30</X>
 		<Y>300</Y>
 		<Width>200</Width>
-		<Height>190</Height>
+		<Height>280</Height>
 		<Resizable>0</Resizable>
 		<Border>0</Border>
 		<StorePosition>1</StorePosition>
-		<BackgroundColor>0</BackgroundColor>
+		<BackgroundColor>FF000000</BackgroundColor>
 		<TitleBar Template="VG.Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
 			<Width>99%</Width>
 			<Height>17</Height>
 			<Children>
-				<text Name='Title' template='VG.Window.TitleBar.Title' />
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
 				<CommandButton Name="Toggle Background" Template="VG.Window.TitleBar.Minimize">
 					<X>1</X>
 					<Command>UIElement[CHUD]:SetBackgroundColor[${If[${UIElement[CHUD].BackgroundColor}==0,FF000000,0]}]</Command>
@@ -2934,10 +2938,102 @@
 						<Text>-</Text>
 					</Text>
 
+;---Difficult
+					<Text Name="QA1T" Template="CVG.Text">
+						<X>5</X>
+						<Y>155</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Difficult: </Text>
+					</Text>
+					<Text Name="QA1" Template="CVG.Text">
+						<X>65</X>
+						<Y>155</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+
+;---Moderate
+					<Text Name="QA2T" Template="CVG.Text">
+						<X>5</X>
+						<Y>170</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Moderate: </Text>
+					</Text>
+					<Text Name="QA2" Template="CVG.Text">
+						<X>65</X>
+						<Y>170</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---Easy
+					<Text Name="QA3T" Template="CVG.Text">
+						<X>5</X>
+						<Y>185</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Easy: </Text>
+					</Text>
+					<Text Name="QA3" Template="CVG.Text">
+						<X>65</X>
+						<Y>185</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---Very Easy
+					<Text Name="QA4T" Template="CVG.Text">
+						<X>5</X>
+						<Y>200</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Very Easy: </Text>
+					</Text>
+					<Text Name="QA4" Template="CVG.Text">
+						<X>65</X>
+						<Y>200</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---Money
+					<Text Name="MONEYT" Template="CVG.Text">
+						<X>5</X>
+						<Y>215</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Copper </Text>
+					</Text>
+					<Text Name="MONEY" Template="CVG.Text">
+						<X>65</X>
+						<Y>215</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---EXP
+					<Text Name="EXPT" Template="CVG.Text">
+						<X>5</X>
+						<Y>230</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>EXP Gained is </Text>
+					</Text>
+					<Text Name="EXP" Template="CVG.Text">
+						<X>85</X>
+						<Y>230</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+
 				<Commandbutton Name='HUDPause' Template='VG.GreenCommandButton'>
 					<visible>0</visible>
 					<X>5</X>
-					<Y>155</Y>
+					<Y>245</Y>
 					<Width>55</Width> 
 					<Height>20</Height>
 					<Text>pause</Text>
