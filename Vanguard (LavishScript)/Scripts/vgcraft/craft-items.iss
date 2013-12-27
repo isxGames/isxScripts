@@ -73,7 +73,7 @@ function BuySupplies()
 			if ${woRecipeFuel.CurrentValue} > 0
 			{
 				lCount:Set[0]
-				while ${lCount:Inc} <= ${Math.Calc[(${woRecipeFuel.CurrentValue}+12.5)/25].Round}
+				while ${lCount:Inc} <= ${Math.Calc[(${woRecipeFuel.CurrentValue}+50)/100].Round}
 				{
 					call DebugOut "VG:Buying: ${woRecipeFuel.CurrentKey}"
 					Merchant.ForSaleItem[${woRecipeFuel.CurrentKey}]:Buy
@@ -117,7 +117,7 @@ function AddExtraIngredients()
 	{
 		; SupplyNeeded should add any required items to the list (after clearing the list)
 		; So the list should not contain any Extra items when this is first called
-		; If it's not on the list, then make sure we add it and have at least 40
+		; If it's not on the list, then make sure we add it and have at least 100
 
 		if !${woRecipeFuel.Element[${extraIter.Key}](exists)}
 		{
@@ -132,9 +132,9 @@ function AddExtraIngredients()
 				}
 			}
 		
-			if ${CurrentFuel} < 25
+			if ${CurrentFuel} < 100
 			{
-				woRecipeFuel:Set[${extraIter.Key},${Math.Calc[25 - ${CurrentFuel}]}]
+				woRecipeFuel:Set[${extraIter.Key},${Math.Calc[100 - ${CurrentFuel}]}]
 				call DebugOut "VG:Fuel list adding: ${extraIter.Key} @ ${woRecipeFuel.Element[${extraIter.Key}]}"
 			}
 		}
@@ -275,16 +275,16 @@ function:bool SupplyNeeded(bool atStation)
 			}
 			while ${invIndex:Inc} <= ${Me.Inventory}
 
-			; If we are at the Station and have more than 25, don't worry, be happy now!
-			if ${atStation} && (${minCount} > 25)
+			; If we are at the Station and have more than 100, don't worry, be happy now!
+			if ${atStation} && (${minCount} > 100)
 				continue
 
 			; If, after subtracting fuel in our inventory, we still need fuel -- we'll return TRUE
 			if ${woRecipeFuel.CurrentValue} > 0
 			{
 				supplyNeeded:Set[TRUE]
-				; ...if we need to buy, then buy 50 Extra... less time running back and forth
-				woRecipeFuel.CurrentValue:Inc[${Math.Calc[${woRecipeFuel.CurrentValue} + 50]}]
+				; ...if we need to buy, then buy 200 Extra... less time running back and forth
+				woRecipeFuel.CurrentValue:Inc[${Math.Calc[${woRecipeFuel.CurrentValue} + 200]}]
 				call DebugOut "VGCraft:: SupplyNeeded should buy : ${woRecipeFuel.CurrentKey} @ ${woRecipeFuel.CurrentValue}"
 			}
 		}
@@ -386,8 +386,8 @@ function:bool RecipeSupplyNeeded()
 			}
 			while ${invIndex:Inc} <= ${Me.Inventory}
 
-			; If we are at the Station and have more than 25, don't worry, be happy now!
-			if (${minCount} > 25)
+			; If we are at the Station and have more than 100, don't worry, be happy now!
+			if (${minCount} > 100)
 				continue
 
 			; If, after subtracting fuel in our inventory, we still need fuel -- we'll return TRUE
@@ -395,7 +395,7 @@ function:bool RecipeSupplyNeeded()
 			{
 				supplyNeeded:Set[TRUE]
 				; ...buying two extra Fuel items -- just because
-				woRecipeFuel.CurrentValue:Inc[50]
+				woRecipeFuel.CurrentValue:Inc[200]
 				call ScreenOut "VGCraft:: SupplyNeeded: ${woRecipeFuel.CurrentKey} @ ${woRecipeFuel.CurrentValue}"
 			}
 		}
