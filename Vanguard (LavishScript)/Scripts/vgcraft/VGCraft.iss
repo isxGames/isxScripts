@@ -3118,6 +3118,8 @@ function main(int testParam)
 	
 				Refining:Cancel
 				call resetCounts
+				BadRecipes:Clear
+
 				wait 10
 	
 				cTarget:Set[${cStation}]
