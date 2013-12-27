@@ -50,6 +50,28 @@ variable int maxWorkDist = 5
 
 variable int TargetQuality = 300
 
+;============= Added Variables
+variable int QA = 0
+variable int QC = 0
+variable int statQualityA1 = 0
+variable int statQualityB1 = 0
+variable int statQualityC1 = 0
+variable int statQualityD1 = 0
+variable int statQualityA2 = 0
+variable int statQualityB2 = 0
+variable int statQualityC2 = 0
+variable int statQualityD2 = 0
+variable int statQualityA3 = 0
+variable int statQualityB3 = 0
+variable int statQualityC3 = 0
+variable int statQualityD3 = 0
+variable int statQualityA4 = 0
+variable int statQualityB4 = 0
+variable int statQualityC4 = 0
+variable int statQualityD4 = 0
+variable string totalTime	
+variable int totalXP
+;=============================
 
 /* **************************************** */
 
@@ -759,6 +781,60 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 			; Set the next action to Loot!
 			cState:Set[CS_LOOT]
 		}
+;====================== Added
+
+		if ${TaskMaster[Crafting].CurrentWorkOrder[${Refining.CurrentRecipe.Name}].Difficulty.Equal["Very Easy"]}
+		{
+			if ${lastQuality} >= 750  
+				statQualityA4:Inc
+			if ( ${lastQuality} >= 500 && ${lastQuality} < 750 )
+				statQualityB4:Inc
+			if ( ${lastQuality} >= 250 && ${lastQuality} < 500 )
+				statQualityC4:Inc
+			if ${lastQuality} < 250
+				statQualityD4:Inc
+		}
+		if ${TaskMaster[Crafting].CurrentWorkOrder[${Refining.CurrentRecipe.Name}].Difficulty.Equal["Easy"]}
+		{
+			if ${lastQuality} >= 750  
+				statQualityA3:Inc
+			if ( ${lastQuality} >= 500 && ${lastQuality} < 750 )
+				statQualityB3:Inc
+			if ( ${lastQuality} >= 250 && ${lastQuality} < 500 )
+				statQualityC3:Inc
+			if ${lastQuality} < 250
+				statQualityD3:Inc
+		}
+		if ${TaskMaster[Crafting].CurrentWorkOrder[${Refining.CurrentRecipe.Name}].Difficulty.Equal["Moderate"]}
+		{
+			if ${lastQuality} >= 750  
+				statQualityA2:Inc
+			if ( ${lastQuality} >= 500 && ${lastQuality} < 750 )
+				statQualityB2:Inc
+			if ( ${lastQuality} >= 250 && ${lastQuality} < 500 )
+				statQualityC2:Inc
+			if ${lastQuality} < 250
+				statQualityD2:Inc
+		}
+		if ${TaskMaster[Crafting].CurrentWorkOrder[${Refining.CurrentRecipe.Name}].Difficulty.Equal["Difficult"]}
+		{
+			if ${lastQuality} >= 750  
+				statQualityA1:Inc
+			if ( ${lastQuality} >= 500 && ${lastQuality} < 750 )
+				statQualityB1:Inc
+			if ( ${lastQuality} >= 250 && ${lastQuality} < 500 )
+				statQualityC1:Inc
+			if ${lastQuality} < 250
+				statQualityD1:Inc
+		}
+
+		UIElement[QA1@CHUD]:SetText["A=${statQualityA1}, B=${statQualityB1}, C=${statQualityC1}, D=${statQualityD1}"]
+		UIElement[QA2@CHUD]:SetText["A=${statQualityA2}, B=${statQualityB2}, C=${statQualityC2}, D=${statQualityD2}"]
+		UIElement[QA3@CHUD]:SetText["A=${statQualityA3}, B=${statQualityB3}, C=${statQualityC3}, D=${statQualityD3}"]
+		UIElement[QA4@CHUD]:SetText["A=${statQualityA4}, B=${statQualityB4}, C=${statQualityC4}, D=${statQualityD4}"]
+		UIElement[MONEY@CHUD]:SetText["Spent= ${statSpentCopper}, Made= ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"]
+
+;============================================
 
 		; Clear out the variables for the next run through
 		call resetCounts
@@ -2716,6 +2792,16 @@ function updateHUD()
 		UIElement[WODiff@CHUD]:SetText[""]
 		UIElement[Action@CHUD]:SetText[""]
 	}
+	
+	totalXP:Set[${Me.CraftXP} - ${startCraftXP}]
+	totalTime:Set[${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000/60)%60].Int.LeadingZeroes[2]}:${Math.Calc[(${Script[VGCraft].RunningTime}/1000)%60].Int.LeadingZeroes[2]}]
+	UIElement[EXP@CHUD]:SetText["${totalXP} in ${totalTime}   "]
+	UIElement[QA1@CHUD]:SetText["A=${statQualityA1}, B=${statQualityB1}, C=${statQualityC1}, D=${statQualityD1}"]
+	UIElement[QA2@CHUD]:SetText["A=${statQualityA2}, B=${statQualityB2}, C=${statQualityC2}, D=${statQualityD2}"]
+	UIElement[QA3@CHUD]:SetText["A=${statQualityA3}, B=${statQualityB3}, C=${statQualityC3}, D=${statQualityD3}"]
+	UIElement[QA4@CHUD]:SetText["A=${statQualityA4}, B=${statQualityB4}, C=${statQualityC4}, D=${statQualityD4}"]
+	UIElement[MONEY@CHUD]:SetText["Spent= ${statSpentCopper}, Made= ${Math.Calc[${statCurrentCopper} - ${startCopper}].Int}"]
+	
 }
 
 
