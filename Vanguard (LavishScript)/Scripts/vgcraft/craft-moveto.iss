@@ -114,7 +114,16 @@ function moveToPoint(float X, float Y, float Precision, bool doStop)
 	}
 
 	if ${doStop}
+	{
 		VG:ExecBinding[moveforward,release]
+		while ${Math.Distance[${Me.X},${Me.Y},${X},${Y}]}<100
+		{
+			VG:ExecBinding[movebackward]
+			face ${X} ${Y}
+		}
+		VG:ExecBinding[movebackward,release]
+	}
+		
 
 	;Event[VG_onHitObstacle]:DetachAtom[VG_onHitObstacle]
 

@@ -670,7 +670,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 		}
 		
 		tTimeOut:Set[${Time.Timestamp}]
-		call DebugOut "VGCraft:: Arg! Out of Sequence action try"
+		call DebugOut "VGCraft:: Arg! Out of Sequence action try!!"
 
 		if (${Refining.Stage.Index} == 4)
 		{
@@ -683,7 +683,7 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 			; For now just set OoAP, as it will work the same way
 			cState:Set[CS_ACTION_OOAP]
 			pState:Set[CS_ACTION_OOAP]
-		}		
+		}
 	}
 	elseif ( ${Text.Find[New complication:]} )
 	{
@@ -1017,6 +1017,9 @@ atom(script) VGCB_OnIncomingText(string Text, string ChannelNumber, string Chann
 /* We just call this over and over and over from main()      */
 function CheckState()
 {
+	;; this wait is a must else you'll likely get the "You may not choose a crafting action" error
+	wait 3
+
 	if ( ${Refining.CurrentRecipe(exists)} && ${Refining.InRecovery} )
 	{
 		UIElement[State@CHUD]:SetText["Action Recovery"]
@@ -1963,10 +1966,12 @@ function CheckState()
 
 			call SellLoot
 
-			; Just ran out of space!
+			;;; Bags are full after selling
+			;;; Just ran out of space!
 			if ( ${Me.InventorySlotsOpen} < 2 )
 			{
 				call ErrorOut "VGCraft:: NOTICE: Out of pack space! (${Me.InventorySlotsOpen})"
+				isPaused:Set[TRUE]
 			;	cState:Set[CS_WAIT]
 			;	pState:Set[CS_WAIT]
 			;	return
@@ -2523,6 +2528,18 @@ function DoLoot()
 		wait 2
 		Loot:LootAll
 		wait 10
+	}
+	
+	if ${Me.InventorySlotsOpen} < 2
+	{
+		; Try to go sell stuff
+		cTarget:Set[${cSupplyNPC}]
+		nextDest:Set[${destSupply}]
+		cState:Set[CS_MOVE]
+		pState:Set[CS_MOVE]
+		call ErrorOut "VGCraft:: NOTICE: Out of pack space (${Me.InventorySlotsOpen})"
+		call DebugOut "VGCraft:: NOTICE: Out of pack space (${Me.InventorySlotsOpen})"
+		return
 	}
 }
 
