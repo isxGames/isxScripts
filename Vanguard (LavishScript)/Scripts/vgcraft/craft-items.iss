@@ -16,6 +16,7 @@ function openLootPacks()
 			wait 10
 			call DoLoot
 			wait 10
+			iCount:Set[0]
 		}
 	}
 	while ${iCount:Inc} <= ${Me.Inventory}
@@ -30,6 +31,23 @@ function SellLoot()
 
 	call DebugOut "VGCraft:: SellLoot called"
 
+	;; All item types of Miscellaneous without a description are added to Selling List and sold
+	iCount:Set[1]
+	do
+	{
+		if ${Me.Inventory[${iCount}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${iCount}].Description.Equal[""]}
+		{
+			AddSellItem "${Me.Inventory[${iCount}].Name}"
+			BuildSellList
+			UIElement[${Me.Inventory[${iCount}].Name}]:SetText[]
+			call DebugOut "VG:Selling: ${Me.Inventory[${iCount}].Name}"
+			Me.Inventory[ExactName,${Me.Inventory[${iCount}].Name}]:Sell
+			wait 1
+			iCount:Set[0]
+		}
+	}
+	while (${iCount:Inc} <= ${Me.Inventory})
+	
 	setSaleItems:GetSettingIterator[Iterator]
 
 	if ( !${Iterator:First(exists)} )
@@ -54,6 +72,8 @@ function SellLoot()
 		}
 	}
 	while ${Iterator:Next(exists)}
+	
+	
 }
 
 /* Buy needed Supplies */
@@ -427,7 +447,6 @@ function MoveCraftSupplies()
 		call DebugOut "VGCraft:: MOVING ${Me.Inventory[${Me.Inventory}].Name} to Container Index: ${UtilityPouchIndex}"
 		wait 5
 	}
-
 }
 
 /* Moves extra Ingredients into the Utility Pouch */
@@ -448,23 +467,22 @@ function CleanUpInventory()
 	{
 		if ${Me.Inventory[${i}].MiscDescription.Find[Small crafting utilities]}
 		{
-     	if !${Me.Inventory[${i}].InContainer(exists)} && ${woRecipeFuel.FirstKey(exists)}
-     	{
-					do
+			if !${Me.Inventory[${i}].InContainer(exists)} && ${woRecipeFuel.FirstKey(exists)}
+			{
+				do
+				{
+					if ${Me.Inventory[${i}].Name.Find[${woRecipeFuel.CurrentKey}]}
 					{
-						if ${Me.Inventory[${i}].Name.Find[${woRecipeFuel.CurrentKey}]}
-						{
-							call DebugOut "VGCraft::  Move Utility: ${Me.Inventory[${i}].Name}"
-		 		 		  Me.Inventory[${i}]:PutInContainer[${UtilityPouchIndex}]
-    		 		  wait 5
-						}
+						call DebugOut "VGCraft::  Move Utility: ${Me.Inventory[${i}].Name}"
+						Me.Inventory[${i}]:PutInContainer[${UtilityPouchIndex}]
+						wait 5
 					}
-					while ${woRecipeFuel.NextKey(exists)}
-     	}
+				}
+				while ${woRecipeFuel.NextKey(exists)}
+			}
 		}
 	}
 	while (${i:Inc} <= ${Me.Inventory})
-
 }
 
 
@@ -485,7 +503,7 @@ function RepairItems()
 	}
 	while (${i:Inc} <= ${Merchant.NumItemsForRepair})
 
-    	Merchant:End		
+   	Merchant:End		
 }
 
 
@@ -504,5 +522,4 @@ function:bool RepairNeeded()
 	while (${iCount:Inc} <= ${Me.Inventory})
 
 	return FALSE
-
 }

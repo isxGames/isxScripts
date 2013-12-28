@@ -10,7 +10,7 @@ function:bool TargetSupplyNPC()
 	Pawn[exactname,npc,${cSupplyNPC}]:Target
 	wait 5
 
-	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 5) )
+	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 7) )
 	{
 
 		if !${Me.Target.HaveLineOfSightTo}
@@ -39,6 +39,14 @@ function:bool TargetOrderNPC()
 	;; Go ahead and retarget Work Order NPC
 	Pawn[exactname,npc,${cWorkNPC}]:Target
 	wait 5
+
+	VG:ExecBinding[moveforward,release]
+	while ( ${Me.Target(exists)} && (${Me.Target.Distance} == 0) )
+	{
+		VG:ExecBinding[movebackward]
+		face ${X} ${Y}
+	}
+	VG:ExecBinding[movebackward,release]
 	
 	if ( ${Me.Target(exists)} && (${Me.Target.Distance} < 7) )
 	{
@@ -118,6 +126,13 @@ function:bool TargetStation()
 		return FALSE
 	}
 
+	while ( ${Me.Target(exists)} && (${Me.Target.Distance} == 0) )
+	{
+		VG:ExecBinding[movebackward]
+		face ${X} ${Y}
+	}
+	VG:ExecBinding[movebackward,release]	
+	
 	return TRUE
 }
 
@@ -470,6 +485,13 @@ function:string MoveTargetPath(string aTarget, int64 aTargetID)
 	;; Retarget our pawn now that we should be at location
 	Pawn[exactname,${cTarget}]:Target
 	wait 5
+	VG:ExecBinding[moveforward,release]
+	while ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}<100
+	{
+		VG:ExecBinding[movebackward]
+		face ${Me.Target.X} ${Me.Target.Y}
+	}
+	VG:ExecBinding[movebackward,release]	
 	
 	call DebugOut "VG:MoveTargetPath: END"
 
@@ -589,6 +611,14 @@ function MoveDone()
 		cState:Set[CS_MOVE]
 		return
 	}
+
+	VG:ExecBinding[moveforward,release]
+	while ${Math.Distance[${Me.X},${Me.Y},${Me.Target.X},${Me.Target.Y}]}<100
+	{
+		VG:ExecBinding[movebackward]
+		face ${${Me.Target.X} ${Me.Target.Y}
+	}
+	VG:ExecBinding[movebackward,release]	
 
 	if ${nextDest.Equal[${destStation}]}
 	{
