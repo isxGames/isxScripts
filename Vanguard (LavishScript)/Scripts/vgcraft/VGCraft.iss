@@ -1667,6 +1667,10 @@ function CheckState()
 				/*  Waiting for Complication Action to finish */
 			; Don't do anything here as this state will be changed by an Event
 			UIElement[State@CHUD]:SetText["Correction Wait"]
+			
+			wait 5
+			if !${Refining.InRecovery}
+				cState:Set[CS_COMPLICATE_REDO]
 
 			break
 
@@ -1831,6 +1835,7 @@ function CheckState()
 							else
 							{
 								call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep"
+								BadRecipes:Clear
 								cState:Set[CS_WAIT]
 							}
 						}
@@ -1840,6 +1845,7 @@ function CheckState()
 							if !${cRefiningStation.Equal[NONE]} && !${cRefiningWorkNPC.Equal[NONE]}
 							{
 								call ErrorOut "VGCraft:: No more Finishing Work Orders, switching to Refining"
+								BadRecipes:Clear
 								UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Show
 								UIElement[FinishingCheck@Move@Craft Main@CraftBot]:UnsetChecked
 								UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Hide
@@ -1851,15 +1857,17 @@ function CheckState()
 							}
 							else
 							{
-								call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep"
+								call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep!"
 								cState:Set[CS_WAIT]
+								BadRecipes:Clear
 							}
 						}
 					}
 					else
 					{
-						call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep"
+						call ErrorOut "VGCraft:: No Work Orders available from ${cWorkNPC}, going to sleep!!"
 						cState:Set[CS_WAIT]
+						BadRecipes:Clear
 					}
 				}
 			}
