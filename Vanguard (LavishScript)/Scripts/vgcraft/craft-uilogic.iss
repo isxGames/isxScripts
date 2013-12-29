@@ -61,7 +61,6 @@ atom(global) ResumeBot()
 
 function Start()
 {
-
 	;if ${isMapping}
 	;{
 	;	call ScreenOut "VGCraft:: Finish Mapping first!"
@@ -104,6 +103,34 @@ function Start()
 		cState:Set[CS_STATION]
 		nextDest:Set[${destStation}]
 	}
+	
+	Switch ${Refining.State}
+	{
+		case 0
+			UIElement[State@CHUD]:SetText["IDLE"]
+			break
+		case 1
+			UIElement[State@CHUD]:SetText["STATION SETUP"]
+			cState:Set[CS_STATION_SETUP]
+			break
+		case 2
+			UIElement[State@CHUD]:SetText["COOLDOWN"]
+			cState:Set[CS_ACTION_KICK]
+			break
+		case 3
+			UIElement[State@CHUD]:SetText["KICK START"]
+			cState:Set[CS_ACTION_KICK]
+			break
+		case 4
+		
+			UIElement[State@CHUD]:SetText["SELECT RECIPE"]
+			cState:Set[CS_STATION_RECIPE]
+			break
+		Default
+			UIElement[State@CHUD]:SetText["(State=${Refining.State})"]
+			break
+	}
+	
 	isPaused:Set[FALSE]
 	isRunning:Set[TRUE]
 	hasStarted:Set[TRUE]
