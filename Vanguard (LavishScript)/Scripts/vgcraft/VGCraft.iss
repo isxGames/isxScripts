@@ -1239,17 +1239,20 @@ function CheckState()
 				wait 5
 				call TableRemovePersonals
 			}
+			
 
 			if ${doExtraIngredients}
 			{
-				; Add optional ingredients
+				;; Add Recipe ingredients (Utilities)
+				call TableAddRecipeIngredients
+
+				;; Add fuel - is there a need for this because stack size is now 100
+				;if ( (${Refining.TotalTableSpace} - ${Refining.Table}) > 0 )
+				;	call TableAddExtraFuel
+					
+				; Add optional ingredients for error corrections
 				call TableAddExtra
-
-				if ( (${Refining.TotalTableSpace} - ${Refining.Table}) > 0 )
-					call TableAddExtraFuel
 			}
-
-			wait 5
 
 			call addRecipeToActionStore
 
@@ -2836,11 +2839,11 @@ function DebugOut(string Message, bool SpewToIRC=FALSE)
 	if ( ${debug} )
 	{
 		;call ScreenOut "${Message}"
-		echo ${Message}
+		echo "[${Time}] ${Message}"
 	}
 	else
 	{
-		call MyOutput "${Message}"
+		call MyOutput "[${Time}] ${Message}"
 	}
 }
 
