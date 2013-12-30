@@ -129,16 +129,79 @@ function:bool StationRecipeSelect()
 	return FALSE
 }
 
+/* Add must have ingredients */
+function TableAddRecipeIngredients()
+{
+	variable int itemIndex = 0
+	variable string fuel
+	variable int tableIndex
+	variable bool doAddIngredient
+	
+	variable int supplyLineCount = 0
+	while ${Refining.CurrentRecipe.Description.Token[${supplyLineCount:Inc},"\n"](exists)}
+	{
+		;; look through each line of recipe for the word "Utilities:"
+		if ${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"].Find[Utilities:]}
+		{
+			;; next line is the ingredient we want
+			supplyLineCount:Inc
+			fuel:Set[${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"]}]
+			
+			;; does it exist? 
+			while !${fuel.Equal[NULL]} && ${fuel.Length} > 1
+			{
+				fuel:Set[${fuel.Token[1,"\r"]}]
+
+				;; cycle through our table (we don't want to add twice)
+				doAddIngredient:Set[TRUE]
+				tableIndex:Set[0]
+				while (${Refining.Table[${tableIndex:Inc}].Name(exists)})
+				{
+					if ${Refining.Table[${tableIndex}].Name.Find[${fuel}]}
+						doAddIngredient:Set[FALSE]
+				}
+
+				;; adding the ingredient
+				if ${doAddIngredient}
+				{
+					;; cycle thru inventory 
+					itemIndex:Set[0]
+					while ( ${Me.Inventory[${itemIndex:Inc}].Name(exists)} )
+					{
+						;; add ingredient if quantity is 15 or more
+						if ( ${Me.Inventory[${itemIndex}].Name.Find[${fuel}]} && (${Me.Inventory[${itemIndex}].Quantity} >= 15) )
+						{
+							call MyOutput "VGCraft:: AddRecipieUtilities adding: ${Me.Inventory[${itemIndex}].Name}, Quantity=${Me.Inventory[${itemIndex}].Quantity}"
+							Me.Inventory[${itemIndex}]:AddToCraftingTable
+							wait 2
+							break
+						}
+					}
+				}
+				supplyLineCount:Inc
+				fuel:Set[${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"]}]
+			}
+		}
+	}
+}
+
 /* Removes non-fuel / extra ingredients */
 function TableRemovePersonals()
 {
 	variable int tableIndex
 	variable bool isFound
-
+	
 	tableIndex:Set[${Refining.TotalTableSpace}]
+	
+	;; remove the first supplied ingedient from the table
+	if ( ${tableIndex} > 0 && ${Refining.Stage.Step[1].AvailAction[1].Name.Find[Supplied]} )
+	{
+		Refining.Table[1]:RemoveFromTable
+		tableIndex:Set[${Refining.TotalTableSpace}]
+	}
+	
 	while (${tableIndex} > 0)
 	{
-
 		;call DebugOut "VGCraft:: item: ${Refining.Table[${tableIndex}].Name}"
 
 		isFound:Set[FALSE]
@@ -168,13 +231,13 @@ function TableRemovePersonals()
 				}
 				elseif
 				{
-				; We found an Item that is not on the list, remove it!
-				call DebugOut "VGCraft:: Removing from table: ${Refining.Table[${tableIndex}].Name}"
-				Refining.Table[${tableIndex}]:RemoveFromTable
+					; We found an Item that is not on the list, remove it!
+					call DebugOut "VGCraft:: Removing from table: ${Refining.Table[${tableIndex}].Name}"
+					Refining.Table[${tableIndex}]:RemoveFromTable
+					wait 5
 				}
 			}
 		}
-	
 		tableIndex:Dec
 	}
 }
@@ -221,7 +284,6 @@ function TableAddExtraFuel()
 {
 	if ( ${Me.Inventory[${Refining.Table[1].Name}](exists)} && ${Me.Inventory[${Refining.Table[1].Name}].Type.Equal[Crafting Component]} )
 		Me.Inventory[${Refining.Table[1].Name}]:AddToCraftingTable
-
 	wait 3
 }
 
