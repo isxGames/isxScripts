@@ -41,7 +41,8 @@ function SellLoot()
 			BuildSellList
 			UIElement[${Me.Inventory[${iCount}].Name}]:SetText[]
 			call DebugOut "VG:Selling: ${Me.Inventory[${iCount}].Name}"
-			Me.Inventory[ExactName,${Me.Inventory[${iCount}].Name}]:Sell
+			Me.Inventory[${iCount}]:Sell[${Me.Inventory[${iCount}].Quantity}]
+			;Me.Inventory[ExactName,${Me.Inventory[${iCount}].Name}]:Sell
 			wait 1
 			iCount:Set[0]
 		}
@@ -66,9 +67,18 @@ function SellLoot()
 
 		while ( ${Me.Inventory[ExactName,${Iterator.Value}](exists)} )
 		{
-			call DebugOut "VG:Selling: ${Iterator.Value}"
-			Me.Inventory[ExactName,${Iterator.Value}]:Sell
-			wait 10
+			iCount:Set[1]
+			do
+			{
+				if ${Me.Inventory[${iCount}].Name.Equal[${Iterator.Value}]}
+				{
+					call DebugOut "VG:Selling: ${Iterator.Value}"
+					Me.Inventory[${iCount}]:Sell[${Me.Inventory[${iCount}].Quantity}]
+					wait 5
+					iCount:Set[0]
+				}
+			}
+			while (${iCount:Inc} <= ${Me.Inventory})
 		}
 	}
 	while ${Iterator:Next(exists)}
@@ -495,14 +505,8 @@ function RepairItems()
 
 	Merchant:Begin[Repair]
 	wait 5
-		
-	do
-	{
-	    Merchant.RepairItem[${i}]:Repair
-	    wait 5
-	}
-	while (${i:Inc} <= ${Merchant.NumItemsForRepair})
-
+	Merchant:RepairAll
+	wait 5
    	Merchant:End		
 }
 
@@ -510,7 +514,7 @@ function RepairItems()
 function:bool RepairNeeded()
 {
 	variable int iCount = 1
-	variable int iDamaged = 70
+	variable int iDamaged = 90
 
 	Call DebugOut "VGCraft:: Determining if items need repairing"
 
