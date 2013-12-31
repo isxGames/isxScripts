@@ -140,6 +140,51 @@ function TableAddRecipeIngredients()
 	variable int supplyLineCount = 0
 	while ${Refining.CurrentRecipe.Description.Token[${supplyLineCount:Inc},"\n"](exists)}
 	{
+		;; look through each line of recipe for the word "Ingredients:"
+		if ${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"].Find[Ingredients:]}
+		{
+			;; next line is the ingredient we want
+			supplyLineCount:Inc
+			fuel:Set[${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"]}]
+
+			;; does it exist? 
+			while !${fuel.Equal[NULL]} && ${fuel.Length} > 1
+			{
+				fuel:Set[${fuel.Right[${Math.Calc[${fuel.Length}-4]}]}]
+				fuel:Set[${fuel.Token[1,"\r"]}]
+
+				;; cycle through our table (we don't want to add twice)
+				doAddIngredient:Set[TRUE]
+				tableIndex:Set[0]
+				while (${Refining.Table[${tableIndex:Inc}].Name(exists)})
+				{
+					if ${Refining.Table[${tableIndex}].Name.Find[${fuel}]}
+						doAddIngredient:Set[FALSE]
+				}
+
+				;; adding the ingredient
+				if ${doAddIngredient}
+				{
+					;; cycle thru inventory 
+					itemIndex:Set[0]
+					while ( ${Me.Inventory[${itemIndex:Inc}].Name(exists)} && ${Refining.Table}<${Refining.TotalTableSpace} )
+					{
+						;; add ingredient 
+						if ( ${Me.Inventory[${itemIndex}].Name.Find[${fuel}]} )
+						{
+							call MyOutput "VGCraft:: AddRecipieIngredients adding: ${Me.Inventory[${itemIndex}].Name}, Quantity=${Me.Inventory[${itemIndex}].Quantity}"
+							Me.Inventory[${itemIndex}]:AddToCraftingTable
+							wait 2
+							break
+						}
+					}
+				}
+				supplyLineCount:Inc
+				fuel:Set[${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"]}]
+			}
+		}
+	
+	
 		;; look through each line of recipe for the word "Utilities:"
 		if ${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"].Find[Utilities:]}
 		{
@@ -166,12 +211,12 @@ function TableAddRecipeIngredients()
 				{
 					;; cycle thru inventory 
 					itemIndex:Set[0]
-					while ( ${Me.Inventory[${itemIndex:Inc}].Name(exists)} )
+					while ( ${Me.Inventory[${itemIndex:Inc}].Name(exists)} && ${Refining.Table}<${Refining.TotalTableSpace} )
 					{
 						;; add ingredient if quantity is 15 or more
 						if ( ${Me.Inventory[${itemIndex}].Name.Find[${fuel}]} && (${Me.Inventory[${itemIndex}].Quantity} >= 15) )
 						{
-							call MyOutput "VGCraft:: AddRecipieUtilities adding: ${Me.Inventory[${itemIndex}].Name}, Quantity=${Me.Inventory[${itemIndex}].Quantity}"
+							call MyOutput "VGCraft:: AddRecipieIngredients adding: ${Me.Inventory[${itemIndex}].Name}, Quantity=${Me.Inventory[${itemIndex}].Quantity}"
 							Me.Inventory[${itemIndex}]:AddToCraftingTable
 							wait 2
 							break
@@ -194,7 +239,7 @@ function TableRemovePersonals()
 	tableIndex:Set[${Refining.TotalTableSpace}]
 	
 	;; remove the first supplied ingedient from the table
-	if ( ${tableIndex} > 0 && ${Refining.Stage.Step[1].AvailAction[1].Name.Find[Supplied]} )
+	if ( ${Refining.Stage.Index} == 1 && ${tableIndex} > 0 && ${Refining.Stage.Step[1].AvailAction[1].Name.Find[Supplied]} )
 	{
 		Refining.Table[1]:RemoveFromTable
 		tableIndex:Set[${Refining.TotalTableSpace}]
@@ -268,9 +313,12 @@ function TableAddExtra()
 			{
 				if ( ${Me.Inventory[${itemIndex}].Name.Find[${extraIter.Key}]} && (${Me.Inventory[${itemIndex}].Quantity} >= 10) )
 				{
-					call MyOutput "VGCraft:: AddExtra adding: ${Me.Inventory[${itemIndex}].Name}"
-					Me.Inventory[${itemIndex}]:AddToCraftingTable
-					wait 2
+					if ${Refining.Table}<${Refining.TotalTableSpace}
+					{
+						call MyOutput "VGCraft:: AddExtra adding: ${Me.Inventory[${itemIndex}].Name}"
+						Me.Inventory[${itemIndex}]:AddToCraftingTable
+						wait 2
+					}
 					break
 				}
 			}

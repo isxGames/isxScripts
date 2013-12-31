@@ -283,15 +283,15 @@ function:bool ChooseAction()
 		{
 			userAPLimit:Set[${apLimit2k}]
 		}
-		elseif (${Refining.OrigActionPointsAvail} == 2500)
+		elseif (${Refining.OrigActionPointsAvail} <= 2500)
 		{
 			userAPLimit:Set[${apLimit25k}]
 		}
-		elseif (${Refining.OrigActionPointsAvail} == 3000)
+		elseif (${Refining.OrigActionPointsAvail} <= 3000)
 		{
 			userAPLimit:Set[${apLimit3k}]
 		}
-		elseif (${Refining.OrigActionPointsAvail} >= 3500)
+		elseif (${Refining.OrigActionPointsAvail} >= 3001)
 		{
 			userAPLimit:Set[${apLimit35k}]
 			isHard:Set[TRUE]
@@ -341,19 +341,19 @@ function:bool ChooseAction()
 				userMaxQ:Set[${maxQVEasy}]
 				userAPLimit:Set[${apLimit2k}]
 			}
-			elseif (${Refining.OrigActionPointsAvail} == 2500)
+			elseif (${Refining.OrigActionPointsAvail} <= 2500)
 			{
 				userMinQ:Set[${minQEasy}]
 				userMaxQ:Set[${maxQEasy}]
 				userAPLimit:Set[${apLimit25k}]
 			}
-			elseif (${Refining.OrigActionPointsAvail} == 3000)
+			elseif (${Refining.OrigActionPointsAvail} <= 3000)
 			{
 				userMinQ:Set[${minQMod}]
 				userMaxQ:Set[${maxQMod}]
 				userAPLimit:Set[${apLimit3k}]
 			}
-			elseif (${Refining.OrigActionPointsAvail} >= 3500)
+			elseif (${Refining.OrigActionPointsAvail} >= 3001)
 			{
 				userMinQ:Set[${minQDiff}]
 				userMaxQ:Set[${maxQDiff}]
