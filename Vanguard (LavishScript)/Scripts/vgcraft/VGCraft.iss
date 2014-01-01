@@ -1472,6 +1472,16 @@ function CheckState()
 				return
 			}
 
+			;; check if you have the Genesis Tool (an Epec item capable of changing into a different tool)
+			if ${Me.Inventory[Genesis Tool](exists)}
+			{
+				if ${Me.Inventory[Genesis Tool].Description.Find[${missingItem}]}
+				{
+					call DebugOut "VGCraft:: missingItem is now Genesis Tool"
+					missingItem:Set[Genesis Tool]
+				}
+			}
+			
 			call ChangeToolBelts "${missingItem}"
 			if ( ${Return} )
 			{

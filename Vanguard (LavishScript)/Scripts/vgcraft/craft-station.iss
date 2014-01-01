@@ -146,7 +146,7 @@ function TableAddRecipeIngredients()
 			;; next line is the ingredient we want
 			supplyLineCount:Inc
 			fuel:Set[${Refining.CurrentRecipe.Description.Token[${supplyLineCount},"\n"]}]
-
+			
 			;; does it exist? 
 			while !${fuel.Equal[NULL]} && ${fuel.Length} > 1
 			{
@@ -158,7 +158,7 @@ function TableAddRecipeIngredients()
 				tableIndex:Set[0]
 				while (${Refining.Table[${tableIndex:Inc}].Name(exists)})
 				{
-					if ${Refining.Table[${tableIndex}].Name.Find[${fuel}]}
+					if ${Refining.Table[${tableIndex}].Name.Equal[${fuel}]}
 						doAddIngredient:Set[FALSE]
 				}
 
@@ -170,7 +170,7 @@ function TableAddRecipeIngredients()
 					while ( ${Me.Inventory[${itemIndex:Inc}].Name(exists)} && ${Refining.Table}<${Refining.TotalTableSpace} )
 					{
 						;; add ingredient 
-						if ( ${Me.Inventory[${itemIndex}].Name.Find[${fuel}]} )
+						if ( ${Me.Inventory[${itemIndex}].Name.Equal[${fuel}]} )
 						{
 							call MyOutput "VGCraft:: AddRecipieIngredients adding: ${Me.Inventory[${itemIndex}].Name}, Quantity=${Me.Inventory[${itemIndex}].Quantity}"
 							Me.Inventory[${itemIndex}]:AddToCraftingTable
