@@ -584,70 +584,35 @@ function DownTime()
 	}
 
 	;;;;;;;
-	;; Cast the strongest buff and buffs that stack with it
-	if ${Me.Ability[${SpiritsBountifulBlessing}](exists)}
+	;; cast our main buff
+	if !${Me.Effect[${MassSpiritsBountifulBlessing}](exists)} && !${Me.Effect[${SpiritsBountifulBlessing}](exists)}
 	{
+		call UseAbilitySelf "${MassSpiritsBountifulBlessing}"
 		call UseAbilitySelf "${SpiritsBountifulBlessing}"
-		if ${Me.Effect[${SpiritsBountifulBlessing}](exists)}
-		{
-			;; these are Rakurr's Buffs
-			call UseAbilitySelf "${RakurrsGiftofGrace}"
-			call UseAbilitySelf "${RakurrsGiftofSpeed}"
-			call UseAbilitySelf "${BoonofRakurr}"
-			
-			;; these are Tuurgin's buffs
-			call UseAbilitySelf "${BoonofTuurgin}"
-			call UseAbilitySelf "${WarmthoftheGreatBear}"
-			call UseAbilitySelf "${TuurginsGiftofFury}"
-			call UseAbilitySelf "${SuperiorTuurginsVigor}"
-		}
 	}
-
-	;;;;;;;
-	;; Cast the second strongest buff as needed
-	if ${Me.Ability[Favor of the Hunter](exists)} && !${Me.Ability[${SpiritsBountifulBlessing}](exists)} && ${Me.Effect[${SpiritsBountifulBlessing}](exists)}
-		call UseAbilitySelf "Favor of the Hunter"
 	
-	;;;;;;;
-	;; Set flag to not cast lesser buffs if any of these exists
-	variable bool doLesserBuff = TRUE
-	if ${Me.Effect[${SpiritsBountifulBlessing}](exists)}
-		doLesserBuff:Set[FALSE]
-	if ${Me.Effect[Gift of Boqobol](exists)}	
-		doLesserBuff:Set[FALSE]
-	if ${Me.Effect[Gift of the Oracle](exists)}	
-		doLesserBuff:Set[FALSE]
-	if ${Me.Effect[Infusion of Spirit](exists)}	
-		doLesserBuff:Set[FALSE]
-
-	if ${doLesserBuff}
+	;; these are Rakurr's Buffs
+	if !${Me.Effect[${MassBoonofRakurr}](exists)} && !${Me.Effect[${BoonofRakurr}](exists)}
 	{
-		;; Default buffs
-		call UseAbilitySelf "${SpiritofRakurr}"
-		call UseAbilitySelf "${Infusion}"
-		call UseAbilitySelf "${OraclesSight}"
-		call UseAbilitySelf "${BoonofBoqobol}"
-		call UseAbilitySelf "${BoonofBosrid}"
-
-		;; Rakurr's buffs
-		call UseAbilitySelf "${RakurrsGiftofGrace}"
-		call UseAbilitySelf "${RakurrsGiftofSpeed}"
+		call UseAbilitySelf "${MassBoonofRakurr}"
 		call UseAbilitySelf "${BoonofRakurr}"
-		if !${Me.Effect[${RakurrsGiftofSpeed}](exists)}	
-			call UseAbilitySelf "${SpeedofRakurr}"
-		if !${Me.Effect[${RakurrsGiftofGrace}](exists)}	
-			call UseAbilitySelf "${RakurrsGrace}"
-		
-		;; Tuurgin's buffs
-		call UseAbilitySelf "${BoonofTuurgin}"
-		if !${Me.Effect[${WarmthoftheGreatBear}](exists)}	
-			call UseAbilitySelf "${CoatoftheGreatbear}"
-		if !${Me.Effect[${TuurginsGiftofFury}](exists)}	
-			call UseAbilitySelf "${RageofTuurgin}"
-		if !${Me.Effect[${SuperiorTuurginsVigor}](exists)}	
-			call UseAbilitySelf "${TuurginsVigor}"
-		
 	}
+			
+	;; these are Tuurgin's buffs
+	if !${Me.Effect[${MassBoonofTurrgin}](exists)} && !${Me.Effect[${BoonofTurrgin}](exists)}
+	{
+		call UseAbilitySelf "${MassBoonofTurrgin}"
+		call UseAbilitySelf "${BoonofTurrgin}"
+	}
+
+	;; Default buffs
+	if !${Me.Effect[Enduring Breath](exists)}	
+		call UseAbilitySelf "${BoonofBoqobol}"
+
+	if !${Me.Effect[${RakurrsGiftofSpeed}](exists)}	
+		call UseAbilitySelf "${SpeedofRakurr}"
+	if !${Me.Effect[${RakurrsGiftofGrace}](exists)}	
+		call UseAbilitySelf "${RakurrsGrace}"
 
 	;; Rakurr's Skin
 	call UseAbilitySelf "${SkinofRakurr}"
@@ -659,7 +624,6 @@ function DownTime()
 	if ${Me.Effect["Tuurgin Form"](exists)}
 		VGExecute /can \"Tuurgin Form\"
 
-		
 	;; Default
 	call UseAbilitySelf "${LifeWard}"
 
@@ -683,7 +647,7 @@ function DownTime()
 	call SummonPet "${SummonAttendantofTuurgin}"
 	
 	;; Levitate
-	if ${doLevitate}
+	if ${doLevitate} && !${Me.Effect["Levitate"](exists)}
 		call UseAbilitySelf "${BoonofAlcipus}"
 
 	;; Rakurr's Stealth/Invisibility
@@ -1062,36 +1026,32 @@ function Startup()
 
 	EchoIt "BUFFS (all Totems)"
 	call SetHighestAbility "BoonofBoqobol" "Boon of Boqobol"
-	call SetHighestAbility "BoonofBosrid" "Boon of Bosrid"
 	call SetHighestAbility "BoonofAlcipus" "Boon of Alcipus"
-	call SetHighestAbility "Infusion" "Infusion"
 	call SetHighestAbility "LifeWard" "Life Ward"
-	call SetHighestAbility "OraclesSight" "Oracle's Sight"
-	call SetHighestAbility "SpiritofRakurr" "Spirit of Rakurr"
+	call SetHighestAbility "MassSpiritsBountifulBlessing" "Mass Spirit's Bountiful Blessing"
+	call SetHighestAbility "ScalingSpiritsBountifulBlessing" "Scaling Spirit's Bountiful Blessing"
 	call SetHighestAbility "SpiritsBountifulBlessing" "Spirit's Bountiful Blessing"
+
+	EchoIt "BUFFS (Tuurgin)"
+	call SetHighestAbility "AvataroftheGreatBear" "Avatar of the Great Bear"
+	call SetHighestAbility "SkinofTuurgin" "Skin of Tuurgin"
+	call SetHighestAbility "MassBoonofTurrgin" "Mass Boon of Turrgin"
+	call SetHighestAbility "ScalingBoonofTurrgin" "Scaling Boon of Turrgin"
+	call SetHighestAbility "BoonofTurrgin" "Boon of Turrgin"
 
 	EchoIt "BUFFS (Rakurr)"
 	call SetHighestAbility "RakurrsGrace" "Rakurr's Grace"
 	call SetHighestAbility "SkinofRakurr" "Skin of Rakurr"
 	call SetHighestAbility "SpeedofRakurr" "Speed of Rakurr"
-	call SetHighestAbility "BoonofRakurr" "Boon of Rakurr"
 	call SetHighestAbility "RakurrsGiftofSpeed" "Rakurr's Gift of Speed"
 	call SetHighestAbility "RakurrsGiftofGrace" "Rakurr's Gift of Grace"
 	call SetHighestAbility "AvataroftheHunter" "Avatar of the Hunter"
 	call SetHighestAbility "AvataroftheMystic" "Avatar of the Mystic"
 	call SetHighestAbility "FavoroftheHunter" "Favor of the Hunter"
+	call SetHighestAbility "MassBoonofRakurr" "Mass Boon of Rakurr"
+	call SetHighestAbility "ScalingBoonofRakurr" "Scaling Boon of Rakurr"
+	call SetHighestAbility "BoonofRakurr" "Boon of Rakurr"
 
-	EchoIt "BUFFS (Tuurgin)"
-	call SetHighestAbility "CoatoftheGreatBear" "Coat of the Great Bear"
-	call SetHighestAbility "RageofTuurgin" "Rage of Tuurgin"
-	call SetHighestAbility "TuurginsVigor" "Tuurgin's Vigor"
-	call SetHighestAbility "BoonofTuurgin" "Boon of Tuurgin"
-	call SetHighestAbility "WarmthoftheGreatBear" "Warmth of the Great Bear"
-	call SetHighestAbility "TuurginsGiftofFury" "Tuurgin's Gift of Fury"
-	call SetHighestAbility "SuperiorTuurginsVigor" "Superior Tuurgin's Vigor"
-	call SetHighestAbility "AvataroftheGreatBear" "Avatar of the Great Bear"
-	call SetHighestAbility "SkinofTuurgin" "Skin of Tuurgin"
-	
 	EchoIt "PET (Rakurr)"
 	call SetHighestAbility "SummonAttendantofRakurr" "Summon Attendant of Rakurr"
 	EchoIt "PET (Tuurgin)"
