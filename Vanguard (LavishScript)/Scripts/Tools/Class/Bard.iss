@@ -91,38 +91,40 @@ function Bard()
 function PlayCombatSong()
 {
 	variable int i
+	variable bool isEquiped 
+
 	if ${Me.Inventory[${PrimaryWeapon}](exists)}
 	{
-		if (${PrimaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}]}) || (${SecondaryWeapon.NotEqual[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}]})
+	
+		if ${Me.Inventory[${PrimaryWeapon}].DefaultEquipSlot.Equal[Two Hands]} && !${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two hands"]}]} 
 		{
-			;vgecho PrimaryWeapon=[${PrimaryWeapon}], SecondaryWeapon=[${SecondaryWeapon}]
-			;vgecho Equiped: Primary=[${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Name}], Secondary=[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"].Name}], Two Hands=[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]
-
-			;first unequip any items
-			;call unequipbarditems
-
-			Me.Inventory[ExactName,"${PrimaryWeapon}"]:Equip
-			;wait 2
-			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)}
-
-			if ${PrimaryWeapon.Equal[${SecondaryWeapon}]}
+			VGExecute /wear \"${PrimaryWeapon}\"
+			wait 10 ${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]}
+		}
+		else
+		{
+			if ${Me.Inventory[${PrimaryWeapon}].DefaultEquipSlot.Equal[Primary Hand]} && !${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]} 
 			{
-				;need to loop through and find this item that is 'not' in Primary Hand
-				for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
-				if (${SecondaryWeapon.Equal[${Me.Inventory[${i}].Name}]}) && (${String["Primary Hand"].NotEqual[${Me.Inventory[${i}].CurrentEquipSlot}]})
-				{
-					Me.Inventory[${i}]:Equip
-					;wait 1
-					;wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
-				}
+				VGExecute /wear \"${PrimaryWeapon}\" primaryhand
+				wait 10 ${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]}
 			}
-			else
+		}
+	}
+
+	if ${Me.Inventory[${SecondaryWeapon}](exists)}
+	{
+		if ${Me.Inventory[${SecondaryWeapon}].DefaultEquipSlot.Equal[Two Hands]} && !${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two hands"]}]} 
+		{
+			VGExecute /wear \"${SecondaryWeapon}\" 
+			wait 10 ${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]}
+		}
+		else
+		{
+			if ${Me.Inventory[${SecondaryWeapon}].DefaultEquipSlot.Equal[Primary Hand]} && !${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]} 
 			{
-				Me.Inventory[ExactName,"${SecondaryWeapon}"]:Equip
-				;wait 1
-				;wait 10 ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+				VGExecute /wear \"${SecondaryWeapon}\" secondaryhand
+				wait 10 ${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]}
 			}
-			wait 2
 		}
 	}
 
@@ -139,7 +141,7 @@ function PlayTravelSong()
 			;first unequip any items
 			;call unequipbarditems
 			Me.Inventory[ExactName,"${TravelInstrument}"]:Equip
-			wait 2
+			wait 10 ${TravelInstrument.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 	
 			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
@@ -157,7 +159,7 @@ function PlayRestSong()
 			;first unequip any items
 			;call unequipbarditems
 			Me.Inventory[ExactName,"${RestInstrument}"]:Equip
-			wait 2
+			wait 10 ${RestInstrument.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 	
 			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
@@ -169,18 +171,10 @@ function PlayRestSong()
 function unequipbarditems()
 {
 	if ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
-	{
 		Me.Inventory[CurrentEquipSlot,"Two Hands"]:Unequip
-		wait 2
-	}
 	if ${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)}
-	{
 		Me.Inventory[CurrentEquipSlot,"Primary Hand"]:Unequip
-		wait 2
-	}
 	if ${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
-	{
 		Me.Inventory[CurrentEquipSlot,"Secondary Hand"]:Unequip
-		wait 2
-	}
+	wait 50 !${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)} && !${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)} && !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 }

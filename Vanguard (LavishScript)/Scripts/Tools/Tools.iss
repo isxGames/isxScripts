@@ -212,6 +212,7 @@ variable settingsetref Counters2
 ;; Equipment variables
 variable string LastPrimary = None
 variable string LastSecondary = None
+variable string LastTwoHands = None
 variable string LastItemUsed = None
 
 ;; BuffBot variables
@@ -364,6 +365,13 @@ function DoSomething()
 		call MeleeAttackOff
 		call CheckBuffs
 	}
+	if ${Me.Encounter}>0 && ${Me.Target(exists)} && ${Me.Encounter[1].Distance}<${Me.Target.Distance}
+	{
+		VGExecute /cleartargets
+		wait 5
+	}
+
+	
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2180,6 +2188,15 @@ function UseItems()
 			Iterator:First
 		}
 
+		;; save what we have equiped
+		if ${Me.Inventory[CurrentEquipSlot,Primary Hand](exists)}
+			LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Primary Hand]}]
+		if ${Me.Inventory[CurrentEquipSlot,Secondary Hand](exists)}
+			LastSecondary:Set[${Me.Inventory[CurrentEquipSlot,Secondary Hand]}]
+		if ${Me.Inventory[CurrentEquipSlot,Two Hands](exists)}
+			LastTwoHands:Set[${Me.Inventory[CurrentEquipSlot,Two Hands]}]
+		
+
 		while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning} && !${Me.Target.IsDead}
 		{
 			if ${Me.Inventory[${Iterator.Key}].IsReady}
@@ -2191,26 +2208,9 @@ function UseItems()
 				if ${Me.Inventory[${Iterator.Key}].Type.Equal[Weapon]} || ${Me.Inventory[${Iterator.Key}].Type.Equal[Shield]} || ${Me.Inventory[${Iterator.Key}].Type.Equal[Instrument]}
 				{
 					;
-					; save our current equiped itemes
-					;
-					if ${Me.Inventory[CurrentEquipSlot,Primary Hand](exists)}
-					{
-						LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Primary Hand]}]
-					}
-					if ${Me.Inventory[CurrentEquipSlot,Secondary Hand](exists)}
-					{
-						LastSecondary:Set[${Me.Inventory[CurrentEquipSlot,Secondary Hand]}]
-					}
-					if ${Me.Inventory[CurrentEquipSlot,Two Hands](exists)}
-					{
-						LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Two Hands]}]
-						LastSecondary:Set[${LastPrimary}]
-					}
-					
-					;
 					; use the item if already equiped
 					;
-					if ${LastPrimary.Equal[${Iterator.Key}]} || ${LastSecondary.Equal[${Iterator.Key}]}
+					if ${LastPrimary.Equal[${Iterator.Key}]} || ${LastSecondary.Equal[${Iterator.Key}]} || ${LastTwoHands.Equal[${Iterator.Key}]}
 					{
 						Me.Inventory[${Iterator.Key}]:Use
 						LastItemUsed:Set[${Iterator.Key}]
@@ -2223,21 +2223,28 @@ function UseItems()
 					; otherwise, equip the item, use it, then equip old items
 					;
 					Me.Inventory[${Iterator.Key}]:Equip
-					wait 2
+					wait 3
 					Me.Inventory[${Iterator.Key}]:Use
 					LastItemUsed:Set[${Iterator.Key}]
 					wait 2
 					
-					if ${LastPrimary.Equal[${LastSecondary}]}
+					;
+					; equip all weapons
+					;
+					if !${LastPrimary.Equal[None]} && !${LastPrimary.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]} 
 					{
-						Me.Inventory[${LastSecondary}]:Equip[Secondary Hand]
-						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
-						wait 2
+						VGExecute /wear \"${LastPrimary}\" primaryhand
+						wait 50 ${LastPrimary.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]} 			
 					}
-					else
+					if !${LastSecondary.Equal[None]} && !${LastSecondary.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]} 	
 					{
-						Me.Inventory[${LastPrimary}]:Equip[Primary Hand]
-						wait 2
+						VGExecute /wear \"${LastSecondary}\" secondaryhand
+						wait 50 ${LastSecondary.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]} 			
+					}
+					if !${LastTwoHands.Equal[None]} && !${LastTwoHands.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 
+					{
+						VGExecute /wear \"${LastTwoHands}\"
+						wait 50 ${LastTwoHands.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 	
 					}
 					return
 				}
@@ -3064,12 +3071,13 @@ function HarvestIt()
 			if !${CurrentPawns.Get[${i}].IsHarvestable(exists)}
 				continue
 				
+			doHarvestItem:Set[FALSE]
 			if ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} || ${CurrentPawns.Get[${i}].Type.Equal[Resource]}
 			{
 				;; Lumberjacking
 				if ${CurrentPawns.Get[${i}].Name.Find[Tree]} || ${CurrentPawns.Get[${i}].Name.Find[Root]}
 				{
-					if ${Me.Stat[Harvesting,Lumberjacking]}>0 && ${CurrentPawns.Get[${i}].Name.Find[Weakened]}
+					if ${Me.Stat[Harvesting,Lumberjacking]}>10 && ${CurrentPawns.Get[${i}].Name.Find[Weakened]}
 						doHarvestItem:Set[TRUE]
 					if ${Me.Stat[Harvesting,Lumberjacking]}>=100 && ${CurrentPawns.Get[${i}].Name.Find[Barbed]}
 						doHarvestItem:Set[TRUE]
@@ -3084,13 +3092,13 @@ function HarvestIt()
 				}
 				
 				;; Skinning
-				if ${Me.Stat[Harvesting,Skinning]}>0 && ${CurrentPawns.Get[${i}].Type.Equal[Corpse]}
+				if ${Me.Stat[Harvesting,Skinning]}>0 && ${CurrentPawns.Get[${i}].Type.Equal[Corpse]} && ${CurrentPawns.Get[${i}].IsHarvestable}
 					doHarvestItem:Set[TRUE]
 					
 				;; Reaping
 				if ${CurrentPawns.Get[${i}].Name.Find[Plant]}
 				{
-					if ${Me.Stat[Harvesting,Reaping]}>0 && ${CurrentPawns.Get[${i}].Name.Find[Jute]}
+					if ${Me.Stat[Harvesting,Reaping]}>10 && ${CurrentPawns.Get[${i}].Name.Find[Jute]}
 						doHarvestItem:Set[TRUE]
 					if ${Me.Stat[Harvesting,Reaping]}>=100 && ${CurrentPawns.Get[${i}].Name.Find[Cotton]}
 						doHarvestItem:Set[TRUE]
@@ -3107,7 +3115,7 @@ function HarvestIt()
 				;; Mining
 				if ${CurrentPawns.Get[${i}].Name.Find[Node]} || ${CurrentPawns.Get[${i}].Name.Find[Vein]}
 				{
-					if ${Me.Stat[Harvesting,Mining]}>0 && ${CurrentPawns.Get[${i}].Name.Equal[Metal Node]}
+					if ${Me.Stat[Harvesting,Mining]}>10 && ${CurrentPawns.Get[${i}].Name.Equal[Metal Node]}
 						doHarvestItem:Set[TRUE]
 					if ${Me.Stat[Harvesting,Mining]}>=100 && ${CurrentPawns.Get[${i}].Name.Equal[Large Metal Node]}
 						doHarvestItem:Set[TRUE]
@@ -3124,7 +3132,7 @@ function HarvestIt()
 				;; Quarrying
 				if ${CurrentPawns.Get[${i}].Name.Find[Cluster]} || ${CurrentPawns.Get[${i}].Name.Find[Deposit]}
 				{
-					if ${Me.Stat[Harvesting,Quarrying]}>0 && ${CurrentPawns.Get[${i}].Name.Equal[Small Mineral Cluster]}
+					if ${Me.Stat[Harvesting,Quarrying]}>10 && ${CurrentPawns.Get[${i}].Name.Equal[Small Mineral Cluster]}
 						doHarvestItem:Set[TRUE]
 					if ${Me.Stat[Harvesting,Quarrying]}>=100 && ${CurrentPawns.Get[${i}].Name.Equal[Medium Mineral Cluster]}
 						doHarvestItem:Set[TRUE]
@@ -3146,6 +3154,11 @@ function HarvestIt()
 				;; target it and blacklist target from future scans
 				Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
 				wait 5
+				if !${Me.Target(exists)}
+				{
+					Pawn[id,${CurrentPawns.Get[${i}].ID}]:Target
+					wait 5
+				}
 				break
 			}
 		}
@@ -3156,7 +3169,6 @@ function HarvestIt()
 
 	if ${HarvestBlackList.Element[${Me.Target.ID}](exists)}
 		return
-	HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 		
 	if !${Me.Target.IsHarvestable}
 		return
@@ -3165,14 +3177,28 @@ function HarvestIt()
 	leftofname:Set[${Me.Target.Name.Left[6]}]
 	if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<${Distance} && ${Me.ToPawn.CombatState}==0 && !${leftofname.Equal[remain]}
 	{
+		Event[VG_onHitObstacle]:AttachAtom[Bump]
+		doHandleBump:Set[FALSE]
+
 		while ${Me.Target.Distance}>=15
 		{
 			VG:ExecBinding[moveforward]
 			face ${Me.Target.X} ${Me.Target.Y}
 			if !${Me.Target(exists)} || !${isRunning} || ${isPaused}
 					break
+			if ${doHandleBump}
+			{
+				VG:ExecBinding[moveforward,release]
+				waitframe
+				VG:ExecBinding[StrafeLeft]
+				wait 7
+				VG:ExecBinding[StrafeLeft,release]
+				doHandleBump:Set[FALSE]
+			}
 		}
 
+		Event[VG_onHitObstacle]:DetachAtom[Bump]
+		
 		;; change posture to walking
 		if ${Me.Target.Distance}>=4
 			VGExecute /walk
@@ -3193,15 +3219,17 @@ function HarvestIt()
 		VGExecute /run
 	}
 
-	if !${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<5 && ${Me.Target.IsHarvestable}
+	if !${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<=5 && ${Me.Target.IsHarvestable}
 	{
+		wait 5
+		vgecho Started harvesting
 		Me.Ability[Auto Attack]:Use
+		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 		wait 30
 	}
 
 	if ${Me.InCombat} && ${Me.Encounter}==0
 	{
-		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 		while ${Me.InCombat} && ${Me.Encounter}==0 && ${GV[bool,bHarvesting]} && ${isHarvesting}
 			waitframe
 		VGExecute "/cleartargets"
@@ -3221,19 +3249,14 @@ function HarvestIt()
 	
 	if ${Me.InCombat}
 		return
-
-	for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
-	{
-		if ${Me.Inventory[${i}].Description.Find[Crafting:]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
-		{
-			EchoIt "Consolidate: ${Me.Inventory[${i}]}"
-			Me.Inventory[${i}]:StartConvert
-			wait 10
-			VG:ConvertItem
-			wait 10
-		}
-	}
 }
+
+atom Bump(string Name)
+{
+	echo ${Time} Bumped Object
+	doHandleBump:Set[TRUE]
+}
+variable bool doHandleBump = FALSE
 
 function Tombstone()
 {
@@ -3575,6 +3598,17 @@ function Loot()
 				Loot:EndLooting
 				wait ${Delay} !${Me.IsLooting}
 			}
+			for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
+			{
+				if ${Me.Inventory[${i}].Description.Find[Crafting:]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
+				{
+					EchoIt "Consolidate: ${Me.Inventory[${i}]}"
+					Me.Inventory[${i}]:StartConvert
+					wait 10
+					VG:ConvertItem
+					wait 10
+				}
+			}
 			return
 		}
 
@@ -3618,9 +3652,9 @@ function Loot()
 		{
 			if !${LootBlackList.Element[${Me.Target.ID}](exists)}
 			{
+				LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 				Loot:BeginLooting
 				wait ${Delay} ${Loot.NumItems}
-				LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 				return
 			}
 		}
