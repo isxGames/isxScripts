@@ -37,12 +37,22 @@ function SellLoot()
 	{
 		if ${Me.Inventory[${iCount}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${iCount}].Description.Equal[""]}
 		{
+			if ${Me.Inventory[${iCount}].Flags.Find[Unique]}
+				continue
+			if ${Me.Inventory[${iCount}].Flags.Find[No Trade]}
+				continue
+			if ${Me.Inventory[${iCount}].Flags.Find[No Rent]}
+				continue
+			if ${Me.Inventory[${iCount}].Flags.Find[No Sell]}
+				continue
+			if ${Me.Inventory[${iCount}].Flags.Find[Quest]}
+				continue
+			
 			AddSellItem "${Me.Inventory[${iCount}].Name}"
 			BuildSellList
 			UIElement[${Me.Inventory[${iCount}].Name}]:SetText[]
 			call DebugOut "VG:Selling: ${Me.Inventory[${iCount}].Name}"
 			Me.Inventory[${iCount}]:Sell[${Me.Inventory[${iCount}].Quantity}]
-			;Me.Inventory[ExactName,${Me.Inventory[${iCount}].Name}]:Sell
 			wait 1
 			iCount:Set[0]
 		}
@@ -72,6 +82,17 @@ function SellLoot()
 			{
 				if ${Me.Inventory[${iCount}].Name.Equal[${Iterator.Value}]}
 				{
+					if ${Me.Inventory[${iCount}].Flags.Find[Unique]}
+						continue
+					if ${Me.Inventory[${iCount}].Flags.Find[No Trade]}
+						continue
+					if ${Me.Inventory[${iCount}].Flags.Find[No Rent]}
+						continue
+					if ${Me.Inventory[${iCount}].Flags.Find[No Sell]}
+						continue
+					if ${Me.Inventory[${iCount}].Flags.Find[Quest]}
+						continue
+						
 					call DebugOut "VG:Selling: ${Iterator.Value}"
 					Me.Inventory[${iCount}]:Sell[${Me.Inventory[${iCount}].Quantity}]
 					wait 5
