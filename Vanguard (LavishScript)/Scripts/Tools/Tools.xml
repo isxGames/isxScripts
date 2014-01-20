@@ -127,6 +127,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doUseAbilities:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -146,6 +147,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doUseItems:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -165,6 +167,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doCounter1:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -184,6 +187,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doCounter2:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -203,6 +207,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doPushStance:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -222,6 +227,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doStripEnchantments:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -241,6 +247,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doForage:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -260,6 +267,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doAutoAttack:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -279,6 +287,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRangedAttack:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -298,6 +307,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doFace:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -317,6 +327,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doAutoRepairs:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -336,6 +347,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doAutoRez:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -355,6 +367,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doHate:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -374,6 +387,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doLoot:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -393,6 +407,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doHarvest:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<Textentry Name="HarvestRange" Template="VG.TextEntry">
@@ -435,6 +450,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doPhysical:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name="doArcane" Template="VG.GreenCheckbox">
@@ -453,6 +469,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doArcane:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name="doMental" Template="VG.GreenCheckbox">
@@ -471,6 +488,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doMental:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name="doFire" Template="VG.GreenCheckbox">
@@ -489,6 +507,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doFire:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name="doIce" Template="VG.GreenCheckbox">
@@ -507,6 +526,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doIce:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<checkbox Name="doSpiritual" Template="VG.GreenCheckbox">
@@ -525,6 +545,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doSpiritual:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -578,6 +599,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doFollow:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<Textentry Name="FollowDistance1" Template="VG.TextEntry">
@@ -684,6 +706,7 @@
 									Script[Tools].Variable[Tank]:Set[${Me.FName}]
 									This:SetText[Tank:  ${Me.FName}]
 								}
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</Commandbutton>
 
@@ -716,6 +739,7 @@
 									Script[Tools].VariableScope.isPaused:Set[FALSE]
 									This:SetText[Running]
 								}
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</Button>
 					</Tab>
@@ -741,6 +765,7 @@
 							{
 								Tools_AddAbilities "${This.SelectedItem.Text}"
 								Tools_BuildAbilities
+								Script[Tools]:QueueCommand[SaveSettings]
 							}
 							</OnSelect>
 						</ComboBox>
@@ -758,6 +783,7 @@
 								Tools_RemoveAbilities "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildAbilities
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</Listbox>
 						 <Text Name='txtItems' Template='VG.BoldText'>
@@ -781,6 +807,7 @@
 								{
 									Tools_AddItems "${This.SelectedItem.Text}"
 									Tools_BuildItems
+									Script[Tools]:QueueCommand[SaveSettings]
 								}
 							</OnSelect>
 						</ComboBox>
@@ -798,6 +825,7 @@
 								Tools_RemoveItems "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildItems
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</Listbox>
  						<Text Name='txtCombatForm' Template='VG.BoldText'>
@@ -818,6 +846,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.CombatForm:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						<Text Name='txtNonCombatForm' Template='VG.BoldText'>
@@ -838,6 +867,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.NonCombatForm:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						 <Text Name='txtBuffs' Template='VG.BoldText'>
@@ -861,6 +891,7 @@
 								{
 									Tools_AddBuff "${This.SelectedItem.Text}"
 									Tools_BuildBuffs
+									Script[Tools]:QueueCommand[SaveSettings]
 								}
 							</OnSelect>
 						</ComboBox>
@@ -878,6 +909,7 @@
 								Tools_RemoveBuff "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildBuffs
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</Listbox>
 					</Tab>
@@ -909,6 +941,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doSmallHeal:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<Textentry Name="SmallHealPct" Template="VG.TextEntry">
@@ -945,6 +978,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.SmallHeal:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						
@@ -964,6 +998,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doBigHeal:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<Textentry Name="BigHealPct" Template="VG.TextEntry">
@@ -1000,6 +1035,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.BigHeal:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 
@@ -1019,6 +1055,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doGroupHeal:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<Textentry Name="GroupHealPct" Template="VG.TextEntry">
@@ -1055,6 +1092,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.GroupHeal:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						
@@ -1074,6 +1112,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doInstantHeal:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<Textentry Name="InstantHealPct" Template="VG.TextEntry">
@@ -1110,6 +1149,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.InstantHeal:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						
@@ -1130,6 +1170,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doHoT:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<Textentry Name="HoTPct" Template="VG.TextEntry">
@@ -1166,6 +1207,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.HoT:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						
@@ -1180,6 +1222,7 @@
 							<OnLeftClick>
 								vgecho "Updating Group Members"
 								Script[Tools].Variable[doFindGroupMembers]:Set[TRUE]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</Commandbutton>								
 					</Tab>
@@ -1210,6 +1253,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRescue1:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<ComboBox Name="Rescue1" Template="VG.ComboBox">
@@ -1222,6 +1266,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.Rescue1:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						
@@ -1241,6 +1286,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRescue2:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<ComboBox Name="Rescue2" Template="VG.ComboBox">
@@ -1253,6 +1299,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.Rescue2:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 
@@ -1272,6 +1319,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRescue3:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>	
 						<ComboBox Name="Rescue3" Template="VG.ComboBox">
@@ -1284,6 +1332,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.Rescue3:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 
@@ -1304,6 +1353,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doReduceHate:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<ComboBox Name="ReduceHate" Template="VG.ComboBox">
@@ -1316,6 +1366,7 @@
 							</OnLoad>
 							<OnSelect>
 								Script[Tools].VariableScope.ReduceHate:Set[${This.SelectedItem.Text}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnSelect>
 						</ComboBox>
 						
@@ -1335,6 +1386,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doIncreaseHate:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 						<ComboBox Name="IncreaseHate" Template="VG.ComboBox">
@@ -1366,6 +1418,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doCheckEncounters:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>						
 
@@ -1403,6 +1456,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.CombatSong:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 								<Text Name='TextPrimaryWeapon' Template='VG.BoldText'>
@@ -1423,6 +1477,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.PrimaryWeapon:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 								<Text Name='TextCombatSecondaryWeapon' Template='VG.BoldText'>
@@ -1443,6 +1498,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.SecondaryWeapon:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 								<Text Name='TextRestSong' Template='VG.BoldText'>
@@ -1463,6 +1519,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.RestSong:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 								<Text Name='TextBardRestInstrument' Template='VG.BoldText'>
@@ -1483,6 +1540,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.RestInstrument:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 								<Text Name='TextBardTravelSong' Template='VG.BoldText'>
@@ -1503,6 +1561,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.TravelSong:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 								<Text Name='TextBardTravelInstrument' Template='VG.BoldText'>
@@ -1523,6 +1582,7 @@
 									</OnLoad>
 									<OnSelect>
 										Script[Tools].VariableScope.TravelInstrument:Set[${This.SelectedItem.Text}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnSelect>
 								</ComboBox>
 							</Children>
@@ -1661,6 +1721,7 @@
 									</OnLoad>
 									<OnLeftClick>
 										Script[Tools].VariableScope.doSummonAbomination:Set[${This.Checked}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnLeftClick>
 								</checkbox>
 								<Textentry Name="AbominationStartAttack" Template="VG.TextEntry">
@@ -1711,6 +1772,7 @@
 									</OnLoad>
 									<OnLeftClick>
 										Script[Tools].VariableScope.doNecropsy:Set[${This.Checked}]
+										Script[Tools]:QueueCommand[SaveSettings]
 									</OnLeftClick>
 								</checkbox>
 
@@ -1744,6 +1806,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doGroupsay:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -1763,6 +1826,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRaidsay:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 
@@ -1782,6 +1846,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doTells:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -1801,6 +1866,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doRift:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -1820,6 +1886,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doMonotorTells:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						
@@ -1876,6 +1943,7 @@
 								{
 									Tools_AddTriggerBuff "${This.SelectedItem.Text}"
 									Tools_BuildTriggerBuffs
+									Script[Tools]:QueueCommand[SaveSettings]
 								}
 							</OnSelect>
 						</ComboBox>
@@ -1893,6 +1961,7 @@
 								Tools_RemoveTriggerBuff "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildTriggerBuffs
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</Listbox>
 						 <Text Name='txtBuffOnly' Template='VG.BoldText'>
@@ -1912,6 +1981,7 @@
 							<OnLeftClick>
 								Tools_AddBuffOnly "${Script[Tools].VariableScope.BuffOnlyName}"
 								Tools_BuildBuffsOnly
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</CommandButton>
 						<Textentry Name='BuffOnlyName' Template='VG.TextEntry'>
@@ -1950,6 +2020,7 @@
 								Tools_RemoveBuffOnly "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildBuffsOnly
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</listbox>
 						<Commandbutton Name="BuffArea" Template="VG.GreyCommandButton">
@@ -1971,6 +2042,7 @@
 							</OnRender>
 							<OnLeftClick>
 								Script[Tools]:QueueCommand[call BuffArea]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 							<Data>${Script[Tools_BuffArea](exists)}</Data>
 						</Commandbutton>
@@ -1993,6 +2065,7 @@
 							</OnRender>
 							<OnLeftClick>
 								Script[Tools]:QueueCommand[call ForceBuffArea]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 							<Data>${Script[Tools_BuffArea](exists)}</Data>
 						</Commandbutton>
@@ -2022,6 +2095,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doCounter1Only:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<Textentry Name='Counter1' Template='VG.TextEntry'>
@@ -2045,6 +2119,7 @@
 								Tools_AddCounter1 "${UIElement[Counter1@Counters@DPS@Tools].Text}"
 								Tools_BuildCounter1
 								UIElement[Counter1@Counters@DPS@Tools]:SetText[]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</Button>
 						<Listbox Name="Counter1List" Template="VG.ListBox">
@@ -2061,6 +2136,7 @@
 								Tools_RemoveCounter1 "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildCounter1
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</Listbox>
 
@@ -2088,6 +2164,7 @@
 							</OnLoad>
 							<OnLeftClick>
 								Script[Tools].VariableScope.doCounter2Only:Set[${This.Checked}]
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnLeftClick>
 						</checkbox>
 						<Textentry Name='Counter2' Template='VG.TextEntry'>
@@ -2111,7 +2188,8 @@
 								Tools_AddCounter2 "${UIElement[Counter2@Counters@DPS@Tools].Text}"
 								Tools_BuildCounter2
 								UIElement[Counter2@Counters@DPS@Tools]:SetText[]
-							</OnLeftClick>
+								Script[Tools]:QueueCommand[SaveSettings]
+						</OnLeftClick>
 						</Button>
 						<Listbox Name="Counter2List" Template="VG.ListBox">
 							<X>3%</X>
@@ -2127,6 +2205,7 @@
 								Tools_RemoveCounter2 "${This.SelectedItem}"
 								This.SelectedItem:Remove
 								Tools_BuildCounter2
+								Script[Tools]:QueueCommand[SaveSettings]
 							</OnRightClick>
 						</Listbox>
 					</Tab>

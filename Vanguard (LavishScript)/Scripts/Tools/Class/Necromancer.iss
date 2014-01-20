@@ -18,17 +18,17 @@ function Necromancer()
 		UIElement[Necromancer@Class@DPS@Tools]:Show
 		
 		; Calculate Highest Level
-		SetHighestAbility "AwakenAbomination" "Awaken Abomination"
-		SetHighestAbility "BloodRite" "Blood Rite"
-		SetHighestAbility "BoneSpike" "Bone Spike"
-		SetHighestAbility "CripplingBlight" "Crippling Blight"
-		SetHighestAbility "Torment" "Torment"
-		SetHighestAbility "VileRitual" "Vile Ritual"
-		SetHighestAbility "SealedFate" "Sealed Fate"
+		declare "AwakenAbomination" string local "Awaken Abomination"
+		declare "BloodRite" string local "Blood Rite"
+		declare "BoneSpike" string local "Bone Spike"
+		declare "CripplingBlight" string local "Crippling Blight"
+		declare "Torment" string local "Torment"
+		declare "VileRitual" string local "Vile Ritual"
+		declare "SealedFate" string local "Sealed Fate"
 		;; Crits
-		SetHighestAbility "BoneSpear" "Bone Spear"
-		SetHighestAbility "BoneChill" "Bone Chill"
-		SetHighestAbility "ShadowFeast" "Shadow Feast"
+		declare "BoneSpear" string local "Bone Spear"
+		declare "BoneChill" string local "Bone Chill"
+		declare "ShadowFeast" string local "Shadow Feast"
 		NecroRunOnce:Set[FALSE]
 	}
 	

@@ -236,8 +236,13 @@ variable int FollowDistance2 = 5
 ;; Defines - good within this script
 #define ALARM "${Script.CurrentDirectory}/ping.wav"
 
-;; Logging path
-variable string LogThis = "${Script.CurrentDirectory}/ChatLog.txt"
+;; File Path
+variable filepath scriptPath = "${Script.CurrentDirectory}"
+variable filepath savePath = "${scriptPath}/Saves"
+variable filepath logPath = "${scriptPath}/Logs"
+
+variable string LogThis = "${logPath}/ChatLog.txt"
+variable string LogAllChat = "${logPath}/LogAllChat.txt"
 
 ;===================================================
 ;===            MAIN SCRIPT                     ====
@@ -259,6 +264,7 @@ function main()
 ;===================================================
 function DoSomething()
 {
+	wait 1
 	;-------------------------------------------
 	; PAUSED - turn off melee attacks and reset variables
 	;-------------------------------------------
@@ -319,7 +325,8 @@ function DoSomething()
 	;-------------------------------------------
 	if ${QueuedCommands}
 	{
-		ExecuteQueued
+		while ${QueuedCommands}
+			ExecuteQueued
 		FlushQueued
 	}
 
@@ -345,7 +352,7 @@ function DoSomething()
 		call Tombstone
 		NextDelayCheck:Set[${Script.RunningTime}]
 	}
-
+	
 	;-------------------------------------------
 	; COMBAT ROUTINES - attack targets that are not a Resource or Dead
 	;-------------------------------------------
@@ -365,13 +372,6 @@ function DoSomething()
 		call MeleeAttackOff
 		call CheckBuffs
 	}
-	if ${Me.Encounter}>0 && ${Me.Target(exists)} && ${Me.Encounter[1].Distance}<${Me.Target.Distance}
-	{
-		VGExecute /cleartargets
-		wait 5
-	}
-
-	
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -395,6 +395,18 @@ function Initialize()
 	}
 	wait 30 ${Me.Chunk(exists)}
 	EchoIt "Started Tools Script"
+	
+	;; Cleanup and create our directories
+	if !${scriptPath.FileExists[Saves]}
+		mkdir "${savePath}"
+	if !${scriptPath.FileExists[Logs]}
+		mkdir "${logPath}"
+	if ${scriptPath.FileExists[Tools_save.xml]}
+		rm "${scriptPath}/Tools_save.xml"
+	if ${logPath.FileExists[ChatLog.txt]}
+		rm "${logPath}/ChatLog.txt"
+	if ${logPath.FileExists[LogAllChat.txt]}
+		rm "${logPath}/LogAllChat.txt"
 	
 	;-------------------------------------------
 	; Identify your Class Abilities
@@ -470,43 +482,282 @@ function Initialize()
 	; Set Forage
 	;-------------------------------------------
 	if !${Me.Ability[Forage](exists)}
-	{
 		Forage:Set[None]
-	}
 	
 	;-------------------------------------------
-	; Calculate Highest Level
+	; Declare our variables
 	;-------------------------------------------
-	SetHighestAbility "CounterA" "${Counter1}"
-	SetHighestAbility "CounterB" "${Counter2}"
-	SetHighestAbility "PushStance" "${PushStance1}"
-	SetHighestAbility "StripEnchantment" "${StripEnchantment1}"
+	
+	call FindBaseAbility "${Counter1}"
+	declare CounterA string script "${Return}"
+	call FindBaseAbility "${Counter2}"
+	declare CounterB string script "${Return}"
+	call FindBaseAbility "${PushStance1}"
+	declare PushStance string script "${Return}"
+	call FindBaseAbility "${StripEnchantment1}"
+	declare StripEnchantment string script "${Return}"
 
 	;-------------------------------------------
 	; Build and Import XML Data
 	;-------------------------------------------
-	LavishSettings[DPS]:Clear
-	LavishSettings:AddSet[DPS]
-	LavishSettings[DPS]:AddSet[General-${Me.FName}]
-	LavishSettings[DPS]:AddSet[Abilities-${Me.FName}]
-	LavishSettings[DPS]:AddSet[Items-${Me.FName}]
-	LavishSettings[DPS]:AddSet[Buffs-${Me.FName}]
-	LavishSettings[DPS]:AddSet[TriggerBuffs-${Me.FName}]
-	LavishSettings[DPS]:AddSet[BuffOnly-${Me.FName}]
-	LavishSettings[DPS]:AddSet[Counters1-${Me.FName}]
-	LavishSettings[DPS]:AddSet[Counters2-${Me.FName}]
-
-	LavishSettings[DPS]:Import[${Script.CurrentDirectory}/Tools_save.xml]
+	LoadSettings
 	
-	General:Set[${LavishSettings[DPS].FindSet[General-${Me.FName}].GUID}]
-	Abilities:Set[${LavishSettings[DPS].FindSet[Abilities-${Me.FName}].GUID}]
-	Items:Set[${LavishSettings[DPS].FindSet[Items-${Me.FName}].GUID}]
-	Buffs:Set[${LavishSettings[DPS].FindSet[Buffs-${Me.FName}].GUID}]
-	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}].GUID}]
-	BuffOnly:Set[${LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}].GUID}]
-	Counters1:Set[${LavishSettings[DPS].FindSet[Counters1-${Me.FName}].GUID}]
-	Counters2:Set[${LavishSettings[DPS].FindSet[Counters2-${Me.FName}].GUID}]
+	;-------------------------------------------
+	; Reload the UI and draw our Tool window
+	;-------------------------------------------
+	waitframe
+	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
+	waitframe
+	ui -reload -skin VGSkin "${Script.CurrentDirectory}/Tools.xml"
+	waitframe
+	
+	;-------------------------------------------
+	; Update UI from the XML Data
+	;-------------------------------------------
+	variable int i
+	variable string BaseAbility = None
+	variable collection:int64 AbilityList
+	
+	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
+	{
+		if ${Me.Ability[${i}].LevelGranted}>${Me.Level}
+			continue
 
+		;; Convert ability to Base Ability
+		call FindBaseAbility "${Me.Ability[${i}].Name}"
+		if ${AbilityList.Element[${Return}](exists)}
+			continue
+		AbilityList:Set[${Return},${Return}]
+		BaseAbility:Set[${Return}]
+		
+		UIElement[AbilitiesCombo@Abilities@DPS@Tools]:AddItem[${BaseAbility}]
+		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
+		{
+			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Find[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
+			{
+				UIElement[BuffsCombo@Abilities@DPS@Tools]:AddItem[${BaseAbility}]
+				UIElement[TriggerBuffsCombo@BuffBot@DPS@Tools]:AddItem[${BaseAbility}]
+			}
+		}
+		if !${Me.Ability[${i}].IsOffensive} && ${Me.Ability[${i}].Type.Equal[Spell]}
+		{
+			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Find[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
+			{
+				if ${Me.Ability[${i}].Description.Find[Heal]} || ${Me.Ability[${i}].Description.Find[Restore]}
+				{
+					UIElement[SmallHeal@Heals@DPS@Tools]:AddItem[${BaseAbility}]
+					UIElement[BigHeal@Heals@DPS@Tools]:AddItem[${BaseAbility}]
+					UIElement[GroupHeal@Heals@DPS@Tools]:AddItem[${BaseAbility}]
+					UIElement[InstantHeal@Heals@DPS@Tools]:AddItem[${BaseAbility}]
+					UIElement[HoT@Heals@DPS@Tools]:AddItem[${BaseAbility}]
+				}
+			}
+		}
+		if ${Me.Ability[${i}].IsRescue} || ${Me.Ability[${i}].Description.Find[to target you]}
+		{
+			UIElement[Rescue1@Tanks@DPS@Tools]:AddItem[${BaseAbility}]
+			UIElement[Rescue2@Tanks@DPS@Tools]:AddItem[${BaseAbility}]
+			UIElement[Rescue3@Tanks@DPS@Tools]:AddItem[${BaseAbility}]
+		}
+		if ${Me.Ability[${i}].Description.Find[less hate]} || ${Me.Ability[${i}].Description.Find[decrease hate]} || ${Me.Ability[${i}].Description.Find[reduce hate]}
+		{
+			UIElement[ReduceHate@Tanks@DPS@Tools]:AddItem[${BaseAbility}]
+			Hate_Abilities:Set["${BaseAbility}", "${BaseAbility}"]
+		}
+		elseif ${Me.Ability[${i}].Description.Find[hate]} || ${Me.Ability[${i}].Description.Find[hatred]}
+		{
+			UIElement[IncreaseHate@Tanks@DPS@Tools]:AddItem[${BaseAbility}]
+			Hate_Abilities:Set["${BaseAbility}", "${BaseAbility}"]
+		}
+		
+	}
+	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
+	{
+		UIElement[CombatForm@Abilities@DPS@Tools]:AddItem[${Me.Form[${i}].Name}]
+		UIElement[NonCombatForm@Abilities@DPS@Tools]:AddItem[${Me.Form[${i}].Name}]
+	}
+	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
+	{
+		;; dump everything here
+		UIElement[ItemsCombo@Abilities@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+
+
+		;; delete these once the broken features are fixed "Me.Inventory[].xxxx"
+		;UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		;UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[RestInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		UIElement[TravelInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		
+		
+		;;THE FOLLOWING FEATURES ARE BROKEN
+
+		if ${Me.Inventory[${i}].Type.Equal[Weapon]} || ${Me.Inventory[${i}].Type.Equal[Shield]}
+		{
+			;; Only Weapons here
+			if ${Me.Inventory[${i}].Type.Equal[Weapon]} && !${Me.Inventory[${i}].DefaultEquipSlot.Equal[Secondary Hand]}
+			{
+				UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+			}
+			;; both Weapons and Sheilds here
+			UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		}
+		
+		if (${Me.Inventory[${i}].Keyword2.Find[Instrument]})
+		{
+			;; Bard - add instruments 
+			;UIElement[RestInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+			;UIElement[TravelInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+		}
+
+	}
+
+	;; class Specific - Bard
+	for (i:Set[1] ; ${i} <= ${Songs} ; i:Inc)
+	{
+		UIElement[CombatSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
+		UIElement[RestSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
+		UIElement[TravelSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
+	}
+
+	;; Now select the items based upon what we had saved
+	Tools_BuildItems
+	Tools_BuildAbilities
+	Tools_BuildForms
+	Tools_BuildBuffs
+	Tools_BuildTriggerBuffs
+	Tools_BuildBuffsOnly
+
+	;;Class Specific - Bard Stuff
+	for (i:Set[1] ; ${i} <= ${UIElement[CombatSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[CombatSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${CombatSong}]}
+			UIElement[CombatSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[PrimaryWeapon@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[PrimaryWeapon@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${PrimaryWeapon}]}
+			UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[SecondaryWeapon@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[SecondaryWeapon@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${SecondaryWeapon}]}
+			UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[RestSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[RestSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${RestSong}]}
+			UIElement[RestSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[RestInstrument@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[RestInstrument@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${RestInstrument}]}
+			UIElement[RestInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[TravelSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[TravelSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${TravelSong}]}
+			UIElement[TravelSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[TravelInstrument@Bard@Class@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[TravelInstrument@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${TravelInstrument}]}
+			UIElement[TravelInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[SmallHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[SmallHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${SmallHeal}]}
+			UIElement[SmallHeal@Heals@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[BigHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[BigHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${BigHeal}]}
+			UIElement[BigHeal@Heals@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[GroupHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[GroupHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${GroupHeal}]}
+			UIElement[GroupHeal@Heals@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[HoT@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[HoT@Heals@DPS@Tools].Item[${i}].Text.Equal[${HoT}]}
+			UIElement[HoT@Heals@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[InstantHeal@Heals@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[InstantHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${InstantHeal}]}
+			UIElement[InstantHeal@Heals@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[Rescue1@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[Rescue1@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue1}]}
+			UIElement[Rescue1@Tanks@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[Rescue2@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[Rescue2@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue2}]}
+			UIElement[Rescue2@Tanks@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[Rescue3@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[Rescue3@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue3}]}
+			UIElement[Rescue3@Tanks@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[ReduceHate@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[ReduceHate@Tanks@DPS@Tools].Item[${i}].Text.Equal[${ReduceHate}]}
+			UIElement[ReduceHate@Tanks@DPS@Tools]:SelectItem[${i}]
+	}
+	for (i:Set[1] ; ${i} <= ${UIElement[IncreaseHate@Tanks@DPS@Tools].Items} ; i:Inc)
+	{
+		if ${UIElement[IncreaseHate@Tanks@DPS@Tools].Item[${i}].Text.Equal[${IncreaseHate}]}
+			UIElement[IncreaseHate@Tanks@DPS@Tools]:SelectItem[${i}]
+	}
+	
+	;-------------------------------------------
+	; Enable Events - this event is automatically removed at shutdown
+	;-------------------------------------------
+	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]	
+	Event[VG_OnPawnSpawned]:AttachAtom[PawnSpawned]
+}
+
+;===================================================
+;===            LOAD OUR SETTINGS               ====
+;===================================================
+atom(script) loadSettings()
+{
+	;; Nope, we do not want to go any further
+	if !${Me(exists)}
+		return
+
+	;; Clear our settings
+	LavishSettings[DPS]:Clear
+	
+	;; Create our Sets
+	LavishSettings:AddSet[DPS]
+	LavishSettings[DPS]:AddSet[General]
+	LavishSettings[DPS]:AddSet[Abilities]
+	LavishSettings[DPS]:AddSet[Items]
+	LavishSettings[DPS]:AddSet[Buffs]
+	LavishSettings[DPS]:AddSet[TriggerBuffs]
+	LavishSettings[DPS]:AddSet[BuffOnly]
+	LavishSettings[DPS]:AddSet[Counters1]
+	LavishSettings[DPS]:AddSet[Counters2]
+
+	;; Load our saved settings
+	LavishSettings[DPS]:Import[${savePath}/${Me.FName}_${Me.ClassAbrv}.xml]
+	
+	;; Set our pointers
+	General:Set[${LavishSettings[DPS].FindSet[General].GUID}]
+	Abilities:Set[${LavishSettings[DPS].FindSet[Abilities].GUID}]
+	Items:Set[${LavishSettings[DPS].FindSet[Items].GUID}]
+	Buffs:Set[${LavishSettings[DPS].FindSet[Buffs].GUID}]
+	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs].GUID}]
+	BuffOnly:Set[${LavishSettings[DPS].FindSet[BuffOnly].GUID}]
+	Counters1:Set[${LavishSettings[DPS].FindSet[Counters1].GUID}]
+	Counters2:Set[${LavishSettings[DPS].FindSet[Counters2].GUID}]
+
+	;; Update our variables
 	doUseAbilities:Set[${General.FindSetting[doUseAbilities,FALSE]}]
 	doUseItems:Set[${General.FindSetting[doUseItems,FALSE]}]
 	doCounter1:Set[${General.FindSetting[doCounter1,FALSE]}]
@@ -587,261 +838,19 @@ function Initialize()
 	doSummonAbomination:Set[${General.FindSetting[doSummonAbomination,FALSE]}]
 	AbominationStartAttack:Set[${General.FindSetting[AbominationStartAttack,99]}]
 	doNecropsy:Set[${General.FindSetting[doNecropsy,FALSE]}]
-	
-	;-------------------------------------------
-	; Reload the UI and draw our Tool window
-	;-------------------------------------------
-	waitframe
-	ui -reload "${LavishScript.CurrentDirectory}/Interface/VGSkin.xml"
-	waitframe
-	ui -reload -skin VGSkin "${Script.CurrentDirectory}/Tools.xml"
-	waitframe
-	
-	;-------------------------------------------
-	; Update UI from the XML Data
-	;-------------------------------------------
-	variable int i
-	for (i:Set[1] ; ${i}<=${Me.Ability} ; i:Inc)
-	{
-		if ${Me.Ability[${i}].LevelGranted}>${Me.Level}
-			continue
-		UIElement[AbilitiesCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-		if !${Me.Ability[${i}].IsOffensive} && !${Me.Ability[${i}].Type.Equal[Combat Art]} && !${Me.Ability[${i}].IsChain} && !${Me.Ability[${i}].IsCounter} && !${Me.Ability[${i}].IsRescue} && !${Me.Ability[${i}].Type.Equal[Song]}
-		{
-			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Find[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
-			{
-				UIElement[BuffsCombo@Abilities@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-				UIElement[TriggerBuffsCombo@BuffBot@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-			}
-		}
-		if !${Me.Ability[${i}].IsOffensive} && ${Me.Ability[${i}].Type.Equal[Spell]}
-		{
-			if ${Me.Ability[${i}].TargetType.Equal[Self]} || ${Me.Ability[${i}].TargetType.Equal[Defensive]} || ${Me.Ability[${i}].TargetType.Find[Group]} || ${Me.Ability[${i}].TargetType.Equal[Ally]}
-			{
-				if ${Me.Ability[${i}].Description.Find[Heal]} || ${Me.Ability[${i}].Description.Find[Restore]}
-				{
-					UIElement[SmallHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-					UIElement[BigHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-					UIElement[GroupHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-					UIElement[InstantHeal@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-					UIElement[HoT@Heals@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-				}
-			}
-		}
-		if ${Me.Ability[${i}].IsRescue} || ${Me.Ability[${i}].Description.Find[to target you]}
-		{
-			UIElement[Rescue1@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[Rescue2@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-			UIElement[Rescue3@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-		}
-		if ${Me.Ability[${i}].Description.Find[less hate]} || ${Me.Ability[${i}].Description.Find[decrease hate]} || ${Me.Ability[${i}].Description.Find[reduce hate]}
-		{
-			UIElement[ReduceHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-			Hate_Abilities:Set["${Me.Ability[${i}].Name}", "${Me.Ability[${i}].Name}"]
-		}
-		elseif ${Me.Ability[${i}].Description.Find[hate]} || ${Me.Ability[${i}].Description.Find[hatred]}
-		{
-			UIElement[IncreaseHate@Tanks@DPS@Tools]:AddItem[${Me.Ability[${i}].Name}]
-			Hate_Abilities:Set["${Me.Ability[${i}].Name}", "${Me.Ability[${i}].Name}"]
-		}
-		
-	}
-	for (i:Set[1] ; ${i} <= ${Me.Form} ; i:Inc)
-	{
-		UIElement[CombatForm@Abilities@DPS@Tools]:AddItem[${Me.Form[${i}].Name}]
-		UIElement[NonCombatForm@Abilities@DPS@Tools]:AddItem[${Me.Form[${i}].Name}]
-	}
-	for (i:Set[1] ; ${i}<=${Me.Inventory} ; i:Inc)
-	{
-		;; dump everything here
-		UIElement[ItemsCombo@Abilities@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
+}	
 
-
-		;; delete these once the broken features are fixed "Me.Inventory[].xxxx"
-		;UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-		;UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-		UIElement[RestInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-		UIElement[TravelInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-		
-		
-		;;THE FOLLOWING FEATURES ARE BROKEN
-
-		if ${Me.Inventory[${i}].Type.Equal[Weapon]} || ${Me.Inventory[${i}].Type.Equal[Shield]}
-		{
-			;; Only Weapons here
-			if ${Me.Inventory[${i}].Type.Equal[Weapon]} && !${Me.Inventory[${i}].DefaultEquipSlot.Equal[Secondary Hand]}
-			{
-				UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-			}
-			;; both Weapons and Sheilds here
-			UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-		}
-		
-		if (${Me.Inventory[${i}].Keyword2.Find[Instrument]})
-		{
-			;; Bard - add instruments 
-			;UIElement[RestInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-			;UIElement[TravelInstrument@Bard@Class@DPS@Tools]:AddItem[${Me.Inventory[${i}].Name}]
-		}
-
-	}
-
-	;; class Specific - Bard
-	for (i:Set[1] ; ${i} <= ${Songs} ; i:Inc)
-	{
-		UIElement[CombatSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
-		UIElement[RestSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
-		UIElement[TravelSong@Bard@Class@DPS@Tools]:AddItem[${Songs[${i}].Name}]
-	}
-
-	;; Now select the items based upon what we had saved
-	Tools_BuildItems
-	Tools_BuildAbilities
-	Tools_BuildForms
-	Tools_BuildBuffs
-	Tools_BuildTriggerBuffs
-	Tools_BuildBuffsOnly
-
-	;;Class Specific - Bard Stuff
-	for (i:Set[1] ; ${i} <= ${UIElement[CombatSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[CombatSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${CombatSong}]}
-		{
-			UIElement[CombatSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[PrimaryWeapon@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[PrimaryWeapon@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${PrimaryWeapon}]}
-		{
-			UIElement[PrimaryWeapon@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[SecondaryWeapon@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[SecondaryWeapon@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${SecondaryWeapon}]}
-		{
-			UIElement[SecondaryWeapon@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[RestSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[RestSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${RestSong}]}
-		{
-			UIElement[RestSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[RestInstrument@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[RestInstrument@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${RestInstrument}]}
-		{
-			UIElement[RestInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[TravelSong@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[TravelSong@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${TravelSong}]}
-		{
-			UIElement[TravelSong@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[TravelInstrument@Bard@Class@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[TravelInstrument@Bard@Class@DPS@Tools].Item[${i}].Text.Equal[${TravelInstrument}]}
-		{
-			UIElement[TravelInstrument@Bard@Class@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[SmallHeal@Heals@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[SmallHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${SmallHeal}]}
-		{	
-			UIElement[SmallHeal@Heals@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[BigHeal@Heals@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[BigHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${BigHeal}]}
-		{
-			UIElement[BigHeal@Heals@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[GroupHeal@Heals@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[GroupHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${GroupHeal}]}
-		{
-			UIElement[GroupHeal@Heals@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[HoT@Heals@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[HoT@Heals@DPS@Tools].Item[${i}].Text.Equal[${HoT}]}
-		{
-			UIElement[HoT@Heals@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[InstantHeal@Heals@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[InstantHeal@Heals@DPS@Tools].Item[${i}].Text.Equal[${InstantHeal}]}
-		{
-			UIElement[InstantHeal@Heals@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[Rescue1@Tanks@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[Rescue1@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue1}]}
-		{
-			UIElement[Rescue1@Tanks@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[Rescue2@Tanks@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[Rescue2@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue2}]}
-		{
-			UIElement[Rescue2@Tanks@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[Rescue3@Tanks@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[Rescue3@Tanks@DPS@Tools].Item[${i}].Text.Equal[${Rescue3}]}
-		{
-			UIElement[Rescue3@Tanks@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[ReduceHate@Tanks@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[ReduceHate@Tanks@DPS@Tools].Item[${i}].Text.Equal[${ReduceHate}]}
-		{
-			UIElement[ReduceHate@Tanks@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	for (i:Set[1] ; ${i} <= ${UIElement[IncreaseHate@Tanks@DPS@Tools].Items} ; i:Inc)
-	{
-		if ${UIElement[IncreaseHate@Tanks@DPS@Tools].Item[${i}].Text.Equal[${IncreaseHate}]}
-		{
-			UIElement[IncreaseHate@Tanks@DPS@Tools]:SelectItem[${i}]
-		}
-	}
-	
-	;-------------------------------------------
-	; Enable Events - this event is automatically removed at shutdown
-	;-------------------------------------------
-	Event[VG_OnIncomingText]:AttachAtom[ChatEvent]	
-	Event[VG_OnPawnSpawned]:AttachAtom[PawnSpawned]
-}
 
 ;===================================================
-;===     ATEXIT - called when the script ends   ====
+;===            SAVE OUR SETTINGS               ====
 ;===================================================
-function atexit()
+atom(script) SaveSettings()
 {
-	;; Unload Tools_BuffArea routine
-	if ${Script[Tools_BuffArea](exists)}
-	{
-		endscript Tools_BuffArea
-	}
+	;; Nope, we do not want to go any further
+	if !${Me(exists)}
+		return
 
-	;; update our toggle settings
+	;; update our settings
 	General:AddSetting[doUseAbilities,${doUseAbilities}]
 	General:AddSetting[doUseItems,${doUseItems}]
 	General:AddSetting[doCounter1,${doCounter1}]
@@ -878,9 +887,7 @@ function atexit()
 	General:AddSetting[doMental,${doMental}]
 	General:AddSetting[TriggerBuffing,${TriggerBuffing}]
 	if ${TriggerBuffing.Length}==0
-	{
 		General:AddSetting[TriggerBuffing,""]
-	}
 
 	;; update class specific - Bard
 	General:AddSetting[CombatSong,${CombatSong}]
@@ -928,7 +935,21 @@ function atexit()
 	General:AddSetting[doNecropsy,${doNecropsy}]
 	
 	;; save our settings to file
-	LavishSettings[DPS]:Export[${Script.CurrentDirectory}/Tools_Save.xml]
+	LavishSettings[DPS]:Export[${savePath}/${Me.FName}_${Me.ClassAbrv}.xml]
+}	
+
+
+;===================================================
+;===     ATEXIT - called when the script ends   ====
+;===================================================
+function atexit()
+{
+	;; Unload Tools_BuffArea routine
+	if ${Script[Tools_BuffArea](exists)}
+		endscript Tools_BuffArea
+
+	;; Save our Settings
+	SaveSettings
 
 	;; Unload our UI
 	ui -unload "${Script.CurrentDirectory}/Tools.xml"
@@ -967,7 +988,7 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 ;===================================================
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
-	;echo [${ChannelNumber}] ${aText}
+	Redirect -append "${LogAllChat}" echo "[${Time}][${ChannelNumber}] ${aText}"
 
 	;; Log all tells to a file and play a sound
 	if ${doMonotorTells} && ${ChannelNumber}==15
@@ -983,6 +1004,14 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 		PlaySound ALARM
 	}
 
+	if ${aText.Equal[The corpse has nothing on it for you.]}
+	{
+		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+		LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
+		VGExecute /cleartargets
+		return
+	}
+	
 	if ${ChannelNumber}==0
 	{
 		if ${aText.Find[Harvesting has begun]}
@@ -996,9 +1025,7 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 			EchoIt "[${ChannelNumber}]${aText}"
 			doWeaponCheck:Set[TRUE]
 			if ${GV[bool,bIsAutoAttacking]} || ${Me.Ability[Auto Attack].Toggled}
-			{
 				Me.Ability[Auto Attack]:Use
-			}
 			;UIElement[doAutoAttack@Abilities@DPS@Tools]:UnsetChecked
 			vgecho "Melee Off - can't attack with that weapon"
 		}
@@ -1104,9 +1131,7 @@ function GlobalCooldown()
 	if ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 	{
 		while ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
-		{
 			call AutoAttack
-		}
 		wait 2
 	}
 	call UseItems
@@ -1118,7 +1143,6 @@ function GlobalCooldown()
 function IsCasting()
 {
 	wait 1
-	;wait 20 !${Tools.AreWeReady}
 	if ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
 	{
 		while ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
@@ -1136,7 +1160,6 @@ function IsCasting()
 		wait 3
 		waitframe
 	}
-	;call UseItems
 }
 
 function ReadyCheck()
@@ -1145,18 +1168,17 @@ function ReadyCheck()
 	{
 		while !${Tools.AreWeReady}
 			waitframe
-		wait 4
+		wait 3
 	}
 }
 
 ;===================================================
-;===       ATOM - SET HIGHEST ABILITIES         ====
+;===  FUNCTION - FIND HIGHEST ABILITIES         ====
 ;===================================================
-atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
+function:string FindHighestAbility(string AbilityName)
 {
-	declare L int local 8
-	declare ABILITY string local ${AbilityName}
-	declare AbilityLevels[8] string local
+	declare L int local 15
+	declare AbilityLevels[15] string local
 
 	AbilityLevels[1]:Set[I]
 	AbilityLevels[2]:Set[II]
@@ -1167,16 +1189,18 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 	AbilityLevels[7]:Set[VII]
 	AbilityLevels[8]:Set[VIII]
 	AbilityLevels[9]:Set[IX]
+	AbilityLevels[10]:Set[X]
+	AbilityLevels[11]:Set[XI]
+	AbilityLevels[12]:Set[XII]
+	AbilityLevels[13]:Set[XIII]
+	AbilityLevels[14]:Set[XIV]
+	AbilityLevels[15]:Set[XV]
 
 	;-------------------------------------------
 	; Return if Ability already exists - based upon current level
 	;-------------------------------------------
-	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${ABILITY}].LevelGranted}<=${Me.Level}
-	{
-		declare	${AbilityVariable}	string	script "${ABILITY}"
-		;echo "${AbilityVariable}=${ABILITY}"
-		return
-	}
+	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${AbilityName}].LevelGranted}<=${Me.Level}
+		return "${AbilityName}"
 
 	;-------------------------------------------
 	; Find highest Ability level - based upon current level
@@ -1184,30 +1208,24 @@ atom(script) SetHighestAbility(string AbilityVariable, string AbilityName)
 	do
 	{
 		if ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"](exists)} && ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"].LevelGranted}<=${Me.Level}
-		{
-			ABILITY:Set["${AbilityName} ${AbilityLevels[${L}]}"]
-			;echo "${AbilityVariable}=${ABILITY}"
-			break
-		}
+			return "${AbilityName} ${AbilityLevels[${L}]}"
 	}
 	while (${L:Dec}>0)
+}
 
-	;-------------------------------------------
-	; If Ability exist then return
-	;-------------------------------------------
-	if ${Me.Ability["${ABILITY}"](exists)} && ${Me.Ability["${ABILITY}"].LevelGranted}<=${Me.Level}
+;===================================================
+;=== ATOM - RETURNS THE BASE NAME OF AN ABILITY ====
+;===================================================
+function:string FindBaseAbility(string AbilityName)
+{
+	variable int x
+
+	for (x:Set[3]; ${x}>0 ; x:Dec)
 	{
-		declare	${AbilityVariable} string script "${ABILITY}"
-		;echo "${AbilityVariable}=${ABILITY}"
-		return
+		if ${AbilityName.GetAt[${Math.Calc[${AbilityName.Length}-${x}]}]}==32
+			return "${AbilityName.Left[${Math.Calc[${AbilityName.Length}-${x}]}]}"
 	}
-
-	;-------------------------------------------
-	; Otherwise, new Ability is named "None"
-	;-------------------------------------------
-	declare	${AbilityVariable} string script "None"
-	;echo "${AbilityVariable}=${ABILITY}"
-	return
+	return "${AbilityName}"
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1458,350 +1476,321 @@ function PushStance()
 function:bool OkayToAttack(string ABILITY="None")
 {
 	call AlwaysCheck
-
-	if !${Me.Target(exists)}
+	
+	if !${Me.Target(exists)} || ${Me.Target.IsDead}
+		return FALSE
+	if ${Me.TargetHealth}>${StartAttack}
 		return FALSE
 	if ${Me.Target.Name.Find[Tombstone]}
 		return FALSE
-
-	if (${Tank.Find[${Me.FName}]} || !${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
-	;if (!${Me.IsGrouped} || ${Me.InCombat} || ${Pawn[Name,${Tank}].CombatState}>0) && ${Me.Target(exists)} && !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
-	;if !${Me.Target.IsDead} && ${Me.Target.Type.Find[NPC]} && ${Me.TargetHealth}<=${StartAttack}
+	if ${Me.IsGrouped}
 	{
-		;if !${doHate} && (${Me.Ability[${ABILITY}].Description.Find[hate]} || ${Me.Ability[${ABILITY}].Description.Find[hatred]})
-		if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
-		{
+		if !${Tank.Find[${Me.FName}]} && ${Pawn[Name,${Tank}].CombatState}==0
 			return FALSE
-		}
-		if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
-		{
+	}
+	if !${Me.IsGrouped}
+	{
+		if !${Me.Target.Type.Find[NPC]}
 			return FALSE
-		}
-		if ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
-		{
+		if ${Me.Target.Type.Find[QuestNPC]}
 			return FALSE
-		}
-		if ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
-		{
-			return FALSE
-		}
-		if ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
-		{
-			return FALSE
-		}
-		if ${Me.Effect[Marshmallow Madness](exists)}
-		{
-			return FALSE
-		}
-		
-		;; we definitely do not want to be hitting any of these mobs!
-		if ${Me.Target.Name.Equal[Corrupted Essence]}
-		{
-			return FALSE
-		}
-		if ${Me.Target.Name.Equal[Corrupted Residue]}
-		{
-			return FALSE
-		}
-
-		;-------------------------------------------
-		; Check PHYSICAL resistances
-		;-------------------------------------------
-		if ${Me.Ability[${ABILITY}].School.Find[Physical]}
-		{
-			if !${doPhysical}
-			{
-				return FALSE
-			}
-			if ${Me.TargetBuff[Earth Form](exists)}
-			{
-				return FALSE
-			}
-			switch "${Me.Target.Name}"
-			{
-				case Summoned Earth Elemental
-					return FALSE
-
-				case Wing Grafted Slasher
-					return FALSE
-
-				case Enraged Death Hound
-					return FALSE
-
-				case Lesser Flarehound
-					return FALSE
-
-				case Lirikin
-					return FALSE
-
-				case Nathrix
-					return FALSE
-
-				case Shonaka
-					return FALSE
-
-				case Wisil
-					return FALSE
-
-				case Filtha
-					return FALSE
-
-				case SILIUSAURUS
-					return FALSE
-
-				case ARCHON TRAVIX
-					return FALSE
-
-				case Earthen Marauder
-					return FALSE
-
-				case Earthen Resonator
-					return FALSE
-
-				case Cartheon Devourer
-					return FALSE
-
-				case Rock Elemental
-					return FALSE
-
-				case Cartheon Soulslasher
-					return FALSE
-
-				case Cartheon Abomination
-					return FALSE
-
-				case Glowing Infineum
-					return FALSE
-
-				case Living Infineum
-					return FALSE
-
-				case Spawn of Infineum
-					return FALSE
-
-				case Myconid Fungal Ravager
-					return FALSE
-
-				case Xakrin Sage
-					return FALSE
-
-				case Hound of Rahz
-					return FALSE
-
-				case Ancient Juggernaut
-					return FALSE
-
-				case Xakrin Razarclaw
-					return FALSE
-
-				case Assaulting Death Hound
-					return FALSE
-
-				case Blood-crazed Ettercap
-					return FALSE
-
-				case Flarehound
-					return FALSE
-
-				case Lixirikin
-					return FALSE
-
-				case Flarehound Watcher
-					return FALSE
-
-				case Nefarious Titan
-					return FALSE
-
-				case Nefarious Elemental
-					return FALSE
-
-				case Enraged Convocation
-					return FALSE
-
-				Default
-					break
-			}
-		}
-
-		;-------------------------------------------
-		; Check ARCANE resistances
-		;-------------------------------------------
-		if ${Me.Ability[${ABILITY}].School.Find[Arcane]}
-		{
-			if !${doArcane}
-			{
-				return FALSE
-			}
-			if ${Me.TargetBuff[Electric Form](exists)}
-			{
-				return FALSE
-			}
-			switch "${Me.Target.Name}"
-			{
-				case Descrier Sentry
-					return FALSE
-
-				case Summoned Air Elemental
-					return FALSE
-
-				case Descrier Psionicist
-					return FALSE
-
-				case Descrier Dreadwatcher
-					return FALSE
-
-				case Sub-Warden Mer
-					return FALSE
-
-				case OVERWARDEN
-					return FALSE
-
-				case Omac
-					return FALSE
-
-				case Salrin
-					return FALSE
-
-				case Bandori
-					return FALSE
-
-				case Guardian B27
-					return FALSE
-
-				case Energized Marauder
-					return FALSE
-
-				case Energized Resonator
-					return FALSE
-
-				case Electric Elemental
-					return FALSE
-
-				case Lesser Electric Elemental
-					return FALSE
-
-				case Greater Electric Elemental
-					return FALSE
-
-				case Energized Elemental
-					return FALSE
-
-				case Construct of Lightning
-					return FALSE
-
-				case Cartheon Wingwraith
-					return FALSE
-
-				case Source of Arcane Energy
-					return FALSE
-
-				case Ancient Infector
-					return FALSE
-
-				case Cartheon Archivist
-					return FALSE
-
-				case Cartheon Arcanist
-					return FALSE
-
-				case Cartheon Scholar
-					return FALSE
-
-				case Eyelord Seeker
-					return FALSE
-
-				case Mechanized Stormsuit
-					return FALSE
-
-				Default
-					break
-			}
-		}
-
-		;-------------------------------------------
-		; Check FIRE resistances
-		;-------------------------------------------
-		if ${Me.Ability[${ABILITY}].School.Find[Fire]}
-		{
-			if !${doFire}
-			{
-				return FALSE
-			}
-			if (${Me.TargetBuff[Molten Form](exists)} || ${Me.TargetBuff[Fire Form](exists)})
-			{
-				return FALSE
-			}
-			switch "${Me.Target.Name}"
-			{
-				case Mechanized Pyromaniac
-					return FALSE
-
-				Default
-					break
-			}
-		}
-
-		;-------------------------------------------
-		; Check ICE/COLD resistances
-		;-------------------------------------------
-		if (${Me.Ability[${ABILITY}].School.Find[Ice]} || ${Me.Ability[${ABILITY}].School.Find[Cold]})
-		{
-			if !${doIce}
-			{
-				return FALSE
-			}
-			if (${Me.TargetBuff[Ice Form](exists)} || ${Me.TargetBuff[Cold Form](exists)} || ${Me.TargetBuff[Frozen Form](exists)})
-			{
-				return FALSE
-			}
-			switch "${Me.Target.Name}"
-			{
-				Default
-					break
-			}
-		}
-
-		;-------------------------------------------
-		; Check MENTAL resistances
-		;-------------------------------------------
-		if ${Me.Ability[${ABILITY}].School.Find[Mental]}
-		{
-			if !${doMental}
-			{
-				return FALSE
-			}
-			switch "${Me.Target.Name}"
-			{
-				Default
-					break
-			}
-		}
-
-		;-------------------------------------------
-		; Check SPIRITUAL resistances
-		;-------------------------------------------
-		if ${Me.Ability[${ABILITY}].School.Find[Spiritual]}
-		{
-			if !${doSpiritual}
-			{
-				return FALSE
-			}
-			switch "${Me.Target.Name}"
-			{
-				Default
-					break
-			}
-		}
-		
-		;; this is sloppy but works
-		if ${doFace}
-		{
-			Me.Target:Face
-		}
-		return TRUE
 	}
 	
-	return FALSE
+
+	if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
+		return FALSE
+	if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
+		return FALSE
+	if ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
+		return FALSE
+	if ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
+		return FALSE
+	if ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
+		return FALSE
+	if ${Me.Effect[Marshmallow Madness](exists)}
+		return FALSE
+	
+	;; we definitely do not want to be hitting any of these mobs!
+	if ${Me.Target.Name.Equal[Corrupted Essence]}
+		return FALSE
+	if ${Me.Target.Name.Equal[Corrupted Residue]}
+		return FALSE
+
+	;-------------------------------------------
+	; Check PHYSICAL resistances
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].School.Find[Physical]}
+	{
+		if !${doPhysical}
+			return FALSE
+		if ${Me.TargetBuff[Earth Form](exists)}
+			return FALSE
+		switch "${Me.Target.Name}"
+		{
+			case Summoned Earth Elemental
+				return FALSE
+
+			case Wing Grafted Slasher
+				return FALSE
+
+			case Enraged Death Hound
+				return FALSE
+
+			case Lesser Flarehound
+				return FALSE
+
+			case Lirikin
+				return FALSE
+
+			case Nathrix
+				return FALSE
+
+			case Shonaka
+				return FALSE
+
+			case Wisil
+				return FALSE
+
+			case Filtha
+				return FALSE
+
+			case SILIUSAURUS
+				return FALSE
+
+			case ARCHON TRAVIX
+				return FALSE
+
+			case Earthen Marauder
+				return FALSE
+
+			case Earthen Resonator
+				return FALSE
+
+			case Cartheon Devourer
+				return FALSE
+
+			case Rock Elemental
+				return FALSE
+
+			case Cartheon Soulslasher
+				return FALSE
+
+			case Cartheon Abomination
+				return FALSE
+
+			case Glowing Infineum
+				return FALSE
+
+			case Living Infineum
+				return FALSE
+
+			case Spawn of Infineum
+				return FALSE
+
+			case Myconid Fungal Ravager
+				return FALSE
+
+			case Xakrin Sage
+				return FALSE
+
+			case Hound of Rahz
+				return FALSE
+
+			case Ancient Juggernaut
+				return FALSE
+
+			case Xakrin Razarclaw
+				return FALSE
+
+			case Assaulting Death Hound
+				return FALSE
+
+			case Blood-crazed Ettercap
+				return FALSE
+
+			case Flarehound
+				return FALSE
+
+			case Lixirikin
+				return FALSE
+
+			case Flarehound Watcher
+				return FALSE
+
+			case Nefarious Titan
+				return FALSE
+
+			case Nefarious Elemental
+				return FALSE
+
+			case Enraged Convocation
+				return FALSE
+
+			Default
+				break
+		}
+	}
+
+	;-------------------------------------------
+	; Check ARCANE resistances
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].School.Find[Arcane]}
+	{
+		if !${doArcane}
+			return FALSE
+		if ${Me.TargetBuff[Electric Form](exists)}
+			return FALSE
+		switch "${Me.Target.Name}"
+		{
+			case Descrier Sentry
+				return FALSE
+
+			case Summoned Air Elemental
+				return FALSE
+
+			case Descrier Psionicist
+				return FALSE
+
+			case Descrier Dreadwatcher
+				return FALSE
+
+			case Sub-Warden Mer
+				return FALSE
+
+			case OVERWARDEN
+				return FALSE
+
+			case Omac
+				return FALSE
+
+			case Salrin
+				return FALSE
+
+			case Bandori
+				return FALSE
+
+			case Guardian B27
+				return FALSE
+
+			case Energized Marauder
+				return FALSE
+
+			case Energized Resonator
+				return FALSE
+
+			case Electric Elemental
+				return FALSE
+
+			case Lesser Electric Elemental
+				return FALSE
+
+			case Greater Electric Elemental
+				return FALSE
+
+			case Energized Elemental
+				return FALSE
+
+			case Construct of Lightning
+				return FALSE
+
+			case Cartheon Wingwraith
+				return FALSE
+
+			case Source of Arcane Energy
+				return FALSE
+
+			case Ancient Infector
+				return FALSE
+
+			case Cartheon Archivist
+				return FALSE
+
+			case Cartheon Arcanist
+				return FALSE
+
+			case Cartheon Scholar
+				return FALSE
+
+			case Eyelord Seeker
+				return FALSE
+
+			case Mechanized Stormsuit
+				return FALSE
+
+			Default
+				break
+		}
+	}
+
+	;-------------------------------------------
+	; Check FIRE resistances
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].School.Find[Fire]}
+	{
+		if !${doFire}
+			return FALSE
+		if (${Me.TargetBuff[Molten Form](exists)} || ${Me.TargetBuff[Fire Form](exists)})
+			return FALSE
+		switch "${Me.Target.Name}"
+		{
+			case Mechanized Pyromaniac
+				return FALSE
+
+			Default
+				break
+		}
+	}
+
+	;-------------------------------------------
+	; Check ICE/COLD resistances
+	;-------------------------------------------
+	if (${Me.Ability[${ABILITY}].School.Find[Ice]} || ${Me.Ability[${ABILITY}].School.Find[Cold]})
+	{
+		if !${doIce}
+			return FALSE
+		if (${Me.TargetBuff[Ice Form](exists)} || ${Me.TargetBuff[Cold Form](exists)} || ${Me.TargetBuff[Frozen Form](exists)})
+			return FALSE
+		switch "${Me.Target.Name}"
+		{
+			Default
+				break
+		}
+	}
+
+	;-------------------------------------------
+	; Check MENTAL resistances
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].School.Find[Mental]}
+	{
+		if !${doMental}
+			return FALSE
+		switch "${Me.Target.Name}"
+		{
+			Default
+				break
+		}
+	}
+
+	;-------------------------------------------
+	; Check SPIRITUAL resistances
+	;-------------------------------------------
+	if ${Me.Ability[${ABILITY}].School.Find[Spiritual]}
+	{
+		if !${doSpiritual}
+			return FALSE
+		switch "${Me.Target.Name}"
+		{
+			Default
+				break
+		}
+	}
+		
+	;; this is sloppy but works
+	if ${doFace}
+		Me.Target:Face
+		
+	;; if it get's here then it must be okay to fight
+	return TRUE
 }
 
 ;===================================================
@@ -1812,6 +1801,7 @@ function:bool AutoAttack()
 	call OkayToAttack
 	if ${Return} && ${doAutoAttack} && ${Me.Target.Distance}<5
 	{
+		wait 5 ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
 		;; Turn on auto-attack
 		if !${GV[bool,bIsAutoAttacking]} || !${Me.Ability[Auto Attack].Toggled}
 		{
@@ -1822,22 +1812,6 @@ function:bool AutoAttack()
 				wait ${Delay} ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
 				return
 			}
-			
-/*		
-			if ${doWeaponCheck}
-			{
-				waitframe
-				if "${Me.Inventory[CurrentEquipSlot,"Primary Hand"].Type.Equal[Weapon]}" || "${Me.Inventory[CurrentEquipSlot,"Two Hand"].Type.Equal[Weapon]}"
-				{
-					waitframe
-					vgecho "Turning AutoAttack ON"
-					Me.Ability[Auto Attack]:Use
-					wait ${Delay} ${GV[bool,bIsAutoAttacking]} && ${Me.Ability[Auto Attack].Toggled}
-					return
-				}
-				doWeaponCheck:Set[FALSE]
-			}
-*/
 		}
 	}
 	else
@@ -1857,9 +1831,7 @@ function MeleeAttackOff()
 		if !${Me.InCombat} && !${Me.Target(exists)} && ${Me.Encounter}==0
 		{
 			if !${doWeaponCheck}
-			{
 				wait ${Delay} !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
-			}
 			doWeaponCheck:Set[TRUE]
 			return
 		}
@@ -1868,26 +1840,18 @@ function MeleeAttackOff()
 		if !${Me.Target.Type.Equal[Resource]}
 		{
 			if ${Me.TargetBuff[Furious](exists)} || ${Me.TargetBuff[Furious Rage](exists)}
-			{
 				vgecho "FURIOUS"
-			}
 			if ${Me.Effect[Devout Foeman I](exists)} || ${Me.Effect[Devout Foeman II](exists)} || ${Me.Effect[Devout Foeman III](exists)}
-			{
 				vgecho "Devout Foeman"
-			}
 			if ${Me.TargetBuff[Rust Shield](exists)} || ${Me.Effect[Mark of Verbs](exists)} || ${Me.TargetBuff[Charge Imminent](exists)}
-			{
 				vgecho "Rust Shield/Mark of Verbs/Charge Imminent"
-			}
 			if ${Me.TargetBuff[Major Disease: Fire Advocate](exists)}
-			{
 				vgecho "Fire Advocate"
-			}
 
 			vgecho "Turning AutoAttack OFF"
 
 			Me.Ability[Auto Attack]:Use
-			wait ${Delay} !${GV[bool,bIsAutoAttacking]} && !${Me.Ability[Auto Attack].Toggled}
+			wait 5
 		}
 	}
 	
@@ -1902,9 +1866,7 @@ function RangedAttack()
 	if ${Return} && ${doRangedAttack}
 	{
 		if ${Me.Ability[Ranged Attack](exists)}
-		{
 			call UseAbility "Ranged Attack"
-		}
 	}
 }
 
@@ -1914,28 +1876,33 @@ function RangedAttack()
 ;===================================================
 function CheckBuffs()
 {
-	variable iterator Iterator
 	variable string temp
+	variable string ABILITY = None
+	variable iterator Iterator
 	Buffs:GetSettingIterator[Iterator]
+	
 	while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
 	{
+		call FindHighestAbility "${Iterator.Key}"
+		ABILITY:Set[${Return}]
+		
 		;; we do not want to recast the berry spell if they already exist in your inventory
-		if ${anIter.Key.Find[berries]}
+		if ${ABILITY.Find[berries]}
 		{
-			temp:Set[${anIter.Key.Token[1," "]}]
+			temp:Set[${ABILITY.Token[1," "]}]
 			if ${Me.Inventory[${temp}](exists)} || ${Me.Inventory[Tiny ${temp}](exists)} || ${Me.Inventory[Small ${temp}](exists)} || ${Me.Inventory[Large ${temp}](exists)} || ${Me.Inventory[Great ${temp}](exists)}
 			{
-				anIter:Next
+				Iterator:Next
 				continue
 			}
 		}
 		
 		;; Use the ability if it is ready and does not exist on self
-		if ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.Effect[${Iterator.Key}](exists)}
+		if ${Me.Ability[${ABILITY}].IsReady} && !${Me.Effect[${ABILITY}](exists)}
 		{
 			Pawn[Me]:Target
 			wait 3
-			Me.Ability["${Iterator.Key}"]:Use
+			Me.Ability["${ABILITY}"]:Use
 			call IsCasting
 		}
 		Iterator:Next
@@ -1988,28 +1955,37 @@ function UseAbilities()
 {
 	if ${doUseAbilities} && !${isPaused} && ${isRunning}
 	{
+		variable string ABILITY = None
 		variable iterator Iterator
 		Abilities:GetSettingIterator[Iterator]
 		while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning} && !${Me.Target.IsDead}
 		{
+			;; Convert to highest ability
+			ABILITY:Set[${Iterator.Key}]
+			call FindHighestAbility "${ABILITY}"
+			ABILITY:Set[${Return}]
+
 			;; use the ability if it is ready and does not exist on target
-			call OkayToAttack "${Iterator.Key}"
-			if ${Return} && ${Me.Ability[${Iterator.Key}].IsReady} && !${Me.TargetMyDebuff[${Iterator.Key}](exists)}
+			call OkayToAttack "${ABILITY}"
+			if ${Return} && ${Me.Ability[${ABILITY}].IsReady} && !${Me.TargetMyDebuff[${ABILITY}](exists)}
 			{
-				if ${Me.Ability[${Iterator.Key}].BloodUnionRequired} > ${Me.BloodUnion}
+				if ${Me.Ability[${ABILITY}].BloodUnionRequired} > ${Me.BloodUnion}
 				{
-					echo "Not Enough Blood Union for ${Iterator.Key}, Required=${Me.Ability[${Iterator.Key}].BloodUnionRequired}, Have=${Me.BloodUnion}"
+					echo "Not Enough Blood Union for ${ABILITY}, Required=${Me.Ability[${ABILITY}].BloodUnionRequired}, Have=${Me.BloodUnion}"
 					Iterator:Next
 				}
-				if ${Me.Ability[${Iterator.Key}].IsCounter} || ${Me.Ability[${Iterator.Key}].IsChain}
+				if ${Me.Ability[${ABILITY}].IsCounter} || ${Me.Ability[${ABILITY}].IsChain}
 				{
-					if ${Me.Ability[${Iterator.Key}].TriggeredCountdown}==0
+					if ${Me.Ability[${ABILITY}].TriggeredCountdown}==0
 					{
-						echo ${Iterator.Key} - Counter/Chain - Skipping
+						echo ${ABILITY} - Counter/Chain - Skipping
 						Iterator:Next
 					}
 				}
-				call UseAbility "${Iterator.Key}"
+				if ${Me.Ability[${ABILITY}].School.Equal[Killing Blow]} && ${Me.TargetHealth}>=19
+					Iterator:Next
+		
+				call UseAbility "${ABILITY}"
 			}
 			Iterator:Next
 		}
@@ -2022,6 +1998,10 @@ function UseAbilities()
 ;===================================================
 function:bool UseAbility(string ABILITY)
 {
+	;; Convert to highest ability
+	call FindHighestAbility "${ABILITY}"
+	ABILITY:Set[${Return}]
+		
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
 		EchoIt "${ABILITY} does not exist or too high a level to use"
@@ -2078,6 +2058,10 @@ function:bool UseAbility(string ABILITY)
 ;===================================================
 function:bool ForceAbility(string ABILITY)
 {
+	;; Convert to highest ability
+	call FindHighestAbility "${ABILITY}"
+	ABILITY:Set[${Return}]
+
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
 		EchoIt "${ABILITY} does not exist or too high a level to use"
@@ -2122,6 +2106,10 @@ function:bool ForceAbility(string ABILITY)
 ;===================================================
 function:bool UseAbilityNoCoolDown(string ABILITY)
 {
+	;; Convert to highest ability
+	call FindHighestAbility "${ABILITY}"
+	ABILITY:Set[${Return}]
+
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
 		echo "${ABILITY} does not exist or too high a level to use"
@@ -2175,26 +2163,22 @@ function UseItems()
 
 		;; keep looping until we reached the last item used
 		while ${Iterator.Key(exists)} && !${LastItemUsed.Equal[${Iterator.Key}]}
-		{
 			Iterator:Next
-		}
 
 		;; get the next one
 		Iterator:Next
 		
 		;; if it doesn't exist then reset to the 1st one
 		if !${Iterator.Key(exists)}
-		{
 			Iterator:First
-		}
 
 		;; save what we have equiped
 		if ${Me.Inventory[CurrentEquipSlot,Primary Hand](exists)}
-			LastPrimary:Set[${Me.Inventory[CurrentEquipSlot,Primary Hand]}]
+			LastPrimary:Set["${Me.Inventory[CurrentEquipSlot,Primary Hand]}"]
 		if ${Me.Inventory[CurrentEquipSlot,Secondary Hand](exists)}
-			LastSecondary:Set[${Me.Inventory[CurrentEquipSlot,Secondary Hand]}]
+			LastSecondary:Set["${Me.Inventory[CurrentEquipSlot,Secondary Hand]}"]
 		if ${Me.Inventory[CurrentEquipSlot,Two Hands](exists)}
-			LastTwoHands:Set[${Me.Inventory[CurrentEquipSlot,Two Hands]}]
+			LastTwoHands:Set["${Me.Inventory[CurrentEquipSlot,Two Hands]}"]
 		
 
 		while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning} && !${Me.Target.IsDead}
@@ -2231,26 +2215,25 @@ function UseItems()
 					;
 					; equip all weapons
 					;
-					if !${LastPrimary.Equal[None]} && !${LastPrimary.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]} 
+					if !${LastPrimary.Equal[None]} && !${LastPrimary.Equal["${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}"]}
 					{
 						VGExecute /wear \"${LastPrimary}\" primaryhand
-						wait 50 ${LastPrimary.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]} 			
+						wait 1
 					}
-					if !${LastSecondary.Equal[None]} && !${LastSecondary.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]} 	
+					if !${LastSecondary.Equal[None]} && !${LastSecondary.Equal["${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}"]}
 					{
 						VGExecute /wear \"${LastSecondary}\" secondaryhand
-						wait 50 ${LastSecondary.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]} 			
+						wait 1
 					}
-					if !${LastTwoHands.Equal[None]} && !${LastTwoHands.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 
+					if !${LastTwoHands.Equal[None]} && !${LastTwoHands.Equal["${Me.Inventory[CurrentEquipSlot,"Two Hands"]}"]}
 					{
 						VGExecute /wear \"${LastTwoHands}\"
-						wait 50 ${LastTwoHands.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 	
+						wait 1
 					}
 					return
 				}
 				else
 				{
-					;; sometimes th
 					Me.Inventory[${Iterator.Key}]:Use
 					LastItemUsed:Set[${Iterator.Key}]
 					wait 2
@@ -2282,9 +2265,7 @@ function Forage()
 			Loot:LootAll
 			wait 2
 			if ${Me.IsLooting}
-			{
 				Loot:EndLooting
-			}
 			Okay2Forage:Set[FALSE]
 		}
 	}
@@ -2334,9 +2315,7 @@ function ForceBuffArea()
 function BuffRequests()
 {
 	if ${Me.IsCasting} || ${VG.InGlobalRecovery} || !${Tools.AreWeReady}
-	{
 		return
-	}
 
 	if ${Tools_BuffRequestList.FirstKey(exists)}
 	{
@@ -2354,9 +2333,7 @@ function BuffRequests()
 
 				;; if nothing is in the buffonly list then might as well we buff everyone
 				if !${Iterator.Key(exists)}
-				{
 					Okay2Buff:Set[TRUE]
-				}
 				
 				;; cycle through all our BuffOnly checking if they exist by name or by guild
 				while ${Iterator.Key(exists)}
@@ -2389,7 +2366,10 @@ function BuffRequests()
 						;; cycle through all our trigger buffs to ensure we casted them
 						while ${Iterator.Key(exists)} && !${isPaused} && ${isRunning}
 						{
-							Temp:Set[${Iterator.Key}]
+							;; Convert to highest ability
+							call FindHighestAbility "${Iterator.Key}"
+							Temp:Set[${Return}]
+							
 							if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
 								break
 							if !${Tools.AreWeReady}
@@ -2417,9 +2397,7 @@ function BuffRequests()
 								
 						;; announce we buffed someone
 						if ${WeBuffed}
-						{
 							vgecho "Buffed: ${Tools_BuffRequestList.CurrentKey}"
-						}
 					}
 				}
 			}
@@ -2439,14 +2417,14 @@ function ChangeForm()
 		if !${Me.CurrentForm.Name.Equal[${CombatForm}]}
 		{
 			Me.Form[${CombatForm}]:ChangeTo
-			wait .5
+			wait 1
 		}
 		return
 	}
 	if !${Me.CurrentForm.Name.Equal[${NonCombatForm}]}
 	{
 		Me.Form[${NonCombatForm}]:ChangeTo
-		wait .5
+		wait 1
 	}
 }
 
@@ -2659,17 +2637,12 @@ function FollowTank()
 atom(global) Tools_AddAbilities(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[Abilities-${Me.FName}]:AddSetting[${aName}, ${aName}]
-
-	}
+		LavishSettings[DPS].FindSet[Abilities]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveAbilities(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		Abilities.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildAbilities()
 {
@@ -2684,10 +2657,8 @@ atom(global) Tools_BuildAbilities()
 	variable int i = 0
 	Abilities:Clear
 	while ${i:Inc} <= ${UIElement[AbilitiesList@Abilities@DPS@Tools].Items}
-	{
 		
-		LavishSettings[DPS].FindSet[Abilities-${Me.FName}]:AddSetting[${UIElement[AbilitiesList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[AbilitiesList@Abilities@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[Abilities]:AddSetting[${UIElement[AbilitiesList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[AbilitiesList@Abilities@DPS@Tools].Item[${i}].Text}]
 }
 
 ;===================================================
@@ -2696,16 +2667,12 @@ atom(global) Tools_BuildAbilities()
 atom(global) Tools_AddItems(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[Items-${Me.FName}]:AddSetting[${aName}, ${aName}]
-	}
+		LavishSettings[DPS].FindSet[Items]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveItems(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		Items.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildItems()
 {
@@ -2720,9 +2687,7 @@ atom(global) Tools_BuildItems()
 	variable int i = 0
 	Items:Clear
 	while ${i:Inc} <= ${UIElement[ItemsList@Abilities@DPS@Tools].Items}
-	{
-		LavishSettings[DPS].FindSet[Items-${Me.FName}]:AddSetting[${UIElement[ItemsList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[ItemsList@Abilities@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[Items]:AddSetting[${UIElement[ItemsList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[ItemsList@Abilities@DPS@Tools].Item[${i}].Text}]
 }
 
 ;===================================================
@@ -2731,16 +2696,12 @@ atom(global) Tools_BuildItems()
 atom(global) Tools_AddBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[Buffs-${Me.FName}]:AddSetting[${aName}, ${aName}]
-	}
+		LavishSettings[DPS].FindSet[Buffs]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		Buffs.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildBuffs()
 {
@@ -2755,9 +2716,7 @@ atom(global) Tools_BuildBuffs()
 	variable int i = 0
 	Buffs:Clear
 	while ${i:Inc} <= ${UIElement[BuffsList@Abilities@DPS@Tools].Items}
-	{
-		LavishSettings[DPS].FindSet[Buffs-${Me.FName}]:AddSetting[${UIElement[BuffsList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[BuffsList@Abilities@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[Buffs]:AddSetting[${UIElement[BuffsList@Abilities@DPS@Tools].Item[${i}].Text}, ${UIElement[BuffsList@Abilities@DPS@Tools].Item[${i}].Text}]
 }
 
 ;===================================================
@@ -2766,16 +2725,12 @@ atom(global) Tools_BuildBuffs()
 atom(global) Tools_AddBuffOnly(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}]:AddSetting[${aName}, ${aName}]
-	}
+		LavishSettings[DPS].FindSet[BuffOnly]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveBuffOnly(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		BuffOnly.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildBuffsOnly()
 {
@@ -2790,9 +2745,7 @@ atom(global) Tools_BuildBuffsOnly()
 	variable int i = 0
 	BuffOnly:Clear
 	while ${i:Inc} <= ${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Items}
-	{
-		LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}]:AddSetting[${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[BuffOnly]:AddSetting[${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[BuffOnlyList@BuffBot@DPS@Tools].Item[${i}].Text}]
 }
 
 ;===================================================
@@ -2804,16 +2757,12 @@ atom(global) Tools_BuildForms()
 	for (i:Set[1] ; ${i} <= ${UIElement[CombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
 	{
 		if ${UIElement[CombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${CombatForm}]}
-		{
 			UIElement[CombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
-		}
 	}
 	for (i:Set[1] ; ${i} <= ${UIElement[NonCombatForm@Abilities@DPS@Tools].Items} ; i:Inc)
 	{
 		if ${UIElement[NonCombatForm@Abilities@DPS@Tools].Item[${i}].Text.Equal[${NonCombatForm}]}
-		{
 			UIElement[NonCombatForm@Abilities@DPS@Tools]:SelectItem[${i}]
-		}
 	}
 }
 
@@ -2823,16 +2772,12 @@ atom(global) Tools_BuildForms()
 atom(global) Tools_AddTriggerBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}]:AddSetting[${aName}, ${aName}]
-	}
+		LavishSettings[DPS].FindSet[TriggerBuffs]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveTriggerBuff(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		TriggerBuffs.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildTriggerBuffs()
 {
@@ -2842,17 +2787,13 @@ atom(global) Tools_BuildTriggerBuffs()
 	while ( ${Iterator.Key(exists)} )
 	{
 		if !${Iterator.Key.Equal[NULL]}
-		{
 			UIElement[TriggerBuffsList@BuffBot@DPS@Tools]:AddItem[${Iterator.Key}]
-		}
 		Iterator:Next
 	}
 	variable int i = 0
 	TriggerBuffs:Clear
 	while ${i:Inc} <= ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Items}
-	{
-		LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}]:AddSetting[${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[TriggerBuffs]:AddSetting[${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}, ${UIElement[TriggerBuffsList@BuffBot@DPS@Tools].Item[${i}].Text}]
 }
 
 ;===================================================
@@ -2861,16 +2802,12 @@ atom(global) Tools_BuildTriggerBuffs()
 atom(global) Tools_AddCounter1(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[Counters1-${Me.FName}]:AddSetting[${aName}, ${aName}]
-	}
+		LavishSettings[DPS].FindSet[Counters1]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveCounter1(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		Counters1.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildCounter1()
 {
@@ -2880,17 +2817,13 @@ atom(global) Tools_BuildCounter1()
 	while ( ${Iterator.Key(exists)} )
 	{
 		if !${Iterator.Key.Equal[NULL]}
-		{
 			UIElement[Counter1List@Counters@DPS@Tools]:AddItem[${Iterator.Key}]
-		}
 		Iterator:Next
 	}
 	variable int i = 0
 	Counters1:Clear
 	while ${i:Inc} <= ${UIElement[Counter1List@Counters@DPS@Tools].Items}
-	{
-		LavishSettings[DPS].FindSet[Counters1-${Me.FName}]:AddSetting[${UIElement[Counter1List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter1List@Counters@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[Counters1]:AddSetting[${UIElement[Counter1List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter1List@Counters@DPS@Tools].Item[${i}].Text}]
 }
 
 ;===================================================
@@ -2899,16 +2832,12 @@ atom(global) Tools_BuildCounter1()
 atom(global) Tools_AddCounter2(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
-		LavishSettings[DPS].FindSet[Counters2-${Me.FName}]:AddSetting[${aName}, ${aName}]
-	}
+		LavishSettings[DPS].FindSet[Counters2]:AddSetting[${aName}, ${aName}]
 }
 atom(global) Tools_RemoveCounter2(string aName)
 {
 	if ( ${aName.Length} > 1 )
-	{
 		Counters2.FindSetting[${aName}]:Remove
-	}
 }
 atom(global) Tools_BuildCounter2()
 {
@@ -2918,17 +2847,13 @@ atom(global) Tools_BuildCounter2()
 	while ( ${Iterator.Key(exists)} )
 	{
 		if !${Iterator.Key.Equal[NULL]}
-		{
 			UIElement[Counter2List@Counters@DPS@Tools]:AddItem[${Iterator.Key}]
-		}
 		Iterator:Next
 	}
 	variable int i = 0
 	Counters2:Clear
 	while ${i:Inc} <= ${UIElement[Counter2List@Counters@DPS@Tools].Items}
-	{
-		LavishSettings[DPS].FindSet[Counters2-${Me.FName}]:AddSetting[${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}]
-	}
+		LavishSettings[DPS].FindSet[Counters2]:AddSetting[${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}, ${UIElement[Counter2List@Counters@DPS@Tools].Item[${i}].Text}]
 }
 
 objectdef Obj_Commands
@@ -3173,6 +3098,11 @@ function HarvestIt()
 	if !${Me.Target.IsHarvestable}
 		return
 		
+	wait 20
+	if !${Me.Target(exists)}
+		return
+	
+		
 	variable string leftofname
 	leftofname:Set[${Me.Target.Name.Left[6]}]
 	if ${Me.Target.Distance}>5 && ${Me.Target.Distance}<${Distance} && ${Me.ToPawn.CombatState}==0 && !${leftofname.Equal[remain]}
@@ -3221,8 +3151,7 @@ function HarvestIt()
 
 	if !${Me.InCombat} && ${Me.Target(exists)} && ${Me.Target.Distance}<=5 && ${Me.Target.IsHarvestable}
 	{
-		wait 5
-		vgecho Started harvesting
+		wait 20
 		Me.Ability[Auto Attack]:Use
 		HarvestBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 		wait 30
@@ -3232,7 +3161,6 @@ function HarvestIt()
 	{
 		while ${Me.InCombat} && ${Me.Encounter}==0 && ${GV[bool,bHarvesting]} && ${isHarvesting}
 			waitframe
-		VGExecute "/cleartargets"
 		wait ${Delay} 
 	}	
 
@@ -3240,8 +3168,8 @@ function HarvestIt()
 	{
 		VGExecute /autoattack
 		wait 5
-		VGExecute "/cleartargets"
-		wait ${Delay} 
+		;VGExecute "/cleartargets"
+		;wait ${Delay} 
 	}
 	
 	VGExecute "/hidewindow Harvesting"
@@ -3263,13 +3191,15 @@ function Tombstone()
 	if !${Me.Target(exists)} && ${Pawn[Tombstone,range,25].Name.Find[${Me.FName}](exists)}
 	{
 		VGExecute "/targetmynearestcorpse"
-		wait ${Delay}  ${Me.Target.Name.Find[${Me.FName}](exists)}
+		wait 10 ${Me.Target.Name.Find[${Me.FName}](exists)}
 	}
 	if ${Me.Target(exists)} && ${Me.Target.Name.Find[Tombstone]} && ${Me.Target.Name.Find[${Me.FName}]}
 	{
 		VGExecute "/corpsedrag"
 		wait 3
 		VGExecute "/lootall"
+		wait 3
+		VGExecute "/cleartargets"
 		wait 3
 	}
 }
@@ -3457,6 +3387,7 @@ function ManageTanks()
 		variable int j
 		variable string TargetOnWho
 		variable bool doRescue = FALSE
+		variable string ABILITY = None
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		;; Grab Targets not on me
@@ -3532,37 +3463,49 @@ function ManageTanks()
 					;; reduce DTarget's hate
 					if ${doReduceHate} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${ReduceHate}].IsReady} && ${Me.Ability[${ReduceHate}].TimeRemaining}<2 && ${Me.Ability[${ReduceHate}].Range}<=${Me.Target.Distance}
-							waitframe
+						call FindHighestAbility "${ReduceHate}"
+						ABILITY:Set[${Return}]
+						wait 20 ${Me.DTarget.Name(exists)} && !${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}<2 && ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance}
 						wait 3
-						call ForceAbility "${ReduceHate}"
+						call ForceAbility "${ABILITY}"
+						return
 					}
 					if ${doRescue1} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${Rescue1}].IsReady} && ${Me.Ability[${Rescue1}].TimeRemaining}<2 && ${Me.Ability[${Rescue1}].Range}<=${Me.Target.Distance}
-							waitframe
+						call FindHighestAbility "${Rescue1}"
+						ABILITY:Set[${Return}]
+						wait 20 ${Me.DTarget.Name(exists)} && !${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}<2 && ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance}
 						wait 3
-						call ForceAbility "${Rescue1}"
+						call ForceAbility "${ABILITY}"
+						return
 					}
 					if ${doRescue2} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${Rescue2}].IsReady} && ${Me.Ability[${Rescue2}].TimeRemaining}<2 && ${Me.Ability[${Rescue2}].Range}<=${Me.Target.Distance}
-							waitframe
+						call FindHighestAbility "${Rescue2}"
+						ABILITY:Set[${Return}]
+						wait 20 ${Me.DTarget.Name(exists)} && !${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}<2 && ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance}
 						wait 3
-						call ForceAbility "${Rescue2}"
+						call ForceAbility "${ABILITY}"
+						return
 					}
 					if ${doRescue3} && !${Me.TargetBuff["Immunity: Force Target"](exists)}
 					{
-						while ${Me.DTarget.Name(exists)} && !${Me.Ability[${Rescue3}].IsReady} && ${Me.Ability[${Rescue3}].TimeRemaining}<2 && ${Me.Ability[${Rescue3}].Range}<=${Me.Target.Distance}
-							waitframe
+						call FindHighestAbility "${Rescue3}"
+						ABILITY:Set[${Return}]
+						wait 20 ${Me.DTarget.Name(exists)} && !${Me.Ability[${ABILITY}].IsReady} && ${Me.Ability[${ABILITY}].TimeRemaining}<2 && ${Me.Ability[${ABILITY}].Range}<=${Me.Target.Distance}
 						wait 3
-						call ForceAbility "${Rescue3}"
+						call ForceAbility "${ABILITY}"
+						return
 					}
 				}
 				
 				;; increase our hate
 				if ${doIncreaseHate}
-					call ForceAbility "${IncreaseHate}"
+				{
+					call FindHighestAbility "${IncreaseHate}"
+					ABILITY:Set[${Return}]
+					call ForceAbility "${ABILITY}"
+				}
 			}
 		}
 	}
@@ -3600,7 +3543,7 @@ function Loot()
 			}
 			for (i:Set[0] ; ${Me.Inventory[${i:Inc}].Name(exists)} ; )
 			{
-				if ${Me.Inventory[${i}].Description.Find[Crafting:]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=20
+				if ${Me.Inventory[${i}].Description.Find[Crafting:]} && ${Me.Inventory[${i}].Type.Equal[Miscellaneous]} && ${Me.Inventory[${i}].Quantity}>=100
 				{
 					EchoIt "Consolidate: ${Me.Inventory[${i}]}"
 					Me.Inventory[${i}]:StartConvert
@@ -3665,6 +3608,7 @@ function Loot()
 	;-------------------------------------------
 	if ${Me.Target.IsDead}
 	{
+		wait 5
 		VGExecute "/cleartargets"
 		wait ${Delay}
 	}

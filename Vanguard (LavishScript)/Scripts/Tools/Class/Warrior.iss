@@ -11,17 +11,12 @@ function Warrior()
 	{
 		UIElement[Warrior@Class@DPS@Tools]:Show
 		WarriorRunOnce:Set[FALSE]
-		
-		SetHighestAbility "Protect" "Protect"
-		SetHighestAbility "StingingCut" "Stinging Cut"
-		SetHighestAbility "Taunt" "Taunt"
-		SetHighestAbility "InfuriatingShot" "Infuriating Shot"
-		SetHighestAbility "ShoutofDefiance" "Shout of Defiance"
-		SetHighestAbility "SavageCut" "Savage Cut"
 
-
+		declare "Protect" string local "Protect"
+		declare "Stinging Cut" string local "Protect"
+		declare "Taunt" string local "Taunt"
+		declare "InfuriatingShot" string local "Infuriating Shot"
+		declare "ShoutofDefiance" string local "Shout of Defiance"
+		declare "SavageCut" string local "Savage Cut"
 	}
-
-	;call ReadyCheck	
-
 }

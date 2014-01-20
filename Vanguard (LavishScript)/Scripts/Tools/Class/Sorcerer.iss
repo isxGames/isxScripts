@@ -23,8 +23,8 @@ function Sorcerer()
 		UIElement[Sorcerer@Class@DPS@Tools]:Show
 		
 		; Calculate Highest Level
-		SetHighestAbility "Incinerate" "Incinerate"
-		SetHighestAbility "Mimic" "Mimic"
+		declare "Incinerate" string local "Incinerate"
+		declare "Mimic" string local "Mimic"
 		SorcRunOnce:Set[FALSE]
 	}
 	
