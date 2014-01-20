@@ -164,6 +164,7 @@ function PlayCombatSong()
 	{
 		Songs[${CombatSong}]:Perform
 		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${CombatSong}\"](exists)}
+		wait 10
 	}
 }
 
@@ -190,6 +191,7 @@ function PlayTravelSong()
 	{
 		Songs[${TravelSong}]:Perform
 		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${TravelSong}\"](exists)}
+		wait 10
 	}
 }
 
@@ -216,6 +218,7 @@ function PlayRestSong()
 	{
 		Songs[${RestSong}]:Perform
 		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${RestSong}\"](exists)}
+		wait 10
 	}
 }
 
