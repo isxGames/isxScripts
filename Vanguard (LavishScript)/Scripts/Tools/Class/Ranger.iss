@@ -19,13 +19,13 @@ function Ranger()
 	{
 		;; show the Bard tab in UI
 		UIElement[Ranger@Class@DPS@Tools]:Show
-		
+
 		; Calculate Highest Level
-		SetHighestAbility "Windsong" "Windsong"
-		SetHighestAbility "Rancor" "Rancor"
-		SetHighestAbility "DeadlyShot" "Deadly Shot"
-		SetHighestAbility "ShockingArrow" "Shocking Arrow"
-		SetHighestAbility "CriticalShot" "Critical Shot"
+		declare "Windsong" string local "Windsong"
+		declare "Rancor" string local "Rancor"
+		declare "DeadlyShot" string local "Deadly Shot"
+		declare "ShockingArrow" string local "Shocking Arrow"
+		declare "CriticalShot" string local "Critical Shot"
 		RangerRunOnce:Set[FALSE]
 	}
 	

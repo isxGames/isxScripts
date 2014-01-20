@@ -91,81 +91,132 @@ function Bard()
 function PlayCombatSong()
 {
 	variable int i
-	variable bool isEquiped 
+	variable bool EquipedPrimary = FALSE 
+	variable bool EquipedSecondary = FALSE 
+	variable bool EquipedTwoHands = FALSE 
 
 	if ${Me.Inventory[${PrimaryWeapon}](exists)}
 	{
-	
-		if ${Me.Inventory[${PrimaryWeapon}].DefaultEquipSlot.Equal[Two Hands]} && !${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two hands"]}]} 
+		if ${Me.Inventory[${PrimaryWeapon}].DefaultEquipSlot.Equal[Two Hands]} && !${PrimaryWeapon.Equal["${Me.Inventory[CurrentEquipSlot,"Two hands"]}"]}
 		{
 			VGExecute /wear \"${PrimaryWeapon}\"
-			wait 10 ${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]}
+			EquipedTwoHands:Set[TRUE]
 		}
 		else
-		{
-			if ${Me.Inventory[${PrimaryWeapon}].DefaultEquipSlot.Equal[Primary Hand]} && !${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]} 
+			if ${Me.Inventory[${PrimaryWeapon}].DefaultEquipSlot.Equal[Primary Hand]} && !${PrimaryWeapon.Equal["${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}"]}
 			{
 				VGExecute /wear \"${PrimaryWeapon}\" primaryhand
-				wait 10 ${PrimaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Primary Hand"]}]}
+				EquipedPrimary:Set[TRUE]
 			}
-		}
 	}
 
 	if ${Me.Inventory[${SecondaryWeapon}](exists)}
 	{
-		if ${Me.Inventory[${SecondaryWeapon}].DefaultEquipSlot.Equal[Two Hands]} && !${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two hands"]}]} 
+		if ${Me.Inventory[${SecondaryWeapon}].DefaultEquipSlot.Equal[Two Hands]} && !${SecondaryWeapon.Equal["${Me.Inventory[CurrentEquipSlot,"Two hands"]}"]}
 		{
 			VGExecute /wear \"${SecondaryWeapon}\" 
-			wait 10 ${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]}
+			EquipedTwoHands:Set[TRUE]
 		}
 		else
-		{
-			if ${Me.Inventory[${SecondaryWeapon}].DefaultEquipSlot.Equal[Primary Hand]} && !${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]} 
+			if ${Me.Inventory[${SecondaryWeapon}].DefaultEquipSlot.Equal[Primary Hand]} && !${SecondaryWeapon.Equal["${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}"]}
 			{
 				VGExecute /wear \"${SecondaryWeapon}\" secondaryhand
-				wait 10 ${SecondaryWeapon.Equal[${Me.Inventory[CurrentEquipSlot,"Secondary Hand"]}]}
+				EquipedSecondary:Set[TRUE]
 			}
-		}
 	}
 
+	if ${EquipedPrimary}
+	{
+		i:Set[0]
+		do
+		{
+			wait 1
+			if ${i:Inc}>=10
+				break
+		}
+		while !${Me.Inventory[CurrentEquipSlot,"Primary Hand"](exists)}
+	}
+	if ${EquipedSecondary}
+	{
+		i:Set[0]
+		do
+		{
+			wait 1
+			if ${i:Inc}>=10
+				break
+		}
+		while !${Me.Inventory[CurrentEquipSlot,"Secondary Hand"](exists)}
+	}
+	if ${EquipedTwoHands}
+	{
+		i:Set[0]
+		do
+		{
+			wait 1
+			if ${i:Inc}>=10
+				break
+		}
+		while !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+	}
+	
 	;at this point proper weapons should be equipped, now play our song
-	Songs[${CombatSong}]:Perform
+	if !${Me.Effect[${Me.FName}'s Bard Song - \"${CombatSong}\"](exists)}
+	{
+		Songs[${CombatSong}]:Perform
+		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${CombatSong}\"](exists)}
+	}
 }
 
 function PlayTravelSong()
 {
 	if ${Me.Inventory[${TravelInstrument}](exists)}
 	{
-		if (${TravelInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
+		if (${TravelInstrument.NotEqual["${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}"]})
 		{
-			;first unequip any items
-			;call unequipbarditems
-			Me.Inventory[ExactName,"${TravelInstrument}"]:Equip
-			wait 10 ${TravelInstrument.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 	
-			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+			VGExecute /wear \"${TravelInstrument}\" 
+			i:Set[0]
+			do
+			{
+				wait 1
+				if ${i:Inc}>=10
+					break
+			}
+			while !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
 
 	;at this point proper weapons should be equipped, now play our song
-	Songs[${TravelSong}]:Perform
+	if !${Me.Effect[${Me.FName}'s Bard Song - \"${TravelSong}\"](exists)}
+	{
+		Songs[${TravelSong}]:Perform
+		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${TravelSong}\"](exists)}
+	}
 }
 
 function PlayRestSong()
 {
 	if ${Me.Inventory[${RestInstrument}](exists)}
 	{
-		if (${RestInstrument.NotEqual[${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}]})
+		if (${RestInstrument.NotEqual["${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}"]})
 		{
-			;first unequip any items
-			;call unequipbarditems
-			Me.Inventory[ExactName,"${RestInstrument}"]:Equip
-			wait 10 ${RestInstrument.Equal[${Me.Inventory[CurrentEquipSlot,"Two Hands"]}]} 	
-			;wait 10 ${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
+			VGExecute /wear \"${RestInstrument}\" 
+			i:Set[0]
+			do
+			{
+				wait 1
+				if ${i:Inc}>=10
+					break
+			}
+			while !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
 
 	;at this point proper weapons should be equipped, now play our song
-	Songs[${RestSong}]:Perform
+	if !${Me.Effect[${Me.FName}'s Bard Song - \"${RestSong}\"](exists)}
+	{
+		Songs[${RestSong}]:Perform
+		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${RestSong}\"](exists)}
+	}
 }
 
 function unequipbarditems()

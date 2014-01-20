@@ -13,10 +13,11 @@ function Cleric()
 		UIElement[Cleric@Class@DPS@Tools]:Show
 		ClericRunOnce:Set[FALSE]
 		
-		SetHighestAbility "Alleviate" "Alleviate"
-		SetHighestAbility "HealingTouch" "Healing Touch"
-		SetHighestAbility "Rejuvenate" "Rejuvenate"
-		SetHighestAbility "Pacify" "Pacify"
+		
+		declare "Alleviate" string local "Alleviate"
+		declare "HealingTouch" string local "Healing Touch"
+		declare "Rejuvenate" string local "Rejuvenate"
+		declare "Pacify" string local "Pacify"
 		
 	}
 	
