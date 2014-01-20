@@ -264,7 +264,7 @@ function main()
 ;===================================================
 function DoSomething()
 {
-	wait 1
+	wait 2
 	;-------------------------------------------
 	; PAUSED - turn off melee attacks and reset variables
 	;-------------------------------------------
@@ -350,6 +350,7 @@ function DoSomething()
 		call RepairEquipment
 		call Forage
 		call Tombstone
+		call DrownProofing
 		NextDelayCheck:Set[${Script.RunningTime}]
 	}
 	
@@ -2010,7 +2011,10 @@ function:bool UseAbility(string ABILITY)
 
 	if !${doHate} && ${Hate_Abilities.Element["${ABILITY}"](exists)}
 		return FALSE
-	
+
+	if ${Me.Ability[${ABILITY}].School.Equal[Killing Blow]} && ${Me.TargetHealth}>=19
+		return FALSE
+		
 	;-------------------------------------------
 	; These have priority over everything
 	;-------------------------------------------
@@ -2240,6 +2244,25 @@ function UseItems()
 				}
 			}
 			Iterator:Next
+		}
+	}
+}
+
+
+;===================================================
+;===         DROWN PROOFING SUBROUTINE          ====
+;===================================================
+function DrownProofing()
+{
+	if ${Me.IsDrowning}
+	{
+		if !${Me.Effect[Enduring Breath](exists)}
+		{
+			if ${Me.Inventory["Potion of Deep Breath"](exists)}
+			{
+				Me.Inventory[Potion of Deep Breath]:Use
+				wait 10
+			}
 		}
 	}
 }
@@ -3538,6 +3561,7 @@ function Loot()
 			wait ${Delay} !${Me.IsLooting}
 			if ${Me.IsLooting}
 			{
+				wait 10
 				Loot:EndLooting
 				wait ${Delay} !${Me.IsLooting}
 			}
@@ -3597,7 +3621,7 @@ function Loot()
 			{
 				LootBlackList:Set[${Me.Target.ID},${Me.Target.ID}]
 				Loot:BeginLooting
-				wait ${Delay} ${Loot.NumItems}
+				wait 10
 				return
 			}
 		}

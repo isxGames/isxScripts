@@ -23,6 +23,7 @@ function main(bool CheckForBuff=TRUE)
 	variable bool WeBuffed
 	variable bool Okay2Buff
 	variable string buff
+	variable string HighestAbility = None
 
 	;-------------------------------------------
 	;; dim our button
@@ -32,8 +33,8 @@ function main(bool CheckForBuff=TRUE)
 	;-------------------------------------------
 	;; DPS data should already exists so just update our settings reference
 	;-------------------------------------------
-	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs-${Me.FName}].GUID}]
-	BuffOnly:Set[${LavishSettings[DPS].FindSet[BuffOnly-${Me.FName}].GUID}]
+	TriggerBuffs:Set[${LavishSettings[DPS].FindSet[TriggerBuffs].GUID}]
+	BuffOnly:Set[${LavishSettings[DPS].FindSet[BuffOnly].GUID}]
 	
 	;-------------------------------------------
 	; Cycle through all PC in area and add them to our list to be buffed
@@ -59,9 +60,7 @@ function main(bool CheckForBuff=TRUE)
 		;; set temp to the PC we want to buff
 		temp:Set[${PC[${i}]}]
 		if !${Pawn[exactname,${temp}](exists)}
-		{
 			continue
-		}
 
 		;-------------------------------------------
 		;; check to see if PC exists, within buffing range, and we can see them
@@ -73,12 +72,10 @@ function main(bool CheckForBuff=TRUE)
 
 			;; set our Iterator to BuffOnly
 			BuffOnly:GetSettingIterator[Iterator]
-
+			
 			;; if nothing is in the buffonly list then might as well we buff everyone
 			if !${Iterator.Key(exists)}
-			{
 				Okay2Buff:Set[TRUE]
-			}
 			
 			;; cycle through all our BuffOnly checking if they exist by name or by guild
 			while ${Iterator.Key(exists)}
@@ -90,7 +87,6 @@ function main(bool CheckForBuff=TRUE)
 				Iterator:Next
 			}
 				
-			
 			;-------------------------------------------
 			;; Let's Buff the PC if its okay to buff them
 			;-------------------------------------------
@@ -114,14 +110,17 @@ function main(bool CheckForBuff=TRUE)
 					
 					;; set our Iterator to TriggerBuffs
 					TriggerBuffs:GetSettingIterator[Iterator]
-
+					
 					;; cycle through all our trigger buffs
 					while ${Iterator.Key(exists)}
 					{
+						call FindHighestAbility "${Iterator.Key}"
+						HighestAbility:Set[${Return}]	
+					
 						;; check the PC for the buff and add it to the HasBuff variable
-						if ${Me.TargetBuff[${Iterator.Key}](exists)} || (${temp.Find[${Me.FName}]} && ${Me.Effect[${Iterator.Key}](exists)})
+						if ${Me.TargetBuff[${HighestAbility}](exists)} || (${temp.Find[${Me.FName}]} && ${Me.Effect[${HighestAbility}](exists)})
 						{
-							HasBuff:Set[${Iterator.Key},${Iterator.Key}]
+							HasBuff:Set[${HighestAbility},${HighestAbility}]
 						}
 						Iterator:Next
 					}
@@ -148,6 +147,9 @@ function main(bool CheckForBuff=TRUE)
 					;; cycle through all our trigger buffs to ensure we casted them
 					while ${Iterator.Key(exists)}
 					{
+						call FindHighestAbility "${Iterator.Key}"
+						HighestAbility:Set[${Return}]	
+
 						if !${Me.DTarget(exists)} || ${Me.DTarget.Distance}>25
 							break
 						if !${ToolBuff.AreWeReady}
@@ -163,12 +165,12 @@ function main(bool CheckForBuff=TRUE)
 						;-------------------------------------------
 						;; cast the buff
 						;-------------------------------------------
-						if !${HasBuff.Element[${Iterator.Key}](exists)} && ${Math.Calc[${Me.DTarget.Level}+15]}>=${Me.Ability[${Iterator.Key}].LevelGranted}
+						if !${HasBuff.Element[${HighestAbility}](exists)} && ${Math.Calc[${Me.DTarget.Level}+15]}>=${Me.Ability[${HighestAbility}].LevelGranted}
 						{
-							wait 10 ${Me.Ability[${Iterator.Key}].IsReady}
-							if ${Me.Ability[${Iterator.Key}].IsReady}
+							wait 10 ${Me.Ability[${HighestAbility}].IsReady}
+							if ${Me.Ability[${HighestAbility}].IsReady}
 							{
-								call UseAbility2 "${Iterator.Key}"
+								call UseAbility2 "${HighestAbility}"
 								if ${Return}
 								{
 									WeBuffed:Set[TRUE]
@@ -251,6 +253,49 @@ function:bool UseAbility2(string ABILITY)
 	;; say we did not execute the ability
 	return FALSE
 }
+
+;===================================================
+;===  FUNCTION - FIND HIGHEST ABILITIES         ====
+;===================================================
+function:string FindHighestAbility(string AbilityName)
+{
+	declare L int local 15
+	declare AbilityLevels[15] string local
+
+	AbilityLevels[1]:Set[I]
+	AbilityLevels[2]:Set[II]
+	AbilityLevels[3]:Set[III]
+	AbilityLevels[4]:Set[IV]
+	AbilityLevels[5]:Set[V]
+	AbilityLevels[6]:Set[VI]
+	AbilityLevels[7]:Set[VII]
+	AbilityLevels[8]:Set[VIII]
+	AbilityLevels[9]:Set[IX]
+	AbilityLevels[10]:Set[X]
+	AbilityLevels[11]:Set[XI]
+	AbilityLevels[12]:Set[XII]
+	AbilityLevels[13]:Set[XIII]
+	AbilityLevels[14]:Set[XIV]
+	AbilityLevels[15]:Set[XV]
+
+	;-------------------------------------------
+	; Return if Ability already exists - based upon current level
+	;-------------------------------------------
+	if ${Me.Ability["${AbilityName}"](exists)} && ${Me.Ability[${AbilityName}].LevelGranted}<=${Me.Level}
+		return "${AbilityName}"
+
+	;-------------------------------------------
+	; Find highest Ability level - based upon current level
+	;-------------------------------------------
+	do
+	{
+		if ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"](exists)} && ${Me.Ability["${AbilityName} ${AbilityLevels[${L}]}"].LevelGranted}<=${Me.Level}
+			return "${AbilityName} ${AbilityLevels[${L}]}"
+	}
+	while (${L:Dec}>0)
+}
+
+
 
 objectdef Obj_Commands
 {
