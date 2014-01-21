@@ -19,77 +19,59 @@ function Bard()
 	;; show the Bard tab in UI
 	UIElement[Bard@Class@DPS@Tools]:Show
 
-	;; variables used in this script
-	variable bool doPlayCombatSong = FALSE
-	variable bool doPlayRestSong = FALSE
-
+	
 	;; Now figure out what we should do
 	if ${Me.IsGrouped}
 	{
 		variable int i
 		for (i:Set[1] ; ${Group[${i}].ID(exists)} ; i:Inc)
 		{
-			if ${Pawn[ExactName,${Group[${i}].Name}].CombatState}>0
+			if ${Pawn[ExactName,${Group[${i}].Name}].CombatState}>0 || ${Pawn[Name,${Tank}].CombatState}>0 || ${Me.Encounter}>0
 			{
-				doPlayCombatSong:Set[TRUE]
-				doPlayRestSong:Set[FALSE]
-				break
+				call PlayCombatSong
+				return
 			}
-			if ${Group[${i}].Health}<90 || ${Me.EnergyPct}<90
+			elseif ${Group[${i}].Health}<85 || ${Me.EnergyPct}<85
 			{
-				doPlayRestSong:Set[TRUE]
+				call PlayRestSong
+				return
 			}
 		}
+		call PlayTravelSong
+		return
 	}
 	else
 	{
 		call OkayToAttack
-		if ${Return} || ${Me.InCombat}
+		if ${Return} || ${Me.InCombat} || ${Me.Encounter}>0
 		{
-			doPlayCombatSong:Set[TRUE]
-			doPlayRestSong:Set[FALSE]
-		}
-		if ${Me.HealthPct}<90 || ${Me.EnergyPct}<90
-		{
-			doPlayRestSong:Set[TRUE]
-		}
-	}
-	
-	;; do we want to play our Combat Song?
-	if ${doPlayCombatSong}
-	{
-		if ${LastSongPlayed.NotEqual[CombatSong]} && ${Me.EnergyPct}>35
-		{
-			LastSongPlayed:Set[CombatSong]
 			call PlayCombatSong
-		}
-		if ${Me.EnergyPct}>5
 			return
-		doPlayRestSong:Set[TRUE]
-	}
-	
-	;; do we want to play our Rest Song?
-	if ${doPlayRestSong}
-	{
-		if ${LastSongPlayed.NotEqual[RestSong]}
-		{
-			LastSongPlayed:Set[RestSong]
-			call PlayRestSong
 		}
-		return
-	}
-
-	;; lets play our Travel Song
-	if ${LastSongPlayed.NotEqual[TravelSong]}
-	{
-		LastSongPlayed:Set[TravelSong]
+		if ${Me.HealthPct}<85 || ${Me.EnergyPct}<85
+		{
+			call PlayRestSong
+			return
+		}
 		call PlayTravelSong
+		return
+		
 	}
 }
 
 ;================================================
 function PlayCombatSong()
 {
+	;; no need to go any further if song is already playing
+	if ${Me.Effect[${Me.FName}'s Bard Song - \"${CombatSong}\"](exists)}
+		return
+		
+	echo Combat song
+
+	;; play our song
+	Songs[${CombatSong}]:Perform
+	wait 10
+	
 	variable int i
 	variable bool EquipedPrimary = FALSE 
 	variable bool EquipedSecondary = FALSE 
@@ -158,21 +140,24 @@ function PlayCombatSong()
 		}
 		while !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 	}
-	
-	;at this point proper weapons should be equipped, now play our song
-	if !${Me.Effect[${Me.FName}'s Bard Song - \"${CombatSong}\"](exists)}
-	{
-		Songs[${CombatSong}]:Perform
-		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${CombatSong}\"](exists)}
-		wait 10
-	}
 }
 
 function PlayTravelSong()
 {
+	;; no need to go any further if song is already playing
+	if ${Me.Effect[${Me.FName}'s Bard Song - \"${TravelSong}\"](exists)}
+		return
+		
+	echo Travel Song
+	
+	;; play our song
+	Songs[${TravelSong}]:Perform
+	wait 10
+	
+	;; equip our instrument
 	if ${Me.Inventory[${TravelInstrument}](exists)}
 	{
-		if (${TravelInstrument.NotEqual["${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}"]})
+		if ${TravelInstrument.NotEqual["${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}"]}
 		{
 			VGExecute /wear \"${TravelInstrument}\" 
 			i:Set[0]
@@ -185,18 +170,19 @@ function PlayTravelSong()
 			while !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
 	}
-
-	;at this point proper weapons should be equipped, now play our song
-	if !${Me.Effect[${Me.FName}'s Bard Song - \"${TravelSong}\"](exists)}
-	{
-		Songs[${TravelSong}]:Perform
-		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${TravelSong}\"](exists)}
-		wait 10
-	}
 }
 
 function PlayRestSong()
 {
+	;; no need to go any further if song is already playing
+	if !${Me.Effect[${Me.FName}'s Bard Song - \"${RestSong}\"](exists)}
+		return
+
+	;; play our song
+	Songs[${RestSong}]:Perform
+	wait 10
+
+	;; equip our instrument
 	if ${Me.Inventory[${RestInstrument}](exists)}
 	{
 		if (${RestInstrument.NotEqual["${Me.Inventory[CurrentEquipSlot,"Two Hands"].Name}"]})
@@ -211,14 +197,6 @@ function PlayRestSong()
 			}
 			while !${Me.Inventory[CurrentEquipSlot,"Two Hands"](exists)}
 		}
-	}
-
-	;at this point proper weapons should be equipped, now play our song
-	if !${Me.Effect[${Me.FName}'s Bard Song - \"${RestSong}\"](exists)}
-	{
-		Songs[${RestSong}]:Perform
-		wait 30 ${Me.Effect[${Me.FName}'s Bard Song - \"${RestSong}\"](exists)}
-		wait 10
 	}
 }
 

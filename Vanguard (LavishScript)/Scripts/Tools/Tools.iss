@@ -360,6 +360,7 @@ function DoSomething()
 	call OkayToAttack
 	if ${Return}
 	{
+		call Bard
 		call CounterIt
 		call StripIt
 		call PushStance
@@ -990,7 +991,7 @@ atom(script) PawnSpawned(string aID, string aName, string aLevel, string aType)
 atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 {
 	Redirect -append "${LogAllChat}" echo "[${Time}][${ChannelNumber}] ${aText}"
-
+	
 	;; Log all tells to a file and play a sound
 	if ${doMonotorTells} && ${ChannelNumber}==15
 	{
@@ -1015,6 +1016,8 @@ atom(script) ChatEvent(string aText, string ChannelNumber, string ChannelName)
 	
 	if ${ChannelNumber}==0
 	{
+		if ${aText.Find[because you have no line of sight]}
+			Script[Tools]:QueueCommand[call MoveBackwards]
 		if ${aText.Find[Harvesting has begun]}
 			isHarvesting:Set[TRUE]
 		if ${aText.Find[Harvesting has ended]}
@@ -1217,8 +1220,9 @@ function:string FindHighestAbility(string AbilityName)
 ;===================================================
 ;=== ATOM - RETURNS THE BASE NAME OF AN ABILITY ====
 ;===================================================
-function:string FindBaseAbility(string AbilityName)
+function:string FindBaseAbility(string temp)
 {
+	variable string AbilityName = "${temp}"
 	variable int x
 
 	for (x:Set[3]; ${x}>0 ; x:Dec)
@@ -1311,6 +1315,23 @@ function CounterIt()
 				}
 			}
 		}
+	}
+}
+
+;===================================================
+;=== MOVE BACKWARDS - can't see the target      ====
+;===================================================
+function MoveBackwards()
+{
+	;; Backup if we are too close
+	if ${Me.Target(exists)} && ${Me.Target.Distance}<4
+	{
+		while ${Me.Target(exists)} && ${Me.Target.Distance}<4
+		{
+			Me.Target:Face
+			VG:ExecBinding[movebackward]
+		}
+		VG:ExecBinding[movebackward,release]
 	}
 }
 
@@ -1474,8 +1495,9 @@ function PushStance()
 ;===================================================
 ;===   OKAY TO ATTACK - returns TRUE/FALSE      ====
 ;===================================================
-function:bool OkayToAttack(string ABILITY="None")
+function:bool OkayToAttack(string temp="None")
 {
+	variable string ABILITY = "${temp}"
 	call AlwaysCheck
 	
 	if !${Me.Target(exists)} || ${Me.Target.IsDead}
@@ -1997,11 +2019,14 @@ function UseAbilities()
 ;===================================================
 ;===               Use Ability                  ====
 ;===================================================
-function:bool UseAbility(string ABILITY)
+function:bool UseAbility(string temp)
 {
 	;; Convert to highest ability
+	variable string ABILITY = "${temp}"
 	call FindHighestAbility "${ABILITY}"
 	ABILITY:Set[${Return}]
+	
+	;echo temp=[${temp}], ABILITY=[${ABILITY}]
 		
 	if !${Me.Ability[${ABILITY}](exists)} || ${Me.Ability[${ABILITY}].LevelGranted}>${Me.Level}
 	{
@@ -2060,9 +2085,10 @@ function:bool UseAbility(string ABILITY)
 ;===================================================
 ;===               Use Ability                  ====
 ;===================================================
-function:bool ForceAbility(string ABILITY)
+function:bool ForceAbility(string temp)
 {
 	;; Convert to highest ability
+	variable string ABILITY = "${temp}"
 	call FindHighestAbility "${ABILITY}"
 	ABILITY:Set[${Return}]
 
@@ -2108,9 +2134,10 @@ function:bool ForceAbility(string ABILITY)
 ;===================================================
 ;===               Use Items                    ====
 ;===================================================
-function:bool UseAbilityNoCoolDown(string ABILITY)
+function:bool UseAbilityNoCoolDown(string temp)
 {
 	;; Convert to highest ability
+	variable string ABILITY = "${temp}"
 	call FindHighestAbility "${ABILITY}"
 	ABILITY:Set[${Return}]
 
