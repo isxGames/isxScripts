@@ -21,11 +21,17 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>        
+      <Setting Name="exp04_rgn_fens_of_nathsar">6</Setting>
     </Set>
     <Set Name="armorer">
       <Setting Name="20">6</Setting>
@@ -46,11 +52,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>        
     </Set>
     <Set Name="carpenter">
       <Setting Name="20">3,3</Setting>
@@ -71,11 +82,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-	  	<Setting Name="81">3,3</Setting>
-	  	<Setting Name="83">3,3</Setting>
-	 	 	<Setting Name="85">3,3</Setting>
-	  	<Setting Name="87">3,3</Setting>
-	  	<Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>      
     </Set>
     <Set Name="jeweler">
       <Setting Name="20">3,3</Setting>
@@ -96,11 +112,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>        
     </Set>
     <Set Name="provisioner">
       <Setting Name="20">3,3</Setting>
@@ -121,11 +142,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>
     </Set>
     <Set Name="sage">
       <Setting Name="20">1,1,1,1,1,1</Setting>
@@ -146,11 +172,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>
     </Set>
     <Set Name="tailor">
       <Setting Name="20">3,3</Setting>
@@ -171,11 +202,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">2,2,2</Setting>
       <Setting Name="79">2,2,2</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>
     </Set>
     <Set Name="weaponsmith">
       <Setting Name="20">6</Setting>
@@ -196,11 +232,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">3,3</Setting>
       <Setting Name="79">3,3</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>        
     </Set>
     <Set Name="woodworker">
       <Setting Name="20">6</Setting>
@@ -221,11 +262,16 @@
       <Setting Name="70">6</Setting>
       <Setting Name="74">3,3</Setting>
       <Setting Name="79">3,3</Setting>
-		  <Setting Name="81">3,3</Setting>
-		  <Setting Name="83">3,3</Setting>
-		  <Setting Name="85">3,3</Setting>
-		  <Setting Name="87">3,3</Setting>
-		  <Setting Name="89">3,3</Setting>
+      <Setting Name="81">3,3</Setting>
+      <Setting Name="83">3,3</Setting>
+      <Setting Name="85">3,3</Setting>
+      <Setting Name="87">3,3</Setting>
+      <Setting Name="89">3,3</Setting>
+      <Setting Name="91">3,3</Setting>
+      <Setting Name="93">3,3</Setting>
+      <Setting Name="95">3,3</Setting>
+      <Setting Name="97">3,3</Setting>
+      <Setting Name="99">3,3</Setting>        
     </Set>
   </Set>
 </InnerSpaceSettings>
