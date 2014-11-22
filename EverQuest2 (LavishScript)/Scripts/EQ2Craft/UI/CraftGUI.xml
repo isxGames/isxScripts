@@ -1454,7 +1454,7 @@
 			<Y>35</Y>
 			<Width>120</Width>
 			<Height>20</Height>
-			<Range>9</Range>
+			<Range>24</Range>
 			<OnLoad>
 				This:SetValue[${Math.Calc[${This.Parent.FindChild[NumWrits].Text} - 1].Int}]
 				This.Parent.FindChild[NumWritsOOG]:SetText[${Math.Calc[(${This.Value}/2)+1].Int}]
@@ -1694,7 +1694,7 @@ Valerian
 									<Font Template='Tahoma'>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>http://www.isxGames.com/forums</Text>
+									<Text>http://www.isxGames.com/f</Text>
 								</Text>
 							</Tab>
 

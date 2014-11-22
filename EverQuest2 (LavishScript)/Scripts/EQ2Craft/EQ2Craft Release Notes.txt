@@ -1,5 +1,7 @@
 Revision History ||
 ===================
+v9.5  - The script will now allow up to 25 writs to be queued (regardless of location.)
+
 v9.14 - Added code to make primalz quit bitching about writs being overwritten
         on exit. New cmdline option -sort to enable sorting and saving of writ
         file.
