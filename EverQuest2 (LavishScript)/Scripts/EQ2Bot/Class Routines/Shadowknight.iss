@@ -895,6 +895,14 @@ function Combat_Routine(int xAction)
 			return CombatComplete
   }
   
+	;; Strike of Consistency
+  if (${Me.Ability[${SpellType[348]}].IsReady})
+  {
+    call _CastSpellRange 348 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
+  }
+  
 	CurrentAction:Set[Combat :: CombatComplete]
 	return CombatComplete
 }
