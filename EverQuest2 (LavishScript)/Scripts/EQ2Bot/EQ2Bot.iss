@@ -3643,6 +3643,9 @@ function CheckLootNoMove()
 
 		if ${CustomActor[${tcount}].Type.Equal[Corpse]}
 		{
+			if (${CustomActor[${tcount}].Distance} > 9)
+				continue
+
 			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
 			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLootNoMove()]"]
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} Loot"
@@ -3687,10 +3690,9 @@ function CheckLoot()
 
 		if ${CustomActor[${tcount}].Type.Equal[chest]}
 		{
-			CurrentAction:Set[Looting ${CustomActor[${tcount}].Name} (Chest) -- Distance: ${CustomActor[${tcount}].Distance}]
-			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
-			if (${CustomActor[${tcount}].Distance} > 4)
+			if (!${NoAutoMovement} && ${CustomActor[${tcount}].Distance} > 4)
 			{
+				CurrentAction:Set[Moving to loot ${CustomActor[${tcount}].Name} (Chest) -- Distance: ${CustomActor[${tcount}].Distance}]
 				if (${AutoFollowMode})
 				{
 					;Debug:Echo["Stopping Autofollow..."]
@@ -3708,7 +3710,12 @@ function CheckLoot()
 				while (${IsMoving} || ${Me.IsMoving})
 				;Debug:Echo["Moving complete...now at ${Me.X}, ${Me.Z} (Distance to chest: ${CustomActor[${tcount}].Distance})"]
 			}
+			
+			if (${CustomActor[${tcount}].Distance} > 4)
+				continue
 
+			CurrentAction:Set[Looting ${CustomActor[${tcount}].Name} (Chest) -- Distance: ${CustomActor[${tcount}].Distance}]
+			Echo "DEBUG: Looting ${CustomActor[${tcount}].Name} (Chest) [CheckLoot()] -- Distance: ${CustomActor[${tcount}].Distance}"
 			Actor[Chest]:DoubleClick
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 3
@@ -3721,10 +3728,9 @@ function CheckLoot()
 		}
 		elseif ${CustomActor[${tcount}].Type.Equal[Corpse]} && ${LootCorpses}
 		{
-			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
-			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"]
-			if (${CustomActor[${tcount}].Distance} > 10)
+			if (!${NoAutoMovement} && ${CustomActor[${tcount}].Distance} > 10)
 			{
+				CurrentAction:Set["Moving to Loot ${Actor[corpse].Name} (Corpse)"]
 				if (${AutoFollowMode})
 				{
 					;Debug:Echo["Stopping Autofollow..."]
@@ -3738,6 +3744,13 @@ function CheckLoot()
 				}
 				while (${IsMoving} || ${Me.IsMoving})
 			}
+			
+			if (${CustomActor[${tcount}].Distance} > 10)
+				continue
+			
+			
+			CurrentAction:Set["Looting ${Actor[corpse].Name} (Corpse)"]
+			Debug:Echo["Looting ${Actor[corpse].Name} (Corpse) [CheckLoot()]"]
 			EQ2execute "/apply_verb ${CustomActor[${tcount}].ID} Loot"
 			EQ2Bot:SetActorLooted[${CustomActor[${tcount}].ID},${CustomActor[${tcount}].Name}]
 			wait 3
