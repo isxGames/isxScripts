@@ -204,6 +204,9 @@
 		<OnLeftClick>
 		  Actor[${This.SelectedItem.Value}]:DoTarget:WaypointTo
 		</OnLeftClick>
+		<OnRightClick>
+			eq2execute "/waypoint_cancel"
+		</OnRightClick>
 	  </listbox>
 
 	</Children>
