@@ -18,7 +18,6 @@
 	  This:SetFocus
 	</OnLeftClick>
 	<Children>
-
 	  <checkbox Name='TrackAggro'>
 		<X>20</X>
 		<Y>50</Y>
@@ -43,7 +42,10 @@
       <Width>50</Width>
       <Height>18</Height>
       <Text>Save</Text>
-      <OnLeftClick>TrackInterface:SaveList</OnLeftClick>
+      <OnLeftClick>
+      	TrackInterface:SaveList
+      	This:SetFocus
+     	</OnLeftClick>
     </Button>
     <Button Name='LoadList'>
       <X>100</X>
@@ -51,7 +53,10 @@
       <Width>35</Width>
       <Height>18</Height>
       <Text>Load</Text>
-      <OnLeftClick>TrackInterface:LoadList</OnLeftClick>
+      <OnLeftClick>
+      	TrackInterface:LoadList
+      	This:SetFocus
+      </OnLeftClick>
     </Button>
     <Button Name='DelList'>
       <X>135</X>
@@ -59,13 +64,19 @@
       <Width>40</Width>
       <Height>18</Height>
       <Text>Delete</Text>
-      <OnLeftClick>TrackInterface:DeleteList</OnLeftClick>
+      <OnLeftClick>
+      	TrackInterface:DeleteList
+      	This:SetFocus
+      </OnLeftClick>
     </Button>
     <textentry name='TrackListName'>
 		<X>20</X>
 		<Y>30</Y>
 		<Width>75</Width>
 		<Height>15</Height>
+    <OnKeyboardEnter>
+    	This:SetText[]
+    </OnKeyboardEnter>
 	  </textentry>
     <Combobox name='TrackListCombo'>
       <X>100</X>
@@ -149,6 +160,17 @@
 		<Y>30</Y>
 		<Width>r212</Width>
 		<Height>15</Height>
+    <OnKeyboardEnter>
+    	This:SetText[]
+    </OnKeyboardEnter>
+    <OnKeyDown>
+    	if ${Key.Equal["enter"]}
+    	{
+     		TrackInterface:AddFilter
+     		This:SetText[]
+     		UIElement[FilterAdd@EQ2 Track]:SetFocus
+      }
+    </OnKeyDown>
 	  </textentry>
 	  <Listbox Name='FiltersList'>
 		<X>190</X>
@@ -169,6 +191,7 @@
       <Text>Clr</Text>
       <OnLeftClick>
         TrackInterface:ClearFilters
+        This:SetFocus
       </OnLeftClick>
     </Button>
 	  <Button name='FilterAdd'>
@@ -178,7 +201,16 @@
 		<Height>20</Height>
 		<Text>Add</Text>
 		<OnLeftClick>
+			if ${UIElement[FilterEditing@EQ2 Track].Text.Length.Equal[0]}
+			{
+				if ${Target(exists)}
+				{
+					UIElement[FilterEditing@EQ2 Track]:SetText[${Target.Name}]
+				}
+			}
       TrackInterface:AddFilter
+      This:SetFocus
+      UIElement[FilterEditing@EQ2 Track]:SetText[]
 		</OnLeftClick>
 	  </Button>
 	  <Button name='FilterDel'>
@@ -187,8 +219,10 @@
 		<Width>25</Width>
 		<Height>20</Height>
 		<Text>Del</Text>
-		<OnLeftClick>
+		<OnLeftClick>		
       TrackInterface:DelFilter
+      This:SetFocus
+      UIElement[FilterEditing@EQ2 Track]:SetText[]
 		</OnLeftClick>
 	  </Button>
 	  <listbox name='TrackItems'>
