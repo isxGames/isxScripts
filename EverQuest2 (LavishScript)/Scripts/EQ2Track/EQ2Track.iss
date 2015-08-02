@@ -51,6 +51,15 @@
 	variable string T2
 ;-------------------------------------
 
+; ------------------------------------
+; Options
+; ------------------------------------
+;;;
+; Never track Corpses (and will remove actors from list once they become a corpse)
+variable bool TrackCorpses = FALSE
+;;;
+	
+
 
 objectdef _TrackInterface
 {
@@ -230,11 +239,15 @@ objectdef TrackHelper
 			aID:Set[${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value}]
 			if !${CustomActor[id,${aID}](exists)}
 			{
+				
 				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 			}
 			else
 			{
-				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${CustomActor[ID,${aID}].Level} (${CustomActor[ID,${aID}].Type}) ${CustomActor[ID,${aID}].Name} ${CustomActor[ID,${aID}].Class} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
+				if (!${TrackCorpses} && ${CustomActor[id,${aID}].Type.Equal[Corpse]})
+					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
+				else
+					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${CustomActor[ID,${aID}].Level} (${CustomActor[ID,${aID}].Type}) ${CustomActor[ID,${aID}].Name} ${CustomActor[ID,${aID}].Class} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
 			}
 		}
 		while ${tcount:Dec[1]} > 0
@@ -407,6 +420,9 @@ atom(script) RefreshList()
 	tcount:Set[${EQ2.CustomActorArraySize}]
 	do
 	{
+		if (!${TrackCorpses} && ${CustomActor[${tcount}].Type.Equal[Corpse]})
+			continue
+		
 		itemInfo:Set[${CustomActor[${tcount}].Level} (${CustomActor[${tcount}].Type}) ${CustomActor[${tcount}].Name} ${CustomActor[${tcount}].Class} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
 		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
 			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]
@@ -470,6 +486,10 @@ atom(global):int TrackSort(int ID1, int ID2)
 atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string ActorType)
 {
 	itemInfo:Set[${Level} (${ActorType}) ${Name} ${Actor[${ID}].Class} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
+
+
+	if (!${TrackCorpses} && ${ActorType.Equal[Corpse]})
+		return
 
 	; check our filters.
 	if ${Tracker.CheckFilter[${ID}]}
