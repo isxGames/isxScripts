@@ -20,24 +20,25 @@
    ------------------------------------------------------------------------- */
 
 
-	variable bool filtersChanged
-	variable bool SortChanged
+	variable bool filtersChanged=FALSE
+	variable bool SortChanged=FALSE
 ;-------------------------------------
 
 ;-------------------------------------
 ; General
 ;-------------------------------------
 
+	variable bool Initializing=TRUE
 	variable bool Tracking
 	variable string itemInfo
 	variable bool TrackAggro
 	variable string ReverseFilter[20]
-	;variable string ReverseFilter
 	variable int NumReverseFilters=0
 	variable int LevelMin
 	variable int LevelMax
 	variable int SortMethod=1
 	variable bool ReverseSort=FALSE
+	variable string CurrentList
 	
 	variable settingsetref User
 	
@@ -55,11 +56,14 @@
 ; Options
 ; ------------------------------------
 ;;;
-; Never track Corpses (and will remove actors from list once they become a corpse)
+; Enable/Disable the tracking of Corpses (and will remove actors from list once they become a corpse)
 variable bool TrackCorpses = FALSE
+; Enable/Disable the inclusion of "Class" in the string that appears in the tracking window
+variable bool IncludeClass = FALSE
+; After zoning, check and load the first found tracking list that has a name equal to the current ${Zone.ShortName}
+variable bool AutoLoadListsOnZoning = TRUE
 ;;;
 	
-
 
 objectdef _TrackInterface
 {
@@ -142,18 +146,17 @@ objectdef _TrackInterface
 	}
 	method LoadList()
 	{
-		variable string SetName
-		variable int Counter=0
-		variable iterator iter
 		This:LoadListByName[${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].SelectedItem.Text}]
 	}
 	method LoadListByName(string SetName)
 	{
 		variable int Counter=0
 		variable iterator iter
+		
 		UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:ClearItems
 		if ${SetName.Length}
 		{
+			CurrentList:Set[${SetName}]
 			LavishSettings:AddSet[TrackList]
 			LavishSettings[TrackList]:AddSet[${SetName}]
 			LavishSettings[TrackList].FindSet[${SetName}]:Import[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/${SetName}.xml]
@@ -170,6 +173,7 @@ objectdef _TrackInterface
 			LavishSettings[TrackList]:Remove
 		}
 		This:ChangeFilters
+		UpdateSettings
 	}
 	method DeleteList()
 	{
@@ -177,9 +181,11 @@ objectdef _TrackInterface
 		SetName:Set[${UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].SelectedItem.Text}]
 		if ${SetName.Length}
 		{
+			CurrentList:Set[]
 			rm "${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/${SetName}.xml"
 			This:UpdateListCombo
 		}
+		UpdateSettings
 	}
 }
 
@@ -201,6 +207,8 @@ function zoneWait()
 objectdef TrackHelper
 {
 	variable int tcount
+	variable int Level
+	
 	member:bool CheckFilter(int ID)
 	{
 		if ${TrackAggro} && !${Actor[${ID}].IsAggro}
@@ -222,74 +230,94 @@ objectdef TrackHelper
 
 		return FALSE
 	}
-	variable int Level
+	
 	method VerifyList()
 	{
+		variable int tcount
+		variable int aID
+		variable bool ActorHasNoLevelOrClass
+		variable string ClassString
+		variable string LevelString
+		
 		EQ2:CreateCustomActorArray
 		if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)} && !${CustomActor[ID,${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
 		{
 			eq2execute /waypoint_cancel
 			UIElement[TrackItems@EQ2 Track].SelectedItem:Remove
 		}
-		variable int tcount
-		variable int aID
 		tcount:Set[${UIElement[TrackItems@EQ2 Track].Items}]
 		do
 		{
 			aID:Set[${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value}]
 			if !${CustomActor[id,${aID}](exists)}
 			{
-				
 				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 			}
 			else
 			{
+				;; TODO:  Add more types here
+				if (${CustomActor[id,${aID}].Type.Equal[resource]}) 
+					ActorHasNoLevelOrClass:Set[TRUE]
+				else
+					ActorHasNoLevelOrClass:Set[FALSE]
+					
 				if (!${TrackCorpses} && ${CustomActor[id,${aID}].Type.Equal[Corpse]})
 					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 				else
-					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${CustomActor[ID,${aID}].Level} (${CustomActor[ID,${aID}].Type}) ${CustomActor[ID,${aID}].Name} ${CustomActor[ID,${aID}].Class} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
+				{
+					if (!${ActorHasNoLevelOrClass} && ${IncludeClass} )
+						ClassString:Set[${CustomActor[ID,${aID}].Class}]
+					else
+						ClassString:Set[]
+						
+					if (${ActorHasNoLevelOrClass})
+						LevelString:Set[]
+					else
+						LevelString:Set[${CustomActor[ID,${aID}].Level}]
+						
+					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${LevelString} (${CustomActor[ID,${aID}].Type}) ${CustomActor[ID,${aID}].Name} ${ClassString} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
+				}
 			}
 		}
 		while ${tcount:Dec[1]} > 0
 		UIElement[TrackItems@EQ2 Track]:Sort[TrackSort]
 	}
 }
+
+
 variable TrackHelper Tracker
 
 function main(... Args)
 {
 	declarevariable TrackInterface _TrackInterface global
+	Initializing:Set[TRUE]
+	
+	;;;;;;;;;;;;;;;;
+	;;; IMPORTANT:   these two lines MUST be executed BEFORE loadings settings from XML
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
+	ui -reload -skin eq2 "${Script.CurrentDirectory}/UI/EQ2Track.xml"
+	;;;;;;;;;;;;;;;;
+	
 	LavishSettings:AddSet[EQ2Track]
 	LavishSettings[EQ2Track]:AddSet[Users]
 	LavishSettings[EQ2Track].FindSet[Users]:AddSet[${Me.Name}]
 	User:Set[${LavishSettings[EQ2Track].FindSet[Users].FindSet[${Me.Name}]}]
 	User:AddSet[ReverseFilters]
 	User:Import["${Script.CurrentDirectory}/Character Config/${Me.Name}_Settings.xml"]
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-	ui -reload -skin eq2 "${Script.CurrentDirectory}/UI/EQ2Track.xml"
+
 
 	if ${Args.Used}
 	{
 		TrackInterface:LoadListByName[${Args.Expand}]
 	}
 
-/*	variable bool TrackAggro
-	;variable string ReverseFilter[20]
-	variable string ReverseFilter
-	variable int NumReverseFilters
-	variable int LevelMin
-	variable int LevelMax
-	variable int SortMethod=1
-	variable bool ReverseSort=FALSE
-*/
-	
-		
 	TrackAggro:Set[${User.FindSetting[TrackAggro,FALSE]}]
 	LevelMin:Set[${User.FindSetting[LevelMin,0]}]
-	LevelMax:Set[${User.FindSetting[LevelMax,90]}]
+	LevelMax:Set[${User.FindSetting[LevelMax,100]}]
 	SortMethod:Set[${User.FindSetting[SortMethod,1]}]
 	ReverseSort:Set[${User.FindSetting[ReverseSort,FALSE]}]
-
+	CurrentList:Set[${User.FindSetting[CurrentList,""]}]
+	
 	if ${TrackAggro}
 		UIElement[TrackAggro@EQ2 Track]:SetChecked
 	else
@@ -297,7 +325,7 @@ function main(... Args)
 	UIElement[TrackMinLevel@EQ2 Track]:SetText[${LevelMin}]
 	UIElement[TrackMaxLevel@EQ2 Track]:SetText[${LevelMax}]
 	UIElement[TrackSort@EQ2 Track]:SetSelection[${SortMethod}]
-
+	
 	variable iterator SettingIterator
 	User.FindSet[ReverseFilters]:GetSettingIterator[SettingIterator]
 	NumReverseFilters:Set[0]
@@ -312,15 +340,21 @@ function main(... Args)
 		while ${SettingIterator:Next(exists)}
 	}
 	
-
 	RefreshList
 	call CheckListTimer
 	call RefreshWaypointTimer
 	SortMethod:Set[${UIElement[TrackSort@EQ2 Track].Selection}]
-
+	
 	Event[EQ2_ActorSpawned]:AttachAtom[EQ2_ActorSpawned]
 	Event[EQ2_ActorDespawned]:AttachAtom[EQ2_ActorDespawned]
+	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]
 	
+	if (${CurrentList.Length} > 0)
+	{
+		UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${CurrentList}]:Select
+	}
+	
+	Initializing:Set[FALSE]
 	do
 	{
 		if ${QueuedCommands}
@@ -348,7 +382,6 @@ function main(... Args)
 		}
 	}
 	while 1
-
 }
 
 atom(script) UpdateSettings()
@@ -375,6 +408,8 @@ atom(script) UpdateSettings()
 	User.FindSetting[TrackAggro]:Set[${TrackAggro}]
 	User.FindSetting[LevelMin]:Set[${LevelMin}]
 	User.FindSetting[LevelMax]:Set[${LevelMax}]
+	
+	User.FindSetting[CurrentList]:Set[${CurrentList}]
 	
 	variable iterator SettingIterator
 	filters:Set[${User.FindSet[ReverseFilters]}]
@@ -409,11 +444,15 @@ function RefreshWaypointTimer()
 
 atom(script) RefreshList()
 {
+	variable int tcount
+	variable bool ActorHasNoLevelOrClass
+	variable string ClassString
+	variable string LevelString
+	
 	UpdateSettings
 	if ${Tracking}
 		return
 	Tracking:Set[TRUE]
-	variable int tcount
 
 	UIElement[TrackItems@EQ2 Track]:ClearItems
 	EQ2:CreateCustomActorArray
@@ -422,8 +461,24 @@ atom(script) RefreshList()
 	{
 		if (!${TrackCorpses} && ${CustomActor[${tcount}].Type.Equal[Corpse]})
 			continue
+			
+		;; TODO:  Add more types here
+		if (${CustomActor[${tcount}].Type.Equal[resource]})   
+			ActorHasNoLevelOrClass:Set[TRUE]
+		else
+			ActorHasNoLevelOrClass:Set[FALSE]
+			
+		if (!${ActorHasNoLevelOrClass} && ${IncludeClass})
+			ClassString:Set[${CustomActor[${tcount}].Class}]
+		else
+			ClassString:Set[]
+			
+		if (${ActorHasNoLevelOrClass})
+			LevelString:Set[]
+		else
+			LevelString:Set[${CustomActor[ID,${aID}].Level}]
 		
-		itemInfo:Set[${CustomActor[${tcount}].Level} (${CustomActor[${tcount}].Type}) ${CustomActor[${tcount}].Name} ${CustomActor[${tcount}].Class} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
+		itemInfo:Set[${LevelString} (${CustomActor[${tcount}].Type}) ${CustomActor[${tcount}].Name} ${ClassString} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
 		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
 			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]
 	}
@@ -483,13 +538,60 @@ atom(global):int TrackSort(int ID1, int ID2)
 	return ${RetVal}
 }
 
+atom(script) EQ2_FinishedZoning(string TimeInSeconds)
+{
+	variable filelist ListFiles
+	variable int Count=0
+	variable string ListName
+	
+	if !${AutoLoadListsOnZoning}
+		return
+		
+	ListFiles:GetFiles[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/\*.xml]
+	while ${Count:Inc}<=${ListFiles.Files}
+	{
+		ListName:Set[${ListFiles.File[${Count}].Filename.Left[-4]}]
+		
+		;echo "EQ2Track.Debug:: Does '${Zone.ShortName}' == '${ListName}'"
+		if ${Zone.ShortName.Equal[${ListName}]}
+		{
+			;echo "EQ2Track.Debug:: Loading ${ListName}"
+			TrackInterface:LoadListByName[${ListName}]
+			UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${ListName}]:Select
+			return
+		}
+	}
+	
+	return
+}
+
 atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string ActorType)
 {
-	itemInfo:Set[${Level} (${ActorType}) ${Name} ${Actor[${ID}].Class} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
-
-
+	variable bool ActorHasNoLevelOrClass
+	variable string ClassString
+	variable string LevelString
+	
 	if (!${TrackCorpses} && ${ActorType.Equal[Corpse]})
 		return
+		
+	;; TODO:  Add more types here
+	if (${ActorType.Equal[resource]})   
+		ActorHasNoLevelOrClass:Set[TRUE]
+	else
+		ActorHasNoLevelOrClass:Set[FALSE]
+
+	if (!${ActorHasNoLevelOrClass} && ${IncludeClass})
+		ClassString:Set[${Actor[${ID}].Class}]
+	else
+		ClassString:Set[]
+		
+	if (${ActorHasNoLevelOrClass})
+		LevelString:Set[]
+	else
+		LevelString:Set[${Level}]
+			
+	itemInfo:Set[${LevelString} (${ActorType}) ${Name} ${ClassString} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
+
 
 	; check our filters.
 	if ${Tracker.CheckFilter[${ID}]}
@@ -500,13 +602,7 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 
 atom(script) EQ2_ActorDespawned(string ID, string Name)
 {
-	RemoveActorByID ${ID}
-}
-
-atom(script) RemoveActorByID(int ID)
-{
 	variable int tcount=${UIElement[TrackItems@EQ2 Track].Items}
-
 
 	do
 	{
@@ -516,8 +612,6 @@ atom(script) RemoveActorByID(int ID)
 	}
 	while ${tcount}>0
 }
-
-
 
 function atexit()
 {
