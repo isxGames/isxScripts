@@ -41,31 +41,26 @@
       <Y>10</Y>
       <Width>50</Width>
       <Height>18</Height>
-      <Text>Save</Text>
+      <Text>Create</Text>
       <OnLeftClick>
+				if ${UIElement[TrackListName@EQ2 Track].Text.Length.Equal[0]}
+				{
+					UIElement[TrackListName@EQ2 Track]:SetText[${Zone.ShortName}]
+				}
       	TrackInterface:SaveList
+      	UIElement[TrackListName@EQ2 Track]:SetText[]
       	This:SetFocus
      	</OnLeftClick>
     </Button>
-    <Button Name='LoadList'>
-      <X>100</X>
-      <Y>10</Y>
-      <Width>35</Width>
-      <Height>18</Height>
-      <Text>Load</Text>
-      <OnLeftClick>
-      	TrackInterface:LoadList
-      	This:SetFocus
-      </OnLeftClick>
-    </Button>
     <Button Name='DelList'>
-      <X>135</X>
+      <X>100</X>
       <Y>10</Y>
       <Width>40</Width>
       <Height>18</Height>
       <Text>Delete</Text>
       <OnLeftClick>
       	TrackInterface:DeleteList
+      	UIElement[TrackListName@EQ2 Track]:SetText[]
       	This:SetFocus
       </OnLeftClick>
     </Button>
@@ -88,6 +83,13 @@
       <OnLoad>
         TrackInterface:UpdateListCombo
       </OnLoad>
+      <OnSelect>
+      	if !${Script[EQ2Bot].Variable[Initializing]}
+      	{
+	      	TrackInterface:LoadList
+ 		     	This:SetFocus
+ 		    }
+      </OnSelect>
     </Combobox>
 	  <Text Name='lblLvlRangeFilter'>
 		<X>20</X>
