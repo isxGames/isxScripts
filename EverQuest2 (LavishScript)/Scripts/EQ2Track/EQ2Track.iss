@@ -28,7 +28,7 @@
 ; General
 ;-------------------------------------
 
-	variable bool Initializing=TRUE
+	variable bool TrackListCombo_executeOnSelect=FALSE
 	variable bool Tracking
 	variable string itemInfo
 	variable bool TrackAggro
@@ -111,12 +111,17 @@ objectdef _TrackInterface
 		UIElement[EQ2 Track].FindUsableChild[FiltersList,listbox]:ClearItems
 		This:ChangeFilters
 	}
-	method SaveList()
+	method SaveList(bool UpdateComboList=TRUE)
 	{
 		variable string SetName
 		variable int Counter=0
 		SetName:Set[${UIElement[EQ2 Track].FindUsableChild[TrackListName,textentry].Text}]
-		if ${SetName.Length}
+		
+		if (${SetName.Length} == 0 || ${SetName.Equal[NULL]})
+		{
+			echo "EQ2Track.ERROR:: Attempting to SaveList() an invalid list name:  '${SetName}'"
+		}
+		else
 		{ /* Create set to store list */
 			LavishSettings:AddSet[TrackList]
 			LavishSettings[TrackList]:AddSet[${SetName}]
@@ -127,7 +132,10 @@ objectdef _TrackInterface
 			LavishSettings[TrackList].FindSet[${SetName}]:Export[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/${SetName}.xml]
 			LavishSettings[TrackList]:Remove
 		}
-		This:UpdateListCombo
+		if ${UpdateComboList}
+			This:UpdateListCombo
+			
+		CurrentList:Set[${SetName}]
 	}
 	method UpdateListCombo()
 	{
@@ -290,7 +298,7 @@ variable TrackHelper Tracker
 function main(... Args)
 {
 	declarevariable TrackInterface _TrackInterface global
-	Initializing:Set[TRUE]
+	TrackListCombo_executeOnSelect:Set[FALSE]
 	
 	;;;;;;;;;;;;;;;;
 	;;; IMPORTANT:   these two lines MUST be executed BEFORE loadings settings from XML
@@ -354,7 +362,7 @@ function main(... Args)
 		UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${CurrentList}]:Select
 	}
 	
-	Initializing:Set[FALSE]
+	TrackListCombo_executeOnSelect:Set[TRUE]
 	do
 	{
 		if ${QueuedCommands}
