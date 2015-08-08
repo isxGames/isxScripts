@@ -50,6 +50,10 @@
       	TrackInterface:SaveList
       	UIElement[TrackListName@EQ2 Track]:SetText[]
       	This:SetFocus
+				if (${Script[EQ2Track].Variable[CurrentList].Length} > 0)
+				{
+					UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${Script[EQ2Track].Variable[CurrentList]}]:Select
+				}
      	</OnLeftClick>
     </Button>
     <Button Name='DelList'>
@@ -84,7 +88,7 @@
         TrackInterface:UpdateListCombo
       </OnLoad>
       <OnSelect>
-      	if !${Script[EQ2Bot].Variable[Initializing]}
+      	if ${Script[EQ2Track].Variable[TrackListCombo_executeOnSelect]}
       	{
 	      	TrackInterface:LoadList
  		     	This:SetFocus
@@ -171,6 +175,9 @@
      		TrackInterface:AddFilter
      		This:SetText[]
      		UIElement[FilterAdd@EQ2 Track]:SetFocus
+				UIElement[TrackListName@EQ2 Track]:SetText[${Script[EQ2Track].Variable[CurrentList]}]
+	    	TrackInterface:SaveList[FALSE]
+	    	UIElement[TrackListName@EQ2 Track]:SetText[]
       }
     </OnKeyDown>
 	  </textentry>
@@ -213,6 +220,9 @@
       TrackInterface:AddFilter
       This:SetFocus
       UIElement[FilterEditing@EQ2 Track]:SetText[]
+			UIElement[TrackListName@EQ2 Track]:SetText[${Script[EQ2Track].Variable[CurrentList]}]
+    	TrackInterface:SaveList[FALSE]
+    	UIElement[TrackListName@EQ2 Track]:SetText[]
 		</OnLeftClick>
 	  </Button>
 	  <Button name='FilterDel'>
@@ -225,6 +235,9 @@
       TrackInterface:DelFilter
       This:SetFocus
       UIElement[FilterEditing@EQ2 Track]:SetText[]
+			UIElement[TrackListName@EQ2 Track]:SetText[${Script[EQ2Track].Variable[CurrentList]}]
+    	TrackInterface:SaveList[FALSE]
+    	UIElement[TrackListName@EQ2 Track]:SetText[]
 		</OnLeftClick>
 	  </Button>
 	  <listbox name='TrackItems'>
