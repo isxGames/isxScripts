@@ -1,33 +1,32 @@
-
 ;------------------------------------------------------------------------------
-; EQ2Track.iss Version 3.1 Updated: 01/22/10 by Valerian
+; EQ2Track.iss Version 4.0
 ;------------------------------------------------------------------------------
 ; EQ2 Track originally created by Equidis
-; Rewritten by Valerian
-;------------------------------------------------------------------------------
-
+; Rewritten by Valerian in 2010
+; Updated by Amadeus in 2015
+;----------------------------------------
 ; ** Additional credits to Karye & Blazer: Some of the UI & Elements & Coding
 ; used were taken from previous version of EQ2BotCommand **
+;------------------------------------------------------------------------------
 
-
-/* -------------------------------------------------------------------------
-   01/12/10 v3.0 
-      - Updated to allow saving and loading of filter lists.
-      - Added "Clr" button to filter controls to clear current filters.
-      - Cleaned up Script<->UI interface.
-   01/22/10 v3.1
-      - Added ability to specify saved filter list on command line.
-   ------------------------------------------------------------------------- */
-
-
-	variable bool filtersChanged=FALSE
-	variable bool SortChanged=FALSE
-;-------------------------------------
 
 ;-------------------------------------
-; General
+; Options
+;--------
+;;;
+; Enable/Disable the tracking of Corpses (and will remove actors from list once they become a corpse)
+variable bool TrackCorpses = FALSE
+; Enable/Disable the inclusion of "Class" in the string that appears in the tracking window
+variable bool IncludeClass = FALSE
+; After zoning, check and load the first found tracking list that has a name equal to the current ${Zone.ShortName}
+variable bool AutoLoadListsOnZoning = TRUE
+;;;
 ;-------------------------------------
 
+
+;-------------------------------------
+; Script Variables
+;-----------------
 	variable bool TrackListCombo_executeOnSelect=FALSE
 	variable bool Tracking
 	variable string itemInfo
@@ -39,9 +38,9 @@
 	variable int SortMethod=1
 	variable bool ReverseSort=FALSE
 	variable string CurrentList
-	
+	variable bool filtersChanged=FALSE
+	variable bool SortChanged=FALSE
 	variable settingsetref User
-	
 	variable int aID1
 	variable int aID2
 	variable int L1
@@ -52,18 +51,7 @@
 	variable string T2
 ;-------------------------------------
 
-; ------------------------------------
-; Options
-; ------------------------------------
-;;;
-; Enable/Disable the tracking of Corpses (and will remove actors from list once they become a corpse)
-variable bool TrackCorpses = FALSE
-; Enable/Disable the inclusion of "Class" in the string that appears in the tracking window
-variable bool IncludeClass = FALSE
-; After zoning, check and load the first found tracking list that has a name equal to the current ${Zone.ShortName}
-variable bool AutoLoadListsOnZoning = TRUE
-;;;
-	
+
 
 objectdef _TrackInterface
 {
@@ -623,8 +611,7 @@ atom(script) EQ2_ActorDespawned(string ID, string Name)
 
 function atexit()
 {
-
 	ui -unload "${Script.CurrentDirectory}/UI/EQ2Track.xml"
-
+	eq2execute "/waypoint_cancel"
 }
 
