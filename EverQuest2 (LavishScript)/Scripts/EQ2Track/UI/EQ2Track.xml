@@ -23,11 +23,25 @@
 		<Y>50</Y>
 		<Width>100</Width>
 		<Height>20</Height>
-		<Text>Track aggro mobs only</Text>
+		<Text>aggro mobs only</Text>
 		<OnLeftClick>
       TrackInterface:ChangeFilters
     </OnLeftClick>
 	  </checkbox>
+    <Button Name='MarkBad'>
+      <X>134</X>
+      <Y>50</Y>
+      <Width>51</Width>
+      <Height>20</Height>
+      <AutoTooltip>Mark Current Target as 'bad' and no longer track</AutoTooltip>
+      <Text>Bad Tgt</Text>
+      <OnLeftClick>
+				if ${Target(exists)}
+				{
+					TrackInterface:MarkTargetAsBad
+				}
+     	</OnLeftClick>
+    </Button>
 	  <Text Name='lblTrackList'>
 		<X>20</X>
 		<Y>10</Y>
