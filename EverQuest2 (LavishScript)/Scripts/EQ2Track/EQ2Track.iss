@@ -49,6 +49,7 @@ variable bool AutoLoadListsOnZoning = TRUE
 	variable float D2
 	variable string T1
 	variable string T2
+	variable collection:string BadActors
 ;-------------------------------------
 
 
@@ -183,6 +184,20 @@ objectdef _TrackInterface
 		}
 		UpdateSettings
 	}
+	method MarkTargetAsBad()
+	{
+		if (!${Target(exists)})
+			return
+		
+		if (${BadActors.Element[${Target.ID}](exists)})
+		{
+			;echo "EQ2Track.MarkTargetAsBad():: Your current Target ([${Target.ID}-${Target.Name}) has already been marked as 'bad' and is not being tracked."
+			return
+		}
+		
+		;echo "EQ2Track.MarkTargetAsBad():: Marking ([${Target.ID}-${Target.Name}) as 'bad'.  This actor will no longer be tracked."
+		BadActors:Set[${Target.ID},${Target.Name}]
+	}
 }
 
 function zoneWait()
@@ -245,7 +260,7 @@ objectdef TrackHelper
 		do
 		{
 			aID:Set[${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value}]
-			if !${CustomActor[id,${aID}](exists)}
+			if (!${CustomActor[id,${aID}](exists)} || ${BadActors.Element[${aID}](exists)})
 			{
 				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 			}
@@ -258,6 +273,8 @@ objectdef TrackHelper
 					ActorHasNoLevelOrClass:Set[FALSE]
 					
 				if (!${TrackCorpses} && ${CustomActor[id,${aID}].Type.Equal[Corpse]})
+					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
+				elseif (${BadActors.Element[${aID}](exists)})
 					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 				else
 				{
@@ -456,7 +473,14 @@ atom(script) RefreshList()
 	do
 	{
 		if (!${TrackCorpses} && ${CustomActor[${tcount}].Type.Equal[Corpse]})
+		{
 			continue
+		}
+			
+		if ${BadActors.Element[${CustomActor[${tcount}].ID}](exists)}
+		{
+			continue
+		}
 			
 		;; TODO:  Add more types here
 		if (${CustomActor[${tcount}].Type.Equal[resource]})   
@@ -472,7 +496,7 @@ atom(script) RefreshList()
 		if (${ActorHasNoLevelOrClass})
 			LevelString:Set[]
 		else
-			LevelString:Set[${CustomActor[ID,${aID}].Level}]
+			LevelString:Set[${CustomActor[${tcount}].Level}]
 		
 		itemInfo:Set[${LevelString} (${CustomActor[${tcount}].Type}) ${CustomActor[${tcount}].Name} ${ClassString} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
 		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
@@ -570,6 +594,9 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 	if (!${TrackCorpses} && ${ActorType.Equal[Corpse]})
 		return
 		
+	if (${BadActors.Element[${ID}](exists)})
+		return
+		
 	;; TODO:  Add more types here
 	if (${ActorType.Equal[resource]})   
 		ActorHasNoLevelOrClass:Set[TRUE]
@@ -598,6 +625,9 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 
 atom(script) EQ2_ActorDespawned(string ID, string Name)
 {
+	if (${BadActors.Element[${ID}](exists)})
+		return
+	
 	variable int tcount=${UIElement[TrackItems@EQ2 Track].Items}
 
 	do
