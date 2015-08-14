@@ -27,46 +27,39 @@
     <OnRender>
       if ${UIElement[EQ2 Bot].Minimized}
       {
-      switch ${Time.Second}
-      {
-      case 10
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[Target: ${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name}]
-      break
-      case 20
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[GainedXP: ${Math.Calc[(${Me.Exp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[EQ2Bot].Variable[StartLevel]})*100)]}]
-      break
-      case 30
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[XPRate: ${Math.Calc[((${Me.Exp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[EQ2Bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/3600)]} / hr]
-      break
-      case 40
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[Runtime: ${Math.Calc[(${Time.Timestamp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/60]}]
-      break
-      case 50
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[EQ2Bot]
-      break
-      case 59
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[EQ2Bot - ${Me.Name}]
-      break
-
-      }
-      }
+	      switch ${Time.Second}
+	      {
+		      case 1
+		      	if ${Script[EQ2Bot].Variable[KillTarget]} > 0
+		      	{
+				      UIElement[Title@TitleBar@EQ2 Bot]:SetText[Target: ${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name}]
+				    }
+			      break
+		      case 25
+			      UIElement[Title@TitleBar@EQ2 Bot]:SetText[Runtime: ${Math.Calc[(${Time.Timestamp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/60]}]
+			      break
+		      case 45
+				    UIElement[Title@TitleBar@EQ2 Bot]:SetText[EQ2Bot - ${Me.Name}]
+			      break
+		    }
+		  }
       else
       {
-      UIElement[Title@TitleBar@EQ2 Bot]:SetText[EQ2Bot - ${Me.Name}]
-      if ${UIElement[EQ2 Bot].FindChild[EQ2Bot Tabs].FindChild[Main].Visible}
-      {
-      if ${UIElement[EQ2 Bot].Height} != 350
-      {
-      UIElement[EQ2 Bot]:SetHeight[350]
-      }
-      }
-      elseif  ${UIElement[EQ2 Bot].FindChild[EQ2Bot Tabs].FindChild[EQ2Bot Options].Visible}
-      {
-      if ${UIElement[EQ2 Bot].Height} != 350
-      {
-      UIElement[EQ2 Bot]:SetHeight[350]
-      }
-      }
+      	UIElement[Title@TitleBar@EQ2 Bot]:SetText[EQ2Bot - ${Me.Name}]
+      	if ${UIElement[EQ2 Bot].FindChild[EQ2Bot Tabs].FindChild[Main].Visible}
+      	{
+      		if ${UIElement[EQ2 Bot].Height} != 350
+      		{
+      			UIElement[EQ2 Bot]:SetHeight[350]
+      		}
+      	}
+      	elseif  ${UIElement[EQ2 Bot].FindChild[EQ2Bot Tabs].FindChild[EQ2Bot Options].Visible}
+      	{
+      		if ${UIElement[EQ2 Bot].Height} != 350
+      		{
+      			UIElement[EQ2 Bot]:SetHeight[350]
+      		}
+    		}
       }
     </OnRender>
     <Children>

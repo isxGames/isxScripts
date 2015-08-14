@@ -9,7 +9,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20121123
+	declare ClassFileVersion int script 20150802
 	;;;;
 
 	declare PBAoEMode bool script FALSE
@@ -30,6 +30,7 @@ function Class_Declaration()
 	declare UseUnholyHunger bool script TRUE
 	declare UseUnholyStrength bool script TRUE
 	declare AlwaysUseAEs bool script FALSE
+	declare UseFeignDeath bool script FALSE
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -50,7 +51,7 @@ function Class_Declaration()
 	UseUnholyHunger:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseUnholyHunger,TRUE]}]
 	UseUnholyStrength:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseUnholyStrength,TRUE]}]
 	AlwaysUseAEs:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[AlwaysUseAEs,FALSE]}]
-
+	UseFeignDeath:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseFeignDeath,FALSE]}]
 
 	BuffArmamentMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffArmamentMember,]}]
 	BuffTacticsGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember,]}]
@@ -136,6 +137,9 @@ function Buff_Init()
    
    PreAction[15]:Set[CShout]
    PreSpellRange[15,1]:Set[345]   
+   
+   PreAction[16]:Set[SubtleStrikes]
+   PreSpellRange[16,1]:Set[349] 
 }
 
 function Combat_Init()
@@ -166,11 +170,57 @@ function Buff_Routine(int xAction)
 
 	switch ${PreAction[${xAction}]}
 	{
+		case SubtleStrikes
+			if (${Me.Group} > 2 && ${MainTank})
+			{
+				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				break
+			}
+			if (${Me.Group} < 2)
+				break
+		
+			if (!${MainTank})
+				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
+			else
+			{
+				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				{
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				}
+			}
+			break
+
 		case Armament_Target
-			BuffTarget:Set[${UIElement[cbBuffArmamentGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if (${Me.Group} > 2 && ${MainTank})
+			{
+				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
+				break
+			}
+			if (${Me.Group} < 2)
+				break
+				
+			variable string ArmamentTarget = ${UIElement[cbBuffArmamentGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}
+			variable bool ArmamentTargetExists = FALSE
+				
+			if (${ArmamentTarget.Equal["No One"]} || ${ArmamentTarget.Length} == 0 || !${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]}](exists)})
+			{
+				;; if someone other than the SK is the MainTank, we can use that as a default
+				ArmamentTarget:Set["${MainTankPC}:PC"]
+
+				;; double-check				
+				if (${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]}](exists)})
+					ArmamentTargetExists:Set[TRUE]
+			}
+			else
+				ArmamentTargetExists:Set[TRUE]
+			
+			echo "EQ2Bot.SK-Debug:: ArmamentTarget is '${ArmamentTarget}'"
+				
 			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
-				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]},exactname].ID})
 				{
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				}
@@ -178,14 +228,14 @@ function Buff_Routine(int xAction)
 					break
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${ArmamentTargetExists}
 			{
-				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+				ActorID:Set[${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]},exactname].ID}]
 				if ${Actor[${ActorID}].Type.Equal[PC]}
 				{
 					if ${Me.InRaid}
 					{
-						if (${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
+						if (${Me.Raid[${ArmamentTarget.Token[1,:]}](exists)})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 							{
@@ -196,7 +246,7 @@ function Buff_Routine(int xAction)
 					}
 					else
 					{
-						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+						if (${Me.Group[${ArmamentTarget.Token[1,:]}](exists)})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 							{
@@ -272,10 +322,34 @@ function Buff_Routine(int xAction)
 
 
 		case Tactics_Target
-			BuffTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+			if (${Me.Group} < 2)
+				break
+				
+			variable string TacticsTarget = ${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}
+			variable bool TacticsTargetExists = FALSE
+				
+			if (${TacticsTarget.Equal["No One"]} || ${TacticsTarget.Length} == 0 || !${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}](exists)})
+			{
+				;; TODO -- make this "smarter"
+				
+				if (${MainTank})
+					TacticsTarget:Set["${Me.Group[1].Name}:PC"]
+				else
+					TacticsTarget:Set["${MainTankPC}:PC"]
+
+				;; double-check				
+				if (${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}](exists)})
+					TacticsTargetExists:Set[TRUE]
+			}
+			else
+				TacticsTargetExists:Set[TRUE]
+			
+			echo "EQ2Bot.SK-Debug:: TacticsTarget is '${TacticsTarget}'"
+
+			
 			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
-				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})
+				if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID} != ${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]},exactname].ID})
 				{
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 				}
@@ -283,14 +357,14 @@ function Buff_Routine(int xAction)
 					break
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${TacticsTargetExists}
 			{
-				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
+				ActorID:Set[${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]},exactname].ID}]
 				if ${Actor[${ActorID}].Type.Equal[PC]}
 				{
 					if ${Me.InRaid}
 					{
-						if (${Me.Raid[${BuffTarget.Token[1,:]}](exists)})
+						if (${Me.Raid[${TacticsTarget.Token[1,:]}](exists)})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 							{
@@ -301,7 +375,7 @@ function Buff_Routine(int xAction)
 					}
 					else
 					{
-						if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+						if (${Me.Group[${TacticsTarget.Token[1,:]}](exists)})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
 							{
@@ -432,7 +506,6 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	{
     if ${Me.Ability[${SpellType[339]}].IsReady}
     {
-      ;ANNOUNCE IS BROKEN announce "I am either frozen, rooted, stunned or charmed...\n\\#FF6E6EUsing Aura of the Crusader!" 3 1
       call CastSpellRange 339 0 0 0 ${Me.ToActor.ID} 0 0 0 1
     }
 	}
@@ -522,7 +595,6 @@ function Combat_Routine(int xAction)
 	{
     if ${Me.Ability[${SpellType[339]}].IsReady}
     {
-      ;ANNOUNCE IS BROKEN announce "I am either frozen, rooted, stunned or charmed...\n\\#FF6E6EUsing Aura of the Crusader!" 3 1
       call CastSpellRange 339 0 0 0 ${Me.ToActor.ID} 0 0 0 1
     }
 	}
@@ -592,7 +664,6 @@ function Combat_Routine(int xAction)
 		}
 	}
 	
-	
   ;; DeathMarch
   if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
   {
@@ -600,6 +671,23 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
   }
+  
+  ;; Self Reverse DS (with life tap proc)
+	if ((!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[7]}].IsReady}) || (${MainTank} && ${Me.ToActor.Health}<25))
+	{
+    if ${MainTank}
+    {
+	    call _CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+  	}
+    else
+    {
+	    call _CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+  	}
+	}
 	
   if ${DoAEs}
   {
@@ -627,7 +715,7 @@ function Combat_Routine(int xAction)
 				return CombatComplete
   	}   	
   	;; Grave Sacrament
-    if (${Me.Ability[${SpellType[45]}].IsReady})
+    if (${MainTank} && ${Me.Ability[${SpellType[45]}].IsReady})
     {
     	;Debug:Echo["${SpellType[45]}..."]
 	    call _CastSpellRange 45 0 0 0 ${Me.ToActor.ID} 0 0 0 1
@@ -698,23 +786,6 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}						
-			
-    ;; Self Reverse DS (with life tap proc)
-  	if ${Me.Ability[${SpellType[7]}].IsReady}
-  	{
-	    if ${MainTank}
-	    {
-  	    call _CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1
-				if ${Return.Equal[CombatComplete]}
-					return CombatComplete
-    	}
-	    else
-	    {
-  	    call _CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
-				if ${Return.Equal[CombatComplete]}
-					return CombatComplete
-    	}
-		}
   }	
   
 	;Essence Siphon
@@ -752,37 +823,6 @@ function Combat_Routine(int xAction)
 	}
 	;;
 	;;;;
-
-  ;; Cast 5-Proc Damage Shield every time it is ready (And as long as we are fighting non-solo mobs)
-  if !${KillTargetIsSoloMob}
-  {
-  	;CurrentAction:Set[Combat :: Checking 'Damage Shield']
-    if ${Actor[${KillTarget}].Health} > 25
-    {
-      BuffTarget:Set[${UIElement[cbBuffDSGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-      if ${Actor[${KillTarget}].Target.Name.Equal[${BuffTarget.Token[1,:]}]}
-      {
-        if !${Me.Maintained[${SpellType[7]}](exists)}
-        {
-        	if ${Me.Ability[${SpellType[7]}].IsReady}
-        	{
-        		if !${BuffTarget.Equal["No one"]}
-        		{
-      		    CurrentAction:Set[Combat :: Casting 'Damage Shield']
-      		    ;Debug:Echo["${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}"]
-      				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
-      				{
-      			    call CastSpellRange 7 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
-      				}
-      				else
-      			    echo "ERROR: Damage Shield proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]}, does not exist!"
-          	}
-          	;; If set to "no one" we assume they do not want to use this spell.
-        	}
-        }
-      }
-    }
-  }
 
 	call CommonHeals 60
   call CheckGroupOrRaidAggro
@@ -956,8 +996,7 @@ function CheckGroupOrRaidAggro()
             	                	{
             	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
             	                		{
-            	                			;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
-                	                    	echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+            	                			echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
             	                			CustomActor[${Counter}]:DoTarget
             	                			wait 2
             	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
@@ -967,7 +1006,6 @@ function CheckGroupOrRaidAggro()
             	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
-                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -975,15 +1013,13 @@ function CheckGroupOrRaidAggro()
                 	                }
                 	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
                 	                {
-                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ESneering!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
                 	                }
-                	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
+                	                elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
                 	                {
-                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1037,8 +1073,7 @@ function CheckGroupOrRaidAggro()
             	                	{
             	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
             	                		{
-            	                			;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EUsing Mythical!" 3 1
-                	                    	echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+            	                			echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
             	                			CustomActor[${Counter}]:DoTarget
             	                			wait 2
             	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
@@ -1048,7 +1083,6 @@ function CheckGroupOrRaidAggro()
             	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
-                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ERescuing!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
@@ -1056,15 +1090,13 @@ function CheckGroupOrRaidAggro()
                 	                }
                 	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
                 	                {
-                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6ESneering!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
                 	                    return 1
                 	                }
-                	                elseif ${Me.Ability[${SpellType[330]}].IsReady}
+                	                elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
                 	                {
-                	                    ;ANNOUNCE IS BROKEN announce "${Actor[${MobTargetID}]} has aggro (${Actor[${MobTargetID}].Health}% health)...\n\\#FF6E6EFeigning ${CustomActor[${Counter}].Target}!" 3 1
                 	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
                 	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
