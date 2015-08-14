@@ -3,8 +3,8 @@
 <InnerSpaceSettings>
 	<Set name="illusionist">
 		<Setting name="1,60">Ultraviolet Beam</Setting>
-		<Setting name="1,500">Salve</Setting>
 		<Setting name="1,352">Entrance</Setting>
+		<Setting name="1,400">Strike of Consistency</Setting>
 		<Setting name="2,190">Paranoia</Setting>
 		<Setting name="2,355">Personae Reflection</Setting>
 		<Setting name="3,70">Brainburst</Setting>

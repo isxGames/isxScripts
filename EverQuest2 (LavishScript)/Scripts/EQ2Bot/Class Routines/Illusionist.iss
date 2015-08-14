@@ -273,10 +273,16 @@ function Combat_Init()
 	MobHealth[6,1]:Set[20]
 	MobHealth[6,2]:Set[100]
 	Action[6]:Set[Master_Strike]
+	
+	;; Smite of Consistency
+	MobHealth[7,1]:Set[0]
+	MobHealth[7,1]:Set[100]
+	SpellRange[7,1]:Set[400]
+	Action[7]:Set[SmiteOfConsistency]
 
 	;; Theorems
-	Action[7]:Set[Theorems]
-	SpellRange[7,1]:Set[51]
+	Action[8]:Set[Theorems]
+	SpellRange[8,1]:Set[51]
 
 	;;;;;;;;;;;;;;;;; STUNS ;;;;;;;;;;;;;;;;;
 
@@ -298,10 +304,10 @@ function Combat_Init()
 	;;; NOTE: This is handled in RefreshPower()
 
 	;; Dispel debuff
-	Action[8]:Set[Dispel]
-	MobHealth[8,1]:Set[1]
-	MobHealth[8,2]:Set[100]
-	SpellRange[8,1]:Set[363]
+	Action[9]:Set[Dispel]
+	MobHealth[9,1]:Set[1]
+	MobHealth[9,2]:Set[100]
+	SpellRange[9,1]:Set[363]
 
 }
 
@@ -1853,6 +1859,40 @@ function Combat_Routine(int xAction)
 			ExecuteQueued Mezmerise_Targets
 			FlushQueued Mezmerise_Targets
 			break
+			
+		case SmiteOfConsistency
+			if (${Me.Ability[${SpellType[400]}].IsReady})
+			{
+				call _CastSpellRange 400 0 0 0 ${KillTarget} 0 0 0 1
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete				
+				}
+				spellsused:Inc
+			}
+			call VerifyTarget
+			if ${Return.Equal[FALSE]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
+			if ${spellsused} < 1 && !${MezzMode}
+			{
+				call CastSomething			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					return CombatComplete
+				}
+			}
+			ExecuteQueued Mezmerise_Targets
+			FlushQueued Mezmerise_Targets				
+			break
+			
 
 		case Theorems
 			;if ${UltraDPSMode}
@@ -1868,6 +1908,8 @@ function Combat_Routine(int xAction)
 			;	FlushQueued Mezmerise_Targets
 			;	break
 			;}
+			if ${Me.Level} < 32
+				break
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
 				break
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
@@ -3273,9 +3315,16 @@ function CheckStuns()
 	if ${IllyDebugMode}	
 		Debug:Echo["CheckStuns()"]
 	
+	;; TODO -- double check these later
+	if (${Me.Level} < 20 && ${Actor[${KillTarget}].IsSolo})
+		return
+	elseif (${Me.Group} > 2 && ${Actor[${MainTankID}].Health} > 50)
+		return
+
+	;; Traditional setting...
 	if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
 		return
-		
+
 	;; Stun 1 (Paranoia)
 	if ${Me.Ability[${SpellType[190]}].IsReady}
 	{
