@@ -295,12 +295,12 @@ objectdef TrackHelper
 					}
 					else
 					{
-						LevelString:Set[${CustomActor[ID,${aID}].Level}]
+						LevelString:Set[(${CustomActor[ID,${aID}].Level})]
 						TypeString:Set[]
 						HealthString:Set[(${CustomActor[ID,${aID}].Health}%)]
 					}
 						
-					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[(${LevelString}) ${TypeString} ${CustomActor[ID,${aID}].Name} ${HealthString} ${ClassString} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
+					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${LevelString} ${TypeString} ${CustomActor[ID,${aID}].Name} ${HealthString} ${ClassString} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
 				}
 			}
 		}
@@ -516,13 +516,13 @@ atom(script) RefreshList()
 		}
 		else
 		{
-			LevelString:Set[${CustomActor[${tcount}].Level}]
+			LevelString:Set[(${CustomActor[${tcount}].Level})]
 			TypeString:Set[]
 			HealthString:Set[(${CustomActor[${tcount}].Health}%)]
 		}
 			
 		
-		itemInfo:Set[(${LevelString}) ${TypeString} ${CustomActor[${tcount}].Name} ${HealthString} ${ClassString} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
+		itemInfo:Set[${LevelString} ${TypeString} ${CustomActor[${tcount}].Name} ${HealthString} ${ClassString} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
 		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
 			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]
 	}
@@ -643,12 +643,12 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 	}
 	else
 	{
-		LevelString:Set[${Level}]
+		LevelString:Set[(${Level})]
 		TypeString:Set[]
 		HealthString:Set[(${Actor[${ID}].Health}%)]
 	}
 
-	itemInfo:Set[(${LevelString}) ${TypeString} ${Name} ${HealthString} ${ClassString} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
+	itemInfo:Set[${LevelString} ${TypeString} ${Name} ${HealthString} ${ClassString} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
 
 
 	; check our filters.
