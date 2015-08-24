@@ -9,7 +9,7 @@
 		<Height>400</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>                                                                         EQ2OgreHarvest - UI Ver: BETA 1.00</Title> 
+		<Title>EQ2OgreHarvest</Title> 
 		<TitleBar Template="Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
@@ -31,6 +31,8 @@
 					<OnLeftClick>
 						if ${Script[EQ2OgreHarvestMain]}
 							endscript EQ2OgreHarvestMain
+						if ${Script[EQ2OgreHarvest]}
+							endscript EQ2OgreHarvest
 						ui -unload scripts\\EQ2OgreHarvest\\EQ2OgreHarvestShellXML.xml
 						</OnLeftClick>
 				</CommandButton>

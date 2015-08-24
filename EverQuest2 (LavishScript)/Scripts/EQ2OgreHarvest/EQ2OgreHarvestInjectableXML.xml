@@ -11,10 +11,13 @@
 		<Text></Text>
 		<OnLoad>
 			declarevariable EQ2OgreHarvestLoaded bool global
+			declarevariable EQ2OgreHarvestOptionsChanged bool global
 			EQ2OgreHarvestLoaded:Set[TRUE]
+			EQ2OgreHarvestOptionsChanged:Set[FALSE]
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable EQ2OgreHarvestLoaded
+			deletevariable EQ2OgreHarvestOptionsChanged
 		</OnUnLoad>
 	</Text>
 
@@ -48,11 +51,13 @@
 		<OnLoad>
 			declarevariable ChkBoxOreID int global
 			ChkBoxOreID:Set[${This.ID}]
-			This:SetChecked	
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxOreID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxGems' template='chkbox'>
 		<X>12</X>
@@ -61,11 +66,13 @@
 		<OnLoad>
 			declarevariable ChkBoxGemsID int global
 			ChkBoxGemsID:Set[${This.ID}]
-			This:SetChecked	
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxGemsID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxWood' template='chkbox'>
 		<X>12</X>
@@ -74,11 +81,13 @@
 		<OnLoad>
 			declarevariable ChkBoxWoodID int global
 			ChkBoxWoodID:Set[${This.ID}]
-			This:SetChecked	
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxWoodID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxRoots' template='chkbox'>
 		<X>12</X>
@@ -87,11 +96,13 @@
 		<OnLoad>
 			declarevariable ChkBoxRootsID int global
 			ChkBoxRootsID:Set[${This.ID}]
-			This:SetChecked
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxRootsID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxDens' template='chkbox'>
 		<X>12</X>
@@ -100,11 +111,13 @@
 		<OnLoad>
 			declarevariable ChkBoxDensID int global
 			ChkBoxDensID:Set[${This.ID}]
-			This:SetChecked
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxDensID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxShrubs' template='chkbox'>
 		<X>12</X>
@@ -113,11 +126,13 @@
 		<OnLoad>
 			declarevariable ChkBoxShrubsID int global
 			ChkBoxShrubsID:Set[${This.ID}]
-			This:SetChecked
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxShrubsID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxFish' template='chkbox'>
 		<X>12</X>
@@ -130,6 +145,9 @@
 		<OnUnLoad>
 			deletevariable ChkBoxFishID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxCollectibleQ' template='chkbox'>
 		<X>12</X>
@@ -142,6 +160,9 @@
 		<OnUnLoad>
 			deletevariable ChkBoxCollectibleQID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxCollectibleE' template='chkbox'>
 		<X>12</X>
@@ -154,6 +175,9 @@
 		<OnUnLoad>
 			deletevariable ChkBoxCollectibleEID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxPathMode' template='chkbox'>
 		<X>225</X>
@@ -162,11 +186,13 @@
 		<OnLoad>
 			declarevariable ChkBoxPathModeID int global
 			ChkBoxPathModeID:Set[${This.ID}]
-			This:SetChecked	
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxPathModeID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxLoopPathMode' template='chkbox'>
 		<X>250</X>
@@ -175,11 +201,13 @@
 		<OnLoad>
 			declarevariable ChkBoxLoopPathModeID int global
 			ChkBoxLoopPathModeID:Set[${This.ID}]
-			This:SetChecked
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxLoopPathModeID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxRoamMode' template='chkbox'>
 		<X>225</X>
@@ -188,11 +216,13 @@
 		<OnLoad>
 			declarevariable ChkBoxRoamModeID int global
 			ChkBoxRoamModeID:Set[${This.ID}]
-			This:SetChecked
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable ChkBoxRoamModeID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<TextEntry Name='TextEntryRoamDistance'>
 		<X>250</X>
@@ -203,11 +233,13 @@
 		<OnLoad>
 			declarevariable TEBoxRoamDistanceID int global
 			TEBoxRoamDistanceID:Set[${This.ID}]
-			This:SetText[50]
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable TEBoxRoamDistanceID
 		</OnUnLoad>
+		<OnKeyDown>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnKeyDown>
 	</TextEntry>
 	<Text name='TextRoamDistance' template='Text'>
 		<X>285</X>
@@ -228,6 +260,9 @@
 		<OnUnLoad>
 			deletevariable ChkBoxTetherModeID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<TextEntry Name='TextEntryTetherDistance'>
 		<X>250</X>
@@ -238,11 +273,13 @@
 		<OnLoad>
 			declarevariable TEBoxTetherDistanceID int global
 			TEBoxTetherDistanceID:Set[${This.ID}]
-			This:SetText[200]
 		</OnLoad>
 		<OnUnLoad>
 			deletevariable TEBoxTetherDistanceID
 		</OnUnLoad>
+		<OnKeyDown>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnKeyDown>
 	</TextEntry>
 	<Text name='TextTetherDistance' template='Text'>
 		<X>285</X>
@@ -264,6 +301,9 @@
 		<OnUnLoad>
 			deletevariable ChkBoxSkillUpOnlyModeID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 	<checkbox name='chkboxNoiseOnExit' template='chkbox'>
 		<X>225</X>
@@ -276,6 +316,9 @@
 		<OnUnLoad>
 			deletevariable ChkBoxNoiseOnExitID
 		</OnUnLoad>
+		<OnLeftClick>
+      EQ2OgreHarvestOptionsChanged:Set[TRUE]
+    </OnLeftClick>
 	</checkbox>
 
 	<Text name='TextOHNavPaths' template='Text'>

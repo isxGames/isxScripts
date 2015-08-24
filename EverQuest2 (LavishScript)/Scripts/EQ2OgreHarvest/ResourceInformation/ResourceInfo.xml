@@ -5,6 +5,21 @@
 <Setting Name="?" Type="CollectibleQ" MinSkill="1" MaxSkill="5000" Tier="1">?</Setting>
 <Setting Name="!" Type="CollectibleE" MinSkill="1" MaxSkill="5000" Tier="1">!</Setting>
 
+<!-- Unknown -->
+<Setting Name="Desert Shrubbery" Type="Shrub" MinSkill="90" MaxSkill="152" Tier="3">Desert Shrubbery</Setting>
+<Setting Name="Felled Desert Arbor" Type="Wood" MinSkill="90" MaxSkill="152" Tier="3">Felled Desert Arbor</Setting>
+
+
+<!-- halas -->
+<Setting Name="scattered ore" Type="Ore" MinSkill="1" MaxSkill="32" Tier="1">scattered ore</Setting>
+<Setting Name="ice-covered stone" Type="Gem" MinSkill="1" MaxSkill="32" Tier="1">ice-covered stone</Setting>
+<Setting Name="weathered driftwood" Type="Wood" MinSkill="1" MaxSkill="32" Tier="1">weathered driftwood</Setting>
+<Setting Name="stunted roots" Type="Root" MinSkill="1" MaxSkill="32" Tier="1">stunted roots</Setting>
+<Setting Name="Creature Den" Type="Den" MinSkill="1" MaxSkill="32" Tier="1">Creature Den</Setting>
+<Setting Name="windblown shrub" Type="Shrub" MinSkill="1" MaxSkill="32" Tier="1">windblown shrub</Setting>
+<Setting Name="school of sunfish" Type="Fish" MinSkill="1" MaxSkill="32" Tier="1">school of sunfish</Setting>
+
+
 <!-- darklight_wood -->
 <Setting Name="Heavy Stone" Type="Ore" MinSkill="1" MaxSkill="32" Tier="1">Heavy Stone</Setting>
 <Setting Name="Unearthed Ore" Type="Gem" MinSkill="1" MaxSkill="32" Tier="1">Unearthed Ore</Setting>
@@ -111,7 +126,7 @@
 
 <!-- nektulos -->
 <Setting Name="Penumbra Ore" Type="Ore" MinSkill="90" MaxSkill="152" Tier="3">Penumbra Ore</Setting>
-<Setting Name="Eventide Stones" Type="Gem" MinSkill="90" MaxSkill="152" Tier="3">Eventide Stones</Setting>
+<Setting Name="Eventide Stone" Type="Gem" MinSkill="90" MaxSkill="152" Tier="3">Eventide Stone</Setting>
 <Setting Name="Putrescent Duskwood Arbor" Type="Wood" MinSkill="90" MaxSkill="152" Tier="3">Putrescent Duskwood Arbor</Setting>
 <Setting Name="Rancid Roots" Type="Root" MinSkill="90" MaxSkill="152" Tier="3">Rancid Roots</Setting>
 <Setting Name="Beast Den" Type="Den" MinSkill="90" MaxSkill="152" Tier="3">Beast Den</Setting>
@@ -126,6 +141,15 @@
 <Setting Name="Beast Den" Type="Den" MinSkill="90" MaxSkill="152" Tier="3">Beast Den</Setting>
 <Setting Name="High Plains Shrubbery" Type="Shrub" MinSkill="90" MaxSkill="152" Tier="3">High Plains Shrubbery</Setting>
 <Setting Name="Mob of Fish" Type="Fish" MinSkill="90" MaxSkill="152" Tier="3">Mob of Fish</Setting>
+
+<!-- exp03_rgn_butcherblock -->
+<Setting Name="mountainous ore" Type="Ore" MinSkill="90" MaxSkill="152" Tier="3">mountainous ore</Setting>
+<Setting Name="crystalline formation" Type="Gem" MinSkill="90" MaxSkill="152" Tier="3">crystalline formation</Setting>
+<Setting Name="axe-felled lumber" Type="Wood" MinSkill="90" MaxSkill="152" Tier="3">axe-felled lumber</Setting>
+<Setting Name="exposed roots" Type="Root" MinSkill="90" MaxSkill="152" Tier="3">exposed roots</Setting>
+<Setting Name="varmint den" Type="Den" MinSkill="90" MaxSkill="152" Tier="3">varmint den</Setting>
+<Setting Name="highland shrub" Type="Shrub" MinSkill="90" MaxSkill="152" Tier="3">highland shrub</Setting>
+<Setting Name="plethora of fish" Type="Fish" MinSkill="90" MaxSkill="152" Tier="3">plethora of fish</Setting>
 
 <!-- enchanted -->
 <Setting Name="Residual Ore" Type="Ore" MinSkill="140" MaxSkill="221" Tier="4">Residual Ore</Setting>
@@ -281,16 +305,75 @@
 <Setting Name="Kylong Briar" Type="Shrub" MinSkill="340" MaxSkill="400" Tier="8">Kylong Briar</Setting>
 <Setting Name="Southshore School" Type="Fish" MinSkill="340" MaxSkill="400" Tier="8">Southshore School</Setting>
 
+<!-- exp05_rgn_innothule -->
+ <Setting Name="ykeshan dark ore" Type="Ore" MinSkill="340" MaxSkill="410" Tier="8">ykeshan dark ore</Setting>
+ <Setting Name="blackened hermatite" Type="Gem" MinSkill="340" MaxSkill="410" Tier="8">blackened hermatite</Setting>
+ <Setting Name="bleached timber" Type="Wood" MinSkill="340" MaxSkill="410" Tier="8">bleached timber</Setting>
+ <Setting Name="swamp foot" Type="Root" MinSkill="340" MaxSkill="410" Tier="8">swamp foot</Setting>
+ <Setting Name="moor mole den" Type="Den" MinSkill="340" MaxSkill="410" Tier="8">moor mole den</Setting>
+ <Setting Name="ykeshan stout shrubbery" Type="Shrub" MinSkill="340" MaxSkill="410" Tier="8">ykeshan stout shrubbery</Setting>
+ <Setting Name="spotted whitesurf fish" Type="Fish" MinSkill="340" MaxSkill="410" Tier="8">spotted whitesurf fish</Setting> 
+ 
 <!-- All of Odus -->
-<Setting Name="an infused deposit" Type="Ore" MinSkill="390" MaxSkill="450" Tier="9">an infused deposit</Setting>
-<Setting Name="a molten formation" Type="Gem" MinSkill="390" MaxSkill="450" Tier="9">a molten formation</Setting>
+<Setting Name="infused deposit" Type="Ore" MinSkill="390" MaxSkill="450" Tier="9">infused deposit</Setting>
+<Setting Name="molten formation" Type="Gem" MinSkill="390" MaxSkill="450" Tier="9">molten formation</Setting>
 <Setting Name="Toxxulia timber" Type="Wood" MinSkill="390" MaxSkill="450" Tier="9">Toxxulia timber</Setting>
-<Setting Name="a Toxxulia root culm" Type="Root" MinSkill="390" MaxSkill="450" Tier="9">a Toxxulia root culm</Setting>
-<Setting Name="a craggy lair" Type="Den" MinSkill="390" MaxSkill="450" Tier="9">a craggy lair</Setting>
-<Setting Name="a perennial shrub" Type="Shrub" MinSkill="390" MaxSkill="450" Tier="9">a perennial shrub</Setting>
+<Setting Name="Toxxulia root culm" Type="Root" MinSkill="390" MaxSkill="450" Tier="9">Toxxulia root culm</Setting>
+<Setting Name="craggy lair" Type="Den" MinSkill="390" MaxSkill="450" Tier="9">craggy lair</Setting>
+<Setting Name="perennial shrub" Type="Shrub" MinSkill="390" MaxSkill="450" Tier="9">perennial shrub</Setting>
 <Setting Name="school of tiny fish" Type="Fish" MinSkill="390" MaxSkill="450" Tier="9">school of tiny fish</Setting>
 
+<!-- exp06_rng_odus_north -->
+<Setting Name="mined slobberjaw ore" Type="Ore" MinSkill="390" MaxSkill="450" Tier="9">mined slobberjaw ore</Setting>
+<Setting Name="molten formation" Type="Gem" MinSkill="390" MaxSkill="450" Tier="9">molten formation</Setting>
+<Setting Name="Toxxulia timber" Type="Wood" MinSkill="390" MaxSkill="450" Tier="9">Toxxulia timber</Setting>
+<Setting Name="Toxxulia root culm" Type="Root" MinSkill="390" MaxSkill="450" Tier="9">Toxxulia root culm</Setting>
+<Setting Name="craggy lair" Type="Den" MinSkill="390" MaxSkill="450" Tier="9">craggy lair</Setting>
+<Setting Name="perennial shrub" Type="Shrub" MinSkill="390" MaxSkill="450" Tier="9">perennial shrub</Setting>
+<Setting Name="school of tiny fish" Type="Fish" MinSkill="390" MaxSkill="450" Tier="9">school of tiny fish</Setting>
 
+<!-- exp08_rgn_velious_cobalt_scar -->
+ <Setting Name="wind-scoured ore" Type="Ore" MinSkill="425" MaxSkill="475" Tier="10">wind-scoured ore</Setting>
+ <Setting Name="leafy roots" Type="Root" MinSkill="425" MaxSkill="475" Tier="10">leafy roots</Setting>
+ <Setting Name="rocky animal den" Type="Den" MinSkill="425" MaxSkill="475" Tier="10">rocky animal den</Setting>
+ <Setting Name="scraggly shrub" Type="Shrub" MinSkill="425" MaxSkill="475" Tier="10">scraggly shrub</Setting>
+ <Setting Name="school of shimmering fish" Type="Fish" MinSkill="425" MaxSkill="475" Tier="10">school of shimmering fish</Setting>
+ 
+<!-- exp08_rgn_withered_lands -->
+<Setting Name="electrified ore" Type="Ore" MinSkill="425" MaxSkill="460" Tier="10">electrified ore</Setting>
+<Setting Name="cloudy gem cluster" Type="Gem" MinSkill="425" MaxSkill="460" Tier="10">cloudy gem cluster</Setting>
+<Setting Name="sturdy animal lair" Type="Den" MinSkill="425" MaxSkill="460" Tier="9">sturdy animal lair</Setting>
+<Setting Name="mossy timber" Type="Wood" MinSkill="425" MaxSkill="460" Tier="10">mossy timber</Setting>
+<Setting Name="clump of toxic roots" Type="Root" MinSkill="425" MaxSkill="460" Tier="10">clump of toxic roots</Setting>
+<Setting Name="withering shrub" Type="Shrub" MinSkill="425" MaxSkill="460" Tier="10">withering shrub</Setting>
+
+<!-- exp09_rgn_plains_of_obol -->
+ <Setting Name="coursing ore" Type="Ore" MinSkill="425" MaxSkill="475" Tier="10">coursing ore</Setting>
+ <Setting Name="quixotic gem cluster" Type="Gem" MinSkill="425" MaxSkill="475" Tier="10">quixotic gem cluster</Setting>
+ <Setting Name="smooth planar log" Type="Wood" MinSkill="425" MaxSkill="475" Tier="10">smooth planar log</Setting>
+ <Setting Name="surging Roots" Type="Root" MinSkill="425" MaxSkill="475" Tier="10">surging Roots</Setting>
+ <Setting Name="fortified animal lair" Type="Den" MinSkill="425" MaxSkill="475" Tier="10">fortified animal lair</Setting>
+ <Setting Name="astral shrub" Type="Shrub" MinSkill="425" MaxSkill="475" Tier="10">astral shrub</Setting>
+ <Setting Name="school of glowing fish" Type="Fish" MinSkill="425" MaxSkill="475" Tier="10">school of glowing fish</Setting>
+
+ <!-- exp09_rgn_dragons_realm -->
+ <Setting Name="luminous ore" Type="Ore" MinSkill="425" MaxSkill="475" Tier="10">luminous ore</Setting>
+ <Setting Name="ethereal stone" Type="Gem" MinSkill="425" MaxSkill="475" Tier="10">etherreal stone</Setting>
+ <Setting Name="ethernere lumber" Type="Wood" MinSkill="425" MaxSkill="475" Tier="10">ethernere lumber</Setting>
+ <Setting Name="surging Roots" Type="Root" MinSkill="425" MaxSkill="475" Tier="10">surging Roots</Setting>
+ <Setting Name="twining Roots" Type="Root" MinSkill="425" MaxSkill="475" Tier="10">twining Roots</Setting>
+ <Setting Name="etherpine lair" Type="Den" MinSkill="425" MaxSkill="475" Tier="10">etherpine lair</Setting>
+ <Setting Name="ethereal shrub" Type="Shrub" MinSkill="425" MaxSkill="475" Tier="10">ethereal shrub</Setting>
+ <Setting Name="school of ethereal fish" Type="Fish" MinSkill="425" MaxSkill="475" Tier="10">school of ethereal fish</Setting> 
+
+<!-- Alter of malice from the forums -->
+<Setting Name="gnarled roots" Type="Root" MinSkill="475" MaxSkill="500" Tier="11">gnarled roots</Setting>
+ <Setting Name="exposed stone" Type="Gem" MinSkill="475" MaxSkill="500" Tier="11">exposed stone</Setting>
+ <Setting Name="pygmy brambles" Type="Shrub" MinSkill="475" MaxSkill="500" Tier="11">pygmy brambles</Setting>
+ <Setting Name="rictus ore" Type="Ore" MinSkill="475" MaxSkill="500" Tier="11">rictus ore</Setting>
+ <Setting Name="a shiver of threshers" Type="Fish" MinSkill="475" MaxSkill="500" Tier="11">a shiver of threshers</Setting>
+ <Setting Name="felled hardwood" Type="Wood" MinSkill="475" MaxSkill="500" Tier="11">felled hardwood</Setting>
+ <Setting Name="odon lair" Type="Den" MinSkill="475" MaxSkill="500" Tier="11">odon lair</Setting> 
 
 	</Set>
 </InnerSpaceSettings>

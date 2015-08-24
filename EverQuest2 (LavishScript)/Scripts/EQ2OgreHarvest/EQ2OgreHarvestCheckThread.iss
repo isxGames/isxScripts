@@ -11,6 +11,8 @@ function main(string Location, float X, float Y, float Z)
 		;If it does not equal "Checking" we don't have to check anything...
 		while !${EQ2OgreHarvestCheckResourceStatus.Equal[Checking]}
 			wait 2
+			
+		;echo "(${Time}) CheckThread:: Moving to ${EQ2OgreHarvestCheckResourceX} ${EQ2OgreHarvestCheckResourceY} ${EQ2OgreHarvestCheckResourceZ}"
 		call OgreNav "Loc" ${EQ2OgreHarvestCheckResourceX} ${EQ2OgreHarvestCheckResourceY} ${EQ2OgreHarvestCheckResourceZ}
 		if ${Return}
 			EQ2OgreHarvestCheckResourceStatus:Set[Valid]

@@ -66,7 +66,7 @@ objectdef ModifiedConditionsObject
 {
 	member:bool Checks()
 	{
-		if !${Paused} && !${Me.IsHated} && ${EQ2OgreHarvestAllowPathing} && ${EQ2OgreHarvestMovementTypeAllowed.Equal[Path]}
+		if !${b_OB_Paused} && !${Me.IsHated} && ${EQ2OgreHarvestAllowPathing} && ${EQ2OgreHarvestMovementTypeAllowed.Equal[Path]}
 		{
 			return TRUE
 		}

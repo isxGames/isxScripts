@@ -13,21 +13,21 @@
 		<TitleBar Template="Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
-			<Width>99%</Width>
-			<Height>5%</Height>
+			<Width>100%</Width>
+			<Height>20</Height>
 			<Children>
 				<Text Name="Title" Template="Window.TitleBar.Title">
 					<Alignment>Center</Alignment>
 				</Text>
 				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
-					<X>85%</X>
-					<Width>16</Width>
-					<Height>16</Height>
+					<X>r45</X>
+					<Width>20</Width>
+					<Height>20</Height>
 				</Button>
 				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
-					<X>92%</X>
-					<Width>16</Width>
-					<Height>16</Height>
+					<X>r20</X>
+					<Width>20</Width>
+					<Height>20</Height>
 					<OnLeftClick>
 						if ${Script[EQ2OgreHarvestMain]}
 							endscript EQ2OgreHarvestMain
@@ -40,11 +40,11 @@
 		</TitleBar>
 
 		<Children>
-		<TabControl Name='MainTabControl'>
+		<TabControl Name='MainTabControl' Template='tabcontrol'>
 			<TabHeight>22</TabHeight>
 			<X>2%</X>
 			<Y>3%</Y>
-			<TabBorder>5</TabBorder>
+			<TabBorder>0</TabBorder>
 			<Height>90%</Height>
 			<Width>96%</Width>
 			<OnLoad>
