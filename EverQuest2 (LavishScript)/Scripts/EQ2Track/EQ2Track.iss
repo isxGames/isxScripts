@@ -270,7 +270,7 @@ objectdef TrackHelper
 			else
 			{
 				;; TODO:  Add more types here
-				if (${CustomActor[id,${aID}].Type.Equal[resource]}) 
+				if (${CustomActor[id,${aID}].Type.Equal[resource]} || ${CustomActor[id,${aID}].Level} < 1) 
 					ActorHasNoLevelOrClass:Set[TRUE]
 				else
 					ActorHasNoLevelOrClass:Set[FALSE]
@@ -314,6 +314,10 @@ variable TrackHelper Tracker
 
 function main(... Args)
 {
+	variable filelist ListFiles
+	variable int Count=0
+	variable string ListName
+	variable bool FoundListForCurrentZone=FALSE
 	declarevariable TrackInterface _TrackInterface global
 	TrackListCombo_executeOnSelect:Set[FALSE]
 	
@@ -351,18 +355,42 @@ function main(... Args)
 	UIElement[TrackMaxLevel@EQ2 Track]:SetText[${LevelMax}]
 	UIElement[TrackSort@EQ2 Track]:SetSelection[${SortMethod}]
 	
-	variable iterator SettingIterator
-	User.FindSet[ReverseFilters]:GetSettingIterator[SettingIterator]
-	NumReverseFilters:Set[0]
-	if ${SettingIterator:First(exists)}
+	
+	ListFiles:GetFiles[${LavishScript.HomeDirectory}/Scripts/EQ2Track/Saved Lists/\*.xml]
+	while ${Count:Inc}<=${ListFiles.Files}
 	{
-		do
+		ListName:Set[${ListFiles.File[${Count}].Filename.Left[-4]}]
+		
+		;echo "EQ2Track.Debug:: Does '${Zone.ShortName}' == '${ListName}'"
+		if ${Zone.ShortName.Equal[${ListName}]}
 		{
-			NumReverseFilters:Inc
-			ReverseFilter[${NumReverseFilters}]:Set[${SettingIterator.Value}]
-			UIElement[FiltersList@EQ2 Track]:AddItem[${ReverseFilter[${NumReverseFilters}]}]
+			;echo "EQ2Track.Debug:: Loading ${ListName}"
+			TrackInterface:LoadListByName[${ListName}]
+			UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${ListName}]:Select
+			FoundListForCurrentZone:Set[TRUE]
 		}
-		while ${SettingIterator:Next(exists)}
+	}
+	
+	if (!${FoundListForCurrentZone})
+	{
+		variable iterator SettingIterator
+		User.FindSet[ReverseFilters]:GetSettingIterator[SettingIterator]
+		NumReverseFilters:Set[0]
+		if ${SettingIterator:First(exists)}
+		{
+			do
+			{
+				NumReverseFilters:Inc
+				ReverseFilter[${NumReverseFilters}]:Set[${SettingIterator.Value}]
+				UIElement[FiltersList@EQ2 Track]:AddItem[${ReverseFilter[${NumReverseFilters}]}]
+			}
+			while ${SettingIterator:Next(exists)}
+		}
+	}
+	
+	if (!${FoundListForCurrentZone} && ${CurrentList.Length} > 0)
+	{
+		UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${CurrentList}]:Select
 	}
 	
 	RefreshList
@@ -373,11 +401,8 @@ function main(... Args)
 	Event[EQ2_ActorSpawned]:AttachAtom[EQ2_ActorSpawned]
 	Event[EQ2_ActorDespawned]:AttachAtom[EQ2_ActorDespawned]
 	Event[EQ2_FinishedZoning]:AttachAtom[EQ2_FinishedZoning]
-	
-	if (${CurrentList.Length} > 0)
-	{
-		UIElement[EQ2 Track].FindUsableChild[TrackListCombo,combobox].ItemByText[${CurrentList}]:Select
-	}
+
+	AddTrigger StopScript "It will take about 20 more seconds to prepare your camp."
 	
 	TrackListCombo_executeOnSelect:Set[TRUE]
 	do
@@ -497,7 +522,7 @@ atom(script) RefreshList()
 		}
 			
 		;; TODO:  Add more types here
-		if (${CustomActor[${tcount}].Type.Equal[resource]})   
+		if (${CustomActor[${tcount}].Type.Equal[resource]} || ${CustomActor[${tcount}].Level} < 1)   
 			ActorHasNoLevelOrClass:Set[TRUE]
 		else
 			ActorHasNoLevelOrClass:Set[FALSE]
@@ -624,7 +649,7 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 		return
 		
 	;; TODO:  Add more types here
-	if (${ActorType.Equal[resource]})   
+	if (${ActorType.Equal[resource]} || ${Level} < 1) 
 		ActorHasNoLevelOrClass:Set[TRUE]
 	else
 		ActorHasNoLevelOrClass:Set[FALSE]
@@ -672,6 +697,11 @@ atom(script) EQ2_ActorDespawned(string ID, string Name)
 		tcount:Dec[1]
 	}
 	while ${tcount}>0
+}
+
+function StopScript()
+{
+	Script:End
 }
 
 function atexit()
