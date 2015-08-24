@@ -34,6 +34,7 @@ function main()
 			UpdateXMLSettings
 			EQ2OgreHarvestOptionsChanged:Set[FALSE]
 		}
+		waitframe
 	}
 	while ${EQ2OgreHarvestLoaded}	
 }
