@@ -1,5 +1,8 @@
-;Version BETA 1.008
+;Version BETA 1.009
 /**
+Version 1.009 - Amadeus
+Updated to use EQ2:GetActors with iterator along with some other tweaks
+(NOTE:  The "Roam Distance" in the UI is now what is used within the script for maximum distance for nodes!)
 Version 1.008 - Kannkor
 Updated to work with latest Innerspace.
 Version 1.007 - Kannkor
@@ -25,7 +28,6 @@ variable(global) float EQ2OgreHarvestX
 variable(global) float EQ2OgreHarvestY
 variable(global) float EQ2OgreHarvestZ
 variable OptionsObject OptionsOb
-variable int ResourcesInArea
 variable(global) bool EQ2OgreHarvestResourceFound=FALSE
 variable(global) int EQ2OgreHarvestResourceID
 variable int CurrentResourceID
@@ -45,7 +47,8 @@ variable TimerObject TimerOb
 variable(global) string EQ2OgreHarvestMovementTypeAllowed=NONE
 variable HarvestStatsObject HarvestStatsOb
 ;EQ2OgreHarvestMovementTypeAllowed Options are: Path and Resource (or None)
-;variable index:actor ResourceActors
+variable index:actor ResourceActors
+variable iterator ResourceIterator
 
 #include "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreMapController.inc"
 
@@ -81,20 +84,6 @@ function main()
 		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestCheckThread"
 	if !${Script[EQ2OgreHarvestPathThread](exists)}
 		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestPathThread"
-
-	;Load OgreCustomActorArray
-
-	if !${Script[OgreCustomArrayControllerScript](exists)}
-	{
-		runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreCustomArrayControllerScript"
-		waitframe
-		wait ${Script[OgreCustomArrayControllerScript](exists)}
-		wait 10
-		wait frame
-	}
-	;Load our distance into the Object
-	;Change this to the number in the UI
-	OgreCustomArrayControllerOb:Load[${Script.Filename},150]
 
 	call LoadResources
 
@@ -152,84 +141,98 @@ function main()
 		;Since you can't path without roaming, we should always check roaming first
 		
 		;Scan the area for resource and lets pick which one we want.
-		/**
-		;***Change 150 to the # in the UI***
-		;EQ2:CreateCustomActorArray[byDist,150,resource]
-		;EQ2:CreateCustomActorArray[byDist,150]
-			This should no longer be needed since it is handled by the object below.
 		
-		**/
-		OgreCustomArrayControllerOb:Update
-		;noop NoOp ${EQ2.GetActors[ResourceActors,Range,20,resource]}
-
-		EQ2OgreHarvestResourceFound:Set[FALSE]
-		ResourcesInArea:Set[0]
-
-		while (${ResourcesInArea:Inc} <= ${EQ2.CustomActorArraySize} && !${EQ2OgreHarvestResourceFound})
+		variable int RoamDistance
+		if (${UIElement[${ChkBoxRoamModeID}].Checked})
 		{
-			;Check some IgnoreNodes list here
-			;Lets double confirm we're going after a resource..
-			/** This section shouldn't be needed, as OptionsOb.Valid takes care of it.
-			if ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0
-			{
-				echo Is Null Valid? ${OptionsOb.ValidResource[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]}
-				echo ${Time}: HarvestMain: Found a 0: ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0 // {Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0 \\ {Actor[{CustomActor[${ResourcesInArea}].ID}].ID}==0
-				EQ2OgreHarvestLoopDone:Set[TRUE]
-				EQ2OgreHarvestAllowPathing:Set[FALSE]
-				continue
-				;break
-			}
-			**/
+			RoamDistance:Set[${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}]
+			if (${RoamDistance} < 1)
+				RoamDistance:Set[75]
+		}
+		else
+			RoamDistance:Set[75]
 
-			if !${OptionsOb.IgnoreNode[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]} && ${OptionsOb.ValidResource[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]} &&  ${OptionsOb.ValidDistance[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]}
+		;echo "[${Time}] EQ2OgreHarvest:: Populating ResourceActors with all resources within ${RoamDistance}"
+		EQ2:GetActors[ResourceActors,Range,${RoamDistance},resource]
+		;echo "[${Time}] EQ2OgreHarvest:: ResourceActors populated -- Size:  ${ResourceActors.Used}"
+		
+		EQ2OgreHarvestResourceFound:Set[FALSE]
+		
+		ResourceActors:GetIterator[ResourceIterator]
+		if ${ResourceIterator:First(exists)}
+		{
+			do
 			{
-				if ${CurrentResourceID}==${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}
+				;Check some IgnoreNodes list here
+				;Lets double confirm we're going after a resource..
+				/** This section shouldn't be needed, as OptionsOb.Valid takes care of it.
+				if ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}==0
 				{
-					echo ${Time} Don't think this should fire.. CurrentResourceID is the same as the scanned resource, but it shouldn't be scanning...
-					EQ2OgreHarvestResourceFound:Set[TRUE]
+					echo Is Null Valid? ${OptionsOb.ValidResource[${ResourceIterator.Value.ID}]}
+					echo ${Time}: HarvestMain: Found a 0: ${ResourceIterator.Value.ID}==0 // ${ResourceIterator.Value.ID}==0 \\ ${ResourceIterator.Value.ID}==0
 					EQ2OgreHarvestLoopDone:Set[TRUE]
 					EQ2OgreHarvestAllowPathing:Set[FALSE]
-					break
+					continue
+					;break
 				}
-
-				;Lets just set new coords for the check Thread.
-				EQ2OgreHarvestCheckResourceX:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].X}]
-				EQ2OgreHarvestCheckResourceY:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].Y}]
-				EQ2OgreHarvestCheckResourceZ:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].Z}]
-				EQ2OgreHarvestCheckResourceStatus:Set[Checking]
-				wait 100 !${EQ2OgreHarvestCheckResourceStatus.Equal[Checking]}
-
-				if ${EQ2OgreHarvestCheckResourceStatus.Equal[Checking]}
-					echo EQ2OgreHarvestMain Error 1: 10 seconds expired and ResourceStatus is still "Checking"
-				elseif ${EQ2OgreHarvestCheckResourceStatus.Equal[Invalid]}
+				**/
+	
+				;echo "[${Time}] EQ2OgreHarvest:: DEBUG-> ${ResourceIterator.Value.Name} (ID: ${ResourceIterator.Value.ID}) :: IgnoreNode: ${OptionsOb.IgnoreNode[${ResourceIterator.Value.ID}]}"
+				;echo "[${Time}] EQ2OgreHarvest:: DEBUG-> ${ResourceIterator.Value.Name} (ID: ${ResourceIterator.Value.ID}) :: ValidResource: ${OptionsOb.ValidResource[${ResourceIterator.Value.ID}]}"
+				;echo "[${Time}] EQ2OgreHarvest:: DEBUG-> ${ResourceIterator.Value.Name} (ID: ${ResourceIterator.Value.ID}) :: ValidDistance: ${OptionsOb.ValidDistance[${ResourceIterator.Value.ID}]} (Distance: ${ResourceIterator.Value.Distance})"
+	
+				if !${OptionsOb.IgnoreNode[${ResourceIterator.Value.ID}]} && ${OptionsOb.ValidResource[${ResourceIterator.Value.ID}]} &&  ${OptionsOb.ValidDistance[${ResourceIterator.Value.ID}]}
 				{
-					;Do nothing? Not a valid harvest
-					;echo ${Time} Bad Harvest: ${Actor[${CustomActor[${ResourcesInArea}].ID}]} - ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}
-					;wait 10
-				}
-				elseif ${EQ2OgreHarvestCheckResourceStatus.Equal[Valid]}
-				{
-					;Found a resource
-
-					echo ${Time}: Breaking current movement: CurrentResourceID: ${CurrentResourceID} / ResourceID: ${Actor[${CustomActor[${ResourcesInArea}].ID}].ID} / ${Actor[${CustomActor[${ResourcesInArea}].ID}].Name}
-					Script[EQ2OgreHarvestMoveThread]:ExecuteAtom[BreakCurrentMovement]
-					EQ2OgreHarvestResourceFound:Set[TRUE]
-					EQ2OgreHarvestLoopDone:Set[TRUE]
-					EQ2OgreHarvestAllowPathing:Set[FALSE]
-					;Script[EQ2OgreHarvestPathThread]:ExecuteAtom[BreakCurrentMovement]
-					;Script[EQ2OgreHarvestPathThread]:ExecuteAtom[BreakCurrentMovementRoutine]
-					wait 1
-					CurrentResourceID:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].ID}]
-					;CurrentResourceID is used for checking if it's available.
-					;EQ2OgreHarvestResourceID is the actual ID we need to move too.
-					EQ2OgreHarvestResourceID:Set[${CurrentResourceID}]
-					EQ2OgreHarvestX:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].X}]
-					EQ2OgreHarvestY:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].Y}]
-					EQ2OgreHarvestZ:Set[${Actor[${CustomActor[${ResourcesInArea}].ID}].Z}]
-					EQ2OgreHarvestNextLoc:Set[Loc]
-					EQ2OgreHarvestMovementTypeAllowed:Set[Resource]
+					if ${CurrentResourceID}==${ResourceIterator.Value.ID}
+					{
+						echo ${Time} Don't think this should fire.. CurrentResourceID is the same as the scanned resource, but it shouldn't be scanning...
+						EQ2OgreHarvestResourceFound:Set[TRUE]
+						EQ2OgreHarvestLoopDone:Set[TRUE]
+						EQ2OgreHarvestAllowPathing:Set[FALSE]
+						break
+					}
+	
+					;Lets just set new coords for the check Thread.
+					EQ2OgreHarvestCheckResourceX:Set[${ResourceIterator.Value.X}]
+					EQ2OgreHarvestCheckResourceY:Set[${ResourceIterator.Value.Y}]
+					EQ2OgreHarvestCheckResourceZ:Set[${ResourceIterator.Value.Z}]
+					EQ2OgreHarvestCheckResourceStatus:Set[Checking]
+					echo "[${Time}] EQ2OgreHarvest:: Checking... ${ResourceIterator.Value.Name} (ID: ${ResourceIterator.Value.ID}) -- Location: ${EQ2OgreHarvestCheckResourceX}, ${EQ2OgreHarvestCheckResourceY}, ${EQ2OgreHarvestCheckResourceZ}"
+					wait 100 !${EQ2OgreHarvestCheckResourceStatus.Equal[Checking]}
+	
+					if ${EQ2OgreHarvestCheckResourceStatus.Equal[Checking]}
+						echo EQ2OgreHarvestMain Error 1: 10 seconds expired and ResourceStatus is still "Checking"
+					elseif ${EQ2OgreHarvestCheckResourceStatus.Equal[Invalid]}
+					{
+						;Do nothing? Not a valid harvest
+						;echo ${Time} Bad Harvest: ${ResourceIterator.Value.Name} - ${ResourceIterator.Value.ID}
+						;wait 10
+					}
+					elseif ${EQ2OgreHarvestCheckResourceStatus.Equal[Valid]}
+					{
+						;Found a resource
+	
+						echo ${Time}: Breaking current movement: CurrentResourceID: ${CurrentResourceID} / ResourceID: ${ResourceIterator.Value.ID} / ${ResourceIterator.Value.Name}
+						Script[EQ2OgreHarvestMoveThread]:ExecuteAtom[BreakCurrentMovement]
+						EQ2OgreHarvestResourceFound:Set[TRUE]
+						EQ2OgreHarvestLoopDone:Set[TRUE]
+						EQ2OgreHarvestAllowPathing:Set[FALSE]
+						;Script[EQ2OgreHarvestPathThread]:ExecuteAtom[BreakCurrentMovement]
+						;Script[EQ2OgreHarvestPathThread]:ExecuteAtom[BreakCurrentMovementRoutine]
+						wait 1
+						CurrentResourceID:Set[${ResourceIterator.Value.ID}]
+						;CurrentResourceID is used for checking if it's available.
+						;EQ2OgreHarvestResourceID is the actual ID we need to move too.
+						EQ2OgreHarvestResourceID:Set[${CurrentResourceID}]
+						EQ2OgreHarvestX:Set[${ResourceIterator.Value.X}]
+						EQ2OgreHarvestY:Set[${ResourceIterator.Value.Y}]
+						EQ2OgreHarvestZ:Set[${ResourceIterator.Value.Z}]
+						EQ2OgreHarvestNextLoc:Set[Loc]
+						EQ2OgreHarvestMovementTypeAllowed:Set[Resource]
+					}
 				}
 			}
+			while (${ResourceIterator:Next(exists)} && !${EQ2OgreHarvestResourceFound})
 		}
 		;If Resource found is false, and Loop Done is false, means there is nothing we should be harvesting, so lets see if we should move.
 		if !${EQ2OgreHarvestResourceFound} && !${EQ2OgreHarvestLoopDone} && ( ${EQ2OgreHarvestMovementTypeAllowed.Equal[None]} || ${EQ2OgreHarvestMovementTypeAllowed.Equal[Path]} )
@@ -368,7 +371,7 @@ objectdef OptionsObject
 				return FALSE
 		}
 		;if Roaming (but NOT pathing), check from current location to node
-		if ${UIElement[${ChkBoxRoamModeID}].Checked} && !${UIElement[${ChkBoxPathModeID}].Checked}
+		if ${UIElement[${ChkBoxRoamModeID}].Checked} && !${UIElement[${ChkBoxPathModeID}].Checked}
 		{
 			if ${Math.Distance[${Actor[${ResourceID}].X},${Actor[${ResourceID}].Y},${Actor[${ResourceID}].Z},${Me.ToActor.Loc}]} <= ${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}
 				return TRUE
@@ -378,7 +381,7 @@ objectdef OptionsObject
 		;if roaming AND pathing, check from node to nearest child on path
 		;***Not sure this is possible here, may need it in the CheckThread
 		;***For now, just use the same as roaming
-		if ${UIElement[${ChkBoxRoamModeID}].Checked} && ${UIElement[${ChkBoxPathModeID}].Checked}
+		if ${UIElement[${ChkBoxRoamModeID}].Checked} && ${UIElement[${ChkBoxPathModeID}].Checked}
 		{
 			if ${Math.Distance[${Actor[${ResourceID}].X},${Actor[${ResourceID}].Y},${Actor[${ResourceID}].Z},${Me.ToActor.Loc}]} <= ${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}
 				return TRUE
@@ -623,7 +626,6 @@ atom EQ2_onLootWindowAppeared(string LootID)
 atom atexit()
 {
 	LavishSettings[EQ2OgreDepotResourceInformation]:Clear
-	OgreCustomArrayControllerOb:UnLoad[${Script.Filename}]
 
 	UIElement[${CmdOHStartID}]:Show
 	UIElement[${CmdOHEndID}]:Hide
