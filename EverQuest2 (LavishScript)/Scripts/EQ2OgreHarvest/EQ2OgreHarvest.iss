@@ -11,7 +11,7 @@ variable(global) int EQ2OgreHarvestTabControl
 
 function main()
 {
-	echo EQ2OgreHarvest Bot -- Version ${EQOHVersion}
+	echo "EQ2OgreHarvest Bot -- Version ${EQOHVersion}"
 	echo "Please note this script is in BETA.  Make suggestions and report bugs on the forums."
 
 	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
