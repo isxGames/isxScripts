@@ -252,9 +252,8 @@ objectdef TrackHelper
 		variable string LevelString
 		variable string TypeString
 		variable string HealthString
-		
-		EQ2:CreateCustomActorArray
-		if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)} && !${CustomActor[ID,${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
+
+		if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)} && !${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
 		{
 			eq2execute /waypoint_cancel
 			UIElement[TrackItems@EQ2 Track].SelectedItem:Remove
@@ -263,44 +262,44 @@ objectdef TrackHelper
 		do
 		{
 			aID:Set[${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value}]
-			if (!${CustomActor[id,${aID}](exists)} || ${BadActors.Element[${aID}](exists)})
+			if (!${Actor[${aID}](exists)} || ${BadActors.Element[${aID}](exists)})
 			{
 				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 			}
 			else
 			{
 				;; TODO:  Add more types here
-				if (${CustomActor[id,${aID}].Type.Equal[resource]} || ${CustomActor[id,${aID}].Level} < 1) 
+				if (${Actor[${aID}].Type.Equal[resource]} || ${Actor[${aID}].Level} < 1) 
 					ActorHasNoLevelOrClass:Set[TRUE]
 				else
 					ActorHasNoLevelOrClass:Set[FALSE]
 					
-				if (!${TrackCorpses} && ${CustomActor[id,${aID}].Type.Equal[Corpse]})
+				if (!${TrackCorpses} && ${Actor[${aID}].Type.Equal[Corpse]})
 					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 				elseif (${BadActors.Element[${aID}](exists)})
 					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 				else
 				{
 					if (!${ActorHasNoLevelOrClass} && ${IncludeClass} )
-						ClassString:Set[${CustomActor[ID,${aID}].Class}]
+						ClassString:Set[${Actor[${aID}].Class}]
 					else
 						ClassString:Set[]
 						
 					if (${ActorHasNoLevelOrClass})
 					{
 						LevelString:Set[]
-						TypeString:Set[(${CustomActor[ID,${aID}].Type})]
+						TypeString:Set[(${Actor[${aID}].Type})]
 						HealthString:Set[]
 						
 					}
 					else
 					{
-						LevelString:Set[(${CustomActor[ID,${aID}].Level})]
+						LevelString:Set[(${Actor[${aID}].Level})]
 						TypeString:Set[]
-						HealthString:Set[(${CustomActor[ID,${aID}].Health}%)]
+						HealthString:Set[(${Actor[${aID}].Health}%)]
 					}
 						
-					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${LevelString} ${TypeString} ${CustomActor[ID,${aID}].Name} ${HealthString} ${ClassString} ${CustomActor[ID,${aID}].Distance.Centi} ${CustomActor[ID,${aID}].HeadingTo["AsString"]}]
+					UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:SetText[${LevelString} ${TypeString} ${Actor[${aID}].Name} ${HealthString} ${ClassString} ${Actor[${aID}].Distance.Centi} ${Actor[${aID}].HeadingTo["AsString"]}]
 				}
 			}
 		}
@@ -500,58 +499,63 @@ atom(script) RefreshList()
 	variable string LevelString
 	variable string TypeString
 	variable string HealthString
-	
+	variable index:actor Actors
+	variable iterator ActorIterator
+
 	UpdateSettings
 	if ${Tracking}
 		return
 	Tracking:Set[TRUE]
 
 	UIElement[TrackItems@EQ2 Track]:ClearItems
-	EQ2:CreateCustomActorArray
-	tcount:Set[${EQ2.CustomActorArraySize}]
-	do
+	EQ2:GetActors[Actors]
+	
+	Actors:GetIterator[ActorIterator]
+	if ${ActorIterator:First(exists)}
 	{
-		if (!${TrackCorpses} && ${CustomActor[${tcount}].Type.Equal[Corpse]})
+		do
 		{
-			continue
+			if (!${TrackCorpses} && ${ActorIterator.Value.Type.Equal[Corpse]})
+			{
+				continue
+			}
+				
+			if ${BadActors.Element[${ActorIterator.Value.ID}](exists)}
+			{
+				continue
+			}
+				
+			if (${ActorIterator.Value.Type.Equal[resource]} || ${ActorIterator.Value.Level} < 1)   
+				ActorHasNoLevelOrClass:Set[TRUE]
+			else
+				ActorHasNoLevelOrClass:Set[FALSE]
+				
+			if (!${ActorHasNoLevelOrClass} && ${IncludeClass})
+				ClassString:Set[${ActorIterator.Value.Class}]
+			else
+				ClassString:Set[]
+				
+			if (${ActorHasNoLevelOrClass})
+			{
+				LevelString:Set[]
+				TypeString:Set[(${ActorIterator.Value.Type})]
+				HealthString:Set[]
+				
+			}
+			else
+			{
+				LevelString:Set[(${ActorIterator.Value.Level})]
+				TypeString:Set[]
+				HealthString:Set[(${ActorIterator.Value.Health}%)]
+			}
+				
+			
+			itemInfo:Set[${LevelString} ${TypeString} ${ActorIterator.Value.Name} ${HealthString} ${ClassString} ${ActorIterator.Value.Distance.Centi} ${ActorIterator.Value.HeadingTo["AsString"]}]
+			if ${Tracker.CheckFilter[${ActorIterator.Value.ID}]}
+				UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${ActorIterator.Value.ID}]
 		}
-			
-		if ${BadActors.Element[${CustomActor[${tcount}].ID}](exists)}
-		{
-			continue
-		}
-			
-		;; TODO:  Add more types here
-		if (${CustomActor[${tcount}].Type.Equal[resource]} || ${CustomActor[${tcount}].Level} < 1)   
-			ActorHasNoLevelOrClass:Set[TRUE]
-		else
-			ActorHasNoLevelOrClass:Set[FALSE]
-			
-		if (!${ActorHasNoLevelOrClass} && ${IncludeClass})
-			ClassString:Set[${CustomActor[${tcount}].Class}]
-		else
-			ClassString:Set[]
-			
-		if (${ActorHasNoLevelOrClass})
-		{
-			LevelString:Set[]
-			TypeString:Set[(${CustomActor[${tcount}].Type})]
-			HealthString:Set[]
-			
-		}
-		else
-		{
-			LevelString:Set[(${CustomActor[${tcount}].Level})]
-			TypeString:Set[]
-			HealthString:Set[(${CustomActor[${tcount}].Health}%)]
-		}
-			
-		
-		itemInfo:Set[${LevelString} ${TypeString} ${CustomActor[${tcount}].Name} ${HealthString} ${ClassString} ${CustomActor[${tcount}].Distance.Centi} ${CustomActor[${tcount}].HeadingTo["AsString"]}]
-		if ${Tracker.CheckFilter[${CustomActor[${tcount}].ID}]}
-			UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${CustomActor[${tcount}].ID}]
+		while (${ActorIterator:Next(exists)})
 	}
-	while ${tcount:Dec[1]} > 0
 	UIElement[TrackItems@EQ2 Track]:Sort[TrackSort]
 	
 	Tracking:Set[FALSE]
