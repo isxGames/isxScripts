@@ -50,7 +50,7 @@ function main(... Args)
   IgnoreRightsOnCans:Set[FALSE]
   CycleBelts:Set[FALSE]
   FoundThem:Set[FALSE]
-  WaitTimeVariable:Set[3]
+  WaitTimeVariable:Set[11]
   CorpFolderToUse:Set["Corporation Folder 1"]
   UnloadTo:Set[]
   HomeBaseBookmarkName:Set["Salvager Home Base"]
@@ -67,7 +67,7 @@ function main(... Args)
   }
   while !${ISXEVE.IsReady}
 
-  echo " \n \n \n** EVE Salvager Script 4.95 by Amadeus ** \n \n"
+  echo " \n \n \n** EVE Salvager Script 4.96 by Amadeus ** \n \n"
 
   ; 'Args' is an array ... arrays are static.
 	if ${Args.Size} > 0
