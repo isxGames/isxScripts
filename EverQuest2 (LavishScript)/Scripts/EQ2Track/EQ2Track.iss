@@ -550,7 +550,7 @@ atom(script) RefreshList()
 			}
 				
 			
-			itemInfo:Set[${LevelString} ${TypeString} ${ActorIterator.Value.Name} ${HealthString} ${ClassString} ${ActorIterator.Value.Distance.Centi} ${ActorIterator.Value.HeadingTo["AsString"]}]
+			itemInfo:Set[${LevelString} ${TypeString} ${ActorIterator.Value.Name.Escape} ${HealthString} ${ClassString} ${ActorIterator.Value.Distance.Centi} ${ActorIterator.Value.HeadingTo["AsString"]}]
 			if ${Tracker.CheckFilter[${ActorIterator.Value.ID}]}
 				UIElement[TrackItems@EQ2 Track]:AddItem[${itemInfo},${ActorIterator.Value.ID}]
 		}
@@ -677,7 +677,7 @@ atom(script) EQ2_ActorSpawned(string ID, string Name, string Level, string Actor
 		HealthString:Set[(${Actor[${ID}].Health}%)]
 	}
 
-	itemInfo:Set[${LevelString} ${TypeString} ${Name} ${HealthString} ${ClassString} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
+	itemInfo:Set[${LevelString} ${TypeString} ${Name.Escape} ${HealthString} ${ClassString} ${Actor[${ID}].Distance.Centi} ${Actor[${ID}].HeadingTo["AsString"]}]
 
 
 	; check our filters.
