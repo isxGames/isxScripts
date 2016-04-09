@@ -1,0 +1,283 @@
+<ISUI>
+	<!-- Main UI Window -->
+	<Window Name='bjmagic' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>375</Width>
+		<Height>200</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>BJ Words of Pure Magic Clicker</Title> 
+		<OnLoad>
+		declarevariable count int global 
+		declarevariable timerunning float global
+		declarevariable statusvar string global
+		echo ${Time}: Loading BJ Words of Pure Magic Clicker Script
+		statusvar:Set["Idle..."]
+		</OnLoad>
+		<OnUnLoad>
+		echo ${Time}: Unloading BJ Words of Pure Magic Clicker Script
+		echo .
+		echo .
+		</OnUnLoad>
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>10%</Height>
+			<Children>
+				<Text Name="Title" Template="Window.TitleBar.Title">
+					<Alignment>Left</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
+					<X>85%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
+					<X>92%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						if ${Script[bjmagic]}
+							endscript bjmagic
+						ui -unload "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjmagic/ui/bjmagicXML.xml"
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		
+	<!-- Start of layout -->
+	<Children>
+				<Text name='Status' template='Text'>
+				<X>50</X>
+				<Y>20</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Status:</Text>
+				</Text>
+				<Text name='StatusVariable' template='Text'>
+				<X>100</X>
+				<Y>20</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${statusvar}]
+				</OnRender>
+				</Text>
+				<Text name='AttemptNumber' template='Text'>
+				<X>50</X>
+				<Y>40</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Attempt Number:</Text>
+				</Text>
+				<Text name='AttemptNumberVar' template='Text'>
+				<X>155</X>
+				<Y>40</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${count}]
+				</OnRender>
+				</Text>
+				<Text name='TextTimeUntilNextMinute1' template='Text'>
+				<X>50</X>
+				<Y>60</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Timeleft until next attempt:</Text>
+				</Text>				
+				<Text name='TextTimeUntilNextMinuteVariable' template='Text'>
+				<X>210</X>
+				<Y>60</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${Math.Calc[(${timeuntilnextmilli.TimeLeft}/1000)/60].Centi}]
+				</OnRender>
+				</Text>
+				<Text name='TextTimeUntilNextMinute2' template='Text'>
+				<X>250</X>
+				<Y>60</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Minutes</Text>
+				</Text>	
+				<Text name='TimeRunning1' template='Text'>
+				<X>50</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Time Running:</Text>
+				</Text>
+				<Text name='TimeRunningVar' template='Text'>
+				<X>140</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+				This:SetText[${Math.Calc[(${Script[bjmagic].RunningTime}/1000)/60].Centi}]
+				</OnRender>
+				</Text>
+				<Text name='TimeRunningVar2' template='Text'>
+				<X>140</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>${timerunning.Centi}</Text>
+				<OnLoad>This:Hide</OnLoad>
+				</Text>
+				<Text name='TimeRunning2' template='Text'>
+				<X>180</X>
+				<Y>80</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Minutes</Text>
+				</Text>
+				<Text name='UserEndTimeText1' template='Text'>
+				<X>25</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enter the time of day to end the script in the field below.</Text>
+				</Text>	
+				<Text name='UserEndTimeText2' template='Text'>
+				<X>100</X>
+				<Y>115</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Must be in a 24 hour format.</Text>
+				</Text>
+				<TextEntry Name='UserEndTimeVar'>
+				<X>165</X>
+				<Y>130</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>2</MaxLength>
+				<OnLoad>
+					declarevariable UserEndTimeVar int global
+					UserEndTimeVar:Set[${This.Text}]
+					This:SetText[1]
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable UserEndTimeVar
+				</OnUnLoad>
+				<OnChange>
+					UserEndTimeVar:Set[${This.Text}]
+				</OnChange>
+				</TextEntry>
+				<CommandButton Name="StartClicker" template='Button'>
+				<X>130</X>
+				<Y>150</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Start</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+						count:Set[1]
+						This.Parent.FindChild[StopClicker]:Show
+						This.Parent.FindChild[TimeRunningVar2]:Hide
+						This.Parent.FindChild[TimeRunningVar]:Show
+						runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjmagic/bjmagic"
+						This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable startclickervar int global ${This.ID}
+				</OnLoad>
+				</CommandButton>
+				<CommandButton Name="StopClicker" template='Button'>
+					<X>130</X>
+					<Y>150</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Stop</Text>
+					<Alignment>Center</Alignment>
+					<visible>0</visible>
+					<OnLeftClick>
+						if ${Script[bjmagic](exists)}
+						{	
+							timerunning:Set[${Math.Calc[(${Script[bjmagic].RunningTime}/1000)/60].Centi}]
+							statusvar:Set["Idle..."]
+							timeuntilnextmilli:Set[0]
+							endscript bjmagic
+						}	
+						This.Parent.FindChild[StartClicker]:Show
+						This.Parent.FindChild[TimeRunningVar]:Hide
+						This.Parent.FindChild[TimeRunningVar2]:Show
+						This:Hide
+					</OnLeftClick>
+				</CommandButton>
+	</Children>			
+  </Window>
+</ISUI>

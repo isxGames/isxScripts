@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- 
+
+ Format of each entry is: 
+
+<Set Name="#"> 
+ <Setting Name="match">word or phrase to match on</Setting> 
+ <Setting Name="delay">time in seconds before responding</Setting> 
+ <Setting Name="reply">what to reply back with</Setting> 
+</Set> 
+
+ For example: 
+
+<Set Name="10"> 
+   <Setting Name="match">Hello</Setting> 
+   <Setting Name="delay">3</Setting> 
+   <Setting Name="reply">Hiya!</Setting> 
+</Set> 
+
+ Would respond to a tell that has "Hello" anywhere in it 
+ It would wait 3 seconds before responding 
+ It would respond with "Hiya!" 
+
+ The keyword ANY will match any phrase.
+
+--
+
+May also use <Setting Name="action"></Setting> for action keys, such as Jump, MoveLeft, etc. 
+
+ The following will make your toon try to open a door when told to: 
+
+<Set Name="8"> 
+   <Setting Name="match">open the door</Setting> 
+   <Setting Name="delay">2</Setting> 
+   <Setting Name="action">UseDoorEtc</Setting> 
+</Set> 
+
+The 'UseDoorEtc' key is defined in your Vanguard User.ini file. 
+
+--
+
+May also use <Setting Name="emote"></Setting> commands, but be sure to specify the / in the emote
+
+<Set Name="6">
+	<Setting Name="match">waves</Setting>
+	<Setting Name="delay">2</Setting> 
+	<Setting Name="emote"> /wave </Setting>
+</Set>
+
+--
+
+ Order is important, as the 1st Set matched will generate the reply 
+ and then will stop. So make sure you get the important ones first :) 
+
+-->
+
+<InnerSpaceSettings>
+	<Set Name="1">
+		<Setting Name="match">have been summoned</Setting>
+		<Setting Name="delay">6</Setting>
+		<Setting Name="emote">/emote ponders</Setting>
+	</Set>
+	<Set Name="2">
+		<Setting Name="match">have been summoned</Setting>
+		<Setting Name="delay">8</Setting>
+		<Setting Name="emote">/emote wonders where he is</Setting>
+	</Set>
+	<Set Name="11">
+		<Setting Name="match">have gained a level</Setting>
+		<Setting Name="delay">8</Setting>
+		<Setting Name="say">ding!</Setting>
+	</Set>
+	<Set Name="20">
+		<Setting Name="match">are you there</Setting>
+		<Setting Name="delay">7</Setting>
+		<Setting Name="reply">yes, what do you need?</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="21">
+		<Setting Name="match">how are you</Setting> 
+		<Setting Name="delay">7</Setting>
+		<Setting Name="reply">good, thanks</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="22">
+		<Setting Name="match">have a nice</Setting> 
+		<Setting Name="delay">5</Setting>
+		<Setting Name="reply">thanks!</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="23">
+		<Setting Name="match">investigate</Setting> 
+		<Setting Name="delay">9</Setting>
+		<Setting Name="reply">Oh? hmmm</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="24">
+		<Setting Name="match">irregular</Setting> 
+		<Setting Name="delay">8</Setting>
+		<Setting Name="reply">irregular... how so?</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="25">
+		<Setting Name="match">explain</Setting> 
+		<Setting Name="delay">5</Setting>
+		<Setting Name="emote">/shrug</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="40">
+		<Setting Name="match">Howdy</Setting> 
+		<Setting Name="delay">5</Setting>
+		<Setting Name="reply">Hello</Setting>
+	</Set>
+	<Set Name="41">
+		<Setting Name="match">Hiya</Setting> 
+		<Setting Name="delay">5</Setting> 
+		<Setting Name="reply">Hi</Setting>
+	</Set>
+	<Set Name="42">
+		<Setting Name="match">Hello</Setting>
+		<Setting Name="delay">6</Setting>
+		<Setting Name="reply">Howdy</Setting>
+	</Set>
+	<Set Name="43">
+		<Setting Name="match">Hi,</Setting>
+		<Setting Name="delay">6</Setting>
+		<Setting Name="reply">hey</Setting>
+	</Set>
+	<Set Name="44">
+		<Setting Name="match">wave</Setting>
+		<Setting Name="delay">5</Setting> 
+		<Setting Name="emote">/wave</Setting>
+	</Set>
+	<Set Name="45">
+		<Setting Name="match">cheer</Setting>
+		<Setting Name="delay">6</Setting> 
+		<Setting Name="emote">/bow</Setting>
+	</Set>
+	<Set Name="50">
+		<Setting Name="match">what level</Setting>
+		<Setting Name="delay">15</Setting> 
+		<Setting Name="reply">what?</Setting>
+	</Set>
+	<Set Name="51">
+		<Setting Name="match">like</Setting>
+		<Setting Name="delay">9</Setting> 
+		<Setting Name="reply">having fun!</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="60">
+		<Setting Name="match">jump</Setting>
+		<Setting Name="delay">4</Setting>
+		<Setting Name="action">Jump</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="61">
+		<Setting Name="match">jump</Setting>
+		<Setting Name="delay">9</Setting>
+		<Setting Name="reply">ribbit!</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+	<Set Name="62">
+		<Setting Name="match">can you</Setting>
+		<Setting Name="delay">10</Setting>
+		<Setting Name="reply">nope, sorry</Setting>
+	</Set>
+	<Set Name="63">
+		<Setting Name="match">?</Setting>
+		<Setting Name="delay">5</Setting>
+		<Setting Name="reply">no</Setting>
+	</Set>
+	<Set Name="70">
+		<Setting Name="match">ANY</Setting>
+		<Setting Name="delay">8</Setting>
+		<Setting Name="reply">ok</Setting>
+		<Setting Name="gmonly">TRUE</Setting>
+	</Set>
+</InnerSpaceSettings>

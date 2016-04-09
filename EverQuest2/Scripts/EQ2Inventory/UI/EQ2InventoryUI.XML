@@ -1,0 +1,2889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<!-- Main Window -->
+	<Window Name='EQ2Inventory'>
+	<X>50</X>
+	<Y>100</Y>
+	<Width>540</Width>
+	<Height>500</Height>
+	  <TitleBar template='window.Titlebar'>
+		<Children>
+		  <Text Name='Title' Template='window.Titlebar.Title' />
+		  <Button Name='Minimize' Template='window.Titlebar.Minimize' />
+		  <Button Name='Maximize' Template='window.Titlebar.Maximize' />
+		  <commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
+			<Command>Script[EQ2Inventory]:End</Command>
+		  </commandbutton>
+		</Children>
+	  </TitleBar>
+	  <StorePosition>1</StorePosition>
+	<Title>EQ2Inventory Manager v3</Title>
+	<Children>
+		<Text name='StatusText'>
+			<X>15</X>
+			<Y>1%</Y>
+			<Width>485</Width>
+			<Height>20</Height>
+			<Alignment>Left</Alignment>
+			<Font>
+				<Color>FF11CCFF</Color>
+			</Font>
+		</Text>
+		<Tabcontrol Name='GUITabs'>
+			<X>1</X>
+			<Y>5</Y>
+			<Height>99%</Height>
+			<Width>100%</Width>
+			<Tabs>
+				<Tab Name='EQ2Broker'>
+					<CommandButton Name='Place Items'>
+					<X>20</X>
+					<Y>15</Y>
+					<Width>90</Width>
+					<Height>65</Height>
+					<Text>Broker Items</Text>
+					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call PlaceItems]</Command>
+				</CommandButton>
+				<checkbox Name='RunMyPrices'>
+    			<X>5</X>
+    			<Y>90</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Run MyPrices</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[RunMyPrices]}
+									This:SetChecked
+					</OnLoad>
+					<OnLeftClick>
+            if ${This.Checked}
+            EQ2InvInterface:SetSetting[RunMyPrices,1]
+            else
+            EQ2InvInterface:SetSetting[RunMyPrices,0]
+          </OnLeftClick>
+    		</checkbox>
+				<checkbox Name='ScanRares'>
+    			<X>5</X>
+    			<Y>115</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Rares</Text>
+  	  		<OnLoad>
+            if ${EQ2InvInterface.GetSetting[ScanRares]}
+            {
+            This:SetChecked
+            }
+          </OnLoad>
+					<OnLeftClick>
+            if ${This.Checked}
+            EQ2InvInterface:SetSetting[ScanRares,1]
+            else
+            EQ2InvInterface:SetSetting[ScanRares,0]
+          </OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanHarvests'>
+    			<X>5</X>
+    			<Y>140</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Harvests</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanHarvests,1]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanHarvests,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanHarvests,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanCollections'>
+    			<X>5</X>
+    			<Y>165</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Collections</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanCollections]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanCollections,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanCollections,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    						<checkbox Name='ScanTradeskills'>
+    			<X>5</X>
+    			<Y>190</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Tradeskills</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanTradeskills]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanTradeskills,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanTradeskills,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanSpellBooks'>
+    			<X>5</X>
+    			<Y>215</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Spells</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanSpellBooks]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanSpellBooks,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanSpellBooks,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanLoreAndLegend'>
+    			<X>5</X>
+    			<Y>240</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Lore Legend</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanLoreAndLegend]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanLoreAndLegend,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanLoreAndLegend,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanStatus'>
+    			<X>5</X>
+    			<Y>265</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Status Items</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanStatus]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanStatus,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanStatus,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='ScanFertilizer'>
+    			<X>5</X>
+    			<Y>290</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Fertilizer</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanFertilizer]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanFertilizer,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanFertilizer,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+				<checkbox Name='ScanCustom'>
+    			<X>5</X>
+    			<Y>315</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Scan Custom List</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[ScanCustom]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[ScanCustom,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[ScanCustom,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<CommandButton Name='Stop Broker'>
+					<X>20</X>
+					<Y>345</Y>
+					<Width>90</Width>
+					<Height>65</Height>
+					<Text>Stop Broker</Text>
+					<AutoTooltip>Automatically Places Broker Items</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunBroker]:Set[FALSE]</Command>
+				</CommandButton>
+    		<listbox Name='ItemList'>
+					<X>140</X>
+					<Y>15</Y>
+					<Width>390</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<Sort>None</Sort>
+				</listbox>
+				<Commandbutton name='Clearlog'>
+					<X>340</X>
+					<Y>440</Y>
+					<Width>100</Width>
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>
+			<Tab Name='EQ2Broker Setup'>
+				<Text Name='BookText'>
+					<X>5</X>
+					<Y>10</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Text>Add tradeskill books to broker for:</Text>
+				</Text>
+				<Text Name='CraftBoxText'>
+					<X>255</X>
+					<Y>10</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='CraftBoxNumber'>
+          <x>290</x>
+          <y>5</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[CraftBoxNumber,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[CraftBoxNumber]}]:Select
+          </OnLoad>
+     		</combobox>
+				<checkbox Name='Alchemist'>
+				<X>5</X>
+  			<Y>24</Y>
+  			<Width>100</Width>
+				<Height>25</Height>
+  			<Text>Alchemist</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Alchemist]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+								if ${This.Checked}
+								{
+								EQ2InvInterface:SetSetting[Alchemist,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Alchemist,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='Armorer'>
+    			<X>105</X>
+    			<Y>25</Y>
+    			<Width>100</Width>
+	    		<Height>20</Height>
+  	  		<Text>Armorer</Text>
+  	  		<OnLoad>
+  	  			if ${EQ2InvInterface.GetSetting[Armorer]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Armorer,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Armorer,0]
+								}
+					</OnLeftClick>
+    		</checkbox>
+    		<checkbox Name='Carpenter'>
+				<X>205</X>
+  			<Y>25</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Carpenter</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Carpenter]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Carpenter,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Carpenter,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Jeweler'>
+				<X>305</X>
+  			<Y>25</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Jeweler</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Jeweler]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Jeweler,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Jeweler,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Sage'>
+				<X>5</X>
+  			<Y>40</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Sage</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Sage]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Sage,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Sage,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Tailor'>
+				<X>105</X>
+  			<Y>40</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Tailor</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Tailor]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Tailor,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Tailor,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='Weaponsmith'>
+				<X>205</X>
+  			<Y>40</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Weaponsmith</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Weaponsmith]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Weaponsmith,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Weaponsmith,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Woodworker'>
+				<X>305</X>
+  			<Y>40</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Woodworker</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Woodworker]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Woodworker,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Woodworker,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Craftsman'>
+				<X>5</X>
+  			<Y>55</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Craftsman</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Craftsman]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Craftsman,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Craftsman,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Outfitter'>
+				<X>105</X>
+  			<Y>55</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Outfitter</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Outfitter]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Outfitter,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Outfitter,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Scholar'>
+				<X>205</X>
+  			<Y>55</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Scholar</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Scholar]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Scholar,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Scholar,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='ClassText'>
+					<X>5</X>
+					<Y>80</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Text>Add class (Adept I) books to broker for:</Text>
+				</Text>
+				<Text Name='ClassBoxText'>
+					<X>255</X>
+					<Y>80</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='ClassBoxNumber'>
+          <x>290</x>
+          <y>75</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[ClassSpellBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[ClassSpellBox]}]:Select
+          </OnLoad>
+     </combobox>
+    		<checkbox Name='Assassin'>
+				<X>5</X>
+  			<Y>95</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Assassin</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Assassin]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Assassin,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Assassin,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Berserker'>
+				<X>105</X>
+  			<Y>95</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Berserker</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Berserker]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Berserker,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Berserker,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Brigand'>
+				<X>205</X>
+  			<Y>95</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Brigand</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Brigand]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Brigand,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Brigand,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Bruiser'>
+				<X>305</X>
+  			<Y>95</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Bruiser</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Bruiser]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Bruiser,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Bruiser,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Coercer'>
+				<X>5</X>
+  			<Y>110</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Coercer</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Coercer]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Coercer,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Coercer,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='Conjuror'>
+				<X>105</X>
+  			<Y>110</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Conjuror</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Conjuror]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Conjuror,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Conjuror,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Defiler'>
+				<X>205</X>
+  			<Y>110</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Defiler</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Defiler]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Defiler,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Defiler,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Dirge'>
+				<X>305</X>
+  			<Y>110</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Dirge</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Dirge]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Dirge,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Dirge,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Fury'>
+				<X>5</X>
+  			<Y>125</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Fury</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Fury]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Fury,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Fury,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Guardian'>
+				<X>105</X>
+  			<Y>125</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Guardian</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Guardian]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Guardian,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Guardian,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Illusionist'>
+				<X>205</X>
+  			<Y>125</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Illusionist</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Illusionist]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Illusionist,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Illusionist,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Inquisitor'>
+				<X>305</X>
+  			<Y>125</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Inquisitor</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Inquisitor]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Inquisitor,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Inquisitor,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Monk'>
+				<X>5</X>
+  			<Y>140</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Monk</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Monk]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Monk,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Monk,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Mystic'>
+				<X>105</X>
+  			<Y>140</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Mystic</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Mystic]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Mystic,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Mystic,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Necromancer'>
+				<X>205</X>
+  			<Y>140</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Necromancer</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Necromancer]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Necromancer,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Necromancer,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Paladin'>
+				<X>305</X>
+  			<Y>140</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Paladin</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Paladin]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Paladin,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Paladin,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Ranger'>
+				<X>5</X>
+  			<Y>155</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Ranger</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Ranger]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Ranger,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Ranger,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Shadowknight'>
+				<X>105</X>
+  			<Y>155</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Shadowknight</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Shadowknight]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Shadowknight,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Shadowknight,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Swashbuckler'>
+				<X>205</X>
+  			<Y>155</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Swashbuckler</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Swashbuckler]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Swashbuckler,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Swashbuckler,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Templar'>
+				<X>305</X>
+  			<Y>155</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Templar</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Templar]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Templar,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Templar,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Troubador'>
+				<X>5</X>
+  			<Y>170</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Troubador</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Troubador]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Troubador,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Troubador,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Warden'>
+				<X>105</X>
+  			<Y>170</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Warden</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Warden]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Warden,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Warden,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Warlock'>
+				<X>205</X>
+  			<Y>170</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Warlock</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Warlock]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Warlock,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Warlock,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+    		<checkbox Name='Wizard'>
+				<X>305</X>
+  			<Y>170</Y>
+			  <Width>100</Width>
+				<Height>20</Height>
+  			<Text>Wizard</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Wizard]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Wizard,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Wizard,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='Collections'>
+				<X>5</X>
+  			<Y>200</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Add Collections</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[AddCollections]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[AddCollections,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[AddCollections,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='CollectionsBoxText'>
+					<X>120</X>
+					<Y>202</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='CollectionsBoxNumber'>
+          <x>155</x>
+          <y>197</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[CollectionsBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[CollectionsBox]}]:Select
+          </OnLoad>
+     		</combobox>
+     		<checkbox Name='LoreAndLegend'>
+				<X>5</X>
+  			<Y>220</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Add Lore And Legend</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[LoreAndLegend]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[LoreAndLegend,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[LoreAndLegend,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='LoreAndLegendBoxText'>
+					<X>160</X>
+					<Y>222</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='LoreAndLegendBox'>
+          <x>195</x>
+          <y>217</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[LoreAndLegendBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[LoreAndLegendBox]}]:Select
+          </OnLoad>
+     		</combobox>
+     		<checkbox Name='CustomItems'>
+				<X>235</X>
+  			<Y>220</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Add Custom Items</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[AddCustomItems]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[AddCustomItems,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[AddCustomItems,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='CustomItemsBoxText'>
+					<X>370</X>
+					<Y>222</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='CustomItemsBoxNumber'>
+          <x>405</x>
+          <y>217</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[CustomItemsBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[CustomItemsBox]}]:Select
+          </OnLoad>
+     		</combobox>
+				<Text Name='AddHarvestText'>
+					<X>5</X>
+					<Y>245</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Text>Add Common Harvest items to broker:</Text>
+				</Text>
+				<Text Name='CHarvestBoxText'>
+					<X>235</X>
+					<Y>245</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='CHarvetsBoxNumber'>
+          <x>270</x>
+          <y>240</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[CHarvestBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[CHarvestBox]}]:Select
+          </OnLoad>
+     		</combobox>
+     		<checkbox Name='DeleteMeat'>
+				<X>325</X>
+  			<Y>242</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Delete Common Meats</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[DeleteMeat]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[DeleteMeat,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[DeleteMeat,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT1'>
+				<X>5</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 1</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT1]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT1,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT1,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT2'>
+				<X>65</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 2</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT2]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT2,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT2,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT3'>
+				<X>125</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 3</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT3]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT3,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT3,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT4'>
+				<X>185</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 4</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT4]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT4,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT4,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT5'>
+				<X>245</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 5</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT5]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT5,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT5,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT6'>
+				<X>305</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 6</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT6]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT6,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT6,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+			  <checkbox Name='CHarvestT7'>
+				<X>365</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 7</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT7]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT7,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT7,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='CHarvestT8'>
+				<X>425</X>
+  			<Y>265</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 8</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[CHarvestT8]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[CHarvestT8,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[CHarvestT8,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='AddRareHarvestText'>
+					<X>5</X>
+					<Y>300</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Text>Add Rare Harvest items to broker:</Text>
+				</Text>
+				<Text Name='RHarvestBoxText'>
+					<X>225</X>
+					<Y>300</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='RHarvestBoxNumber'>
+          <x>260</x>
+          <y>295</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[RHarvestBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[RHarvestBox]}]:Select
+          </OnLoad>
+     		</combobox>
+				<checkbox Name='RHarvestT1'>
+				<X>5</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 1</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT1]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT1,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT1,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='RHarvestT2'>
+				<X>65</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 2</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT2]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT2,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT2,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='RHarvestT3'>
+				<X>125</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 3</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT3]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT3,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT3,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='RHarvestT4'>
+				<X>185</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 4</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT4]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT4,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT4,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='RHarvestT5'>
+				<X>245</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 5</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT5]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT5,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT5,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='RHarvestT6'>
+				<X>305</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 6</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT6]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT6,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT6,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='RHarvestT7'>
+				<X>365</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 7</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT7]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT7,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT7,0]
+								}
+					</OnLeftClick>
+					</checkbox>
+					<checkbox Name='RHarvestT8'>
+				<X>425</X>
+  			<Y>320</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 8</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[RHarvestT8]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[RHarvestT8,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[RHarvestT8,0]
+								}
+					</OnLeftClick>
+					</checkbox>
+				<Text Name='AddStatusText'>
+					<X>5</X>
+					<Y>355</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Text>Add status items to broker:</Text>
+				</Text>
+				<Text Name='StatusItemBoxText'>
+					<X>235</X>
+					<Y>355</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='StatusItemBoxNumber'>
+          <x>270</x>
+          <y>350</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[StatusItemBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[StatusItemBox]}]:Select
+          </OnLoad>
+     		</combobox>
+				<checkbox Name='StatusItemT1'>
+				<X>5</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 1</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT1]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT1,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT1,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='StatusItemT2'>
+				<X>65</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 2</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT2]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT2,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT2,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='StatusItemT3'>
+				<X>125</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 3</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT3]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT3,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT3,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='StatusItemT4'>
+				<X>185</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 4</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT4]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT4,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT4,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='StatusItemT5'>
+				<X>245</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 5</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT5]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT5,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT5,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='StatusItemT6'>
+				<X>305</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 6</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT6]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT6,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT6,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+			  <checkbox Name='StatusItemT7'>
+				<X>365</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 7</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT7]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT7,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT7,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='StatusItemT8'>
+				<X>425</X>
+  			<Y>375</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 8</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusItemT8]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusItemT8,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusItemT8,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='AddFertilizerText'>
+					<X>5</X>
+					<Y>410</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Text>Add fertilizer items to broker:</Text>
+				</Text>
+				<Text Name='FertilizerItemBoxText'>
+					<X>235</X>
+					<Y>410</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Box #:</Text>
+				</Text>
+    		<combobox name='FertilizerItemBoxNumber'>
+          <x>270</x>
+          <y>405</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[FertilizerItemBox,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[FertilizerItemBox]}]:Select
+          </OnLoad>
+     		</combobox>
+				<checkbox Name='FertT1'>
+				<X>5</X>
+  			<Y>430</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 1</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[FertT1]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[FertT1,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[FertT1,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='FertT2'>
+				<X>65</X>
+  			<Y>430</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 2</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[FertT2]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[FertT2,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[FertT2,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='FertT3'>
+				<X>125</X>
+  			<Y>430</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 3</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[FertT3]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[FertT3,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[FertT3,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='FertT4'>
+				<X>185</X>
+  			<Y>430</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 4</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[FertT4]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[FertT4,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[FertT4,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<checkbox Name='FertT5'>
+				<X>245</X>
+  			<Y>430</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 5</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[FertT5]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[FertT5,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[FertT5,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+			  <checkbox Name='FertT7'>
+				<X>305</X>
+  			<Y>430</Y>
+			  <Width>50</Width>
+				<Height>20</Height>
+  			<Text>Tier 7</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[FertT7]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[FertT7,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[FertT7,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+			</Tab>
+			<Tab Name='EQ2Junk'>
+				<CommandButton Name='Vendor Items'>
+					<X>10</X>
+					<Y>25</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Vendor Items</Text>
+					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call VendorType]</Command>
+				</CommandButton>
+				<checkbox Name='StatusMerchant'>
+				<X>5</X>
+  			<Y>85</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Status Merchant</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[StatusMerchant]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[StatusMerchant,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[StatusMerchant,0]
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell Status Items to a Status Merchant.</AutoTooltip>
+				</checkbox>
+				<checkbox Name='SellTreasured'>
+				<X>5</X>
+  			<Y>135</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Sell Treasured</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[SellTreasured]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[SellTreasured,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[SellTreasured,0]
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale TREASURED Items to a Merchant.</AutoTooltip>
+				</checkbox>
+				<checkbox Name='SellAdeptI'>
+				<X>5</X>
+  			<Y>110</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+				<Text>Sell Adept I</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[SellAdeptI]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[SellAdeptI,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[SellAdeptI,0]
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale Adept I Items to a Merchant.</AutoTooltip>
+				</checkbox>
+				<checkbox Name='SellHandcrafted'>
+				<X>5</X>
+  			<Y>160</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+				<Text>Sell Handcrafted</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[SellHandcrafted]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[SellHandcrafted,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[SellHandcrafted,0]
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale HANDCRAFTED Items to a Merchant.</AutoTooltip>
+				</checkbox>
+				<checkbox Name='SellUncommon'>
+				<X>5</X>
+  			<Y>185</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+				<Text>Sell Uncommon</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[SellUncommon]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[SellUncommon,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[SellUncommon,0]
+								}
+					</OnLeftClick>
+					<AutoTooltip>Check to sell ALL for sale UNCOMMON Items to a Merchant.</AutoTooltip>
+				</checkbox>
+				<CommandButton Name='Stop Vendor Items'>
+					<X>10</X>
+					<Y>220</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop Vending Items</Text>
+					<AutoTooltip>Will sell all items on your Vendor list.</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunJunk]:Set[FALSE]</Command>
+				</CommandButton>
+				<CommandButton Name='Destroy Items'>
+					<X>10</X>
+					<Y>285</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Destroy Items</Text>
+					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call DestroyItems]</Command>
+				</CommandButton>
+				<CommandButton Name='Stop Destroy Items'>
+					<X>10</X>
+					<Y>350</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop Destroying</Text>
+					<AutoTooltip>Automatically Destroys Items</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunDestroy]:Set[FLASE]</Command>
+				</CommandButton>
+				<listbox Name='SellItemList'>
+					<X>140</X>
+					<Y>15</Y>
+					<Width>390</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<OnSelect>
+					</OnSelect>
+					<Sort></Sort>
+				</listbox>
+				<Commandbutton name='ClearSelllog'>
+					<X>340</X>
+					<Y>440</Y>
+					<Width>100</Width>
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>
+			<Tab Name='EQ2Depot'>
+    		<CommandButton Name='PlaceInDepot'>
+					<X>10</X>
+					<Y>25</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Start EQ2Depot</Text>
+					<AutoTooltip>Places Items in Harvest Depot</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddToDepot]</Command>
+				</CommandButton>
+				<CommandButton Name='SkipDepot'>
+					<X>10</X>
+					<Y>95</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Skip Depot Item</Text>
+					<AutoTooltip>Skips Placing an Item in Harvest Depot</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[SkipItem]:Set[TRUE]</Command>
+				</CommandButton>
+				<CommandButton Name='StopDepot'>
+					<X>10</X>
+					<Y>165</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop EQ2Depot</Text>
+					<AutoTooltip>Stops Placing Items in Harvest Depot</AutoTooltip>
+					<Command>Script[EQ2Inventory].Variable[RunDepot]:Set[FALSE]</Command>
+				</CommandButton>
+    		<listbox Name='DepotItemList'>
+					<X>140</X>
+					<Y>15</Y>
+					<Width>390</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<Sort></Sort>
+				</listbox>
+				<Commandbutton name='Clearlog'>
+					<X>340</X>
+					<Y>440</Y>
+					<Width>100</Width>
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[DepotItemList@EQ2Depot@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>
+			<Tab Name='EQ2Hirelings'>
+				<CommandButton Name='StartHirelings'>
+					<X>10</X>
+					<Y>10</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Start Hireling Bot</Text>
+					<AutoTooltip>Starts Hirelings Bot</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call EQ2Hirelings]</Command>
+				</CommandButton>
+				<CommandButton Name='StopHirelings'>
+					<X>130</X>
+					<Y>10</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Stop Hireling Bot</Text>
+					<AutoTooltip>Stops Hirelings Bot</AutoTooltip>
+					<Command>Script[EQ2Hirelings].Variable[RunHirelings]:Set[FALSE]</Command>
+				</CommandButton>
+				<Text Name='Status Text'>
+					<X>10</X>
+					<Y>70</Y>
+					<Width>40</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Status:</Text>
+				</Text>
+				<Text Name='StatusText'>
+					<X>55</X>
+					<Y>70</Y>
+					<Width>90%</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text></Text>
+				</Text>
+				<Text Name='Trip Text'>
+					<X>270</X>
+					<Y>70</Y>
+					<Width>80</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Trips Made:</Text>
+				</Text>
+				<Text Name='TripText'>
+					<X>345</X>
+					<Y>70</Y>
+					<Width>90%</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>0</Text>
+				</Text>
+				<checkbox Name='GathererHireling'>
+					<X>10</X>
+  				<Y>95</Y>
+			  	<Width>60</Width>
+					<Height>20</Height>
+  				<Text>Gatherer Hireling</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[GathererHireling]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[GathererHireling,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[GathererHireling,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='GathererTierText'>
+					<X>135</X>
+					<Y>98</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Tier:</Text>
+				</Text>
+    		<combobox name='GathererTierNumber'>
+          <x>165</x>
+          <y>95</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+               <Item Value='7'>7</Item>
+               <Item Value='8'>8</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[GathererTierNumber,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[GathererTierNumber]}]:Select
+          </OnLoad>
+     		</combobox>
+			<checkbox Name='HunterHireling'>
+				<X>10</X>
+  			<Y>117</Y>
+			  <Width>60</Width>
+				<Height>20</Height>
+  			<Text>Hunter Hireling</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[HunterHireling]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[HunterHireling,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[HunterHireling,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='HunterTierText'>
+					<X>135</X>
+					<Y>120</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Tier:</Text>
+				</Text>
+    		<combobox name='HunterTierNumber'>
+          <x>165</x>
+          <y>117</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+               <Item Value='7'>7</Item>
+               <Item Value='8'>8</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[HunterTierNumber,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[HunterTierNumber]}]:Select
+          </OnLoad>
+     		</combobox>
+			<checkbox Name='MinerHireling'>
+				<X>10</X>
+  			<Y>140</Y>
+			  <Width>60</Width>
+				<Height>20</Height>
+  			<Text>Miner Hireling</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[MinerHireling]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[MinerHireling,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[MinerHireling,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<Text Name='MinerTierText'>
+					<X>135</X>
+					<Y>143</Y>
+					<Width>30</Width>
+					<Height>20</Height>
+					<Text>Tier:</Text>
+				</Text>
+    		<combobox name='MinerTierNumber'>
+          <x>165</x>
+          <y>140</y>
+          <width>35</width>
+          <height>20</height>
+          <items>
+               <Item Value='1'>1</Item>
+               <Item Value='2'>2</Item>
+               <Item Value='3'>3</Item>
+               <Item Value='4'>4</Item>
+               <Item Value='5'>5</Item>
+               <Item Value='6'>6</Item>
+               <Item Value='7'>7</Item>
+               <Item Value='8'>8</Item>
+          </items>
+          <OnSelect>
+               	EQ2InvInterface:SetSetting[MinerTierNumber,${This.SelectedItem.ID}]
+          </OnSelect>
+          <OnLoad>
+          			This.Item[${EQ2InvInterface.GetSetting[MinerTierNumber]}]:Select
+          </OnLoad>
+     		</combobox>
+			<Text Name='Waittime'>
+				<X>15</X>
+				<Y>165</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text>Wait Time:</Text>
+			</Text>
+			<Text Name='WaittimeText'>
+				<X>80</X>
+				<Y>165</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text></Text>
+			</Text>
+			<Text Name='Runtime'>
+				<X>15</X>
+				<Y>185</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text>Runtime:</Text>
+			</Text>
+			<Text Name='RuntimeText'>
+				<X>70</X>
+				<Y>185</Y>
+				<Width>90%</Width>
+				<Height>10</Height>
+				<Alignment>Left</Alignment>
+				<Wrap />
+				<Text></text>
+			</Text>
+			<checkbox Name='UseHarvestDepot'>
+				<X>10</X>
+  			<Y>205</Y>
+			  <Width>90%</Width>
+				<Height>20</Height>
+  			<Text>Place Items in Supply Depot after Retrevial.</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[UseHarvestDepot]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[UseHarvestDepot,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[UseHarvestDepot,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+			</Tab>
+			<Tab Name='Add Items'>
+    		<CommandButton Name='Inventory List'>
+					<X>10</X>
+					<Y>25</Y>
+					<Width>110</Width>
+					<Height>55</Height>
+					<Text>Inventory List</Text>
+					<AutoTooltip>Outputs Current Inventory to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call InvList]</Command>
+				</CommandButton>
+				<checkbox Name='Examine'>
+				<X>5</X>
+  			<Y>85</Y>
+			  <Width>150</Width>
+				<Height>20</Height>
+  			<Text>Examine on Select</Text>
+  				<OnLoad>
+  					if ${EQ2InvInterface.GetSetting[Examine]}
+								{
+									This:SetChecked
+								}
+					</OnLoad>
+					<OnLeftClick>
+						if ${This.Checked}
+								{
+									EQ2InvInterface:SetSetting[Examine,1]
+								}
+								else
+								{
+									EQ2InvInterface:SetSetting[Examine,0]
+								}
+					</OnLeftClick>
+				</checkbox>
+				<CommandButton Name='Vendor Items Add'>
+					<X>10</X>
+					<Y>115</Y>
+					<Width>110</Width>
+					<Height>35</Height>
+					<Text>Add Vendor Item</Text>
+					<AutoTooltip>Adds The selected Item to the Vendor Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddJunk]</Command>
+				</CommandButton>
+				<CommandButton Name='Destroy Items Add'>
+					<X>10</X>
+					<Y>160</Y>
+					<Width>110</Width>
+					<Height>35</Height>
+					<Text>Add Destroy Item</Text>
+					<AutoTooltip>Adds The selected Item to the Destroy List</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddDestroy]</Command>
+				</CommandButton>
+				<CommandButton Name='Custom Items Add'>
+					<X>10</X>
+					<Y>205</Y>
+					<Width>110</Width>
+					<Height>35</Height>
+					<Text>Add Custom Item</Text>
+					<AutoTooltip>Adds The selected Item to the Custom List</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddCustom]</Command>
+				</CommandButton>
+				<CommandButton Name='Depot Items Add'>
+					<X>10</X>
+					<Y>250</Y>
+					<Width>110</Width>
+					<Height>35</Height>
+					<Text>Add Depot Item</Text>
+					<AutoTooltip>Adds The selected Item to the Supply Depot List</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call AddDepot]</Command>
+				</CommandButton>
+    		<listbox Name='AddItemList'>
+					<X>140</X>
+					<Y>15</Y>
+					<Width>390</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<OnLeftDown>
+						if ${This.SelectedItems}
+							Me.Inventory[${This.SelectedItem}]:Examine
+					</OnLeftDown>
+					<OnLeftClick>
+						if ${This.SelectedItems}
+							Me.Inventory[${This.SelectedItem}]:Examine
+					</OnLeftClick>
+					<Sort>Text</Sort>
+				</listbox>
+				<Commandbutton name='Clearlog'>
+					<X>340</X>
+					<Y>440</Y>
+					<Width>100</Width>
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>
+			<Tab Name='Remove Items'>
+    		<CommandButton Name='Vendor Items List'>
+					<X>10</X>
+					<Y>25</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Vendor List</Text>
+					<AutoTooltip>Outputs the Vendor List to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call JunkList]</Command>
+				</CommandButton>
+				<CommandButton Name='Vendor Items Remove'>
+					<X>10</X>
+					<Y>65</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Remove Vendor Item</Text>
+					<AutoTooltip>Removes The selected Item from the Vendor Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveJunk]</Command>
+				</CommandButton>
+				<CommandButton Name='Destroy Items List'>
+					<X>10</X>
+					<Y>125</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Destroy List</Text>
+					<AutoTooltip>Outputs the Destroy List to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call DestroyList]</Command>
+				</CommandButton>
+				<CommandButton Name='Destroy Items Remove'>
+					<X>10</X>
+					<Y>165</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Remove Destroy Item</Text>
+					<AutoTooltip>Removes The selected Item from the Destroy Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveDestroy]</Command>
+				</CommandButton>
+				<CommandButton Name='Custom Items List'>
+					<X>10</X>
+					<Y>225</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Custom List</Text>
+					<AutoTooltip>Outputs the Custom List to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call CustomList]</Command>
+				</CommandButton>
+				<CommandButton Name='Custom Items Remove'>
+					<X>10</X>
+					<Y>265</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Remove Custom Item</Text>
+					<AutoTooltip>Removes The selected Item from the Custom Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveCustom]</Command>
+				</CommandButton>
+				<CommandButton Name='Depot Items List'>
+					<X>10</X>
+					<Y>325</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Depot List</Text>
+					<AutoTooltip>Outputs the Depot List to Log Window</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call DepotList]</Command>
+				</CommandButton>
+				<CommandButton Name='Depot Items Remove'>
+					<X>10</X>
+					<Y>365</Y>
+					<Width>115</Width>
+					<Height>35</Height>
+					<Text>Remove Depot Item</Text>
+					<AutoTooltip>Removes The selected Item from the Sepot Item List.</AutoTooltip>
+					<Command>Script[eq2inventory]:QueueCommand[call RemoveDepot]</Command>
+				</CommandButton>
+    		<listbox Name='RemoveItemList'>
+					<X>140</X>
+					<Y>15</Y>
+					<Width>390</Width>
+					<Height>420</Height>
+					<Font>
+						<Name>Times New Roman</Name>
+						<Size>19</Size>
+					</Font>
+					<SelectMultiple>0</SelectMultiple>
+					<Sort>Text</Sort>
+				</listbox>
+				<Commandbutton name='Clearlog'>
+					<X>340</X>
+					<Y>440</Y>
+					<Width>100</Width>
+					<Height>15</Height>
+					<Text>Clear Log</Text>
+					<OnLeftClick>
+						UIElement[RemoveItemList@Remove Items@GUITabs@EQ2Inventory]:ClearItems
+					</OnLeftClick>
+					<AutoTooltip>
+						Clear Log
+					</AutoTooltip>
+				</Commandbutton>
+			</Tab>
+		</Tabs>
+	</Tabcontrol>
+ </Children>
+</Window>
+</ISUI>

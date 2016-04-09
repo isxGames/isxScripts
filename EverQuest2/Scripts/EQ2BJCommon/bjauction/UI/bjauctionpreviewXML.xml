@@ -1,0 +1,61 @@
+<ISUI>
+	<!-- Main UI Window -->
+	<Window Name='bjauctionpreviewXML' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>450</Width>
+		<Height>210</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title></Title> 
+		<OnLoad>
+		declarevariable bjauctionpreviewvar int global ${This.ID}
+		</OnLoad>
+		<Visible>0</Visible>
+		<OnUnLoad>
+
+		</OnUnLoad>
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>100%</Width>
+			<Height>5%</Height>
+			<Children>
+				
+			</Children>
+		</TitleBar>
+		
+	<!-- Start of layout -->
+	<Children>
+		<Text name='PreviewWarning' template='Text'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>440</Width>
+		<Height>200</Height>
+		<Alignment>Left</Alignment>
+		<Font>
+			<Color>FFFF3300</Color>
+			<Size>20</Size>
+		</Font>
+		<Wrap/>
+		<Text>Please Note: The preview below is just an approximation and does not consider if you have a checkbox enabled.  There is code in place to prevent you from broadcasting NULL and default phrases to your channel.  See documentation for further details.</Text>
+		</Text>
+		<Text name='Preview' template='Text'>
+		<X>10</X>
+		<Y>120</Y>
+		<Width>440</Width>
+		<Height>200</Height>
+		<Alignment>Left</Alignment>
+		<Wrap/>
+		<Font>
+			<Color>FFBE5522</Color>
+			<Size>16</Size>
+		</Font>
+		<OnRender>
+			This:SetText[${Me.Name} tells channel ${BJChannelName}: ${SellingTypeVar} ${item1textvar} ${Item2textvar} ${BidTypeVar}: ${StartBidTextEntry} ${OptionalTextEntryVar}]
+		</OnRender>
+		<Text></Text>
+		</Text>	
+	</Children>			
+  </Window>
+</ISUI>

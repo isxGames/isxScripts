@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Commandcheckbox Name='OffensiveMode'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Enable Offensive Stance</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[OffensiveMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseOffensiveStance",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				
+				UIElement[EQ2 Bot].FindUsableChild[DefensiveMode,CommandCheckbox]:UnsetChecked
+				Script[EQ2Bot].Variable[DefensiveMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseDefensiveStance",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[OffensiveMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseOffensiveStance",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseOffensiveStance]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='DefensiveMode'>
+		<X>10</X>
+		<Y>30</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Enable Defensive Stance</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[DefensiveMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseDefensiveStance",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+				
+				UIElement[EQ2 Bot].FindUsableChild[OffensiveMode,CommandCheckbox]:UnsetChecked
+				Script[EQ2Bot].Variable[OffensiveMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseOffensiveStance",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[DefensiveMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["UseDefensiveStance",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseDefensiveStance]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseDeathMarch'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Death March"</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseDeathMarch]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseDeathMarch,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseDeathMarch]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseDeathMarch,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseDeathMarch]}</Data>
+	</Commandcheckbox>	
+	
+	<Commandcheckbox Name='PBAoEMode'>
+		<X>10</X>
+		<Y>80</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use blue AE abilities</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[PBAoEMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[PBAoEMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast PBAoE Spells",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast PBAoE Spells]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='AlwaysUseAEs'>
+		<X>10</X>
+		<Y>100</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use blue AEs on all encounters</Text>
+		<AutoTooltip>If checked, blue AEs will be used on all encounters regardless of concolor, number of mobs, etc.</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[AlwaysUseAEs]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[AlwaysUseAEs,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[AlwaysUseAEs]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[AlwaysUseAEs,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[AlwaysUseAEs]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='Taunt Mode'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>120</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use taunt abilities</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+
+				Script[EQ2Bot].Variable[TauntMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Taunt Spells",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+
+				Script[EQ2Bot].Variable[TauntMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Taunt Spells",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Taunt Spells]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='StartHO'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>140</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Innitiate HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start HOs",TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start HOs",FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Start HOs]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseMastersRage'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>160</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Master Strike</Text>
+		<AutoTooltip>Use Master Strike spell on all targets.  It will only cast it once per target if the target is not eligable for Master Strike.</AutoTooltip>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseMastersRage]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseMastersRage,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseMastersRage]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseMastersRage,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseMastersRage]}</Data>
+	</Commandcheckbox>	
+	
+	<Commandcheckbox Name='UseUnholyStrength'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>200</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Unholy Strength" Raid Buff</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseUnholyStrength]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseUnholyStrength,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseUnholyStrength]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseUnholyStrength,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseUnholyStrength]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseUnholyHunger'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>220</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Unholy Hunger" Group Buff</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseUnholyHunger]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseUnholyHunger,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseUnholyHunger]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseUnholyHunger,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseUnholyHunger]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='UseReaver'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>240</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Reaver" AA Buff</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseReaver]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseReaver,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseReaver]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseReaver,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseReaver]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseBattleLeadershipAABuff'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>260</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Battle Leadership" AA Buff</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseBattleLeadershipAABuff]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseBattleLeadershipAABuff,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseBattleLeadershipAABuff]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseBattleLeadershipAABuff,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseBattleLeadershipAABuff]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseFearlessMoraleAABuff'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>280</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use "Fearless Morale" AA Buff</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseFearlessMoraleAABuff]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseFearlessMoraleAABuff,TRUE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseFearlessMoraleAABuff]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[UseFearlessMoraleAABuff,FALSE]
+				Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[UseFearlessMoraleAABuff]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblBuffArmamentMember'>
+		<X>65%</X>
+		<Y>10</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Armament:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffArmamentGroupMember'>
+		<x>65%</x>
+		<y>30</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group/Raid Member to Armament Buff</AutoTooltip>
+		<Items></items>
+		<Sort>Text</Sort>
+		<OnLoad>
+		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember](exists)})
+		    {
+          This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]
+			    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]:Select
+    		}
+    		else
+    		{
+    		    This:AddItem["No one"]
+    		    This.ItemByText["No one"]:Select
+    		}			
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffArmamentGroupMember,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffArmamentGroupMember,0,1,1]
+		</OnLeftClick>
+	</combobox>
+    <Text Name='lblBuffTacticsGroupMember'>
+		<X>65%</X>
+		<Y>60</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Evasion:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffTacticsGroupMember'>
+		<x>65%</x>
+		<y>80</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group/Raid Member to Evasion Buff</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+		    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember](exists)})
+		    {
+          This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]
+			    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]:Select
+    		}
+    		else
+    		{
+    		    This:AddItem["No one"]
+    		    This.ItemByText["No one"]:Select
+    		}
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffTacticsGroupMember,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTacticsGroupMember,0,1,1]
+		</OnLeftClick>
+    </combobox>
+</ISUI>

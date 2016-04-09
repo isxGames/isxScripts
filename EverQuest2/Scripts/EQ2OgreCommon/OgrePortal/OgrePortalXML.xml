@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+<Template Name='chkbox' template='checkbox'><Width>30</Width><Height>23</Height></Template>
+	<!-- Main UI Window -->
+	<Window Name='OgrePortalXML' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>500</Width>
+		<Height>500</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>                                                                         Ogre Portal - UI Ver: 1.00</Title>
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>5%</Height>
+			<Children>
+				<Text Name="Title" Template="Window.TitleBar.Title">
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
+					<X>85%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
+					<X>92%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						;ui -unload scripts\\EQ2OgreCommon\\OgrePortal\\OgrePortalXML.xml
+						UIElement[OgrePortalXML]:Hide
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+
+		<Children>
+			<!-- ***********Labels************** -->
+				<Text name='OPScriptName' template='Text'>
+					<X>10</X>
+					<Y>10</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Script Name</Text>
+					<Font>
+						<Color>FFA9A9A9</Color>
+					</Font>
+				</Text>
+				<Text name='OPOptions' template='Text'>
+					<X>100</X>
+					<Y>10</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Options (command line options)</Text>
+					<Font>
+						<Color>FFA9A9A9</Color>
+					</Font>
+				</Text>
+				<Text name='OPStatus' template='Text'>
+					<X>415</X>
+					<Y>10</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Status</Text>
+					<Font>
+						<Color>FFA9A9A9</Color>
+					</Font>
+				</Text>
+
+			<!-- ***********Ogre Tell Window************** -->
+				<Text name='OPScriptTellWindow' template='Text'>
+					<X>10</X>
+					<Y>30</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Tell Window</Text>
+				</Text>
+				<checkbox name='chkboxOPBroadcastTells' template='chkbox'>
+					<X>100</X>
+					<Y>30</Y>
+					<Text>(-b)Broadcast tells through uplink</Text>
+					<OnLoad>
+						This:SetChecked
+					</OnLoad>
+					<OnLeftClick>
+						if ${Script[eq2ogretellwindow](exists)}
+							Script[eq2ogretellwindow].VariableScope.BroadcastTells:Set[${This.Checked}]
+					</OnLeftClick>
+				</checkbox>
+				<checkbox name='chkboxOPReceiveBroadcastTells' template='chkbox'>
+					<X>100</X>
+					<Y>50</Y>
+					<Text>(-r)Receive broadcast tells from uplink</Text>
+					<OnLoad>
+						This:SetChecked
+					</OnLoad>
+					<OnLeftClick>
+						if ${Script[eq2ogretellwindow](exists)}
+							Script[eq2ogretellwindow].VariableScope.ReceiveBroadcastTells:Set[${This.Checked}]
+					</OnLeftClick>
+				</checkbox>
+				<checkbox name='chkboxOPPlaySoundOnReceiveBroadcastTells' template='chkbox'>
+					<X>100</X>
+					<Y>70</Y>
+					<Text>(-n)Play noise when tell received</Text>
+					<OnLoad>
+						This:SetChecked
+					</OnLoad>
+					<OnLeftClick>
+						if ${Script[eq2ogretellwindow](exists)}
+							Script[eq2ogretellwindow].VariableScope.PlayNoiseOnReceivedBroadCast:Set[${This.Checked}]
+					</OnLeftClick>
+				</checkbox>
+				<Text name='OPStatusTellWindow' template='Text'>
+					<X>400</X>
+					<Y>30</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${Script[eq2ogretellwindow](exists)} &amp;&amp; ${This.Text.NotEqual[--Running..--]}
+							This:SetText[--Running..--]
+						elseif !${Script[eq2ogretellwindow](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Button Name="CmdOPTellWindow" template='Button'>
+					<X>375</X>
+					<Y>50</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						if ${Script[eq2ogretellwindow](exists)} &amp;&amp; ${This.Text.Equal[Stop]}
+							run ogre end tell
+						elseif !${Script[eq2ogretellwindow](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+						{
+							variable string TempArgs
+							TempArgs:Set[]
+							if ${This.Parent.FindChild[chkboxOPBroadcastTells].Checked}
+								TempArgs:Set[-b]
+							if ${This.Parent.FindChild[chkboxOPReceiveBroadcastTells].Checked}
+								TempArgs:Set[${TempArgs}-r]
+							if ${This.Parent.FindChild[chkboxOPPlaySoundOnReceiveBroadcastTells].Checked}
+								TempArgs:Set[${TempArgs}-n]
+							run ogre tell ${TempArgs}
+						}
+						else
+							echo Error OPTellWindow1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${Script[eq2ogretellwindow](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${Script[eq2ogretellwindow](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+
+
+			<!-- ***********Ogre Zone Resetter************** -->
+				<Text name='OPScriptZoneResetter' template='Text'>
+					<X>10</X>
+					<Y>110</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Zone Resetter</Text>
+				</Text>
+				<Text name='OPStatusZoneResetter' template='Text'>
+					<X>400</X>
+					<Y>110</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${UIElement[eq2OgreZoneResetXML](exists)} &amp;&amp; ${This.Text.NotEqual[--Running..--]}
+							This:SetText[--Running..--]
+						elseif !${UIElement[eq2OgreZoneResetXML](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Button Name="CmdOPZoneResetter" template='Button'>
+					<X>375</X>
+					<Y>130</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						;eq2OgreZoneResetXML
+						if ${UIElement[eq2OgreZoneResetXML](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+							run ogre end zone
+						elseif !${UIElement[eq2OgreZoneResetXML](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+						{
+							run ogre zone
+						}
+						else
+							echo Error OPZoneResetter1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${UIElement[eq2OgreZoneResetXML](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${UIElement[eq2OgreZoneResetXML](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+
+			<!-- ***********Ogre Depot************** -->
+				<Text name='OPScriptDepot' template='Text'>
+					<X>10</X>
+					<Y>160</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Depot</Text>
+				</Text>
+				<Text name='OPStatusDepot' template='Text'>
+					<X>400</X>
+					<Y>160</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[--Running..--]}
+							This:SetText[--Running..--]
+						elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Button Name="CmdOPDepot" template='Button'>
+					<X>375</X>
+					<Y>180</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						if ${Script[eq2ogredepot](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+							run ogre end depot
+						elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+						{
+							run ogre depot
+						}
+						else
+							echo Error OPDepot1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+			<!-- ***********Ogre Transmute************** -->
+				<Text name='OPScriptTransmute' template='Text'>
+					<X>10</X>
+					<Y>210</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Transmute</Text>
+				</Text>
+				<Text name='OPStatusTransmute' template='Text'>
+					<X>400</X>
+					<Y>210</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${UIElement[eq2OgreTransmuteXML](exists)} &amp;&amp; ${This.Text.NotEqual[--Running..--]}
+							This:SetText[--Running..--]
+						elseif !${UIElement[eq2OgreTransmuteXML](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Button Name="CmdOPTransmute" template='Button'>
+					<X>375</X>
+					<Y>230</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						if ${UIElement[eq2OgreTransmuteXML](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+							run ogre end Transmute
+						elseif !${UIElement[eq2OgreTransmuteXML](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+							run ogre Transmute
+						else
+							echo Error OPTransmute1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${UIElement[eq2OgreTransmuteXML](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${UIElement[eq2OgreTransmuteXML](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+
+			<!-- ***********Ogre Harvest************** -->
+				<Text name='OPScriptHarvest' template='Text'>
+					<X>10</X>
+					<Y>260</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Harvest</Text>
+				</Text>
+				<Text name='OPStatusHarvest' template='Text'>
+					<X>400</X>
+					<Y>260</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${UIElement[eq2OgreHarvestShell](exists)} &amp;&amp; ${This.Text.NotEqual[--Running..--]}
+							This:SetText[--Running..--]
+						elseif !${UIElement[eq2OgreHarvestShell](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Button Name="CmdOPHarvest" template='Button'>
+					<X>375</X>
+					<Y>280</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						if ${UIElement[eq2OgreHarvestShell](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+							run ogre end harvest
+						elseif !${UIElement[eq2OgreHarvestShell](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+							run ogre harvest
+						else
+							echo Error OPHarvest1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${UIElement[eq2OgreHarvestShell](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${UIElement[eq2OgreHarvestShell](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+			<!-- ***********Ogre Mapper************** -->
+				<Text name='OPScriptMapper' template='Text'>
+					<X>10</X>
+					<Y>310</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Mapper</Text>
+				</Text>
+				<Text name='OPStatusMapper' template='Text'>
+					<X>400</X>
+					<Y>310</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${Script[eq2ogrenavcreator](exists)} &amp;&amp; ${This.Text.NotEqual[--Running..--]}
+							This:SetText[--Running..--]
+						elseif !${Script[eq2ogrenavcreator](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Button Name="CmdOPMapper" template='Button'>
+					<X>375</X>
+					<Y>330</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						if ${Script[eq2ogrenavcreator](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+							run ogre end mapper
+						elseif !${Script[eq2ogrenavcreator](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+						{
+							run ogre mapper
+						}
+						else
+							echo Error OPMapper1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${Script[eq2ogrenavcreator](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${Script[eq2ogrenavcreator](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+
+			<Button Name="Clear" template='Button'>
+				<X>15</X>
+				<Y>450</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Clear</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
+				</OnLeftClick>
+			</Button>
+			<!-- Green <Color>FF00FF00</Color> -->
+			<!-- Red <Color>FFFF0000</Color> -->
+			<!-- Gray (labels) <Color>FFA9A9A9</Color> -->
+
+		</Children>
+	</Window>
+
+</ISUI>

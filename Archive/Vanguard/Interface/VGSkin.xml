@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<!--
+	The Skin tag defines the actual "skin" that can be used to skin any interface.
+	Templates alone do not constitute a skin, and for best compatibility, skin templates should
+	not be specifically referred to by an interface.
+	-->
+	<Skin Name="vgskin" Template="Default Skin">
+		<!--
+		Every template in the Default Skin template is listed below. You do not need to change every
+		template, just the ones you want. You do not need to change any of the SkinTemplate tags
+		except to change the SkinPrefix (use find/replace to change the entire file)
+		-->
+		<SkinTemplate Base='Default Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='Default Fixed Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='button.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='button.TextureHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='button.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='button.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='button' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.UpTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.UpTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.DownTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.DownTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.SliderTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.SliderHandleTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.upbutton' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.downbutton' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar.Slider' SkinPrefix='vg.' />
+		<SkinTemplate Base='scrollbar' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.UpTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.UpTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.DownTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.DownTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.SliderTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.SliderHandleTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.upbutton' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.downbutton' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar.Slider' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalscrollbar' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.TextureHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.TextureChecked' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.TextureCheckedHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.TextureCheckedPressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='checkbox' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandbutton.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandbutton.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandbutton.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandbutton' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.TextureHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.TextureChecked' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.TextureCheckedHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.TextureCheckedPressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandcheckbox' SkinPrefix='vg.' />
+		<SkinTemplate Base='console.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='console.ScrollBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='console' SkinPrefix='vg.' />
+		<SkinTemplate Base='frame.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='frame' SkinPrefix='vg.' />
+		<SkinTemplate Base='gauge.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='gaugefiller.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='gaugefiller' SkinPrefix='vg.' />
+		<SkinTemplate Base='gauge' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalgauge' SkinPrefix='vg.' />
+		<SkinTemplate Base='hud' SkinPrefix='vg.' />
+		<SkinTemplate Base='hudelement.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='hudelement' SkinPrefix='vg.' />
+		<SkinTemplate Base='listbox.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='listbox.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='listbox.ScrollBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='listbox' SkinPrefix='vg.' />
+		<SkinTemplate Base='combobox.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='combobox.ButtonTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='combobox.ListBoxTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='combobox.ListBox' SkinPrefix='vg.' />
+		<SkinTemplate Base='combobox.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='combobox' SkinPrefix='vg.' />
+		<SkinTemplate Base='map' SkinPrefix='vg.' />
+		<SkinTemplate Base='mapblip.font' SkinPrefix='vg.' />
+		<SkinTemplate Base='mapblip' SkinPrefix='vg.' />
+		<SkinTemplate Base='slider.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='slider.HandleTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='slider' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalslider.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalslider.HandleTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalslider' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.LeftTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.LeftTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.LeftTextureHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.RightTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.RightTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.RightTextureHover' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.FrameTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.TabTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.TabTextureSelected' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.LeftButton' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol.RightButton' SkinPrefix='vg.' />
+		<SkinTemplate Base='tabcontrol' SkinPrefix='vg.' />
+		<SkinTemplate Base='text.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='text' SkinPrefix='vg.' />
+		<SkinTemplate Base='textentry.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='textentry' SkinPrefix='vg.' />
+		<SkinTemplate Base='tree.ScrollBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='tree.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='tree' SkinPrefix='vg.' />
+		<SkinTemplate Base='commandentry' SkinPrefix='vg.' />
+		<SkinTemplate Base='tooltip.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='tooltip' SkinPrefix='vg.' />
+		<SkinTemplate Base='variablegauge.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='variablegaugefiller.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='variablegauge' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalvariablegauge' SkinPrefix='vg.' />
+		<SkinTemplate Base='variableslider.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='variableslider.HandleTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='variableslider' SkinPrefix='vg.' />
+		<SkinTemplate Base='verticalvariableslider' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Title.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Title' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Minimize.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Minimize.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Minimize' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Maximize.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Maximize.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Maximize' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Close.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Close.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar.Close' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.TitleBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='window.Client' SkinPrefix='vg.' />
+		<SkinTemplate Base='window' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Title.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Title' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Minimize.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Minimize.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Minimize' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Maximize.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Maximize.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Maximize' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Close.Texture' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Close.TexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar.Close' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.TitleBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow.Client' SkinPrefix='vg.' />
+		<SkinTemplate Base='horizontalwindow' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.OKTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.OKTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.YesTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.YesTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.NoTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.NoTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.CancelTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.CancelTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='messagebox' SkinPrefix='vg.' />
+		<SkinTemplate Base='scriptinputbox.OKTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='scriptinputbox.OKTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='scriptinputbox.CancelTexture' SkinPrefix='vg.' />
+		<SkinTemplate Base='scriptinputbox.CancelTexturePressed' SkinPrefix='vg.' />
+		<SkinTemplate Base='scriptinputbox.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='scriptinputbox' SkinPrefix='vg.' />
+		<SkinTemplate Base='textedit.VerticalScrollBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='textedit.HorizontalScrollBar' SkinPrefix='vg.' />
+		<SkinTemplate Base='contextmenu.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='contextmenu' SkinPrefix='vg.' />
+		<SkinTemplate Base='textedit.Font' SkinPrefix='vg.' />
+		<SkinTemplate Base='textedit' SkinPrefix='vg.' />
+		<!-- Ventrilo templates -->
+		<SkinTemplate Base='Ventrilo.User.Texture.voiceoff.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.User.Texture.voiceon.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.User.Texture.voicegroup.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.User.Texture.voicechan.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.User.Texture.voicebegin.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.User.Texture.voicep2p.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.User.Texture.voiceu2u.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.Channel.Texture.channel.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.Channel.Texture.chanpass.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.Channel.Texture.chanauth.ico' SkinPrefix='vg.' />
+		<SkinTemplate Base='Ventrilo.Server.Texture.server.ico' SkinPrefix='vg.' />
+
+	</Skin>
+<!--
+This or where you have innerspace installed
+${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/
+this will get a majority of the old non standard vgskin scripts to work.
+-->
+	<!-- Fonts -->
+	<Template name='vg.Default Font' Template='Default Font'>
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FFffffff</Color>
+	</Template>
+	<Template name='vg.Default Bold Font' Template='Default Font'>
+		<Bold />
+	</Template>
+	<Template name='vg.Default Fixed Font' Template='Default Fixed Font'>
+		<Name>Courier</Name>
+		<Size>14</Size>
+		<Color>FFff00ff</Color>
+	</Template>
+
+	<!-- Button -->
+	<Template name='vg.Button.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgbuttontexture.png' ColorKey='FFFF00FF' />
+	<Template name='vg.Button.TextureHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgbuttontexturehover.png' ColorKey='FFFF00FF' />
+	<Template name='vg.Button.TexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgbuttontexturepressed.png' ColorKey='FFFF00FF' />
+	<Template name='vg.button.Font' Template='Default Font'>
+		<Name>Arial</Name>
+		<Size>12</Size>
+		<Color>FFffff00</Color>
+	</Template>
+	<template name='vg.button' template='button'>
+		<Font Template='vg.button.Font' />
+		<Border>3</Border>
+		<Texture Template='vg.button.Texture' />
+		<TextureHover Template='vg.button.TextureHover' />
+		<TexturePressed Template='vg.button.TexturePressed' />
+	</template>
+
+	<!-- ScrollBar -->
+	<Template name='vg.scrollbar.UpTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>66</Left>
+		<Right>88</Right
+	</Template>
+	<Template name='vg.scrollbar.UpTexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>22</Left>
+		<Right>44</Right
+	</Template>
+	<Template name='vg.scrollbar.UpTextureHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>44</Left>
+		<Right>66</Right
+	</Template>
+	<Template name='vg.scrollbar.DownTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>66</Left>
+		<Right>88</Right
+		<Orientation>2</Orientation>
+	</Template>
+	<Template name='vg.scrollbar.DownTexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>22</Left>
+		<Right>44</Right
+		<Orientation>2</Orientation>
+	</Template>
+	<Template name='vg.scrollbar.DownTextureHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>44</Left>
+		<Right>66</Right
+		<Orientation>2</Orientation>
+	</Template>
+	<Template name='vg.scrollbar.SliderTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Bottom>22</Bottom>
+		<Left>0</Left>
+		<Right>22</Right
+	</Template>
+	<Template name='vg.scrollbar.SliderHandleTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskinscrollcontrol.png' ColorKey='FFFF00FF' >
+		<Bottom>22</Bottom>
+		<Left>88</Left>
+		<Right>110</Right
+	</Template>
+
+	<!-- Scrollbar (Horizontal) -->
+	<template name='vg.scrollbar.upbutton' template='scrollbar.upbutton'>
+		<Texture template='vg.scrollbar.UpTexture' />
+		<TexturePressed template='vg.scrollbar.UpTexturePressed' />
+		<TextureHover template='vg.scrollbar.UpTextureHover' />
+	</template>
+
+	<template name='vg.scrollbar.downbutton' template='scrollbar.downbutton'>
+		<Texture template='vg.scrollbar.DownTexture' />
+		<TexturePressed template='vg.scrollbar.DownTexturePressed' />
+		<TextureHover template='vg.scrollbar.DownTextureHover' />
+	</template>
+
+	<template name='vg.scrollbar.Slider' template='scrollbar.Slider'>
+		<Texture template='vg.scrollbar.SliderTexture' />
+		<HandleTexture template='vg.scrollbar.SliderHandleTexture' />
+	</template>
+
+	<Template name='vg.scrollbar' Template='scrollbar'>
+		<UpButton template='vg.scrollbar.upbutton' />
+		<DownButton template='vg.scrollbar.downbutton' />
+		<Slider template='vg.scrollbar.slider' />
+	</Template>
+
+	<!-- Scrollbar (Vertical) -->
+	<template name='vg.verticalscrollbar.upbutton' Template='verticalscrollbar.upbutton'>
+		<Texture template='vg.scrollbar.UpTexture'>
+			<Orientation>3</Orientation>
+		</Texture>
+		<TexturePressed template='vg.scrollbar.UpTexturePressed'>
+			<Orientation>3</Orientation>
+		</TexturePressed>
+		<TextureHover template='vg.scrollbar.UpTextureHover'>
+			<Orientation>3</Orientation>
+		</TextureHover>
+	</template>
+
+	<template name='vg.verticalscrollbar.downbutton' Template='verticalscrollbar.downbutton'>
+		<Texture template='vg.scrollbar.DownTexture'>
+			<Orientation>1</Orientation>
+		</Texture>
+		<TexturePressed template='vg.scrollbar.DownTexturePressed'>
+			<Orientation>1</Orientation>
+		</TexturePressed>
+		<TextureHover template='vg.scrollbar.DownTextureHover' >
+			<Orientation>1</Orientation>
+		</TextureHover>
+	</template>
+
+	<template name='vg.verticalscrollbar.Slider' Template='verticalscrollbar.Slider'>
+		<Texture template='vg.scrollbar.SliderTexture'>
+			<Orientation>1</Orientation>
+		</Texture>
+		<HandleTexture template='vg.scrollbar.SliderHandleTexture' />
+	</template>
+
+	<Template name='vg.verticalscrollbar' Template='verticalscrollbar'>
+		<UpButton template='vg.verticalscrollbar.upbutton' />
+		<DownButton template='vg.verticalscrollbar.downbutton' />
+		<Slider template='vg.verticalscrollbar.slider' />
+	</Template>
+
+	<!-- Checkbox Green Check Circle -->
+	<template name='vg.checkbox.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcheckboxtexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.checkbox.TextureHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcheckboxtexturehover.png' ColorKey='FFFF00FF' />
+	<template name='vg.checkbox.TexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcheckboxtexturepressed.png' ColorKey='FFFF00FF' />
+	<template name='vg.checkbox.TextureChecked' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcheckboxtexturechecked.png' ColorKey='FFFF00FF' />
+	<template name='vg.checkbox.TextureCheckedHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcheckboxtexturecheckedhover.png' ColorKey='FFFF00FF' />
+	<template name='vg.checkbox.TextureCheckedPressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcheckboxtexturecheckedpressed.png' ColorKey='FFFF00FF' />
+	<template name='vg.checkbox.Font' Template='vg.Default Font' />
+	<template name='vg.checkbox' template='checkbox'>
+		<TextColor>FFEECC00</TextColor>
+	</template>
+
+	<!-- CommandButton -->
+	<template name='vg.commandbutton.Texture' template='vg.button.Texture' />
+	<template name='vg.commandbutton.TextureHover' template='vg.button.TextureHover' />
+	<template name='vg.commandbutton.TexturePressed' template='vg.button.TexturePressed' />
+	<template name='vg.commandbutton.Font' Template='vg.button.Font' />
+	<template name='vg.commandbutton' Template='vg.button' />
+
+	<!-- CommandCheckbox Green Check -->
+	<template name='vg.commandcheckbox.Texture' Template='vg.checkbox.Texture' />
+	<template name='vg.commandcheckbox.TextureHover' Template='vg.checkbox.TextureHover' />
+	<template name='vg.commandcheckbox.TexturePressed' Template='vg.checkbox.TexturePressed' />
+	<template name='vg.commandcheckbox.TextureChecked' Template='vg.checkbox.TextureChecked' />
+	<template name='vg.commandcheckbox.TextureCheckedHover' Template='vg.checkbox.TextureCheckedHover' />
+	<template name='vg.commandcheckbox.TextureCheckedPressed' Template='vg.checkboxCheckedPressed.Texture' />
+	<template name='vg.commandcheckbox.Font' Template='vg.checkbox.Font' />
+	<template name='vg.commandcheckbox' Template='vg.checkbox' />
+
+	<!-- Console (Use Default HUD Information) -->
+	<Template name='vg.console.Font' Template='console.Font' />
+	<Template name='vg.console.ScrollBar' Template='vg.VerticalScrollBar' />
+	<Template name='vg.console' Template='console'>
+		<BackgroundColor>FF080808</BackgroundColor>
+		<Border>1</Border>
+		<BorderColor>FF282828</BorderColor>
+	</Template>
+	<!-- Frame -->
+	<template name='vg.frame.Texture' template='frame.Texture' />
+	<template name='vg.frame' template='frame' />
+
+	<!-- Gauge -->
+	<template name='vg.gauge.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vggaugetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.gauge.TopTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vggaugetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.gaugefiller.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vggaugefillertexture.png' ColorKey='FFFF00FF' />
+
+	<template name='vg.gaugefiller' template='gaugefiller' >
+		<!--<Texture template='vg.Button.TextureHover' /> -->
+		<Texture Template='vg.gaugefiller.Texture' />
+	</template>
+	<template name='vg.gauge' template='gauge' >
+		<Texture Template='vg.gauge.Texture' />
+		<Filler Template='vg.gaugefiller' />
+	</template>
+	<template name='vg.verticalgauge' Template='verticalgauge'>
+		<Texture Template='vg.gauge.Texture' />
+		<Filler Template='vg.gaugefiller'>
+			<Texture Template='vg.gaugefiller.Texture'>
+			</Texture>
+		</Filler>
+	</template>
+
+	<!-- Hud (Use Default HUD Information) -->
+	<Template name='vg.hud' Template='hud' />
+	<Template name='vg.hudelement.Font' Template='hudelement.Font' />
+	<Template name='vg.hudelement' Template='hudelement' />
+
+	<!-- ListBox -->
+	<template name='vg.listbox.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vglistboxtexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.listbox.Font' Template='vg.Default Font' >
+		<Color>FF00ff00</Color>
+	</template>
+	<template name='vg.listbox.ScrollBar' Template='vg.VerticalScrollBar' />
+	<template name='vg.listbox' template='listbox' >
+		<Border>6</Border>
+		<Font Template='vg.listbox.Font' />
+		<SelectionColor>FF666666</SelectionColor>
+		<Sort>Text</Sort>
+		<Texture Template='vg.listbox.Texture' />
+		<ScrollBar template='vg.listbox.ScrollBar' />
+	</template>
+
+	<!-- ComboBox -->
+	<template name='vg.combobox.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcomboboxtexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.combobox.ButtonTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcomboboxbuttontexture.png' ColorKey='FFFF00FF' />
+	<Template name='vg.combobox.ListBoxTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgcombolistboxtexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.combobox.Font' Template='vg.Default Font' >
+		<Color>FFff0000</Color>
+	</template>
+	<template name='vg.combobox.ListBox' Template='combobox.listbox'>
+		<Font Template='vg.combobox.Font' />
+		<Texture Template='vg.combobox.ListBoxTexture'/>
+		<SelectionColor>FF666666</SelectionColor>
+	</template>
+	<template name='vg.combobox' template='combobox'>
+		<Border>3</Border>
+		<Font Template='vg.combobox.Font' />
+		<Texture Template='vg.combobox.Texture' />
+		<ButtonTexture Template='vg.combobox.ButtonTexture' />
+		<ListBox Template='vg.combobox.listbox' />
+	</template>
+
+	<!-- map -->
+	<Template name='vg.map' Template='map' />
+	<Template name='vg.mapblip.font' Template='mapblip.font' />
+	<Template name='vg.mapblip' Template='mapblip' />
+
+	<!-- Slider -->
+	<template name='vg.slider.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgslidertexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.slider.HandleTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgsliderhandletexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.slider' template='slider' >
+		<Texture Template='vg.slider.Texture' />
+		<HandleTexture Template='vg.slider.HandleTexture' />
+	</template>
+
+	<template name='vg.verticalslider.Texture' Template='vg.slider.Texture'>
+		<Orientation>3</Orientation>
+	</template>
+	<template name='vg.verticalslider.HandleTexture' Template='vg.slider.HandleTexture'>
+		<Orientation>3</Orientation>
+	</template>
+	<template name='vg.verticalslider' Template='vg.slider'>
+		<Vertical>1</Vertical>
+		<Texture Template='vg.verticalslider.Texture' />
+		<HandleTexture Template='vg.verticalslider.HandleTexture' />
+	</template>
+
+	<!-- redoing this still -->
+
+
+
+	<!-- TabControl -->
+	<template name='vg.tabcontrol.LeftTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskintabcontrol.png' ColorKey='FFFF00FF'>
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>66</Left>
+		<Right>88</Right
+	</Template>
+	<template name='vg.tabcontrol.LeftTexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskintabcontrol.png' ColorKey='FFFF00FF'>
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>22</Left>
+		<Right>44</Right
+	</Template>
+	<template name='vg.tabcontrol.LeftTextureHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskintabcontrol.png' ColorKey='FFFF00FF'>
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>44</Left>
+		<Right>66</Right
+	</Template>
+	<template name='vg.tabcontrol.RightTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskintabcontrol.png' ColorKey='FFFF00FF'>
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>66</Left>
+		<Right>88</Right
+		<Orientation>2</Orientation>
+	</Template>
+	<template name='vg.tabcontrol.RightTexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskintabcontrol.png' ColorKey='FFFF00FF'>
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>22</Left>
+		<Right>44</Right
+		<Orientation>2</Orientation>
+	</Template>
+	<template name='vg.tabcontrol.RightTextureHover' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgskintabcontrol.png' ColorKey='FFFF00FF'>
+		<Border>4</Border>
+		<Bottom>22</Bottom>
+		<Left>44</Left>
+		<Right>66</Right>
+		<Orientation>2</Orientation>
+	</template>
+
+	<template name='vg.tabcontrol.FrameTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgtabcontroltabtextureframe.png' ColorKey='FFFF00FF' />
+	<template name='vg.tabcontrol.TabTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgtabcontroltabtexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.tabcontrol.TabSelectedTexture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgtabcontroltabtextureselected.png' ColorKey='FFFF00FF' />
+	<template name='vg.tabcontrol.Font' Template='default Font' />
+
+	<Template name='vg.tabcontrol.LeftButton'>
+		<Texture template='vg.tabcontrol.LeftTexture' >
+			<Orientation>2</Orientation>
+		</Texture>
+		<TexturePressed template='vg.tabcontrol.LeftTexturePressed' >
+			<Orientation>2</Orientation>
+		</TexturePressed>
+		<TextureHover template='vg.tabcontrol.LeftTextureHover' >
+			<Orientation>2</Orientation>
+		</TextureHover>
+	</Template>
+
+	<template name='vg.tabcontrol.RightButton'>
+		<Texture Template='vg.tabcontrol.RightTexture' >
+			<Orientation>0</Orientation>
+		</Texture>
+		<TexturePressed Template='vg.tabcontrol.RightTexturePressed' >
+			<Orientation>0</Orientation>
+		</TexturePressed>
+		<TextureHover Template='vg.tabcontrol.RightTextureHover' >
+			<Orientation>0</Orientation>
+		</TextureHover>
+	</template>
+
+	<template name='vg.tabcontrol'>
+		<Font Template='vg.tabcontrol.Font' >
+			<Color>FFff00ff</Color>
+		</Font>
+		<SelectedTextColor>FF005555</SelectedTextColor>
+		<TabHeight>20</TabHeight>
+		<TabBorder>2</TabBorder>
+		<FrameBackgroundColor>FF000000</FrameBackgroundColor>
+		<FrameBorder>1</FrameBorder>
+		<FrameBorderColor>FFD4D0C8</FrameBorderColor>
+		<LeftButton Template='vg.tabcontrol.LeftButton' />
+		<RightButton Template='vg.tabcontrol.RightButton' />
+		<TabTexture Template='vg.tabcontrol.TabTexture' />
+		<TabSelectedTexture Template='vg.tabcontrol.TabSelectedTexture' />
+		<FrameTexture Template='vg.tabcontrol.FrameTexture' />
+	</template>
+
+	<!-- Text -->
+	<template name='vg.text.Font' Template='default Font' />
+	<template name='vg.text'>
+		<Font Template='vg.text.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+	</template>
+
+	<!-- TextEntry -->
+	<template name='vg.textentry.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgtextentrytexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.textentry.Font' Template='Default Font'>
+		<Color>FFff00ff</Color>
+	</template>
+	<template name='vg.textentry' template='textentry'>
+		<Texture template='vg.textentry.Texture' />
+		<Font Template='vg.textentry.Font' />
+		<SelectionColor>FFffff00</SelectionColor>
+		<BackgroundColor>FF0000cc</BackgroundColor>
+		<BorderColor>FF000011</BorderColor>
+		<Border>1</Border>
+		<CaretInnerColor>FF660000</CaretInnerColor>
+		<CaretOuterColor>FFcc0000</CaretOuterColor>
+	</template>
+
+	<!-- CommandEntry -->
+	<template name='vg.commandentry' Template='vg.textentry'>
+		<CommandHistory>50</CommandHistory>
+	</template>
+
+	<!-- Tooltip -->
+	<Template name='vg.tooltip.Font' Template='tooltip.Font' />
+	<Template name='vg.tooltip' Template='tooltip' />
+
+	<!-- Tree -->
+	<template name='vg.tree.ScrollBar' template='vg.verticalscrollbar' />
+	<template name='vg.tree.Font' Template='Default Font'>
+		<Color>FFff00ff</Color>
+	</template>
+	<template name='vg.tree'>
+		<Border>1</Border>
+		<BorderColor>FFFFFFFF</BorderColor>
+		<BackgroundColor>FF000000</BackgroundColor>
+		<SelectionBackgroundColor>FF000066</SelectionBackgroundColor>
+		<SelectionTextColor>FFFFFFFF</SelectionTextColor>
+		<ImageSize>12</ImageSize>
+		<ItemHeight>14</ItemHeight>
+		<ImageBorder>2</ImageBorder>
+		<TextMargin>5</TextMargin>
+		<IndentPerDepth>21</IndentPerDepth>
+		<ScrollBar template='vg.tree.scrollbar' />
+		<Font template='vg.tree.Font' />
+		<ImageTexture template='vg.checkbox.Texture' />
+		<ImageTextureCollapsible template='vg.checkbox.TextureChecked' />
+		<ImageTextureCollapsed template='vg.checkbox.TextureHover' />
+	</template>
+	<!-- VariableGauge -->
+	<template name='vg.variablegauge.Texture' Template='vg.gauge.Texture' />
+	<template name='vg.variablegaugefiller.Texture' Template='vg.gaugefiller.Texture' />
+	<template name='vg.variablegauge'>
+		<Vertical>0</Vertical>
+		<Border>0</Border>
+		<Range>1</Range>
+		<!-- Causes variablegauges to default to 0.0-1.0. Changing this is not recommended -->
+		<Texture Template='vg.variablegauge.Texture' />
+		<Data></Data>
+		<Offset>0</Offset>
+		<Filler>
+			<Height>100%</Height>
+			<Width>100%</Width>
+			<Texture Template='vg.variablegaugefiller.Texture' />
+		</Filler>
+	</template>
+	<template name='vg.verticalvariablegauge'>
+		<Vertical>1</Vertical>
+		<Border>0</Border>
+		<Range>1</Range>
+		<!-- Causes variablegauges to default to 0.0-1.0. Changing this is not recommended -->
+		<Texture Template='vg.variablegauge.Texture'>
+			<Orientation>3</Orientation>
+		</Texture>
+		<Data></Data>
+		<Offset>0</Offset>
+		<Filler>
+			<Height>100%</Height>
+			<Width>100%</Width>
+			<Texture Template='vg.variablegaugefiller.Texture'>
+				<Orientation>3</Orientation>
+			</Texture>
+		</Filler>
+	</template>
+
+	<!-- VariableSlider -->
+	<template name='vg.variableslider.Texture' Template='vg.slider.Texture' />
+	<template name='vg.variableslider.HandleTexture' Template='vg.slider.HandleTexture' />
+	<template name='vg.variableslider' Template='vg.slider'>
+		<Vertical>0</Vertical>
+		<Range>100</Range>
+		<!-- Causes variablesliders to default to 0-100. Changing this is not recommended -->
+		<Border>0</Border>
+		<Data></Data>
+		<Offset>0</Offset>
+		<VariableRange>1.0</VariableRange>
+		<Texture Template='vg.variableslider.Texture' />
+		<HandleTexture Template='vg.variableslider.HandleTexture' />
+	</template>
+	<template name='vg.verticalvariableslider' Template='vg.variableslider'>
+		<Vertical>1</Vertical>
+		<Texture Template='vg.variableslider.Texture'>
+			<Orientation>3</Orientation>
+		</Texture>
+		<HandleTexture Template='vg.variableslider.HandleTexture'>
+			<Orientation>3</Orientation>
+		</HandleTexture>
+	</template>
+
+	<!-- Window -->
+	<template name='vg.window.TitleBar.Title.Font' Template='Default Font' >
+		<Bold />
+	</template>
+	<template name='vg.window.TitleBar.Title'>
+		<X>10</X>
+		<Y>2</Y>
+		<Width>r38</Width>
+		<Height>18</Height>
+		<Font Template='vg.window.TitleBar.Title.Font' />
+	</template>
+	<template name='vg.window.TitleBar.Minimize.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebarminimizetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar.Minimize.TexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebarminimizetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar.Minimize'>
+		<X>r34</X>
+		<Y>2</Y>
+		<Width>14</Width>
+		<Height>14</Height>
+		<Texture Template='vg.window.TitleBar.Minimize.Texture' />
+		<TexturePressed Template='vg.window.TitleBar.Minimize.TexturePressed' />
+	</template>
+	<template name='vg.window.TitleBar.Maximize.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebarmaximizetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar.Maximize.TexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebarmaximizetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar.Maximize'>
+		<X>r34</X>
+		<Y>2</Y>
+		<Width>14</Width>
+		<Height>14</Height>
+		<Texture Template='vg.window.TitleBar.Maximize.Texture' />
+		<TexturePressed Template='vg.window.TitleBar.Maximize.TexturePressed' />
+	</template>
+	<template name='vg.window.TitleBar.Close.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebarclosetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar.Close.TexturePressed' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebarclosetexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar.Close'>
+		<X>r18</X>
+		<Y>2</Y>
+		<Width>14</Width>
+		<Height>14</Height>
+		<Texture Template='vg.window.TitleBar.Close.Texture' />
+		<TexturePressed Template='vg.window.TitleBar.Close.TexturePressed' />
+	</template>
+	<Template name='vg.window.TitleBar.Texture' Filename='${LavishScript.CurrentDirectory}/interface/skins/vgskin/images/vgwindowtitlebartexture.png' ColorKey='FFFF00FF' />
+	<template name='vg.window.TitleBar'>
+		<Height>18</Height>
+		<Border>1</Border>
+		<BorderColor>FF000033</BorderColor>
+		<Width>100%</Width>
+		<BackgroundColor>FF000066</BackgroundColor>
+		<Texture Template='vg.window.TitleBar.Texture' />
+		<Children>
+			<text Name='Title' template='vg.window.TitleBar.title' />
+			<button Name='Close' template='vg.window.TitleBar.Close' />
+			<button Name='Minimize' template='vg.window.TitleBar.Minimize' />
+			<button Name='Maximize' template='vg.window.TitleBar.Maximize' />
+		</Children>
+	</template>
+	<template name='vg.window.Client'>
+		<Y>16</Y>
+		<Height>r16</Height>
+		<Width>100%</Width>
+	</template>
+	<template name='vg.window'>
+		<Border>1</Border>
+		<BorderColor>FFD4D0C8</BorderColor>
+		<Resizable>0</Resizable>
+		<CloseButton />
+		<MinimizeButton />
+		<WidthResizable>0</WidthResizable>
+		<HeightResizable>0</HeightResizable>
+		<TitleBar template='vg.window.TitleBar' />
+		<OffsetTitleBarHeight />
+		<Client template='vg.window.Client' />
+		<BackgroundColor>FF000000</BackgroundColor>
+		<StorePosition>1</StorePosition>
+	</template>
+
+	<!-- Horizontal Window -->
+	<Template name='vg.horizontalwindow.TitleBar.Title.Font' Template='Default Font' />
+	<Template name='vg.horizontalwindow.TitleBar.Title' Template='horizontalwindow.TitleBar.Title' />
+	<Template name='vg.horizontalwindow.TitleBar.Minimize.Texture' Template='vg.window.TitleBar.Minimize.Texture' />
+	<Template name='vg.horizontalwindow.TitleBar.Minimize.TexturePressed' Template='vg.window.TitleBar.Minimize.TexturePressed' />
+	<Template name='vg.horizontalwindow.TitleBar.Minimize' Template='horizontalwindow.TitleBar.Minimize' />
+	<Template name='vg.horizontalwindow.TitleBar.Maximize.Texture' Template='vg.window.TitleBar.Maximize.Texture' />
+	<Template name='vg.horizontalwindow.TitleBar.Maximize.TexturePressed' Template='vg.window.TitleBar.Maximize.TexturePressed' />
+	<Template name='vg.horizontalwindow.TitleBar.Maximize' Template='horizontalwindow.TitleBar.Maximize' />
+	<Template name='vg.horizontalwindow.TitleBar.Close.Texture' Template='vg.window.TitleBar.Close.Texture' />
+	<Template name='vg.horizontalwindow.TitleBar.Close.TexturePressed' Template='vg.window.TitleBar.Close.TexturePressed' />
+	<Template name='vg.horizontalwindow.TitleBar.Close' Template='horizontalwindow.TitleBar.Close' />
+	<template name='vg.horizontalwindow.TitleBar' Template='vg.window.TitleBar' />
+	<template name='vg.horizontalwindow.Client' Template='vg.window.Client' />
+	<template name='vg.horizontalwindow' Template='vg.window' />
+
+	<!-- MessageBox -->
+	<template name='vg.messagebox.OKTexture' Template='messagebox.OKTexture' />
+	<template name='vg.messagebox.OKTexturePressed' Template='messagebox.OKTexturePressed' />
+	<template name='vg.messagebox.YesTexture' Template='messagebox.YesTexture' />
+	<template name='vg.messagebox.YesTexturePressed' Template='messagebox.YesTexturePressed' />
+	<template name='vg.messagebox.NoTexture' Template='messagebox.NoTexture' />
+	<template name='vg.messagebox.NoTexturePressed' Template='messagebox.NoTexturePressed' />
+	<template name='vg.messagebox.CancelTexture' Template='messagebox.CancelTexture' />
+	<template name='vg.messagebox.CancelTexturePressed' Template='messagebox.CancelTexturePressed' />
+	<template name='vg.messagebox.Font' Template='messagebox.Font' />
+	<template name='vg.messagebox' Template='messagebox' />
+
+	<!-- ScriptInputBox -->
+	<template name='vg.scriptinputbox.OKTexture' Template='scriptinputbox.OKTexture' />
+	<template name='vg.scriptinputbox.OKTexturePressed' Template='scriptinputbox.OKTexturePressed' />
+	<template name='vg.scriptinputbox.CancelTexture' Template='scriptinputbox.CancelTexture' />
+	<template name='vg.scriptinputbox.CancelTexturePressed' Template='scriptinputbox.CancelTexturePressed' />
+	<template name='vg.scriptinputbox.Font' Template='scriptinputbox.Font' />
+	<template name='vg.scriptinputbox' Template='scriptinputbox' />
+	<template name='vg.textedit.VerticalScrollBar' Template='textedit.VerticalScrollBar' />
+	<template name='vg.textedit.HorizontalScrollBar' Template='textedit.HorizontalScrollBar' />
+	<template name='vg.contextmenu.Font' Template='contextmenu.Font' />
+	<template name='vg.contextmenu' Template='contextmenu' />
+	<template name='vg.textedit.Font' Template='textedit.Font' />
+	<template name='vg.textedit' Template='textedit' />
+
+</ISUI>

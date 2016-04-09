@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<!-- Main UI Window -->
+	<Window Name='port' Template='VG.Window'>
+		<StorePosition>1</StorePosition>
+		<Title>Port Locations by XeonX/Cr4zyb4rd</Title>
+		<TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>250</Width>
+		<Height>225</Height>
+		<StorePosition>1</StorePosition>
+		<Title>Port</Title>
+			<TitleBar template='VG.window.TitleBar'>
+			<X>0</X>
+			<Y>0</Y>
+			<Width>100%</Width>
+			<Height>18</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>12</Width>
+					<Height>12</Height>
+				</Button>
+				<Button Name="Custom Quit Button" Template="VG.Window.TitleBar.Close">
+					<X>r13</X>
+					<Width>12</Width>
+					<Height>12</Height>
+					<OnLeftClick>
+						ui -unload "${LavishScript.HomeDirectory}/Interface/VGSkin.xml"
+						UIElement[port]:Destroy
+					</OnLeftClick>
+				</Button>
+			</Children>
+		</TitleBar>
+		<Client Template="VG.Window.Client">
+			<Y>18</Y>
+			<Height>r18</Height>
+			<Texture Template="VG.TabControl.FrameTexture" />
+		</Client>
+		<Children>
+			<Button Name="AddFast" Template="VG.GreenButton">
+				<X>5%</X>
+				<Y>5</Y>
+				<Width>90%</Width>
+				<Height>20</Height>
+				<Text>Add ${If[${Me.Target(exists)},"${Me.Target.Name}","${Me.Chunk.ShortName} - ${Time.Time24.Left[-3]}"]}</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					ISXVG:AddLoc[${This.Text.Right[-4]}]
+					UIElement[PortList@port]:AddItem[${This.Text.Right[-4]}]
+				</OnLeftClick>
+			</Button>
+			<Button Name="AddCmd" Template="VG.GreenButton">
+				<X>5%</X>
+				<Y>25</Y>
+				<Width>44%</Width>
+				<Height>20</Height>
+				<Text>Add Custom</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					ISXVG:AddLoc[${UIElement[PortEntry@port].Text}]
+					UIElement[PortList@port]:AddItem[${UIElement[PortEntry@port].Text}]
+					UIElement[PortEntry@port]:SetText[]
+				</OnLeftClick>
+			</Button>
+			<Textentry Name="PortEntry">
+				<X>50%</X>
+				<Y>25</Y>
+				<Width>45%</Width>
+				<Height>18</Height>
+				<Color>FFDDBB00</Color>
+			</Textentry>
+			<Listbox Name="PortList">
+				<X>5%</X>
+				<Y>45</Y>
+				<Width>90%</Width>
+				<Height>125</Height>
+				<AutoSort>TRUE</AutoSort>
+				<Sort>Text</Sort>
+				<SelectMultiple>FALSE</SelectMultiple>
+				<OnLoad>
+					declarevar portLocCount int global
+					declarevar portOldMapName string global
+					addatom -global "atom portFillPortList()\n{\nUIElement[PortList@port]:ClearItems\nportLocCount:Set[0]\nwhile \${VGLoc[\${portLocCount:Inc}](exists)}\n{\nif \${Me.Chunk.MapName.Equal[\${VGLoc[\${portLocCount}].MapName}]}\nUIElement[PortList@port]:AddItem[\${VGLoc[\${portLocCount}]}]\n}\n}\n"
+					;Event[VG_onChangeChunk]:AttachAtom[portFillPortList]
+					ExecuteAtom portFillPortList
+				</OnLoad>
+				<OnUnload>
+					deletevar portLocCount
+					deletevar portOldMapName
+					deleteatom -global portFillPortList
+					;Event[VG_onChangeChunk]:DetachAtom[portFillPortList]
+				</OnUnload>
+				<OnRender>
+					if !${Me.Chunk.MapName.Equal["${portOldMapName}"]}
+					{
+						ExecuteAtom portFillPortList
+						portOldMapName:Set["${Me.Chunk.MapName}"]
+					}
+				</OnRender>
+				<OnRightClick>
+					squelch VGLoc delete "${This.SelectedItem.Text}"
+					UIElement[PortList@port]:RemoveItem[${This.SelectedItem.ID}]
+				</OnRightClick>
+				<OnLeftClick>
+					UIElement[ButtonPort@port]:Show
+				</OnLeftClick>
+			</Listbox>
+			<Button name='ButtonPort' Template="VG.CustomButton">
+				<visible>1</visible>
+				<X>7%</X>
+				<Y>r38</Y>
+				<Width>86%</Width>
+				<Height>25</Height>
+				<Alignment>Center</Alignment>
+				<Text>PORT</Text>
+				<OnLeftClick>
+					echo "Porting to: ${UIElement[PortList@port].SelectedItem.Text}"
+					VGLoc[${UIElement[PortList@port].SelectedItem.Text}]:Port
+					if !${portTimestamp}
+					{
+						portTimestamp:Set[${Time.Timestamp}]
+						portTimestamp:Inc[60]
+					}
+				</OnLeftClick>
+				<OnLoad>
+						declarevar portTimestamp int global 0
+				</OnLoad>
+				<OnUnload>
+						deletevar portTimestamp
+				</OnUnload>
+				<OnRender>
+					if !${This.Parent.FindChild[portlist].SelectedItems}
+					{
+						This:SetAlpha[1]
+						This:SetText["Select a location"]
+						This:SetLeftClickThru[TRUE]
+					}
+					else
+					{
+						if !${Me.PortReady}
+						{
+							This:SetLeftClickThru[TRUE]
+							This:SetAlpha[0.5]
+							if ${portTimestamp}
+								This:SetText["Ready in ${Math.Calc[${portTimestamp}-${Time.Timestamp}].Int}"]
+							else
+								This:SetText[Not Ready]
+						}
+						else
+						{
+							This:SetLeftClickThru[FALSE]
+							This:SetAlpha[1]
+							This:SetText[PORT]
+							portTimestamp:Set[0]
+						}
+					}
+				</OnRender>
+			</Button>
+		</Children>
+	</Window>
+</ISUI>

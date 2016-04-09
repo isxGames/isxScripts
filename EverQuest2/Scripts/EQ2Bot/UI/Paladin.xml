@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Commandcheckbox Name='Start_HO'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Start HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[Start_HO]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start_HO",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[Start_HO]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start_HO",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Start_HO]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='DefensiveStance'>
+		<X>10</X>
+		<Y>30</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Defensive Stance</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[DefensiveMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["DefensiveMode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[DefensiveMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["DefensiveMode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[DefensiveMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='AoE Mode'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Blue AoEs:</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+
+				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["AoEMode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+
+				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["AoEMode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[AoEMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='Healer Mode'>
+		<X>10</X>
+		<Y>70</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Enable Heal Self Mode</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[HealerMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["HealerMode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[HealerMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["HealerMode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[HealerMode]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='Heal Other Mode'>
+		<X>10</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Enable Heal Others Mode</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[HealOthersMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["HealOthersMode",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[HealerMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["HealOthersMode",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[HealOthersMode]}</Data>
+	</Commandcheckbox>	
+	<Text Name='lblBuffProcGroupMember'>
+		<X>375</X>
+		<Y>10</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Place Avoidance On:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffProcGroupMember'>
+		<x>375</x>
+		<y>30</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>Avoidance Buff Target</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffProcGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffProcGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffProcGroupMember,0,1,1]
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblSecondary_Assist'>
+		<X>375</X>
+		<Y>50</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Armament:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox Name='cbSecondary_Assist'>
+		<x>375</x>
+		<y>70</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>Who to lend Mitigation to</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Secondary_Assist]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Secondary_Assist]}]:Select
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Secondary_Assist,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},Secondary_Assist,0,1,1]
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblBuffAmendsGroupMember'>
+		<X>375</X>
+		<Y>90</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Amends on:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox Name='cbBuffAmendsGroupMember'>
+		<x>375</x>
+		<y>110</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>Who to Give Amends to</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffAmendsGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffAmendsGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffAmendsGroupMember,0,1,1]
+		</OnLeftClick>
+	</combobox>
+</ISUI>

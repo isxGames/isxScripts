@@ -1,0 +1,7 @@
+ * Uniqiue Spells/Skills for the Wizard *
+
+320 - Convert HP to Power over time.
+321 - Surge of Flames (Adds additional heat damage).
+322 - Give power to Ally at cost of health (DoT).
+323 - Mesmerize Target but stuns wizard.
+324 - Summons a Pet until the spell expires.

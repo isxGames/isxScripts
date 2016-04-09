@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Text Name='lblFighterSword1'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Sword 1</Text>
+	</Text>
+	<combobox name='cbFighterSword1'>
+		<x>150</x>
+		<y>10</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[0,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterSword1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterSword1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterSword1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterSword1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterSword2'>
+		<X>10</X>
+		<Y>30</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Sword 2</Text>
+	</Text>
+	<combobox name='cbFighterSword2'>
+		<x>150</x>
+		<y>30</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[0,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterSword2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterSword2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterSword2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterSword2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterHorn1'>
+		<X>10</X>
+		<Y>50</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Horn 1</Text>
+	</Text>
+	<combobox name='cbFighterHorn1'>
+		<x>150</x>
+		<y>50</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[2,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterHorn1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterHorn1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterHorn1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterHorn1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterHorn2'>
+		<X>10</X>
+		<Y>70</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Horn 2</Text>
+	</Text>
+	<combobox name='cbFighterHorn2'>
+		<x>150</x>
+		<y>70</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[2,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterHorn2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterHorn2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterHorn2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterHorn2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterBoot1'>
+		<X>10</X>
+		<Y>90</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Boot 1</Text>
+	</Text>
+	<combobox name='cbFighterBoot1'>
+		<x>150</x>
+		<y>90</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[4,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterBoot1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterBoot1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterBoot1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterBoot1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterBoot2'>
+		<X>10</X>
+		<Y>110</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Boot 2</Text>
+	</Text>
+	<combobox name='cbFighterBoot2'>
+		<x>150</x>
+		<y>110</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[4,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterBoot2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterBoot2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterBoot2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterBoot2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterFist1'>
+		<X>10</X>
+		<Y>130</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Fist 1</Text>
+	</Text>
+	<combobox name='cbFighterFist1'>
+		<x>150</x>
+		<y>130</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[3,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterFist1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterFist1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterFist2'>
+		<X>10</X>
+		<Y>150</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Fist 2</Text>
+	</Text>
+	<combobox name='cbFighterFist2'>
+		<x>150</x>
+		<y>150</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[3,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterFist2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterFist2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterFist2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterArm1'>
+		<X>10</X>
+		<Y>170</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Arm 1</Text>
+	</Text>
+	<combobox name='cbFighterArm1'>
+		<x>150</x>
+		<y>170</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[5,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterArm1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterArm1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblFighterArm2'>
+		<X>10</X>
+		<Y>190</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Arm 2</Text>
+	</Text>
+	<combobox name='cbFighterArm2'>
+		<x>150</x>
+		<y>190</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[5,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[FighterArm2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[FighterArm2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[FighterArm2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Checkbox name='LimitToHighest'>
+		<X>20</X>
+		<Y>220</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Limit to highest level spells only.</Text>
+		<AutoToolTip>When checked, limits the listboxes to the highest level ability for each ability icon.</AutoToolTip>
+	</Checkbox>
+</ISUI>

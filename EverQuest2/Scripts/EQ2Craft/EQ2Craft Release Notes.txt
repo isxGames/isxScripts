@@ -1,0 +1,420 @@
+Revision History ||
+===================
+v9.5  - The script will now allow up to 25 writs to be queued (regardless of location.)
+
+v9.14 - Added code to make primalz quit bitching about writs being overwritten
+        on exit. New cmdline option -sort to enable sorting and saving of writ
+        file.
+
+v9.13 - Added ${ICraft.TotalQueued} method. Returns total number of combines
+        queued. (may be broken currently)
+
+v9.11 - Updated for GU58 writ npc madness. Will now apply_verb Hail with writ 
+        giver instead of :DoubleClick
+
+v9.1  - French Localization
+        * Should work properly in guildhalls; however, writs in TS Instances 
+          may not function perfectly due to lack of data
+        * Wholesaler names (not guild tags) should be added to the appropriate
+          section of /eq2craft/Recipe Data/Common.xml
+        
+v9.00 - Integration of Recipe Search function, thanks to Noob536.
+
+v8.99 - Infestation by CyberTechs!
+        * Added support for navigating to retrieve writ invoices
+          NavPoints: Invoices and Invoices 1 thru Invoices 5
+          Bot will select the closest NavPoint to your writ npc
+        ** If the clipboard is not within clicking range of your writ npc, you
+           MUST define the Invoices region(s)
+        * -debug mode will now display at startup, a list of all possible
+          NavPoint names used by the script, whether they were found, and
+          whether there is a path to the NavPoint.
+        * Improved reporting of missing required NavPoints
+        * Log message to console when an error causes craft to go into resume
+          mode, in addition to UI
+      - Updated writ parser to allow for "I must create" recipes.
+      - Now with MOAR STFU! - Craft will now only complain about missing
+        resources.xml entries ONCE per item per session.
+      - Fixed drooling issues when running without nav path.
+      - Craft will no longer set or reset Guild Event Privacy settings if
+        neither option is enabled.
+
+v8.98 - Changed hardcoded lvl 80 code to lvl 90 for SF expansion.
+
+v8.97 - Minor changes to config file structure. Movement keys now save to
+        global config file.
+
+v8.96 - Adjusted commandline arguments relating to verbosity. Default
+        verbosity is now for error messages only, displayed in the console
+        window.
+        * Changed -verbose option to -chat option (see below)
+        * Added -v, -vv, -q, -chat options:
+          -v     Verbose mode. Will echo to console/chat window. This used to
+                 be the default.
+          -vv    Extra verbose mode. Implies -debug. Echos everything possible
+          -q     Quiet mode. Not even error messages will display.
+          -chat  Sends all non-debug output to the EQ2 chat window. This
+                 replaces the old option for -verbose.
+      - Added support for the new Achievement Award craft tables in guild
+        halls. Craft will favor Elaborate tables in guild halls, but will
+        attempt to use normal (no prefix) tables if unable to target an
+        Elaborate table.
+      - Ignore while crafting (invites, etc) will no longer be in effect while
+        in CraftLite mode.
+
+v8.94 - Added TTS announcements between writs, and after writ sessions are complete.
+      - Added congratulatory TTS announcements when gaining levels and auto-scribing new recipes.
+      - Updated Writ tab of UI to use a Slider for writ count.
+      - Maximum number of writs allowed in guild halls increased to 10. Non-guildhall writs still
+        limited to 5.
+
+v8.93 - Fixed Writ Reward Window bug. No more "Automatically accepted OMGHAX Quest Rewards." when
+        logging in or zoning! (Thanks HotShot)
+      - Really really fixed the Reset Thresholds button to actually set thresholds to the current
+        defaults.
+
+v8.92 - Bugfix release. Slightly increased delay between turning in and getting new writ. This
+        will hopefully resolve some issues with craft randomly being unable to obtain a new writ
+        quest.
+
+v8.91 - Bugfix release. Craft -load really works now.
+
+v8.9  - REALLY fixed spell writs to work with GU52 changes. Jewelers and Alchemists rejoice!
+
+v8.8  - Fixed spell writs to work with GU52 changes.
+
+v8.7  - Tweaked commandline switches slightly. <Recipe Queue> in the second syntax is no longer
+        required to be alone. This means you can use -debug and still include a recipe queue to
+        get the original behavior.
+      - Moved recipe favorite lists out of the Character Config xml file. All recipe favorite
+        lists are self-contained in their own simple xml settings files, within the (NEW) Queues
+        subfolder.
+      - Craft will auto-populate the favorites list with the recipe queues from your class. You
+        may select a different class, or the "ALL" selection to view other recipe favorites in
+        your Queues folder.
+      - When saving a recipe queue, craft will automatically prefix the filename with your
+        tradeskill subclass.
+      - Text to Speech support is now available. This will require the LSMTTS Lavishscript Module
+        (available on the SVN) to function correctly. This option will default to OFF, and is
+        currently set up to only announce when you encounter a rare reaction (Innovation) or when
+        your craft session is complete.
+
+
+v8.65 - Added -load and -start commandline switches. Craft now has the following usage:
+        Craft [-debug] [-verbose] [-load <Recipe Queue>] [-start]
+        Craft [<Recipe Queue>]
+
+        -debug                 Enables debug output to console and file
+        -verbose               Shows some text in EQ2 chat window instead of console
+        -load <Recipe Queue>   Loads and processes the specified saved favorite list, but does
+                               not begin crafting. Allows you to go shopping before starting the
+                               queue.
+        -start                 If a recipe queue has been loaded with -load, this will begin
+                               crafting after processing the recipe queue.
+
+        <Recipe Queue>         Must be the only argument in this syntax. Loads queue, processes,
+                               and begins crafting.
+
+v8.64 - Minor change to help eliminate the "out of range" issues.
+
+v8.63 - Added support for new UI element to display writs remaining in Crafting frame
+      - Updated Craft UI to have a smaller footprint. Nuprecon provided much of this rearrangement
+        of UI code. Thanks Nuprecon!
+
+v8.62 - Stopped the crazy exiting bot when out of money. Craft will now wait the same as when
+        buying harvests from the broker and unable to buy enough. (Resume Crafting button)
+
+v8.61 - Fixed numerous bugs with the component quantity counting. This was a major rewrite of a
+        large block of code. Please report any further bugs with quantity counting on the ISXEQ2
+        bug tracker.
+      - Updated to use the EQ2Common folder for included utilities.
+
+v8.6  - Changed all "terminal" fonts in the GUI to default skinned font. Adjusted all text using
+        that font to fit with the UI elements.
+      - Removed initial blank lines from listboxes. This was annoying some people, and is not
+        needed with the default font anyway.
+      - Tweaked UI update code. Resources, Vendor bought components, Fuel, and Crafted components
+        listboxes will no longer rebuild unless the number of items in the listbox changes. They
+        will continue to update quantites on the fly. -- Please report any issues with the Queue
+        (loading, saving, submitting, etc) on the forums.
+
+v8.59 - Precision path writers rejoice! Craft will no longer try to stand on top of writ givers,
+        wholesalers, or brokers. It will now stop within 3 meters of the point set in the
+        navigation, and NOT try to adjust after that. Extra tight precision is still in effect
+        for tradeskill devices.
+
+v8.58 - Fixed error with saving recipe favorite lists.
+      - Hopefully fixed guild hall targetting of non-Elaborate tables.
+
+v8.57 - Fixed error in recipe processing
+        More tweaks to CraftLite code
+
+v8.56 - More scholar writ tweaks
+
+v8.55 - Fixed <T8 scholar writ processing.
+
+v8.54 - Fixed T8 scholar writ processing.
+      - Fixed Provisioner writ processing. Note that all previously entered CustomWrits for
+        provisioner will need to be fixed as they come up. Our parsed text is different than
+        it used to be.
+
+v8.53 - Changed writ recipe detection code. This should allow for a much smaller CustomWrits
+        file.
+      - Fixed guild privacy not getting re-set after completing one writ and starting the next.
+      - Made the harvest frame stay on top where it's supposed to be. This was actually an
+        unexpected side-effect of putting a texture on the tabs.
+      - Slightly increased font size, and removed blank line from listboxes in the harvest frame.
+      - Added more inventory checks and UI updates -- This should fix the issue of resources showing
+        quantities from one step behind.
+
+v8.52 - Fixed progressively long delays when processing recipes. Craft will now process the
+        inventory only after processing the queue and failed recipes.
+
+v8.51 - Craft will now move you to within 3m of tradeskill desks in a guildhall
+      - New option added: "disable guild notifications entirely (while crafting)"
+
+v8.5  - Buying from the broker should be even faster now
+      - Lots of little bugs fixed
+      - Added UI option to "disable guild events while doing writs" (it will properly restore
+        your setting after finishing with writs and will ONLY disable during writs, not regular
+        recipes.)
+
+v8.43 - Added basic Guild Hall crafting functionality - Rush Order and Work Order NPCs,
+        Work Order Clipboard, and Guild Fuel Merchant recognition.
+      - Added code that will cause the script to utilize the harvest depot while in a guild hall
+        as well as other optimizations dealing with available resources when the script first starts
+      - Buying from the broker should be faster now
+
+v8.42 - Added code to account for "Pristine Tailored XXX" recipes in writ recipe names.
+      - Removed writ desk facing code. Looked way too botty.
+      - Tweaks to movement code should make pathing better.
+      - Re-tuned CraftLite code. It should now pick up on the first crafting tick as advertised.
+
+v8.41 - Changed writ recipe name code slightly. Should now correctly identify recipes it previously
+        had marked as "Pristine XXX" or "Pristine Forged XXX".
+
+v8.40 - Craft Lite!
+        - You can now use the Craft Lite button in the titlebar to switch between the Craft Full
+          version and the Craft Lite version.
+        - When Craft is in Lite mode, it will pick up and button mash for any recipe you start
+          manually. Craft will start mashing buttons after the first "tick". This should work
+          for ANY recipe, though I'm not sure I'd trust it with the level 100 artisan epic quest
+          recipes.
+        - Craft Lite will use the "Rare" thresholds from the Options page to determine when to
+          use power and durability buffs.
+
+v8.33 - Fixed auto-transmute functionality (I think)
+      - Trimmed out much unused code.
+      - Tuned buff spamming - This should speed up the crafting process immensely.
+      - Added tooltips to the Durability Threshold elements explaining what they are used for.
+      - Tweaked imbue code. Blessed items should now be filtered by the imbue checkbox, and imbues
+        of all levels should work correctly.
+
+v8.32 - Forcing script to forget what device it was at after finishing a craft session. This should
+        eliminate a few annoying issues where you move around after doing some crafting, and the
+        script thinks you're still in front of a device (or targetting a particular NPC).
+      - Fixed the GUI to allow mouse focus where mouse focus is desired, e.g. the harvest list
+        scrollbar. This fix also includes miscellaneous other shuffling and resizing of UI elements.
+
+v8.31 - New option on Options tab - Save recipe list range. Enabling this option will keep EQ2Craft
+        from automatically assigning the most recent 10 levels to the Recipe List drop-down box.
+        The current level range will be saved when setting this option, and every time you refresh
+        the list.
+        *NOTE* If you set this to a large range, it may take significantly longer for Craft to
+               initialize.
+      - Fixed the disappearing secondary tradeskill filter. If there are any secondary tradeskill
+        recipes in the level range, the secondary tradeskill filter checkbox will become visible
+        when the list is refreshed.
+
+***** THIS IS FOR THE BETA TEST OF CRAFT 8.0 -- READ THE FORUMS *****
+BETA 8.0 - Fixed a ton of stuff.  A lot of things that were broken are now fixed.  I don't remember
+           them all to paste them here; however, I suggest you try everything again that you had
+           problems with previously.
+         - Added an uption under the "Special" tab called 'Stop crafting when secondary tradeskill achieves maximum level'.
+           If checked, you will stop crafting when your tinkering or transmuting skill reaches the
+           maximum for your current skill level.   This value, intentionally, does not save to your configuration file.
+         - Most of the textentry boxes in the UI will now update the script and save to the xml file immediately.
+         - The "Custom Writs" xml file will now sort alphabetically automatically.  Simply add recipes to the bottom of
+           the file as you always did, and then the next time you end craft it will sort properly upon exit.
+
+================================================
+
+v7.10 - EQ2Craft should be less likely to be stuck "Processing Recipes".
+      - When you gain a tradeskill level (after level 20) EQ2Craft will scribe any 'essentials'
+        or 'advanced' recipe books that you have in your inventory for the level gained before
+        acquiring the next writ.
+      - Movement issues have been addressed somewhat.  In the near future we will be transitioning
+        to LavishNav, so if there are bugs remaining, they will probably remain until that transition
+        is complete.
+
+v7.09 - Added option to GUI for fine-tuning the path precision on a per-character basis. This
+        option can be found on the Options tab. If you are bouncing back and forth while running
+        the path, you will want to increase this number. If you are not bouncing, but are not
+        getting close enough to your work tables, you will want to decrease this number.
+
+v7.08 - Tweaks to pathing code -- should now open doors in qeynos properly again and not get
+        stuck as often.
+      - New path files for Qeynos and Freeport instances is on the SVN! Also updated Kelethin.
+
+v7.07 - Minor change to inventory search -- allows for resources etc with space to underscore
+        conversion; e.g. flying fish -> flying_fish_
+        Note: This is an all-or-nothing conversion, either all spaces are underscores, or none.
+
+v7.06 - Moved all writ quantities to a new file, WritCounts.xml.
+      - Removed another section of code that could cause a writ to finish early.
+      - Committed a Custom Writ file to the SVN. -- You may wish to back up your own
+        customwrits.xml file before updating! This file has a broader assortment of recipes.
+
+v7.05 - Changed output to default ALL output to the console. You may use /craft -verbose
+        for the old behavior of output in the EQ2 chat window.
+      - Fixed imbue material counting.
+      - Removed code that checks for a completed writ step. It was buggy and broken anyway.
+        This should fix those writs that were completing early.
+      - Fixed writ quantities for level 24 armorer.
+
+v7.04 - Fixed lvl 50 Alchemist writ quantities.
+      - Fixed reset issue after finishing the requested number of writs. Craft should now
+        create the correct number of writs again after running through a writ cycle.
+      - Crash when turning in a writ has been fixed by Amadeus (no credit for me on this.)
+
+v7.03 - Valerian takes over as primary maintainer of craft.
+      - Fixed double hailing of writ giver.
+      - Bot should now automatically create exactly enough items to complete the writ,
+        whether work order or rush order. Quantity textbox in the UI now does nothing.
+        *TODO* Fix quantity textbox to "add" extra quantity, for those that want a
+               safety net when doing writs.
+      - Support files updates:
+        * Added path for Kelethin's crafting area! You should be within the building before
+          starting anything requiring pathing.
+        * Fixed bug where any recipe containing the word "fir" was mistakenly marked as rare.
+
+v7.02 - Craft should no longer double click the table when going through doors in Qeynos.
+      - Fixed random typos.
+      - Added more resources.
+
+v7.01 - Fixed a typo when processing writs.
+      - Took out debug spam.
+
+v7.0  - IMPORTANT On the options tab, you MUST reset and save thresholds.
+         *Craft files have been updated to work with T8 (some things may still be
+         missing).
+         * Buff selection - Craft will spam progress buffs every round until
+         QualityTier4 is under 40% (Standard Quality 1 Threshold). Then it will
+         use the Highest power durability with the 2 lowest power progress buffs.
+             - If QuailtyTier4 is under 20% (Standard Quality 2 Threshold), it will use
+             all durability buffs.
+             - If power drops below 70% (Standard Power 3 Threshold), it will stop
+             using the highest power progress buff unless it is needed for a counter.
+         *Counter Selection - Craft will always counter with progress buff as a
+         successful counter is always a successful round. You can NOT get a
+         failure or critical failure with a success full counter. If quailtytier4
+         is under 20% (Standard Quality 2 Threshold) it will counter with
+         durability, as even a success can lower durability slightly.
+         *Tinkering and Transmuting has been updated to work like other craft
+         recipes.
+         *Writs have been updated to work with T8.
+         *Fixed a bug when loading recipes lists via command line.
+
+v6.9  - There is now a custom writ file in Recipe Data folder called CustomWrits.xml
+        You can now set a recipe name that is extracted and set the value to what it should be. See the file for some examples.
+        So if there are any wierd names for writs, just use the customwrit file for the translation.
+
+v6.8  - Fixes.
+
+v6.7  - Fixes.
+
+v6.6  - Writs should now work as intended for all classes without crashes.
+
+v6.5  - Fixed all Imbue Recipes.
+      - Minor fix to Writs with regards to the quest update trigger.
+
+v6.4  - Few minor bug fixes
+
+v6.3  - Fixed doors in Qeynos Tradeskills
+
+v6.2  - You can now craft a Recipe from your 'Recipe Favourites' on the command line, which will avoid any prompting.
+        Example: If you had previously saved a recipe called 'Cobalt full suit' under Advanced, then based on what settings you have currently set,
+        you can just type in /craft "Cobalt full suit" and it will automatically craft whatever recipes you had listed under that favourite.
+      - Added an optional delay between combines. This can be found under options.
+      - You can now set a durability threshold for each quality level using standard or rare recipes. This can also be found under options
+        Example: If you set the Durability threshold for Quality 1 to 105%, and Quality 2, to 95%, then the craft bot will only use Durability buffs,
+        if the current Durability is less than 105% during the 1st Quality and less than 95% during the 2nd and so on.
+        This should allow a lot more flexibility in the crafting process.
+      - Added Automatic Crafting of Writs. See the Special Tab.
+        You need to select a Tier. This reflects the response you select when obtaining the writ.
+        You will need to specify the quantity however, as I did not have time to figure this out. Currently this is set to 10 for each recipe.
+        It wont matter if you set a higher quantity as the craft bot will end when its made enough quantity for the recipe writ.
+        You can also specify how many writs you want to do.
+      - Fixed a few minor bugs that have been posted on the forums.
+
+v6.1  - If a recipe fails to load, it will now open the examine window to retrieve the data from the server.
+      - Added filters (Standard, Rare, Imbued and/or Secondary TS) to display in the Recipe List.
+        Note: This will also reflect what recipes are loaded as well, when you Add Level Recipes.
+      - Fixed several bugs that have been posted on the forums.
+
+v6.0  - The recipe files are no more! The recipe data is now retrieved from the server.
+        Note: If the data is not available on your client, it will re-sync and re-process the recipe again.
+      - You can now craft Tinkering and Transmuting recipes.
+      - Select 'Automatically Transmute Master Crafted Items after Creation' in the Special tab to do just that.
+        Note: This is turned off by default everytime you start craft for obvious reasons.
+      - Added a checkbox to show only the Secondary Tradeskill Recipes (Tinkering or Transmuting).
+      - You can now choose to wait for your power to regenerate a certain amount after each recipe is made if you wish (see options).
+      - Fixed the way counters work. After each round, the buffs will be cleared before it uses them again to avoid stacking issues.
+      - Tuned buffs in general so its more efficient in crafting.
+      - The craft session will remain opened if you dont choose to exit after a crafting session is complete.
+      - Lots of general fixes that have been posted on the forums.
+
+v5.3  - More fixes.
+      - Added option to camp out after craft session while the bot is crafting.
+      - Option to pause the bot when it cant buy all harvest components.
+
+v5.2  - Minor fixes
+
+v5.1  - PC Detection and smarter positioning (more random and not close to other PC's) for any device or NPC.
+      - Bot will just move to a station directly if not in a tradeskill instance (so no need for a path file if your crafting at home).
+
+v5.0  - Added buying of harvests, fuels and common components Automatically.
+      - Added Automatic creation of Writs.
+      - Fixed an issue with missing resouces and bot locking out components in the inventory.
+      - Path restructure. All files are now located under ./Scripts/EQ2Craft/...
+      - Optimized code to work even faster since subcombines have been removed.
+      - Bot will detect if door is open or not, and no longer stop at door to open it, but instead open it while its moving towards it (qeynos).
+
+v4.4  - Fixed issue with not being able to craft Rare combines.
+      - Rares or any other unique component used for crafting can be included in the CraftCommon.xml file.
+      - Example: <Setting Name="cobalt cluster">cobalt</Setting>
+        The 'cobalt cluster' is used to determine whethere is a rare or unique component.
+        The 'cobalt' is used for partial matching for loading all recipes in a particular level (so any recipe that has the word cobalt will be excluded).
+
+v4.3  - Fixed craft to work with the current stable IS release.
+      - Fixed the locking of components so it should no longer happen.
+
+v4.2  - Several Fixes to v4.1
+
+v4.1  - Craft should now be able to make recipes with rare components.
+      - Implemented an option to Save Recipe List when you begin crafting.
+      - You can now load and save 'Favourite Recipe Lists' from the queue.
+      - Several fixes with the craft bot thinking some harvests were recipes.
+
+v4.0  - Conversion of code to use Objects.
+      - Optmised code which will make the craft script run a lot faster.
+      - It will check Primary Components and Build components for vendor bought items or harvested components regardless of process.
+        This will fix any problems with Provisioner recipes in the past.
+      - Fixed several bugs.
+
+v3.4  - Few minor bug fixes.
+
+v3.3  - Several fixes
+      - Added Level Range for the recipe list.
+      - Option added to skip moving to stations, and only use your current targetted station to craft. This will help for special station devices in instances.
+      - Non-UI syntax: /craft "Recipe Name" <Quantity> <Quality> -p(ristine) -s(kip inventory checking) -i(gnore station check)
+
+v3.2  - Fix for Level 1-19 Spells.
+
+v3.0  - Fix for Kingdom of Sky Expansion and numerous changes.
+
+v2.5  - More functionality added to the UI.
+
+v2.0  - Special UI Edition
+
+v1.0  - Initial Release

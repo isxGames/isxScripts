@@ -1,5 +1,0 @@
- * Uniqiue Spells/Skills for the Guardian *
-
-320 - Rescue 
-321 - Increase Defense (Hunker Down)
-322 - Shield an Ally

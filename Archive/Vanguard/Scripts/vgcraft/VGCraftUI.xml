@@ -1,0 +1,3071 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+	<!-- Font -->
+	<Template Name='VG.Font'>
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+
+	<!-- Text -->
+	<template name='VG.Text.Font' Template='VG.Font' />
+	<template name='VG.Text'>
+		<Font Template='VG.Text.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name='VG.BoldText'>
+		<Font Template='VG.BoldFont' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+
+	<!-- HUD Text -->
+	<Template Name='CVG.Font'>
+		<Name>Times New Roman</Name>
+		<Size>15</Size>
+		<Color>FFF9F099</Color>
+	</Template>
+	<Template Name="CVG.BoldFont" Template="CVG.Font">
+		<Bold />
+	</Template>
+	<template name='CVG.text'>
+		<Font Template='CVG.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name='CVG.BoldText'>
+		<Font Template='CVG.BoldFont' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+		<Bold />
+	</template>
+
+
+	<!-- HUD Window -->
+	<Template Name="CVG.Window.Client">
+		<Y>16</Y>
+		<Height>r16</Height>
+		<Width>100%</Width>
+	</Template>
+	<Template Name="CVG.Window">
+		<Border>0</Border>
+		<BorderColor>FF655025</BorderColor>
+		<Resizable>0</Resizable>
+		<CloseButton />
+		<MinimizeButton />
+		<WidthResizable>0</WidthResizable>
+		<HeightResizable>0</HeightResizable>
+		<TitleBar Template="VG.Window.TitleBar" />
+		<OffsetTitleBarHeight />
+		<Client Template="CVG.Window.Client" />
+		<BackgroundColor>00000000</BackgroundColor>
+		<StorePosition>1</StorePosition>
+	</Template>
+
+	<!-- Green CheckBox -->
+	<Template Name="VG.GreenCheckbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.Checkbox.Texture" />
+		<TextureHover Template="VG.Checkbox.TextureHover" />
+		<TexturePressed Template="VG.Checkbox.TexturePressed" />
+		<TextureChecked Template="VG.Checkbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.Checkbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.Checkbox.TextureCheckedPressed" />
+	</Template>
+
+	<!-- Main UI Window -->
+	<Window Name='CraftBot' Template='VG.Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>340</Width>
+		<Height>350</Height>
+		<Client Template="VG.Window.Client" />
+		<StorePosition>0</StorePosition>
+		<Title>   CraftBot</Title>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>5%</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title" />
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>endscript VGCraft</OnLeftClick>
+					<Command>ui -unload "&filename;"</Command>					
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		<Children>
+			<Tabcontrol Name='Craft Main' Template='VG.Tabcontrol'>
+				<X>0</X>
+				<Y>5</Y>
+				<Font>
+					<Name>Times New Roman</Name>
+					<Size>18</Size>
+				</Font>
+				<TabHeight>27</TabHeight>
+				<TabBorder>3</TabBorder>
+				<Height>85%</Height>
+				<Width>97%</Width>
+				<Tabs>
+					<Tab Name='Setup'>
+
+						<Text Name='WoDiffText' Template='VG.BoldText'>
+							<X>20</X>
+							<Y>18</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<Text>Do Work Orders with Difficulty:</Text>
+						</Text>
+						<checkbox Name='DoDiff' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>95</X>
+							<Y>35</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Difficult</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doDiffWO}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doDiffWO:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoMod' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>180</X>
+							<Y>35</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Moderate</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doModWO}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doModWO:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoEasy' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>30</X>
+							<Y>55</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Easy</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doEasyWO}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doEasyWO:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoVeryEasy' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>95</X>
+							<Y>55</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Very Easy</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doVeryEasyWO}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doVeryEasyWO:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoTrivial' Template='VG.GreenCheckbox'>
+							<visible>0</visible>
+							<X>180</X>
+							<Y>55</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Trivial</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doTrivWO}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doTrivWO:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoAnyWO' Template='VG.BlueCheckbox'>
+							<X>30</X>
+							<Y>35</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>All</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doAnyWO}
+								{
+									This:SetChecked
+								}
+								else
+								{
+									UIElement[DoDiff@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoMod@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoEasy@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoVeryEasy@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoTrivial@Setup@Craft Main@CraftBot]:Show
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${This.Checked}
+								{
+									Script[VGCraft].VariableScope.doAnyWO:Set[TRUE]
+									UIElement[DoDiff@Setup@Craft Main@CraftBot]:Hide
+									UIElement[DoMod@Setup@Craft Main@CraftBot]:Hide
+									UIElement[DoEasy@Setup@Craft Main@CraftBot]:Hide
+									UIElement[DoVeryEasy@Setup@Craft Main@CraftBot]:Hide
+									UIElement[DoTrivial@Setup@Craft Main@CraftBot]:Hide
+								}
+								else
+								{
+									Script[VGCraft].VariableScope.doAnyWO:Set[FALSE]
+									UIElement[DoDiff@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoMod@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoEasy@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoVeryEasy@Setup@Craft Main@CraftBot]:Show
+									UIElement[DoTrivial@Setup@Craft Main@CraftBot]:Show
+								}
+							</OnLeftClick>
+						</checkbox>
+
+
+						<Text Name='WOSelectText' Template='VG.BoldText'>
+							<X>20</X>
+							<Y>80</Y>
+							<Width>220</Width>
+							<Height>20</Height>
+							<Text>Work Order Selection Preference:</Text>
+						</Text>
+						<CheckBox Name='SingleWOCheck' Template='VG.CheckBox'>
+							<X>35</X> 
+							<Y>97</Y> 
+							<Width>50</Width> 
+							<Height>15</Height>
+							<Text>Single</Text>
+							<OnLoad>
+								if (${Script[VGCraft].VariableScope.doSingles})
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doSingles:Set[${This.Checked}]
+							</OnLeftClick>
+						</CheckBox>
+						<CheckBox Name='SetWOCheck' Template='VG.CheckBox'>
+							<X>95</X> 
+							<Y>97</Y> 
+							<Width>50</Width> 
+							<Height>15</Height>
+							<Text>Set</Text>
+							<OnLoad>
+								if (${Script[VGCraft].VariableScope.doSets})
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doSets:Set[${This.Checked}]
+							</OnLeftClick>
+						</CheckBox>
+						<CheckBox Name='BatchWOCheck' Template='VG.CheckBox'>
+							<X>150</X> 
+							<Y>97</Y> 
+							<Width>50</Width> 
+							<Height>15</Height>
+							<Text>Batch</Text>
+							<OnLoad>
+								if (${Script[VGCraft].VariableScope.doBatches})
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doBatches:Set[${This.Checked}]
+							</OnLeftClick>
+						</CheckBox>
+
+
+						<Text Name='Text2k' Template='VG.BoldText'>
+							<X>30</X>
+							<Y>142</Y>
+							<Width>40</Width>
+							<Height>20</Height>
+							<Text>2000</Text>
+						</Text>
+						<CheckBox Name='Button2k' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>62</X> 
+							<Y>143</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLoad>This:SetChecked</OnLoad>
+							<OnLeftClick>
+								UIElement[Frame2k@Setup@Craft Main@CraftBot]:Show
+								UIElement[Button25k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button3k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button35k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Frame25k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame3k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame35k@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='Text25k' Template='VG.BoldText'>
+							<X>105</X>
+							<Y>142</Y>
+							<Width>35</Width>
+							<Height>20</Height>
+							<Text>2500</Text>
+						</Text>
+						<CheckBox Name='Button25k' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>137</X> 
+							<Y>143</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLeftClick>
+								UIElement[Frame25k@Setup@Craft Main@CraftBot]:Show
+								UIElement[Button2k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button3k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button35k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Frame2k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame3k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame35k@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='Text3k' Template='VG.BoldText'>
+							<X>175</X>
+							<Y>142</Y>
+							<Width>35</Width>
+							<Height>20</Height>
+							<Text>3000</Text>
+						</Text>
+						<CheckBox Name='Button3k' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>207</X> 
+							<Y>143</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLeftClick>
+								UIElement[Frame3k@Setup@Craft Main@CraftBot]:Show
+								UIElement[Button2k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button25k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button35k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Frame2k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame25k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame35k@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='Text35k' Template='VG.BoldText'>
+							<X>250</X>
+							<Y>142</Y>
+							<Width>35</Width>
+							<Height>20</Height>
+							<Text>3500</Text>
+						</Text>
+						<CheckBox Name='Button35k' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>282</X> 
+							<Y>143</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLeftClick>
+								UIElement[Frame35k@Setup@Craft Main@CraftBot]:Show
+								UIElement[Button2k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button25k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button3k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Frame2k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame25k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame3k@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<frame name='Frame2k'>
+							<visible>1</visible>
+							<X>15</X>
+							<Y>140</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='APLimit2k' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>20</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Prog Ratio:</Text>
+								</Text>
+
+								<Textentry Name='APLimitText2k' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.apLimit2k}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.apLimit2k:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[APLimitSlider2k@Frame2k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+
+								<Slider Name='APLimitSlider2k' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>100</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit2k}]
+										UIElement[APLimitText2k@Frame2k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.apLimit2k:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[APLimitText2k@Frame2k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<frame name='Frame25k'>
+							<visible>1</visible>
+							<X>15</X>
+							<Y>140</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='APLimit25k' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>20</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Prog Ratio:</Text>
+								</Text>
+								<TextEntry Name='APLimitText25k' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.apLimit25k}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.apLimit25k:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[APLimitSlider25k@Frame25k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='APLimitSlider25k' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>100</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit25k}]
+										UIElement[APLimitText25k@Frame25k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.apLimit25k:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[APLimitText25k@Frame25k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<frame name='Frame3k'>
+							<visible>1</visible>
+							<X>15</X>
+							<Y>140</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='APLimit3k' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>20</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Prog Ratio:</Text>
+								</Text>
+								<TextEntry Name='APLimitText3k' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.apLimit3k}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.apLimit3k:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[APLimitSlider3k@Frame3k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='APLimitSlider3k' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>100</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit3k}]
+										UIElement[APLimitText3k@Frame3k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.apLimit3k:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[APLimitText3k@Frame3k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<frame name='Frame35k'>
+							<visible>1</visible>
+							<X>15</X>
+							<Y>140</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='APLimit35k' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>20</Y>
+									<Width>70</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Prog Ratio:</Text>
+								</Text>
+								<TextEntry Name='APLimitText35k' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.apLimit35k}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.apLimit35k:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[APLimitSlider35k@Frame35k@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='APLimitSlider35k' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>100</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.apLimit35k}]
+										UIElement[APLimitText35k@Frame35k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.apLimit35k:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[APLimitText35k@Frame35k@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<Text Name='ExtraQualControlText' Template='VG.BoldText'>
+							<X>20</X>
+							<Y>120</Y>
+							<Width>130</Width>
+							<Height>25</Height>
+							<Text>Extra Quality Prefers:</Text>
+							<OnLoad>
+								UIElement[Frame2k@Setup@Craft Main@CraftBot]:Show
+								UIElement[Button25k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button3k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Button35k@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[Frame25k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame3k@Setup@Craft Main@CraftBot]:Hide
+								UIElement[Frame35k@Setup@Craft Main@CraftBot]:Hide
+							</OnLoad>
+						</Text>
+						<CheckBox Name='UtilityCheck' Template='VG.CheckBox'>
+							<X>160</X> 
+							<Y>119</Y> 
+							<Width>50</Width> 
+							<Height>15</Height>
+							<Text>Utility</Text>
+							<OnLoad>
+								if (${Script[VGCraft].VariableScope.preferUtility})
+								{
+									This:SetChecked
+									UIElement[ToolCheck@Setup@Craft Main@CraftBot]:UnsetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.preferUtility:Set[TRUE]
+								UIElement[ToolCheck@Setup@Craft Main@CraftBot]:UnsetChecked
+							</OnLeftClick>
+						</CheckBox>
+						<CheckBox Name='ToolCheck' Template='VG.CheckBox'>
+							<X>225</X> 
+							<Y>119</Y> 
+							<Width>50</Width> 
+							<Height>15</Height>
+							<Text>Tools</Text>
+							<OnLoad>
+								if (!${Script[VGCraft].VariableScope.preferUtility})
+								{
+									This:SetChecked
+									UIElement[UtilityCheck@Setup@Craft Main@CraftBot]:UnsetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.preferUtility:Set[FALSE]
+								UIElement[UtilityCheck@Setup@Craft Main@CraftBot]:UnsetChecked
+							</OnLeftClick>
+						</CheckBox>
+
+
+
+
+						<Text Name='TextVEasy' Template='VG.BoldText'>
+							<X>30</X>
+							<Y>184</Y>
+							<Width>40</Width>
+							<Height>20</Height>
+							<Text>VEasy</Text>
+						</Text>
+						<CheckBox Name='ButtonVEasy' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>67</X>
+							<Y>185</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLoad>This:SetChecked</OnLoad>
+							<OnLeftClick>
+								UIElement[FrameVEasy@Setup@Craft Main@CraftBot]:Show
+								UIElement[ButtonEasy@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonMod@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonDiff@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[FrameEasy@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameMod@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameDiff@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='TextEasy' Template='VG.BoldText'>
+							<X>105</X>
+							<Y>184</Y>
+							<Width>35</Width>
+							<Height>20</Height>
+							<Text>Easy</Text>
+						</Text>
+						<CheckBox Name='ButtonEasy' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>137</X> 
+							<Y>185</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLeftClick>
+								UIElement[FrameEasy@Setup@Craft Main@CraftBot]:Show
+								UIElement[ButtonVEasy@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonMod@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonDiff@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[FrameVEasy@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameMod@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameDiff@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='TextMod' Template='VG.BoldText'>
+							<X>175</X>
+							<Y>184</Y>
+							<Width>35</Width>
+							<Height>20</Height>
+							<Text>Mod</Text>
+						</Text>
+						<CheckBox Name='ButtonMod' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>207</X> 
+							<Y>185</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLeftClick>
+								UIElement[FrameMod@Setup@Craft Main@CraftBot]:Show
+								UIElement[ButtonVEasy@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonEasy@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonDiff@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[FrameVEasy@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameEasy@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameDiff@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='TextDiff' Template='VG.BoldText'>
+							<X>250</X>
+							<Y>184</Y>
+							<Width>35</Width>
+							<Height>20</Height>
+							<Text>Diff</Text>
+						</Text>
+						<CheckBox Name='ButtonDiff' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>280</X> 
+							<Y>185</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLeftClick>
+								UIElement[FrameDiff@Setup@Craft Main@CraftBot]:Show
+								UIElement[ButtonVEasy@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonEasy@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[ButtonMod@Setup@Craft Main@CraftBot]:UnsetChecked
+								UIElement[FrameVEasy@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameEasy@Setup@Craft Main@CraftBot]:Hide
+								UIElement[FrameMod@Setup@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<frame name='FrameVEasy'>
+							<visible>1</visible>
+							<X>15</X>
+							<Y>185</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='QualTextVEasy' Template='VG.BoldText'>
+									<X>20</X> 
+									<Y>20</Y> 
+									<Width>60</Width> 
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Min Qual:</Text> 
+								</Text>
+								<TextEntry name='MinQTextVEasy' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.minQVEasy}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.minQVEasy:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[QualSliderVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='QualSliderVEasy' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.minQVEasy}]
+										UIElement[MinQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.minQVEasy:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MinQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+								<Text Name='MaxQVEasy' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>40</Y>
+									<Width>60</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Max Qual:</Text>
+								</Text>
+								<TextEntry name='MaxQTextVEasy' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>40</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.maxQVEasy}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.maxQVEasy:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[MaxQSliderVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='MaxQSliderVEasy' Template='VG.Slider'>
+									<X>90</X>
+									<Y>39</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.maxQVEasy}]
+										UIElement[MaxQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.maxQVEasy:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MaxQTextVEasy@FrameVEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<frame name='FrameEasy'>
+							<visible>0</visible>
+							<X>15</X>
+							<Y>185</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='QualTextEasy' Template='VG.BoldText'>
+									<X>20</X> 
+									<Y>20</Y> 
+									<Width>60</Width> 
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Min Qual:</Text> 
+								</Text>
+								<TextEntry name='MinQTextEasy' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.minQEasy}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.minQEasy:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[QualSliderEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='QualSliderEasy' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.minQEasy}]
+										UIElement[MinQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.minQEasy:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MinQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+								<Text Name='MaxQEasy' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>40</Y>
+									<Width>60</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Max Qual:</Text>
+								</Text>
+								<TextEntry name='MaxQTextEasy' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>40</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.maxQEasy}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.maxQEasy:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[MaxQSliderEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='MaxQSliderEasy' Template='VG.Slider'>
+									<X>90</X>
+									<Y>39</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.maxQEasy}]
+										UIElement[MaxQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.maxQEasy:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MaxQTextEasy@FrameEasy@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<frame name='FrameMod'>
+							<visible>0</visible>
+							<X>15</X>
+							<Y>185</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='QualTextMod' Template='VG.BoldText'>
+									<X>20</X> 
+									<Y>20</Y> 
+									<Width>60</Width> 
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Min Qual:</Text> 
+								</Text>
+								<TextEntry name='MinQTextMod' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.minQMod}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.minQMod:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[QualSliderMod@FrameMod@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='QualSliderMod' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.minQMod}]
+										UIElement[MinQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.minQMod:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MinQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+								<Text Name='MaxQMod' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>40</Y>
+									<Width>60</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Max Qual:</Text>
+								</Text>
+								<TextEntry name='MaxQTextMod' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>40</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.maxQMod}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.maxQMod:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[MaxQSliderMod@FrameMod@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='MaxQSliderMod' Template='VG.Slider'>
+									<X>90</X>
+									<Y>39</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.maxQMod}]
+										UIElement[MaxQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.maxQMod:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MaxQTextMod@FrameMod@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+						<frame name='FrameDiff'>
+							<visible>0</visible>
+							<X>15</X>
+							<Y>185</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Text Name='QualTextDiff' Template='VG.BoldText'>
+									<X>20</X> 
+									<Y>20</Y> 
+									<Width>60</Width> 
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Min Qual:</Text> 
+								</Text>
+								<TextEntry name='MinQTextDiff' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>20</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.minQDiff}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.minQDiff:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[QualSliderDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='QualSliderDiff' Template='VG.Slider'>
+									<X>90</X>
+									<Y>19</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.minQDiff}]
+										UIElement[MinQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.minQDiff:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MinQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+								<Text Name='MaxQDiff' Template='VG.BoldText'>
+									<X>20</X>
+									<Y>40</Y>
+									<Width>60</Width>
+									<Height>20</Height>
+									<Alignment>Right</Alignment>
+									<Text>Max Qual:</Text>
+								</Text>
+								<TextEntry name='MaxQTextDiff' Template='VG.TextEntry'>
+									<X>250</X>
+									<Y>40</Y>
+									<Width>30</Width>
+									<Height>15</Height>
+									<Color>FFDDBB00</Color>
+									<SelectionColor>FF000000</SelectionColor>
+									<BackgroundColor>FF948974</BackgroundColor>
+									<BorderColor>FF948974</BorderColor>
+									<Border>0</Border>
+									<OnLoad>
+										This:SetText[${Script[VGCraft].VariableScope.maxQDiff}]
+									</OnLoad>
+									<OnChange>
+										if ${This.Text.Length} > 0
+										{
+											Script[VGCraft].VariableScope.maxQDiff:Set[${Math.Calc[${This.Text}].Int}]
+											UIElement[MaxQSliderDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+										}
+									</OnChange>
+								</Textentry>
+								<Slider Name='MaxQSliderDiff' Template='VG.Slider'>
+									<X>90</X>
+									<Y>39</Y>
+									<Width>150</Width>
+									<Height>20</Height>
+									<Range>1000</Range>
+									<OnLoad>
+										This:SetValue[${Script[VGCraft].VariableScope.maxQDiff}]
+										UIElement[MaxQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnLoad>
+									<OnChange>
+										Script[VGCraft].VariableScope.maxQDiff:Set[${Math.Calc[${This.Value}].Int}]
+										UIElement[MaxQTextDiff@FrameDiff@Setup@Craft Main@CraftBot]:SetText[${This.Value}]
+									</OnChange>
+								</Slider>
+							</Children>
+						</frame>
+
+					</Tab>
+
+					<Tab Name='Move'>
+
+						<Frame name='FinishingFrame'>
+							<visible>0</visible>
+							<X>5</X>
+							<Y>40</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Commandbutton Name='FStation Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>0</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Craft Station</Text>
+									<OnLeftClick>
+										SetFinishingStation
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='FStation' Template='VG.BoldText'>
+									<X>110</X> 
+									<Y>4</Y> 
+									<Width>180</Width>
+									<Height>20</Height>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cFinishingStation}]</OnRender> 
+								</Text>
+								<Commandbutton Name='FWO Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>20</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Work NPC</Text>
+									<OnLeftClick>
+										SetFinishingWorkNPC
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='FWONPC' Template='VG.BoldText'>
+									<X>110</X> 
+									<Y>24</Y> 
+									<Width>150</Width>
+									<Height>20</Height>
+									<Color>FFEBDEAA</Color>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cFinishingWorkNPC}]</OnRender> 
+								</Text>
+								<Commandbutton Name='FSupply Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>40</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Supply NPC</Text>
+									<OnLeftClick>
+										SetFinishingSupplyNPC
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='FSupplyNPC' Template='VG.BoldText'>
+									<X>110</X> 
+									<Y>44</Y> 
+									<Width>150</Width>
+									<Height>20</Height>
+									<Color>FFEBDEAA</Color>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cFinishingSupplyNPC}]</OnRender> 
+								</Text>
+								<Commandbutton Name='FRepair Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>60</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Repair NPC</Text>
+									<OnLeftClick>
+										SetRepairNPC
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='FRepairNPC' Template='VG.BoldText'>
+									<X>110</X> 
+									<Y>64</Y> 
+									<Width>150</Width>
+									<Height>20</Height>
+									<Color>FFEBDEAA</Color>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRepairNPC}]</OnRender> 
+								</Text>
+							</Children>
+						</Frame>
+
+						<Frame name='RefiningFrame'>
+							<visible>0</visible>
+							<X>5</X>
+							<Y>40</Y>
+							<Height>80</Height>
+							<Width>100%</Width>
+							<Children>
+								<Commandbutton Name='RStation Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>0</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Craft Station</Text>
+									<OnLeftClick>
+										SetRefiningStation
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='RStation'>
+									<X>110</X> 
+									<Y>4</Y> 
+									<Width>180</Width>
+									<Height>20</Height>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRefiningStation}]</OnRender> 
+								</Text>
+								<Commandbutton Name='RWO Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>20</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Work NPC</Text>
+									<OnLeftClick>
+										SetRefiningWorkNPC
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='RWONPC'>
+									<X>110</X> 
+									<Y>24</Y> 
+									<Width>150</Width>
+									<Height>20</Height>
+									<Color>FFEBDEAA</Color>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRefiningWorkNPC}]</OnRender> 
+								</Text>
+								<Commandbutton Name='RSupply Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>40</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Supply NPC</Text>
+									<OnLeftClick>
+										SetRefiningSupplyNPC
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='RSupplyNPC'>
+									<X>110</X> 
+									<Y>44</Y> 
+									<Width>150</Width>
+									<Height>20</Height>
+									<Color>FFEBDEAA</Color>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRefiningSupplyNPC}]</OnRender> 
+								</Text>
+								<Commandbutton Name='RRepair Button' Template='VG.GreenButton'>
+									<X>15</X> 
+									<Y>60</Y> 
+									<Width>80</Width> 
+									<Height>20</Height>
+									<Text>Repair NPC</Text>
+									<OnLeftClick>
+										SetRepairNPC
+									</OnLeftClick>
+								</Commandbutton>
+								<Text Name='RRepairNPC'>
+									<X>110</X> 
+									<Y>64</Y> 
+									<Width>150</Width>
+									<Height>20</Height>
+									<Color>FFEBDEAA</Color>
+									<Text>NONE</Text>
+									<OnRender>This:SetText[${Script[VGCraft].VariableScope.cRepairNPC}]</OnRender> 
+								</Text>
+							</Children>
+						</Frame>
+						<Text Name='FinishingText' Template='VG.BoldText'>
+							<X>45</X>
+							<Y>15</Y>
+							<Width>80</Width>
+							<Height>20</Height>
+							<Font Template="VG.Window.TitleBar.Title.Font">
+								<Size>18</Size>
+								<Bold />
+							</Font>
+							<Text>Finishing</Text>
+						</Text>
+						<CheckBox Name='FinishingCheck' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>115</X> 
+							<Y>19</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLoad>
+								if !${Script[VGCraft].VariableScope.doRefining}
+								{
+									This:SetChecked
+									setupFinishing
+									UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Show
+									UIElement[RefiningCheck@Move@Craft Main@CraftBot]:UnsetChecked
+									UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Hide
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doRefining:Set[FALSE]
+								setupFinishing
+								UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Show
+								UIElement[RefiningCheck@Move@Craft Main@CraftBot]:UnsetChecked
+								UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Text Name='RefiningText' Template='VG.BoldText'>
+							<X>165</X>
+							<Y>15</Y>
+							<Width>80</Width>
+							<Height>20</Height>
+							<Font Template="VG.Window.TitleBar.Title.Font">
+								<Size>18</Size>
+								<Bold />
+							</Font>
+							<Text>Refining</Text>
+						</Text>
+						<CheckBox Name='RefiningCheck' Template='VG.CheckBox'>
+							<visible>1</visible>
+							<X>230</X> 
+							<Y>19</Y> 
+							<Width>10</Width> 
+							<Height>10</Height>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doRefining}
+								{
+									This:SetChecked
+									setupRefining
+									UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Show
+									UIElement[FinishingCheck@Move@Craft Main@CraftBot]:UnsetChecked
+									UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Hide
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doRefining:Set[TRUE]
+								setupRefining
+								UIElement[RefiningFrame@Move@Craft Main@CraftBot]:Show
+								UIElement[FinishingCheck@Move@Craft Main@CraftBot]:UnsetChecked
+								UIElement[FinishingFrame@Move@Craft Main@CraftBot]:Hide
+							</OnLeftClick>
+						</CheckBox>
+
+						<Commandbutton Name='Search Button' Template='VG.GreenButton'>
+							<visible>0</visible>
+							<X>15</X> 
+							<Y>95</Y> 
+							<Width>120</Width> 
+							<Height>20</Height>
+							<Text>Set Search Spot</Text>
+							<OnLeftClick>
+								SetWOSearch
+							</OnLeftClick>
+						</Commandbutton>
+
+						<Commandbutton Name='Door Point' Template='VG.GreenButton'>
+							<visible>1</visible>
+							<X>240</X> 
+							<Y>115</Y> 
+							<Width>70</Width> 
+							<Height>20</Height>
+							<Text>Add Door</Text>
+							<OnLeftClick>
+								AddDoor
+							</OnLeftClick>
+						</Commandbutton>
+
+
+
+						<CommandButton Name="PrecSet" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>15</X>
+							<Y>125</Y>
+							<Width>100</Width>
+							<Height>25</Height>
+							<Text>Path Precision</Text>
+							<Alignment>Left</Alignment>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.movePrecision:Set[${UIElement[PrecEntry@Move@Craft Main@CraftBot].Text}]
+							</OnLeftClick>
+						</CommandButton>
+						<Textentry Name="PrecEntry" Template="VG.TextEntry">
+							<visible>1</visible>
+							<X>120</X>
+							<Y>129</Y>
+							<Width>50</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.movePrecision}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.movePrecision:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+
+						<CommandButton Name="ObjPrecSet" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>15</X>
+							<Y>150</Y>
+							<Width>100</Width>
+							<Height>25</Height>
+							<Text>Target Precision</Text>
+							<Alignment>Left</Alignment>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.objPrecision:Set[${UIElement[ObjPrecEntry@Move@Craft Main@CraftBot].Text}]
+							</OnLeftClick>
+						</CommandButton>
+						<Textentry Name="ObjPrecEntry" Template="VG.TextEntry">
+							<visible>1</visible>
+							<X>120</X>
+							<Y>154</Y>
+							<Width>50</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.objPrecision}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.objPrecision:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+
+						<CommandButton Name="MaxWorkSet" Template="VG.GreenCommandButton">
+							<visible>1</visible>
+							<X>15</X>
+							<Y>175</Y>
+							<Width>100</Width>
+							<Height>25</Height>
+							<Text>Max WO NPC Dist</Text>
+							<Alignment>Left</Alignment>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.maxWorkDist:Set[${UIElement[MaxWorkEntry@Move@Craft Main@CraftBot].Text}]
+							</OnLeftClick>
+						</CommandButton>
+						<Textentry Name="MaxWorkEntry" Template="VG.TextEntry">
+							<visible>1</visible>
+							<X>120</X>
+							<Y>179</Y>
+							<Width>50</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.maxWorkDist}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.maxWorkDist:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+
+						<checkbox Name='Slow Turn' Template='VG.checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>203</Y>
+							<Width>150</Width>
+							<Height>15</Height>
+							<Text>Use Slow Turn</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doSlowTurn}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doSlowTurn:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Exact Path' Template='VG.checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>223</Y>
+							<Width>150</Width>
+							<Height>15</Height>
+							<Text>Only use defined Locations</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doExactPath}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doExactPath:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+						<checkbox Name='Mapping' Template='VG.checkbox'>
+							<visible>1</visible>
+							<X>200</X>
+							<Y>203</Y>
+							<Width>100</Width>
+							<Height>15</Height>
+							<Text>Mapping Mode</Text>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.isMapping:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+					</Tab>
+
+					<Tab Name='Options'>
+						<checkbox Name='Full Auto' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>15</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<Text>Full Automatic (Bot Mode)</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.fullAuto}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.fullAuto:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DoComp' Template='VG.checkbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>40</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Fix Complications while crafting</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doComplications}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doComplications:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Load Extra' Template='VG.checkbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>60</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Load Extra Ingredients at Table Setup</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doExtraIngredients}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doExtraIngredients:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Hard First' Template='VG.checkbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>80</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Get harder Work Orders first</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doHardFirst}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doHardFirst:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Auto Switch' Template='VG.Checkbox'>
+							<X>30</X>
+							<Y>100</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Auto Switch Between Work Order NPC's</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.autoSwitchCrafting}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.autoSwitchCrafting:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Open Packs' Template='VG.Checkbox'>
+							<X>30</X>
+							<Y>120</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Auto Open Reward Supply Packs</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doOpenPacks}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doOpenPacks:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Do Repairs' Template='VG.Checkbox'>
+							<X>30</X>
+							<Y>140</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Auto Repair Gear</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doRepair}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doRepair:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Faction Grind' Template='VG.Checkbox'>
+							<X>30</X>
+							<Y>160</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Faction GRIND mode</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doFactionGrind}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doFactionGrind:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+
+						<checkbox Name='Pause Recipe' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>185</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Pause to allow Craft Table Setup</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doPauseRecipe}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doPauseRecipe:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Console Output' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>205</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Only Output Text to IS Console</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doConsoleOut}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doConsoleOut:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='DebugOutput' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>225</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Display debug text in Chat window</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.debug}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.debug:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+					</Tab>
+
+					<Tab Name="Items">
+						<Textentry Name="ExtraEntry" Template="VG.TextEntry">
+							<X>15</X>
+							<Y>5</Y>
+							<Width>50%</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+						</Textentry>
+						<CommandButton Name="AddExtra" Template="VG.GreenCommandButton">
+							<X>58%</X>
+							<Y>4</Y>
+							<Width>120</Width>
+							<Height>25</Height>
+							<Text>Add Extra Ingred</Text>
+							<Alignment>Center</Alignment>
+							<OnLeftClick>
+								echo "Extra: ${UIElement[ExtraEntry@Items@Craft Main@CraftBot].Text}"
+								AddExtraItem "${UIElement[ExtraEntry@Items@Craft Main@CraftBot].Text}"
+								BuildExtraList
+								UIElement[ExtraEntry@Items@Craft Main@CraftBot]:SetText[]
+							</OnLeftClick>
+						</CommandButton>
+						<Listbox Name="ExtraList" Template="VG.ListBox">
+							<X>5%</X>
+							<Y>30</Y>
+							<Width>90%</Width>
+							<Height>80</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>User</Sort>
+							<OnRightClick>
+								RemoveExtraItem "${This.SelectedItem}"
+								BuildExtraList
+							</OnRightClick>
+						</Listbox>
+
+						<Textentry Name="ItemEntry" Template="VG.TextEntry">
+							<X>20</X>
+							<Y>126</Y>
+							<Width>50%</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+						</Textentry>
+						<CommandButton Name="AddCmd" Template="VG.GreenCommandButton">
+							<X>58%</X>
+							<Y>124</Y>
+							<Width>120</Width>
+							<Height>25</Height>
+							<Text>Add To Sell List</Text>
+							<Alignment>Center</Alignment>
+							<OnLeftClick>
+								echo "Adding: ${UIElement[ItemEntry@Items@Craft Main@CraftBot].Text}"
+								AddSellItem "${UIElement[ItemEntry@Items@Craft Main@CraftBot].Text}"
+								BuildSellList
+								UIElement[ItemEntry@Items@Craft Main@CraftBot]:SetText[]
+							</OnLeftClick>
+						</CommandButton>
+						<Listbox Name="ItemsList" Template="VG.ListBox">
+							<X>5%</X>
+							<Y>150</Y>
+							<Width>90%</Width>
+							<Height>95</Height>
+							<AutoSort>TRUE</AutoSort>
+							<Sort>Text</Sort>
+							<OnRightClick>
+								RemoveSellItem "${This.SelectedItem}"
+								BuildSellList
+							</OnRightClick>
+						</Listbox>
+					</Tab>
+
+					<Tab Name='Recipe'>
+
+						<checkbox Name='Named Recipe' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>20</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Repeat Recipe # of Times:</Text>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doRecipeOnly:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<Textentry Name="Repeat" Template="VG.TextEntry">
+							<X>190</X>
+							<Y>20</Y>
+							<Width>20</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.recipeRepeatNum}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.recipeRepeatNum:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+
+						<ComboBox Name="RecipeSelectCombo" Template="VG.ComboBox">
+							<X>20</X>
+							<Y>40</Y>
+							<Width>80%</Width>
+							<Height>20</Height>
+							<OnSelect>
+								Script[VGCraft].VariableScope.recipeName:Set[${This.SelectedItem.Text}]
+							</OnSelect>
+						</ComboBox>
+
+						<Checkbox Name='Step1Check' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>68</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doStep1Action}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doStep1Action:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='Step1Text' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>67</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Step 1: Use Action #:</Text>
+						</Text>
+						<Textentry Name="Step1" Template="VG.TextEntry">
+							<X>185</X>
+							<Y>65</Y>
+							<Width>20</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.recipeStep1Action}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.recipeStep1Action:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+
+						<Checkbox Name='Step2Check' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>93</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doStep2Action}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doStep2Action:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='Step2Text' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>92</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Step 2: Use Action #:</Text>
+						</Text>
+						<Textentry Name="Step2" Template="VG.TextEntry">
+							<X>185</X>
+							<Y>90</Y>
+							<Width>20</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.recipeStep2Action}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.recipeStep2Action:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+
+						<Checkbox Name='MaterialCheck' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>115</Y>
+							<Width>10</Width>
+							<Height>15</Height>
+							<Text>Check for Required Ingredients</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doRecipeMatCheck}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doRecipeMatCheck:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+
+						<Commandbutton Name='Recipe Station Button' Template='VG.GreenButton'>
+							<X>20</X> 
+							<Y>140</Y> 
+							<Width>80</Width> 
+							<Height>20</Height>
+							<Text>Set Station</Text>
+							<OnLeftClick>
+								Script[VGCraft]:QueueCommand[call SetRecipeStation]
+							</OnLeftClick>
+						</Commandbutton>
+						<Text Name='RecipeStationText' Template='VG.BoldText'>
+							<X>130</X> 
+							<Y>142</Y> 
+							<Width>180</Width> 
+							<Height>20</Height>
+							<Text>Recipe Station: NONE</Text>
+							<OnRender>This:SetText[${Script[VGCraft].VariableScope.recipeStation}]</OnRender> 
+						</Text>
+
+						<Text Name='APLimitRecipe' Template='VG.BoldText'>
+							<X>20</X>
+							<Y>170</Y>
+							<Width>70</Width>
+							<Height>20</Height>
+							<Alignment>Right</Alignment>
+							<Text>Prog Ratio:</Text>
+						</Text>
+						<Textentry Name='APLimitTextRecipe' Template='VG.TextEntry'>
+							<X>250</X>
+							<Y>170</Y>
+							<Width>30</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<SelectionColor>FF000000</SelectionColor>
+							<BackgroundColor>FF948974</BackgroundColor>
+							<BorderColor>FF948974</BorderColor>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.apLimitRecipe}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[VGCraft].VariableScope.apLimitRecipe:Set[${Math.Calc[${This.Text}].Int}]
+									UIElement[APLimitSliderRecipeRecipe@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Slider Name='APLimitSliderRecipe' Template='VG.Slider'>
+							<X>90</X>
+							<Y>169</Y>
+							<Width>150</Width>
+							<Height>20</Height>
+							<Range>100</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGCraft].VariableScope.apLimitRecipe}]
+								UIElement[APLimitTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.apLimitRecipe:Set[${Math.Calc[${This.Value}].Int}]
+								UIElement[APLimitTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
+							</OnChange>
+						</Slider>
+
+						<Text Name='QualTextRecipe' Template='VG.BoldText'>
+							<X>20</X> 
+							<Y>190</Y> 
+							<Width>60</Width> 
+							<Height>20</Height>
+							<Alignment>Right</Alignment>
+							<Text>Min Qual:</Text> 
+						</Text>
+						<TextEntry name='MinQTextRecipe' Template='VG.TextEntry'>
+							<X>250</X>
+							<Y>190</Y>
+							<Width>30</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<SelectionColor>FF000000</SelectionColor>
+							<BackgroundColor>FF948974</BackgroundColor>
+							<BorderColor>FF948974</BorderColor>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.minQRecipe}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[VGCraft].VariableScope.minQRecipe:Set[${Math.Calc[${This.Text}].Int}]
+									UIElement[QualSliderRecipe@Recipe@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Slider Name='QualSliderRecipe' Template='VG.Slider'>
+							<X>90</X>
+							<Y>189</Y>
+							<Width>150</Width>
+							<Height>20</Height>
+							<Range>1000</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGCraft].VariableScope.minQRecipe}]
+								UIElement[MinQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.minQRecipe:Set[${Math.Calc[${This.Value}].Int}]
+								UIElement[MinQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
+							</OnChange>
+						</Slider>
+
+						<Text Name='MaxQRecipe' Template='VG.BoldText'>
+							<X>20</X>
+							<Y>210</Y>
+							<Width>60</Width>
+							<Height>20</Height>
+							<Alignment>Right</Alignment>
+							<Text>Max Qual:</Text>
+						</Text>
+						<TextEntry name='MaxQTextRecipe' Template='VG.TextEntry'>
+							<X>250</X>
+							<Y>210</Y>
+							<Width>30</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<SelectionColor>FF000000</SelectionColor>
+							<BackgroundColor>FF948974</BackgroundColor>
+							<BorderColor>FF948974</BorderColor>
+							<Border>0</Border>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.maxQRecipe}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} > 0
+								{
+									Script[VGCraft].VariableScope.maxQRecipe:Set[${Math.Calc[${This.Text}].Int}]
+									UIElement[MaxQSliderRecipe@Recipe@Craft Main@CraftBot]:SetValue[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Slider Name='MaxQSliderRecipe' Template='VG.Slider'>
+							<X>90</X>
+							<Y>209</Y>
+							<Width>150</Width>
+							<Height>20</Height>
+							<Range>1000</Range>
+							<OnLoad>
+								This:SetValue[${Script[VGCraft].VariableScope.maxQRecipe}]
+								UIElement[MaxQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.maxQRecipe:Set[${Math.Calc[${This.Value}].Int}]
+								UIElement[MaxQTextRecipe@Recipe@Craft Main@CraftBot]:SetText[${This.Value}]
+							</OnChange>
+						</Slider>
+
+
+
+					</Tab>
+					
+					<Tab Name='IRC'>
+
+						<checkbox Name='AutoConnectToIRC' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>10</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Connect To IRC on startup</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.AutoConnectToIRC}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.AutoConnectToIRC:Set[${This.Checked}]
+							</OnLeftClick>
+							<AutoTooltip>Select to have VGCraft connect to IRC on startup.</AutoTooltip>
+						</checkbox>
+						
+						<Text Name='lbIRCServer' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>32</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Server:</Text>
+						</Text>
+						<Textentry Name="IRCServer" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>30</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCServer}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCServer:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Text Name='lbIRCNick' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>52</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Nick:</Text>
+						</Text>
+						<Textentry Name="IRCNick" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>50</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCNick}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCNick:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						
+						<Checkbox Name='bUseNickservIdentify' Template='VG.Checkbox'>
+							<X>45</X>
+							<Y>73</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bUseNickservIdentify}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bUseNickservIdentify:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbNickservIdentifyPasswd' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>60</X> 
+							<Y>72</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Nickserv Passwd:</Text>
+						</Text>
+						<Textentry Name="NickservIdentifyPasswd" Template="VG.TextEntry">
+							<X>165</X>
+							<Y>70</Y>
+							<Width>100</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.NickservIdentifyPasswd}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.NickservIdentifyPasswd:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						
+						<Checkbox Name='bIRCChannel' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>93</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bIRCChannel}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bIRCChannel:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbIRCChannel' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>92</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Join Channel:</Text>
+						</Text>
+						<Textentry Name="IRCChannel" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>90</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCChannel}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCChannel:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						<Checkbox Name='bUseChannelKey' Template='VG.Checkbox'>
+							<X>45</X>
+							<Y>113</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bUseChannelKey}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bUseChannelKey:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbChannelKey' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>60</X> 
+							<Y>112</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Channel Key:</Text>
+						</Text>
+						<Textentry Name="ChannelKey" Template="VG.TextEntry">
+							<X>165</X>
+							<Y>110</Y>
+							<Width>100</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.ChannelKey}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.ChannelKey:Set[${This.Text}]
+							</OnChange>
+						</Textentry>
+						
+						<Checkbox Name='bUseIRCMaster' Template='VG.Checkbox'>
+							<X>25</X>
+							<Y>133</Y>
+							<Width>10</Width>
+							<Height>10</Height>
+							<Text></Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.bUseIRCMaster}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.bUseIRCMaster:Set[${This.Checked}]
+							</OnLeftClick>
+						</Checkbox>
+						<Text Name='lbIRCMaster' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>40</X> 
+							<Y>132</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>IRC Master:</Text>
+						</Text>
+						<Textentry Name="IRCMaster" Template="VG.TextEntry">
+							<X>145</X>
+							<Y>130</Y>
+							<Width>120</Width>
+							<Height>18</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VGCraft].VariableScope.IRCMaster}]
+							</OnLoad>
+							<OnChange>
+								Script[VGCraft].VariableScope.IRCMaster:Set[${This.Text}]
+							</OnChange>
+						</Textentry>	
+						
+						<Text Name='lbOptions' Template='VG.BoldText'>
+							<visible>1</visible>
+							<X>20</X> 
+							<Y>155</Y> 
+							<Width>140</Width> 
+							<Height>20</Height>
+							<Text>Options:</Text>
+						</Text>
+						<checkbox Name='IRCAcceptMasterCommands' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>170</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Accept Commands from IRC Master</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCAcceptMasterCommands}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCAcceptMasterCommands:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='IRCSpewToMasterPM' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>190</Y>
+							<Width>240</Width>
+							<Height>20</Height>
+							<Text>Spew Text to IRC Master as PM</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCSpewToMasterPM}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCSpewToMasterPM:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>			
+						<checkbox Name='IRCSpewToChannel' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>210</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Spew Text to Channel</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCSpewToChannel}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCSpewToChannel:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>			
+						<checkbox Name='IRCSpewExtraDebugText' Template='VG.BlueCheckbox'>
+							<X>20</X>
+							<Y>230</Y>
+							<Width>140</Width>
+							<Height>20</Height>
+							<Text>Spew extra Debug Text</text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.IRCSpewExtraDebugText}
+								{
+									This:SetChecked
+								}
+							</OnLoad>							
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.IRCSpewExtraDebugText:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>	
+						
+						<Commandbutton Name='Connect Now' Template='VG.GreenButton'>
+							<X>240</X> 
+							<Y>230</Y> 
+							<Width>90</Width> 
+							<Height>20</Height>
+							<Text>Connect Now</Text>
+							<OnLeftClick>
+								Script[VGCraft]:QueueCommand[call ConnectToIRC]
+							</OnLeftClick>
+							<AutoTooltip>Click to connect NOW.  Otherwise, the script will connect on startup if 'Connect to IRC' is selected.</AutoTooltip>
+						</Commandbutton>
+						
+
+					</Tab>					
+
+					<Tab Name='Alarms'>
+						<checkbox Name='GM Alarm' Template='VG.Checkbox'>
+							<X>20</X>
+							<Y>20</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>GM Alarm</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doGMAlarm}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${This.Checked}
+								{
+									Script[VGCraft].VariableScope.doGMAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testGMAlarm]
+								}
+								else
+								{
+									Script[VGCraft].VariableScope.doGMAlarm:Set[FALSE]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='GM Respond' Template='VG.BlueCheckbox'>
+							<X>30</X>
+							<Y>40</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Auto-respond to GMs</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doGMRespond}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doGMRespond:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='GM Detect' Template='VG.Checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>60</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>GM Detected Alarm</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doDetectGM}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${This.Checked}
+								{
+									Script[VGCraft].VariableScope.doDetectGM:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testGMDetect]
+								}
+								else
+								{
+									Script[VGCraft].VariableScope.doDetectGM:Set[FALSE]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Tell Alarm' Template='VG.Checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>85</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Tells Alarm</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doTellAlarm}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${This.Checked}
+								{
+									Script[VGCraft].VariableScope.doTellAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testTellAlarm]
+								}
+								else
+								{
+									Script[VGCraft].VariableScope.doTellAlarm:Set[FALSE]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Player Respond' Template='VG.BlueCheckbox'>
+							<visible>1</visible>
+							<X>30</X>
+							<Y>105</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Auto-respond to Players</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doPlayerRespond}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+									Script[VGCraft].VariableScope.doPlayerRespond:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Say Alarm' Template='VG.Checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>130</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Say/Emote Alarm with your Name in it</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doSayAlarm}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${This.Checked}
+								{
+									Script[VGCraft].VariableScope.doSayAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testTellAlarm]
+								}
+								else
+								{
+									Script[VGCraft].VariableScope.doSayAlarm:Set[FALSE]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Level Alarm' Template='VG.Checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>155</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Level Up Notice</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doLevelAlarm}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								if ${This.Checked}
+								{
+									Script[VGCraft].VariableScope.doLevelAlarm:Set[TRUE]
+									Script[VGCraft]:QueueCommand[call testLevelAlarm]
+								}
+								else
+								{
+									Script[VGCraft].VariableScope.doLevelAlarm:Set[FALSE]
+								}
+							</OnLeftClick>
+						</checkbox>
+						<checkbox Name='Reboot Stop' Template='VG.Checkbox'>
+							<visible>1</visible>
+							<X>20</X>
+							<Y>185</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Text>Stop Script on Server Down/Reboot Notice</Text>
+							<OnLoad>
+								if ${Script[VGCraft].VariableScope.doServerDown}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VGCraft].VariableScope.doServerDown:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+
+					</Tab>
+
+					<Tab Name='About'>
+						<Text Name='About Title' Template='VG.Text'>
+							<X>0</X>
+							<Y>50</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Window.TitleBar.Title.Font">
+								<Name>terminal</Name>
+								<Size>16</Size>
+								<Bold />
+							</Font>
+							<Text>VGCraft</Text>
+						</Text>
+						<Text Name='About By' Template='VG.Text'>
+							<X>0</X>
+							<Y>70</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Window.TitleBar.Title.Font">
+								<Size>15</Size>
+							</Font>
+							<Text>by Xeon</Text>
+						</Text>
+						<Text Name='About Ver' Template='VG.Text'>
+							<X>0</X>
+							<Y>100</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Window.TitleBar.Title.Font">
+								<Size>15</Size>
+							</Font>
+							<Text>Ver ${Script[VGCraft].VariableScope.VGCraft_VERSION}</Text>
+						</Text>
+						<Text Name='About 1'>
+							<X>0</X>
+							<Y>125</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Font>
+								<Name>terminal</Name>
+								<Size>11</Size>
+								<Color>FFFFFF00</Color>
+							</Font>
+							<Text>ISXVG was created by Amadeus</Text>
+						</Text>
+						<Text Name='About 2'>
+							<X>0</X>
+							<Y>145</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Font>
+								<Name>terminal</Name>
+								<Size>11</Size>
+								<Color>FFEBDEAA</Color>
+							</Font>
+							<Text>For more Information Please see</Text>
+						</Text>
+						<Text Name='About 3'>
+							<X>0</X>
+							<Y>160</Y>
+							<Width>100%</Width>
+							<Height>20</Height>
+							<Alignment>Center</Alignment>
+							<Font>
+								<Name>terminal</Name>
+								<Size>10</Size>
+								<Color>FFEBDEAA</Color>
+							</Font>
+							<Text>http://www.isxgames.com/forums</Text>
+						</Text>
+					</Tab>
+
+				</Tabs>
+			</TabControl>
+				
+			<Commandbutton Name='RunButton' Template='VG.GreenCommandButton'>
+				<visible>1</visible>
+				<X>5%</X>
+				<Y>295</Y>
+				<Width>80</Width> 
+				<Height>30</Height>
+				<Text>Start</Text>
+				<OnLeftClick>
+					if ${This.Text.Equal[Pause]}
+					{
+						This:SetText[Resume]
+						UIElement[HUDPause@CHUD]:SetText[resume]
+						PauseBot
+						UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- PAUSED"] 
+					}
+					elseif ${This.Text.Equal[Resume]}
+					{
+						This:SetText[Pause]
+						UIElement[HUDPause@CHUD]:SetText[pause]
+						ResumeBot
+						if ${Script[VGCraft].VariableScope.doRefining}
+							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Refining"]
+						else
+							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Finishing"]
+					}
+					elseif ${This.Text.Equal[Start]}
+					{
+						This:SetText[Pause]
+						Script[VGCraft]:QueueCommand[call Start]
+						UIElement[HUDPause@CHUD]:Show
+						if ${Script[VGCraft].VariableScope.doRefining}
+							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Refining"]
+						else
+							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Finishing"]
+					}
+				</OnLeftClick>
+			</Commandbutton>
+
+			<Commandbutton Name='QuitButton' Template='VG.RedCommandButton'>
+				<visible>1</visible>
+				<X>30%</X> 
+				<Y>295</Y> 
+				<Width>65</Width> 
+				<Height>30</Height>
+				<BackgroundColor>FFCC0000</BackgroundColor>
+				<Text>Quit</Text>
+				<OnLeftClick>
+					StopBot
+				</OnLeftClick>
+			</Commandbutton>
+			
+			<Commandbutton Name='ConsolidateInventoryButton' Template='VG.RedCommandButton'>
+				<visible>1</visible>
+				<X>55%</X> 
+				<Y>295</Y> 
+				<Width>90</Width> 
+				<Height>30</Height>
+				<BackgroundColor>FFCC0000</BackgroundColor>
+				<Text>Consolidate Inv.</Text>
+				<OnLeftClick>
+					Script[VGCraft]:QueueCommand[call ConsolidateInventory]
+				</OnLeftClick>
+			</Commandbutton>			
+
+			<commandbutton name='ButtonHUD' Template='VG.GreenCommandButton'>
+				<visible>1</visible>
+				<X>85%</X>
+				<Y>298</Y>
+				<Width>40</Width>
+				<Height>25</Height>
+				<Alignment>Center</Alignment>
+				<Text>HUD</Text>
+				<Command>UIElement[CHUD]:ToggleVisible</Command>
+			</commandbutton>
+
+		</Children>
+	</Window>
+
+	<Window Name='CHUD' Template='CVG.Window'>
+		<Title>Craft HUD</Title>
+		<X>30</X>
+		<Y>300</Y>
+		<Width>200</Width>
+		<Height>280</Height>
+		<Resizable>0</Resizable>
+		<Border>0</Border>
+		<StorePosition>1</StorePosition>
+		<BackgroundColor>FF000000</BackgroundColor>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>17</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<CommandButton Name="Toggle Background" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Command>UIElement[CHUD]:SetBackgroundColor[${If[${UIElement[CHUD].BackgroundColor}==0,FF000000,0]}]</Command>
+				</CommandButton>
+				<CommandButton Name="Custom Close Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Command>UIElement[CHUD]:ToggleVisible</Command>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		<Children>
+					<Text Name="ChunkT" Template="CVG.Text">
+						<X>5</X>
+						<Y>5</Y>
+						<Width>45</Width>
+						<Height>16</Height>
+						<Text>Chunk: </Text>
+					</Text>
+					<Text Name="Chunk" Template="CVG.BoldText">
+						<X>60</X>
+						<Y>5</Y>
+						<Width>140</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+		
+					<Text Name="StateT" Template="CVG.Text">
+						<X>5</X>
+						<Y>20</Y>
+						<Width>35</Width>
+						<Height>16</Height>
+						<Text>State: </Text>
+					</Text>
+					<Text Name="State" Template="CVG.BoldText">
+						<X>45</X>
+						<Y>20</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+		
+					<Text Name="WorkOrderT" Template="CVG.Text">
+						<X>5</X>
+						<Y>35</Y>
+						<Width>35</Width>
+						<Height>16</Height>
+						<Text>WO: </Text>
+					</Text>
+					<Text Name="WorkOrder" Template="CVG.Text">
+						<X>55</X>
+						<Y>35</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+		
+					<Text Name="WODiffT" Template="CVG.Text">
+						<X>5</X>
+						<Y>50</Y>
+						<Width>35</Width>
+						<Height>16</Height>
+						<Text>Diff: </Text>
+					</Text>
+					<Text Name="WODiff" Template="CVG.BoldText">
+						<X>55</X>
+						<Y>50</Y>
+						<Width>60</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+		
+					<Text Name="ActionT" Template="CVG.Text">
+						<X>5</X>
+						<Y>65</Y>
+						<Width>45</Width>
+						<Height>16</Height>
+						<Text>Action: </Text>
+					</Text>
+					<Text Name="Action" Template="CVG.Text">
+						<X>55</X>
+						<Y>65</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+		
+					<Text Name="XPHourT" Template="CVG.Text">
+						<X>5</X>
+						<Y>80</Y>
+						<Width>45</Width>
+						<Height>16</Height>
+						<Text>XP/Hr: </Text>
+					</Text>
+					<Text Name="XPHour" Template="CVG.BoldText">
+						<X>55</X>
+						<Y>80</Y>
+						<Width>90</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+
+					<Text Name="LastXPT" Template="CVG.Text">
+						<X>5</X>
+						<Y>95</Y>
+						<Width>50</Width>
+						<Height>16</Height>
+						<Text>LastXP: </Text>
+					</Text>
+					<Text Name="LastXP" Template="CVG.Text">
+						<X>60</X>
+						<Y>95</Y>
+						<Width>140</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+		
+					<Text Name="TotalRecipeT" Template="CVG.Text">
+						<X>5</X>
+						<Y>110</Y>
+						<Width>55</Width>
+						<Height>16</Height>
+						<Text>#Recipes: </Text>
+					</Text>
+					<Text Name="TotalRecipe" Template="CVG.Text">
+						<X>65</X>
+						<Y>110</Y>
+						<Width>130</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+					<Text Name="FailedRecipeT" Template="CVG.Text">
+						<X>5</X>
+						<Y>125</Y>
+						<Width>55</Width>
+						<Height>16</Height>
+						<Text>#Failed: </Text>
+					</Text>
+					<Text Name="FailedRecipe" Template="CVG.Text">
+						<X>65</X>
+						<Y>125</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+					<Text Name="APLimitT" Template="CVG.Text">
+						<X>5</X>
+						<Y>140</Y>
+						<Width>55</Width>
+						<Height>16</Height>
+						<Text>APLimit: </Text>
+					</Text>
+					<Text Name="APLimit" Template="CVG.Text">
+						<X>60</X>
+						<Y>140</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+
+;---Difficult
+					<Text Name="QA1T" Template="CVG.Text">
+						<X>5</X>
+						<Y>155</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Difficult: </Text>
+					</Text>
+					<Text Name="QA1" Template="CVG.Text">
+						<X>65</X>
+						<Y>155</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+
+;---Moderate
+					<Text Name="QA2T" Template="CVG.Text">
+						<X>5</X>
+						<Y>170</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Moderate: </Text>
+					</Text>
+					<Text Name="QA2" Template="CVG.Text">
+						<X>65</X>
+						<Y>170</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---Easy
+					<Text Name="QA3T" Template="CVG.Text">
+						<X>5</X>
+						<Y>185</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Easy: </Text>
+					</Text>
+					<Text Name="QA3" Template="CVG.Text">
+						<X>65</X>
+						<Y>185</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---Very Easy
+					<Text Name="QA4T" Template="CVG.Text">
+						<X>5</X>
+						<Y>200</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Very Easy: </Text>
+					</Text>
+					<Text Name="QA4" Template="CVG.Text">
+						<X>65</X>
+						<Y>200</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---Money
+					<Text Name="MONEYT" Template="CVG.Text">
+						<X>5</X>
+						<Y>215</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>Copper </Text>
+					</Text>
+					<Text Name="MONEY" Template="CVG.Text">
+						<X>65</X>
+						<Y>215</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+;---EXP
+					<Text Name="EXPT" Template="CVG.Text">
+						<X>5</X>
+						<Y>230</Y>
+						<Width>100</Width>
+						<Height>16</Height>
+						<Text>EXP Gained is </Text>
+					</Text>
+					<Text Name="EXP" Template="CVG.Text">
+						<X>85</X>
+						<Y>230</Y>
+						<Width>150</Width>
+						<Height>16</Height>
+						<Text>-</Text>
+					</Text>
+
+				<Commandbutton Name='HUDPause' Template='VG.GreenCommandButton'>
+					<visible>0</visible>
+					<X>5</X>
+					<Y>245</Y>
+					<Width>55</Width> 
+					<Height>20</Height>
+					<Text>pause</Text>
+					<OnLeftClick>
+						if ${This.Text.Equal[pause]}
+						{
+							This:SetText[resume]
+							PauseBot
+							UIElement[Title@TitleBar@CHUD]:SetText["CHUD -- PAUSED"]
+							UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- PAUSED"]
+							UIElement[RunButton@CraftBot]:SetText[Resume]
+						}
+						elseif ${This.Text.Equal[Resume]}
+						{
+							This:SetText[pause]
+							ResumeBot
+							if ${Script[VGCraft].VariableScope.doRefining}
+							{
+								UIElement[Title@TitleBar@CHUD]:SetText["CHUD - Refining"]
+								UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Refining"]
+							}
+							else
+							{
+								UIElement[Title@TitleBar@CHUD]:SetText["CHUD - Finishing"]
+								UIElement[Title@TitleBar@CraftBot]:SetText["CraftBot -- Finishing"]
+							}
+							UIElement[RunButton@CraftBot]:SetText[Pause]
+						}
+					</OnLeftClick>
+				</Commandbutton>
+
+		</Children>
+	</Window>
+
+</ISUI>

@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI><!-- Main UI Window -->
+
+	<!-- Font -->
+	<Template Name="VG.Font">
+		<Name>Tahoma</Name>
+		<Size>13</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+
+	<!-- Text -->
+	<template name="VG.Text.Font" Template="VG.Font" />
+	<template name="VG.Text">
+		<Font Template="VG.Text.Font" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name="VG.BoldText">
+		<Font Template="VG.BoldFont" />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+
+	<!-- Green CheckBox -->
+	<Template Name="VG.GreenCheckbox">
+		<Font Template="VG.Checkbox.Font" />
+		<Texture Template="VG.Checkbox.Texture" />
+		<TextureHover Template="VG.Checkbox.TextureHover" />
+		<TexturePressed Template="VG.Checkbox.TexturePressed" />
+		<TextureChecked Template="VG.Checkbox.TextureChecked" />
+		<TextureCheckedHover Template="VG.Checkbox.TextureCheckedHover" />
+		<TextureCheckedPressed Template="VG.Checkbox.TextureCheckedPressed" />
+	</Template>
+	
+	<!-- Grey CommandBox -->
+	<Template Name="VG.GreyCommandButton">
+		<Font Template="vg.button.Font" />
+		<Texture Template="vg.button.Texture" />
+		<TextureHover Template="vg.button.TextureHover" />
+		<TexturePressed Template="vg.button.TexturePressed" />
+	</Template>
+	
+	<!-- Window Name: (VG-Hunt) -->
+	<Window Name="VG-Hunt" Template="VG.Window">
+		<!-- Basic Window Information -->
+		<StorePosition>1</StorePosition>
+		<X>100</X>
+		<Y>100</Y>
+		<Width>240</Width>
+		<Height>270</Height>
+		<Title>VG-Hunt</Title>
+		<TitleBar Template="VG.Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>18</Height>
+			<Children>
+				<!-- Centered -->
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<!-- Minimize -->
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<!-- Close -->
+				<CommandButton Name="Custom Quit Button" Template="VG.Window.TitleBar.Close">
+					<X>r17</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						Script[VG-Hunt].Variable[isRunning]:Set[FALSE]
+						endscript VG-Hunt
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+		<!-- Nothing fancy for Window Client -->
+		<Client Template="VG.Window.Client" />
+
+		<Children>
+			<!-- Tab: (Tabs) -->
+			<TabControl Name="Tabs" Template="VG.Tabcontrol">
+				<X>5</X>
+				<Y>5</Y>
+				<Font>
+					<Name>Times New Roman</Name>
+					<Size>12</Size>
+				</Font>
+				<TabHeight>15</TabHeight>
+				<TabBorder>3</TabBorder>
+				<Height>97%</Height>
+				<Width>97%</Width>
+				<OnSelect>
+					switch ${This.SelectedTab}
+					{
+						Case Hunt
+							UIElement[VG-Hunt]:SetWidth[240]
+							UIElement[VG-Hunt]:SetHeight[270]
+							break
+						Case About
+							UIElement[VG-Hunt]:SetWidth[240]
+							UIElement[VG-Hunt]:SetHeight[270]
+							break
+					}
+
+				</OnSelect>
+				<Tabs>
+
+					<!-- Tab Name: (Hunt) -->
+					<Tab name='Hunt'>
+						<checkbox Name='doScanAreaForTarget' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>4%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Scan Area For Target</Text>
+							<AutoTooltip>  Scan Area for a Target </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doScanAreaForTarget}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doScanAreaForTarget:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						
+						<checkbox Name='doMoveBetweenWaypoints' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>11%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Move Between Waypoints</Text>
+							<AutoTooltip>  Start navigating between waypoints </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doMoveBetweenWaypoints}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doMoveBetweenWaypoints:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						
+						<checkbox Name='doCheckLineOfSight' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>18%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Line of Sight to target</Text>
+							<AutoTooltip>  Target only those that you have a direct line of sight to </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doCheckLineOfSight}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doCheckLineOfSight:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name='doAggroNPC' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>25%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Attack AggroNPC (red targets)</Text>
+							<AutoTooltip>  Turning this on will allow attacking AggroNPC  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doAggroNPC}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doAggroNPC:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name='doNPC' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>32%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Attack NPC (yellow targets)</Text>
+							<AutoTooltip>  Turning this on will allow attacking any NPC  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doNPC}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doNPC:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name='doLoot' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>39%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Loot corpses</Text>
+							<AutoTooltip>  Loot corpses that contains loot </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doLoot}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doLoot:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<checkbox Name='doCamp' Template='VG.GreenCheckbox'>
+							<visible>1</visible>
+							<X>5%</X>
+							<Y>46%</Y>
+							<Width>15</Width>
+							<Height>15</Height>
+							<Text>Camp after dying</Text>
+							<AutoTooltip>  Turning this on will allow camping if you die  </AutoTooltip>
+							<OnLoad>
+								if ${Script[VG-Hunt].VariableScope.doCamp}
+								{
+									This:SetChecked
+								}
+							</OnLoad>
+							<OnLeftClick>
+								Script[VG-Hunt].VariableScope.doCamp:Set[${This.Checked}]
+							</OnLeftClick>
+						</checkbox>
+						
+						<Textentry Name="PullDistance" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>53%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-Hunt].VariableScope.PullDistance}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-Hunt].VariableScope.PullDistance:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-Hunt].VariableScope.PullDistance:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-PullDistance" Template="VG.Text">
+							<X>18%</X>
+							<Y>53.4%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Pull Distance</Text>
+						</Text>
+						<Textentry Name="MaxDistance" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>60%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-Hunt].VariableScope.MaxDistance}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-Hunt].VariableScope.MaxDistance:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-Hunt].VariableScope.MaxDistance:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-MaxDistance" Template="VG.Text">
+							<X>18%</X>
+							<Y>60.4%</Y>
+							<Width>80%</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Maximum distance to scan for target</Text>
+						</Text>
+						<Textentry Name="MinimumLevel" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>67%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-Hunt].VariableScope.MinimumLevel}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-Hunt].VariableScope.MinimumLevel:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-Hunt].VariableScope.MinimumLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-MinimumLevel" Template="VG.Text">
+							<X>18%</X>
+							<Y>67.4%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Minimum level of target</Text>
+						</Text>
+						<Textentry Name="MaximumLevel" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>74%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-Hunt].VariableScope.MaximumLevel}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-Hunt].VariableScope.MaximumLevel:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-Hunt].VariableScope.MaximumLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-MaximumLevel" Template="VG.Text">
+							<X>18%</X>
+							<Y>74.4%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Maximum level of target</Text>
+						</Text>
+
+
+						<Textentry Name="DifficultyLevel" Template="VG.TextEntry">
+							<X>3%</X>
+							<Y>81%</Y>
+							<Width>28</Width>
+							<Height>15</Height>
+							<Color>FFDDBB00</Color>
+							<OnLoad>
+								This:SetText[${Script[VG-Hunt].VariableScope.DifficultyLevel}]
+							</OnLoad>
+							<OnChange>
+								if ${This.Text.Length} == 0
+								{
+									Script[VG-Hunt].VariableScope.DifficultyLevel:Set[0]
+								}
+								if ${This.Text.Length} >= 3
+								{
+									This:SetText[100]
+								}
+								if ${This.Text.Length} > 0
+								{
+									Script[VG-Hunt].VariableScope.DifficultyLevel:Set[${Math.Calc[${This.Text}].Int}]
+								}
+							</OnChange>
+						</Textentry>
+						<Text Name="Text-DifficultyLevel" Template="VG.Text">
+							<X>18%</X>
+							<Y>81.4%</Y>
+							<Width>200</Width>
+							<Height>15</Height>
+							<Alignment>Left</Alignment>
+							<Text>Maximum Difficulty of Target</Text>
+						</Text>
+
+						<button name='SetWaypoint' Template='VG.GreenCommandButton'>
+							<X>3%</X>
+							<Y>89%</Y>
+							<Width>45%</Width>
+							<Height>20</Height>
+							<AutoTooltip>Click here to set Waypoints</AutoTooltip>
+							<Text>Add Waypoint</Text>
+							<OnLeftClick>
+								Script[VG-Hunt]:ExecuteAtom[AddWayPoint]
+							</OnLeftClick>
+						</button>
+						<button name='ClearWayPoints' Template='VG.GreenCommandButton'>
+							<X>52%</X>
+							<Y>89%</Y>
+							<Width>45%</Width>
+							<Height>20</Height>
+							<AutoTooltip>Clear All Waypoints</AutoTooltip>
+							<Text>Clear Waypoints</Text>
+							<OnLeftClick>
+								Script[VG-Hunt]:ExecuteAtom[ClearWayPoints]
+							</OnLeftClick>
+						</button>
+					</Tab>
+
+					
+					<!-- Tab Name: (About) -->
+					<Tab name='About'>
+						<Text Name='About Line 1'>
+							<X>0</X>
+							<Y>12%</Y>
+							<Width>100%</Width>
+							<Height>80%</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>16</Size>
+							</Font>
+							<Text>VG-Hunt</Text>
+						</Text>
+						<Text Name='About Line 2'>
+							<X>0</X>
+							<Y>33%</Y>
+							<Width>100%</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>14</Size>
+							</Font>
+							<Text>by Zandros</Text>
+						</Text>
+						<Text Name='About Line 3'>
+							<X>0</X>
+							<Y>50%</Y>
+							<Width>100%</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>11</Size>
+							</Font>
+							<Text>Hunting Script</Text>
+						</Text>
+						<Text Name='About Line 4'>
+							<X>0</X>
+							<Y>57%</Y>
+							<Width>100%</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Font Template="VG.Text.Font">
+								<Name>terminal</Name>
+								<Size>10</Size>
+							</Font>
+							<Text>(Does not contain any combat routines)</Text>
+						</Text>
+					</Tab>
+					
+				</Tabs>
+			</TabControl>
+		</Children>
+	</Window>
+	
+</ISUI>

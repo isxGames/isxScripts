@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 
+Default ISXVG Radar
+-->
+<ISUI>
+	<template name='lightbluedot'>
+		<Top>0</Top>
+		<Left>0</Left>
+		<Bottom>16</Bottom>
+		<Right>16</Right>
+	</template>
+	<template name='browndot'>
+		<Top>0</Top>
+		<Left>16</Left>
+		<Bottom>16</Bottom>
+		<Right>32</Right>
+	</template>
+	<template name='yellowdot'>
+		<Top>0</Top>
+		<Left>32</Left>
+		<Bottom>16</Bottom>
+		<Right>48</Right>
+	</template>
+	<template name='lightgreendot'>
+		<Top>0</Top>
+		<Left>48</Left>
+		<Bottom>16</Bottom>
+		<Right>64</Right>
+	</template>
+	<template name='pinkdot'>
+		<Top>0</Top>
+		<Left>64</Left>
+		<Bottom>16</Bottom>
+		<Right>80</Right>
+	</template>
+	<template name='darkgreendot'>
+		<Top>0</Top>
+		<Left>80</Left>
+		<Bottom>16</Bottom>
+		<Right>96</Right>
+	</template>
+	<template name='whitedot'>
+		<Top>16</Top>
+		<Left>0</Left>
+		<Bottom>32</Bottom>
+		<Right>16</Right>
+	</template>
+	<template name='graydot'>
+		<Top>16</Top>
+		<Left>16</Left>
+		<Bottom>32</Bottom>
+		<Right>32</Right>
+	</template>
+	<template name='reddot'>
+		<Top>16</Top>
+		<Left>32</Left>
+		<Bottom>32</Bottom>
+		<Right>48</Right>
+	</template>
+	<template name='darkpurpledot'>
+		<Top>16</Top>
+		<Left>48</Left>
+		<Bottom>32</Bottom>
+		<Right>64</Right>
+	</template>
+	<template name='darkbluedot'>
+		<Top>16</Top>
+		<Left>64</Left>
+		<Bottom>32</Bottom>
+		<Right>80</Right>
+	</template>
+	<template name='orangedot'>
+		<Top>16</Top>
+		<Left>80</Left>
+		<Bottom>32</Bottom>
+		<Right>96</Right>
+	</template>
+	<template name='lightpurpledot'>
+		<Top>32</Top>
+		<Left>0</Left>
+		<Bottom>48</Bottom>
+		<Right>16</Right>
+	</template>
+
+	<template Name='radar'>
+		<Font template='Default Font' />
+		<ZAxisclip>0</ZAxisclip>
+		<ClipRadius>1</ClipRadius>
+		<ShowLabels>1</ShowLabels>
+		<Rotation>1</Rotation>
+		<ClipText>1</ClipText>
+		<RadarSize>40.0</RadarSize>
+	</template>
+	<template Name='vgradar' Template='radar'>
+		<BlipTypes>
+			<Bliptype Name='AggroNPC' Filename='ISXVGRadar.png' ColorKey='0' template='reddot'></BlipType>				
+			<BlipType Name='Clickable' Filename='ISXVGRadar.png' ColorKey='0' Template='graydot'></BlipType>
+			<BlipType Name='Corpse' Filename='ISXVGRadar.png' ColorKey='0' template='graydot'></BlipType>
+			<BlipType Name='Crafting Station' Filename='ISXVGRadar.png' ColorKey='0' template='browndot'></BlipType>
+			<BlipType Name='Group Member' Filename='ISXVGRadar.png' ColorKey='0' template='whitedot'></BlipType>
+			<BlipType Name='Me' Filename='ISXVGRadar.png' ColorKey='0' template='lightbluedot'></BlipType>
+			<BlipType Name='Merchant' Filename='ISXVGRadar.png' ColorKey='0' template='whitedot'></BlipType>
+			<Bliptype Name='MyPet' Filename='ISXVGRadar.png' ColorKey='0' template='darkbluedot'></BlipType>
+			<BlipType Name='NPC' Filename='ISXVGRadar.png' ColorKey='0' template='yellowdot'></BlipType>
+			<Bliptype Name='NamedNPC' filename='ISXVGRadar.png' ColorKey='0' Template='pinkdot'></BlipType>
+			<BlipType Name='PC' Filename='ISXVGRadar.png' ColorKey='0' template='lightgreendot'></BlipType>
+			<Bliptype Name='Pet' Filename='ISXVGRadar.png' ColorKey='0' template='darkpurpledot'></BlipType>				
+			<BlipType Name='QuestNPC' Filename='ISXVGRadar.png' ColorKey='0' Template='darkpurpledot'></BlipType>
+			<BlipType Name='Resource' Filename='ISXVGRadar.png' ColorKey='0' template='darkgreendot'></BlipType>
+			<BlipType Name='Special' Filename='ISXVGRadar.png' ColorKey='0' template='pinkdot'></BlipType>
+			<BlipType Name='Trainer' Filename='ISXVGRadar.png' ColorKey='0' template='whitedot'></BlipType>
+		</BlipTypes>
+	</template>
+	<vgradar Name='Main Radar'>
+		<X>0</X>
+		<Y>0</Y>
+		<Width>100%</Width>
+		<Height>100%</Height>
+				<Visible>1</Visible>
+				<ShowMe>1</ShowMe>
+				<ShowNPCs>1</ShowNPCs>
+				<ShowAggroNPCs>1</ShowAggroNPCs>
+				<ShowPCs>1</ShowPCs>
+				<ShowGroupMembers>1</ShowGroupMembers>
+				<ShowMerchants>0</ShowMerchants>
+				<ShowTrainers>0</ShowTrainers>
+				<ShowClickables>1</ShowClickables>
+				<ShowSpecials>1</ShowSpecials>
+				<ShowResources>1</ShowResources>
+				<ShowCorpses>1</ShowCorpses>
+				<ShowPets>1</ShowPets>
+				<ShowMyPet>1</ShowMyPet>
+               <Children> 
+                         <tooltip Name='Radar Tooltip'> 
+                         </tooltip> 
+                </Children> 
+	</vgradar>
+</ISUI>

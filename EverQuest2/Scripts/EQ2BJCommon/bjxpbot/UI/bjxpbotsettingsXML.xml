@@ -1,0 +1,2040 @@
+<ISUI>
+  <Template Name='Tab_Buttons' template='Button'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Alignment>Center</Alignment>
+
+		<OnLeftClick>
+		      This.Font:SetColor[ff00ff00]
+		</OnLeftClick>
+		<OnLoad>
+		  This:SetX[${BJXPBotSettingsXMLXPos}]
+		  This:SetY[${BJXPBotSettingsXMLYPos:Inc[${BJXPBotSettingsXMLYInc}]}]
+		  if ${This.Text.Equal[Not Used]}
+		  This:Hide
+		</OnLoad>		
+  </Template>
+	<!-- Main UI Window -->
+	<Window Name='bjxpbotsettings' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>800</Width>
+		<Height>500</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>Settings</Title> 
+		<OnLoad>
+		declarevariable settingsvar int global ${This.ID}
+		
+		declarevariable DisplayLooterCopper int global
+		declarevariable DisplayLooterSilver int global
+		declarevariable DisplayLooterGold int global
+		declarevariable DisplayLooterPlatinum int global
+		
+		declarevariable DisplayLooterSmall int global
+		declarevariable DisplayLooterTreasure int global
+		declarevariable DisplayLooterOrnate int global
+		declarevariable DisplayLooterExquisite int global
+		
+		declarevariable SetHomePoint bool global
+		declarevariable HomePointLocation point3f global
+		
+		declarevariable LooterPause bool global
+		
+		SetHomePoint:Set[FALSE]
+		LooterPause:Set[FALSE]
+		</OnLoad>
+		<OnUnLoad>
+		</OnUnLoad>
+		<Visible>0</Visible>
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>100%</Width>
+			<Height>10%</Height>
+			<Children>
+				<Text Name="Title" Template="Window.TitleBar.Title">
+					<Alignment>Left</Alignment>
+				</Text>
+			</Children>
+		</TitleBar>
+		
+	<!-- Start of layout -->
+	<Children>
+	    <Text name='SetVariables' template='Text'>
+        <X>1</X>
+        <Y>1</Y>
+        <visible>0</visible>
+        <Width>1</Width>
+        <Height>1</Height>
+        <Alignment>Left</Alignment>
+        <Text>This should be invisible</Text>
+        <OnLoad>
+          declare BJXPBotSettingsXMLXPos int global
+          declare BJXPBotSettingsXMLYPos int global
+          declare BJXPBotSettingsXMLXInc int global
+          declare BJXPBotSettingsXMLYInc int global
+          BJXPBotSettingsXMLXPos:Set[5]
+          BJXPBotSettingsXMLYPos:Set[-10]
+          BJXPBotSettingsXMLYInc:Set[25]
+          BJXPBotSettingsXMLXInc:Set[55]
+        </OnLoad>
+        <OnUnLoad>
+          deletevariable BJXPBotSettingsXMLXPos
+          deletevariable BJXPBotSettingsXMLYPos
+          deletevariable BJXPBotSettingsXMLXInc
+          deletevariable BJXPBotSettingsXMLYInc
+        </OnUnLoad>
+      </Text>
+		  <!-- Tabs column 1 -->
+      <Button Name="TabColumn1Button1" Template='Tab_Buttons'>
+		<Text>Potions</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Show
+		This.Parent.FindChild[Exp_Frame]:Hide
+		This.Parent.FindChild[Limits_Frame]:Hide
+		This.Parent.FindChild[Debug_Frame]:Hide	
+		This.Parent.FindChild[Setup_Frame]:Hide	
+		This.Parent.FindChild[Statistics_Frame]:Hide
+		This.Parent.FindChild[Looter_Frame]:Hide		
+		</OnLeftClick>
+      </Button>
+      <Button Name="TabColumn1Button2" Template='Tab_Buttons'>
+		<Text>XP Calculations</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Hide
+		This.Parent.FindChild[Exp_Frame]:Show
+		This.Parent.FindChild[Limits_Frame]:Hide
+		This.Parent.FindChild[Debug_Frame]:Hide
+		This.Parent.FindChild[Setup_Frame]:Hide	
+		This.Parent.FindChild[Statistics_Frame]:Hide
+		This.Parent.FindChild[Looter_Frame]:Hide		
+		</OnLeftClick>		
+      </Button>
+      <Button Name="TabColumn1Button3" Template='Tab_Buttons'>
+		<Text>Limits</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Hide
+		This.Parent.FindChild[Exp_Frame]:Hide
+		This.Parent.FindChild[Limits_Frame]:Show
+		This.Parent.FindChild[Debug_Frame]:Hide
+		This.Parent.FindChild[Setup_Frame]:Hide	
+		This.Parent.FindChild[Statistics_Frame]:Hide
+		This.Parent.FindChild[Looter_Frame]:Hide		
+		</OnLeftClick>		
+      </Button>	
+		<Button Name="TabColumn1Button6" Template='Tab_Buttons'>
+		<Text>Statistics</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Hide
+		This.Parent.FindChild[Exp_Frame]:Hide
+		This.Parent.FindChild[Limits_Frame]:Hide
+		This.Parent.FindChild[Debug_Frame]:Hide
+		This.Parent.FindChild[Setup_Frame]:Hide	
+		This.Parent.FindChild[Statistics_Frame]:Show
+		This.Parent.FindChild[Looter_Frame]:Hide		
+		</OnLeftClick>		
+       </Button>
+      <Button Name="TabColumn1Button7" Template='Tab_Buttons'>
+		<Text>Looter</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Hide
+		This.Parent.FindChild[Exp_Frame]:Hide
+		This.Parent.FindChild[Limits_Frame]:Hide
+		This.Parent.FindChild[Debug_Frame]:Hide
+		This.Parent.FindChild[Setup_Frame]:Hide	
+		This.Parent.FindChild[Statistics_Frame]:Hide	
+		This.Parent.FindChild[Looter_Frame]:Show	
+		</OnLeftClick>
+      </Button>		   
+      <Button Name="TabColumn1Button5" Template='Tab_Buttons'>
+		<Text>Setup</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Hide
+		This.Parent.FindChild[Exp_Frame]:Hide
+		This.Parent.FindChild[Limits_Frame]:Hide
+		This.Parent.FindChild[Debug_Frame]:Hide
+		This.Parent.FindChild[Setup_Frame]:Show	
+		This.Parent.FindChild[Statistics_Frame]:Hide
+		This.Parent.FindChild[Looter_Frame]:Hide		
+		</OnLeftClick>
+      </Button>	
+ <!--   <Button Name="TabColumn1Button4" Template='Tab_Buttons'>
+		<Text>Debug</Text>
+		<OnLeftClick>
+		This.Parent.FindChild[Potions_Frame]:Hide
+		This.Parent.FindChild[Exp_Frame]:Hide
+		This.Parent.FindChild[Limits_Frame]:Hide
+		This.Parent.FindChild[Debug_Frame]:Show
+		This.Parent.FindChild[Setup_Frame]:Hide	
+		This.Parent.FindChild[Statistics_Frame]:Hide		
+		</OnLeftClick>		
+       </Button>
+ -->   <Button Name='SaveButton'>
+		<Text>Save</Text>
+		<X>5</X>
+		<Y>400</Y>
+		<Width>110</Width>
+		<Height>40</Height>
+		<OnLeftClick>
+			p_count:Set[1]
+			d_count:Set[1]
+			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/SaveSettings"
+		</OnLeftClick>
+      </Button>	   
+ 
+<!-- Frames -->
+	  <frame name='Potions_Frame'>
+		<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		<Children>
+			  <checkbox name='EnablePotionsCheckbox'>
+				<Font>
+					<Name>EnablePotions</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>10</X>
+				<Y>10</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable enablepotionscheckboxvar int global ${This.ID}
+				enablepotionscheckboxvar:Set[${This.ID}]
+				</OnLoad>
+				<OnLeftClick>
+					if ${UIElement[EnablePotionsCheckbox@Potions_Frame@bjxpbotsettings].Checked}
+					{
+						EnableConsumePotion:Set[1]
+					}
+					else
+					{
+						EnableConsumePotion:Set[0]
+					}
+				</OnLeftClick>
+			</checkbox>	
+			<Text name='EnablePotionsText' template='Text'>
+				<X>30</X>
+				<Y>14</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Experience Potion Consumption</Text>
+			</Text>	
+			  <checkbox name='EnableVitalityPotionsCheckbox'>
+				<Font>
+					<Name>EnableVitalityPotions</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>10</X>
+				<Y>30</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableVitalityPotionsCheckboxVar int global ${This.ID}
+				EnableVitalityPotionsCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+				<OnLeftClick>
+					if ${UIElement[EnableVitalityPotionsCheckbox@Potions_Frame@bjxpbotsettings].Checked}
+					{
+						EnableConsumeVitalityPotion:Set[1]
+					}
+					else
+					{
+						EnableConsumeVitalityPotion:Set[0]
+					}
+				</OnLeftClick>
+			</checkbox>	
+			<Text name='EnableVitalityPotionsText' template='Text'>
+				<X>30</X>
+				<Y>34</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Vitality Replenishment</Text>
+			</Text>	
+			<CommandButton Name="RefreshInventoryButton" template='Button'>
+			<X>70</X>
+			<Y>55</Y>
+			<Width>150</Width>
+			<Height>40</Height>
+			<Font>
+				<Size>20</Size>
+			</Font>
+			<Text>Refresh Inventory</Text>
+			<Alignment>Center</Alignment>
+			<AutoTooltip>Refreshes the contents of the player inventory and displays them in the box below.</AutoTooltip>
+			<Command>Script[bjxpbotinventory]:QueueCommand[call RefreshInventoryQueue]</Command>
+			<OnLoad>
+				declarevariable RefreshInventoryButtonVar int global ${This.ID}
+			</OnLoad>
+			</CommandButton>
+			<Text name='SavePotionListText' template='Text'>
+			<X>365</X>
+			<Y>14</Y>
+			<Width>350</Width>
+			<Height>20</Height>
+			<Alignment>Left</Alignment>
+			<Font>
+				<Color>FFBE5522</Color>
+				<Size>16</Size>
+			</Font>
+			<Text>Potion List:</Text>
+			</Text>
+			<CommandButton Name="SavePotionListButton" template='Button'>
+			<X>430</X>
+			<Y>14</Y>
+			<Width>65</Width>
+			<Height>20</Height>
+			<Font>
+				<Size>12</Size>
+			</Font>
+			<Text>Save</Text>
+			<Alignment>Center</Alignment>
+			<Command>Script[bjxpbotinventory]:QueueCommand[call SaveList]</Command>
+			<OnLoad>
+				declarevariable SavePotionListButtonVar int global ${This.ID}
+			</OnLoad>
+			</CommandButton>
+			<CommandButton Name="LoadPotionListButton" template='Button'>
+			<X>505</X>
+			<Y>14</Y>
+			<Width>65</Width>
+			<Height>20</Height>
+			<Font>
+				<Size>12</Size>
+			</Font>
+			<Text>Load</Text>
+			<Alignment>Center</Alignment>
+			<Command>Script[bjxpbotinventory]:QueueCommand[call LoadListByName]</Command>
+			<OnLoad>
+				declarevariable LoadPotionListButtonVar int global ${This.ID}
+			</OnLoad>
+			</CommandButton>
+			<CommandButton Name="DeletePotionListButton" template='Button'>
+			<X>575</X>
+			<Y>14</Y>
+			<Width>65</Width>
+			<Height>20</Height>
+			<Font>
+				<Size>12</Size>
+			</Font>
+			<Text>Delete</Text>
+			<Alignment>Center</Alignment>
+			<Command>Script[bjxpbotinventory]:QueueCommand[call DeleteList]</Command>
+			<OnLoad>
+				declarevariable DeletePotionListButton int global ${This.ID}
+			</OnLoad>
+			</CommandButton>
+			<TextEntry Name='SavePotionListTextEntry'>
+				<X>365</X>
+				<Y>45</Y>
+				<Width>135</Width>
+				<Height>20</Height>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnLoad>
+					declarevariable SavePotionListTextEntryVar string global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable SavePotionListTextEntryVar
+				</OnUnLoad>
+				<OnChange>
+					SavePotionListTextEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<combobox name='SavePotionListComboBox'>
+			<X>505</X>
+			<Y>45</Y>
+			<Width>135</Width> 
+			<Height>20</Height> 
+				   <FullHeight>120</FullHeight>
+				   <ButtonWidth>20</ButtonWidth>
+			<Sort>Text</Sort>	   
+			<OnLoad>
+				Script[bjxpbotinventory]:QueueCommand[call UpdateListCombo]
+			</OnLoad>
+			</combobox>	
+			<Text name='FullInventoryText' template='Text'>
+				<X>100</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Full Inventory List</Text>
+			</Text>
+			<listbox name='FullInventoryListBox'>
+				<X>20</X>
+				<Y>120</Y>
+				<Width>250</Width>
+				<Height>310</Height>
+				<Sort>Text</Sort>
+				<OnDoubleLeftClick>
+					UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings]:AddItem[${FullInventoryListBoxTextVar}]
+				</OnDoubleLeftClick>
+				<OnSelect>
+					FullInventoryListBoxTextVar:Set[${UIElement[FullInventoryListBox@Potions_Frame@bjxpbotsettings].SelectedItem.Text}]
+					FullInventoryListBoxIDVar:Set[${UIElement[FullInventoryListBox@Potions_Frame@bjxpbotsettings].SelectedItem.ID}]
+				</OnSelect>
+				<OnLoad>
+					declarevariable FullInventoryListBoxTextVar string global ${This.ID}
+					declarevariable FullInventoryListBoxIDVar string global ${This.ID}
+				</OnLoad>
+			</listbox>
+			<Text name='InformationText' template='Text'>
+				<X>275</X>
+				<Y>175</Y>
+				<Width>100</Width>
+				<Height>250</Height>
+				<Wrap />
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Double click a potion from the list on the left to move it to the list on the right.  You can order the list on the right by clicking and dragging. To remove a potion, left click and then right click on it.</Text>
+			</Text>
+			<Text name='PotionPriorityText' template='Text'>
+				<X>460</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Potion Priority List</Text>
+			</Text>
+			<listbox name='PotionPriorityListBox'>
+				<X>380</X>
+				<Y>120</Y>
+				<Width>250</Width>
+				<Height>310</Height>
+				<Sort>User</Sort>
+				<OnRightClick>
+					UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings]:RemoveItem[${PotionPriorityListBoxIDVar}]
+				</OnRightClick>
+				<OnSelect>
+					PotionPriorityListBoxIDVar:Set[${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].SelectedItem.ID}]
+				</OnSelect>
+				<OnLoad>
+					declarevariable PotionPriorityListBoxTextVar string global ${This.ID}
+					declarevariable PotionPriorityListBoxIDVar string global ${This.ID}
+				</OnLoad>
+			</listbox>
+		</Children>	
+	  </frame>	 
+	  <frame name='Exp_Frame'>
+		<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		  <Visible>0</Visible>
+		  <Children>
+				<Text name='XPTrackText' template='Text'>
+					<X>200</X>
+					<Y>5%</Y>
+					<Width>250</Width>
+					<Height>20</Height>
+					<Alignment>Left</Alignment>
+					<Font>
+						<Color>FFBE5522</Color>
+						<Size>16</Size>
+					</Font>
+					<Text>Choose which type of XP to track:</Text>
+				</Text>			
+				<checkbox name='EnableAdvXPCheckbox'>
+						 <Font>
+						   <Name>EnableAdvXP</Name>
+						   <Size>30</Size>
+						   <Color>FF0000FF</Color>
+						</Font>
+					<X>15%</X>
+					<Y>15%</Y>	
+					<Width>23</Width> 
+					<Height>23</Height> 
+					<OnLoad>
+					declarevariable EnableAdvXPCheckboxvar int global ${This.ID}
+					EnableAdvXPCheckboxvar:Set[${This.ID}]	
+					</OnLoad>
+					<OnLeftClick>
+					This.Parent.FindChild[EnableTSXPCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableAAXPCheckbox]:SetChecked
+					
+					UIElement[${TSVitalityTextVar}]:Hide
+					UIElement[${VitalityTextVar}]:Show
+					UIElement[${ADVXpCalcText2Var}]:Hide
+					UIElement[${ADVXpCalcText1Var}]:Show
+					UIElement[${ADVXPCalcPerHourText2Var}]:Hide
+					UIElement[${ADVXPCalcPerHourText1Var}]:Show
+					UIElement[${AAXpCalcText2Var}]:Hide
+					UIElement[${AAXpCalcText1Var}]:Show	
+					UIElement[${AAXPCalcPerHourText2Var}]:Hide
+					UIElement[${AAXPCalcPerHourText1Var}]:Show
+					UIElement[${TSXpCalcText2Var}]:Hide
+					UIElement[${TSXpCalcText1Var}]:Hide
+					UIElement[${TSXPCalcPerHourText2Var}]:Hide
+					UIElement[${TSXPCalcPerHourText1Var}]:Hide
+					</OnLeftClick>
+				</checkbox>	
+				<Text name='AdvXPText' template='Text'>
+					<X>25%</X>
+					<Y>15%</Y>
+					<Width>350</Width>
+					<Height>20</Height>
+					<Alignment>Left</Alignment>
+					<Font>
+						<Color>FFBE5522</Color>
+						<Size>16</Size>
+					</Font>
+					<Text>ADV</Text>
+				</Text>	
+				<checkbox name='EnableTSXPCheckbox'>
+						 <Font>
+						   <Name>EnableTSXP</Name>
+						   <Size>30</Size>
+						   <Color>FF0000FF</Color>
+						</Font>
+					<X>40%</X>
+					<Y>15%</Y>	
+					<Width>23</Width> 
+					<Height>23</Height> 
+					<OnLoad>
+					declarevariable EnableTSXPCheckboxvar int global ${This.ID}
+					EnableTSXPCheckboxvar:Set[${This.ID}]
+					</OnLoad>
+					<OnLeftClick>
+					This.Parent.FindChild[EnableAdvXPCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableAAXPCheckbox]:UnsetChecked
+					
+					UIElement[${TSVitalityTextVar}]:Show
+					UIElement[${VitalityTextVar}]:Hide
+					UIElement[${ADVXpCalcText2Var}]:Hide
+					UIElement[${ADVXpCalcText1Var}]:Hide
+					UIElement[${ADVXPCalcPerHourText2Var}]:Hide
+					UIElement[${ADVXPCalcPerHourText1Var}]:Hide
+					UIElement[${AAXpCalcText2Var}]:Hide
+					UIElement[${AAXpCalcText1Var}]:Hide	
+					UIElement[${AAXPCalcPerHourText2Var}]:Hide
+					UIElement[${AAXPCalcPerHourText1Var}]:Hide
+					UIElement[${TSXpCalcText2Var}]:Hide
+					UIElement[${TSXpCalcText1Var}]:Show	
+					UIElement[${TSXPCalcPerHourText2Var}]:Hide
+					UIElement[${TSXPCalcPerHourText1Var}]:Show
+					</OnLeftClick>
+				</checkbox>	
+				<Text name='TSXPText' template='Text'>
+					<X>50%</X>
+					<Y>15%</Y>
+					<Width>350</Width>
+					<Height>20</Height>
+					<Alignment>Left</Alignment>
+					<Font>
+						<Color>FFBE5522</Color>
+						<Size>16</Size>
+					</Font>
+					<Text>TS</Text>
+				</Text>
+				<checkbox name='EnableAAXPCheckbox'>
+						 <Font>
+						   <Name>EnableAAXP</Name>
+						   <Size>30</Size>
+						   <Color>FF0000FF</Color>
+						</Font>
+					<X>65%</X>
+					<Y>15%</Y>	
+					<Width>23</Width> 
+					<Height>23</Height> 
+					<OnLoad>
+					declarevariable EnableAAXPCheckboxvar int global ${This.ID}
+					EnableAAXPCheckboxvar:Set[${This.ID}]		
+					</OnLoad>
+					<OnLeftClick>
+					This.Parent.FindChild[EnableTSXPCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableADVXPCheckbox]:SetChecked
+					
+					UIElement[${TSVitalityTextVar}]:Hide
+					UIElement[${VitalityTextVar}]:Show
+					UIElement[${ADVXpCalcText2Var}]:Hide
+					UIElement[${ADVXpCalcText1Var}]:Show
+					UIElement[${ADVXPCalcPerHourText2Var}]:Hide
+					UIElement[${ADVXPCalcPerHourText1Var}]:Show
+					UIElement[${AAXpCalcText2Var}]:Hide
+					UIElement[${AAXpCalcText1Var}]:Show	
+					UIElement[${AAXPCalcPerHourText2Var}]:Hide
+					UIElement[${AAXPCalcPerHourText1Var}]:Show
+					UIElement[${TSXpCalcText2Var}]:Hide
+					UIElement[${TSXpCalcText1Var}]:Hide
+					UIElement[${TSXPCalcPerHourText2Var}]:Hide
+					UIElement[${TSXPCalcPerHourText1Var}]:Hide
+					</OnLeftClick>
+				</checkbox>	
+				<Text name='AAXPText' template='Text'>
+					<X>75%</X>
+					<Y>15%</Y>
+					<Width>350</Width>
+					<Height>20</Height>
+					<Alignment>Left</Alignment>
+					<Font>
+						<Color>FFBE5522</Color>
+						<Size>16</Size>
+					</Font>
+					<Text>AA</Text>
+				</Text>
+		  </Children>
+	  </frame>	
+	<frame name='Limits_Frame'>
+		<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		<Visible>0</Visible>
+		<Children>
+			 <checkbox name='EnableTimeLimitCheckbox'>
+				<Font>
+					<Name>EnableTimeLimit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>20</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<AutoTooltip>Enter the time of day to end the script in the textfield.  Must be in a 24 hour format.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableTimeLimitCheckboxVar int global ${This.ID}
+				EnableTimeLimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+				<OnLeftClick>
+					This.Parent.FindChild[EnableADVLevelLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableAALevelLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableTSLevelLimitCheckbox]:UnsetChecked
+				</OnLeftClick>
+			</checkbox>	
+			<Text name='EnableTimeLimitText' template='Text'>
+				<X>40</X>
+				<Y>24</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the time of day to end the script in the textfield.  Must be in a 24 hour format.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Time Limit</Text>
+			</Text>				
+			<TextEntry Name='UserEndTimeEntry'>
+				<X>40</X>
+				<Y>40</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the time of day to end the script in the textfield.  Must be in a 24 hour format.</AutoTooltip>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>3</MaxLength>
+				<OnLoad>
+					declarevariable UserEndTimeVar int global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable UserEndTimeVar
+				</OnUnLoad>
+				<OnChange>
+					UserEndTimeVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='EnableTimeLimitText2' template='Text'>
+				<X>80</X>
+				<Y>42</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the time of day to end the script in the textfield.  Must be in a 24 hour format.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Time of Day</Text>
+			</Text>				
+			 <checkbox name='EnableADVLevelLimitCheckbox'>
+				<Font>
+					<Name>EnableLevelLimit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>60</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enter an ADV level to perform the options below.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableADVLevelLimitCheckboxVar int global ${This.ID}
+				EnableADVLevelLimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+				<OnLeftClick>
+					This.Parent.FindChild[EnableTimeLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableAALevelLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableTSLevelLimitCheckbox]:UnsetChecked
+				</OnLeftClick>
+			</checkbox>	
+			<Text name='EnableADVLevelLimitText' template='Text'>
+				<X>40</X>
+				<Y>64</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter an ADV level to perform the options below.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable ADV Level Limit</Text>
+			</Text>	
+			<TextEntry Name='LevelAdvLimitEntry'>
+				<X>40</X>
+				<Y>80</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter a level to end the script in the boxes.</AutoTooltip>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable LevelAdvLimitVar int global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable LevelAdvLimitVar
+				</OnUnLoad>
+				<OnChange>
+					LevelAdvLimitVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>	
+			<Text name='EnableLevelLimitText4' template='Text'>
+				<X>80</X>
+				<Y>82</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>ADV Level</Text>
+			</Text>
+			<checkbox name='EnableAASliderBar1LimitCheckbox'>
+				<Font>
+					<Name>EnableAASliderBar1Limit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>40</X>
+				<Y>100</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enables the changing of the AA slider bar when ADV limit is reached.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableAASliderBar1LimitCheckboxVar int global ${This.ID}
+				EnableAASliderBar1LimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableAASliderBar1LimitText' template='Text'>
+				<X>60</X>
+				<Y>102</Y>
+				<Width>450</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>When ADV Limit has been reached, change the AA slider bar to</Text>
+			</Text>	
+			<TextEntry Name='EnableAASliderBar1LimitTextEntry'>
+				<X>430</X>
+				<Y>100</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the percentage to change the AA slider bar to.</AutoTooltip>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable EnableAASliderBar1LimitTextEntryVar int global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable EnableAASliderBar1LimitTextEntryVar
+				</OnUnLoad>
+				<OnChange>
+					EnableAASliderBar1LimitTextEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<checkbox name='EnableAALevelLimitCheckbox'>
+				<Font>
+					<Name>EnableLevelLimit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>120</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enter an AA level to perform the options below.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableAALevelLimitCheckboxVar int global ${This.ID}
+				EnableAALevelLimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+				<OnLeftClick>
+					This.Parent.FindChild[EnableADVLevelLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableTimeLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableTSLevelLimitCheckbox]:UnsetChecked
+				</OnLeftClick>
+			</checkbox>	
+			<Text name='EnableAALevelLimitText' template='Text'>
+				<X>40</X>
+				<Y>124</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter an AA level to perform the options below.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable AA Level Limit</Text>
+			</Text>
+			<TextEntry Name='LevelAALimitEntry'>
+				<X>40</X>
+				<Y>140</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter a level to end the script in the boxes.</AutoTooltip>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable LevelAALimitVar int global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable LevelAALimitVar
+				</OnUnLoad>
+				<OnChange>
+					LevelAALimitVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='EnableLevelLimitText3' template='Text'>
+				<X>80</X>
+				<Y>142</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter a level to end the script in the boxes.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>AA Level</Text>
+			</Text>
+			<checkbox name='EnableAASliderBar2LimitCheckbox'>
+				<Font>
+					<Name>EnableAASliderBar2Limit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>40</X>
+				<Y>160</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enables the changing of the AA slider bar when AA limit is reached.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableAASliderBar2LimitCheckboxVar int global ${This.ID}
+				EnableAASliderBar2LimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableAASliderBar2LimitText' template='Text'>
+				<X>60</X>
+				<Y>162</Y>
+				<Width>450</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>When AA Limit has been reached, change the AA slider bar to</Text>
+			</Text>			
+			<TextEntry Name='EnableAASliderBar2LimitTextEntry'>
+				<X>420</X>
+				<Y>160</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the percentage to change the AA slider bar to.</AutoTooltip>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable EnableAASliderBar2LimitTextEntryVar int global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable EnableAASliderBar2LimitTextEntryVar
+				</OnUnLoad>
+				<OnChange>
+					EnableAASliderBar2LimitTextEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<checkbox name='EnableTSLevelLimitCheckbox'>
+				<Font>
+					<Name>EnableTSLevelLimit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>180</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enter an TS level to perform the options below.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableTSLevelLimitCheckboxVar int global ${This.ID}
+				EnableTSLevelLimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+				<OnLeftClick>
+					This.Parent.FindChild[EnableADVLevelLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableAALevelLimitCheckbox]:UnsetChecked
+					This.Parent.FindChild[EnableTimeLimitCheckbox]:UnsetChecked
+				</OnLeftClick>
+			</checkbox>	
+			<Text name='EnableTSLevelLimitText' template='Text'>
+				<X>40</X>
+				<Y>184</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter a TS level to perform the options below.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable TS Level Limit</Text>
+			</Text>
+			<TextEntry Name='LevelTSLimitEntry'>
+				<X>40</X>
+				<Y>200</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter a TS level to end the script in the boxes.</AutoTooltip>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable LevelTSLimitVar int global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable LevelTSLimitVar
+				</OnUnLoad>
+				<OnChange>
+					LevelTSLimitVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='EnableTSLevelLimitText3' template='Text'>
+				<X>80</X>
+				<Y>202</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter a TS level to end the script in the boxes.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>TS Level</Text>
+			</Text>
+			<checkbox name='EnableSoundLimitCheckbox'>
+				<Font>
+					<Name>EnableSoundLimit</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>220</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Plays a sound when any limit is reached.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableSoundLimitCheckboxVar int global ${This.ID}
+				EnableSoundLimitCheckboxVar:Set[${This.ID}]
+				</OnLoad>				
+			</checkbox>
+			<Text name='EnableSoundLimitText' template='Text'>
+				<X>40</X>
+				<Y>222</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Play a sound when any limit is reached</Text>
+			</Text>
+			<checkbox name='EnableLimitDropboxCheckbox'>
+				<Font>
+					<Name>EnableLimitDropboxCheckbox</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>240</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enables selecting what to do when a limit is reached from the dropbox.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableLimitDropboxCheckboxVar int global ${This.ID}
+				EnableLimitDropboxCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableLimitDropboxText' template='Text'>
+				<X>40</X>
+				<Y>242</Y>
+				<Width>500</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>When any Limit has been reached perform the following command:</Text>
+			</Text>	
+			<combobox name='LimitReachedComboBox'>
+			<X>430</X>
+			<Y>240</Y>
+			<Width>140</Width> 
+			<Height>20</Height> 
+				   <FullHeight>120</FullHeight>
+				   <ButtonWidth>20</ButtonWidth>
+			<Items>
+			<Item Value='1' Default='1'>Please choose...</Item>
+			<Item Value='2'>Leave group</Item>
+			<Item Value='3'>Camp to login screen</Item>
+			<Item Value='4'>Quit to login screen</Item>
+			<Item Value='5'>Disable potion consumption</Item>
+			<Item Value='6'>End entire script</Item>
+			</Items>
+			<OnSelect>
+				LimitReachedComboBoxVar:Set[${UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings].SelectedItem.Text}]
+			</OnSelect>
+			<OnLoad>
+				declarevariable LimitReachedComboBoxVar string global ${This.ID}
+				LimitReachedComboBoxVar:Set[${UIElement[LimitReachedComboBox@Limits_Frame@bjxpbotsettings].SelectedItem.Text}]
+			</OnLoad>
+			</combobox>			
+		</Children>
+	</frame>
+	<frame name='Statistics_Frame'>
+		<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		<Visible>0</Visible>
+		<Children>
+			<checkbox name='EnableIRCRelayCheckbox'>
+				<Font>
+					<Name>EnableIRCRelayCheckbox</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>20</X>
+				<Y>360</Y>	
+				<Width>133</Width> 
+				<Height>23</Height>
+				<AutoTooltip>Enables the irc relay script, which posts level/aa gain in an irc channel.</AutoTooltip>
+				<OnLoad>
+				declarevariable EnableIRCRelayCheckboxVar int global ${This.ID}
+				EnableIRCRelayCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>			
+			<Text name='EnableIRCRelayText' template='Text'>
+				<X>40</X>
+				<Y>364</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enables the irc relay script, which posts level/aa gain in an irc channel.</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable IRC Relay Script</Text>
+			</Text>
+			<Text name='IRCServerText' template='Text'>
+				<X>60</X>
+				<Y>380</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the irc server you want to connect to. (IE. irc.lavishsoft.com)</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>IRC Server:</Text>
+			</Text>
+			<TextEntry Name='IRCServerTextEntry'>
+				<X>130</X>
+				<Y>380</Y>
+				<Width>150</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the irc server you want to connect to. (IE. irc.lavishsoft.com)</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>30</MaxLength>
+				<OnLoad>
+					declarevariable IRCServerTextEntryVar string global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable IRCServerTextEntryVar
+				</OnUnLoad>
+				<OnChange>
+					IRCServerTextEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>	
+			<Text name='IRCChannelText' template='Text'>
+				<X>290</X>
+				<Y>380</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the irc channel you want to connect to starting with #. (IE. #leveling)</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>IRC Channel:</Text>
+			</Text>
+			<TextEntry Name='IRCChannelTextEntry'>
+				<X>370</X>
+				<Y>380</Y>
+				<Width>150</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the irc channel you want to connect to starting with #. (IE. #leveling)</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>30</MaxLength>
+				<OnLoad>
+					declarevariable IRCChannelTextEntryVar string global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable IRCChannelTextEntryVar
+				</OnUnLoad>
+				<OnChange>
+					IRCChannelTextEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='IRCNicknameSuffixText' template='Text'>
+				<X>60</X>
+				<Y>400</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the irc nickname suffix you want to use. (IE. _grindinghard)</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>IRC Nickname Suffix:</Text>
+			</Text>
+			<TextEntry Name='IRCNicknameSuffixTextEntry'>
+				<X>180</X>
+				<Y>400</Y>
+				<Width>150</Width>
+				<Height>20</Height>
+				<AutoTooltip>Enter the irc nickname suffix you want to use. (IE. _grindinghard)</AutoTooltip>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>30</MaxLength>
+				<OnLoad>
+					declarevariable IRCNicknameSuffixTextEntryVar string global
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable IRCNicknameSuffixTextEntryVar
+				</OnUnLoad>
+				<OnChange>
+					IRCNicknameSuffixTextEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+		</Children>
+	</frame>
+	<frame name='Looter_Frame'>
+	<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		  <Visible>0</Visible>
+		  <Children>
+			<Text name='ScanRangeText' template='Text'>
+				<X>150</X>
+				<Y>20</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Scan Range:</Text>
+			</Text>
+			<TextEntry Name='ScanRangeTextEntry'>
+				<X>230</X>
+				<Y>17</Y>
+				<Width>40</Width>
+				<Height>20</Height>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>3</MaxLength>
+				<OnLoad>
+					declarevariable ScanRangeTextEntry int global
+					ScanRangeTextEntry:Set[ ]
+				</OnLoad>
+				<OnChange>
+					ScanRangeTextEntry:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>			
+			<CommandButton Name="SetHomePointButton" template='Button'>
+				<X>330</X>
+				<Y>17</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Set Home Point</Text>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFCC0033</Color>
+				</Font>
+				<OnLeftClick>
+					SetHomePoint:Set[TRUE]
+					HomePointLocation:Set[${Me.ToActor.Loc}]
+					This.Parent.FindChild[ResetHomePointButton]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable SetHomePointButtonVar int global ${This.ID}
+				</OnLoad>
+			</CommandButton>
+			<CommandButton Name="ResetHomePointButton" template='Button'>
+				<X>330</X>
+				<Y>17</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Visible>0</Visible>
+				<Text>Reset Home Point</Text>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FF33FF00</Color>
+				</Font>
+				<OnLeftClick>
+					SetHomePoint:Set[FALSE]
+					This.Parent.FindChild[SetHomePointButton]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable ResetHomePointButtonVar int global ${This.ID}
+				</OnLoad>
+			</CommandButton>
+			<Text name='EnableLootText' template='Text'>
+				<X>190</X>
+				<Y>40</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Check the boxes below to enable looting for:</Text>
+			</Text>
+			<checkbox name='EnableExquisiteChestCheckbox'>
+				<Font>
+				<Name>EnableExquisiteChestCheckbox</Name>
+				<Size>30</Size>
+				<Color>FF0000FF</Color>
+				</Font>
+				<X>150</X>
+				<Y>60</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableExquisiteChestCheckboxVar int global ${This.ID}
+				EnableExquisiteChestCheckboxVar:Set[${This.ID}]
+				
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableExquisiteChestText' template='Text'>
+				<X>170</X>
+				<Y>63</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Exquisite Chest</Text>
+			</Text>
+			<checkbox name='EnableOrnateChestCheckbox'>
+				<Font>
+				<Name>EnableOrnateChestCheckbox</Name>
+				<Size>30</Size>
+				<Color>FF0000FF</Color>
+				</Font>
+				<X>270</X>
+				<Y>60</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableOrnateChestCheckboxVar int global ${This.ID}
+				EnableOrnateChestCheckboxVar:Set[${This.ID}]
+				
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableOrnateChestText' template='Text'>
+				<X>290</X>
+				<Y>63</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Ornate Chest</Text>
+			</Text>
+			<checkbox name='EnableTreasureChestCheckbox'>
+				<Font>
+				<Name>EnableTreasureChestCheckbox</Name>
+				<Size>30</Size>
+				<Color>FF0000FF</Color>
+				</Font>
+				<X>380</X>
+				<Y>60</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableTreasureChestCheckboxVar int global ${This.ID}
+				EnableTreasureChestCheckboxVar:Set[${This.ID}]
+				
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableTreasureChestText' template='Text'>
+				<X>400</X>
+				<Y>63</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Treasure Chest</Text>
+			</Text>
+			<checkbox name='EnableSmallChestCheckbox'>
+				<Font>
+				<Name>EnableSmallChestCheckbox</Name>
+				<Size>30</Size>
+				<Color>FF0000FF</Color>
+				</Font>
+				<X>220</X>
+				<Y>80</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableSmallChestCheckboxVar int global ${This.ID}
+				EnableSmallChestCheckboxVar:Set[${This.ID}]
+				
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableSmallChestText' template='Text'>
+				<X>240</X>
+				<Y>83</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Small Chest</Text>
+			</Text>
+			<checkbox name='EnableLootBodyCheckbox'>
+				<Font>
+				<Name>EnableLootBodyCheckbox</Name>
+				<Size>30</Size>
+				<Color>FF0000FF</Color>
+				</Font>
+				<X>320</X>
+				<Y>80</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableLootBodyCheckboxVar int global ${This.ID}
+				EnableLootBodyCheckboxVar:Set[${This.ID}]
+				
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableLootBodyText' template='Text'>
+				<X>340</X>
+				<Y>83</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Loot Bodies</Text>
+			</Text>
+			<Text name='LootedStatisticsText' template='Text'>
+				<X>150</X>
+				<Y>100</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FF339933</Color>
+					<Size>18</Size>
+				</Font>
+				<Text>Looted Statistics:</Text>
+			</Text>
+			<Text name='LootedExquisiteText' template='Text'>
+				<X>150</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<OnRender>
+					This:SetText["Exquisite: ${DisplayLooterExquisite.LeadingZeroes[1]}"]
+				</OnRender>
+			</Text>
+			<Text name='LootedOrnateText' template='Text'>
+				<X>240</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<OnRender>
+					This:SetText["Ornate: ${DisplayLooterOrnate.LeadingZeroes[1]}"]
+				</OnRender>
+			</Text>
+			<Text name='LootedTreasureText' template='Text'>
+				<X>320</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<OnRender>
+					This:SetText["Treasure: ${DisplayLooterTreasure.LeadingZeroes[1]}"]
+				</OnRender>
+			</Text>
+			<Text name='LootedSmallText' template='Text'>
+				<X>410</X>
+				<Y>120</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text></Text>
+				<OnRender>
+					This:SetText["Small: ${DisplayLooterSmall.LeadingZeroes[1]}"]
+				</OnRender>
+			</Text>
+			<Text name='LooterLootedCoinText' template='Text'>
+				<X>150</X>
+				<Y>140</Y>
+				<Width>450</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<OnRender>
+					This:SetText[Amount of Looted Coin: P = ${DisplayLooterPlatinum.LeadingZeroes[1]} G = ${DisplayLooterGold.LeadingZeroes[2]} S = ${DisplayLooterSilver.LeadingZeroes[2]} C = ${DisplayLooterCopper.LeadingZeroes[2]}]
+				</OnRender>
+				<Text></Text>
+			</Text>
+			<CommandButton Name="StartLooterButton" template='Button'>
+				<X>160</X>
+				<Y>160</Y>
+				<Width>110</Width>
+				<Height>40</Height>
+				<Text>Start</Text>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Size>20</Size>
+				</Font>
+				<OnLeftClick>
+					runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjlooter/bjlooter"	
+					This.Parent.FindChild[StopLooterButton]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable StartLooterButtonVar int global ${This.ID}
+				</OnLoad>
+			</CommandButton>
+			<CommandButton Name="StopLooterButton" template='Button'>
+				<X>160</X>
+				<Y>160</Y>
+				<Width>110</Width>
+				<Height>40</Height>
+				<Text>Stop</Text>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Size>20</Size>
+				</Font>
+				<visible>0</visible>
+				<OnLeftClick>
+					if ${Script[bjlooter](exists)}
+						endscript bjlooter
+					eq2press -release w	
+					This.Parent.FindChild[StartLooterButton]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable StopLooterButtonVar int global ${This.ID}
+				</OnLoad>
+			</CommandButton>
+			<CommandButton Name="PauseLooterButton" template='Button'>
+				<X>360</X>
+				<Y>160</Y>
+				<Width>110</Width>
+				<Height>40</Height>
+				<Text>Pause</Text>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Size>20</Size>
+				</Font>
+				<OnLeftClick>
+					LooterPause:Set[TRUE]
+					eq2press -release w
+					This.Parent.FindChild[ResumeLooterButton]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable PauseLooterButtonVar int global ${This.ID}
+				</OnLoad>
+			</CommandButton>
+			<CommandButton Name="ResumeLooterButton" template='Button'>
+				<X>360</X>
+				<Y>160</Y>
+				<Width>110</Width>
+				<Height>40</Height>
+				<Text>Resume</Text>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Size>20</Size>
+				</Font>
+				<visible>0</visible>
+				<OnLeftClick>
+					LooterPause:Set[FALSE]
+					This.Parent.FindChild[PauseLooterButton]:Show
+					This:Hide
+				</OnLeftClick>
+				<OnLoad>
+					declarevariable ResumeLooterButtonVar int global ${This.ID}
+				</OnLoad>
+			</CommandButton>
+		</Children>	
+	</frame>	
+	<frame name='Setup_Frame'>
+		<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		<Visible>0</Visible>
+		<Children>
+			<Text name='CurrentMaxAdvLevelText' template='Text'>
+				<X>30</X>
+				<Y>30</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Current EQ2 Maximum ADV Level:</Text>
+			</Text>
+			<TextEntry Name='CurrentMaxAdvLevelEntry'>
+				<X>230</X>
+				<Y>30</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable CurrentMaxAdvLevelEntryVar int global
+					if ${CurrentMaxAdvLevelEntryVar} == 0
+					{
+						CurrentMaxAdvLevelEntryVar:Set[90]
+						UIElement[CurrentMaxAdvLevelEntry@Setup_Frame@bjxpbotsettings]:SetText[90]
+					}
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable CurrentMaxAdvLevelEntryVar
+				</OnUnLoad>
+				<OnChange>
+					CurrentMaxAdvLevelEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='CurrentMaxTSLevelText' template='Text'>
+				<X>30</X>
+				<Y>50</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Current EQ2 Maximum TS Level:</Text>
+			</Text>
+			<TextEntry Name='CurrentMaxTSLevelEntry'>
+				<X>230</X>
+				<Y>50</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable CurrentMaxTSLevelEntryVar int global
+					if ${CurrentMaxTSLevelEntryVar} == 0
+					{
+						CurrentMaxTSLevelEntryVar:Set[90]
+						UIElement[CurrentMaxTSLevelEntry@Setup_Frame@bjxpbotsettings]:SetText[90]
+					}
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable CurrentMaxTSLevelEntryVar
+				</OnUnLoad>
+				<OnChange>
+					CurrentMaxTSLevelEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='CurrentMaxAALevelText' template='Text'>
+				<X>30</X>
+				<Y>70</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Current EQ2 Maximum AA Level:</Text>
+			</Text>
+			<TextEntry Name='CurrentMaxAALevelEntry'>
+				<X>230</X>
+				<Y>70</Y>
+				<Width>30</Width>
+				<Height>20</Height>
+				<Alignment>Center</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<MaxLength>4</MaxLength>
+				<OnLoad>
+					declarevariable CurrentMaxAALevelEntryVar int global
+					if ${CurrentMaxAALevelEntryVar} == 0
+					{
+						CurrentMaxAALevelEntryVar:Set[${Me.MaxAPs}]
+						UIElement[CurrentMaxAALevelEntry@Setup_Frame@bjxpbotsettings]:SetText[${Me.MaxAPs}]
+					}	
+				</OnLoad>
+				<OnUnLoad>
+					deletevariable CurrentMaxAALevelEntryVar
+				</OnUnLoad>
+				<OnChange>
+					CurrentMaxAALevelEntryVar:Set[${This.Text}]
+				</OnChange>
+			</TextEntry>
+			<Text name='PowerlevelerText' template='Text'>
+				<X>30</X>
+				<Y>94</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Powerleveler:</Text>
+			</Text>
+			<combobox name='PowerlevelerComboBox'>
+			<X>110</X>
+			<Y>90</Y>
+			<Width>140</Width> 
+			<Height>20</Height> 
+				   <FullHeight>110</FullHeight>
+				   <ButtonWidth>20</ButtonWidth>
+		  	<Items>
+			<Item Value='1' Default='1'>Please choose...</Item>
+			
+			</Items>
+			<OnSelect>
+				PowerlevelerComboBoxVar:Set[${UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]
+			</OnSelect>
+			<OnLoad>
+				declarevariable PowerlevelerComboBoxVar string global ${This.ID}
+				PowerlevelerComboBoxVar:Set[${UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]	
+			</OnLoad>
+			<OnLeftClick>
+					This:ClearItems
+					if ${Me.GroupCount} &lt; 2
+					{
+						This:AddItem[${Me.Group[0]},2]
+					}
+					elseif ${Me.GroupCount} &lt; 3
+					{
+						This:AddItem[${Me.Group[0]},2]
+						This:AddItem[${Me.Group[1]},3]
+					}
+					elseif ${Me.GroupCount} &lt; 4
+					{
+						This:AddItem[${Me.Group[0]},2]
+						This:AddItem[${Me.Group[1]},3]
+						This:AddItem[${Me.Group[2]},4]
+					}
+					elseif ${Me.GroupCount} &lt; 5
+					{
+						This:AddItem[${Me.Group[0]},2]
+						This:AddItem[${Me.Group[1]},3]
+						This:AddItem[${Me.Group[2]},4]
+						This:AddItem[${Me.Group[3]},5]
+					}
+					elseif ${Me.GroupCount} &lt; 6
+					{
+						This:AddItem[${Me.Group[0]},2]
+						This:AddItem[${Me.Group[1]},3]
+						This:AddItem[${Me.Group[2]},4]
+						This:AddItem[${Me.Group[3]},5]
+						This:AddItem[${Me.Group[4]},6]
+					}
+					else
+					{
+						This:AddItem[${Me.Group[0]},2]
+						This:AddItem[${Me.Group[1]},3]
+						This:AddItem[${Me.Group[2]},4]
+						This:AddItem[${Me.Group[3]},5]
+						This:AddItem[${Me.Group[4]},6]
+						This:AddItem[${Me.Group[5]},7]
+					}
+					UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings]:SetAutoSort[TRUE]
+					UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings]:SetSortType[text]
+					UIElement[PowerlevelerComboBox@Setup_Frame@bjxpbotsettings]:Sort
+					
+			</OnLeftClick>
+			</combobox>
+			<Text name='PowerlevelerOptionsText' template='Text'>
+				<X>30</X>
+				<Y>114</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>When the "Powerlevler" dies perform the following action:</Text>
+			</Text>
+			<combobox name='PowerlevelerOptionsComboBox'>
+			<X>365</X>
+			<Y>110</Y>
+			<Width>140</Width> 
+			<Height>20</Height> 
+				   <FullHeight>110</FullHeight>
+				   <ButtonWidth>20</ButtonWidth>
+		  	<Items>
+			<Item Value='1' Default='1'>Please choose...</Item>
+			<Item Value='2'>Play a sound</Item>
+			<Item Value='3'>Pause script</Item>
+			<Item Value='4'>Camp to login</Item>
+			<Item Value='5'>Quit to login</Item>
+			
+			</Items>
+			<OnSelect>
+				PowerlevelerOptionsComboBoxVar:Set[${UIElement[PowerlevelerOptionsComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]
+			</OnSelect>
+			<OnLoad>
+				declarevariable PowerlevelerOptionsComboBoxVar string global ${This.ID}
+				PowerlevelerOptionsComboBoxVar:Set[${UIElement[PowerlevelerOptionsComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]	
+			</OnLoad>
+			<OnLeftClick>
+						
+			</OnLeftClick>
+			</combobox>
+			<checkbox name='EnableSelfReviveOptionsCheckbox'>
+				<Font>
+					<Name>EnableSelfReviveOptions</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>30</X>
+				<Y>130</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableSelfReviveOptionsCheckboxVar int global ${This.ID}
+				EnableSelfReviveOptionsCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>
+			<Text name='EnableSelfReviveOptionsText' template='Text'>
+				<X>50</X>
+				<Y>133</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Self Revival Options</Text>
+			</Text>
+			<Text name='EnableSelfReviveOptionsText2' template='Text'>
+				<X>70</X>
+				<Y>153</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>When you die, perform the following action:</Text>
+			</Text>
+			<combobox name='SelfReviveOptionsComboBox'>
+			<X>325</X>
+			<Y>150</Y>
+			<Width>140</Width> 
+			<Height>20</Height> 
+				   <FullHeight>110</FullHeight>
+				   <ButtonWidth>20</ButtonWidth>
+		  	<Items>
+			<Item Value='1' Default='1'>Please choose...</Item>
+			<Item Value='2'>Wait for a res</Item>
+			<Item Value='3'>Revive</Item>
+			<Item Value='4'>Quit to login</Item>
+			</Items>
+			<OnSelect>
+				SelfReviveOptionsComboBoxVar:Set[${UIElement[SelfReviveOptionsComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]
+			</OnSelect>
+			<OnLoad>
+				declarevariable SelfReviveOptionsComboBoxVar string global ${This.ID}
+				SelfReviveOptionsComboBoxVar:Set[${UIElement[SelfReviveOptionsComboBox@Setup_Frame@bjxpbotsettings].SelectedItem.Text}]	
+			</OnLoad>
+			<OnLeftClick>
+						
+			</OnLeftClick>
+			</combobox>
+		</Children>
+	</frame>	
+	<frame name='Debug_Frame'>
+		<X>15%</X>
+		<Y>3%</Y>
+		<Border>5</Border>
+		<Height>450</Height>
+		<Width>650</Width>
+		<Visible>0</Visible>
+		<Children>
+			  <checkbox name='EnablePotionsDebugCheckbox'>
+				<Font>
+					<Name>EnablePotionsDebug</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>5%</X>
+				<Y>5%</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable enablepotionsdebugcheckboxvar int global ${This.ID}
+				enablepotionsdebugcheckboxvar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>	
+			<Text name='EnablePotionsDebugText' template='Text'>
+				<X>15%</X>
+				<Y>6.5%</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Experience Potion Debugging</Text>
+			</Text>	
+			  <checkbox name='EnableVitalityPotionsDebugCheckbox'>
+				<Font>
+					<Name>EnableVitalityPotionsDebug</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>5%</X>
+				<Y>15%</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableVitalityPotionsDebugCheckboxVar int global ${This.ID}
+				EnableVitalityPotionsDebugCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>	
+			<Text name='EnableVitalityPotionsDebugText' template='Text'>
+				<X>15%</X>
+				<Y>16.5%</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Vitality Replenishment Debugging</Text>
+			</Text>	
+			  <checkbox name='EnableAdvXPCalcDebugCheckbox'>
+				<Font>
+					<Name>EnableAdvXPCalcDebug</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>5%</X>
+				<Y>28%</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableAdvXPCalcDebugCheckboxvar int global ${This.ID}
+				EnableAdvXPCalcDebugCheckboxvar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>	
+			<Text name='EnableAdvXPCalcDebugText' template='Text'>
+				<X>15%</X>
+				<Y>28%</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable Adv. Experience Calculation Debugging</Text>
+			</Text>	
+			  <checkbox name='EnableAAXPCalcDebugCheckbox'>
+				<Font>
+					<Name>EnableAAXPCalcDebug</Name>
+					<Size>30</Size>
+					<Color>FF0000FF</Color>
+				</Font>
+				<X>5%</X>
+				<Y>39.5%</Y>	
+				<Width>133</Width> 
+				<Height>23</Height> 
+				<OnLoad>
+				declarevariable EnableAAXPCalcDebugCheckboxVar int global ${This.ID}
+				EnableAAXPCalcDebugCheckboxVar:Set[${This.ID}]
+				</OnLoad>
+			</checkbox>	
+			<Text name='EnableAAXPCalcDebugText' template='Text'>
+				<X>15%</X>
+				<Y>39.5%</Y>
+				<Width>350</Width>
+				<Height>20</Height>
+				<Alignment>Left</Alignment>
+				<Font>
+					<Color>FFBE5522</Color>
+					<Size>16</Size>
+				</Font>
+				<Text>Enable AA Experience Calculation Debugging</Text>
+			</Text>			
+		</Children>
+	</frame>	
+	</Children>			
+  </Window>
+</ISUI>

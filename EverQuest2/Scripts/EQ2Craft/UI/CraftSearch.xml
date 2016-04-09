@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Window name='CraftSearch'>
+		<X>100</X>
+		<Y>100</Y>
+		<Width>200</Width>
+		<Height>80</Height>
+		<Visible>0</Visible>
+		<Title>Recipe Search</Title>
+		<Children>
+			<Textentry name="Search String">
+				<X>7</X>
+				<Y>7</Y>
+				<Width>186</Width>
+				<Height>20</Height>
+				<Font>
+					<Name>Sans Serif</Name>
+					<Size>16</Size>
+				</Font>
+				<OnKeyUp>
+					if ${Key.Equal[Enter]}
+					ICraft.Search:Search[ALL]
+				</OnKeyUp>
+			</Textentry>
+			<Button name="Reset">
+				<X>7</X>
+				<Y>30</Y>
+				<Height>25</Height>
+				<Width>62</Width>
+				<Text>Reset Search</Text>
+				<Font>
+					<Name>Sans Serif</Name>
+					<Size>12</Size>
+				</Font>
+				<OnLeftClick>
+					ICraft.Search:Reset
+				</OnLeftClick>
+			</Button>
+			<Button name="Search Any">
+				<X>69</X>
+				<Y>30</Y>
+				<Height>25</Height>
+				<Width>62</Width>
+				<Text>Search Any</Text>
+				<Font>
+					<Name>Sans Serif</Name>
+					<Size>12</Size>
+				</Font>
+				<OnLeftClick>
+					ICraft.Search:Search[ANY]
+				</OnLeftClick>
+			</Button>
+			<Button name="Search All">
+				<X>131</X>
+				<Y>30</Y>
+				<Height>25</Height>
+				<Width>62</Width>
+				<Text>Search All</Text>
+				<Font>
+					<Name>Sans Serif</Name>
+					<Size>12</Size>
+				</Font>
+				<OnLeftClick>
+					ICraft.Search:Search[ALL]
+				</OnLeftClick>
+			</Button>
+		</Children>
+	</Window>
+</ISUI>

@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Template Name='VG.Font'>
+		<Name>Tahoma</Name>
+		<Size>14</Size>
+		<Color>FF100000</Color>
+	</Template>
+	<Template Name="VG.BoldFont" Template="VG.Font">
+		<Bold />
+	</Template>
+		<template name='VG.Text.Font' Template='VG.Font' />
+	<template name='VG.Text'>
+		<Font Template='VG.Text.Font' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<template name='VG.BoldText'>
+		<Font Template='VG.BoldFont' />
+		<Wrap>0</Wrap>
+		<Alignment>Left</Alignment>
+		<VerticalAlignment>Top</VerticalAlignment>
+	</template>
+	<Window Name='vgassist' Template='VG.Window'>
+		<StorePosition>1</StorePosition>
+		<Title>Vanguard Assist Bot</Title>
+		<TitleBarTextColor>FFFFFFFF</TitleBarTextColor>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>340</Width>
+		<Height>480</Height>
+		<StorePosition>1</StorePosition>
+		<Title>VanguardAssist</Title>
+			<TitleBar template='VG.window.TitleBar'>
+			<X>0</X>
+			<Y>0</Y>
+			<Width>100%</Width>
+			<Height>18</Height>
+			<Children>
+				<Text Name="Title" Template="VG.Window.TitleBar.Title">
+					<X>18</X>
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="VG.Window.TitleBar.Minimize">
+					<X>1</X>
+					<Width>12</Width>
+					<Height>12</Height>
+				</Button>
+				<Button Name='Close' Template='VG.Window.TitleBar.Close'>
+         		 <X>r17</X>
+          		<Width>14</Width>
+          		<Height>14</Height>
+          		<OnLeftClick>
+            		Event[VGTrackEvent]:Execute[${This},"OnLeftClick"]
+         		 </OnLeftClick>
+        		</Button>
+			</Children>
+		</TitleBar>
+		<Client Template="VG.Window.Client">
+			<Y>18</Y>
+			<Height>r18</Height>
+			<Texture Template="VG.TabControl.FrameTexture" />
+		</Client>
+		<Children>
+<!--main tab control-->
+      <TabControl name='ABot' Template='VG.Tabcontrol'>
+        <X>0</X>
+        <Y>3</Y>
+        <Font>
+          <Name>Arial</Name>
+          <Size>14</Size>
+        </Font>
+        <TabHeight>18</TabHeight>
+        <TabBorder>2</TabBorder>
+        <Height>99%</Height>
+        <Width>99%</Width>
+        <Tabs>
+          <!--Top Level Main Tab-->
+          <Tab name='Main'>
+            <Frame name='MainFrame'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <BackgroundColor>FF000000</BackgroundColor>
+              <Texture></Texture>
+              <Children>
+                <!--SubMain tab control-->
+                <TabControl name='SubMain' Template='VG.Tabcontrol'>
+                  <X>0</X>
+                  <Y>3</Y>
+                  <Font>
+                    <Name>Arial</Name>
+                    <Size>14</Size>
+                  </Font>
+                  <TabHeight>18</TabHeight>
+                  <TabBorder>2</TabBorder>
+                  <Height>99%</Height>
+                  <Width>99%</Width>
+                  <Tabs>
+                    <!--2nd Level MainMain Tab-->
+                    <Tab name='MainMain'>
+                      <Frame name='MainMainFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                  </Tabs>
+                </TabControl>
+              </Children>
+            </Frame>
+          </Tab>
+          <!--Top Level Healer Tab-->
+          <Tab name='Healer'>
+            <Frame name='HealerFrame'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <BackgroundColor>FF000000</BackgroundColor>
+              <Texture></Texture>
+              <Children>
+                <!--SubHealer tab control-->
+                <TabControl name='SubHeaer' Template='VG.Tabcontrol'>
+                  <X>0</X>
+                  <Y>3</Y>
+                  <Font>
+                    <Name>Arial</Name>
+                    <Size>14</Size>
+                  </Font>
+                  <TabHeight>18</TabHeight>
+                  <TabBorder>2</TabBorder>
+                  <Height>99%</Height>
+                  <Width>99%</Width>
+                  <Tabs>
+                    <!--2nd Level MainHealer Tab-->
+                    <Tab name='MainHealer'>
+                      <Frame name='MainHealerFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainCleric Tab-->
+                    <Tab name='Cleric'>
+                      <Frame name='MainClericFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainShaman Tab-->
+                    <Tab name='Shaman'>
+                      <Frame name='MainShamanFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainDisc Tab-->
+                    <Tab name='Disc'>
+                      <Frame name='MainDiscFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainBMage Tab-->
+                    <Tab name='BMage'>
+                      <Frame name='MainBMageFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                  </Tabs>
+                </TabControl>
+              </Children>
+            </Frame>
+          </Tab>
+          <!--Top Level Caster Tab-->
+          <Tab name='Caster'>
+            <Frame name='CasterFrame'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <BackgroundColor>FF000000</BackgroundColor>
+              <Texture></Texture>
+              <Children>
+                <!--SubCaster tab control-->
+                <TabControl name='SubCaster' Template='VG.Tabcontrol'>
+                  <X>0</X>
+                  <Y>3</Y>
+                  <Font>
+                    <Name>Arial</Name>
+                    <Size>14</Size>
+                  </Font>
+                  <TabHeight>18</TabHeight>
+                  <TabBorder>2</TabBorder>
+                  <Height>99%</Height>
+                  <Width>99%</Width>
+                  <Tabs>
+                    <!--2nd Level MainCaster Tab-->
+                    <Tab name='MainCaster'>
+                      <Frame name='MainCasterFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainSorc Tab-->
+                    <Tab name='Sorc'>
+                      <Frame name='MainSorcFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainNecro Tab-->
+                    <Tab name='Necro'>
+                      <Frame name='MainNecroFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainDruid Tab-->
+                    <Tab name='Druid'>
+                      <Frame name='MainDruidFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainPsi Tab-->
+                    <Tab name='Psi'>
+                      <Frame name='MainPsiFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                  </Tabs>
+                </TabControl>
+              </Children>
+            </Frame>
+          </Tab>
+          <!--Top Level Melee Tab-->
+          <Tab name='Melee'>
+            <Frame name='MeleeFrame'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <BackgroundColor>FF000000</BackgroundColor>
+              <Texture></Texture>
+              <Children>
+                <!--SubMelee tab control-->
+                <TabControl name='SubMelee' Template='VG.Tabcontrol'>
+                  <X>0</X>
+                  <Y>3</Y>
+                  <Font>
+                    <Name>Arial</Name>
+                    <Size>14</Size>
+                  </Font>
+                  <TabHeight>18</TabHeight>
+                  <TabBorder>2</TabBorder>
+                  <Height>99%</Height>
+                  <Width>99%</Width>
+                  <Tabs>
+                    <!--2nd Level MainMelee Tab-->
+                    <Tab name='MainMelee'>
+                      <Frame name='MainMeleeFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainRogue Tab-->
+                    <Tab name='Rogue'>
+                      <Frame name='MainRogueFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainBard Tab-->
+                    <Tab name='Bard'>
+                      <Frame name='MainBardFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainRanger Tab-->
+                    <Tab name='Ranger'>
+                      <Frame name='MainRangerFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainMonk Tab-->
+                    <Tab name='Monk'>
+                      <Frame name='MainMonkFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                  </Tabs>
+                </TabControl>
+              </Children>
+            </Frame>
+          </Tab>
+          <!--Top Level Tank Tab-->
+          <Tab name='Tank'>
+            <Frame name='TankFrame'>
+              <Height>100%</Height>
+              <Width>100%</Width>
+              <BackgroundColor>FF000000</BackgroundColor>
+              <Texture></Texture>
+              <Children>
+                <!--SubMelee tab control-->
+                <TabControl name='SubMelee' Template='VG.Tabcontrol'>
+                  <X>0</X>
+                  <Y>3</Y>
+                  <Font>
+                    <Name>Times New Roman</Name>
+                    <Size>14</Size>
+                  </Font>
+                  <TabHeight>18</TabHeight>
+                  <TabBorder>2</TabBorder>
+                  <Height>99%</Height>
+                  <Width>99%</Width>
+                  <Tabs>
+                    <!--2nd Level MainTank Tab-->
+                    <Tab name='MainTank'>
+                      <Frame name='MainTankFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainPali Tab-->
+                    <Tab name='Pali'>
+                      <Frame name='MainPaliFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainDread Tab-->
+                    <Tab name='Dreadk'>
+                      <Frame name='MainDreadFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                    <!--2nd Level MainWarrior Tab-->
+                    <Tab name='Warrior'>
+                      <Frame name='MainWarriorFrame'>
+                        <Height>100%</Height>
+                        <Width>100%</Width>
+                        <Texture></Texture>
+                        <Children></Children>
+                      </Frame>
+                    </Tab>
+                  </Tabs>
+                </TabControl>
+              </Children>
+            </Frame>
+          </Tab>
+        </Tabs>
+      </TabControl>	
+  </Children>
+    
+	</Window>
+</ISUI>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Window name='EQ2AFKAlarm Config'>
+		<X>200</X>
+		<Y>500</Y>
+		<Width>300</Width>
+		<Height>185</Height>
+		<StorePosition>1</StorePosition>
+		<TitleBar template='window.TitleBar'>
+			<Children>
+				<text Name='Title' template='window.TitleBar.title' />
+				<button Name='Minimize' template='window.TitleBar.Minimize' />
+				<commandbutton name='Custom Close Button' template='window.TitleBar.Close'>
+					<Command>ui -unload "&filename;"</Command>
+				</commandbutton>
+			</Children>
+		</TitleBar>
+		<Children>
+			<TabControl name='EQ2AFKAlarm TabControl'>
+				<X>0</X>
+				<Y>0</Y>
+				<Width>100%</Width>
+				<Height>100%</Height>
+				<FrameTexture />
+				<Tabs>
+					<Tab name='Channels'>
+						<commandcheckbox name='Says Toggle'>
+							<X>10</X>
+							<Y>10</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Says</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TriggerSays]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TriggerSays]:Set[FALSE]} ${Script[EQ2AFKAlarm].Variable[CountSays]:Set[0]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TriggerSays]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Says TTS Toggle'>
+							<X>110</X>
+							<Y>10</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> TTS? </Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TTSSays]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TTSSays]:Set[FALSE]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TTSSays]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Tells Toggle'>
+							<X>10</X>
+							<Y>30</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Tells</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TriggerTells]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TriggerTells]:Set[FALSE]} ${Script[EQ2AFKAlarm].Variable[CountTells]:Set[0]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TriggerTells]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Tells TTS Toggle'>
+							<X>110</X>
+							<Y>30</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> TTS? </Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TTSTells]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TTSTells]:Set[FALSE]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TTSTells]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Group Toggle'>
+							<X>10</X>
+							<Y>50</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Group</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TriggerGroup]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TriggerGroup]:Set[FALSE]} ${Script[EQ2AFKAlarm].Variable[CountGroup]:Set[0]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TriggerGroup]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Group TTS Toggle'>
+							<X>110</X>
+							<Y>50</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> TTS?</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TTSGroup]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TTSGroup]:Set[FALSE]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TTSGroup]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Raid Toggle'>
+							<X>10</X>
+							<Y>70</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Raid</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TriggerRaid]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TriggerRaid]:Set[FALSE]} ${Script[EQ2AFKAlarm].Variable[CountRaid]:Set[0]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TriggerRaid]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Raid TTS Toggle'>
+							<X>110</X>
+							<Y>70</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> TTS?</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TTSRaid]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TTSRaid]:Set[FALSE]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TTSRaid]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Guild Toggle'>
+							<X>10</X>
+							<Y>90</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Guild</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TriggerGuild]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TriggerGuild]:Set[FALSE]} ${Script[EQ2AFKAlarm].Variable[CountGuild]:Set[0]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TriggerGuild]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Guild TTS Toggle'>
+							<X>110</X>
+							<Y>90</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> TTS? </Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TTSGuild]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TTSGuild]:Set[FALSE]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TTSGuild]}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Officer Toggle'>
+							<X>10</X>
+							<Y>110</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Officer</Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TriggerOfficer]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TriggerOfficer]:Set[FALSE]} ${Script[EQ2AFKAlarm].Variable[CountOfficer]:Set[0]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TriggerOfficer]}</Data>
+						</commandcheckbox>
+					<commandcheckbox name='Officer TTS Toggle'>
+							<X>110</X>
+							<Y>110</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> TTS? </Text>
+							<Command>noop ${Script[EQ2AFKAlarm].Variable[TTSOfficer]:Set[TRUE]}</Command>
+							<CommandChecked>noop ${Script[EQ2AFKAlarm].Variable[TTSOfficer]:Set[FALSE]}</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].Variable[TTSOfficer]}</Data>
+						</commandcheckbox>
+					</Tab>
+					<Tab name='Options'>
+						<commandcheckbox name='Show Console'>
+							<X>10</X>
+							<Y>10</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Display Console</Text>
+							<Command>UIElement[EQ2AFKAlarm Console]:ToggleVisible</Command>
+							<CommandChecked>UIElement[EQ2AFKAlarm Console]:ToggleVisible</CommandChecked>
+							<Data>${UIElement[EQ2AFKAlarm Console].Visible}</Data>
+						</commandcheckbox>
+						<commandcheckbox name='Log Console to File'>
+							<X>10</X>
+							<Y>30</Y>
+							<Width>100</Width>
+							<Height>20</Height>
+							<Text> -> Log To File</Text>
+							<Command>Script[EQ2AFKAlarm].VariableScope.Log:Enable</Command>
+							<CommandChecked>Script[EQ2AFKAlarm].VariableScope.Log:Disable</CommandChecked>
+							<Data>${Script[EQ2AFKAlarm].VariableScope.Log.Enabled}</Data>
+						</commandcheckbox>
+
+						<commandbutton name='Test Sound'>
+							<X>10</X>
+							<Y>120</Y>
+							<Width>120</Width>
+							<Height>20</Height>
+							<Text>Test Sound</Text>
+							<Command>Script[EQ2AFKAlarm]:QueueCommand[call DebugSound]</Command>
+						</commandbutton>
+					</Tab>
+					<Tab name='About'>
+						<text name='About Title'>
+							<X>0</X>
+							<Y>10</Y>
+							<Width>300</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Text>EQ2AFKAlarm v${Script[EQ2AFKAlarm].Variable[EQ2AFKAlarm_version]}</Text>
+						</text>
+						<text name='About By'>
+							<X>0</X>
+							<Y>25</Y>
+							<Width>300</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Text>EQ2 Port by SuperNoob</Text>
+						</text>
+						<text name='Maintained by'>
+							<X>0</X>
+							<Y>45</Y>
+							<Width>300</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Text>Currently maintained by Valerian</Text>
+						</text>
+						<text name='About Thanks To'>
+							<X>0</X>
+							<Y>70</Y>
+							<Width>300</Width>
+							<Height>15</Height>
+							<Alignment>Center</Alignment>
+							<Text>Thanks to...BobTest,Jackalo,Tenshi</Text>
+						</text>
+						<text name='About Thanks To Text'>
+							<X>10</X>
+							<Y>95</Y>
+							<Width>280</Width>
+							<Height>50</Height>
+							<Alignment>Center</Alignment>
+							<Wrap>1</Wrap>
+							<Text>Cr4zyb4rd and Pygar for helping me out all the time.</Text>
+						</text>
+					</Tab>
+				</Tabs>
+			</TabControl>
+		</Children>
+	</Window>
+</ISUI>

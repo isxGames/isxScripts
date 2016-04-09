@@ -1,0 +1,8 @@
+ * Uniqiue Spells/Skills for the Bruiser *
+
+320 - Self Heal.
+321 - High Damage attack that decreases self HP.
+322 - Mesmerize Target for a short duration.
+323 - Fear Target.
+324 - Feign Death.
+325 - Sonic Fists (Teleporting Attack)

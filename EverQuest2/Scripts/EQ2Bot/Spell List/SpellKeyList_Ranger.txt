@@ -1,0 +1,14 @@
+ * Uniqiue Spells/Skills for the Ranger *
+
+153 - Melee Attack 4
+154 - Melee Attack 5
+252 - Ranged Attack 3
+253 - Ranged Attack 4
+254 - Ranged Attack 5
+259 - Ranged Attack + Snare
+260 - Ranged Stealth
+261 - Ranged (Point Blank)
+320 - Flank attack that stealths the Ranger.
+321 - Damage + Root attack.
+400 - Bounty
+401 - Pet (Visual only - No function)

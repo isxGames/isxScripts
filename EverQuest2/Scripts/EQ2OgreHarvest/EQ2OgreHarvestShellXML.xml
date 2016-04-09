@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+
+	<!-- Main UI Window -->
+	<Window Name='EQ2OgreHarvestShell' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>700</Width>
+		<Height>400</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>EQ2OgreHarvest</Title> 
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>5%</Height>
+			<Children>
+				<Text Name="Title" Template="Window.TitleBar.Title">
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
+					<X>85%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
+					<X>92%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						if ${Script[EQ2OgreHarvestMain]}
+							endscript EQ2OgreHarvestMain
+						if ${Script[EQ2OgreHarvest]}
+							endscript EQ2OgreHarvest
+						ui -unload scripts\\EQ2OgreHarvest\\EQ2OgreHarvestShellXML.xml
+						</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+
+		<Children>
+		<TabControl Name='MainTabControl'>
+			<TabHeight>22</TabHeight>
+			<X>2%</X>
+			<Y>3%</Y>
+			<TabBorder>5</TabBorder>
+			<Height>83%</Height>
+			<Width>96%</Width>
+			<OnLoad>
+				EQ2OgreHarvestTabControl:Set[${This.ID}]
+			</OnLoad>
+			<Tabs>
+			</Tabs>
+		</TabControl>
+
+		</Children>
+		<OnExit>
+		</OnExit>
+	</Window>
+</ISUI>

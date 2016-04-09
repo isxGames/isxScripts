@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Commandcheckbox Name='DebuffMode'>
+		<X>5%</X>
+		<Y>10</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Prioritize Debuffs</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[DebuffMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Debuff Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[DebuffMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Debuff Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='AoEMode'>
+		<X>5%</X>
+		<Y>30</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Cast PBAoEs</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[AoEMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[AoEMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast AoE Spells",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='cbSurroundingAttacks'>
+		<Visible>1</Visible>
+		<X>10</X>
+		<Y>50</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Buff Surrounding Attacks:</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+
+				Script[EQ2Bot].Variable[SurroundingAttacksMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff Surrounding Attacks",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+
+				Script[EQ2Bot].Variable[SurroundingAttacksMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Buff Surrounding Attacks",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Buff Surrounding Attacks]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='UseRangeMode'>
+		<X>5%</X>
+		<Y>70</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Use Ranged CA's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[UseRangeMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Range Arts",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[UseRangeMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Cast Range Arts",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Cast Range Arts]}</Data>
+	</Commandcheckbox>
+	<Commandcheckbox Name='CloakMode'>
+		<X>5%</X>
+		<Y>90</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Stealth After Combat</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[CloakMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Stealth After Combat",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[CloakMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Stealth After Combat",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Stealth After Combat]}</Data>
+	</Commandcheckbox>	
+	<Commandcheckbox Name='MaintainPoison'>
+		<X>5%</X>
+		<Y>110</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Maintains Poisons (Caustic, Enfeebling, Bliss) Edit Class File to Select others...</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["MaintainPoison",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[MaintainPoison]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["MaintainPoison",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MaintainPoison]}</Data>
+	</Commandcheckbox>
+	<Text Name='lblMainWeapon'>
+		<X>5%</X>
+		<Y>150</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Main Hand:</Text>
+		<AutoTooltip>Main Hand weapon to equip when not using an AA weapon</AutoTooltip>
+	</Text>
+	<combobox name='cbMainWeapon'>
+		<x>100</x>
+		<y>150</y>
+		<width>30%</width>
+		<height>20</height>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
+				{
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
+				{
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MainWeapon]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[MainWeapon]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[MainWeapon]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[MainWeapon,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblOffHand'>
+		<X>10</X>
+		<Y>170</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Off Hand:</Text>
+		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
+	</Text>
+	<combobox name='cbOffHand'>
+		<x>100</x>
+		<y>170</y>
+		<width>30%</width>
+		<height>20</height>
+		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].Type.Equal[Shield]} || ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
+				{
+					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].Type.Equal[Shield]} || ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
+				{
+					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem["${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[OffHand]}"]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[OffHand]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[OffHand]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[OffHand,"${This.SelectedItem.Text}"]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+
+	<Text Name='lblDagger'>
+		<X>5%</X>
+		<Y>190</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>AA Dagger:</Text>
+		<AutoTooltip>Weapon to use during Dagger required AA skills</AutoTooltip>
+	</Text>
+	<combobox name='cbDagger'>
+		<x>100</x>
+		<y>190</y>
+		<width>30%</width>
+		<height>20</height>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].SubType.Equal[Dagger]}
+				{
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].SubType.Equal[Dagger]}
+				{
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Dagger]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Dagger]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[WeaponDagger]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Dagger,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblSword'>
+		<X>5%</X>
+		<Y>210</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>AA Sword:</Text>
+		<AutoTooltip>Weapon to use during Sword required AA skills</AutoTooltip>
+	</Text>
+	<combobox name='cbSword'>
+		<x>100</x>
+		<y>210</y>
+		<width>30%</width>
+		<height>20</height>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].SubType.Equal[Sword]}
+				{
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].SubType.Equal[Sword]}
+				{
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Sword]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Sword]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[WeaponSword]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Sword,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblRapier'>
+		<X>5%</X>
+		<Y>230</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>AA Rapier:</Text>
+		<AutoTooltip>Weapon to use during Rapier required AA skills</AutoTooltip>
+	</Text>
+	<combobox name='cbRapier'>
+		<x>100</x>
+		<y>230</y>
+		<width>30%</width>
+		<height>20</height>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if ${Me.CustomInventory[${Counter}].SubType.Equal[Rapier]}
+				{
+					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if ${Me.Equipment[${Counter}].SubType.Equal[Rapier]}
+				{
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Rapier]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Rapier]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[WeaponRapier]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Rapier,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblSpear'>
+		<X>10</X>
+		<Y>250</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>AA Spear:</Text>
+		<AutoTooltip>Weapon to use during Spear required AA skills</AutoTooltip>
+	</Text>
+	<combobox name='cbSpear'>
+		<x>100</x>
+		<y>250</y>
+		<width>30%</width>
+		<height>20</height>
+		<AutoTooltip>Weapon to use during Spear required AA skills</AutoTooltip>
+		<OnLeftClick>
+			declare Counter int
+			Counter:Set[1]
+			This:ClearItems
+			Me:CreateCustomInventoryArray[nonbankonly]
+			do
+			{
+				if (${Me.CustomInventory[${Counter}].SubType.Equal[Great Spear]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Spear]})
+				{
+					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+				}
+			}
+			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
+			Counter:Set[1]
+			do
+			{
+				if (${Me.Equipment[${Counter}].SubType.Equal[Great Spear]} || ${Me.Equipment[${Counter}].SubType.Equal[Spear]})
+				{
+					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+				}
+			}
+			while ${Counter:Inc}&lt;=22
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem["${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Spear]}"]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Spear]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[WeaponSpear]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[Spear,"${This.SelectedItem.Text}"]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>	
+	<Text Name='lblBuffShadowsGroupMember'>
+		<X>375</X>
+		<Y>10</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Hate Transfer:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffShadowsGroupMember'>
+		<x>375</x>
+		<y>30</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to give Hate</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShadowsGroupMember]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffShadowsGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffShadowsGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffShadowsGroupMember,0,1,0]
+		</OnLeftClick>
+	</combobox>
+	<Text Name='lblBuffPoisonGroupMember'>
+		<X>375</X>
+		<Y>60</Y>
+		<Width>20%</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Buff Poison Proc:</Text>
+		<AutoTooltip></AutoTooltip>
+	</Text>
+	<combobox name='cbBuffPoisonGroupMember'>
+		<x>375</x>
+		<y>80</y>
+		<Width>100</width>
+		<Height>20</height>
+		<AutoTooltip>The Group Member to Buff Poison Proc on</AutoTooltip>
+		<Items></items>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPoisonGroupMember]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffPoisonGroupMember]}]:Select
+		</OnLoad>
+		<OnSelect>
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffPoisonGroupMember,${This.SelectedItem.Text}]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
+		<OnLeftClick>
+		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffPoisonGroupMember,0,1,0]
+		</OnLeftClick>
+	</combobox>
+	<Commandcheckbox Name='StartHO'>
+		<Visible>1</Visible>
+		<X>375</X>
+		<Y>100</Y>
+		<Width>30%</Width>
+		<Height>20</Height>
+		<Text>Innitiate HO's</Text>
+		<OnLeftClick>
+			if ${This.Checked}
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[TRUE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start HOs",TRUE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+			else
+			{
+				Script[EQ2Bot].Variable[ConvertMode]:Set[FALSE]
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting["Start HOs",FALSE]
+Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			}
+		</OnLeftClick>
+		<Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[Start HOs]}</Data>
+	</Commandcheckbox>
+</ISUI>

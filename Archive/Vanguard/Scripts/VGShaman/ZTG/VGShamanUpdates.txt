@@ -1,0 +1,49 @@
+Version: 20100831.01
+ -- Patched to work with the latest ISXVG
+ -- Switch old style Effect to TargetMyDebuff
+ -- Added new facing routines
+ -- Added new MoveCloser routine
+Version: 20070430.01
+ -- Added Pet ability use
+ -- Added melee combat modes: No Melee, Melee but dont move, Melee and move to mob
+ -- Added support for 6th melee attack.
+ -- Changed Follow to always re-check follow targets ID.  Ran into issues using just ID,
+			after the follow character died they get a new ID.  Using the name works around that.
+ -- Modified Harvest logic.  Should now work on harvestable corpses also.
+ -- Moved version info to new file.  See VGShamanUpdates.txt in the ZTG/ directory.
+ --	Changed default location for VGSkin to conform to community standard.
+ -- Slows/Debuffs will no longer cast if there are 3 or more mobs in your current encounter.
+		(Known Issues)
+ -- New pet ability code can spam the client window if a ability has been selected to be used
+		but not actually used yet. (i.e. pet still pathing to target)
+Version: 20070403.01
+ -- Changed path/folder to VGShaman for all includes/skins other than common.
+ -- Added back in isRunning, but feel free to take it out if it really
+ 				isn't crashing you (test it alot with both the quit button, the X in
+ 				the UI, and just ends vgshaman!).
+ -- Added in Atom for group changes (to set up buttons).
+ -- Added in function for setting up buff buttons.
+ -- Moved the declare for default form to the variable set up include.
+ -- Fight: added check to make sure mob is owned by me/us if in a group before fighting.
+ -- BuffGroup: added part to buff Tank too if not grouped (so buffs self and tank).
+ -- includeSHM.iss: Changed stuff to a lvl 30 shm for testing.  Make
+ 				sure you back yours up or don't extract this one.
+ -- added buttons for runspeed, eb, lev....
+ -- Added SpiritOrb and Rez routines and UI stuff.
+ -- Made UI tabs name text smaller.
+ (Optional) To Dos:
+ -- Redo Buff buttons to be similar to rez buttons (textname, buffbutton, runbutton, ebbutton, levbutton).
+ -- Make Boon of Bosrid button instead of including it in regular buffs (30 min buff).
+Version: 20070327.01 -- 03/27/2007
+ -- Changed Name to VGShaman since the script has been
+ 			heavily modified for shaman.
+ -- Massive Rewrite.  Added Follow, Melee, Face support.
+ -- Added a ui
+ -- Totaly changed Buff logic/functionality
+Version: 0.7 -- 02/13/2007
+  -- Added first pass of group healing.
+Version: 0.6 -- 02/11/2007
+  -- Minor changes to logic.  Had to take out
+     VG.InGlobalCooldown as it was Not working.
+Version: 0.5 -- 02/07/2007
+  -- Initial Public Release

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+	<Text Name='lblPriestChalice1'>
+		<X>10</X>
+		<Y>10</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Chalice 1</Text>
+	</Text>
+	<combobox name='cbPriestChalice1'>
+		<x>150</x>
+		<y>10</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[12,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestChalice1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestChalice1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestChalice2'>
+		<X>10</X>
+		<Y>30</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Chalice 2</Text>
+	</Text>
+	<combobox name='cbPriestChalice2'>
+		<x>150</x>
+		<y>30</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[12,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestChalice2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestChalice2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestChalice2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestHammer1'>
+		<X>10</X>
+		<Y>50</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Hammer 1</Text>
+	</Text>
+	<combobox name='cbPriestHammer1'>
+		<x>150</x>
+		<y>50</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[14,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestHammer1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHammer1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestHammer2'>
+		<X>10</X>
+		<Y>70</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Hammer 2</Text>
+	</Text>
+	<combobox name='cbPriestHammer2'>
+		<x>150</x>
+		<y>70</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[14,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHammer2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestHammer2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHammer2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestEye1'>
+		<X>10</X>
+		<Y>90</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Eye 1</Text>
+	</Text>
+	<combobox name='cbPriestEye1'>
+		<x>150</x>
+		<y>90</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[15,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestEye1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestEye1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestEye2'>
+		<X>10</X>
+		<Y>110</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Eye 2</Text>
+	</Text>
+	<combobox name='cbPriestEye2'>
+		<x>150</x>
+		<y>110</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[15,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestEye2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestEye2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestEye2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestMoon1'>
+		<X>10</X>
+		<Y>130</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Moon 1</Text>
+	</Text>
+	<combobox name='cbPriestMoon1'>
+		<x>150</x>
+		<y>130</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[16,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestMoon1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestMoon1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestMoon2'>
+		<X>10</X>
+		<Y>150</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Moon 2</Text>
+	</Text>
+	<combobox name='cbPriestMoon2'>
+		<x>150</x>
+		<y>150</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[16,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestMoon2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestMoon2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestMoon2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestHolySymbol1'>
+		<X>10</X>
+		<Y>170</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Holy Symbol 1</Text>
+	</Text>
+	<combobox name='cbPriestHolySymbol1'>
+		<x>150</x>
+		<y>170</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[13,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol1]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestHolySymbol1]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHolySymbol1,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Text Name='lblPriestHolySymbol2'>
+		<X>10</X>
+		<Y>190</Y>
+		<Width>145</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Holy Symbol 2</Text>
+	</Text>
+	<combobox name='cbPriestHolySymbol2'>
+		<x>150</x>
+		<y>190</y>
+		<width>240</width>
+		<height>20</height>
+		<ListBox Template='ComboBox.ListBox'><Sort>Value</Sort></ListBox>
+		<OnLeftClick>
+			Script[EQ2Bot].VariableScope.objHeroicOp:PopulateCB[13,${This.FullName}]
+		</OnLeftClick>
+		<OnLoad>
+			This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2]}]
+			This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp].FindSetting[PriestHolySymbol2]}]:Select
+		</OnLoad>
+		<OnSelect>
+			Script[EQ2Bot].Variable[PriestHolySymbol2]:Set[${This.SelectedItem.Text}]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSet[HeroicOp]:AddSetting[PriestHolySymbol2,${This.SelectedItem.Text}]
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+		</OnSelect>
+	</combobox>
+	<Checkbox name='LimitToHighest'>
+		<X>20</X>
+		<Y>220</Y>
+		<Width>30</Width>
+		<Height>20</Height>
+		<Text>Limit to highest level spells only.</Text>
+		<AutoToolTip>When checked, limits the listboxes to the highest level ability for each ability icon.</AutoToolTip>
+	</Checkbox>
+</ISUI>

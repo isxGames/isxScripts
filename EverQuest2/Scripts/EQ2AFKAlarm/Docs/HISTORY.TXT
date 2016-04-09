@@ -1,0 +1,4 @@
+== Version History ==
+
+=== 07/07/2005 - v1.0 ===
+* initial Port to EQ2
