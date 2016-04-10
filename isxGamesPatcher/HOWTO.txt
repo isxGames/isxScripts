@@ -1,8 +1,0 @@
-
-== DO NOT ADD FILES TO THIS DIRECTORY, ADD PROJECT FOLDER NAMES ONLY==
-
-See 
-
-	http://vg.isxgames.com/wiki/index.php?title=IsxGamesPatcher#XML_Manifest_.26_Project_File_Storage.2FDistribution
-	
-for instructions on how to use this directory.
