@@ -1,7 +1,5 @@
 function main(string LoginModifer, string CharToLogin, string Arg3)
 {
-	variable filepath AdventureBotFilePath=${LavishScript.HomeDirectory}/scripts/EQ2Ogrebot
-
 	if !${ISXEQ2(exists)}
 	{
 		ext isxeq2
@@ -33,9 +31,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		echo Run Ogre toonname -- Loads the toon and loads Ogrebot
 		echo Run Ogre login toonname -- Runs a seperate login script that loads the toon but does NOT load the bot
 		echo Run Ogre up | uplink || OgreMCP || MCP -- Loads OgreMCP (Previously known as Uplink)
-		echo Run Ogre Spell | SpellExport -- Runs the spellexport
 		echo Run Ogre Move <string location> | Movement <string location> -- Runs movement script with the arg of location using lavishnav
-		echo Run Ogre Broker | B -- Runs the broker pricing bot
 		echo Run Ogre Tell -- Loads the Uplink tell window. Note: This is built into Ogrebot already. This Command is a standalone version.
 		echo Run Ogre Map | Mapper -- Runs the LavishNav mapper. Remember to SAVE before you zone!
 		echo Run Ogre Hire <tier> | Hireling <tier> -- Runs the hireling script for Guild Hunter/Gatherer/Miner - Default tier is 8
@@ -66,7 +62,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	}
 	elseif ${LoginModifer.Equal[harvest]}
 	{
-		runscript eq2Ogreharvest/eq2ogreharvest
+		runscript eq2Ogrecommon/eq2Ogreharvest/eq2ogreharvest
 		return
 	}
 	elseif ${LoginModifer.Equal[transmute]}
@@ -80,16 +76,6 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		;runscript eq2Ogrecommon/ogretransmute/eq2ogretransmuteshell
 		return
 	}
-	elseif ${LoginModifer.Equal[up]} || ${LoginModifer.Equal[uplink]} || ${LoginModifer.Equal[MCP]} || ${LoginModifer.Equal[OgreMCP]}
-	{
-		runscript eq2Ogrebot/up
-		return
-	}
-	elseif ${LoginModifer.Equal[Spell]} || ${LoginModifer.Equal[SpellExport]}
-	{
-		runscript eq2ogrebot/spellexport
-		return
-	}
 	elseif ${LoginModifer.Equal[tell]} || ${LoginModifer.Equal[tellwindow]}
 	{
 		if ${Script[eq2ogretellwindow](exists)}
@@ -97,22 +83,12 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 			Script[eq2ogretellwindow]:End
 			wait 50 !${Script[eq2ogretellwindow](exists)}
 		}
-		run eq2ogretellwindow "${CharToLogin}"
+		run eq2Ogrecommon/eq2ogretellwindow "${CharToLogin}"
 		return
 	}
 	elseif ${LoginModifer.Equal[Move]} || ${LoginModifer.Equal[Movement]}
 	{
 		runscript eq2ogrecommon/OgreMove "${CharToLogin}"
-		return
-	}
-	elseif ${LoginModifer.Equal[r]} || ${LoginModifer.Equal[radar]}
-	{
-		runscript eq2ogrebot/r "${CharToLogin}"
-		return
-	}
-	elseif ${LoginModifer.Equal[b]} || ${LoginModifer.Equal[Broker]}
-	{
-		runscript eq2ogrebot/Extras/BrokerPricer
 		return
 	}
 	elseif ${LoginModifer.Equal[map]} || ${LoginModifer.Equal[mapper]}
@@ -195,19 +171,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		runscript eq2ogrecommon/loginonly "${LoginModifer}" "${CharToLogin}"
 		return
 	}
-	if ${AdventureBotFilePath.FileExists[ui.iss]}
-	{
-		if ${Script[ui](exists)}
-		{
-			Script[ui]:End
-			wait 50 !${Script[ui](exists)}
-		}
-		runscript eq2Ogrebot/ui "${LoginModifer}" "${CharToLogin}"
-	}
-	else
-	{
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
-		return
-	}
-
+	
+	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
+	return
 }
