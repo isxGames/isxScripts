@@ -13,6 +13,6 @@ Set the app priority for an app just launched by Inner Space
 ## Example
 ```
 <Set Name="Pre-Startup Sequence" GUID="1863684435">
-    <Setting Name="Debugger">execute ${If[${LavishScript.Executable.Find[ExeFile.exe](exists)},run AttachWindbg ${System.APICall[${System.GetProcAddress["kernel32.dll","GetCurrentProcessId"]}]}]}</Setting>
+    <Setting Name="SetProcessPriority">execute ${If[${LavishScript.Executable.Find[ExeFile.exe](exists)},run SetProcessPriority ${System.APICall[${System.GetProcAddress["kernel32.dll","GetCurrentProcessId"]}]}]}</Setting>
 </Set>
 ```
