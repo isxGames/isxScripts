@@ -1,0 +1,1 @@
+These folders contain scripts and resource files used for the now-defunct MMO "VAngard: Saga of Heroes"
