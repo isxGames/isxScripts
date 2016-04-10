@@ -1,6 +1,5 @@
-# AttachWindbg 
-Version 1 by Cybertech
----
+# AttachWindbg:  Version 1 by Cybertech
+
 Attaches windbg to a launched process immediately after Inner Space starts it, without additional clicks
 
 ## Instructions
