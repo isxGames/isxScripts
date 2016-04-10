@@ -7,7 +7,7 @@ Set the app priority for an app just launched by Inner Space
 1. Place the .cs and .xml in Scripts\SetProcessPriority\
 2. Add the following to Pre-Startup for the game you wish to attach:
 ```
-<Setting Name="AttachWindbg">execute ${If[${LavishScript.Executable.Find[ExeFile.exe](exists)},run SetProcessPriority ${System.APICall[${System.GetProcAddress["kernel32.dll","GetCurrentProcessId"]}]}]}</Setting>
+<Setting Name="SetProcessPriority">execute ${If[${LavishScript.Executable.Find[ExeFile.exe](exists)},run SetProcessPriority ${System.APICall[${System.GetProcAddress["kernel32.dll","GetCurrentProcessId"]}]}]}</Setting>
 ```
 
 ## Example
