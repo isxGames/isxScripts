@@ -367,15 +367,19 @@ if !${InitialBuffsDone}
 			{
 				;buff myself first
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ToActor.ID}
+					
 
-				;buff the group
-				tempvar:Set[1]
-				do
-				{
-					if ${Me.Group[${tempvar}].ToActor.Distance}<15
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
-				}
-				while ${tempvar:Inc}<${Me.GroupCount}
+				;;;Removing for now (...do we really want to mess with buffing the group with SeeInvis?)
+				;if (${Me.GroupCount} > 1)
+				;{
+				;	tempvar:Set[1]
+				;	do
+				;	{
+				;		if ${Me.Group[${tempvar}].ToActor.Distance}<15
+				;			call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
+				;	}
+				;	while ${tempvar:Inc}<${Me.GroupCount}
+				;}
 			}
 			break
 		default
@@ -846,7 +850,7 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID}  || (${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
+					if ${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID}  || (${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
 					{
 						aggrogrp:Set[TRUE]
 						break

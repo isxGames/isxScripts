@@ -23,6 +23,7 @@ variable string PATH_CLASS_ROUTINES = "${LavishScript.HomeDirectory}/Scripts/${S
 variable string PATH_CHARACTER_CONFIG = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config"
 variable string PATH_UI = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/UI"
 variable string PATH_SPELL_LIST = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Spell List"
+variable string PATH_THREADS = "${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Threads"
 
 ;
 ;===================================================
@@ -48,7 +49,7 @@ variable int Latest_MysticVersion = 0
 variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 20090623
 variable int Latest_RangerVersion = 0
-variable int Latest_ShadowknightVersion = 20100130
+variable int Latest_ShadowknightVersion = 20150802
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
 variable int Latest_TroubadorVersion = 20090619
@@ -249,6 +250,9 @@ variable bool NoAutoMovement
 variable settingsetref CharacterSet
 variable settingsetref SpellSet
 variable bool DoNoCombat
+variable string Me_SubClass
+variable string Me_Name
+variable bool IsPetClass = FALSE
 
 ;===================================================
 ;===          AutoAttack Timing                 ====
@@ -508,22 +512,30 @@ function main(string Args)
 
 		if (${usemanastone})
 		{
-			if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)}
+			if !${Me.ToActor.InCombatMode}
 			{
-				if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+				call AmIInvis "CheckManaStone()"
+				if ${Return.Equal[FALSE]}
 				{
-					Me.Inventory[ExactName,ManaStone]:Use
-					mstimer:Set[${Time.Timestamp}]
-					wait 2
-					do
+					if ${Me.ToActor.Power}<85 && ${Me.ToActor.Health}>80 && ${Me.Inventory[ExactName,ManaStone](exists)}
 					{
-						waitframe
+						if ${Math.Calc64[${Time.Timestamp}-${mstimer}]}>70
+						{
+							Me.Inventory[ExactName,ManaStone]:Use
+							mstimer:Set[${Time.Timestamp}]
+							wait 2
+							do
+							{
+								waitframe
+							}
+							while ${Me.CastingSpell}
+						}
 					}
-					while ${Me.CastingSpell}
 				}
-			}
+			}	
 		}
 
+		; Call "Pulse" function located within the class file
 		call Pulse
 
 		;;;;
@@ -543,7 +555,7 @@ function main(string Args)
 			ExecuteAtom CheckStuck
 
 			;;;;;;
-			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
+			;; Make sure that MainAssistID and/or MainTankID are still valid (IDs sometimes change on zoning...)
 			if !${Actor[${MainTankID}](exists)}
 			{
 				if ${Actor[exactname,${MainTankPC}](exists)}
@@ -1174,7 +1186,7 @@ function CalcAutoAttackTimer()
 
 	if !${AutoAttackReady}
 	{
-		PrimaryDelay:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Stats.Primary_Delay].ShortLabel}]
+		PrimaryDelay:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Stats.Primary_Delay].Label}]
 		RunningTimeInSeconds:Set[${Script.RunningTime}/1000]
 		TimeUntilNextAutoAttack:Set[${PrimaryDelay}-(${RunningTimeInSeconds}-${LastAutoAttack})]
 	}
@@ -1190,7 +1202,7 @@ function CheckManaStone()
 {
 	variable int tempvar
 	;Me.Equipment[Exactname,"Manastone"]:UnEquip
-
+	
 	Me:CreateCustomInventoryArray[nonbankonly]
 
 	do
@@ -1673,7 +1685,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				wait 4
 				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 				;; more than 7 seconds to cast.
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 				{
 					do
 					{
@@ -1684,7 +1696,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 					wait 5
 				}
 		
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
 				{
 					do
 					{
@@ -1733,7 +1745,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				wait 4
 				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 				;; more than 7 seconds to cast.
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 				{
 					do
 					{
@@ -1744,7 +1756,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 					wait 5
 				}
 		
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
 				{
 					do
 					{
@@ -1761,7 +1773,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		{
 			;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 			;; more than 7 seconds to cast.
-			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 			{
 				do
 				{
@@ -1772,7 +1784,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				wait 5
 			}
 	
-			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
 			{
 				do
 				{
@@ -1788,14 +1800,14 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 
 	;Debug:Echo["EQ2Bot-Debug:: Queuing: ${spell}"]
 	;Debug:Echo["EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"]
-	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
+	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}"]
 
 
-	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
 	{
 		Counter:Set[0]
-		;Debug:Echo["EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting..."]
-		CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}' to finish casting...]
+		;Debug:Echo["EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}' to finish casting..."]
+		CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}' to finish casting...]
 		TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
 		do
 		{
@@ -1830,13 +1842,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			}
 			;Debug:Echo["EQ2Bot-Debug:: Waiting..."]
 		}
-		while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${spell}]})
+		while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
 	}
 
 	Counter:Set[0]
 	if (!${LastQueuedAbility.Equal[${spell}]})
 	{
-		if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+		if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 		{
 			;Debug:Echo["EQ2Bot-Debug:: ---Waiting for ${spell} to cast"]
 			CurrentAction:Set[---Waiting for ${spell} to cast]
@@ -1878,7 +1890,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				;Debug:Echo["EQ2Bot-Debug:: Waiting..."]
 				CurrentAction:Set[---Waiting for ${spell} to cast]
 			}
-			while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel.Equal[${LastQueuedAbility}]})
+			while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 		}
 	}
 
@@ -1889,7 +1901,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 	{
 		;Debug:Echo["EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"]
 		;Debug:Echo["EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"]
-		;Debug:Echo["EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].ShortLabel == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel}"]
+		;Debug:Echo["EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].Label == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}"]
 		wait 2
 	}
 
@@ -4430,22 +4442,22 @@ atom(script) EQ2_onIncomingText(string Text)
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
 {
-		;Debug:Echo[" ChatType: ${ChatType} -- Speaker: ${Speaker} -- Target: ${sTarget} -- ChannelName: ${ChannelName} -- Message: ${Message}"]
+	;Debug:Echo[" ChatType: ${ChatType} -- Speaker: ${Speaker} -- Target: ${sTarget} -- ChannelName: ${ChannelName} -- Message: ${Message}"]
 
 	if (${Message.Find[Invis us please]} > 0)
 	{
-			if ${Me.Group[${Speaker}](exists)}
+		if ${Me.Group[${Speaker}](exists)}
+		{
+			if (${Me.SubClass.Equal[Illusionist]} && ${Me.Level} >= 24)
 			{
-					if (${Me.SubClass.Equal[Illusionist]} && ${Me.Level} >= 24)
-					{
-								eq2execute /useabilityonplayer ${Speaker} "Illusory Mask"
-					}
-					elseif (${Me.SubClass.Equal[Fury]} && ${Me.Level} >= 45)
-					{
-								eq2execute /useabilityonplayer ${Speaker} "Untamed Shroud"
-					}
-				}
+				eq2execute /useabilityonplayer ${Speaker} "Illusory Mask"
+			}
+			elseif (${Me.SubClass.Equal[Fury]} && ${Me.Level} >= 45)
+			{
+				eq2execute /useabilityonplayer ${Speaker} "Untamed Shroud"
+			}
 		}
+	}
 }
 
 atom(script) LootWDw(string ID)
@@ -4931,7 +4943,7 @@ function CheckBuffsOnce()
 
 	if ${Me.CastingSpell}
 	{
-		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].ShortLabel} to finish casting..."]
+		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label} to finish casting..."]
 		do
 		{
 			waitframe
@@ -5278,6 +5290,9 @@ objectdef ActorCheck
 	member:bool Detect(int iEngageDistance=${ScanRange})
 	{
 		variable int tcount=1
+		
+		if (${IsPetClass})
+			iEngageDistance:Set[30]
 
 		if !${Actor[NPC,range,${iEngageDistance}](exists)} && !(${Actor[NamedNPC,range,${iEngageDistance}](exists)} && !${IgnoreNamed})
 		{
@@ -5490,13 +5505,19 @@ objectdef EQ2BotObj
 
 				if ${Me.Raid[${tmpvar}].ToActor(exists)}
 				{
-					UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
-					if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
-						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-					if (${Me.Raid[${tmpvar}].Class.Equal[mystic]} || ${Me.Raid[${tmpvar}].Class.Equal[defiler]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
-						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-					if ${Me.Raid[${tmpvar}].Class.Equal[beastlord]} && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
-						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]						
+					if (${Me.Raid[${tmpvar}].ToActor.Type.Equal[Mercenary]})
+						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					else
+					{
+						UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].Name}:${Me.Raid[${tmpvar}].ToActor.Type}]
+					
+						if (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+							UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						elseif (${Me.Raid[${tmpvar}].Class.Equal[mystic]} || ${Me.Raid[${tmpvar}].Class.Equal[defiler]})  && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+							UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						elseif ${Me.Raid[${tmpvar}].Class.Equal[beastlord]} && ${Me.Raid[${tmpvar}].ToActor.Pet(exists)} && ${IncludePets}
+							UIElement[${ListFQN}]:AddItem[${Me.Raid[${tmpvar}].ToActor.Pet}:${Me.Raid[${tmpvar}].ToActor.Pet.Type},FF0000FF]	
+					}					
 				}
 			}
 			while ${tmpvar:Inc} <= 24
@@ -5508,13 +5529,19 @@ objectdef EQ2BotObj
 			{
 				if ${Me.Group[${tmpvar}].ToActor(exists)}
 				{
-					UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
-					if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-					if (${Me.Group[${tmpvar}].Class.Equal[mystic]} || ${Me.Group[${tmpvar}].Class.Equal[defiler]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
-					if ${Me.Group[${tmpvar}].Class.Equal[beastlord]} && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
-						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]						
+					if (${Me.Group[${tmpvar}].ToActor.Type.Equal[Mercenary]})
+						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					else
+					{
+						UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].Name}:${Me.Group[${tmpvar}].ToActor.Type}]
+					
+						if (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+							UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						elseif (${Me.Group[${tmpvar}].Class.Equal[mystic]} || ${Me.Group[${tmpvar}].Class.Equal[defiler]}) && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+							UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]
+						elseif ${Me.Group[${tmpvar}].Class.Equal[beastlord]} && ${Me.Group[${tmpvar}].ToActor.Pet(exists)}
+							UIElement[${ListFQN}]:AddItem[${Me.Group[${tmpvar}].ToActor.Pet}:${Me.Group[${tmpvar}].ToActor.Pet.Type},FF0000FF]		
+					}				
 				}
 			}
 			while ${tmpvar:Inc} <= ${Me.Group}
@@ -5636,6 +5663,23 @@ objectdef EQ2BotObj
 			else
 				PullRange:Set[25]
 		}
+		
+		Me_SubClass:Set[${Me.SubClass}]
+		switch ${Me_SubClass}
+		{
+			case necromancer
+			case conjuror
+			case coercer
+			case illusionist
+			case beastlord
+				IsPetClass:Set[TRUE]
+				break
+			default
+				IsPetClass:Set[FALSE]
+		}
+		
+		Me_Name:Set[${Me.Name}]
+		
 		This:Save_Settings
 	}
 
@@ -6705,14 +6749,13 @@ atom ExcludePOI()
 
 atom(script) EQ2_onChoiceWindowAppeared()
 {
+	Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"]
 	if ${PauseBot} || !${StartBot}
 		return
 
-	Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"]
-
 	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
 	{
-		ChoiceWindow:DoChoice1
+		run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
 		if ${KillTarget} && ${Actor[${KillTarget}](exists)}
 		{
 			if !${Actor[${KillTarget}].InCombatMode}
@@ -6724,34 +6767,44 @@ atom(script) EQ2_onChoiceWindowAppeared()
 
 	if ${ChoiceWindow.Text.Find[thoughtstone]}
 	{
-		ChoiceWindow:DoChoice1
+		;if (${Me.GroupCount} > 1)
+			run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
 		return
 	}
 
 	if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
 	{
-		if ${LoreConfirm}
-			ChoiceWindow:DoChoice1
-		else
-			ChoiceWindow:DoChoice2
+		;if (${Me.GroupCount} > 1)
+		;{
+			if ${LoreConfirm}
+				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+			else
+				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2
+		;}
 		return
 	}
 
 	if ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
-		if ${NoTradeConfirm}
-			ChoiceWindow:DoChoice1
-		else
-			ChoiceWindow:DoChoice2
+		;if (${Me.GroupCount} > 1)
+		;{
+			if ${NoTradeConfirm}
+				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+			else
+				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2
+		;}
 		return
 	}
 
 	if ${ChoiceWindow.Text.Find[Heirloom]} && ${Me.ToActor.Health}>1
 	{
-		if ${NoTradeConfirm}
-			ChoiceWindow:DoChoice1
-		else
-			ChoiceWindow:DoChoice2
+		;if (${Me.GroupCount} > 1)
+		;{
+			if ${NoTradeConfirm}
+				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+			else
+				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2
+		;}
 		return
 	}
 

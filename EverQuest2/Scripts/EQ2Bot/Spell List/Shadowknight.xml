@@ -19,7 +19,6 @@
 		<Setting name="9,20">Unholy Hunger</Setting>
 		<Setting name="10,334">Reaver</Setting>
 		<Setting name="10,505">Hammer Ground</Setting>
-		<Setting name="10,504">Salve</Setting>
 		<Setting name="10,333">Combat Leadership</Setting>
 		<Setting name="10,335">Siphon Hate</Setting>
 		<Setting name="10,336">Battle Leadership</Setting>
@@ -28,14 +27,13 @@
 		<Setting name="10,341">Aura of Leadership</Setting>
 		<Setting name="10,501">Alternate: Siphon Armament</Setting>
 		<Setting name="10,340">Hateful Respite</Setting>
-		<Setting name="10,508">Sneering Assault</Setting>
 		<Setting name="10,507">Shadowknight\'s Furor</Setting>
+		<Setting name="10,508">Zealous Smite</Setting>
 		<Setting name="10,339">Aura of the Crusader</Setting>
 		<Setting name="10,26">Grim Harbinger</Setting>
 		<Setting name="10,503">Essence Siphon</Setting>
 		<Setting name="10,502">Divine Aura</Setting>
 		<Setting name="10,381">Swift Attack</Setting>
-		<Setting name="10,509">Sprint</Setting>
 		<Setting name="10,332">Legionnaire\'s Smite</Setting>
 		<Setting name="10,342">Trample</Setting>
 		<Setting name="10,343">Shadowknight\'s Furor</Setting>

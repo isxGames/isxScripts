@@ -1,50 +1,9 @@
 ;============================================
 ;
-;EQ2BotLib version 20081023a
-;by karye
-;updated by pygar
-;
-;20081023a (Pygar)
-;	Shard and UseCrystalizedSpirit functions are now depricated.  They have been replaced with CommonPower and CommonHeal functions.
-; Added Power/health potion use toggles.
-; Every class file should call CommonPower in RefreshPower and CommonHeal should be called at the end of CheckHeals or somewhere
-; in Combat Routine.
-;
-; 20080513a (Pygar)
-; * Made Persistent Following an Option.  Click it to resume follow every 5 seconds.  Leave it blank to only resume follow
-;		post combat or zone
-;
-; 20080425a (Amadeus)
-; AutoFollowTank() should no longer attempt to autofollow if the person to whom the bot is trying to follow (or the bot itself) is on a
-; griffon-like transport or if they (or the bot) are currently climbing a wall.
-;
-; 20080406a (Amadeus)
-; * Various fixes to Math.Calc (to Math.Calc64) when used in conjunction with Time.Timestamp
-; * The 'autofollow' routine will now only auto follow a tank every 5 seconds at most.
-;
-; 20080331a (Amadeus)
-; * Added events for Zoning.  EQ2Bot should now autofollow the "AutoFollowee" after zoning.
-; * Updated the 'AutoFollowTank()' function.
-;
-; 20080323a (Amadeus)
-; * Added a collection called "MezSpells" which is intended to contain all spells that qualify as 'mez' type spells.  It is populated during initialization.
-; * Added function CheckForMez().  Checks first if a mob is rooted and cannot turn, if so, it then checks the effects on the mob to see if any of the effects
-;   are 'mez spells' as defined in the "MezSpells" collection
-; * Added function CheckForStun(). If the mob is rooted and cannot turn, and it is NOT mezzed, then it must be stunned.
-; * Added function ReacquireTargetFromMA()
-;
-; 20070337a
-; Added a condition around creating uplink name to stop session rejected messages
-;
-;Added Defiler Cyrstalize Spirit Healing function
-;Use call UseCrystallizedSpirit SomeHealth%
-;example:
-;call UseCrystallizedSpirit 60
-
-;Description: Helper functions for EQ2BotCommander,
-; EQ2BotExtras and various karye class bots
-;
-;
+;EQ2BotLib
+;originally by Karye
+;updated by Pygar and Amadeus
+;============================================
 
 #define _Eq2Botlib_
 
@@ -197,9 +156,6 @@ function EQ2BotLib_Init()
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[7]:Move[4]
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[8]:Move[5]
 	
-	
-	
-
 	echo Loading Class UI Tab...
 	ui -load -parent "Class@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}.xml"
 	
@@ -331,8 +287,6 @@ function PopulateMezSpells()
 				Default
 					break
 			}
-
-
 		}
 		while ${SpellIterator:Next(exists)}
 	}
@@ -370,8 +324,6 @@ function PopulateMezSpells()
 				Default
 					break
 			}
-
-
 		}
 		while ${tempvar:Inc} <= ${keycount}
 	}
@@ -567,11 +519,11 @@ atom EQ2_FinishedZoning(string TimeInSeconds)
         {
             if (!${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
             {
-        		squelch face ${AutoFollowee}
-        		eq2execute /follow ${AutoFollowee}
-        		AutoFollowingMA:Set[TRUE]
-        		AutoFollowMode:Set[TRUE]
-    	    }
+	        		squelch face ${AutoFollowee}
+	        		eq2execute /follow ${AutoFollowee}
+	        		AutoFollowingMA:Set[TRUE]
+	        		AutoFollowMode:Set[TRUE]
+    	    	}
         }
     }
 }
@@ -620,15 +572,12 @@ function Swap()
 			OriginalItem:Set[]
 		}
 	}
-
-
 }
 
 function IsHealer(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
-
 		case inquisitor
 		case templar
 		case fury
@@ -645,7 +594,6 @@ function IsFighter(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
-
 		case guardian
 		case berserker
 		case shadowknight
@@ -678,7 +626,6 @@ function IsScout(uint ID)
 {
 	switch ${Actor[${ID}].Class}
 	{
-
 		case ranger
 		case assassin
 		case swashbuckler
@@ -945,8 +892,6 @@ atom SaveEquipmentSet(string EquipmentSetName)
 	}
 	while ${tempvar:Inc} <=22
 	CharacterSet:Export[${charfile}]
-
-
 }
 
 atom GetNaked()

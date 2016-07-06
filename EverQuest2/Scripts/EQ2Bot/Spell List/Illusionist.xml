@@ -4,7 +4,7 @@
 	<Set name="illusionist">
 		<Setting name="1,60">Ultraviolet Beam</Setting>
 		<Setting name="1,352">Entrance</Setting>
-		<Setting name="1,400">Strike of Consistency</Setting>
+		<Setting name="1,400">Smite of Consistency</Setting>
 		<Setting name="2,190">Paranoia</Setting>
 		<Setting name="2,355">Personae Reflection</Setting>
 		<Setting name="3,70">Brainburst</Setting>
@@ -13,11 +13,11 @@
 		<Setting name="5,501">Master\'s Strike</Setting>
 		<Setting name="5,364">Bind Sight</Setting>
 		<Setting name="5,230">Lockdown</Setting>
-		<Setting name="6,210">Cure Arcane</Setting>
+		<Setting name="6,210">Cure Magic</Setting>
 		<Setting name="6,60">Ultraviolet Beam II</Setting>
 		<Setting name="7,21">Aspect of Genius</Setting>
 		<Setting name="8,91">Chromatic Storm</Setting>
-		<Setting name="9,363">Dispel Magic</Setting>
+		<Setting name="9,363">Absorb Magic</Setting>
 		<Setting name="10,396">Nullifying Staff</Setting>
 		<Setting name="10,360">Mana Flow</Setting>
 		<Setting name="10,393">Time Compression</Setting>
