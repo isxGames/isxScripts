@@ -6749,11 +6749,11 @@ atom ExcludePOI()
 
 atom(script) EQ2_onChoiceWindowAppeared()
 {
-	Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text}'"]
+	Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text.GetProperty[LocalText]}'"]
 	if ${PauseBot} || !${StartBot}
 		return
 
-	if ${ChoiceWindow.Text.Find[cast]} && ${Me.ToActor.Health}<1
+	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[cast]} && ${Me.ToActor.Health}<1
 	{
 		run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
 		if ${KillTarget} && ${Actor[${KillTarget}](exists)}
@@ -6765,14 +6765,14 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-	if ${ChoiceWindow.Text.Find[thoughtstone]}
+	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[thoughtstone]}
 	{
 		;if (${Me.GroupCount} > 1)
 			run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
 		return
 	}
 
-	if ${ChoiceWindow.Text.Find[Lore]} && ${Me.ToActor.Health}>1
+	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[Lore]} && ${Me.ToActor.Health}>1
 	{
 		;if (${Me.GroupCount} > 1)
 		;{
@@ -6784,7 +6784,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-	if ${ChoiceWindow.Text.Find[No-Trade]} && ${Me.ToActor.Health}>1
+	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[No-Trade]} && ${Me.ToActor.Health}>1
 	{
 		;if (${Me.GroupCount} > 1)
 		;{
@@ -6796,7 +6796,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 		return
 	}
 
-	if ${ChoiceWindow.Text.Find[Heirloom]} && ${Me.ToActor.Health}>1
+	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[Heirloom]} && ${Me.ToActor.Health}>1
 	{
 		;if (${Me.GroupCount} > 1)
 		;{
