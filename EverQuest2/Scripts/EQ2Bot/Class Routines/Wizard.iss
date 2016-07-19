@@ -271,15 +271,15 @@ function Buff_Routine(int xAction)
 					break
 				}
 				;buff myself first
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ToActor.ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 
 				;buff the group
 				tempvar:Set[1]
 				do
 				{
-					if ${Me.Group[${tempvar}].ToActor.Distance}<15
+					if ${Me.Group[${tempvar}].Distance}<15
 					{
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ID}
 					}
 
 				}
@@ -319,7 +319,7 @@ function Combat_Routine(int xAction)
 	spellsused:Set[0]
 	spellthreshold:Set[1]		
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -600,17 +600,17 @@ function RefreshPower()
 	if ${ShardMode}
 		call Shard
 
-	if ${Me.Power}<40 && ${Me.ToActor.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<40 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use
 
 	;Conjuror Shard
-	if ${Me.ToActor.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
+	if ${Me.Power}<70 && ${Me.Inventory[${ShardType}](exists)} && ${Me.Inventory[${ShardType}].IsReady}
 		Me.Inventory[${ShardType}]:Use
 
-	if ${Me.ToActor.Power}<50 && ${Me.ToActor.Health}>20 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+	if ${Me.Power}<50 && ${Me.Health}>20 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 		call CastSpellRange 309
 
-	if ${Me.ToActor.Power}<5
+	if ${Me.Power}<5
 		call CastSpellRange 310
 }
 

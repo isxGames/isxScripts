@@ -123,14 +123,14 @@ function Combat_Routine(int xAction)
 	if !${MainTank}
 		eq2execute /auto 2
 		
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 		wait 3
 	}
 
-	if ${Me.ToActor.IsStealthed} && !${MainTank}
+	if ${Me.IsStealthed} && !${MainTank}
 	{
 		if ${Me.Ability[${SpellType[260]}].TimeUntilReady}<.1
 		{
@@ -467,7 +467,7 @@ function Post_Combat_Routine(int xAction)
 function Have_Aggro(int agroid)
 {
 	;Turn on Parry AA Impenetrable
-	if ${Me.ToActor.Health}<30
+	if ${Me.Health}<30
 		call CastSpellRange 395
 
 	if ${Me.Ability[${SpellType[383]}].IsReady}

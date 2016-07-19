@@ -221,7 +221,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -229,7 +229,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;check if we are not in control, and use control cure if needed
-	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
+	if !${Me.CanTurn} || ${Me.IsRooted}
 		call CastSpellRange 403
 
 	call CommonHeals 70
@@ -244,15 +244,15 @@ function Combat_Routine(int xAction)
 		call Shard
 
 	;stoneskin
-	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[502]}].IsReady}
+	if ${Me.Health}<50 && ${Me.Ability[${SpellType[502]}].IsReady}
 		call CastSpellRange 502
 
 	;magic stoneskin
-	if ${Me.ToActor.Health}<40 && ${Me.Ability[${SpellType[401]}].IsReady}
+	if ${Me.Health}<40 && ${Me.Ability[${SpellType[401]}].IsReady}
 		call CastSpellRange 401
 
 	;parry
-	if ${Me.ToActor.Health}<30 && ${Me.Ability[${SpellType[503]}].IsReady}
+	if ${Me.Health}<30 && ${Me.Ability[${SpellType[503]}].IsReady}
 		call CastSpellRange 503
 
 	;dev fist
@@ -274,7 +274,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 			break
 		case Self_Heal
-			if ${Me.ToActor.Health}<50
+			if ${Me.Health}<50
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			break
 		case Cure_Trauma
@@ -295,7 +295,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${SpellRange[${xAction},1]} ${SpellRange[${xAction},2]}
 			break
 		case High_Attack
-			if ${Me.ToActor.Health}>60
+			if ${Me.Health}>60
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			break
 		case AoE_All
@@ -383,7 +383,7 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${Me.ToActor.Power}>5
+	if ${Me.Power}>5
 	{
 		if ${Me.Maintained[${SpellType[307]}](exists)}
 		{
@@ -432,31 +432,31 @@ function CheckHeals()
 	grpcnt:Set[${Me.GroupCount}]
 
 	;Feign Death if I am solo and low on health
-	if ${Me.ToActor.Health}<15 && ${Me.GroupCount}==1
+	if ${Me.Health}<15 && ${Me.GroupCount}==1
 	{
 		call CastSpellRange 368 0 0 0 0 0 0 1
 	}
 
 	;Use Chi if low health
-	if ${Me.ToActor.Health}<35 && ${Me.InCombat} && ${Me.Ability[${SpellType[387]}].IsReady}
+	if ${Me.Health}<35 && ${Me.InCombat} && ${Me.Ability[${SpellType[387]}].IsReady}
 	{
 		call CastSpellRange 387 0 0 0 0 0 0 1
 	}
 
 	;Cancel Feign if Health is better
-	if ${Me.Maintained[${SpellType[368]}](exists)} && ${Me.ToActor.Health}>60
+	if ${Me.Maintained[${SpellType[368]}](exists)} && ${Me.Health}>60
 	{
 		Me.Maintained[${SpellType[368]}]:Cancel
 	}
 
 	;Tsunami
-	if ${Me.ToActor.Health}<25 && ${DefensiveMode}
+	if ${Me.Health}<25 && ${DefensiveMode}
 	{
 		call CastSpellRange 300 0 0 0 0 0 0 1
 	}
 
 	;Toggle Stone Stance
-	if ${Me.ToActor.Health}<50 && ${DefensiveMode}
+	if ${Me.Health}<50 && ${DefensiveMode}
 	{
 		call CastSpellRange 157 0 0 0 0 0 0 1
 	}
@@ -473,27 +473,27 @@ function CheckHeals()
 	}
 
 	;Check Me first for mending,
-	if ${Me.ToActor.Health}<30
+	if ${Me.Health}<30
 	{
-		call CastSpellRange 366 0 0 0 ${Me.ToActor.ID} 0 0 1
+		call CastSpellRange 366 0 0 0 ${Me.ID} 0 0 1
 
 	}
 
 	do
 	{
 		;Check Group members
-		if ${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].Health}<30 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
 		{
-			call CastSpellRange 366 0 0 0 ${Me.Group[${temphl}].ToActor.ID} 0 0 1
+			call CastSpellRange 366 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1
 
 		}
 	}
 	while ${temphl:Inc}<${grpcnt}
 
 	;Outward Calm
-	if ${Me.ToActor.Health}<50
+	if ${Me.Health}<50
 	{
-		call CastSpellRange 369 0 0 0 ${Me.ToActor.ID} 0 0 1
+		call CastSpellRange 369 0 0 0 ${Me.ID} 0 0 1
 
 	}
 

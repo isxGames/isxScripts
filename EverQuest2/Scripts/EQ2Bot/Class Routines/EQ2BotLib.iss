@@ -448,15 +448,15 @@ function ReacquireTargetFromMA()
 
 atom AutoFollowTank()
 {
-	if !${Me.ToActor.InCombatMode}
+	if !${Me.InCombatMode}
 	{
 	  	UIElement[AutoFollow@@Extras@EQ2Bot Tabs@EQ2 Bot]:SetChecked
 
 		CharacterSet.FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
 		CharacterSet:Export[${PATH_CHARACTER_CONFIG}/${Me.Name}.xml]
 
-		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowingID = ${Me.ToActor.WhoFollowingID}"]
-		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.ToActor.WhoFollowing = ${Me.ToActor.WhoFollowing}"]
+		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.WhoFollowingID = ${Me.WhoFollowingID}"]
+		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): Me.WhoFollowing = ${Me.WhoFollowing}"]
 		;Debug:Echo["DEBUG-AutoFollowTank() -- AutoFollowTank(): AutoFollowee = ${AutoFollowee}"]
 
 		;Debug:Echo["DEBUG-AutoFollowTank(): AutoFollowLastSetTime: ${AutoFollowLastSetTime}"]
@@ -465,9 +465,9 @@ atom AutoFollowTank()
 		if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
 		{
 			;Debug:Echo["DEBUG-AutoFollowTank(): Following...."]
-			if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
+			if !${Me.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
 			{
-				if !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]}
+				if !${Me.WhoFollowing.Equal[${AutoFollowee}]}
 				{
 					;squelch face ${AutoFollowee}
 					eq2execute /follow ${AutoFollowee}
@@ -517,7 +517,7 @@ atom EQ2_FinishedZoning(string TimeInSeconds)
     {
         if (${Actor[pc,${AutoFollowee}](exists)})
         {
-            if (!${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+            if (!${Me.WhoFollowing.Equal[${AutoFollowee}]})
             {
 	        		squelch face ${AutoFollowee}
 	        		eq2execute /follow ${AutoFollowee}
@@ -665,9 +665,9 @@ function IsFighterOrScout(uint ID)
 function CommonPower(int sPower)
 {
 	;Potion Checks
-	if ${UsePotions} && ${Me.Inventory[Essence of Power].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${UsePotions} && ${Me.Inventory[Essence of Power].IsReady} && ${Me.InCombatMode}
 	{
-		if ${Me.ToActor.Power}<5
+		if ${Me.Power}<5
 		{
 			Me.Inventory[Essence of Power]:Use
 			wait 2
@@ -679,9 +679,9 @@ function CommonPower(int sPower)
 		}
 	}
 
-	if ${UsePotions} && ${Me.Inventory[Essence of Clarity].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${UsePotions} && ${Me.Inventory[Essence of Clarity].IsReady} && ${Me.InCombatMode}
 	{
-		if ${Me.ToActor.Power}<5
+		if ${Me.Power}<5
 		{
 			Me.Inventory[Essence of Clarity]:Use
 			wait 2
@@ -693,7 +693,7 @@ function CommonPower(int sPower)
 		}
 	}
 
-	if ${Me.Inventory[ExactName,ManaStone].IsReady} && !${Me.Inventory[ExactName,ManaStone].InBank} && ${Me.ToActor.Power}<50
+	if ${Me.Inventory[ExactName,ManaStone].IsReady} && !${Me.Inventory[ExactName,ManaStone].InBank} && ${Me.Power}<50
 	{
 		Me.Inventory[ExactName,ManaStone]:Use
 		wait 2
@@ -719,7 +719,7 @@ function CommonPower(int sPower)
 	if ${Me.Inventory["Dark Heart"](exists)}
 		HeartTypeL:Set[Dark Heart]
 
-	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${ShardTypeL.NotEqual[NOSHARD]} && ${Me.Power}<${sPower} && ${Me.Inventory[${ShardTypeL}].IsReady} && ${Me.InCombatMode}
 	{
 		Me.Inventory[${ShardTypeL}]:Use
 		wait 2
@@ -737,7 +737,7 @@ function CommonPower(int sPower)
 		EQ2Execute /tell ${ShardGroupMember} shard please
 	}
 
-	if ${HeartTypeL.NotEqual[NOHEART]} && ${Me.ToActor.Power}<${sPower} && ${Me.Inventory[${HeartTypeL}].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${HeartTypeL.NotEqual[NOHEART]} && ${Me.Power}<${sPower} && ${Me.Inventory[${HeartTypeL}].IsReady} && ${Me.InCombatMode}
 	{
 		Me.Inventory[${HeartTypeL}]:Use
 		wait 2
@@ -777,7 +777,7 @@ function CheckGroupHealth(int MinHealth)
 {
 	declare counter int local 0
 
-	if ${Me.ToActor.Health} < ${MinHealth}
+	if ${Me.Health} < ${MinHealth}
 		Return FALSE
 
 	if ${Me.Group} <= 1
@@ -786,13 +786,13 @@ function CheckGroupHealth(int MinHealth)
 	do
 	{
 		;check groupmates health
-		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].ToActor.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Health} > 0
+		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Health} < ${MinHealth} && ${Me.Group[${counter}].Health} > 0
 			Return FALSE
 
 		;check health of summoner pets
 		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
 		{
-			if ${Me.Group[${counter}].ToActor.Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].ToActor.Pet.Health} > 0
+			if ${Me.Group[${counter}].Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].Pet.Health} > 0
 				Return FALSE
 		}
 
@@ -865,9 +865,9 @@ atom CheckStuck()
 {
 	if (${AutoFollowMode})
 	{
-		if (${Actor[${Me.ToActor.WhoFollowing}](exists)})
+		if (${Actor[${Me.WhoFollowing}](exists)})
 		{
-			if ${Actor[${Me.ToActor.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)
+			if ${Actor[${Me.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)
 			{
 				relay ${RelaySession} EQ2Echo ${Me.Name} IS STUCK
 				StuckWarningTime:Set[${Time.Timestamp}]
@@ -898,7 +898,7 @@ atom GetNaked()
 {
 	variable int tempvar=1
 
-	if !${Me.ToActor.InCombatMode}
+	if !${Me.InCombatMode}
 	{
 		Do
 		{
@@ -912,7 +912,7 @@ atom LoadEquipmentSet(string EquipmentSetName)
 {
 	variable int tempvar=1
 
-	if !${Me.ToActor.InCombatMode}
+	if !${Me.InCombatMode}
 	{
 		Do
 		{
@@ -965,21 +965,21 @@ function CommonHeals(int Health)
 	grpcnt:Set[${Me.Group}]
 	temphl:Set[0]
 
-	if ${Me.Inventory[Crystallized Spirit].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Crystallized Spirit].IsReady} && ${Me.InCombatMode}
 	{
-		if ${Me.ToActor.Health}>0 && ${Me.Group[${temphl}].ToActor.Health}<${Health}
+		if ${Me.Health}>0 && ${Me.Group[${temphl}].Health}<${Health}
 			grpheal:Inc
 
 		do
 		{
-			if ${Me.Group[${temphl}].ToActor(exists)}
+			if ${Me.Group[${temphl}](exists)}
 			{
-				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<${Health}
+				if !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Health}<${Health}
 					grpheal:Inc
 
 				if ${Me.Group[${temphl}].Class.Equal[conjuror]} || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[beastlord]}
 				{
-					if ${Me.Group[${temphl}].ToActor.Pet.Health}<${Health} && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
+					if ${Me.Group[${temphl}].Pet.Health}<${Health} && ${Me.Group[${temphl}].Pet.Health}>0
 						grpheal:Inc
 				}
 			}
@@ -1015,7 +1015,7 @@ function CommonHeals(int Health)
 		    return
 			}
 		}
-		elseif !${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 75
+		elseif !${Me.InRaid} && !${MainTank} && ${Me.Health} < 75
 		{
 	    if (${Me.Ability[Salve].IsReady})
 	    {
@@ -1029,7 +1029,7 @@ function CommonHeals(int Health)
 		    return
 			}
 		}
-		elseif ${Me.InRaid} && !${MainTank} && ${Me.ToActor.Health} < 35
+		elseif ${Me.InRaid} && !${MainTank} && ${Me.Health} < 35
 		{
 	    if (${Me.Ability[Salve].IsReady})
 	    {
@@ -1045,9 +1045,9 @@ function CommonHeals(int Health)
 		}
 	}
 
-	if ${Me.Inventory[Innoruk's Child].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Innoruk's Child].IsReady} && ${Me.InCombatMode}
 	{
-		if ${Me.ToActor.Health}<50
+		if ${Me.Health}<50
 		{
 			Me.Inventory[Innoruk's Child]:Use
 			wait 2
@@ -1059,12 +1059,12 @@ function CommonHeals(int Health)
 		}
 	}
 
-	if ${UseCurePotions} && ${Me.ToActor.InCombatMode}
+	if ${UseCurePotions} && ${Me.InCombatMode}
 		call CheckPotCures
 
-	if ${Me.Inventory[Essence of Health].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Essence of Health].IsReady} && ${Me.InCombatMode}
 	{
-		if ${Me.ToActor.Health}<25
+		if ${Me.Health}<25
 		{
 			Me.Inventory[Essence of Health]:Use
 			wait 2
@@ -1076,9 +1076,9 @@ function CommonHeals(int Health)
 		}
 	}
 
-	if ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.ToActor.InCombatMode}
+	if ${Me.Inventory[Essence of Regeneration].IsReady} && ${Me.InCombatMode}
 	{
-		if ${Me.ToActor.Health}<25
+		if ${Me.Health}<25
 		{
 			Me.Inventory[Essence of Regeneration]:Use
 			wait 2
@@ -1125,17 +1125,17 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 		do
 		{
 			;check groupmates health
-			if (${Me.Group[${counter}].ToActor(exists)} && !${Me.Group[${counter}].ToActor.IsDead})
+			if (${Me.Group[${counter}](exists)} && !${Me.Group[${counter}].IsDead})
 			{
-				if (${Me.Group[${counter}].ToActor.Health} < ${GroupHealth})
+				if (${Me.Group[${counter}].Health} < ${GroupHealth})
 					return FALSE
 
 				;check health of summoner pets .. TO DO -- why do we care about these on epic/raid fights?
 				if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
 				{
-					if (${Me.Group[${counter}].ToActor.Pet(exists)} && !${Me.Group[${counter}].ToActor.Pet.IsDead})
+					if (${Me.Group[${counter}].Pet(exists)} && !${Me.Group[${counter}].Pet.IsDead})
 					{
-						if ${Me.Group[${counter}].ToActor.Pet.Health} < ${GroupHealth}
+						if ${Me.Group[${counter}].Pet.Health} < ${GroupHealth}
 							return FALSE
 					}
 				}
@@ -1149,7 +1149,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 		return FALSE
 
 	;check my health
-	if ${Me.ToActor.Health} < ${MyHealth}
+	if ${Me.Health} < ${MyHealth}
 		return FALSE
 
 	return TRUE
@@ -1164,9 +1164,9 @@ atom(script) ChatText(int ChatType, string Message, string Speaker, string ChatT
 		case 26
 		case 15
 		case 16
-			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.ToActor.InCombatMode}
+			if ${Message.Find[${OutTrigger}]} && ${JoustMode} && ${Me.InCombatMode}
 				JoustStatus:Set[1]
-			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.ToActor.InCombatMode}
+			elseif ${Message.Find[${InTrigger}]} && ${JoustMode} && ${Me.InCombatMode}
 				JoustStatus:Set[0]
 			elseif ${Message.Find[${BDTrigger}]}
 				BDStatus:Set[1]
@@ -1205,13 +1205,13 @@ function FindHealer()
 			case fury
 			case mystic
 			case defiler
-				healer:Set[${Me.Group[${tempgrp}].ToActor.ID}]
+				healer:Set[${Me.Group[${tempgrp}].ID}]
 				break
 			case warden
 			case inquisitor
 				;don't trust priests that have melee configs unless no other priest is available
 				if ${healer}==${Me.ID}
-					healer:Set[${Me.Group[${tempgrp}].ToActor.ID}]
+					healer:Set[${Me.Group[${tempgrp}].ID}]
 				break
 			default
 				break

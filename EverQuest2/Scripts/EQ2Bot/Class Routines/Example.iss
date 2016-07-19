@@ -127,7 +127,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -152,12 +152,12 @@ function Combat_Routine(int xAction)
 	call CheckHeals
 
 	;Add persistant checks you want the bot to do every round of combat, these are optional
-	if ${Me.ToActor.Health}<60
+	if ${Me.Health}<60
 	{
 		call CastSpellRange 156
 	}
 
-	if ${Me.ToActor.Health}<40
+	if ${Me.Health}<40
 	{
 		call CastSpellRange 155
 	}
@@ -265,15 +265,15 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ZoneName.Equal["${Zone.Name}"]}
 		{
 
-			if ${Me.Group[${temphl}].ToActor.Health} < 100 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor(exists)}
+			if ${Me.Group[${temphl}].Health} < 100 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
+				if ${Me.Group[${temphl}].Health} < ${Me.Group[${lowest}].Health}
 				{
 					lowest:Set[${temphl}]
 				}
 			}
 
-			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<60
+			if ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].Health}<60
 			{
 				grpheal:Inc
 			}

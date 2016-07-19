@@ -309,7 +309,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -325,16 +325,16 @@ function Combat_Routine(int xAction)
 	;The following till FullAuto could be nested in FullAuto, but I think bot control of these abilities is better
 	call CheckHeals
 
-	if ${Me.Ability[${SpellType[156]}].IsReady} && ${Me.ToActor.Health}<60
+	if ${Me.Ability[${SpellType[156]}].IsReady} && ${Me.Health}<60
 		call CastSpellRange 156
 
-	if ${Me.Ability[${SpellType[172]}].IsReady} && ${Me.ToActor.Health}<50
+	if ${Me.Ability[${SpellType[172]}].IsReady} && ${Me.Health}<50
 		call CastSpellRange 172
 
-	if ${Me.Ability[${SpellType[155]}].IsReady} && ${Me.ToActor.Health}<40
+	if ${Me.Ability[${SpellType[155]}].IsReady} && ${Me.Health}<40
 		call CastSpellRange 155
 
-	if ${Me.ToActor.Health}<20
+	if ${Me.Health}<20
 	{
 		if ${Me.Equipment[2].Name.Equal[${TowerShield}]}
 			call CastSpellRange 322 0 1 0 ${KillTarget}
@@ -458,7 +458,7 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${FullAutoMode} && ${Me.ToActor.Power}>5
+	if ${FullAutoMode} && ${Me.Power}>5
 	{
 		if ${TauntMode}
 		{
@@ -484,7 +484,7 @@ function Lost_Aggro(int mobid)
 					call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
 
 				;use rescue if new agro target is under 65 health
-				if ${Me.ToActor.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+				if ${Me.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 					call CastSpellRange 320 0 1 0 ${KillTarget}
 			}
 		}
@@ -530,13 +530,13 @@ function CheckHeals()
 			if ${Me.Group[${temphl}].ZoneName.Equal["${Zone.Name}"]}
 			{
 
-				if ${Me.Group[${temphl}].ToActor.Health} < 100 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor(exists)}
+				if ${Me.Group[${temphl}].Health} < 100 && !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}](exists)}
 				{
-					if ${Me.Group[${temphl}].ToActor.Health} < ${Me.Group[${lowest}].ToActor.Health}
+					if ${Me.Group[${temphl}].Health} < ${Me.Group[${lowest}].Health}
 						lowest:Set[${temphl}]
 				}
 
-				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<60
+				if !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Health}<60
 					grpheal:Inc
 
 				if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
@@ -547,7 +547,7 @@ function CheckHeals()
 		while ${temphl:Inc}<${grpcnt}
 	}
 	;MAINTANK EMERGENCY Mitigation
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].Health}<30 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}](exists)}
 	{
 		call CastSpellRange 317
 		call CastSpellRange 155 156

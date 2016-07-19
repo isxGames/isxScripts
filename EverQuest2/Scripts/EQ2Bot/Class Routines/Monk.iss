@@ -254,7 +254,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -269,10 +269,10 @@ function Combat_Routine(int xAction)
 	if !${EQ2.HOWindowActive} && ${Me.InCombat}
 		call CastSpellRange 303
 
-	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[503]}].IsReady}
+	if ${Me.Health}<50 && ${Me.Ability[${SpellType[503]}].IsReady}
 		call CastSpellRange 503
 
-	if ${Me.ToActor.Health}<70 && ${Me.Ability[${SpellType[505]}].IsReady}
+	if ${Me.Health}<70 && ${Me.Ability[${SpellType[505]}].IsReady}
 		call CastSpellRange 505
 
 	;Always keep Thundering Hand Buffed
@@ -405,14 +405,14 @@ function Have_Aggro()
 
 	;Feign Death if I am very low on health
 	;while not MT
-	if !${MainTank} && ${Me.ToActor.Health}<15
+	if !${MainTank} && ${Me.Health}<15
 	{
 		call CastSpellRange 368 0 0 0 0 0 0 1
 	}
 
 	;apply mountain stance if I got aggro and am hurt
 	;while not MT
-	if !${MainTank} && ${Me.ToActor.Health}<70
+	if !${MainTank} && ${Me.Health}<70
 	{
 		call CastSpellRange 156 0 0 0 0 0 0 1
 	}
@@ -421,7 +421,7 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${FullAutoMode} && ${Me.ToActor.Power}>5
+	if ${FullAutoMode} && ${Me.Power}>5
 	{
 		if ${TauntMode} && !${RangedAttacksMode}
 		{
@@ -429,7 +429,7 @@ function Lost_Aggro(int mobid)
 				call CastSpellRange 321 0 1 0 ${Actor[${KillTarget}].ID}
 
 			;use rescue if new agro target is under 65 health
-			if ${Me.ToActor.Target.Target.Health}<65
+			if ${Me.Target.Target.Health}<65
 			{
 				call CastSpellRange 320 0 1 0 ${mobid} 0 0 1
 			}
@@ -460,31 +460,31 @@ function CheckHeals()
 	grpcnt:Set[${Me.GroupCount}]
 
 	;Feign Death if I am solo and low on health
-	if ${Me.ToActor.Health}<15 && ${Me.GroupCount}==1
+	if ${Me.Health}<15 && ${Me.GroupCount}==1
 	{
 		call CastSpellRange 368 0 0 0 0 0 0 1
 	}
 
 	;Use Chi if low health
-	if ${Me.ToActor.Health}<35 && ${Me.InCombat} && ${Me.Ability[${SpellType[387]}].IsReady}
+	if ${Me.Health}<35 && ${Me.InCombat} && ${Me.Ability[${SpellType[387]}].IsReady}
 	{
 		call CastSpellRange 387 0 0 0 0 0 0 1
 	}
 
 	;Cancel Feign if Health is better
-	if ${Me.Effect[${SpellType[368]}](exists)} && ${Me.ToActor.Health}>60
+	if ${Me.Effect[${SpellType[368]}](exists)} && ${Me.Health}>60
 	{
 		Me.Effect[${SpellType[368]}]:Cancel
 	}
 
 	;Tsunami
-	if ${Me.ToActor.Health}<25
+	if ${Me.Health}<25
 	{
 		call CastSpellRange 300 0 0 0 0 0 0 1
 	}
 
 	;Toggle Stone Stance
-	if ${Me.ToActor.Health}<50 && ${DefensiveMode}
+	if ${Me.Health}<50 && ${DefensiveMode}
 	{
 		call CastSpellRange 157 0 0 0 0 0 0 1
 	}
@@ -501,28 +501,28 @@ function CheckHeals()
 	}
 
 	;Check Me first for mending,
-	if ${Me.ToActor.Health}<30
+	if ${Me.Health}<30
 	{
-		call CastSpellRange 366 0 0 0 ${Me.ToActor.ID} 0 0 1
+		call CastSpellRange 366 0 0 0 ${Me.ID} 0 0 1
 
 	}
 
 	do
 	{
 		;Check Group members
-		if ${Me.Group[${temphl}].ToActor.Health}<30 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].Health}<30 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
 		{
-			call CastSpellRange 366 0 0 0 ${Me.Group[${temphl}].ToActor.ID} 0 0 1
+			call CastSpellRange 366 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1
 
 		}
 	}
 	while ${temphl:Inc}<${grpcnt}
 
 	;Outward Calm
-	if ${Me.ToActor.Health}<50
+	if ${Me.Health}<50
 	{
-		call CastSpellRange 369 0 0 0 ${Me.ToActor.ID} 0 0 1
-		call CastSpellRange 300 0 0 0 ${Me.ToActor.ID} 0 0 1
+		call CastSpellRange 369 0 0 0 ${Me.ID} 0 0 1
+		call CastSpellRange 300 0 0 0 ${Me.ID} 0 0 1
 	}
 
 	call UseCrystallizedSpirit 60

@@ -335,7 +335,7 @@ function Combat_Routine(int xAction)
 	spellthreshold:Set[1]
 
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -583,7 +583,7 @@ function Post_Combat_Routine(int xAction)
 	}
 
 	;cancel stealth
-	if ${Me.ToActor.Effect[Shroud](exists)} || ${Me.Maintained[Shroud](exists)}
+	if ${Me.Effect[Shroud](exists)} || ${Me.Maintained[Shroud](exists)}
 	{
 		Me.Maintained[Shroud]:Cancel
 	}
@@ -624,7 +624,7 @@ function RefreshPower()
 	declare tempvar int local
 	declare MemberLowestPower int local
 
-	if ${Me.Power}<10 && ${Me.ToActor.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<10 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use
 
 	if ${ShardMode}
@@ -638,13 +638,13 @@ function RefreshPower()
 		
 		do
 		{
-   		if ${Me.Raid[${tempvar}](exists)} && ${Me.Raid[${tempvar}].ToActor(exists)}
+   		if ${Me.Raid[${tempvar}](exists)} && ${Me.Raid[${tempvar}](exists)}
    		{
    		  if ${Me.Raid[${tempvar}].Name.NotEqual[${Me.Name}]}
    			{
-					if ${Me.Raid[${tempvar}].ToActor.Power}<25 && !${Me.Raid[${tempvar}].ToActor.IsDead} && ${Me.Raid[${tempvar}].ToActor.Distance}<=${Me.Ability[${SpellType[409]}].Range}
+					if ${Me.Raid[${tempvar}].Power}<25 && !${Me.Raid[${tempvar}].IsDead} && ${Me.Raid[${tempvar}].Distance}<=${Me.Ability[${SpellType[409]}].Range}
     			{
-    				if (${Me.Raid[${tempvar}].ToActor.Power} < ${Me.Raid[${MemberLowestPower}].ToActor.Health}) || ${MemberLowestPower}==0
+    				if (${Me.Raid[${tempvar}].Power} < ${Me.Raid[${MemberLowestPower}].Health}) || ${MemberLowestPower}==0
     					MemberLowestPower:Set[${tempvar}]
     			}   				
    			}
@@ -652,7 +652,7 @@ function RefreshPower()
 		}
 		while ${tempvar:Inc}<=24
 
-		if ${Me.Raid[${MemberLowestPower}].ToActor(exists)} && ${Me.Raid[${MemberLowestPower}].ToActor.Distance}<30
+		if ${Me.Raid[${MemberLowestPower}](exists)} && ${Me.Raid[${MemberLowestPower}].Distance}<30
 		{	
 			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
 			eq2execute em Energizing Ballad to ${Me.Raid[${MemberLowestPower}].Name}
@@ -666,20 +666,20 @@ function RefreshPower()
 		MemberLowestPower:Set[0]
 		do
 		{
-			if ${Me.Group[${tempvar}].ToActor.Power}<25 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+			if ${Me.Group[${tempvar}].Power}<25 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}](exists)}
 			{
-				if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
+				if ${Me.Group[${tempvar}].Power}<=${Me.Group[${MemberLowestPower}].Power}
 					MemberLowestPower:Set[${tempvar}]
 			}
 		}
 		while ${tempvar:Inc}<${Me.GroupCount}
 
 
-		if ${Me.Group[${MemberLowestPower}].ToActor(exists)} && ${Me.Group[${MemberLowestPower}].ToActor.Power}<25 && ${Me.Group[${MemberLowestPower}].ToActor.Distance}<30 && ${Me.Ability[${SpellType[409]}].IsReady}
+		if ${Me.Group[${MemberLowestPower}](exists)} && ${Me.Group[${MemberLowestPower}].Power}<25 && ${Me.Group[${MemberLowestPower}].Distance}<30 && ${Me.Ability[${SpellType[409]}].IsReady}
 		{
-			call CastSpellRange 409 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}	
-			if ${Me.Group[${MemberLowestPower}].ToActor(exists)}	
-				eq2execute em Energizing Ballad to ${Me.Group[${MemberLowestPower}].ToActor.Name}	
+			call CastSpellRange 409 0 0 0 ${Me.Group[${MemberLowestPower}].ID}	
+			if ${Me.Group[${MemberLowestPower}](exists)}	
+				eq2execute em Energizing Ballad to ${Me.Group[${MemberLowestPower}].Name}	
 		}
 	}
 		
@@ -768,7 +768,7 @@ function Mezmerise_Targets()
 	if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
 	{
 		Target ${KillTarget}
-		wait 20 ${Me.ToActor.Target.ID}==${KillTarget}
+		wait 20 ${Me.Target.ID}==${KillTarget}
 	}
 	else
 	{

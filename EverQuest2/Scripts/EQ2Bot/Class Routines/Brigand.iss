@@ -206,7 +206,7 @@ function Combat_Routine(int xAction)
 	else
 		spellthreshold:Set[3]
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -231,7 +231,7 @@ function Combat_Routine(int xAction)
 		eq2execute /auto 1
 
 	;if stealthed, use ambush
-	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
+	if !${MainTank} && ${Me.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 		call CastSpellRange 130 0 1 0 ${KillTarget} 0 0 0 0 1
 
 	if !${EQ2.HOWindowActive} && ${Me.InCombat} && ${StartHO}

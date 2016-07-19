@@ -406,7 +406,7 @@ function Combat_Routine(int xAction)
 	if !${JoustMode}
 		call DoBladeDance
 	
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -865,9 +865,9 @@ function CheckHeals()
 	do
 	{
 		;oration of sacrifice heal
-		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Health}<70 && !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.ToActor.Health}>75 && ${Me.Group[${temphl}].ToActor.Distance}<=20
+		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Health}<70 && !${Me.Group[${temphl}].IsDead} && ${Me.Health}>75 && ${Me.Group[${temphl}].Distance}<=20
 		{
-			EQ2Echo healing ${Me.Group[${temphl}].ToActor.Name}
+			EQ2Echo healing ${Me.Group[${temphl}].Name}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1 0 2 0
 		}
 	}
@@ -876,7 +876,7 @@ function CheckHeals()
 	;Res Fallen Groupmembers only if in range
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
+		if ${Me.Group[${tempgrp}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady})
 		{
 			call CastSpellRange 300 301 1 0 ${Me.Group[${tempgrp}].ID}
 			;short wait for accept
@@ -890,7 +890,7 @@ function CheckHeals()
 		;Res Fallen RAID members only if in range
 		do
 		{
-			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<35
+			if ${Me.Raid[${tempraid}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady} || ${Me.Ability[${SpellType[301]}].IsReady}) && ${Me.Raid[${tempraid}].Distance}<35
 			{
 				call CastSpellRange 300 301 1 0 ${Me.Raid[${tempraid}].ID}
 				;short wait for accept

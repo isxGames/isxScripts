@@ -286,7 +286,7 @@ function Buff_Routine(int xAction)
 function Combat_Routine(int xAction)
 {
 	
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -306,7 +306,7 @@ function Combat_Routine(int xAction)
 	;call ActionChecks
 
 	;if stealthed, use ambush
-	if !${MainTank} && ${Me.ToActor.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
+	if !${MainTank} && ${Me.IsStealthed} && ${Me.Ability[${SpellType[130]}].IsReady}
 		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 0 0 1
 
 	;use best debuffs on target if epic

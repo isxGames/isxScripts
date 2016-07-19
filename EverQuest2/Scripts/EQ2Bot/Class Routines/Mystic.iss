@@ -97,7 +97,7 @@ function Pulse()
 		call CheckWards
 		call CheckHeals
 
-		if ${Me.ToActor.Power}>85 && ${KeepWardUp}
+		if ${Me.Power}>85 && ${KeepWardUp}
 		{
 			call CastSpellRange 15
 			call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
@@ -386,7 +386,7 @@ function Buff_Routine(int xAction)
 			temp:Set[1]
 			do
 			{
-				if ${Me.Group[${temp}].ToActor.Health}==-99 && ${Me.Group[${temp}].ToActor(exists)}
+				if ${Me.Group[${temp}].Health}==-99 && ${Me.Group[${temp}](exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 1 0 ${Me.Group[${temp}].ID} 1
 			}
 			while ${temp:Inc}<${Me.GroupCount}
@@ -398,13 +398,13 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case AA_AuraOfHaste
-			if !${Me.ToActor.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.ToActor.Pet(exists)}
+			if !${Me.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case AA_SpiritualForesight
 		case AA_RitualOfAbsolution
 		case AA_AuraOfWarding
-			if ${Me.ToActor.Pet(exists)}
+			if ${Me.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 		Default
@@ -417,7 +417,7 @@ function Combat_Routine(int xAction)
 {
 	declare spellsused int local
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -583,7 +583,7 @@ function Post_Combat_Routine(int xAction)
 			tempgrp:Set[1]
 			do
 			{
-				if ${Me.Group[${tempgrp}].ToActor.Health}==-99
+				if ${Me.Group[${tempgrp}].Health}==-99
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 1 0 ${Me.Group[${tempgrp}].ID} 1
 			}
 			while ${tempgrp:Inc} <= ${Me.GroupCount}
@@ -640,7 +640,7 @@ function CheckHeals()
 	lowest:Set[1]
 
 	;Cancel Oberon if up and tank dieing
-	if ${Me.Maintained[${SpellType[317]}](exists)} && (${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}) && ${Me.ToActor.Power} >20 || !${OberonMode}
+	if ${Me.Maintained[${SpellType[317]}](exists)} && (${Actor[${MainTankPC}].Health}<30 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}) && ${Me.Power} >20 || !${OberonMode}
 		Me.Maintained[${SpellType[317]}]:Cancel
 
 	;Res the MT if they are dead
@@ -649,15 +649,15 @@ function CheckHeals()
 
 	do
 	{
-		if ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}](exists)}
 		{
 
-			if ${Me.Group[${temphl}].ToActor.Health}==-99 && !${Me.InCombat}
+			if ${Me.Group[${temphl}].Health}==-99 && !${Me.InCombat}
 				call CastSpellRange 300 301 1 0 ${Me.Group[${temphl}].ID} 1
 
-			if ${Me.Group[${temphl}].ToActor.Health}<100 && ${Me.Group[${temphl}].ToActor.Health}>-99
+			if ${Me.Group[${temphl}].Health}<100 && ${Me.Group[${temphl}].Health}>-99
 			{
-				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health}
+				if ${Me.Group[${temphl}].Health}<=${Me.Group[${lowest}].Health}
 					lowest:Set[${temphl}]
 			}
 
@@ -682,7 +682,7 @@ function CheckHeals()
 				}
 			}
 
-			if ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}].ToActor.Health}<80
+			if ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].Health}<80
 				grpheal:Inc
 
 			if ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Trauma}>0
@@ -690,12 +690,12 @@ function CheckHeals()
 
 			if ${Me.Group[${temphl}].Class.Equal[conjuror]}  || ${Me.Group[${temphl}].Class.Equal[necromancer]}
 			{
-				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0
-					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+				if ${Me.Group[${temphl}].Pet.Health}<60 && ${Me.Group[${temphl}].Pet.Health}>0
+					PetToHeal:Set[${Me.Group[${temphl}].Pet.ID}
 			}
 
-			if ${Me.ToActor.Pet.Health}<60
-				PetToHeal:Set[${Me.ToActor.Pet.ID}]
+			if ${Me.Pet.Health}<60
+				PetToHeal:Set[${Me.Pet.ID}]
 
 			if ${Me.Group[${temphl}].Name.Equal[${MainTankPC}]}
 				MTinMyGroup:Set[TRUE]
@@ -703,7 +703,7 @@ function CheckHeals()
 	}
 	while ${temphl:Inc} <= ${Me.GroupCount}
 
-	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
+	if ${Me.Health}<80 && ${Me.Health}>-99
 		grpheal:Inc
 
 	if ${Me.Noxious}>0 || ${Me.Trauma}>0
@@ -754,21 +754,21 @@ function CheckHeals()
 		call CureGroupMember ${mostafflicted}
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
 		call EmergencyHeal ${Actor[${MainTankPC}].ID}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Health}<=${Me.Group[${lowest}].Health} && ${Me.Group[${lowest}](exists)}
 	{
-		if ${Me.ToActor.Health}<85
+		if ${Me.Health}<85
 		{
-			if ${haveaggro} && ${Me.ToActor.InCombatMode}
+			if ${haveaggro} && ${Me.InCombatMode}
 				call CastSpellRange 7 0 0 0 ${Me.ID}
 			else
 				call CastSpellRange 4 0 0 0 ${Me.ID}
 		}
 
-		if ${Me.ToActor.Health}<25
+		if ${Me.Health}<25
 		{
 			if ${haveaggro}
 				call EmergencyHeal ${Me.ID}
@@ -791,7 +791,7 @@ function CheckHeals()
 		if !${KeepGroupWardUp} && ${MTinMyGroup}
 			call CastSpellRange 15
 
-		if ${OberonMode} && ${MTinMyGroup} && ${Me.Ability[${SpellType[317]}].IsReady} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Me.ToActor.Power}<40
+		if ${OberonMode} && ${MTinMyGroup} && ${Me.Ability[${SpellType[317]}].IsReady} && ${Actor[${MainTankPC}].ID}!=${Me.ID} && ${Me.Power}<40
 			call CastSpellRange 317 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
 
@@ -814,17 +814,17 @@ function CheckHeals()
 			call CastSpellRange 16
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<80 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].Health}<80 && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
-			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID}
 		else
-			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
 		hurt:Set[TRUE]
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<60 && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)} && ${TorporMode}
-		call CastSpellRange 8 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+	if ${Me.Group[${lowest}].Health}<60 && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)} && ${TorporMode}
+		call CastSpellRange 8 0 0 0 ${Me.Group[${lowest}].ID}
 
 	;PET HEALS
 	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)}
@@ -841,7 +841,7 @@ function CheckHeals()
 		tempgrp:Set[1]
 		do
 		{
-			if ${Me.Group[${tempgrp}].ToActor(exists)} && ${Me.Group[${tempgrp}].ToActor.IsDead} && ${Me.Group[${tempgrp}].ToActor.Distance}<=20
+			if ${Me.Group[${tempgrp}](exists)} && ${Me.Group[${tempgrp}].IsDead} && ${Me.Group[${tempgrp}].Distance}<=20
 			{
 				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
 					call CastSpellRange 500 0 0 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
@@ -1014,7 +1014,7 @@ function CureGroupMember(int gMember)
 
 
 	tmpcure:Set[0]
-	if !${Me.Group[${gMember}].ToActor(exists)}
+	if !${Me.Group[${gMember}](exists)}
 		return
 
 	do
@@ -1025,7 +1025,7 @@ function CureGroupMember(int gMember)
 		if  ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
 			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
 	}
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].ToActor(exists)}
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}](exists)}
 }
 
 function PostDeathRoutine()

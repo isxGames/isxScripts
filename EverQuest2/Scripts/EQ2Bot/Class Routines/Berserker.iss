@@ -253,7 +253,7 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -273,7 +273,7 @@ function Combat_Routine(int xAction)
 	call CastSpellRange 393
 
 	;use Wall of Force if health is low
-	if ${Me.Ability[${SpellType[501]}].IsReady} && ${Me.ToActor.Health}<40
+	if ${Me.Ability[${SpellType[501]}].IsReady} && ${Me.Health}<40
 		call CastSpellRange 501
 
 	;echo in combat
@@ -284,7 +284,7 @@ function Combat_Routine(int xAction)
 		if ${AoEMode}
 			call CastSpellRange 392
 
-		if ${Me.ToActor.Health}<50
+		if ${Me.Health}<50
 			call CastSpellRange 324
 
 		switch ${Action[${xAction}]}
@@ -425,7 +425,7 @@ function Have_Aggro()
 
 function Lost_Aggro(int mobid)
 {
-	if ${FullAutoMode} && ${Me.ToActor.Power}>5
+	if ${FullAutoMode} && ${Me.Power}>5
 	{
 		if ${TauntMode}
 		{
@@ -446,7 +446,7 @@ function Lost_Aggro(int mobid)
 				call CastSpellRange 160 161 1 0 ${Actor[${KillTarget}].ID}
 
 			;use rescue if new agro target is under 65 health
-			if ${Me.ToActor.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
+			if ${Me.Target.Target.Health}<65 && ${Actor[${KillTarget}].Target.ID}!=${Me.ID}
 				call CastSpellRange 320 0 1 0 ${mobid}
 		}
 	}

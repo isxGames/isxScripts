@@ -123,10 +123,10 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	;check if we have a pet up
-	if !${Me.ToActor.Pet(exists)} && ${PetMode}
+	if !${Me.Pet(exists)} && ${PetMode}
 		call SummonPet
 	;check if we are changing pets 
-	if ${Me.ToActor.Pet(exists)} && ${PetMode} && ${ChangePet}!=${PetType}
+	if ${Me.Pet(exists)} && ${PetMode} && ${ChangePet}!=${PetType}
 	{
 		Me.Maintained[${SpellType[${Math.Calc[459+${ChangePet}]}]}]:Cancel
 		Wait 150
@@ -189,7 +189,7 @@ function Buff_Routine(int xAction)
 			}
 		break
 		case Shrink_Warder
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${PetShrink} && ${Me.ToActor.Pet(exists)}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${PetShrink} && ${Me.Pet(exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -199,7 +199,7 @@ function Buff_Routine(int xAction)
 			}
 		break
 		case Invs_Warder
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${PetInvs} && ${Me.ToActor.Pet(exists)}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${PetInvs} && ${Me.Pet(exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -228,16 +228,16 @@ function Combat_Routine(int xAction)
 	spellthreshold:Set[${CombatUse}]
 
 	; Check for Pet
-	if !${Me.ToActor.Pet(exists)} && ${PetMode}
+	if !${Me.Pet(exists)} && ${PetMode}
 		call SummonPet	
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 	}	
 	
-	if ${Me.ToActor.Pet(exists)} && !${Me.ToActor.Pet.InCombatMode}
+	if ${Me.Pet(exists)} && !${Me.Pet.InCombatMode}
 	{
 		EQ2Execute /pet attack
 	}
@@ -245,7 +245,7 @@ function Combat_Routine(int xAction)
  	call Primals
 	call Advantages 		 
  
- 	if ${Actor[${KillTarget}](exists)} && ${Me.ToActor.InCombatMode} && ${Me.ToActor.Pet.InCombatMode}
+ 	if ${Actor[${KillTarget}](exists)} && ${Me.InCombatMode} && ${Me.Pet.InCombatMode}
  	{
 		;;;;PBAOE
 		if ${spellsused}<${spellthreshold} && ${Actor[${KillTarget}](exists)} && ${Mob.Count}>2 && ${Me.Ability[${SpellType[394]}].IsReady}
@@ -442,7 +442,7 @@ function RefreshPower()
 
 function CheckHeals()
 {
-	if ${Me.ToActor.Pet.Health}<70 && ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet.Health}<70 && ${Me.Pet(exists)}
 		call CastSpellRange 391
 
 	call CommonHeals 70
@@ -469,24 +469,24 @@ function Advantages()
 		
 	declare counter int local
  ;; Loop for Advantages both Offensive and Defensive 
-	if ${Me.ToActor.Pet(exists)} && ${Actor[${KillTarget}].Type.Equal[NPC]}
+	if ${Me.Pet(exists)} && ${Actor[${KillTarget}].Type.Equal[NPC]}
 	{
 		if ${Me.Maintained[Spiritual Stance](exists)}
 		{
 			counter:Set[432]
 			do
 			{
-				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${Me.ToActor.Health}>=60 && ${FightType}!=1
+				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${Me.Health}>=60 && ${FightType}!=1
 				{
 					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 					wait 2
 			  }
-			  Elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)}  && ${Me.ToActor.Health}<60 || ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)} && ${FightType}==1
+			  Elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)}  && ${Me.Health}<60 || ${Me.Ability[${SpellType[434]}].IsReady} && !${Me.Maintained[${SpellType[434]}](exists)} && ${FightType}==1
 			 	{
 					call CastSpellRange 434 0 0 0 ${KillTarget}
 					wait 2
 				}
-				Elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[431]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[431]}].IsReady} && ${FightType}==1 || ${Me.Ability[${SpellType[435]}].IsReady} && ${Me.ToActor.Health}<40 || ${Me.Ability[${SpellType[435]}].IsReady} && ${FightType}==1
+				Elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[431]}].IsReady} && ${Me.Health}<40 || ${Me.Ability[${SpellType[431]}].IsReady} && ${FightType}==1 || ${Me.Ability[${SpellType[435]}].IsReady} && ${Me.Health}<40 || ${Me.Ability[${SpellType[435]}].IsReady} && ${FightType}==1
 			 	{
 			 		if ${Me.Ability[${SpellType[403]}].IsReady}
 						call CastSpellRange 431 0 0 0 ${KillTarget}
@@ -559,7 +559,7 @@ function Primals()
 		
 	declare counter int local
 	;; Loop for Primals both Offensive and Defensive
-	if ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet(exists)}
 	{
 		if ${Me.Maintained[Spiritual Stance](exists)}
 		{
@@ -570,7 +570,7 @@ function Primals()
 				{
 					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 			  }
-			  elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && ${Me.ToActor.Health}<=50
+			  elseif ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && ${Me.Health}<=50
 			 	{
 					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 				}			

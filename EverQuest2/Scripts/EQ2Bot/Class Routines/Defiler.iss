@@ -130,7 +130,7 @@ function Pulse()
 	{
 		if ${Actor[${MainTankID}].InCombatMode}
 		{
-			if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+			if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 			{
 				;Debug:Echo["Pulse() -- Stopping autofollow"]		
 				EQ2Execute /stopfollow
@@ -142,7 +142,7 @@ function Pulse()
 		if ${CureMode}
 			call CheckCures
 		
-		if ${Me.ToActor.Power}>85 && ${KeepWardUp}
+		if ${Me.Power}>85 && ${KeepWardUp}
 			call CheckWards
 
 
@@ -316,7 +316,7 @@ function Buff_Routine(int xAction)
 	call CheckHeals
 	
 
-	if ${Me.ToActor.Power}>85 && ${KeepWardUp}
+	if ${Me.Power}>85 && ${KeepWardUp}
 		call CheckWards
 
 	switch ${PreAction[${xAction}]}
@@ -457,18 +457,18 @@ function Buff_Routine(int xAction)
 			call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case AA_Immunities
-			if !${Me.ToActor.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.ToActor.Pet(exists)}
+			if !${Me.Effect[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case AA_RitualisticAggression
 		case AA_RitualOfAbsolution
 		case AA_InfectiveBites
 		case BuffTribalSpirit
-			if ${Me.ToActor.Pet(exists)}
+			if ${Me.Pet(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 		case SpecialVision
-			if ${Me.ToActor.Race.Equal[Euridite]}
+			if ${Me.Race.Equal[Euridite]}
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		Default
@@ -492,7 +492,7 @@ function Combat_Routine(int xAction)
 	spellmax:Set[2]
 	spellsused:Set[0]
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -756,7 +756,7 @@ function Post_Combat_Routine(int xAction)
 			tempgrp:Set[1]
 			do
 			{
-				if ${Me.Group[${tempgrp}].ToActor.IsDead}
+				if ${Me.Group[${tempgrp}].IsDead}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 1 0 ${Me.Group[${tempgrp}].ID} 1 0 0 0 2 0
 			}
 			while ${tempgrp:Inc} <= ${Me.GroupCount}
@@ -770,7 +770,7 @@ function Post_Combat_Routine(int xAction)
 
 function Have_Aggro(int aggroid)
 {
-	if ${Me.ToActor.Health}<50 || ${Actor[${aggroid}].IsEpic}
+	if ${Me.Health}<50 || ${Actor[${aggroid}].IsEpic}
 	{
 		if  ${Me.Ability[${SpellType[180]}].IsReady}
 			call CastSpellRange 180 0 0 0 ${aggroid}
@@ -782,14 +782,14 @@ function Have_Aggro(int aggroid)
 function RefreshPower()
 {
 	;AA Cannibalize
-	if ${Me.ToActor.Power}<45  && ${Me.ToActor.Health}>50
+	if ${Me.Power}<45  && ${Me.Health}>50
 	{
 		call CastSpellRange 387
 		call CastSpellRange 381
 	}
 
 	;Forced Canabalize
-	if ${Me.ToActor.Power}<85 && ${Me.InCombat}  && !${Actor[${KillTarget}].Name.Upper.Find[DRUSELLA]} && !${Actor[${KillTarget}].Name.Upper.Find[VENRIL SATHIR]}
+	if ${Me.Power}<85 && ${Me.InCombat}  && !${Actor[${KillTarget}].Name.Upper.Find[DRUSELLA]} && !${Actor[${KillTarget}].Name.Upper.Find[VENRIL SATHIR]}
 		call CastSpellRange 72 0 0 0 ${KillTarget}
 }
 
@@ -862,11 +862,11 @@ function CheckCures()
 			do
 			{
 					
-				if (${Me.Group[${i}].ToActor(exists)} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].ToActor.Distance} <= 40)
+				if (${Me.Group[${i}](exists)} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].Distance} <= 40)
 				{
 					if ${Me.Group[${i}].Noxious}>0 || ${Me.Group[${i}].Arcane}>0 || ${Me.Group[${i}].Elemental}>0 || ${Me.Group[${i}].Trauma}>0
 					{
-						Debug:Echo["Group member ${i}. ${Me.Group[${i}].ToActor.Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].ToActor.Distance}]"]
+						Debug:Echo["Group member ${i}. ${Me.Group[${i}].Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].Distance}]"]
 						grpcure:Inc
 					}
 				}
@@ -876,7 +876,7 @@ function CheckCures()
 			if ${grpcure} > 2
 			{
 				Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Mail of Souls"]
-				call CastSpellRange 220 0 0 0 ${Me.ToActor.ID} 0 0 0 0 1 0
+				call CastSpellRange 220 0 0 0 ${Me.ID} 0 0 0 0 1 0
 				wait 5
 				if ${AnnounceMode} && ${Me.CastingSpell}
 				{
@@ -897,7 +897,7 @@ function CheckCures()
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
 	;	all afflictions unless group health or mt health gets low
-	while ${Affcnt:Inc}<7 && ${Me.ToActor.Health}>10 
+	while ${Affcnt:Inc}<7 && ${Me.Health}>10 
 	{
 		call CheckCurse
 		if ${Return}>0
@@ -918,7 +918,7 @@ function CheckCures()
 			call CureMe
 
 		;healself if needed
-		if ${Me.ToActor.Health}>30
+		if ${Me.Health}>30
 			call HealMe
 
 		;Check MT health and heal him if needed
@@ -943,7 +943,7 @@ function FindAfflicted()
 	;check for single target cures
 	do
 	{
-		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<=35
+		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Distance}<=35
 		{
 			if ${Me.Group[${temphl}].Arcane}>0
 				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
@@ -986,7 +986,7 @@ function CheckCurse()
 	;check for single target cures
 	do
 	{
-		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.Distance}<=35
+		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Distance}<=35
 		{
 			if ${Me.Group[${temphl}].Cursed}
 				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+1]}]
@@ -1012,7 +1012,7 @@ function CureMe()
 	declare CureCnt int 0
 
 	;check if we are not in control, and use control cure if needed
-	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
+	if !${Me.CanTurn} || ${Me.IsRooted}
 		call CastSpellRange 326
 
 	if !${Me.IsAfflicted}
@@ -1040,7 +1040,7 @@ function CureMe()
 			wait 5
 		}
 
-		if ${Me.ToActor.Health}<30 && ${EpicMode}
+		if ${Me.Health}<30 && ${EpicMode}
 			call HealMe
 	}
 }
@@ -1049,13 +1049,13 @@ function HealMe()
 {
 	;ME HEALS
 	; if i have summoned a defiler crystal use that to heal first
-	if !${Me.CastingSpell} && ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.ToActor.Health}<70 && ${Me.ToActor.InCombatMode}
+	if !${Me.CastingSpell} && ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.Health}<70 && ${Me.InCombatMode}
 	{
 		Me.Inventory[Crystallized Spirit]:Use
 		wait 5
 	}
 
-	if ${Me.ToActor.Health}<25
+	if ${Me.Health}<25
 	{
 		if ${haveaggro}
 			call EmergencyHeal ${Me.ID}
@@ -1074,7 +1074,7 @@ function HealMe()
 		}
 	}
 
-	if ${Me.ToActor.Health}<85
+	if ${Me.Health}<85
 	{
 		call CastSpellRange 387
 		call CastSpellRange 4 0 0 0 ${Me.ID} 0 0 0 0 2 0
@@ -1112,30 +1112,30 @@ function CheckHeals()
   {
 		do
 		{
-			if ${Me.Group[${temphl}].ToActor(exists)}
+			if ${Me.Group[${temphl}](exists)}
 			{
-				if ${Me.Group[${temphl}].ToActor.Health}<100 && !${Me.Group[${temphl}].ToActor.IsDead}
+				if ${Me.Group[${temphl}].Health}<100 && !${Me.Group[${temphl}].IsDead}
 				{
-					if (${Me.Group[${temphl}].ToActor.Health}<${Me.Group[${lowest}].ToActor.Health} || ${lowest}==0) && ${Me.Group[${temphl}].ToActor.Distance}<=${Me.Ability[${SpellType[1]}].Range}
+					if (${Me.Group[${temphl}].Health}<${Me.Group[${lowest}].Health} || ${lowest}==0) && ${Me.Group[${temphl}].Distance}<=${Me.Ability[${SpellType[1]}].Range}
 						lowest:Set[${temphl}]
 				}
 
 				if ${Me.Group[${temphl}].ID}==${MainTankID}
 					MainTankInGroup:Set[1]
 
-				if !${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Distance}<=30
+				if !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Health}<80 && ${Me.Group[${temphl}].Distance}<=30
 					grpheal:Inc
 
-				if ${Me.Group[${temphl}].ToActor.Pet.Health}<60 && ${Me.Group[${temphl}].ToActor.Pet.Health}>0 && !${EpicMode}
-					PetToHeal:Set[${Me.Group[${temphl}].ToActor.Pet.ID}
+				if ${Me.Group[${temphl}].Pet.Health}<60 && ${Me.Group[${temphl}].Pet.Health}>0 && !${EpicMode}
+					PetToHeal:Set[${Me.Group[${temphl}].Pet.ID}
 
-				if ${Me.ToActor.Pet.Health}<60 && !${EpicMode}
-					PetToHeal:Set[${Me.ToActor.Pet.ID}]
+				if ${Me.Pet.Health}<60 && !${EpicMode}
+					PetToHeal:Set[${Me.Pet.ID}]
 			}
 		}
 		while ${temphl:Inc} <= ${Me.GroupCount}
 
-		if ${Me.ToActor.Health}<80 && !${Me.ToActor.IsDead}
+		if ${Me.Health}<80 && !${Me.IsDead}
 			grpheal:Inc
 	}
 
@@ -1150,7 +1150,7 @@ function CheckHeals()
   	}
 
   	;Check My health after MT
-    if ${Me.ID}!=${MainTankID} && ${Me.ToActor.Health}<25
+    if ${Me.ID}!=${MainTankID} && ${Me.Health}<25
 	    call HealMe
   }
 
@@ -1168,13 +1168,13 @@ function CheckHeals()
 	;now lets heal individual groupmembers if needed
 	if ${lowest}
 	{
-		if ${Me.Group[${lowest}].ToActor.Health}<80
+		if ${Me.Group[${lowest}].Health}<80
 			call UseCrystallizedSpirit 60
 
-		if ${Me.Group[${lowest}].ToActor.Health}<50 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=35
+		if ${Me.Group[${lowest}].Health}<50 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}](exists)} && ${Me.Group[${lowest}].Distance}<=35
 			call CastSpellRange 387
 
-		if ${Me.Group[${lowest}].ToActor.Health}<70 && !${Me.Group[${lowest}].ToActor.IsDead} && ${Me.Group[${lowest}].ToActor(exists)} && ${Me.Group[${lowest}].ToActor.Distance}<=35
+		if ${Me.Group[${lowest}].Health}<70 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}](exists)} && ${Me.Group[${lowest}].Distance}<=35
 		{
 			if ${Me.Ability[${SpellType[1]}].IsReady}
 				call CastSpellRange 1 0 0 0 ${Me.Group[${lowest}].ID} 0 0 0 0 2 0
@@ -1198,7 +1198,7 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].ToActor.IsDead} && ${Me.Group[${temphl}].ToActor.Distance}<=20
+			if ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Distance}<=20
 			{
 				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
 					call CastSpellRange 500 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
@@ -1312,10 +1312,10 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
-	if !${Me.Group[${gMember}].ToActor(exists)} || ${Me.Group[${gMember}].ToActor.IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].ToActor.Distance}>${Me.Ability[${SpellType[210]}].Range}
+	if !${Me.Group[${gMember}](exists)} || ${Me.Group[${gMember}].IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].Distance}>${Me.Ability[${SpellType[210]}].Range}
 		return
 
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}].ToActor(exists)} && !${Me.Group[${gMember}].ToActor.IsDead}
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<4 && ${Me.Group[${gMember}](exists)} && !${Me.Group[${gMember}].IsDead}
 	{
 		if ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
 		{

@@ -346,8 +346,8 @@ function Buff_Routine(int xAction)
 					echo "Tactics_Target:: Invalid TacticsTarget -- setting automatically"
 					if (${MainTank})
 					{
-						if (${Me.Group[1].ToActor.Type.Equal[Mercenary]})
-							TacticsTarget:Set["${Me.Group[1].ToActor.Name}:Mercenary"]
+						if (${Me.Group[1].Type.Equal[Mercenary]})
+							TacticsTarget:Set["${Me.Group[1].Name}:Mercenary"]
 						else
 							TacticsTarget:Set["${Me.Group[1].Name}:PC"]
 					}
@@ -376,8 +376,8 @@ function Buff_Routine(int xAction)
 				{
 					if (${MainTank})
 					{
-						if (${Me.Group[1].ToActor.Type.Equal[Mercenary]})
-							TacticsTarget:Set["${Me.Group[1].ToActor.Name}:Mercenary"]
+						if (${Me.Group[1].Type.Equal[Mercenary]})
+							TacticsTarget:Set["${Me.Group[1].Name}:Mercenary"]
 						else
 							TacticsTarget:Set["${Me.Group[1].Name}:PC"]
 					}
@@ -404,8 +404,8 @@ function Buff_Routine(int xAction)
 			{
 				if (${MainTank})
 				{
-					if (${Me.Group[1].ToActor.Type.Equal[Mercenary]})
-						TacticsTarget:Set["${Me.Group[1].ToActor.Name}:Mercenary"]
+					if (${Me.Group[1].Type.Equal[Mercenary]})
+						TacticsTarget:Set["${Me.Group[1].Name}:Mercenary"]
 					else
 						TacticsTarget:Set["${Me.Group[1].Name}:PC"]
 				}
@@ -602,15 +602,15 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
 
-	if (${Me.ToActor.IsRooted} || !${Me.ToActor.CanTurn})
+	if (${Me.IsRooted} || !${Me.CanTurn})
 	{
     if ${Me.Ability[${SpellType[339]}].IsReady}
     {
-      call CastSpellRange 339 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+      call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
     }
 	}
 
-	if ${TargetID} != ${Me.ToActor.ID}
+	if ${TargetID} != ${Me.ID}
 	{
 		call VerifyTarget ${TargetID}
 		if !${Return}
@@ -650,7 +650,7 @@ function Combat_Routine(int xAction)
 	
 	KillTargetIsSoloMob:Set[${Actor[${KillTarget}].IsSolo}]
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -681,21 +681,21 @@ function Combat_Routine(int xAction)
   ;; uncomment for venril fight
   ;if (${Zone.ShortName.Find[venril]} > 0)
   ;{
-  ;	if (${Me.ToActor.Power} <= 47)
+  ;	if (${Me.Power} <= 47)
   ;	{
   ;		do
   ;		{
   ;			waitframe
   ;		}
-  ;		while ${Me.ToActor.Power} < 49
+  ;		while ${Me.Power} < 49
   ;	}
   ;}
 
-	if (${Me.ToActor.IsRooted} || !${Me.ToActor.CanTurn})
+	if (${Me.IsRooted} || !${Me.CanTurn})
 	{
     if ${Me.Ability[${SpellType[339]}].IsReady}
     {
-      call CastSpellRange 339 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+      call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
     }
 	}
 
@@ -767,17 +767,17 @@ function Combat_Routine(int xAction)
   ;; DeathMarch
   if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
   {
-		call _CastSpellRange 312 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+		call _CastSpellRange 312 0 0 0 ${Me.ID} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
   }
   
   ;; Self Reverse DS (with life tap proc)
-	if ((!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[7]}].IsReady}) || (${MainTank} && ${Me.ToActor.Health}<25))
+	if ((!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[7]}].IsReady}) || (${MainTank} && ${Me.Health}<25))
 	{
     if ${MainTank}
     {
-	    call _CastSpellRange 7 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+	    call _CastSpellRange 7 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
   	}
@@ -795,7 +795,7 @@ function Combat_Routine(int xAction)
     if (${Me.Ability[${SpellType[340]}].IsReady})
     {
     	;Debug:Echo["${SpellType[340]}..."]
-	    call _CastSpellRange 340 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+	    call _CastSpellRange 340 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}  
@@ -818,7 +818,7 @@ function Combat_Routine(int xAction)
     if (${MainTank} && ${Me.Ability[${SpellType[45]}].IsReady})
     {
     	;Debug:Echo["${SpellType[45]}..."]
-	    call _CastSpellRange 45 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+	    call _CastSpellRange 45 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}    	
@@ -826,7 +826,7 @@ function Combat_Routine(int xAction)
     if (${Me.Ability[${SpellType[98]}].IsReady})
     {
     	;Debug:Echo["${SpellType[98]}..."]
-	    call _CastSpellRange 98 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+	    call _CastSpellRange 98 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}
@@ -844,7 +844,7 @@ function Combat_Routine(int xAction)
 			;Debug:Echo["${SpellType[347]}..."]
 			if (${Me.Ability[${SpellType[347]}].IsReady})
 			{
-				call _CastSpellRange 347 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+				call _CastSpellRange 347 0 0 0 ${Me.ID} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
 					return CombatComplete
 			}
@@ -854,7 +854,7 @@ function Combat_Routine(int xAction)
 		{
 			if (${Me.Ability[${SpellType[505]}].IsReady})
 	    {
-		    call _CastSpellRange 505 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+		    call _CastSpellRange 505 0 0 0 ${Me.ID} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
 					return CombatComplete
 			}
@@ -874,7 +874,7 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[97]}].IsReady})
 		{
 			;Debug:Echo["${SpellType[97]}..."]
-			call _CastSpellRange 97 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			call _CastSpellRange 97 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}
@@ -882,7 +882,7 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[95]}].IsReady})
 		{
 			;Debug:Echo["${SpellType[95]}..."]
-			call _CastSpellRange 95 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			call _CastSpellRange 95 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}		
@@ -890,7 +890,7 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[96]}].IsReady})
 		{
 			echo "${SpellType[96]}..."
-			call _CastSpellRange 96 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+			call _CastSpellRange 96 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}			
@@ -905,11 +905,11 @@ function Combat_Routine(int xAction)
 	}
 	
 	;; Divine Aura
-	if ${Me.ToActor.Health}<70 && ${Me.Ability[${SpellType[502]}].IsReady}
+	if ${Me.Health}<70 && ${Me.Ability[${SpellType[502]}].IsReady}
 		call CastSpellRange 502 
 
 	;; SK's Furor
-	if ${Me.ToActor.Health}<=60 && ${Me.Ability[${SpellType[507]}].IsReady}
+	if ${Me.Health}<=60 && ${Me.Ability[${SpellType[507]}].IsReady}
 		call CastSpellRange 507
 
 
@@ -1255,7 +1255,7 @@ function FeignDeath()
   if ${Me.Ability[${SpellType[330]}].IsReady}
   {
     CurrentAction:Set[Casting Feign Death!]
-    call CastSpellRange 330 0 0 0 ${Me.ToActor.ID} 0 0 0 1
+    call CastSpellRange 330 0 0 0 ${Me.ID} 0 0 0 1
   }
 }
 

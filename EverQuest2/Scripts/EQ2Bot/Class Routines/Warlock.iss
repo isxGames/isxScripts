@@ -370,15 +370,15 @@ function Buff_Routine(int xAction)
 			if ${BuffSeeInvis}
 			{
 				;buff myself first
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ToActor.ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 
 				;buff the group
 				tempvar:Set[1]
 				do
 				{
-					if ${Me.Group[${tempvar}].ToActor.Distance}<15
+					if ${Me.Group[${tempvar}].Distance}<15
 					{
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ID}
 					}
 
 				}
@@ -414,7 +414,7 @@ function Combat_Routine(int xAction)
 	declare debuffused int local 0
 	declare pricast int local 0
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -730,15 +730,15 @@ function RefreshPower()
 	if ${ShardMode}
 		call Shard
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<60
+	if ${Me.InCombat} && ${Me.Power}<60
 		call CastSpellRange 56 0 0 0 ${KillTarget}
 
 
-	if ${Me.InCombat} && ${Me.ToActor.Power}<5
+	if ${Me.InCombat} && ${Me.Power}<5
 		call CastSpellRange 309
 
 	;This should be cast on ally?
-	;if ${Me.InCombat} && ${Me.ToActor.Power}<15
+	;if ${Me.InCombat} && ${Me.Power}<15
 	;{
 	;	call CastSpellRange 333
 	;}
@@ -764,7 +764,7 @@ function CheckHeals()
 	do
 	{
 		; Cure Arcane
-		if ${Me.Group[${temphl}].Arcane}>0 && ${Me.Group[${temphl}].ToActor(exists)}
+		if ${Me.Group[${temphl}].Arcane}>0 && ${Me.Group[${temphl}](exists)}
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
 

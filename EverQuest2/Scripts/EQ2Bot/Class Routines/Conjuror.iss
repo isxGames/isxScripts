@@ -99,7 +99,7 @@ function Pulse()
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		;check if we have a pet or a hydromancy not up
-		if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
+		if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
 		{
 			call SummonPet
 			waitframe
@@ -110,7 +110,7 @@ function Pulse()
 		call AnswerShardRequest
 
 		;keep blazing Avatar up at all times
-		if ${Me.ToActor.Pet(exists)} && ${AoEMode}
+		if ${Me.Pet(exists)} && ${AoEMode}
 			call CastSpellRange 71
 
 		;; This has to be set WITHIN any 'if' block that uses the timer.
@@ -235,7 +235,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	;check if we have a pet or a hydromancy not up
-	if !${Me.ToActor.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
+	if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
 		call SummonPet
 
 	; Pass out feathers on initial script startup
@@ -287,7 +287,7 @@ function Buff_Routine(int xAction)
 
 		case Pet_Buff
 		case AA_Bubble
-			if ${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)}
+			if ${Me.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 		case Tank_Buff
@@ -369,14 +369,14 @@ function Buff_Routine(int xAction)
 			if ${BuffSeeInvis}
 			{
 				;buff myself first
-				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ToActor.ID}
+				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.ID}
 
 				;buff the group
 				tempvar:Set[1]
 				do
 				{
-					if ${Me.Group[${tempvar}].ToActor.Distance}<15
-						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ToActor.ID}
+					if ${Me.Group[${tempvar}].Distance}<15
+						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Me.Group[${tempvar}].ID}
 
 				}
 				while ${tempvar:Inc}<${Me.GroupCount}
@@ -404,7 +404,7 @@ function Combat_Routine(int xAction)
 	
 	variable int Counter
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -412,13 +412,13 @@ function Combat_Routine(int xAction)
 	}
 
 	;check if we have a pet or a hydromancy not up
-	if !${Me.ToActor.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
+	if !${Me.Pet(exists)} || !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
 		call SummonPet
 
 	if ${Me.Pet.Distance}>35
 		call CastSpellRange 222
 
-	if ${Me.ToActor.Pet(exists)} && ${PetMode}
+	if ${Me.Pet(exists)} && ${PetMode}
 		call PetAttack
 
 	if ${DoHOs}
@@ -435,11 +435,11 @@ function Combat_Routine(int xAction)
 	call AnswerShardRequest
 
 	;keep blazing Avatar up at all times
-	if ${Me.ToActor.Pet(exists)} && ${AoEMode}
+	if ${Me.Pet(exists)} && ${AoEMode}
 		call CastSpellRange 71
 
 	;keep blazing Avatar up at all times
-	if ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet(exists)}
 		call CastSpellRange 363
 
 	if ${Me.Ability[${SpellType[61]}].IsReady}
@@ -484,7 +484,7 @@ function Combat_Routine(int xAction)
 			break
 
 		case Combat_Buff
-			if ${AoEMode} && (${Me.ToActor.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
+			if ${AoEMode} && (${Me.Pet(exists)} || ${Me.Maintained[${SpellType[379]}](exists)})
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		case AoE1
@@ -527,7 +527,7 @@ function Post_Combat_Routine(int xAction)
 	TellTank:Set[FALSE]
 
 	;Blazing Vigor Line in Combat
-	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<80
+	if ${Me.Pet.Health}>50 && ${Me.Power}<80
 			call CastSpellRange 309
 
 	switch ${PostAction[${xAction}]}
@@ -610,7 +610,7 @@ function RefreshPower()
 {
 
 	;Blazing Vigor line out of Combat
-	if ${Me.ToActor.Pet.Health}>60 && ${Me.ToActor.Power}<70 && !${Me.ToActor.InCombatMode}
+	if ${Me.Pet.Health}>60 && ${Me.Power}<70 && !${Me.InCombatMode}
 		call CastSpellRange 309
 
 	;Conjuror Shard
@@ -618,7 +618,7 @@ function RefreshPower()
 		Me.Inventory[${ShardType}]:Use
 
 	;Blazing Vigor Line in Combat
-	if ${Me.ToActor.Pet.Health}>50 && ${Me.ToActor.Power}<20
+	if ${Me.Pet.Health}>50 && ${Me.Power}<20
 			call CastSpellRange 309
 
 }
@@ -640,7 +640,7 @@ function CheckHeals()
 	;= Animist Transference Check
 	;================================
 	;Check ME first,
-	if ${Me.ToActor.Health}<60
+	if ${Me.Health}<60
 	{
 		call CastSpellRange 396 0 0 0 ${Me.ID}
 		;stoneskins AA
@@ -652,16 +652,16 @@ function CheckHeals()
 	;================================
 
 	;Animist Bond AA check
-	if  ${Me.ToActor.Pet.Health}<50 && ${Me.ToActor.Pet.Power}>30 && ${Me.ToActor.Pet(exists)}
+	if  ${Me.Pet.Health}<50 && ${Me.Pet.Power}>30 && ${Me.Pet(exists)}
 		call CastSpellRange 382
 
-	if ${Me.ToActor.Pet.Health}<70 && ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet.Health}<70 && ${Me.Pet(exists)}
 		call CastSpellRange 1
 
-	if ${Me.ToActor.Pet.Health}<40 && ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet.Health}<40 && ${Me.Pet(exists)}
 		call CastSpellRange 4
 
-	if ${Me.ToActor.Pet.Health}<30 && ${Me.ToActor.Pet(exists)}
+	if ${Me.Pet.Health}<30 && ${Me.Pet(exists)}
 		call CastSpellRange 47
 
 	call CommonHeals 70

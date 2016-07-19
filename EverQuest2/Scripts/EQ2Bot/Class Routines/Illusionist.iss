@@ -157,7 +157,7 @@ function Pulse()
 			{
 				if ${Actor[${MainTankID}].InCombatMode}
 				{
-					if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+					if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 					{
 						if ${IllyDebugMode}
 							Debug:Echo["Pulse() -- Stopping autofollow"]		
@@ -418,7 +418,7 @@ function Buff_Routine(int xAction)
 		case MakePet
 			if ${Makepet}
 			{
-				if (!${MakePetWhileInCombat} && ${Me.ToActor.InCombatMode})
+				if (!${MakePetWhileInCombat} && ${Me.InCombatMode})
 					break
 				; needs to be equipped for the pet conc thing.
 				if (${HaveMythical} && ${Me.Equipment[Mirage Star](exists)}) || (${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3)
@@ -1135,7 +1135,7 @@ function Combat_Routine(int xAction)
 		return
 	}
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Stopping autofollow"]		
@@ -1252,7 +1252,7 @@ function Combat_Routine(int xAction)
 	;; Aggro Control...
 	if (${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
 	{
-		if (${Me.ToActor.Health} < 70)
+		if (${Me.Health} < 70)
 		{
 			if ${Me.Ability["Phase"].IsReady}
 			{
@@ -1282,7 +1282,7 @@ function Combat_Routine(int xAction)
 
 	if ${StartHO}
 	{
-		if !${EQ2.HOWindowActive} && ${Me.ToActor.InCombatMode}
+		if !${EQ2.HOWindowActive} && ${Me.InCombatMode}
 		{
 			call CastSpellRange 303
 			LastSpellCast:Set[303]
@@ -1606,7 +1606,7 @@ function Combat_Routine(int xAction)
 	FlushQueued Mezmerise_Targets
 
 	;; Melee Debuff (Dismay) -- only for Epic mobs for now
-	if ${Me.ToActor.Power} > 40
+	if ${Me.Power} > 40
 	{
 		if ${FightingEpicMob}
 		{
@@ -2267,7 +2267,7 @@ function CastSomething()
 	}
 
 	; extract mana
-	if (${Me.ToActor.Power} < 65 && ${Me.Ability[${SpellType[309]}].IsReady})
+	if (${Me.Power} < 65 && ${Me.Ability[${SpellType[309]}].IsReady})
 	{
 		call _CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
@@ -2344,7 +2344,7 @@ function Have_Aggro()
 
 
 	;; Aggro Control...
-	if (${Me.ToActor.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
+	if (${Me.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
 	{
 		if ${Me.Ability["Sever Hate"].IsReady}
 		{
@@ -2418,7 +2418,7 @@ function RefreshPower()
 	;;        else provide more logic here to handle ${UltraDPSMode} in a way so that we are not killing our DPS by being overly concerned about 
 	;;        power.   For the moment, I think the way it is working now is the best option.
 	
-	if (${Me.ToActor.InCombatMode} && ${IllyDebugMode})
+	if (${Me.InCombatMode} && ${IllyDebugMode})
 		Debug:Echo["RefreshPower()"]
 	
 	declare tempvar int local
@@ -2438,14 +2438,14 @@ function RefreshPower()
 	}
 
 	;Extract Mana
-	if (${Me.ToActor.Power}<80 && ${Me.Ability[${SpellType[309]}].IsReady})
+	if (${Me.Power}<80 && ${Me.Ability[${SpellType[309]}].IsReady})
 	{
-		if (!${Me.ToActor.InCombatMode})
+		if (!${Me.InCombatMode})
 		{
 			call CastSpellRange 309
 			LastSpellCast:Set[309]
 		}
-		elseif (${Me.ToActor.Power}<55)
+		elseif (${Me.Power}<55)
 		{
 			call CastSpellRange 309
 			LastSpellCast:Set[309]
@@ -2456,31 +2456,31 @@ function RefreshPower()
 	{
 		if ${Me.Group} > 1 && ${ManaFlowThreshold} > 0
 		{
-			if ${Me.ToActor.Power} > 45
+			if ${Me.Power} > 45
 			{
 				;Mana Flow the lowest group member
 				tempvar:Set[1]
 				MemberLowestPower:Set[1]
 				do
 				{
-					if ${Me.Group[${tempvar}].ToActor.Power}<60 && ${Me.Group[${tempvar}].ToActor.Distance}<30 && ${Me.Group[${tempvar}].ToActor(exists)}
+					if ${Me.Group[${tempvar}].Power}<60 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}](exists)}
 					{
-						if ${Me.Group[${tempvar}].ToActor.Power}<=${Me.Group[${MemberLowestPower}].ToActor.Power}
+						if ${Me.Group[${tempvar}].Power}<=${Me.Group[${MemberLowestPower}].Power}
 						{
-							if !${Me.Group[${MemberLowestPower}].ToActor.IsDead}
+							if !${Me.Group[${MemberLowestPower}].IsDead}
 								MemberLowestPower:Set[${tempvar}]
 						}
 					}
 				}
 				while ${tempvar:Inc} < ${Me.GroupCount}
 	
-				if (${Me.ToActor.InCombatMode} && ${IllyDebugMode})
-					Debug:Echo["- Checking Mana Flow (lowest: ${MemberLowestPower}, ${Me.Group[${MemberLowestPower}].ToActor.Power} vs. ${ManaFlowThreshold})"]
-				if (${Me.Group[${MemberLowestPower}].ToActor(exists)})
+				if (${Me.InCombatMode} && ${IllyDebugMode})
+					Debug:Echo["- Checking Mana Flow (lowest: ${MemberLowestPower}, ${Me.Group[${MemberLowestPower}].Power} vs. ${ManaFlowThreshold})"]
+				if (${Me.Group[${MemberLowestPower}](exists)})
 				{
-					if (${Me.Group[${MemberLowestPower}].ToActor.Power} < ${ManaFlowThreshold} && ${Me.Group[${MemberLowestPower}].ToActor.Distance} < 30  && ${Me.ToActor.Health} > 30)
+					if (${Me.Group[${MemberLowestPower}].Power} < ${ManaFlowThreshold} && ${Me.Group[${MemberLowestPower}].Distance} < 30  && ${Me.Health} > 30)
 					{
-						call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ToActor.ID}
+						call CastSpellRange 360 0 0 0 ${Me.Group[${MemberLowestPower}].ID}
 						LastSpellCast:Set[360]
 					}
 				}
@@ -2489,7 +2489,7 @@ function RefreshPower()
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if (${Me.Ability[${SpellType[354]}].IsReady} && ${Me.ToActor.InCombatMode})
+	if (${Me.Ability[${SpellType[354]}].IsReady} && ${Me.InCombatMode})
 	{
 		if ${Me.Group[${MainTankPC}](exists)}
 		{
@@ -2503,7 +2503,7 @@ function RefreshPower()
 		}
 	}
 	
-	if (${Me.ToActor.InCombatMode})
+	if (${Me.InCombatMode})
 	{
 		if ${Me.Ability[${SpellType[389]}].IsReady}
 		{
@@ -2511,13 +2511,13 @@ function RefreshPower()
 				Debug:Echo["- Checking Savante"]
 			if ${Me.Group} > 1
 			{
-				if ${Me.ToActor.Power} > 25
+				if ${Me.Power} > 25
 				{
 					; if anyone is below 60% power -- savante
 					tempvar:Set[1]
 					do
 					{
-						if ${Me.Group[${tempvar}].ToActor.Power}<60
+						if ${Me.Group[${tempvar}].Power}<60
 						{
 							call CastSpellRange 389
 						}
@@ -2527,7 +2527,7 @@ function RefreshPower()
 			}
 			else
 			{
-				if ${Me.ToActor.Power} < 50
+				if ${Me.Power} < 50
 				{
 					call CastSpellRange 389
 				}
@@ -2543,7 +2543,7 @@ function RefreshPower()
 				if (${UltraDPSMode} || ${DPSMode} || ${Me.Group} > 1 || ${Actor[${KillTarget}].Health} < 70)
 					return
 			}
-			if ${Me.ToActor.Power} > 5
+			if ${Me.Power} > 5
 			{
 				if ${Me.Group} > 1
 				{
@@ -2553,14 +2553,14 @@ function RefreshPower()
 					tempvar:Set[1]
 					do
 					{
-						if ${Me.Group[${tempvar}].ToActor.Power}<80
+						if ${Me.Group[${tempvar}].Power}<80
 						{
 							call CastSpellRange 90 0 0 0 ${KillTarget} 0 0 0 1
 						}
 					}
 					while ${tempvar:Inc} < ${Me.GroupCount}
 				}
-				elseif ${Me.ToActor.Power} < 60
+				elseif ${Me.Power} < 60
 				{
 					call CastSpellRange 90 0 0 0 ${KillTarget} 0 0 0 1
 				}
@@ -2610,7 +2610,7 @@ function CheckHeals()
 			{
 				;;;;;;;;;;;;;
 				;; Cure Arcane
-				if (${Me.Group[${temphl}].ToActor(exists)} && !${Me.Group[${temph1}].ToActor.IsDead})
+				if (${Me.Group[${temphl}](exists)} && !${Me.Group[${temph1}].IsDead})
 				{
 					if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
 					{
@@ -2754,7 +2754,7 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ToActor.Pet.ID})
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].Pet.ID})
 					{
 						aggrogrp:Set[TRUE]
 						break
@@ -2766,7 +2766,7 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ToActor.Pet.ID} && ${Me.Group[${tempvar}].ToActor.Pet(exists)})
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
 					{
 						aggrogrp:Set[TRUE]
 						break
@@ -2903,7 +2903,7 @@ function CheckSKFD()
 {
 	;; This is not being called....for now.
 	
-	if !${Me.ToActor.IsFD}
+	if !${Me.IsFD}
 		return
 
 	if !${Actor[${MainTankID}](exists)}
@@ -2912,7 +2912,7 @@ function CheckSKFD()
 	if ${Actor[${MainTankID}].IsDead}
 		return
 
-	if ${Me.ToActor.Health} < 20
+	if ${Me.Health} < 20
 		return
 
 	call RemoveSKFD "Illusionist::CheckSKFD"
@@ -2936,7 +2936,7 @@ function PostDeathRoutine()
 	InPostDeathRoutine:Set[TRUE]
 
 	;; Auto-Follow
-	if (${AutoFollowMode} && !${Me.ToActor.WhoFollowing.Equal[${AutoFollowee}]})
+	if (${AutoFollowMode} && !${Me.WhoFollowing.Equal[${AutoFollowee}]})
 	{
 		ExecuteAtom AutoFollowTank
 		wait 5
@@ -3466,7 +3466,7 @@ function CheckStuns()
 		return
 
 	;; Traditional setting...
-	if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 40 && ${Me.ToActor.Health} > 50
+	if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 40 && ${Me.Health} > 50
 		return
 
 	;; Stun 1 (Paranoia)

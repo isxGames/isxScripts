@@ -362,27 +362,27 @@ function Buff_Routine(int xAction)
 
 function Combat_Routine(int xAction)
 {
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 		wait 3
 	}
 
-	if ${Me.ToActor.IsStealthed}
+	if ${Me.IsStealthed}
 	{
 		call CastStealthAttack
 	}
 
 	;smokebomb check
-	if ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.ToActor.IsStealthed}
+	if ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.IsStealthed}
 	{
 		call CastSpellRange 387 0 1 1 ${KillTarget} 0 0 0 0 1
 		call CastStealthAttack
 	}
 
 	;Getaway check
-	if ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.ToActor.IsStealthed}
+	if ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.IsStealthed}
 	{
 		call CastSpellRange 391 0 1 1 ${KillTarget} 0 0 0 0 1
 		call CastStealthAttack
@@ -596,7 +596,7 @@ function Post_Combat_Routine(int xAction)
 		case Slip
 			if ${CloakMode}
 			{
-				if !${Me.ToActor.IsStealthed}
+				if !${Me.IsStealthed}
 				{
 					call CastSpellRange ${PostSpellRange[${xAction},1]}
 				}

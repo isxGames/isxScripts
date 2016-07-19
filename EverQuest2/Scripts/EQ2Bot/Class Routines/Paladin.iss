@@ -218,7 +218,7 @@ function Combat_Routine(int xAction)
 	spellsused:Set[0]
 
 
-	if (!${RetainAutoFollowInCombat} && ${Me.ToActor.WhoFollowing(exists)})
+	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
@@ -637,25 +637,25 @@ function CheckHeals()
 	{
 		if ${Me.Group[${temphl}].ZoneName.Equal[${Zone.Name}]}
 		{
-			if ${Me.Group[${temphl}].ToActor.Health}<80 && ${Me.Group[${temphl}].ToActor.Health}>-99 && ${Me.Group[${temphl}](exists)}
+			if ${Me.Group[${temphl}].Health}<80 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
 			{
 				grpheal:Inc
-				if ${Me.Group[${temphl}].ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health}
+				if ${Me.Group[${temphl}].Health}<=${Me.Group[${lowest}].Health}
 					lowest:Set[${temphl}]
 			}
 		}
 	}
 	while ${temphl:Inc} <= ${Me.GroupCount}
 
-	if ${Me.ToActor.Health}<80 && ${Me.ToActor.Health}>-99
+	if ${Me.Health}<80 && ${Me.Health}>-99
 		grpheal:Inc
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].ToActor.Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}](exists)}
 		call EmergencyHeal ${Actor[${MainAssist}].ID}
 
 	;ME HEALS
-	if ${Me.ToActor.Health}<=${Me.Group[${lowest}].ToActor.Health} && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Health}<=${Me.Group[${lowest}].Health} && ${Me.Group[${lowest}](exists)}
 	{
 		call MeHeals
 	}
@@ -673,14 +673,14 @@ function CheckHeals()
 			call CastSpellRange 15
 	}
 
-	if ${Me.Group[${lowest}].ToActor.Health}<50 && ${Me.Group[${lowest}].ToActor(exists)}
+	if ${Me.Group[${lowest}].Health}<50 && ${Me.Group[${lowest}](exists)}
 	{
-		if ${Me.Ability[${SpellType[393]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
-			call CastSpellRange 393 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
-		elseif ${Me.Ability[${SpellType[5]}].IsReady} && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
-			call CastSpellRange 5 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
-		elseif && ${Me.Group[${lowest}].ToActor.Health}>-99 && ${Me.Group[${lowest}].ToActor(exists)}
-			call CastSpellRange 9 0 0 0 ${Me.Group[${lowest}].ToActor.ID}
+		if ${Me.Ability[${SpellType[393]}].IsReady} && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
+			call CastSpellRange 393 0 0 0 ${Me.Group[${lowest}].ID}
+		elseif ${Me.Ability[${SpellType[5]}].IsReady} && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
+			call CastSpellRange 5 0 0 0 ${Me.Group[${lowest}].ID}
+		elseif && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
+			call CastSpellRange 9 0 0 0 ${Me.Group[${lowest}].ID}
 
 	}
 }
@@ -688,9 +688,9 @@ function CheckHeals()
 function MeHeals()
 {
 
-	if ${Me.ToActor.Health}<50
+	if ${Me.Health}<50
 	{
-		if ${Me.ToActor.Health}<25
+		if ${Me.Health}<25
 			call EmergencyHeal ${Me.ID}
 
 		if ${Me.Ability[${SpellType[393]}].IsReady}
@@ -703,13 +703,13 @@ function MeHeals()
 			call CastSpellRange 9 0 0 0 ${Me.ID}
 	}
 
-	if ${Me.ToActor.Health}<70 && ${Me.Ability[${SpellType[7]}].IsReady}
+	if ${Me.Health}<70 && ${Me.Ability[${SpellType[7]}].IsReady}
 		call CastSpellRange 7 0 0 0 ${Me.ID}
 
-	if ${Me.ToActor.Health}<90 && ${Me.Ability[${SpellType[401]}].IsReady}
+	if ${Me.Health}<90 && ${Me.Ability[${SpellType[401]}].IsReady}
 		call CastSpellRange 401 0 0 0 ${Me.ID}
 
-	if ${Me.ToActor.Health}<80 && ${Me.Ability[${SpellType[390]}].IsReady}
+	if ${Me.Health}<80 && ${Me.Ability[${SpellType[390]}].IsReady}
 		call CastSpellRange 390 0 0 0 ${Me.ID}
 
 }
@@ -717,11 +717,11 @@ function MeHeals()
 function EmergencyHeal(int healtarget)
 {
 	;use stonewall
-	if ${Me.ToActor.Health}<50 && ${Me.Ability[${SpellType[400]}].IsReady}
+	if ${Me.Health}<50 && ${Me.Ability[${SpellType[400]}].IsReady}
 		call CastSpellRange 400
 
 	;use divine aura
-	if ${Me.ToActor.Health}<20 && ${Me.Ability[${SpellType[386]}].IsReady}
+	if ${Me.Health}<20 && ${Me.Ability[${SpellType[386]}].IsReady}
 		call CastSpellRange 386
 
 	if ${Me.Ability[${SpellType[9]}].IsReady}
@@ -734,7 +734,7 @@ function CheckCures()
 {
 
 	;check if we are not in control, and use control cure if needed
-	if !${Me.ToActor.CanTurn} || ${Me.ToActor.IsRooted}
+	if !${Me.CanTurn} || ${Me.IsRooted}
 		call CastSpellRange 399
 
 	;use Castigate or Aura Self Cure
@@ -752,7 +752,7 @@ function CheckRez()
 	;Res Fallen Groupmembers only if in range
 	do
 	{
-		if ${Me.Group[${tempgrp}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady})
+		if ${Me.Group[${tempgrp}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady})
 		{
 			call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID}
 			;short wait for accept
@@ -765,7 +765,7 @@ function CheckRez()
 		;Res Fallen RAID members only if in range
 		do
 		{
-			if ${Me.Raid[${tempraid}].ToActor.IsDead} && (${Me.Ability[${SpellType[300]}].IsReady}) && ${Me.Raid[${tempraid}].ToActor.Distance}<25
+			if ${Me.Raid[${tempraid}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady}) && ${Me.Raid[${tempraid}].Distance}<25
 			{
 				call CastSpellRange 300 0 1 0 ${Me.Raid[${tempraid}].ID}
 				;short wait for accept
