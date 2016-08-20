@@ -56,7 +56,7 @@
 <Height>20</Height>
 <Text>Echo Current</Text>
 <OnLeftClick>
-echo ${Script[CraftPathTester].VariableScope.Nav.NearestRegion[${Me.ToActor.Loc}].FQN}
+echo ${Script[CraftPathTester].VariableScope.Nav.NearestRegion[${Me}].FQN}
 </OnLeftClick>
 </Button>
       <Button Name='RunFull'>
