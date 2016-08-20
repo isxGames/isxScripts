@@ -222,7 +222,7 @@ function CheckMovingAggro()
 			;echo waiting 1 second in moveto
 			wait 10
 		}
-		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90 || ${Me.IsHated}
+		while ${MobCheck.Detect} || ${Me.Health}<90 || ${Me.IsHated}
 
 		Echo Scanning Loot in moveto
 		EQ2:CreateCustomActorArray[byDist,15]

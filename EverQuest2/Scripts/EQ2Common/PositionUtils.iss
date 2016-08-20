@@ -82,7 +82,7 @@ objectdef EQ2Position
 		variable point3f ActorVelocity
 		variable float TimeToImpact
 		variable float TotalSpeed
-		MyVelocity:Set[${Me.ToActor.Velocity}]
+		MyVelocity:Set[${Me.Velocity}]
 		ActorVelocity:Set[${Actor[${ActorID}].Velocity}]
 		
 		if ${MyVelocity.Distance[0,0,0]}==0 || ${ActorVelocity.Distance[0,0,0]}==0
@@ -143,13 +143,13 @@ objectdef EQ2Position
 		;
 		; ok which point is closer our min range or max range, will vary depending on our vector to mob
 		;
-		myspeed:Set[${Math.Calc[${Actor[${ActorID}].Distance2D}/10+${Me.ToActor.Speed}]}]
+		myspeed:Set[${Math.Calc[${Actor[${ActorID}].Distance2D}/10+${Me.Speed}]}]
 		destminpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${minrange}]}]
 		destmaxpoint:Set[${This.PredictPointAtAngle[${ActorID},${destangle},${myspeed},${maxrange}]}]
 
 		Returning.Y:Set[${Actor[${ActorID}].Y}]
 				
-		if ${Math.Distance[${Me.ToActor.Loc},${destminpoint}]}<${Math.Distance[${Me.ToActor.Loc},${destmaxpoint}]}
+		if ${Math.Distance[${Me.Loc},${destminpoint}]}<${Math.Distance[${Me.Loc},${destmaxpoint}]}
 		{
 			Returning.X:Set[${destminpoint.X}]
 			Returning.Z:Set[${destminpoint.Z}]
