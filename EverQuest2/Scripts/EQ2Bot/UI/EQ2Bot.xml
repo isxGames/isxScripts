@@ -400,7 +400,6 @@
                   <OnChange>
                     LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Assist and Engage in combat at what Health?,${This.Text}]
                     Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                    This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Assist and Engage in combat at what Health?]}]
                     Script[EQ2Bot].Variable[AssistHP]:Set[${This.Text}]
                   </OnChange>
                 </Textentry>
@@ -1420,7 +1419,6 @@
                           Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What RANGE to PULL from?",${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to PULL from?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='PowerCheck Text'>
@@ -1443,7 +1441,6 @@
                           Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Power the puller will pull at?,${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='HealthCheck Text1'>
@@ -1466,7 +1463,6 @@
                           Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Health the puller will pull at?,${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='HealthCheck Text2'>
@@ -1527,7 +1523,6 @@
                           Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What RANGE to PULL from?",${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to PULL from?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='PowerCheck Text'>
@@ -1550,7 +1545,6 @@
                           Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Power the puller will pull at?,${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='HealthCheck Text1'>
@@ -1573,7 +1567,6 @@
                           Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Health the puller will pull at?,${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='HealthCheck Text2'>
@@ -1671,7 +1664,6 @@
                           Script[EQ2Bot].Variable[PullRange]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting["What RANGE to PULL from?",${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to PULL from?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='PowerCheck Text'>
@@ -1694,7 +1686,6 @@
                           Script[EQ2Bot].Variable[PowerCheck]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Power the puller will pull at?,${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Power the puller will pull at?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='HealthCheck Text1'>
@@ -1717,7 +1708,6 @@
                           Script[EQ2Bot].Variable[HealthCheck]:Set[${This.Text}]
                           LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Minimum Health the puller will pull at?,${This.Text}]
                           Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                          This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Minimum Health the puller will pull at?]}]
                         </OnChange>
                       </Textentry>
                       <Text Name='HealthCheck Text2'>
@@ -1757,7 +1747,6 @@
                       UIElement[EQ2 Bot].FindUsableChild[ScanRange Slider,slider]:SetValue[${Math.Calc[${Value} - 5]}]
                       LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${Value}]
                       Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                      This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to SCAN for Mobs?]}]
                       Script[EQ2Bot].Variable[ScanRange]:Set[${Value}]
                     </OnChange>
                   </Textentry>
@@ -1786,7 +1775,6 @@
                     <OnChange>
                       variable int Value
                       Value:Set[${This.Value} + 5]
-                      UIElement[EQ2 Bot].FindUsableChild[ScanRange,textentry]:SetText[${Value}]
                       LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to SCAN for Mobs?,${Value}]
                       Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                       Script[EQ2Bot].Variable[ScanRange]:Set[${Value}]
@@ -1819,7 +1807,6 @@
                       UIElement[EQ2 Bot].FindUsableChild[MARange Slider,slider]:SetValue[${Math.Calc[${Value} - 5]}]
                       LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to Engage from Main Assist?,${Value}]
                       Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                      This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[What RANGE to Engage from Main Assist?]}]
                       Script[EQ2Bot].Variable[MARange]:Set[${Value}]
                     </OnChange>
                   </Textentry>
@@ -1848,7 +1835,6 @@
                     <OnChange>
                       variable int Value
                       Value:Set[${This.Value} + 5]
-                      UIElement[EQ2 Bot].FindUsableChild[MARange,textentry]:SetText[${Value}]
                       LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[What RANGE to Engage from Main Assist?,${Value}]
                       Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                       Script[EQ2Bot].Variable[MARange]:Set[${Value}]
@@ -2505,7 +2491,6 @@
               <OnChange>
                 LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Navigation: Size of Box?,${This.Text}]
                 Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-                This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[Navigation: Size of Box?]}]
                 Script[EQ2Bot].Variable[BoxWidth]:Set[${This.Text}]
               </OnChange>
             </Textentry>

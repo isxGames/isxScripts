@@ -294,7 +294,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnChange>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[BuffRoutinesTimerInterval,${This.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-			This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[BuffRoutinesTimerInterval]}]
 			Script[EQ2Bot].Variable[BuffRoutinesTimerInterval]:Set[${This.Text}]
 			echo "EQ2Bot Debug :: BuffRoutinesTimerInterval now set to ${Script[EQ2Bot].Variable[BuffRoutinesTimerInterval]} ms"
 		</OnChange>
@@ -348,7 +347,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnChange>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[OutOfCombatRoutinesTimerInterval,${This.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-			This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[OutOfCombatRoutinesTimerInterval]}]
 			Script[EQ2Bot].Variable[OutOfCombatRoutinesTimerInterval]:Set[${This.Text}]
 			echo "EQ2Bot Debug :: OutOfCombatRoutinesTimerInterval now set to ${Script[EQ2Bot].Variable[OutOfCombatRoutinesTimerInterval]} ms"
 		</OnChange>
@@ -402,7 +400,6 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<OnChange>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[AggroDetectionTimerInterval,${This.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
-			This:SetText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings].FindSetting[AggroDetectionTimerInterval]}]
 			Script[EQ2Bot].Variable[AggroDetectionTimerInterval]:Set[${This.Text}]
 			echo "EQ2Bot Debug :: AggroDetectionTimerInterval now set to ${Script[EQ2Bot].Variable[AggroDetectionTimerInterval]} ms"
 		</OnChange>
