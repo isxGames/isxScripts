@@ -58,6 +58,6 @@ Buff Group:
 Buff Single Target:
 	Infernal Blessing
 	Offering of Armament
-	Evasive Tactics
+	Devious Evasion
 	
 	

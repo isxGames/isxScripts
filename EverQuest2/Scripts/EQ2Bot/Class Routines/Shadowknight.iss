@@ -9,7 +9,7 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20150802
+	declare ClassFileVersion int script 20161128
 	;;;;
 
 	declare PBAoEMode bool script FALSE
@@ -133,14 +133,11 @@ function Buff_Init()
    PreAction[13]:Set[AuraOfLeadershipAABuff]
    PreSpellRange[13,1]:Set[341]
    
-   PreAction[14]:Set[Trample]
-   PreSpellRange[14,1]:Set[342]
+   PreAction[14]:Set[CShout]
+   PreSpellRange[14,1]:Set[345]   
    
-   PreAction[15]:Set[CShout]
-   PreSpellRange[15,1]:Set[345]   
-   
-   PreAction[16]:Set[SubtleStrikes]
-   PreSpellRange[16,1]:Set[349] 
+   PreAction[15]:Set[SubtleStrikes]
+   PreSpellRange[15,1]:Set[349] 
 }
 
 function Combat_Init()
@@ -551,17 +548,6 @@ function Buff_Routine(int xAction)
 			    }
 			}
 		  break
-		  
-		case Trample
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
-			{
-				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-			    {
-				    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
-				        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
-			    }
-			}
-		  break
 
 		case CShout
 			if (${MainTank})
@@ -580,7 +566,7 @@ function Buff_Routine(int xAction)
 		case Bloodletter
 		  if ${Me.Level} < 80
 		  	break
-			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)} && ${Me.Maintained[${SpellType[295]}](exists)}
 			{
 			    if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 			        call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},1]} 0 0 ${Me.ID}
