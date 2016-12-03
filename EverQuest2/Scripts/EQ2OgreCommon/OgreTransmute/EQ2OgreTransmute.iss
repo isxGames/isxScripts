@@ -38,7 +38,7 @@ function main()
 			VarCopy:Set[${OgreBagInfoOb.BagContents[${ContainerCounter},${x}]}]
 
 			;Lets eliminate items that can't be transmuted period.
-			if ${Me.Inventory[id,${VarCopy}].NoValue} || ${Me.Inventory[id,${VarCopy}].Level}<=0 || ${Me.Inventory[id,${VarCopy}].IsReserved} || ${Me.Inventory[id,${VarCopy}].Ornate}
+			if ${Me.Inventory[id,${VarCopy}].NoValue} || ${Me.Inventory[id,${VarCopy}].Level}<=0 || ${Me.Inventory[id,${VarCopy}].Ornate}
 				continue
 
 			if !${Me.Inventory[id,${VarCopy}].Tier.Equal[TREASURED]} && !${Me.Inventory[id,${VarCopy}].Tier.Equal[Legendary]} && !${Me.Inventory[id,${VarCopy}].Tier.Equal[Fabled]} && !${Me.Inventory[id,${VarCopy}].Tier.Equal[mastercrafted]}
@@ -76,6 +76,8 @@ function TransmuteIt(int ItemID)
 {
 	Transmuted:Set[TRUE]
 	echo Transmuting.. ${Me.Inventory[id,${ItemID}].Name}.
+	Me.Ability[id, 3943362837]:Use
+	wait 5
 	Me.Inventory[id,${ItemID}]:Transmute
 	wait 20 ${Me.CastingSpell}
 	while ${Me.CastingSpell}

@@ -1,23 +1,60 @@
 ;Version 1.01
 ;Created by Kannkor (HotShot)
 ;Version 1.01 - Kannkor
-;	Changed default to T9
+;Changed default to T12(12)
 
-variable int OptionNum=9
+variable int OptionNum=12
+variable int tierNum=1
+variable int selNum=1
 variable string Communication=Waiting
 variable bool HunterDone=FALSE
 variable bool MinerDone=FALSE
 variable bool GathererDone=FALSE
 variable int DefaultTimeToWait=72000
-;72000 should be 2 hours
 variable int TimeToWait=72000
 ;This one may change in the script
-function main(int TempNum=9, bool LoopScript=TRUE)
+function main(int TempNum=12, bool LoopScript=TRUE)
 {
 
 	OptionNum:Set[${TempNum}]
 	Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
+
+	;Selects second dialog based off of tier selection
+	if ${OptionNum} >= 7
+	{
+		tierNum:Set[2]
+	}
+
+	;Selects proper dialog based off tier selection
+	if ${OptionNum} == 7
+	{
+		selNum:Set[1]
+	}
+	elseif ${OptionNum} == 8
+	{
+		selNum:Set[2]
+	}
+	elseif ${OptionNum} == 9
+	{
+		selNum:Set[3]
+	}
+	elseif ${OptionNum} == 10
+	{
+		selNum:Set[4]
+	}
+	elseif ${OptionNum} == 11
+	{
+		selNum:Set[5]
+	}
+	elseif ${OptionNum} == 12
+	{
+		selNum:Set[6]
+	}
+	else
+	{
+		selNum:Set[${OptionNum}]
+	}
 
 	do
 	{
@@ -38,7 +75,9 @@ function main(int TempNum=9, bool LoopScript=TRUE)
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending Hunter hireling out
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${OptionNum}]:LeftClick				
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tierNum}]:LeftClick
+				wait 25
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${selNum}]:LeftClick
 				HunterDone:Set[TRUE]
 			}
 			elseif ${Communication.Find[Harvesting]}
@@ -63,7 +102,9 @@ function main(int TempNum=9, bool LoopScript=TRUE)
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending miner hireling out
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${OptionNum}]:LeftClick				
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tierNum}]:LeftClick
+				wait 25
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${selNum}]:LeftClick
 				MinerDone:Set[TRUE]
 			}
 			elseif ${Communication.Find[Harvesting]}
@@ -88,7 +129,9 @@ function main(int TempNum=9, bool LoopScript=TRUE)
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending gatherer hireling out
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${OptionNum}]:LeftClick				
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tierNum}]:LeftClick
+				wait 25
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${selNum}]:LeftClick
 				GathererDone:Set[TRUE]
 			}
 			elseif ${Communication.Find[Harvesting]}
@@ -130,7 +173,7 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 		Communication:Set[GoHarvest]
 	elseif ${ChatType}==26 && ${Message.Find[How may me and the boys be o' service]} && ${Actor[${Speaker}].Guild.Equal[guild miner]}
 		Communication:Set[GoHarvest]
-	elseif ${ChatType}==26 && ${Message.Find[What is it that you need gathered from the wildest of Norrath]} && ${Actor[${Speaker}].Guild.Equal[guild gatherer]}
+	elseif ${ChatType}==26 && ${Message.Find[What is it that you need gathered from the wilds of Norrath]} && ${Actor[${Speaker}].Guild.Equal[guild gatherer]}
 		Communication:Set[GoHarvest]
 	elseif ${ChatType}==8 && ${Message.Find[The hunting expedition is still under way.]} && ${Actor[${Speaker}].Guild.Equal[guild hunter]}
 		Communication:Set[Harvesting]
