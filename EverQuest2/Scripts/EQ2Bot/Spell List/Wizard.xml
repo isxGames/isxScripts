@@ -223,5 +223,24 @@
 		<Setting name="94,95">Furnace of Ro IV</Setting>
 		<Setting name="94,311">Mana Intromission VI</Setting>
 		<Setting name="94,324">Protoflame V</Setting>
+		<Setting name="95,360">Frigid Gift VI</Setting>
+		<Setting name="95,21">Fortify Elements VIII</Setting>
+		<Setting name="95,91">Glacial Wind VII</Setting>
+		<Setting name="96,70">Storming Tempest IV</Setting>
+		<Setting name="96,92">Storm of Lightning VIII</Setting>
+		<Setting name="96,355">Iceshield VII</Setting>
+		<Setting name="97,71">Immolation VIII</Setting>
+		<Setting name="97,180">Cease VIII</Setting>
+		<Setting name="97,62">Ball of Fire VII</Setting>
+		<Setting name="98,94">Fusion IV</Setting>
+		<Setting name="98,31">Ro\'s Blade VIII</Setting>
+		<Setting name="98,90">Ring of Ice VI</Setting>
+		<Setting name="99,309">Vital Transfer VIII</Setting>
+		<Setting name="99,73">Ice Spears IX</Setting>
+		<Setting name="99,20">Tyrant's Pact VIII</Setting>
+		<Setting name="100,60">Ice Comet V</Setting>
+		<Setting name="100,500">Rays of Disintegration III</Setting>
+		<Setting name="100,96">Firestorm VIII</Setting>
+		<Setting name="100,310">Harvest Mana VII</Setting>
 	</Set>
 </InnerSpaceSettings>

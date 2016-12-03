@@ -221,5 +221,32 @@
 		<Setting name="90,153">Devour Vitae VI</Setting>
 		<Setting name="90,96">Unending Agony VII</Setting>
 		<Setting name="90,55">Devouring Mist IV</Setting>
+		<Setting name="91,152">Cleave Flesh VII</Setting>
+		<Setting name="91,97">Doom Judgment V</Setting>
+		<Setting name="91,150">Painbringer VIII</Setting>
+		<Setting name="92,80">Siphon Strength VI</Setting>
+		<Setting name="92,160">Insidious Whisper IX</Setting>
+		<Setting name="92,81">Mana Sieve IV</Setting>
+		<Setting name="92,295">Lucan\'s Pact VIII</Setting>
+		<Setting name="93,290">Dark Blade VIII</Setting>
+		<Setting name="93,30">Pledge of Armament VI</Setting>
+		<Setting name="94,63">Harm Touch VII</Setting>
+		<Setting name="94,151">Soulrend VIII</Setting>
+		<Setting name="95,95">Death Cloud VIII</Setting>
+		<Setting name="96,170">Blasphemy VIII</Setting>
+		<Setting name="96,20">Unholy Hunger VIII</Setting>
+		<Setting name="96,60">Shadow Coil VII</Setting>
+		<Setting name="97,25">Innoruuk\'s Caress IX</Setting>
+		<Setting name="97,26">Grim Harbinger VIII</Setting>
+		<Setting name="97,61">Siphon Strike VIII</Setting>
+		<Setting name="98,45">Grave Sacrament VII</Setting>
+		<Setting name="98,99">Pestilence IV</Setting>
+		<Setting name="98,154">Dreadful Wrath VI</Setting>
+		<Setting name="99,7">Unholy Blessing VIII</Setting>
+		<Setting name="99,62">Malice IX</Setting>
+		<Setting name="99,240">Hateful Slam VIII</Setting>
+		<Setting name="100,153">Devour Vitae VII</Setting>
+		<Setting name="100,96">Unending Agony VIII</Setting>
+		<Setting name="100,55">Devouring Mist V</Setting>
 	</Set>
 </InnerSpaceSettings>
