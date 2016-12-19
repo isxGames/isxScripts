@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ISUI>
+	<Text name='TextEQ2OgreTypeText' template='Text'>
+		<X>10</X>
+		<Y>35</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Transmute selection</Text>
+	</Text>
+	<checkbox name='ChkBoxTransmuteTreasuredID' template='chkbox'>
+		<X>10</X>
+		<Y>50</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Treasured</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteTreasuredID int global
+			EQ2OgreTransmuteTreasuredID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteTreasuredID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteLegendaryID' template='chkbox'>
+		<X>10</X>
+		<Y>70</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Legendary</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteLegendaryID int global
+			EQ2OgreTransmuteLegendaryID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteLegendaryID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteFabledID' template='chkbox'>
+		<X>10</X>
+		<Y>90</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Fabled</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteFabledID int global
+			EQ2OgreTransmuteFabledID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteFabledID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteMasterCraftedID' template='chkbox'>
+		<X>10</X>
+		<Y>110</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Master Crafted</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteMasterCraftedID int global
+			EQ2OgreTransmuteMasterCraftedID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteMasterCraftedID
+		</OnUnLoad>
+	</checkbox>
+
+	<Text name='TextEQ2OgreBoxText' template='Text'>
+		<X>235</X>
+		<Y>35</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Box selection</Text>
+	</Text>
+	<checkbox name='ChkBoxTransmuteBox1ID' template='chkbox'>
+		<X>235</X>
+		<Y>50</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Box 1</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteBox1ID int global
+			EQ2OgreTransmuteBox1ID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteBox1ID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteBox2ID' template='chkbox'>
+		<X>235</X>
+		<Y>70</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Box 2</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteBox2ID int global
+			EQ2OgreTransmuteBox2ID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteBox2ID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteBox3ID' template='chkbox'>
+		<X>235</X>
+		<Y>90</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Box 3</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteBox3ID int global
+			EQ2OgreTransmuteBox3ID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteBox3ID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteBox4ID' template='chkbox'>
+		<X>300</X>
+		<Y>50</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Box 4</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteBox4ID int global
+			EQ2OgreTransmuteBox4ID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteBox4ID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteBox5ID' template='chkbox'>
+		<X>300</X>
+		<Y>70</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Box 5</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteBox5ID int global
+			EQ2OgreTransmuteBox5ID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteBox5ID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxTransmuteBox6ID' template='chkbox'>
+		<X>300</X>
+		<Y>90</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Box 6</Text>
+		<OnLoad>
+			declarevariable EQ2OgreTransmuteBox6ID int global
+			EQ2OgreTransmuteBox6ID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable EQ2OgreTransmuteBox6ID
+		</OnUnLoad>
+	</checkbox>
+	<Text name='TextEQ2OgreLevelText' template='Text'>
+		<X>15</X>
+		<Y>160</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Text>Level selection</Text>
+	</Text>
+	<Text name='TextEQ2OgreMinLevelText' template='Text'>
+		<X>15</X>
+		<Y>178</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Alignment>Left</Alignment>
+		<Text>Min level:</Text>
+	</Text>
+	<TextEntry Name='TextEntryMinLevel'>
+		<X>75</X>
+		<Y>178</Y>
+		<Width>30</Width>
+		<Height>15</Height>
+		<MaxLength>4</MaxLength>
+		<OnLoad>
+			declarevariable TEBoxEQ2OgreTransmuteMinLevelID int global
+			TEBoxEQ2OgreTransmuteMinLevelID:Set[${This.ID}]
+			This:SetText[1]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable TEBoxEQ2OgreTransmuteMinLevelID
+		</OnUnLoad>
+	</TextEntry>
+	<Text name='TextEQ2OgreMaxLevelText' template='Text'>
+		<X>15</X>
+		<Y>200</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Alignment>Left</Alignment>
+		<Text>Max level:</Text>
+	</Text>
+	<TextEntry Name='TextEntryMaxLevel'>
+		<X>75</X>
+		<Y>200</Y>
+		<Width>30</Width>
+		<Height>15</Height>
+		<MaxLength>4</MaxLength>
+		<OnLoad>
+			declarevariable TEBoxEQ2OgreTransmuteMaxLevelID int global
+			TEBoxEQ2OgreTransmuteMaxLevelID:Set[${This.ID}]
+			This:SetText[100]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable TEBoxEQ2OgreTransmuteMaxLevelID
+		</OnUnLoad>
+	</TextEntry>
+
+
+	<CommandButton Name="Reset" template='Button'>
+		<X>235</X>
+		<Y>200</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Reset</Text>
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/eq2OgreTransmuteXML.xml"
+		</OnLeftClick>
+	</CommandButton>
+
+	<CommandButton Name="StartTransmute" template='Button'>
+		<X>235</X>
+		<Y>125</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Start Transmuting</Text>
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/eq2OgreTransmute" Transmute
+			This.Parent.FindChild[Stop]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable CmdEQ2OgreTransmuteStartID int global
+			CmdEQ2OgreTransmuteStartID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable CmdEQ2OgreTransmuteStartID
+		</OnUnLoad>
+	</CommandButton>
+
+	<CommandButton Name="StartSalvage" template='Button'>
+		<X>235</X>
+		<Y>150</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Start Salvaging</Text>
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/eq2OgreTransmute" Salvage
+			This.Parent.FindChild[Stop]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable CmdEQ2OgreSalvageStartID int global
+			CmdEQ2OgreSalvageStartID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable CmdEQ2OgreSalvageStartID
+		</OnUnLoad>
+	</CommandButton>
+
+	<CommandButton Name="StartRefine" template='Button'>
+		<X>235</X>
+		<Y>175</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Start Refining</Text>
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/eq2OgreTransmute" Refine
+			This.Parent.FindChild[Stop]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable CmdEQ2OgreRefineStartID int global
+			CmdEQ2OgreRefineStartID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable CmdEQ2OgreRefineStartID
+		</OnUnLoad>
+	</CommandButton>
+
+	<CommandButton Name="Stop" template='Button'>
+		<X>235</X>
+		<Y>125</Y>
+		<Width>110</Width>
+		<Height>95</Height>
+		<Text>STOP</Text>
+		<Alignment>Center</Alignment>
+		<visible>0</visible>
+		<OnLeftClick>
+			if ${Script[eq2ogretransmute](exists)}
+				endscript eq2ogretransmute
+			This.Parent.FindChild[StartRefine]:Show
+			This.Parent.FindChild[StartTransmute]:Show
+			This.Parent.FindChild[StartSalvage]:Show
+			This:Hide
+		</OnLeftClick>
+		<OnLoad>
+			declarevariable CmdEQ2OgreStopID int global
+			CmdEQ2OgreStopID:Set[${This.ID}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable CmdEQ2OgreStopID
+		</OnUnLoad>
+	</CommandButton>
+
+</ISUI>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- UI for the free Ogre Scripts -->
+<!-- Updated by IDBurner 12/12/2016 -->
+<ISUI>
+<Template Name='chkbox' template='checkbox'><Width>30</Width><Height>23</Height></Template>
+	<!-- Main UI Window -->
+	<Window Name='OgrePortalXML' Template='Window'>
+		<X>20</X>
+		<Y>20</Y>
+		<Width>370</Width>
+		<Height>285</Height>
+		<Client Template="Window.Client" />
+		<StorePosition>1</StorePosition>
+		<Title>OgreFree Portal - Ver: 1.50</Title>
+		<TitleBar Template="Window.TitleBar">
+			<X>0</X>
+			<Y>0</Y>
+			<Width>99%</Width>
+			<Height>5%</Height>
+			<Children>
+				<Text Name="Title" Template="Window.TitleBar.Title">
+					<Alignment>Center</Alignment>
+				</Text>
+				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
+					<X>85%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+				</Button>
+				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
+					<X>92%</X>
+					<Width>16</Width>
+					<Height>16</Height>
+					<OnLeftClick>
+						;ui -unload scripts\\EQ2OgreFree\\OgrePortal\\OgrePortalXML.xml
+						UIElement[OgrePortalXML]:Hide
+					</OnLeftClick>
+				</CommandButton>
+			</Children>
+		</TitleBar>
+
+		<Children>
+			<Tabcontrol Name='OgreFree Tabs'>
+        		<X>1%</X>
+        		<Y>1%</Y>
+        		<Height>98%</Height>
+        		<Width>98%</Width>
+        		<Tabs>
+          			<Tab Name='Main'>
+			<!-- ***********Labels************** -->
+				<Text name='OPScriptName' template='Text'>
+					<X>10</X>
+					<Y>10</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Script Name</Text>
+					<Font>
+						<Color>FFA9A9A9</Color>
+					</Font>
+				</Text>
+				<Text name='OPOptions' template='Text'>
+					<X>130</X>
+					<Y>10</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Options</Text>
+					<Font>
+						<Color>FFA9A9A9</Color>
+					</Font>
+				</Text>
+				<Text name='OPStatus' template='Text'>
+					<X>270</X>
+					<Y>10</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Status</Text>
+					<Font>
+						<Color>FFA9A9A9</Color>
+					</Font>
+				</Text>
+
+			<!-- ***********Ogre Hire************** -->
+				<Text name='OPScriptHire' template='Text'>
+					<X>10</X>
+					<Y>60</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Hireling</Text>
+				</Text>
+				<Text name='OPStatusHire' template='Text'>
+					<X>260</X>
+					<Y>40</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Alignment>Left</Alignment>
+					<Text>Loading...</Text>
+					<OnRender>
+						if ${Script[eq2ogrehireling](exists)} &amp;&amp; ${This.Text.NotEqual[--Running--]}
+							This:SetText[--Running--]
+						elseif !${Script[eq2ogrehireling](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+							This:SetText[--Inactive--]
+					</OnRender>
+				</Text>
+				<Slider Name="HirelingTier">
+					<X>105</X>
+					<Y>60</Y>
+					<Width>90</Width>
+					<Height>15</Height>
+					<Range>12</Range> <!-- max amount of tiers -->
+					<OnLoad>
+						declarevar rwHirelingTier int global 12
+              			This:SetValue[${rwHirelingTier}]
+            		</OnLoad>
+					<OnChange>
+							if ${rwHirelingTier}!=${This.Value}
+							{
+								rwHirelingTier:Set[${This.Value}]
+							}
+					</OnChange>
+					<OnUnLoad>
+						deletevariable rwHirelingTier
+					</OnUnLoad>
+				</Slider>
+				<Text Name="TierLevel">
+					<X>135</X>
+					<Y>40</Y>
+					<Width>200</Width>
+					<Height>10</Height>
+					<Text>Tier ${rwHirelingTier}</Text>
+				</Text>
+				<Button Name="CmdOPHire" template='Button'>
+					<X>235</X>
+					<Y>60</Y>
+					<Width>110</Width>
+					<Height>20</Height>
+					<Text>Loading...</Text>
+					<Font>
+						<Color>FF00FF00</Color>
+					</Font>
+					<Alignment>Center</Alignment>
+					<OnLeftClick>
+						if ${Script[eq2ogrehireling](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+							endscript eq2ogrehireling
+						elseif !${Script[eq2ogrehireling](exists)} &amp;&amp; ${This.Text.Equal[Start]}
+						{
+							runscript EQ2OgreFree/ogrehireling/eq2ogrehireling ${rwHirelingTier}
+						}
+						else
+							echo Error OPHire1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+					</OnLeftClick>
+					<OnRender>
+						if ${Script[eq2ogrehireling](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+						{
+							This:SetText[Stop]
+							This.Font:SetColor[FFFF0000]
+						}
+						elseif !${Script[eq2ogrehireling](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+						{
+							This:SetText[Start]
+							This.Font:SetColor[FF00FF00]
+						}
+					</OnRender>
+				</Button>
+
+			<!-- ***********UI Reload Button************** -->
+			<Button Name="Reload" template='Button'>
+				<X>235</X>
+				<Y>200</Y>
+				<Width>110</Width>
+				<Height>20</Height>
+				<Text>Reload UI</Text>
+				<Alignment>Center</Alignment>
+				<OnLeftClick>
+					runscript ogrefree
+					<!-- ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/OgrePortalXML.xml" -->
+				</OnLeftClick>
+			</Button>
+			<!-- Green <Color>FF00FF00</Color> -->
+			<!-- Red <Color>FFFF0000</Color> -->
+			<!-- Gray (labels) <Color>FFA9A9A9</Color> -->
+
+			
+          			</Tab>
+          		</Tabs>
+          	</Tabcontrol> 
+
+		</Children>
+	</Window>
+
+</ISUI>

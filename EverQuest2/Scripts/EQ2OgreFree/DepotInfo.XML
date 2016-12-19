@@ -1,0 +1,37 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<InnerSpaceSettings>
+
+	<Set Name="EQ2DepotInfo">
+	<!-- "GuildDepots" -->
+		<Setting Name="Harvesting Supply Depot" Options="Full" ChkBox="${DepotHarvestID}"></Setting>
+		<Setting Name="Harvesting Supply Depot (Large)" Options="Full" ChkBox="${DepotHarvestID}"></Setting>
+		<Setting Name="Ammo Depot" Options="One" ChkBox="${DepotAmmoID}"></Setting>
+		<Setting Name="Ammo Depot (Large)" Options="One" ChkBox="${DepotAmmoID}"></Setting>
+		<Setting Name="Collectible Depot" Options="One" ChkBox="${DepotCollectiblesID}"></Setting>
+		<Setting Name="Collectible Depot (Large)" Options="One" ChkBox="${DepotCollectiblesID}"></Setting>
+		<Setting Name="Scroll Depot" Options="One" ChkBox="${DepotScrollsID}"></Setting>
+		<Setting Name="Scroll Depot (Large)" Options="One" ChkBox="${DepotScrollsID}"></Setting>
+		<Setting Name="Food &#038; Drink Depot" Options="One" ChkBox="${DepotFoodDrinkID}"></Setting>
+		<Setting Name="Food &#038; Drink Depot (Large)" Options="One" ChkBox="${DepotFoodDrinkID}"></Setting>
+		<Setting Name="Fuel Depot" Options="One" ChkBox="${DepotFuelID}"></Setting>
+		<Setting Name="Fuel Depot (Large)" Options="One" ChkBox="${DepotFuelID}"></Setting>
+		<Setting Name="Lore &#038; Legend Depot" Options="One" ChkBox="${DepotLoreLegendID}"></Setting>
+		<Setting Name="Lore &#038; Legend Depot (Large)" Options="One" ChkBox="${DepotLoreLegendID}"></Setting>
+		<Setting Name="Adornment Depot" Options="One" ChkBox="${DepotAdornmentID}"></Setting>
+		<Setting Name="Adornment Depot (Large)" Options="One" ChkBox="${DepotAdornmentID}"></Setting>
+		<Setting Name="Poison, Potion, &#038; Totem Depot" Options="One" ChkBox="${DepotPosionID}"></Setting>
+		<Setting Name="Poison, Potion, &#038; Totem Depot (Large)" Options="One" ChkBox="${DepotPosionID}"></Setting>
+	<!-- "HouseDepots" -->
+		<Setting Name="Personal Harvest Depot (small)" Options="Full" ChkBox="${DepotHarvestID}"></Setting>
+		<Setting Name="Personal Harvest Depot (large)" Options="Full" ChkBox="${DepotHarvestID}"></Setting>
+	<!--<Setting Name="Personal Ammo Depot" Options="One" ChkBox="${DepotAmmoID}"></Setting>
+		<Setting Name="Personal Collectible Depot" Options="One" ChkBox="${DepotCollectiblesID}"></Setting>
+		<Setting Name="Personal Food &#038; Drink Depot" Options="One" ChkBox="${DepotFoodDrinkID}"></Setting>
+		<Setting Name="Personal Fuel Depot" Options="One" ChkBox="${DepotFuelID}"></Setting>
+		<Setting Name="Personal Lore &#038; Legend Depot" Options="One" ChkBox="${DepotLoreLegendID}"></Setting>
+		<Setting Name="Personal Adornment Depot" Options="One" ChkBox="${DepotAdornmentID}"></Setting>
+		<Setting Name="Personal Poison, Potion, &#038; Totem Depot" Options="One" ChkBox="${DepotPosionID}"></Setting>-->
+
+	</Set>
+
+</InnerSpaceSettings>
