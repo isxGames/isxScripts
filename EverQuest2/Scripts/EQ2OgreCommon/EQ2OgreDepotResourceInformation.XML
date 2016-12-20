@@ -3,20 +3,20 @@
 <InnerSpaceSettings>
 	<Set Name="EQ2OgreDepotResourceInfo">
 	<!-- "Tier1Raw" -->
-		<Setting Name="deer meat" Tier="1" Type="Raw"></Setting>
-		<Setting Name="rawhide leather pelt" Tier="1" Type="Raw"></Setting>
-		<Setting Name="frog leg" Tier="1" Type="Raw"></Setting>
-		<Setting Name="sunfish" Tier="1" Type="Raw"></Setting>
-		<Setting Name="leaded loam" Tier="1" Type="Raw"></Setting>
-		<Setting Name="tin cluster" Tier="1" Type="Raw"></Setting>
-		<Setting Name="root" Tier="1" Type="Raw"></Setting>
-		<Setting Name="Baubbleshire cabbage" Tier="1" Type="Raw"></Setting>
-		<Setting Name="black coffee bean" Tier="1" Type="Raw"></Setting>
-		<Setting Name="jumjum" Tier="1" Type="Raw"></Setting>
-		<Setting Name="raw white tea leaf" Tier="1" Type="Raw"></Setting>
-		<Setting Name="lead cluster" Tier="1" Type="Raw"></Setting>
-		<Setting Name="rough malachite" Tier="1" Type="Raw"></Setting>
-		<Setting Name="severed elm" Tier="1" Type="Raw"></Setting>
+		<Setting Name="rawhide leather pelt" Tier="1" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="leaded loam" Tier="1" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="tin cluster" Tier="1" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="root" Tier="1" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="lead cluster" Tier="1" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough malachite" Tier="1" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="severed elm" Tier="1" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="deer meat" Tier="1" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="frog leg" Tier="1" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="sunfish" Tier="1" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="Baubbleshire cabbage" Tier="1" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="black coffee bean" Tier="1" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="jumjum" Tier="1" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="raw white tea leaf" Tier="1" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
 	<!-- "Tier1Rare" -->
 		<Setting Name="waxed leather pelt" Tier="1" Type="Rare"></Setting>
 		<Setting Name="bronze cluster" Tier="1" Type="Rare"></Setting>
@@ -25,22 +25,31 @@
 		<Setting Name="copper cluster" Tier="1" Type="Rare"></Setting>
 		<Setting Name="rough lapis lazuli" Tier="1" Type="Rare"></Setting>
 		<Setting Name="severed alder" Tier="1" Type="Rare"></Setting>
+	<!-- "Tier1Mute" -->
+		<Setting Name="Lapis Lazuli Fragment" Tier="1" Type="Mute"></Setting>
+		<Setting Name="Ulteran Powder" Tier="1" Type="Mute"></Setting>
+		<Setting Name="Infusion of Earth" Tier="1" Type="Mute"></Setting>
+		<Setting Name="Refined Mana" Tier="1" Type="Mute"></Setting>
+	<!-- "Tier1Dust" -->
+		<Setting Name="Flickering Dust" Tier="1" Type="Dust"></Setting>	
+	
 	<!-- "Tier2Raw" -->
-		<Setting Name="elephant meat" Tier="2" Type="Raw"></Setting>
-		<Setting Name="tanned leather pelt" Tier="2" Type="Raw"></Setting>
-		<Setting Name="vulrich meat" Tier="2" Type="Raw"></Setting>
-		<Setting Name="raw crab meat" Tier="2" Type="Raw"></Setting>
-		<Setting Name="freewater grouper" Tier="2" Type="Raw"></Setting>
-		<Setting Name="iron cluster" Tier="2" Type="Raw"></Setting>
-		<Setting Name="salty loam" Tier="2" Type="Raw"></Setting>
-		<Setting Name="tuber strand" Tier="2" Type="Raw"></Setting>
-		<Setting Name="Antonican coffee bean" Tier="2" Type="Raw"></Setting>
-		<Setting Name="raw black tea leaf" Tier="2" Type="Raw"></Setting>
-		<Setting Name="raw carrot" Tier="2" Type="Raw"></Setting>
-		<Setting Name="murdunk orange" Tier="2" Type="Raw"></Setting>
-		<Setting Name="electrum cluster" Tier="2" Type="Raw"></Setting>
-		<Setting Name="rough turquoise" Tier="2" Type="Raw"></Setting>
-		<Setting Name="severed maple" Tier="2" Type="Raw"></Setting>
+		<Setting Name="tanned leather pelt" Tier="2" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="iron cluster" Tier="2" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="salty loam" Tier="2" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="tuber strand" Tier="2" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="electrum cluster" Tier="2" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough turquoise" Tier="2" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="severed maple" Tier="2" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="elephant meat" Tier="2" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="vulrich meat" Tier="2" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="raw crab meat" Tier="2" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="freewater grouper" Tier="2" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="Antonican coffee bean" Tier="2" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="raw black tea leaf" Tier="2" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="raw carrot" Tier="2" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="murdunk orange" Tier="2" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+    	<Setting Name="glowing material" Tier="2" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier2Rare" -->
 		<Setting Name="cured leather pelt" Tier="2" Type="Rare"></Setting>
 		<Setting Name="alkaline loam" Tier="2" Type="Rare"></Setting>
@@ -49,23 +58,31 @@
 		<Setting Name="rough coral" Tier="2" Type="Rare"></Setting>
 		<Setting Name="silver cluster" Tier="2" Type="Rare"></Setting>
 		<Setting Name="severed bone" Tier="2" Type="Rare"></Setting>
-		<Setting Name="glowing material" Tier="2" Type="Rare"></Setting>
+	<!-- "Tier2Mute" -->
+		<Setting Name="Coral Fragment" Tier="2" Type="Mute"></Setting>
+		<Setting Name="Aether Powder" Tier="2" Type="Mute"></Setting>
+		<Setting Name="Infusion of Air" Tier="2" Type="Mute"></Setting>
+		<Setting Name="Processed Mana" Tier="2" Type="Mute"></Setting>
+	<!-- "Tier2Dust" -->
+		<Setting Name="Shimmering Dust" Tier="2" Type="Dust"></Setting>	
+		
 	<!-- "Tier3Raw" -->
-		<Setting Name="boiled leather pelt" Tier="3" Type="Raw"></Setting>
-		<Setting Name="lion meat" Tier="3" Type="Raw"></Setting>
-		<Setting Name="pig meat" Tier="3" Type="Raw"></Setting>
-		<Setting Name="seafury mackerel" Tier="3" Type="Raw"></Setting>
-		<Setting Name="thicket crayfish" Tier="3" Type="Raw"></Setting>
-		<Setting Name="carbonite cluster" Tier="3" Type="Raw"></Setting>
-		<Setting Name="pliant loam" Tier="3" Type="Raw"></Setting>
-		<Setting Name="belladonna root" Tier="3" Type="Raw"></Setting>
-		<Setting Name="fayberry" Tier="3" Type="Raw"></Setting>
-		<Setting Name="oolong tea leaf" Tier="3" Type="Raw"></Setting>
-		<Setting Name="steppes mountain bean" Tier="3" Type="Raw"></Setting>
-		<Setting Name="sweet onion" Tier="3" Type="Raw"></Setting>
-		<Setting Name="rough agate" Tier="3" Type="Raw"></Setting>
-		<Setting Name="gold cluster" Tier="3" Type="Raw"></Setting>
-		<Setting Name="severed ash" Tier="3" Type="Raw"></Setting>
+		<Setting Name="boiled leather pelt" Tier="3" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="carbonite cluster" Tier="3" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="pliant loam" Tier="3" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="belladonna root" Tier="3" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough agate" Tier="3" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="gold cluster" Tier="3" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="severed ash" Tier="3" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="lion meat" Tier="3" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="pig meat" Tier="3" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="seafury mackerel" Tier="3" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="thicket crayfish" Tier="3" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="fayberry" Tier="3" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="oolong tea leaf" Tier="3" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="steppes mountain bean" Tier="3" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="sweet onion" Tier="3" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+    	<Setting Name="sparkling material" Tier="3" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier3Rare" -->
 		<Setting Name="cuirboilli leather pelt" Tier="3" Type="Rare"></Setting>
 		<Setting Name="malleable loam" Tier="3" Type="Rare"></Setting>
@@ -74,23 +91,31 @@
 		<Setting Name="rough jasper" Tier="3" Type="Rare"></Setting>
 		<Setting Name="palladium cluster" Tier="3" Type="Rare"></Setting>
 		<Setting Name="severed fir" Tier="3" Type="Rare"></Setting>
-		<Setting Name="sparkling material" Tier="3" Type="Rare"></Setting>
+	<!-- "Tier3Mute" -->
+		<Setting Name="Jasper Fragment" Tier="3" Type="Mute"></Setting>
+		<Setting Name="Phantom Powder" Tier="3" Type="Mute"></Setting>
+		<Setting Name="Infusion of Fire" Tier="3" Type="Mute"></Setting>
+		<Setting Name="Clarified Mana" Tier="3" Type="Mute"></Setting>
+	<!-- "Tier3Dust" -->
+		<Setting Name="Sparkling Dust" Tier="3" Type="Dust"></Setting>	
+		
 	<!-- "Tier4Raw" -->
-		<Setting Name="bear meat" Tier="4" Type="Raw"></Setting>
-		<Setting Name="etched leather pelt" Tier="4" Type="Raw"></Setting>
-		<Setting Name="griffon meat" Tier="4" Type="Raw"></Setting>
-		<Setting Name="murkwater carp" Tier="4" Type="Raw"></Setting>
-		<Setting Name="shark fin" Tier="4" Type="Raw"></Setting>
-		<Setting Name="feyiron cluster" Tier="4" Type="Raw"></Setting>
-		<Setting Name="supple loam" Tier="4" Type="Raw"></Setting>
-		<Setting Name="tussah root" Tier="4" Type="Raw"></Setting>
-		<Setting Name="cucumber" Tier="4" Type="Raw"></Setting>
-		<Setting Name="Everfrost ice bean" Tier="4" Type="Raw"></Setting>
-		<Setting Name="green tea leaf" Tier="4" Type="Raw"></Setting>
-		<Setting Name="wild apple" Tier="4" Type="Raw"></Setting>
-		<Setting Name="rough opaline" Tier="4" Type="Raw"></Setting>
-		<Setting Name="velium cluster" Tier="4" Type="Raw"></Setting>
-		<Setting Name="severed briarwood" Tier="4" Type="Raw"></Setting>
+		<Setting Name="etched leather pelt" Tier="4" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="feyiron cluster" Tier="4" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="supple loam" Tier="4" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="tussah root" Tier="4" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough opaline" Tier="4" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="velium cluster" Tier="4" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="severed briarwood" Tier="4" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="bear meat" Tier="4" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="griffin meat" Tier="4" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="murkwater carp" Tier="4" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="shark fin" Tier="4" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="cucumber" Tier="4" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="Everfrost ice bean" Tier="4" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="green tea leaf" Tier="4" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="wild apple" Tier="4" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+    	<Setting Name="glimmering material" Tier="4" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier4Rare" -->
 		<Setting Name="engraved leather pelt" Tier="4" Type="Rare"></Setting>
 		<Setting Name="ductile loam" Tier="4" Type="Rare"></Setting>
@@ -99,23 +124,31 @@
 		<Setting Name="rough opal" Tier="4" Type="Rare"></Setting>
 		<Setting Name="ruthenium cluster" Tier="4" Type="Rare"></Setting>
 		<Setting Name="severed oak" Tier="4" Type="Rare"></Setting>
-		<Setting Name="glimmering material" Tier="4" Type="Rare"></Setting>
+	<!-- "Tier4Mute" -->
+		<Setting Name="Opal Fragment" Tier="4" Type="Mute"></Setting>
+		<Setting Name="Ethereal Powder" Tier="4" Type="Mute"></Setting>
+		<Setting Name="Infusion of Water" Tier="4" Type="Mute"></Setting>
+		<Setting Name="Purified Mana" Tier="4" Type="Mute"></Setting>
+	<!-- "Tier4Dust" -->
+		<Setting Name="Glimmering Dust" Tier="4" Type="Dust"></Setting>	
+		
 	<!-- "Tier5Raw" -->
-		<Setting Name="owlbear meat" Tier="5" Type="Raw"></Setting>
-		<Setting Name="strengthened leather pelt" Tier="5" Type="Raw"></Setting>
-		<Setting Name="wyrm meat" Tier="5" Type="Raw"></Setting>
-		<Setting Name="cauldron blowfish" Tier="5" Type="Raw"></Setting>
-		<Setting Name="nerius trout" Tier="5" Type="Raw"></Setting>
-		<Setting Name="bonded loam" Tier="5" Type="Raw"></Setting>
-		<Setting Name="fulginate cluster" Tier="5" Type="Raw"></Setting>
-		<Setting Name="ashen root" Tier="5" Type="Raw"></Setting>
-		<Setting Name="browncap mushroom" Tier="5" Type="Raw"></Setting>
-		<Setting Name="Lavastorm robusta bean" Tier="5" Type="Raw"></Setting>
-		<Setting Name="pu-erh tea leaf" Tier="5" Type="Raw"></Setting>
-		<Setting Name="white peach" Tier="5" Type="Raw"></Setting>
-		<Setting Name="rough bloodstone" Tier="5" Type="Raw"></Setting>
-		<Setting Name="diamondine cluster" Tier="5" Type="Raw"></Setting>
-		<Setting Name="severed teak" Tier="5" Type="Raw"></Setting>
+		<Setting Name="strengthened leather pelt" Tier="5" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="bonded loam" Tier="5" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="fulginate cluster" Tier="5" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="ashen root" Tier="5" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough bloodstone" Tier="5" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="diamondine cluster" Tier="5" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="severed teak" Tier="5" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="owlbear meat" Tier="5" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="wyrm meat" Tier="5" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="cauldron blowfish" Tier="5" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="nerius trout" Tier="5" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="browncap mushroom" Tier="5" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="Lavastorm robusta bean" Tier="5" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="pu-erh tea leaf" Tier="5" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="white peach" Tier="5" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+    	<Setting Name="luminous material" Tier="5" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier5Rare" -->
 		<Setting Name="augmented leather pelt" Tier="5" Type="Rare"></Setting>
 		<Setting Name="ebon cluster" Tier="5" Type="Rare"></Setting>
@@ -125,23 +158,31 @@
 		<Setting Name="rhodium cluster" Tier="5" Type="Rare"></Setting>
 		<Setting Name="rough ruby" Tier="5" Type="Rare"></Setting>
 		<Setting Name="severed cedar" Tier="5" Type="Rare"></Setting>
-		<Setting Name="luminous material" Tier="5" Type="Rare"></Setting>
+	<!-- "Tier5Mute" -->
+		<Setting Name="Ruby Fragment" Tier="5" Type="Mute"></Setting>
+		<Setting Name="Spectral Powder" Tier="5" Type="Mute"></Setting>
+		<Setting Name="Infusion of Nightmares" Tier="5" Type="Mute"></Setting>
+		<Setting Name="Natural Mana" Tier="5" Type="Mute"></Setting>
+	<!-- "Tier5Dust" -->
+		<Setting Name="Luminous Dust" Tier="5" Type="Dust"></Setting>	
+				
 	<!-- "Tier6Raw" -->
-		<Setting Name="stonehide leather pelt" Tier="6" Type="Raw"></Setting>
-		<Setting Name="caiman meat" Tier="6" Type="Raw"></Setting>
-		<Setting Name="sabertooth meat" Tier="6" Type="Raw"></Setting>
-		<Setting Name="conger eel" Tier="6" Type="Raw"></Setting>
-		<Setting Name="tiger shrimp" Tier="6" Type="Raw"></Setting>
-		<Setting Name="indium cluster" Tier="6" Type="Raw"></Setting>
-		<Setting Name="soluble loam" Tier="6" Type="Raw"></Setting>
-		<Setting Name="succulent root" Tier="6" Type="Raw"></Setting>
-		<Setting Name="artichoke" Tier="6" Type="Raw"></Setting>
-		<Setting Name="darjeeling tea leaf" Tier="6" Type="Raw"></Setting>
-		<Setting Name="Maj'Dul coffee bean" Tier="6" Type="Raw"></Setting>
-		<Setting Name="prickly pear" Tier="6" Type="Raw"></Setting>
-		<Setting Name="beryllium cluster" Tier="6" Type="Raw"></Setting>
-		<Setting Name="rough nacre" Tier="6" Type="Raw"></Setting>
-		<Setting Name="severed sandalwood" Tier="6" Type="Raw"></Setting>
+		<Setting Name="stonehide leather pelt" Tier="6" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="indium cluster" Tier="6" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="soluble loam" Tier="6" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="succulent root" Tier="6" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="beryllium cluster" Tier="6" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough nacre" Tier="6" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="severed sandalwood" Tier="6" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="caiman meat" Tier="6" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="sabertooth meat" Tier="6" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="conger eel" Tier="6" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="tiger shrimp" Tier="6" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="artichoke" Tier="6" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="darjeeling tea leaf" Tier="6" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="Maj'Dul coffee bean" Tier="6" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="prickly pear" Tier="6" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+    	<Setting Name="lambent material" Tier="6" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier6Rare" -->
 		<Setting Name="scaled leather pelt" Tier="6" Type="Rare"></Setting>
 		<Setting Name="alkali loam" Tier="6" Type="Rare"></Setting>
@@ -150,22 +191,30 @@
 		<Setting Name="vanadium cluster" Tier="6" Type="Rare"></Setting>
 		<Setting Name="rough pearl" Tier="6" Type="Rare"></Setting>
 		<Setting Name="severed ironwood" Tier="6" Type="Rare"></Setting>
-		<Setting Name="lambent material" Tier="6" Type="Rare"></Setting>
+	<!-- "Tier6Mute" -->
+		<Setting Name="Pearl Fragment" Tier="6" Type="Mute"></Setting>
+		<Setting Name="Vision Powder" Tier="6" Type="Mute"></Setting>
+		<Setting Name="Infusion of Daydreams" Tier="6" Type="Mute"></Setting>
+		<Setting Name="Coalesced Mana" Tier="6" Type="Mute"></Setting>
+	<!-- "Tier6Dust" -->
+		<Setting Name="Lambent Dust" Tier="6" Type="Dust"></Setting>	
+				
 	<!-- "Tier7Raw" -->
-		<Setting Name="horned leather pelt" Tier="7" Type="Raw"></Setting>
-		<Setting Name="aviak meat" Tier="7" Type="Raw"></Setting>
-		<Setting Name="ravasect meat" Tier="7" Type="Raw"></Setting>
-		<Setting Name="flying fish" Tier="7" Type="Raw"></Setting>
-		<Setting Name="adamantine cluster" Tier="7" Type="Raw"></Setting>
-		<Setting Name="porous loam" Tier="7" Type="Raw"></Setting>
-		<Setting Name="hanging root" Tier="7" Type="Raw"></Setting>
-		<Setting Name="soaring coffee bean" Tier="7" Type="Raw"></Setting>
-		<Setting Name="squash" Tier="7" Type="Raw"></Setting>
-		<Setting Name="sweet chai tea leaf" Tier="7" Type="Raw"></Setting>
-		<Setting Name="xegonberry" Tier="7" Type="Raw"></Setting>
-		<Setting Name="azurite cluster" Tier="7" Type="Raw"></Setting>
-		<Setting Name="rough topaz" Tier="7" Type="Raw"></Setting>
-		<Setting Name="rough lumbered rosewood" Tier="7" Type="Raw"></Setting>
+		<Setting Name="horned leather pelt" Tier="7" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="adamantine cluster" Tier="7" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="porous loam" Tier="7" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="hanging root" Tier="7" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="azurite cluster" Tier="7" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough topaz" Tier="7" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough lumbered rosewood" Tier="7" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="aviak meat" Tier="7" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="ravasect meat" Tier="7" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="flying fish" Tier="7" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="soaring coffee bean" Tier="7" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="squash" Tier="7" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="sweet chai tea leaf" Tier="7" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="xegonberry" Tier="7" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+    	<Setting Name="scintillating material" Tier="7" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier7Rare" -->
 		<Setting Name="dragonhide leather pelt" Tier="7" Type="Rare"></Setting>
 		<Setting Name="spongy loam" Tier="7" Type="Rare"></Setting>
@@ -173,53 +222,192 @@
 		<Setting Name="nimbus root" Tier="7" Type="Rare"></Setting>
 		<Setting Name="acrylia cluster" Tier="7" Type="Rare"></Setting>
 		<Setting Name="rough moonstone" Tier="7" Type="Rare"></Setting>
-		<Setting Name="lumbered ebony" Tier="7" Type="Rare"></Setting>
-		<Setting Name="scintillating material" Tier="7" Type="Rare"></Setting>
+		<Setting Name="rough lumbered ebony" Tier="7" Type="Rare"></Setting>
+	<!-- "Tier7Mute" -->
+		<Setting Name="Lunar Fragment" Tier="7" Type="Mute"></Setting>
+		<Setting Name="Illusionary Powder" Tier="7" Type="Mute"></Setting>
+		<Setting Name="Infusion of Illusion" Tier="7" Type="Mute"></Setting>
+		<Setting Name="Hardened Mana" Tier="7" Type="Mute"></Setting>
+	<!-- "Tier7Dust" -->
+		<Setting Name="Scintillating Dust" Tier="7" Type="Dust"></Setting>	
+				
 	<!-- "Tier8Raw" -->
-		<Setting Name="bristled pelt" Tier="8" Type="Raw"></Setting>
-		<Setting Name="barracuda" Tier="8" Type="Raw"></Setting>
-		<Setting Name="king prawn" Tier="8" Type="Raw"></Setting>
-		<Setting Name="brute flesh" Tier="8" Type="Raw"></Setting>
-		<Setting Name="devourer meat" Tier="8" Type="Raw"></Setting>
-		<Setting Name="drachnid meat" Tier="8" Type="Raw"></Setting>
-		<Setting Name="hornet meat" Tier="8" Type="Raw"></Setting>
-		<Setting Name="mountain giant meat" Tier="8" Type="Raw"></Setting>
-		<Setting Name="ferrite cluster" Tier="8" Type="Raw"></Setting>
-		<Setting Name="mineral salt loam" Tier="8" Type="Raw"></Setting>
-		<Setting Name="lichenclover root" Tier="8" Type="Raw"></Setting>
-		<Setting Name="raw cranberry" Tier="8" Type="Raw"></Setting>
-		<Setting Name="raw succulent petal" Tier="8" Type="Raw"></Setting>
-		<Setting Name="cabilis cocoa bean" Tier="8" Type="Raw"></Setting>
-		<Setting Name="torsis tea leaf" Tier="8" Type="Raw"></Setting>
-		<Setting Name="deklium cluster" Tier="8" Type="Raw"></Setting>
-		<Setting Name="rough kunzite" Tier="8" Type="Raw"></Setting>
-		<Setting Name="redwood lumber" Tier="8" Type="Raw"></Setting>
-		<Setting Name="smoldering material" Tier="8" Type="Raw"></Setting>
+		<Setting Name="bristled pelt" Tier="8" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="ferrite cluster" Tier="8" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="mineral salt loam" Tier="8" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="lichenclover root" Tier="8" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="deklium cluster" Tier="8" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rough kunzite" Tier="8" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="redwood lumber" Tier="8" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="barracuda" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="king prawn" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="brute flesh" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="devourer meat" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="drachnid meat" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="hornet meat" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="cockatrice meat" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="mountain giant meat" Tier="8" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="raw cranberry" Tier="8" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="raw succulent petal" Tier="8" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="cabilis cocoa bean" Tier="8" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="torsis tea leaf" Tier="8" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="smoldering material" Tier="8" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
 	<!-- "Tier8Rare" -->
-		<Setting Name="hidebound leather pelt" Tier="8" Type="Rare"></Setting>
+		<Setting Name="hidebound pelt" Tier="8" Type="Rare"></Setting>
 		<Setting Name="silicate loam" Tier="8" Type="Rare"></Setting>
 		<Setting Name="incarnadine cluster" Tier="8" Type="Rare"></Setting>
 		<Setting Name="mantrap root" Tier="8" Type="Rare"></Setting>
 		<Setting Name="tynnonium cluster" Tier="8" Type="Rare"></Setting>
 		<Setting Name="rough fire emerald" Tier="8" Type="Rare"></Setting>
 		<Setting Name="mahogany lumber" Tier="8" Type="Rare"></Setting>
+	<!-- "Tier8Mute" -->
+		<Setting Name="Emerald Fragment" Tier="8" Type="Mute"></Setting>
+		<Setting Name="Sacred Powder" Tier="8" Type="Mute"></Setting>
+		<Setting Name="Infusion of Reality" Tier="8" Type="Mute"></Setting>
+		<Setting Name="Crystallized Mana" Tier="8" Type="Mute"></Setting>
+	<!-- "Tier8Dust" -->
+		<Setting Name="Smoldering Dust" Tier="8" Type="Dust"></Setting>	
+		
 	<!-- "Tier9Raw" -->
-		<Setting Name="gazer meat" Tier="9" Type="Raw"></Setting>
-		<Setting Name="Kobold meat" Tier="9" Type="Raw"></Setting>
-		<Setting Name="fearstalker meat" Tier="9" Type="Raw"></Setting>
-		<Setting Name="giant octopus meat" Tier="9" Type="Raw"></Setting>
-		<Setting Name="mottled pelt" Tier="9" Type="Raw"></Setting>
-		<Setting Name="seahorse roe" Tier="9" Type="Raw"></Setting>
-		<Setting Name="ethereal material" Tier="9" Type="Raw"></Setting>
-		<Setting Name="amber" Tier="9" Type="Raw"></Setting>
-		<Setting Name="quicksilver cluster" Tier="9" Type="Raw"></Setting>
-		<Setting Name="titanium ore" Tier="9" Type="Raw"></Setting>
-		<Setting Name="bamboo shoot" Tier="9" Type="Raw"></Setting>
-		<Setting Name="caynar nut" Tier="9" Type="Raw"></Setting>
-		<Setting Name="kejekan palmfruit" Tier="9" Type="Raw"></Setting>
-		<Setting Name="lapsang tea leaf" Tier="9" Type="Raw"></Setting>
-		<Setting Name="marr cherry" Tier="9" Type="Raw"></Setting>
-		<Setting Name="sumac lumber" Tier="9" Type="Raw"></Setting>
-	</Set>
+		<Setting Name="mottled pelt" Tier="9" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="amber" Tier="9" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="quicksilver cluster" Tier="9" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="titanium ore" Tier="9" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="bamboo shoot" Tier="9" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="sumac lumber" Tier="9" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="gazer meat" Tier="9" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="Kobold meat" Tier="9" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="fearstalker meat" Tier="9" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="giant octopus meat" Tier="9" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="seahorse roe" Tier="9" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="caynar nut" Tier="9" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="kejekan palmfruit" Tier="9" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="lapsang tea leaf" Tier="9" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="marr cherry" Tier="9" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="roper sinew" Tier="9" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="ethereal material" Tier="9" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
+	<!-- "Tier9Rare" -->
+		<Setting Name="eucalyptus lumber" Tier="9" Type="Rare"></Setting>
+		<Setting Name="ulteran diamond" Tier="9" Type="Rare"></Setting>
+		<Setting Name="kaborite cluster" Tier="9" Type="Rare"></Setting>
+		<Setting Name="toxnettle root" Tier="9" Type="Rare"></Setting>
+		<Setting Name="brellium ore" Tier="9" Type="Rare"></Setting>
+		<Setting Name="spotted pelt" Tier="9" Type="Rare"></Setting>
+	<!-- "Tier9Mute" -->
+		<Setting Name="Underfoot Fragment" Tier="9" Type="Mute"></Setting>
+		<Setting Name="Void Powder" Tier="9" Type="Mute"></Setting>
+		<Setting Name="Infusion of the Void" Tier="9" Type="Mute"></Setting>
+		<Setting Name="Distilled Mana" Tier="9" Type="Mute"></Setting>
+	<!-- "Tier9Dust" -->
+		<Setting Name="Ethereal Dust" Tier="9" Type="Dust"></Setting>	
 
+	<!-- "Tier10Raw" -->
+		<Setting Name="thick bear pelt" Tier="10" Hireling="Hunter" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="amethyst" Tier="10" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="iridium cluster" Tier="10" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="rhenium ore" Tier="10" Hireling="Miner" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="matoppie roots" Tier="10" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="swamp ash lumber" Tier="10" Hireling="Gatherer" Provis="FALSE" Type="Raw"></Setting>
+		<Setting Name="panther meat" Tier="10" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="raptor meat" Tier="10" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+    <Setting Name="plump haddock" Tier="10" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+    <Setting Name="cutthroat trout" Tier="10" Provis="TRUE" Hireling="Hunter" Type="Raw"></Setting>
+		<Setting Name="plump lychee" Tier="10" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="aduki bean" Tier="10" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="white peony tea leaf" Tier="10" Provis="TRUE" Hireling="Gatherer" Type="Raw"></Setting>
+		<Setting Name="effulgent material" Tier="10" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
+		<Setting Name="ripe mangosteen" Tier="10" Type="Raw" Hireling="All" Provis="TRUE"></Setting>
+	<!-- "Tier10Rare" -->
+		<Setting Name="bubinga lumber" Tier="10" Type="Rare"></Setting>
+		<Setting Name="black star sapphire" Tier="10" Type="Rare"></Setting>
+		<Setting Name="osmium cluster" Tier="10" Type="Rare"></Setting>
+		<Setting Name="banyan root" Tier="10" Type="Rare"></Setting>
+		<Setting Name="tungsten ore" Tier="10" Type="Rare"></Setting>
+		<Setting Name="metallic reptile hide" Tier="10" Type="Rare"></Setting>
+    <!-- "Tier10Dust" -->
+    <Setting Name="Effulgent Dust" Tier="10" Type="Dust"></Setting>
+    <!-- "Tier10Mute" -->
+    <Setting Name="Frozen Fragment" Tier="10" Type="Mute"></Setting>
+    <Setting Name="Frozen Powder" Tier="10" Type="Mute"></Setting>
+    <Setting Name="Infusion of Ice" Tier="10" Type="Mute"></Setting>
+    <Setting Name="Frozen Mana" Tier="10" Type="Mute"></Setting>
+
+    <!-- "Reactants" -->
+    <Setting Name="Humming Reactant" Tier="2" Type="Rare"></Setting>
+    <Setting Name="Murmuring Reactant" Tier="3" Type="Rare"></Setting>
+    <Setting Name="Simmering Reactant" Tier="4" Type="Rare"></Setting>
+    <Setting Name="Powerful Reactant" Tier="5" Type="Rare"></Setting>
+    <Setting Name="Aberrant Reactant" Tier="6" Type="Rare"></Setting>
+    <Setting Name="Anomalous Reactant" Tier="7" Type="Rare"></Setting>
+    <Setting Name="Phenomenal Reactant" Tier="8" Type="Rare"></Setting>
+    <Setting Name="Momentous Reactant" Tier="9" Type="Rare"></Setting>
+    <Setting Name="Colossal Reactant" Tier="10" Type="Rare"></Setting>
+    <Setting Name="Azure Reactant" Tier="10" Type="Rare"></Setting>
+
+    <!-- "Tier10PurifiedRare" -->
+    <Setting Name="purified bubinga lumber" Tier="10" Type="Rare"></Setting>
+    <Setting Name="purified black star sapphire" Tier="10" Type="Rare"></Setting>
+    <Setting Name="purified osmium cluster" Tier="10" Type="Rare"></Setting>
+    <Setting Name="purified banyan root" Tier="10" Type="Rare"></Setting>
+    <Setting Name="purified tungsten ore" Tier="10" Type="Rare"></Setting>
+    <Setting Name="purified metallic reptile hide" Tier="10" Type="Rare"></Setting>
+
+
+	
+	<!-- Tier 11, 2014/11/11, Altar of Malice, levels 96-99 -->
+	<!-- "Tier11Raw" -->
+		<Setting Name="ragged leathery hide" Tier="11" Type="Raw" Hireling="Hunter" Provis="FALSE"></Setting>
+		<Setting Name="stringy meat" Tier="11" Type="Raw" Hireling="Hunter" Provis="TRUE"></Setting>
+		<Setting Name="fresh thresher fin" Tier="11" Type="Raw" Hireling="Hunter" Provis="TRUE"></Setting>
+		<Setting Name="leonid root" Tier="11" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="cadmium ore" Tier="11" Type="Raw" Hireling="Miner" Provis="FALSE"></Setting>
+		<Setting Name="handama leaf" Tier="11" Type="Raw" Hireling="Gatherer" Provis="TRUE"></Setting>
+		<Setting Name="sulfur fruit" Tier="11" Type="Raw" Hireling="Gatherer" Provis="TRUE"></Setting>
+		<Setting Name="kith peppers" Tier="11" Type="Raw" Hireling="Gatherer" Provis="TRUE"></Setting>
+		<Setting Name="hylocereus fruit" Tier="11" Type="Raw" Hireling="Gatherer" Provis="TRUE"></Setting>
+		<Setting Name="iodocus cluster" Tier="11" Type="Raw" Hireling="Miner" Provis="FALSE"></Setting>
+		<Setting Name="uncut tourmaline" Tier="11" Type="Raw" Hireling="Miner" Provis="FALSE"></Setting>
+		<Setting Name="larix lumber" Tier="11" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="incandescent material" Tier="11" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
+	<!-- "Tier11Rare" -->
+		<Setting Name="pristine leathery hide" Tier="11" Type="Rare"></Setting>
+		<Setting Name="hiven root" Tier="11" Type="Rare"></Setting>
+		<Setting Name="carbide ore" Tier="11" Type="Rare"></Setting>
+		<Setting Name="sapphire bixbite" Tier="11" Type="Rare"></Setting>
+		<Setting Name="lumium cluster" Tier="11" Type="Rare"></Setting>
+		<Setting Name="araucaria lumber" Tier="11" Type="Rare"></Setting>
+    <!-- "Tier11Mute" -->
+		<Setting Name="Luminous Fragment" Tier="11" Type="Mute"></Setting>
+		<Setting Name="Luminous Powder" Tier="11" Type="Mute"></Setting>
+		<Setting Name="Infusion of Scale" Tier="11" Type="Mute"></Setting>
+		<Setting Name="Polished Mana" Tier="11" Type="Mute"></Setting>
+    <!-- "Tier11Dust" -->
+		<!-- Tier 11 uses the IMBUE mat (incandescent material) instead of dusts? -->
+		
+	<!-- Tier 12, 2015/11/17, Terrors of Thalumbra, levels 100-109 -->
+	<!-- "Tier12Raw" -->
+		<Setting Name="wild tempeh" Tier="12" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="umbrite" Tier="12" Type="Raw" Hireling="Miner" Provis="FALSE"></Setting>
+		<Setting Name="umbral trout" Tier="12" Type="Raw" Hireling="Hunter" Provis="FALSE"></Setting>
+		<Setting Name="thalumbral root" Tier="12" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="splitiron ore" Tier="12" Type="Raw" Hireling="Miner" Provis="FALSE"></Setting>
+		<Setting Name="mycelial tendrils" Tier="12" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="malduran lumber" Tier="12" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="fruticose lichen" Tier="12" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="fruiting sporangium" Tier="12" Type="Raw" Hireling="Gatherer" Provis="FALSE"></Setting>
+		<Setting Name="bornite nodule" Tier="12" Type="Raw" Hireling="Miner" Provis="FALSE"></Setting>
+		<Setting Name="abyssal pelt" Tier="12" Type="Raw" Hireling="Hunter" Provis="FALSE"></Setting>
+		<Setting Name="abyssal angler" Tier="12" Type="Raw" Hireling="Hunter" Provis="FALSE"></Setting>
+		<Setting Name="thaumic material" Tier="12" Type="Raw" Hireling="All" Provis="FALSE"></Setting>
+	<!-- "Tier12Rare" -->
+		<Setting Name="arcannium" Tier="12" Type="Rare"></Setting>
+		<Setting Name="deepstone root" Tier="12" Type="Rare"></Setting>
+		<Setting Name="glittervein ore" Tier="12" Type="Rare"></Setting>
+		<Setting Name="lumicite" Tier="12" Type="Rare"></Setting>
+		<Setting Name="petrified lumber" Tier="12" Type="Rare"></Setting>
+		<Setting Name="umbral pelt" Tier="12" Type="Rare"></Setting>
+    <!-- "Tier12Mute" -->
+    <!-- "Tier12Dust" -->
+		
+  </Set>
 </InnerSpaceSettings>

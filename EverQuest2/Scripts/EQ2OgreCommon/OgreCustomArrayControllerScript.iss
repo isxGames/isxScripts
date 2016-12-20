@@ -1,5 +1,9 @@
-;***Verison 1.03***
+;***Verison 1.05***
 /**
+Version 1.05 - Kannkor
+	* Removed the debug for distance echoing
+Version 1.04 - Kannkor
+	* Increased default delay from 500ms to 1000ms
 Version 1.03 - Kannkor
 	* Because of scripts starting/stopping on the same frame, it was causing issues when you would reload the bot because this script 
 	tried to delete itself and start iself with global variables on the same frame causing issues. Now, when CCAA thinks it's empty, 
@@ -32,7 +36,7 @@ OgreCustomArrayControllerOb:SetUpdateInterval[delay in milliseconds - default is
 Example: OgreCustomArrayControllerOb:SetUpdateInterval[250]
 **/
 
-
+#include "${LavishScript.HomeDirectory}/Scripts/OgreCommon/Object_Timer.inc"
 function main()
 {
 
@@ -48,32 +52,33 @@ function main()
 
 objectdef OgreCustomArrayControllerObect
 {
-	variable int UpdateInterval=500
+	variable int UpdateInterval=1000
 	variable int DistanceToUse
-	variable CustomArrayControllerTimerObject CACTimerOb
+	variable Object_Timer CACTimerOb
 	method Update()
 	{
 		if ${DistanceToUse} > 0 && !${CACTimerOb.TimeLeft}
 		{
-			;echo ${Time} Command: EQ2 - CreateCustomActorArray[byDist,${DistanceToUse}]
+			;// echo ${Time} Command: EQ2 - CreateCustomActorArray[byDist,${DistanceToUse}]
 			EQ2:CreateCustomActorArray[byDist,${DistanceToUse}]
 			CACTimerOb:Set[${UpdateInterval}]
+			;// echo CACTimerOb:Set[${UpdateInterval}]
 		}
 	}
-	method SetUpdateInterval(int Interval=500)
+	method SetUpdateInterval(int Interval=1000)
 	{
 		UpdateInterval:Set[${Interval}]
 	}
 	method Load(string ScriptName, int Distance)
 	{
-		;echo Load: ScriptsUsingCustomArrayController:Set[${ScriptName},${Distance}]
+		;// echo Load: ScriptsUsingCustomArrayController:Set[${ScriptName},${Distance}]
 		ScriptsUsingCustomArrayController:Set[${ScriptName},${Distance}]
 		This:UpdateDistance
 	}
 
 	method UnLoad(string ScriptName)
 	{
-		;echo Unload: ${ScriptsUsingCustomArrayController.Element[${ScriptName}](exists)} -- {ScriptsUsingCustomArrayController.Element[${ScriptName}]}
+		;// echo Unload: ${ScriptsUsingCustomArrayController.Element[${ScriptName}](exists)} -- {ScriptsUsingCustomArrayController.Element[${ScriptName}]}
 		if ${ScriptsUsingCustomArrayController.Element[${ScriptName}](exists)}
 		{
 			ScriptsUsingCustomArrayController:Erase[${ScriptName}]
@@ -94,12 +99,12 @@ objectdef OgreCustomArrayControllerObect
 		}
 		else
 		{
-			;If there are no scripts using this object, we can close down the script.
+			;// If there are no scripts using this object, we can close down the script.
 			timedcommand 100 OgreCustomArrayControllerOb:CleanUp
-			;echo No more scripts using ${Script.Filename}.
-			;Script:End
+			;// echo No more scripts using ${Script.Filename}.
+			;// Script:End
 		}
-		echo Debug: CustomArrayController: Distance updated ( ${DistanceToUse} )
+		;// echo Debug: CustomArrayController: Distance updated ( ${DistanceToUse} )
 	}
 	method CleanUp()
 	{
@@ -108,22 +113,6 @@ objectdef OgreCustomArrayControllerObect
 			echo No more scripts using ${Script.Filename}.
 			Script:End
 		}
-	}
-}
-objectdef CustomArrayControllerTimerObject
-{
-	variable uint EndTime
-
-	method Set(uint Milliseconds)
-	{
-		EndTime:Set[${Milliseconds}+${LavishScript.RunningTime}]
-	}
-
-	member:uint TimeLeft()
-	{
-		if ${LavishScript.RunningTime}>=${EndTime}
-			return 0
-		return ${Math.Calc[${EndTime}-${LavishScript.RunningTime}]}
 	}
 }
 

@@ -5,29 +5,29 @@
 	<Window Name='EQ2OgreTransmuteXML' Template='Window'>
 		<X>20</X>
 		<Y>20</Y>
-		<Width>300</Width>
-		<Height>400</Height>
+		<Width>190</Width>
+		<Height>175</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>EQ2Ogre Transmute - UI Ver: 1.00</Title> 
+		<Title>EQ2Ogre Transmute - UI Ver: 1.02</Title> 
 		<TitleBar Template="Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
-			<Width>99%</Width>
-			<Height>5%</Height>
+			<Width>100%</Width>
+			<Height>11%</Height>
 			<Children>
 				<Text Name="Title" Template="Window.TitleBar.Title">
-					<Alignment>Center</Alignment>
+					<Alignment>Left</Alignment>
 				</Text>
 				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
-					<X>85%</X>
-					<Width>16</Width>
-					<Height>16</Height>
+					<X>84%</X>
+					<Width>14</Width>
+					<Height>14</Height>
 				</Button>
 				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
-					<X>92%</X>
-					<Width>16</Width>
-					<Height>16</Height>
+					<X>93%</X>
+					<Width>14</Width>
+					<Height>14</Height>
 					<OnLeftClick>
 						if ${Script[EQ2OgreTransmute]}
 							endscript EQ2OgreTransmute
@@ -38,29 +38,9 @@
 		</TitleBar>
 
 		<Children>
-			<Text name='TextEQ2OgreTransmuteBot' template='Text'>
-				<X>75</X>
-				<Y>10</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Font>
-					<Color>FFBE5522</Color>
-					<Size>20</Size>
-				</Font>
-				<Text>Ogre Transmute Bot</Text>
-			</Text>
-			<Text name='TextEQ2OgreTypeText' template='Text'>
-				<X>10</X>
-				<Y>35</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Text>Transmute selection</Text>
-			</Text>
 			<checkbox name='ChkBoxTransmuteTreasuredID' template='chkbox'>
-				<X>10</X>
-				<Y>50</Y>
+				<X>95</X>
+				<Y>5</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
@@ -75,8 +55,8 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteLegendaryID' template='chkbox'>
-				<X>10</X>
-				<Y>70</Y>
+				<X>95</X>
+				<Y>25</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
@@ -91,8 +71,8 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteFabledID' template='chkbox'>
-				<X>10</X>
-				<Y>90</Y>
+				<X>95</X>
+				<Y>45</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
@@ -107,12 +87,12 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteMasterCraftedID' template='chkbox'>
-				<X>10</X>
-				<Y>110</Y>
+				<X>95</X>
+				<Y>65</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Master Crafted</Text>
+				<Text>Mastercrafted</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteMasterCraftedID int global
 					EQ2OgreTransmuteMasterCraftedID:Set[${This.ID}]
@@ -123,21 +103,14 @@
 				</OnUnLoad>
 			</checkbox>
 
-			<Text name='TextEQ2OgreBoxText' template='Text'>
-				<X>150</X>
-				<Y>35</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Text>Box selection</Text>
-			</Text>
 			<checkbox name='ChkBoxTransmuteBox1ID' template='chkbox'>
-				<X>150</X>
-				<Y>50</Y>
+				<X>10</X>
+				<Y>5</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Box 1</Text>
+				<Alignment>Right</Alignment>
+				<Text>Bag 1</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteBox1ID int global
 					EQ2OgreTransmuteBox1ID:Set[${This.ID}]
@@ -148,12 +121,12 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteBox2ID' template='chkbox'>
-				<X>150</X>
-				<Y>70</Y>
+				<X>10</X>
+				<Y>25</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Box 2</Text>
+				<Text>Bag 2</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteBox2ID int global
 					EQ2OgreTransmuteBox2ID:Set[${This.ID}]
@@ -164,28 +137,27 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteBox3ID' template='chkbox'>
-				<X>150</X>
-				<Y>90</Y>
+				<X>10</X>
+				<Y>45</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Box 3</Text>
+				<Text>Bag 3</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteBox3ID int global
 					EQ2OgreTransmuteBox3ID:Set[${This.ID}]
-					This:SetChecked
 				</OnLoad>
 				<OnUnLoad>
 					deletevariable EQ2OgreTransmuteBox3ID
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteBox4ID' template='chkbox'>
-				<X>215</X>
-				<Y>50</Y>
+				<X>10</X>
+				<Y>65</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Box 4</Text>
+				<Text>Bag 4</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteBox4ID int global
 					EQ2OgreTransmuteBox4ID:Set[${This.ID}]
@@ -195,12 +167,12 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteBox5ID' template='chkbox'>
-				<X>215</X>
-				<Y>70</Y>
+				<X>10</X>
+				<Y>85</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Box 5</Text>
+				<Text>Bag 5</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteBox5ID int global
 					EQ2OgreTransmuteBox5ID:Set[${This.ID}]
@@ -210,12 +182,12 @@
 				</OnUnLoad>
 			</checkbox>
 			<checkbox name='ChkBoxTransmuteBox6ID' template='chkbox'>
-				<X>215</X>
-				<Y>90</Y>
+				<X>10</X>
+				<Y>105</Y>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
-				<Text>Box 6</Text>
+				<Text>Bag 6</Text>
 				<OnLoad>
 					declarevariable EQ2OgreTransmuteBox6ID int global
 					EQ2OgreTransmuteBox6ID:Set[${This.ID}]
@@ -224,28 +196,20 @@
 					deletevariable EQ2OgreTransmuteBox6ID
 				</OnUnLoad>
 			</checkbox>
-			<Text name='TextEQ2OgreLevelText' template='Text'>
-				<X>15</X>
-				<Y>150</Y>
-				<Width>350</Width>
-				<Height>20</Height>
-				<Alignment>Left</Alignment>
-				<Text>Level selection</Text>
-			</Text>
 			<Text name='TextEQ2OgreMinLevelText' template='Text'>
-				<X>15</X>
-				<Y>170</Y>
+				<X>130</X>
+				<Y>90</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
 				<Alignment>Left</Alignment>
-				<Text>Min level:</Text>
+				<Text>Min level</Text>
 			</Text>
 			<TextEntry Name='TextEntryMinLevel'>
-				<X>75</X>
-				<Y>168</Y>
+				<X>95</X>
+				<Y>90</Y>
 				<Width>30</Width>
 				<Height>15</Height>
 				<MaxLength>4</MaxLength>
@@ -259,26 +223,26 @@
 				</OnUnLoad>
 			</TextEntry>
 			<Text name='TextEQ2OgreMaxLevelText' template='Text'>
-				<X>15</X>
-				<Y>190</Y>
+				<X>130</X>
+				<Y>110</Y>
 				<Width>350</Width>
 				<Height>20</Height>
 				<Font>
 					<Color>FF00FF00</Color>
 				</Font>
 				<Alignment>Left</Alignment>
-				<Text>Max level:</Text>
+				<Text>Max level</Text>
 			</Text>
 			<TextEntry Name='TextEntryMaxLevel'>
-				<X>75</X>
-				<Y>188</Y>
+				<X>95</X>
+				<Y>110</Y>
 				<Width>30</Width>
 				<Height>15</Height>
 				<MaxLength>4</MaxLength>
 				<OnLoad>
 					declarevariable TEBoxEQ2OgreTransmuteMaxLevelID int global
 					TEBoxEQ2OgreTransmuteMaxLevelID:Set[${This.ID}]
-					This:SetText[90]
+					This:SetText[100]
 				</OnLoad>
 				<OnUnLoad>
 					deletevariable TEBoxEQ2OgreTransmuteMaxLevelID
@@ -287,23 +251,29 @@
 
 
 				<CommandButton Name="Clear" template='Button'>
-					<X>15</X>
-					<Y>350</Y>
-					<Width>110</Width>
+					<X>100</X>
+					<Y>130</Y>
+					<Width>85</Width>
 					<Height>20</Height>
-					<Text>Clear</Text>
+					<Text>Reset</Text>
 					<Alignment>Center</Alignment>
+					<Font>
+						<Size>20</Size>
+					</Font>
 					<OnLeftClick>
 						ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreTransmute/eq2OgreTransmuteXML.xml"
 					</OnLeftClick>
 				</CommandButton>
 				<CommandButton Name="StartTransmute" template='Button'>
-					<X>150</X>
-					<Y>350</Y>
-					<Width>110</Width>
+					<X>5</X>
+					<Y>130</Y>
+					<Width>85</Width>
 					<Height>20</Height>
-					<Text>Start Transmuting</Text>
+					<Text>Start</Text>
 					<Alignment>Center</Alignment>
+					<Font>
+						<Size>20</Size>
+					</Font>
 					<OnLeftClick>
 						runscript "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreTransmute/eq2OgreTransmute"
 						This.Parent.FindChild[StopTransmute]:Show
@@ -318,12 +288,15 @@
 					</OnUnLoad>
 				</CommandButton>
 				<CommandButton Name="StopTransmute" template='Button'>
-					<X>150</X>
-					<Y>350</Y>
-					<Width>110</Width>
+					<X>5</X>
+					<Y>130</Y>
+					<Width>85</Width>
 					<Height>20</Height>
-					<Text>Stop Transmuting</Text>
+					<Text>Stop</Text>
 					<Alignment>Center</Alignment>
+					<Font>
+						<Size>20</Size>
+					</Font>
 					<visible>0</visible>
 					<OnLeftClick>
 						if ${Script[eq2ogretransmute](exists)}

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ISUI>
+	<Template Name='CodeButton' template='Button'>
+    <X>1</X>    <Y>1</Y>    <Width>1</Width>    <Height>1</Height>    <Alignment>Left</Alignment>
+    <Text>This should be invisible</Text>    <visible>0</visible>
+  </Template>
 <Template Name='chkbox' template='checkbox'><Width>30</Width><Height>23</Height></Template>
 	<!-- Main UI Window -->
 	<Window Name='EQ2OgreZoneResetXML' Template='Window'>
@@ -9,25 +13,21 @@
 		<Height>400</Height>
 		<Client Template="Window.Client" />
 		<StorePosition>1</StorePosition>
-		<Title>                                                                       Ogre Zone Resetter  - UI Ver: 1.00</Title>
+		<Title>Ogre Zone Resetter  - UI Ver: 1.03</Title>
 		<TitleBar Template="Window.TitleBar">
 			<X>0</X>
 			<Y>0</Y>
-			<Width>99%</Width>
+			<Width>100%</Width>
 			<Height>5%</Height>
 			<Children>
 				<Text Name="Title" Template="Window.TitleBar.Title">
 					<Alignment>Center</Alignment>
 				</Text>
-				<Button Name="Minimize" Template="Window.TitleBar.Minimize">
-					<X>85%</X>
-					<Width>16</Width>
-					<Height>16</Height>
-				</Button>
 				<CommandButton Name="Custom Quit Button" Template="Window.TitleBar.Close">
-					<X>92%</X>
-					<Width>16</Width>
-					<Height>16</Height>
+          <X>r20</X>
+          <Y>0</Y>
+          <Width>20</Width>
+          <Height>20</Height>
 					<OnLeftClick>
 						ui -unload scripts\\EQ2OgreCommon\\OgreZoneReset\\EQ2OgreZoneResetXML.XML
 						if ${Script[EQ2OgreZoneReset](exists)}
@@ -39,7 +39,7 @@
 
 		<Children>
 				<Text name='TextInstructions1' template='Text'>
-					<X>190</X>
+					<X>305</X>
 					<Y>50</Y>
 					<Width>100</Width>
 					<Height>180</Height>
@@ -48,7 +48,7 @@
 					<Text>Double click zones from the left, to move them to the right.</Text>
 				</Text>
 				<Text name='TextInstructions2' template='Text'>
-					<X>190</X>
+					<X>300</X>
 					<Y>200</Y>
 					<Width>100</Width>
 					<Height>180</Height>
@@ -74,10 +74,24 @@
 					<Wrap />
 					<Text>Zone List to Reset</Text>
 				</Text>
+				<Button Name="ButtonCode1" template='CodeButton'>
+	        <OnLeftClick>
+	          variable index:string TempIndex
+            EQ2:GetPersisentZones[TempIndex]
+            variable int xx=0
+            This.Parent.FindChild[lstboxFullZoneList]:ClearItems
+            while ${TempIndex[${xx:Inc}](exists)}
+              This.Parent.FindChild[lstboxFullZoneList]:AddItem["${TempIndex[${xx}]}"]
+	        </OnLeftClick>
+	        <OnLoad>
+            declarevariable OgreZoneResetReloadListCode int global
+            OgreZoneResetReloadListCode:Set[${This.ID}]
+          </OnLoad>
+	      </Button>
 				<ListBox Name='lstboxFullZoneList' template='ListBox'>
 					<X>15</X>
 					<Y>25</Y>
-					<Width>170</Width>
+					<Width>280</Width>
 					<Height>345</Height>
 					<Sort>User</Sort>
 					<OnRightClick>
@@ -88,26 +102,31 @@
 					</OnRightClick>
 					<OnDoubleLeftClick>
 						if ${This.SelectedItem.ID} &amp;&amp; !${UIElement[${LstBoxOgreZoneResetResetZoneListID}].ItemByText[${This.SelectedItem}](exists)}
-							UIElement[${LstBoxOgreZoneResetResetZoneListID}]:AddItem[${This.SelectedItem}]
+							UIElement[${LstBoxOgreZoneResetResetZoneListID}]:AddItem["${This.SelectedItem}"]
 					</OnDoubleLeftClick>
 					<OnLoad>
-						declarevariable LstBoxOgreZoneResetFullZoneListID int global
-						LstBoxOgreZoneResetFullZoneListID:Set[${This.ID}]
-						variable index:string TempIndex
-						EQ2:GetPersisentZones[TempIndex]
-						variable int xx=0
-						while ${TempIndex[${xx:Inc}](exists)}
-							This:AddItem[${TempIndex[${xx}]}]
-					</OnLoad>
+            declarevariable LstBoxOgreZoneResetFullZoneListID int global
+            LstBoxOgreZoneResetFullZoneListID:Set[${This.ID}]
+            variable index:string TempIndex
+            EQ2:GetPersisentZones[TempIndex]
+            if !${TempIndex[1](exists)}
+            {
+            	EQ2Execute /togglezonereuse
+            	timedcommand 5 EQ2Execute /togglezonereuse
+            	timedcommand 6 UIElement[${OgreZoneResetReloadListCode}]:LeftClick
+            }
+            else
+            	UIElement[${OgreZoneResetReloadListCode}]:LeftClick
+          </OnLoad>
 					<OnUnLoad>
 							deletevariable LstBoxOgreZoneResetFullZoneListID
 					</OnUnLoad>
 				</ListBox>
 				<ListBox Name='lstboxResetZoneList' template='ListBox'>
-					<X>300</X>
+					<X>400</X>
 					<Y>25</Y>
-					<Width>170</Width>
-					<Height>345</Height>
+					<Width>270</Width>
+					<Height>315</Height>
 					<Sort>User</Sort>
 					<OnRightClick>
 						if ${This.SelectedItem.ID}
@@ -151,8 +170,9 @@
 					<Text> - NOTE: If you have another script running that confirms these the zone reset pops up, do NOT select this.</Text>
 				</Text>
 				<CommandButton Name="ResetZonesLocal" template='Button'>
-					<X>510</X>
-					<Y>125</Y>
+					<X>400</X>
+					<Y>340</Y>
+          <Visible>0</Visible>
 					<Width>130</Width>
 					<Height>30</Height>
 					<Text>Reset MY zones only</Text>
@@ -161,9 +181,20 @@
 						runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreZoneReset/EQ2OgreZoneResetXMLCall" local
 					</OnLeftClick>
 				</CommandButton>
+      <CommandButton Name="ResetZonesIRC" template='Button'>
+        <X>400</X>
+        <Y>340</Y>
+        <Width>130</Width>
+        <Height>30</Height>
+        <Text>Reset zones via IRC</Text>
+        <Alignment>Center</Alignment>
+        <OnLeftClick>
+          runscript "${LavishScript.HomeDirectory}/Scripts/EQ2OgreCommon/OgreZoneReset/EQ2OgreZoneResetXMLCall" irc
+        </OnLeftClick>
+      </CommandButton>
 				<CommandButton Name="ResetZonesRelay" template='Button'>
-					<X>510</X>
-					<Y>165</Y>
+					<X>550</X>
+					<Y>340</Y>
 					<Width>130</Width>
 					<Height>30</Height>
 					<Text>Relay Reset zones</Text>
@@ -175,13 +206,14 @@
 				<CommandButton Name="Clear" template='Button'>
 					<X>500</X>
 					<Y>350</Y>
+          <Visible>0</Visible>
 					<Width>110</Width>
 					<Height>20</Height>
 					<Text>Clear</Text>
 					<Alignment>Center</Alignment>
 					<OnLeftClick>
-						ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreZonereset/eq2ogrezoneresetxml.xml"
-					</OnLeftClick>
+            ui -reload -skin ${ISXOgre.SkinName} "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreZonereset/eq2ogrezoneresetxml.xml"
+          </OnLeftClick>
 				</CommandButton>
 
 

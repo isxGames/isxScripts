@@ -22,7 +22,9 @@ Loads LSO files, if no LSO file exists it loads an XML
 Version 1.00, 11/02/2009 by Kannkor (Hotshot)
 Loading/unloading of LavishNav into memory.
 **/
-
+/**
+To do: Make on the initialize to capture the script name and use it in the unload / shutdown to free up atexit calling.
+**/
 variable OgreMapControllerObject OgreMapControllerOb
 #if !${ScriptsUsingMap(exists)}
 	variable(globalkeep) collection:string ScriptsUsingMap
@@ -33,69 +35,64 @@ variable filepath ZoneFilePath=${LavishScript.HomeDirectory}/scripts/EQ2OgreComm
 
 objectdef OgreMapControllerObject
 {
-	variable string ScriptName
 	variable string MapFile="${LavishScript.HomeDirectory}/scripts/EQ2OgreCommon/zonefiles/"
-	method Initialize()
-	{
-		ScriptName:Set[${Script.Filename}]
-	}
 	method LoadMap(string MapToLoad)
 	{
 		if ${LavishNav.FindRegion[${MapToLoad}].ID}>0
 		{
-			Debug:Echo["Adding ${ScriptName} to the collection since the map is already loaded.."]
+			echo Adding ${Script.Filename} to the collection since the map is already loaded..
 		}
 		else
 		{
-			Debug:Echo["Loading map: ${MapToLoad}"]
+			echo Loading map: ${MapToLoad}
 			;LavishNav.Tree:AddChild[universe,${MapToLoad},-unique]
 			if ${ZoneFilePath.FileExists[${MapToLoad}.lso]}
 			{
-				Debug:Echo["Loading LSO file: ${ZoneFilePath}${MapToLoad}"]
+				echo Loading LSO file: ${ZoneFilePath}${MapToLoad}
 				;LavishNav.FindRegion[${MapToLoad}]:Import[-lso,${ZoneFilePath}${MapToLoad}.lso]
 				LavishNav.Tree:Import[-lso,${ZoneFilePath}${MapToLoad}.lso]
 			}
 			elseif ${ZoneFilePath.FileExists[${MapToLoad}.xml]}
 			{
-				Debug:Echo["Loading XML file: ${ZoneFilePath}${MapToLoad}"]
+				echo Loading XML file: ${ZoneFilePath}${MapToLoad}
 				;LavishNav.FindRegion[${MapToLoad}]:Import[${ZoneFilePath}${MapToLoad}.xml]
 				LavishNav.Tree:Import[${ZoneFilePath}${MapToLoad}.xml]
 			}
 			else
 			{
-				Debug:Echo["No LSO or XML file found. Creating a new file."]
+				echo No LSO or XML file found. Creating a new file.
 				LavishNav.Tree:AddChild[universe,${MapToLoad},-unique]
 			}
 		}
 
-		ScriptsUsingMap:Set[${ScriptName},${MapToLoad}]
+		ScriptsUsingMap:Set[${Script.Filename},${MapToLoad}]
 	}
 
 	method UnLoadMap(string MapToLoad)
 	{
-		if ${ScriptsUsingMap.Element[${ScriptName}](exists)}
+		if ${ScriptsUsingMap.Element[${Script.Filename}](exists)}
 		{
-			;Debug:Echo["Removing ${ScriptName} from the collection"]
-			ScriptsUsingMap:Erase[${ScriptName}]
+			;echo Removing ${Script.Filename} from the collection
+			ScriptsUsingMap:Erase[${Script.Filename}]
 		}
 		else
-			Debug:Echo["${ScriptName} is not showing as currently using the map."]
+			echo ${Script.Filename} is not showing as currently using the map.
 
 		if ${LavishNav.FindRegion[${MapToLoad}].ID}>0
 		{
 			if ${ScriptsUsingMap.Used}<=0
 			{
-				;Debug:Echo["There are no scripts using the map, so lets unload it."]
+				;echo There are no scripts using the map, so lets unload it.
 				LNavRegion[${MapToLoad}]:Remove
 			}
 			else
 			{
-				;Debug:Echo["There are other maps using the script so we won't unload it. # of scripts using it: ${ScriptsUsingMap.Used}"]
+				;echo There are other maps using the script so we won't unload it. # of scripts using it: ${ScriptsUsingMap.Used}
 			}
 		}
 		else
 		{
-			Debug:Echo["${MapToLoad} isn't loaded. Either the load was never called, or something else cleared it already."]
+			echo ${MapToLoad} isn't loaded. Either the load was never called, or something else cleared it already.
 		}
 	}
 }

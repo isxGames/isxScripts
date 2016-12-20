@@ -9,7 +9,7 @@ NOTE: In order to use the auto-login, you MUST have a login screen (loginscene) 
 
 **/
 
-#include UICommon.inc
+#include OgreCommon.inc
 #include DoNotShareWithOthers/EQ2Chars.inc
 function main(string LoginModifer, string CharToLogin)
 {

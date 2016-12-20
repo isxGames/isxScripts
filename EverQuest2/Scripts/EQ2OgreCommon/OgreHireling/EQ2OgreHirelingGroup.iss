@@ -16,11 +16,12 @@ function main(int TempNum=9)
 {
 	variable int X=0
 	variable int TotalX=0
-	HirelingCharInfo[${X:Inc}]:Set[Toonname1]
-	HirelingCharInfo[${X:Inc}]:Set[Toonname2]
-	HirelingCharInfo[${X:Inc}]:Set[Toonname3]
-	HirelingCharInfo[${X:Inc}]:Set[Toonname4]
-	HirelingCharInfo[${X:Inc}]:Set[Toonname5]
+	HirelingCharInfo[${X:Inc}]:Set[MinionSupplyDep]
+	HirelingCharInfo[${X:Inc}]:Set[Supplydepot]
+	HirelingCharInfo[${X:Inc}]:Set[Supplydepottwo]
+	HirelingCharInfo[${X:Inc}]:Set[Supplydepotthre]
+	HirelingCharInfo[${X:Inc}]:Set[Supplydepotfour]
+	HirelingCharInfo[${X:Inc}]:Set[Supplydepotfive]
 	
 	TotalX:Set[${X}]
 	OptionNum:Set[${TempNum}]
@@ -44,7 +45,7 @@ function main(int TempNum=9)
 	}
 	echo EQ2OgreHirelingGroup is complete.
 }
-atom atext()
+atom atexit()
 {
 	if ${Script[EQ2OgreHireling](exists)}
 		Script[EQ2OgreHireling]:End
