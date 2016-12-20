@@ -31,7 +31,7 @@ function main()
 	{
 		if (${start})
 		{
-			if (${Me.ToActor.WhoFollowing(exists)})
+			if (${Me.WhoFollowing(exists)})
 			{
 				wait 20
 			}

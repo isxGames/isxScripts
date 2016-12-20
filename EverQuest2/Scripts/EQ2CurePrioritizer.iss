@@ -315,7 +315,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 		do
 		{
 			;make sure they in zone and in range
-			if ${Me.Group[${temphl}].ToActor(exists)} && ${Me.Group[${temphl}].IsAfflicted}
+			if ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].IsAfflicted}
 			{
 				if ${Me.Group[${temphl}].Trauma}>0
 					acount:Inc

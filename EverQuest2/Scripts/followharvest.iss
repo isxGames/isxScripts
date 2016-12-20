@@ -80,7 +80,7 @@ function main(string FollowMember, int MaxRange)
 				{
 					;echo ${CustomActor[${tcount}].Name} is agro on follower, ignore it.
 				}
-				elseif ${CustomActor[${tcount}].ID}==${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}==${Me.ToActor.ID}
+				elseif ${CustomActor[${tcount}].ID}==${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}==${Me.ID}
 				{
 					;echo ${CustomActor[${tcount}].Name} is me or follower
 				}
@@ -124,7 +124,7 @@ function DoHarvest(int NodeID)
 
 function ResumeFollow(string fMember)
 {
-	if ${Me.ToActor.WhoFollowingID}<1 && ${Me.GroupCount}
+	if ${Me.WhoFollowingID}<1 && ${Me.GroupCount}
 	{
 		Actor[pc,${fMember}]:DoFace
 		echo /follow ${Actor[pc,${fMember}].Name}

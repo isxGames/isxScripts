@@ -76,7 +76,7 @@ grpcnt:Set[${Me.GroupCount}]
 hurt:Set[FALSE]
 temphl:Set[1]
 
-if ${Me.ToActor.Health} < 95
+if ${Me.Health} < 95
 {
 ; I am low health.. Trigger the healing
 triggerheal:Set[1]
@@ -91,7 +91,7 @@ do
 {
 x:Inc
 
-memhealth:Set[${Me.Group[${x}].ToActor.Health}]
+memhealth:Set[${Me.Group[${x}].Health}]
 
 if ${memhealth.Equal[NULL]}
 {
@@ -99,7 +99,7 @@ if ${memhealth.Equal[NULL]}
 }
 else
 {
-if ${Me.Group[${x}].ToActor.Health} < 95
+if ${Me.Group[${x}].Health} < 95
 {
 ; A group member is low health.. Trigger the healing
 Me.Ability[${spell}]:Use

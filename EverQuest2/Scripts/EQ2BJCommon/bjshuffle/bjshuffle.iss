@@ -25,8 +25,8 @@ function main()
 	facedirectionmage:Set[${Math.Rand[155]:Inc[45]}]
 	facedirectionpriest:Set[${Math.Rand[290]:Inc[45]}]
 	
-	InitialHeading:Set[${Me.ToActor.Heading}]
-	InitialLocation:Set[${Me.ToActor.Loc}]
+	InitialHeading:Set[${Me.Heading}]
+	InitialLocation:Set[${Me.Loc}]
 	
 ;// Start movement
 	
@@ -56,9 +56,9 @@ function main()
 		wait 4
 		eq2press -release w
 		wait 5
-		if ${Math.Distance[${Me.ToActor.Loc},${InitialLocation}]} > ${MaxDistance}
+		if ${Math.Distance[${Me.Loc},${InitialLocation}]} > ${MaxDistance}
 		{
-			while ${Math.Distance[${Me.ToActor.Loc},${InitialLocation}]} > ${MaxDistance}
+			while ${Math.Distance[${Me.Loc},${InitialLocation}]} > ${MaxDistance}
 			{
 				face ${InitialLocation.X} ${InitialLocation.Z}
 				eq2press -hold w
@@ -103,9 +103,9 @@ function main()
 			eq2press -release w
 			wait 5
 		}
-		if ${Math.Distance[${Me.ToActor.Loc},${InitialLocation}]} > ${MaxDistance}
+		if ${Math.Distance[${Me.Loc},${InitialLocation}]} > ${MaxDistance}
 		{
-			while ${Math.Distance[${Me.ToActor.Loc},${InitialLocation}]} > ${MaxDistance}
+			while ${Math.Distance[${Me.Loc},${InitialLocation}]} > ${MaxDistance}
 			{
 				face ${InitialLocation.X} ${InitialLocation.Z}
 				eq2press -hold w
@@ -154,9 +154,9 @@ function main()
 		wait 3
 		eq2press -release w
 		wait 5
-		if ${Math.Distance[${Me.ToActor.Loc},${InitialLocation}]} > ${MaxDistance}
+		if ${Math.Distance[${Me.Loc},${InitialLocation}]} > ${MaxDistance}
 		{
-			while ${Math.Distance[${Me.ToActor.Loc},${InitialLocation}]} > ${MaxDistance}
+			while ${Math.Distance[${Me.Loc},${InitialLocation}]} > ${MaxDistance}
 			{
 				face ${InitialLocation.X} ${InitialLocation.Z}
 				eq2press -hold w

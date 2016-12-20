@@ -96,9 +96,9 @@ function main()
 
 	;**Below is information about the current point you are on**
 	HUD -add EQ2OgreNavCreatorCurrentPointTypeHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current plotting type: ${EQ2OgreMapperPlottingType}"
-	HUD -add EQ2OgreNavCreatorCurrentPointNameHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current point Name: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}"
-	HUD -add EQ2OgreNavCreatorCurrentPointUniqueHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current point Unique?: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Unique}"
-	HUD -add EQ2OgreNavCreatorCurrentPointAvoidHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Valid point?: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].AllPointsValid}"
+	HUD -add EQ2OgreNavCreatorCurrentPointNameHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current point Name: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.Loc}].Name}"
+	HUD -add EQ2OgreNavCreatorCurrentPointUniqueHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Current point Unique?: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.Loc}].Unique}"
+	HUD -add EQ2OgreNavCreatorCurrentPointAvoidHUD ${EQ2OgreNavCreatorCurrentPointHUDX},${EQ2OgreNavCreatorCurrentPointHUDY:Inc[${EQ2OgreNavCreatorHUDInc}]} "Valid point?: \${Script[EQ2OgreNavCreator].VariableScope.EQ2OgreNavRegion.BestContainer[${Me.Loc}].AllPointsValid}"
 
 
 	Script:Unsquelch
@@ -115,9 +115,9 @@ function main()
 			EQ2OgreMapperSaveBool:Set[FALSE]
 			continue
 		}
-		if ${EQ2OgreMapperMarkAsAvoidBool} || ( ${EQ2OgreMapperPlottingType.Equal[Auto Avoid]} && ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID}!=${EQ2OgreNavRegion.ID} )
+		if ${EQ2OgreMapperMarkAsAvoidBool} || ( ${EQ2OgreMapperPlottingType.Equal[Auto Avoid]} && ${EQ2OgreNavRegion.BestContainer[${Me.Loc}].ID}!=${EQ2OgreNavRegion.ID} )
 		{
-			if !${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].AllPointsValid}
+			if !${EQ2OgreNavRegion.BestContainer[${Me.Loc}].AllPointsValid}
 				continue
 			;OgreNavMapperOb:MarkAvoid
 			OgreNavMapperOb:RemoveBox
@@ -128,7 +128,7 @@ function main()
 		}
 		if ${EQ2OgreMapperDeletePointBool}
 		{
-			if ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID}==${EQ2OgreNavRegion.ID}
+			if ${EQ2OgreNavRegion.BestContainer[${Me.Loc}].ID}==${EQ2OgreNavRegion.ID}
 				continue
 			OgreNavMapperOb:RemoveBox
 			EQ2OgreMapperDeletePointBool:Set[FALSE]
@@ -218,35 +218,35 @@ objectdef OgreNavMapperObject
 	method LoadCurrentAndPreviousPoints()
 	{
 		LastPoint:SetRegion[${CurrentPoint.ID}]
-		CurrentPoint:SetRegion[${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID}]
+		CurrentPoint:SetRegion[${EQ2OgreNavRegion.BestContainer[${Me.Loc}].ID}]
 	}
 	member:bool CheckIfBoxMapped()
 	{
-		if ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID}==${EQ2OgreNavRegion.ID}
+		if ${EQ2OgreNavRegion.BestContainer[${Me.Loc}].ID}==${EQ2OgreNavRegion.ID}
 		{
-			;echo ${Me.ToActor.Loc} is not mapped. BestContainer ( ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID} ) is the same as the Region ( ${EQ2OgreNavRegion.ID} )
+			;echo ${Me.Loc} is not mapped. BestContainer ( ${EQ2OgreNavRegion.BestContainer[${Me.Loc}].ID} ) is the same as the Region ( ${EQ2OgreNavRegion.ID} )
 			return FALSE
 		}
 		else
 		{
-			;echo ${Me.ToActor.Loc} is mapped. BestContainer ( ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].ID} ) is NOT the same as the Region ( ${EQ2OgreNavRegion.ID} )
+			;echo ${Me.Loc} is mapped. BestContainer ( ${EQ2OgreNavRegion.BestContainer[${Me.Loc}].ID} ) is NOT the same as the Region ( ${EQ2OgreNavRegion.ID} )
 			return TRUE
 		}
 	}
 	method RemoveBox()
 	{
-		RegionConnectionsToBeRemoved:Set[${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name},${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}]
-		;echo Adding ${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name} To the RegionConnectionsToBeRemoved ( ${RegionConnectionsToBeRemoved.Element[${EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}].Name}]} )
-		EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}]:Remove
+		RegionConnectionsToBeRemoved:Set[${EQ2OgreNavRegion.BestContainer[${Me.Loc}].Name},${EQ2OgreNavRegion.BestContainer[${Me.Loc}].Name}]
+		;echo Adding ${EQ2OgreNavRegion.BestContainer[${Me.Loc}].Name} To the RegionConnectionsToBeRemoved ( ${RegionConnectionsToBeRemoved.Element[${EQ2OgreNavRegion.BestContainer[${Me.Loc}].Name}]} )
+		EQ2OgreNavRegion.BestContainer[${Me.Loc}]:Remove
 	}
 	method MarkAvoid()
 	{
-		EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}]:SetAvoid[TRUE]
-		EQ2OgreNavRegion.BestContainer[${Me.ToActor.Loc}]:SetAllPointsValid[FALSE]
+		EQ2OgreNavRegion.BestContainer[${Me.Loc}]:SetAvoid[TRUE]
+		EQ2OgreNavRegion.BestContainer[${Me.Loc}]:SetAllPointsValid[FALSE]
 	}
 	method AddBox()
 	{
-		;echo Adding Box around ${Me.ToActor.Loc}
+		;echo Adding Box around ${Me.Loc}
 		;EQ2OgreNavRegion:AddChild[box,"auto",${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
 		LastPoint:SetRegion[${CurrentPoint.ID}]
 		CurrentPoint:SetRegion[${EQ2OgreNavRegion.AddChild[box,"auto",${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
@@ -254,7 +254,7 @@ objectdef OgreNavMapperObject
 	}
 	method CustomAddBox(string BoxName)
 	{
-		echo Adding custom Box ( ${BoxName} ) around ${Me.ToActor.Loc}
+		echo Adding custom Box ( ${BoxName} ) around ${Me.Loc}
 		;EQ2OgreNavRegion:AddChild[box,${BoxName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]
 		;LastPoint:SetRegion[${CurrentPoint.ID}]
 		CurrentPoint:SetRegion[${EQ2OgreNavRegion.AddChild[box,${BoxName},-unique,${X1},${X2},${Y1},${Y2},${Z1},${Z2}]}]
@@ -262,12 +262,12 @@ objectdef OgreNavMapperObject
 	}
 	method SetBoxAroundMe()
 	{
-		X1:Set[${Me.ToActor.X}-${XZBoxRadius}]
-		X2:Set[${Me.ToActor.X}+${XZBoxRadius}]
-		Y1:Set[${Me.ToActor.Y}-${YDownBoxRadius}]
-		Y2:Set[${Me.ToActor.Y}+${YUpBoxRadius}]
-		Z1:Set[${Me.ToActor.Z}-${XZBoxRadius}]
-		Z2:Set[${Me.ToActor.Z}+${XZBoxRadius}]
+		X1:Set[${Me.X}-${XZBoxRadius}]
+		X2:Set[${Me.X}+${XZBoxRadius}]
+		Y1:Set[${Me.Y}-${YDownBoxRadius}]
+		Y2:Set[${Me.Y}+${YUpBoxRadius}]
+		Z1:Set[${Me.Z}-${XZBoxRadius}]
+		Z2:Set[${Me.Z}+${XZBoxRadius}]
 	}
 	method ConnectLastPoint()
 	{

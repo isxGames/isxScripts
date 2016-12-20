@@ -15,12 +15,12 @@ function main()
 			{
 				echo Curing ${Me.Group[${Count}].Name}
 					
-				Echo Saving Current Target ${Me.ToActor.Target.Name}
+				Echo Saving Current Target ${Me.Target.Name}
 				target:Set[${Target.ID}]
-				Me.Group[${Count}].ToActor:DoTarget
+				Me.Group[${Count}]:DoTarget
 				
 				echo Targeting ${Me.Group[${Count}].Name}
-				wait 20 ${Target.ID}==${Me.Group[${Count}].ToActor.ID}
+				wait 20 ${Target.ID}==${Me.Group[${Count}].ID}
 				
 				Echo Potting
 				EQ2Execute "/cancel_spellcast"

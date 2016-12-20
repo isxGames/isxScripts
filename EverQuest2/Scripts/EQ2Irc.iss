@@ -123,7 +123,7 @@ atom(script) IRC_ReceivedChannelMsg(string User, string Channel, string From, st
                         IRCUser[${Me.Name}].Channel[IRC_CHANNEL]:Say["Level:${Me.Level} Exp:${Me.Exp}"]
                         break
                     case >MyStatus
-                       IRCUser[${Me.Name}].Channel[IRC_CHANNEL]:Say["Health:${Me.ToActor.Health} Power:${Me.ToActor.Power}"]
+                       IRCUser[${Me.Name}].Channel[IRC_CHANNEL]:Say["Health:${Me.Health} Power:${Me.Power}"]
                         break
                     case >location
                         IRCUser[${Me.Name}].Channel[IRC_CHANNEL]:Say["Zone:${Zone.Name} Location:${Me.X} ${Me.Y} ${Me.Z}"]
@@ -152,7 +152,7 @@ atom(script) IRC_ReceivedChannelMsg(string User, string Channel, string From, st
                     do
                     {
                         
-					IRCUser[${Me.Name}].Channel[IRC_CHANNEL]:Say["${Me.Group[${tempgrp}].Name} H->${Me.Group[${tempgrp}].ToActor.Health} P->${Me.Group[${tempgrp}].ToActor.Health}"]
+					IRCUser[${Me.Name}].Channel[IRC_CHANNEL]:Say["${Me.Group[${tempgrp}].Name} H->${Me.Group[${tempgrp}].Health} P->${Me.Group[${tempgrp}].Health}"]
                     }
                     while ${tempgrp:Inc}<${grpcnt}
                     break

@@ -380,14 +380,14 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				if ${Zone.ShortName.Equal[qey_tradeskill01]}
 				{
-					if ${Me.ToActor.Speed} < 50
+					if ${Me.Speed} < 50
 					{
 						press -hold "${Nav.STRAFELEFT}"
-						wait ${Math.Calc[4-${Me.ToActor.Speed}/100*4]}
+						wait ${Math.Calc[4-${Me.Speed}/100*4]}
 						press -release "${Nav.STRAFELEFT}" 
 						wait 1
 						press -hold "${Nav.MOVEFOWARD}
-						wait ${Math.Calc[5-${Me.ToActor.Speed}/100*5]}
+						wait ${Math.Calc[5-${Me.Speed}/100*5]}
 						press -release "${Nav.MOVEFORWARD}"
 						wait 1
 					}
@@ -402,7 +402,7 @@ function MovetoDevice(string devicename, int devicenum)
 			wait 10 "${Target.ID}==${Actor[${devicename}].ID}"
 			face
 			wait 2
-/*			if ${Me.ToActor.Speed} < 15
+/*			if ${Me.Speed} < 15
 			{
 				tmprnd:Set[${Math.Rand[90]}]
 				variable int HoldCnt
@@ -410,21 +410,21 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					press -hold "${Nav.STRAFELEFT}"
 					HoldCnt:Set[${Math.Rand[5]:Inc}]
-					wait ${Math.Calc[${HoldCnt}-${Me.ToActor.Speed}/100*${HoldCnt}]}
+					wait ${Math.Calc[${HoldCnt}-${Me.Speed}/100*${HoldCnt}]}
 					press -release "${Nav.STRAFELEFT}"
 				}
 				elseif ${tmprnd}<60
 				{
 					press -hold "${Nav.STRAFERIGHT}"
 					HoldCnt:Set[${Math.Rand[5]:Inc}]
-					wait ${Math.Calc[${HoldCnt}-${Me.ToActor.Speed}/100*${HoldCnt}]}
+					wait ${Math.Calc[${HoldCnt}-${Me.Speed}/100*${HoldCnt}]}
 					press -release "${Nav.STRAFERIGHT}"
 				}
 				else
 				{
 					press "${Nav.AUTORUN}"
 					HoldCnt:Set[${Math.Rand[3]:Inc}]
-					wait ${Math.Calc[${HoldCnt}-${Me.ToActor.Speed}/100*${HoldCnt}]}
+					wait ${Math.Calc[${HoldCnt}-${Me.Speed}/100*${HoldCnt}]}
 					press "${Nav.AUTORUN}"
 				}
 				wait 2

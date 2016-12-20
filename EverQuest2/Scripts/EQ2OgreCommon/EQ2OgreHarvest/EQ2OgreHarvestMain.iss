@@ -365,7 +365,7 @@ objectdef OptionsObject
 		;if Tether is selected, then check from StartLocation to node
 		if ${UIElement[${ChkBoxTetherModeID}].Checked}
 		{
-			if ${Math.Distance[${EQ2OgreHarvestStartingLocation},${Me.ToActor.Loc}]} <= ${Int[${UIElement[${TEBoxTetherDistanceID}].Text}]}
+			if ${Math.Distance[${EQ2OgreHarvestStartingLocation},${Me.Loc}]} <= ${Int[${UIElement[${TEBoxTetherDistanceID}].Text}]}
 				return TRUE
 			else
 				return FALSE
@@ -373,7 +373,7 @@ objectdef OptionsObject
 		;if Roaming (but NOT pathing), check from current location to node
 		if ${UIElement[${ChkBoxRoamModeID}].Checked} && !${UIElement[${ChkBoxPathModeID}].Checked}
 		{
-			if ${Math.Distance[${Actor[${ResourceID}].X},${Actor[${ResourceID}].Y},${Actor[${ResourceID}].Z},${Me.ToActor.Loc}]} <= ${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}
+			if ${Math.Distance[${Actor[${ResourceID}].X},${Actor[${ResourceID}].Y},${Actor[${ResourceID}].Z},${Me.Loc}]} <= ${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}
 				return TRUE
 			else
 				return FALSE
@@ -383,7 +383,7 @@ objectdef OptionsObject
 		;***For now, just use the same as roaming
 		if ${UIElement[${ChkBoxRoamModeID}].Checked} && ${UIElement[${ChkBoxPathModeID}].Checked}
 		{
-			if ${Math.Distance[${Actor[${ResourceID}].X},${Actor[${ResourceID}].Y},${Actor[${ResourceID}].Z},${Me.ToActor.Loc}]} <= ${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}
+			if ${Math.Distance[${Actor[${ResourceID}].X},${Actor[${ResourceID}].Y},${Actor[${ResourceID}].Z},${Me.Loc}]} <= ${Int[${UIElement[${TEBoxRoamDistanceID}].Text}]}
 				return TRUE
 			else
 				return FALSE

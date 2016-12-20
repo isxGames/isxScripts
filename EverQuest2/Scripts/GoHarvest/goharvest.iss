@@ -56,7 +56,7 @@ function main()
 				call AutoBox 2
 
 		}
-		while ${pauseharvest}|| ${Me.ToActor.Health}<90
+		while ${pauseharvest}|| ${Me.Health}<90
 		scan:Set[${UIElement[GoHarvest].FindChild[GUITabs].FindChild[Harvest].FindChild[ScanArea].Text}]
 
 		if ${scan} <0 || ${scan} > 300
@@ -84,7 +84,7 @@ function startharvest(int scan)
 		{
 			break
 		}
-		if !${Me.InCombat} && ${Me.ToActor.Health}>90
+		if !${Me.InCombat} && ${Me.Health}>90
 		{
 			if ${MaxDistance}
 			{
@@ -154,7 +154,7 @@ function startharvest(int scan)
 						while ${tempvar:Inc} <=10
 					}
 				}
-				if ${pauseharvest} || ${Me.InCombat} || ${Me.ToActor.Health}<90
+				if ${pauseharvest} || ${Me.InCombat} || ${Me.Health}<90
 				break
 			}
 			while ${harvestloop:Inc} <= ${harvestcount}
@@ -675,7 +675,7 @@ function CheckAggro()
 		{
 			waitframe
 		}
-		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
+		while ${MobCheck.Detect} || ${Me.Health}<90
 
 		EQ2:CreateCustomActorArray[byDist,15]
 

@@ -255,7 +255,7 @@ function main()
 				UIElement[${stopclickervar}]:Hide
 				endscript bjxpbot
 			}
-			elseif ${Me.Group[${PowerlevelerComboBoxVar}].ToActor.IsDead}
+			elseif ${Me.Group[${PowerlevelerComboBoxVar}].IsDead}
 			{
 				call PowerlevelerDead
 			}
@@ -481,7 +481,7 @@ function main()
 			
 			ExecuteQueued
 			
-			if ${Me.Group[${PowerlevelerComboBoxVar}].ToActor.IsDead}
+			if ${Me.Group[${PowerlevelerComboBoxVar}].IsDead}
 			{
 				call PowerlevelerDead
 			}

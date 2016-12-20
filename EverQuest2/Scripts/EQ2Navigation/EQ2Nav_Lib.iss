@@ -130,7 +130,7 @@ objectdef EQ2Nav
 		This.NavDestination:Set[0,0,0]
 		This.degrees:Set[15]
 		This.UsingLSO:Set[FALSE]
-		This.MeLastLocation:Set[${Me.ToActor.Loc}]
+		This.MeLastLocation:Set[${Me.Loc}]
 		This.NextHopOldTime:Set[${LavishScript.RunningTime}]
 		This.StuckTime:Set[${LavishScript.RunningTime}]
 		This.TotalStuck:Set[0]
@@ -214,8 +214,8 @@ objectdef EQ2Nav
 		variable lnavregionref NextRegion
 		variable float NearestRegionDistance
 		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
-		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
-		NearestRegionDistance:Set[${Math.Distance[${Me.ToActor.Loc},${NextRegion.CenterPoint}]}]
+		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.Loc}]}]
+		NearestRegionDistance:Set[${Math.Distance[${Me.Loc},${NextRegion.CenterPoint}]}]
 
 		return ${NearestRegionDistance}
 	}
@@ -241,9 +241,9 @@ objectdef EQ2Nav
 			return FALSE
 		}
 
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 40 && \
+		if ${Math.Distance[${Me.Loc},${X},${Y},${Z}]} < 40 && \
 			!${Me.CheckCollision[${X},${Y},${Z}]} && \
-			!${Mapper.Topography.IsSteep[${Me.ToActor.Loc},${X},${Y},${Z}]}
+			!${Mapper.Topography.IsSteep[${Me.Loc},${X},${Y},${Z}]}
 		{
 			return TRUE
 		}
@@ -251,7 +251,7 @@ objectdef EQ2Nav
 		Path:Clear
 		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
 		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
-		CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.ToActor.Loc}].ID}]
+		CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.Loc}].ID}]
 		DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${X},${Math.Calc[${Y}+1]},${Z}].ID}]
 		PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},Path]
 		if ${Path.Hops}
@@ -358,9 +358,9 @@ objectdef EQ2Nav
 
 	method MoveTo(float X, float Y, float Z, float fPrecision)
 	{
-		This.CheckX:Set[${Me.ToActor.X}]
-		This.CheckY:Set[${Me.ToActor.Y}]
-		This.CheckZ:Set[${Me.ToActor.Z}]
+		This.CheckX:Set[${Me.X}]
+		This.CheckY:Set[${Me.Y}]
+		This.CheckZ:Set[${Me.Z}]
 		This.CheckLocPassCount:Inc
 		This.CheckLocSet:Set[${Time.Timestamp}]
 		;;;;;;;;;;;
@@ -379,10 +379,10 @@ objectdef EQ2Nav
 					if (${This.MovingToNearestRegion})
 					{
 						This.MovingToNearestRegion:Set[FALSE]
-						if (${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]} > ${DestinationPrecision})
+						if (${Math.Distance[${Me.Loc},${This.NavDestination}]} > ${DestinationPrecision})
 						{
-							;This:Debug["if (${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.ToActor.Loc},${This.NearestRegion[${Me.ToActor.Loc}].CenterPoint}]})"]
-							if (${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.ToActor.Loc},${This.NearestRegion[${Me.ToActor.Loc}].CenterPoint}]})
+							;This:Debug["if (${Math.Distance[${Me.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.Loc},${This.NearestRegion[${Me.Loc}].CenterPoint}]})"]
+							if (${Math.Distance[${Me.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.Loc},${This.NearestRegion[${Me.Loc}].CenterPoint}]})
 							{
 								This:MoveToNearestRegion[${This.NavDestination}]
 							}
@@ -410,10 +410,10 @@ objectdef EQ2Nav
 					if (${This.MovingToNearestRegion})
 					{
 						This.MovingToNearestRegion:Set[FALSE]
-						if (${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]} > ${DestinationPrecision})
+						if (${Math.Distance[${Me.Loc},${This.NavDestination}]} > ${DestinationPrecision})
 						{
-							;This:Debug["if (${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.ToActor.Loc},${This.NearestRegion[${Me.ToActor.Loc}].CenterPoint}]})"]
-							if (${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.ToActor.Loc},${This.NearestRegion[${Me.ToActor.Loc}].CenterPoint}]})
+							;This:Debug["if (${Math.Distance[${Me.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.Loc},${This.NearestRegion[${Me.Loc}].CenterPoint}]})"]
+							if (${Math.Distance[${Me.Loc},${This.NavDestination}]} < ${Math.Distance[${Me.Loc},${This.NearestRegion[${Me.Loc}].CenterPoint}]})
 								This:MoveToNearestRegion[${This.NavDestination}]
 							else
 								This:MoveToNearestRegion[${This.NavDestination}]
@@ -465,7 +465,7 @@ objectdef EQ2Nav
 		;;;;;
 
 		;This:Debug["MoveTo()-] Math.Distance[${Me.X},${Me.Z},${X},${Z}]: ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} (Precision: ${fPrecision})"]
-		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.ToActor.Loc}]} || ${Me.CheckCollision[${X},${Y},${Z}]}
+		if ${Math.Distance[${Me.X},${Me.Y},${Me.Z},${X},${Y},${Z}]} > ${fPrecision} || ${Mapper.IsSteep[${X},${Y},${Z},${Me.Loc}]} || ${Me.CheckCollision[${X},${Y},${Z}]}
 		{
 
 			face ${X} ${Y} ${Z}
@@ -548,7 +548,7 @@ objectdef EQ2Nav
 
 		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
 		DestZoneRegion:SetRegion[${LavishNav.FindRegion[${Mapper.ZoneText}]}]
-		CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.ToActor.Loc}].ID}]
+		CurrentRegion:SetRegion[${ZoneRegion.BestContainer[${Me.Loc}].ID}]
 		DestinationRegion:SetRegion[${DestZoneRegion.BestContainer[${X},${Math.Calc[${Y}+1]},${Z}].ID}]
 		PathFinder:SelectPath[${CurrentRegion.FQN},${DestinationRegion.FQN},This.Path]
 
@@ -665,7 +665,7 @@ objectdef EQ2Nav
 		}
 
 		; If we are already PRECISION from it why bother moving?
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.PRECISION}
+		if ${Math.Distance[${Me.Loc},${X},${Y},${Z}]}<${This.PRECISION}
 		{
 			This:Output["Already here, not moving."]
 			This:ClearPath
@@ -705,7 +705,7 @@ objectdef EQ2Nav
 
 
 		; If we are already PRECISION from it why bother moving?
-		if ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}<${This.PRECISION}
+		if ${Math.Distance[${Me.Loc},${X},${Y},${Z}]}<${This.PRECISION}
 		{
 			This:Output["Already here, not moving."]
 			This:ClearPath
@@ -728,7 +728,7 @@ objectdef EQ2Nav
 
 		This:ClearPath
 
-		if (${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]} < 20 && !${Me.CheckCollision[${X},${Y},${Z}]})
+		if (${Math.Distance[${Me.Loc},${X},${Y},${Z}]} < 20 && !${Me.CheckCollision[${X},${Y},${Z}]})
 		{
 			This:Debug["Moving to ${X},${Y},${Z} directly."]
 
@@ -756,7 +756,7 @@ objectdef EQ2Nav
 			else
 			{
 				; We didnt get a path run to the next closest point and try from there
-				This:Output["There is not enough mapping data between your current (${Me.ToActor.Loc}) and destination (${X},${Y},${Z}) locations (Dist: ${Math.Distance[${Me.ToActor.Loc},${X},${Y},${Z}]}).  Moving to nearest mapped point..."]
+				This:Output["There is not enough mapping data between your current (${Me.Loc}) and destination (${X},${Y},${Z}) locations (Dist: ${Math.Distance[${Me.Loc},${X},${Y},${Z}]}).  Moving to nearest mapped point..."]
 				This:MoveToNearestRegion[${X},${Y},${Z}]
 			}
 		}
@@ -766,25 +766,25 @@ objectdef EQ2Nav
 	method MoveToNearestRegion(float FinalDestX, float FinalDestY, float FinalDestZ)
 	{
 		This.CheckLocPassCount:Set[0]
-		;declarevariable NextRegion lnavregionref local ${This.NearestRegion[${Me.ToActor.Loc}]}
+		;declarevariable NextRegion lnavregionref local ${This.NearestRegion[${Me.Loc}]}
 		variable lnavregionref ZoneRegion
 		variable lnavregionref NextRegion
 		variable float NearestRegionDistance
 		ZoneRegion:SetRegion[${LNavRegion[${Mapper.ZoneText}]}]
-		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
-		NearestRegionDistance:Set[${Math.Distance[${Me.ToActor.Loc},${NextRegion.CenterPoint}]}]
+		NextRegion:SetRegion[${ZoneRegion.NearestChild[${Me.Loc}]}]
+		NearestRegionDistance:Set[${Math.Distance[${Me.Loc},${NextRegion.CenterPoint}]}]
 
 		/*  This function is not working exactly right -- reported to Lax
-		echo "Me.ToActor.Loc: ${Me.ToActor.Loc}"
-		echo "NearestChild: ${ZoneRegion.NearestChild[${Me.ToActor.Loc}].FQN} (Distance: ${NearestRegionDistance})"
+		echo "Me.Loc: ${Me.Loc}"
+		echo "NearestChild: ${ZoneRegion.NearestChild[${Me.Loc}].FQN} (Distance: ${NearestRegionDistance})"
 		variable index:lnavregionref NearestChildren
-		echo "NearestChildren: ${ZoneRegion.NearestChildren[NearestChildren,20,${Me.ToActor.Loc}]}"
+		echo "NearestChildren: ${ZoneRegion.NearestChildren[NearestChildren,20,${Me.Loc}]}"
 		echo "NearestChildren[1]: ${NearestChildren.Get[1].FQN}"
 		variable index:lnavregionref DescendantsWithin
-		echo "DescendantsWithin: ${ZoneRegion.DescendantsWithin[DescendantsWithin,20,${Me.ToActor.Loc}]}"
+		echo "DescendantsWithin: ${ZoneRegion.DescendantsWithin[DescendantsWithin,20,${Me.Loc}]}"
 		echo "DescendantsWithin[1]: ${DescendantsWithin.Get[1].FQN}"
 		variable index:lnavregionref ChildrenWithin
-		echo "ChildrenWithin: ${ZoneRegion.ChildrenWithin[ChildrenWithin,20,${Me.ToActor.Loc}]}"
+		echo "ChildrenWithin: ${ZoneRegion.ChildrenWithin[ChildrenWithin,20,${Me.Loc}]}"
 		echo "ChildrenWithin[1]: ${ChildrenWithin.Get[1].FQN}"
 		*/
 
@@ -815,7 +815,7 @@ objectdef EQ2Nav
 			else
 			{
 				; We didnt get a path run to the next closest point and try from there
-				This:Output["There is not enough mapping data between your current (${Me.ToActor.Loc}) and destination (${FinalDestX},${FinalDestY},${FinalDestZ}) locations."]
+				This:Output["There is not enough mapping data between your current (${Me.Loc}) and destination (${FinalDestX},${FinalDestY},${FinalDestZ}) locations."]
 			}
 			return
 		}
@@ -905,7 +905,7 @@ objectdef EQ2Nav
 
 
 		;; TO DO -- do we want to utilize this to know if we should stop?`
-		This.MeLastLocation:Set[${Me.ToActor.Loc}]
+		This.MeLastLocation:Set[${Me.Loc}]
 
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -932,9 +932,9 @@ objectdef EQ2Nav
 			if ${Math.Calc64[${Time.Timestamp}-${CheckLocSet}]} < 2
 			{
 				;echo "{Math.Calc64[{Time.Timestamp}-{CheckLocSet}]}: ${Math.Calc64[${Time.Timestamp}-${CheckLocSet}]}"
-				if ${Math.Distance[${Me.ToActor.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]} < .1
+				if ${Math.Distance[${Me.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]} < .1
 				{
-					echo "{Math.Distance[{Me.ToActor.Loc},{This.CheckX},{This.CheckY},{This.CheckZ}]}: ${Math.Distance[${Me.ToActor.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]}"
+					echo "{Math.Distance[{Me.Loc},{This.CheckX},{This.CheckY},{This.CheckZ}]}: ${Math.Distance[${Me.Loc},${This.CheckX},${This.CheckY},${This.CheckZ}]}"
 					This:Debug["We must be stuck...handling."]
 					This:StopRunning
 					runscript "${LavishScript.HomeDirectory}/Scripts/EQ2Navigation/EQ2NavObstacleHandler.iss" "${This.AUTORUN}" "${This.MOVEFORWARD}" "${This.MOVEBACKWARD}" "${This.STRAFELEFT}" "${This.STRAFERIGHT}" "${This.BackupTime}" "${This.StrafeTime}"
@@ -971,8 +971,8 @@ objectdef EQ2Nav
 		{
 			;This:Debug["DESTINATION: ${This.NavigationPath.Get[${NavigationPath.Used}].FQN}"]
 			;This:Debug["NavigationPath[1] exists (${This.NavigationPath.Get[1].FQN})..."]
-			This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
-			This.DestinationDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]}]
+			This.NextHopDistance:Set[${Math.Distance[${Me.Loc},${This.NavigationPath.Get[1].Location}]}]
+			This.DestinationDistance:Set[${Math.Distance[${Me.Loc},${This.NavDestination}]}]
 			This:Debug["Distance to ${This.NavigationPath.Get[1].FQN}: ${This.NextHopDistance} (Distance to Destination: ${This.DestinationDistance})"]
 
 
@@ -1068,11 +1068,11 @@ objectdef EQ2Nav
 				}
 
 				This:Debug["NavigationPath[1] is now ${This.NavigationPath.Get[1].FQN}"
-				This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
+				This.NextHopDistance:Set[${Math.Distance[${Me.Loc},${This.NavigationPath.Get[1].Location}]}]
 
 				if (${This.NextHopDistance} < ${This.gPrecision})
 				{
-					This.DestinationDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavDestination}]}]
+					This.DestinationDistance:Set[${Math.Distance[${Me.Loc},${This.NavDestination}]}]
 					if (${This.DestinationDistance} < ${This.gPrecision})
 					{
 						This:Debug["Within ${This.gPrecision} meters of destination -- ending movement."]
@@ -1117,7 +1117,7 @@ objectdef EQ2Nav
 
 					This:Debug["NavigationPath exists, but not moving -- issuing movement"]
 					This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
-					This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
+					This.NextHopDistance:Set[${Math.Distance[${Me.Loc},${This.NavigationPath.Get[1].Location}]}]
 					This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 					This.MeMoving:Set[TRUE]
 					This.CheckLocPassCount:Set[0]
@@ -1129,7 +1129,7 @@ objectdef EQ2Nav
 				else
 				{
 					This.NextHopSpeed:Set[(${This.NextHopOldDistance}-${This.NextHopDistance})/(${LavishScript.RunningTime}-${This.NextHopOldTime}]
-					This.NextHopDistance:Set[${Math.Distance[${Me.ToActor.Loc},${This.NavigationPath.Get[1].Location}]}]
+					This.NextHopDistance:Set[${Math.Distance[${Me.Loc},${This.NavigationPath.Get[1].Location}]}]
 					;This:Debug["Calling MoveTo(${This.NavigationPath.Get[1].FQN}) -- Distance: ${This.NextHopDistance}"]
 					This.MeMoving:Set[TRUE]
 					This.CheckLocPassCount:Set[0]

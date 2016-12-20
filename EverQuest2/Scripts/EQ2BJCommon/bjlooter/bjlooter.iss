@@ -202,9 +202,9 @@ function main()
 			{
 				if ${SetHomePoint} == TRUE
 				{
-					if ${Math.Distance[${Me.ToActor.Loc},${HomePointLocation}]} > 3
+					if ${Math.Distance[${Me.Loc},${HomePointLocation}]} > 3
 					{
-						while ${Math.Distance[${Me.ToActor.Loc},${HomePointLocation}]} > 3
+						while ${Math.Distance[${Me.Loc},${HomePointLocation}]} > 3
 						{
 							face ${HomePointLocation.X} ${HomePointLocation.Z}
 							eq2press -hold w

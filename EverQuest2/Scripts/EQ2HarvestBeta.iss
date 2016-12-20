@@ -123,8 +123,8 @@ function main(string mode)
 
         variable float DistToStart
         variable float DistToFinish
-        DistToStart:Set[${Math.Distance[${Me.ToActor.Loc},${rStart.CenterPoint}]}]
-        DistToFinish:Set[${Math.Distance[${Me.ToActor.Loc},${rFinish.CenterPoint}]}]
+        DistToStart:Set[${Math.Distance[${Me.Loc},${rStart.CenterPoint}]}]
+        DistToFinish:Set[${Math.Distance[${Me.Loc},${rFinish.CenterPoint}]}]
         echo "EQ2Harvest-DEBUG: DistToStart: ${DistToStart} -- DistToFinish: ${DistToFinish}"
         
 		if ${PathRoute}==1
@@ -215,14 +215,14 @@ function PathingRoutine(string Dest)
     	call CheckTimer
     
     	harvested:Set[FALSE]
-		if ${UseSprint} && ${Me.ToActor.Power} > 80
+		if ${UseSprint} && ${Me.Power} > 80
 		{
 			EQ2Execute /useability Sprint
 		}
         
         ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
-    	NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
-        NodeID:Set[${Harvest.Node[${Me.ToActor.Loc}]}]
+    	NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.Loc}]}]
+        NodeID:Set[${Harvest.Node[${Me.Loc}]}]
         echo "${NodeID}"
         if (${NodeID} > 0)
         {
@@ -237,7 +237,7 @@ function PathingRoutine(string Dest)
 
 				if !${Harvest.PCDetected}
 				{
-					if ${UseSprint} && ${Me.ToActor.Power} > 80
+					if ${UseSprint} && ${Me.Power} > 80
 					{
 						EQ2Execute /useability Sprint
 					}
@@ -294,7 +294,7 @@ function PathingRoutine(string Dest)
 						}
 						while ${isintruder}
 
-						if ${Me.ToActor.IsAFK}
+						if ${Me.IsAFK}
 						{
 							EQ2Execute /afk
 							wait 10
@@ -303,8 +303,8 @@ function PathingRoutine(string Dest)
 				}
 				
                 ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
-    		    NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]				
-				NodeID:Set[${Harvest.Node[${Me.ToActor.Loc}]}]
+    		    NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.Loc}]}]				
+				NodeID:Set[${Harvest.Node[${Me.Loc}]}]
 				if (${NodeID} == 0)
 				{
 				    Harvesting:Set[FALSE]
@@ -326,7 +326,7 @@ function PathingRoutine(string Dest)
             }
             
     		ZoneRegion:SetRegion[${LNavRegion[${Nav.Mapper.ZoneText}]}]
-    		NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.ToActor.Loc}]}]
+    		NearestRegion:SetRegion[${ZoneRegion.NearestChild[${Me.Loc}]}]
     		if ${Me.CheckCollision[${NearestRegion.CenterPoint}]}
     		{
     		    Nav:StopRunning   
@@ -356,9 +356,9 @@ function PathingRoutine(string Dest)
             wait 0.5
             call ProcessTriggers         
         }
-        echo "EQ2Harvest-Debug:: Distance to ${Dest}: ${Math.Distance[${Me.ToActor.Loc},${rDestination.CenterPoint}]}"
+        echo "EQ2Harvest-Debug:: Distance to ${Dest}: ${Math.Distance[${Me.Loc},${rDestination.CenterPoint}]}"
     }
-    while ${Math.Distance[${Me.ToActor.Loc},${rDestination.CenterPoint}]} >= 5 && ${Nav.MeMoving}
+    while ${Math.Distance[${Me.Loc},${rDestination.CenterPoint}]} >= 5 && ${Nav.MeMoving}
     echo "EQ2Harvest-Debug:: Reached Destination (${Dest})"
 }
 
@@ -380,7 +380,7 @@ function CheckAggro()
 		{
 			wait 3
 		}
-		while ${MobCheck.Detect} || ${Me.ToActor.Health}<90
+		while ${MobCheck.Detect} || ${Me.Health}<90
 
 		CurrentAction:Set[Checking For Loot...]
 

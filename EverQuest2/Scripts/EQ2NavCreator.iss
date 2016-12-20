@@ -195,22 +195,22 @@ function main(... Args)
 		    case 1
 		        CurrentTask:Set[0]
 		        if (${RegionCreationType.Equal[Box]})
-    		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc}]
+    		        Mapper:PlotBoxFromPoint[${Me.Loc}]
     		    elseif (${RegionCreationType.Equal[Point]})
-    		        Mapper:PlotPoint[${Me.ToActor.Loc}]
+    		        Mapper:PlotPoint[${Me.Loc}]
     		    else
-    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius}]
+    		        Mapper:PlotSphereFromPoint[${Me.Loc},${SphereRadius}]
 		        break
 		        
 		    case 2
 		        CurrentTask:Set[0]
 		        Mapper.NoCollisionDetection:Set[TRUE]
 		        if (${RegionCreationType.Equal[Box]})
-    		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc}]
+    		        Mapper:PlotBoxFromPoint[${Me.Loc}]
     		    elseif (${RegionCreationType.Equal[Point]})
-    		        Mapper:PlotPoint[${Me.ToActor.Loc}]
+    		        Mapper:PlotPoint[${Me.Loc}]
     		    else
-    		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius}]
+    		        Mapper:PlotSphereFromPoint[${Me.Loc},${SphereRadius}]
 		        Mapper.NoCollisionDetection:Set[FALSE]
 		        break
 		    
@@ -220,11 +220,11 @@ function main(... Args)
 				if ${UserInput.Length}
 				{
     		        if (${RegionCreationType.Equal[Box]})
-        		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc},${UserInput},TRUE]
+        		        Mapper:PlotBoxFromPoint[${Me.Loc},${UserInput},TRUE]
         		    elseif (${RegionCreationType.Equal[Point]})
-        		        Mapper:PlotPoint[${Me.ToActor.Loc},${UserInput}]
+        		        Mapper:PlotPoint[${Me.Loc},${UserInput}]
         		    else
-        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius},${UserInput},TRUE]				        
+        		        Mapper:PlotSphereFromPoint[${Me.Loc},${SphereRadius},${UserInput},TRUE]				        
 				}
 				break
 				
@@ -235,11 +235,11 @@ function main(... Args)
 				{
 				    Mapper.NoCollisionDetection:Set[TRUE]
     		        if (${RegionCreationType.Equal[Box]})
-        		        Mapper:PlotBoxFromPoint[${Me.ToActor.Loc},${UserInput},TRUE]
+        		        Mapper:PlotBoxFromPoint[${Me.Loc},${UserInput},TRUE]
         		    elseif (${RegionCreationType.Equal[Point]})
-        		        Mapper:PlotPoint[${Me.ToActor.Loc},${UserInput}]
+        		        Mapper:PlotPoint[${Me.Loc},${UserInput}]
         		    else
-        		        Mapper:PlotSphereFromPoint[${Me.ToActor.Loc},${SphereRadius},${UserInput},TRUE]	
+        		        Mapper:PlotSphereFromPoint[${Me.Loc},${SphereRadius},${UserInput},TRUE]	
         		    Mapper.NoCollisionDetection:Set[FALSE]
 				}
 				break

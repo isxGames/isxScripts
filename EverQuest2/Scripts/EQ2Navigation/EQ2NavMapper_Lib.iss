@@ -174,7 +174,7 @@ objectdef EQ2Mapper
 	method Pulse()
 	{
 		This.PreviousRegion:SetRegion[${This.CurrentRegion}]
-		This.CurrentRegion:SetRegion[${This.CurrentZone.BestContainer[${Me.ToActor.Loc}].ID}]
+		This.CurrentRegion:SetRegion[${This.CurrentZone.BestContainer[${Me.Loc}].ID}]
 
 		if (${This.CurrentZone.ID} != ${LNavRegion[${This.ZoneText}].ID})
 		{
@@ -183,24 +183,24 @@ objectdef EQ2Mapper
 		}
 
 
-		if (!${This.IsMapped[${Me.ToActor.Loc}]})
+		if (!${This.IsMapped[${Me.Loc}]})
 		{
 			switch ${This.MapFileRegionsType}
 			{
 				case Box
-				This:PlotBoxFromPoint[${Me.ToActor.Loc}]
+				This:PlotBoxFromPoint[${Me.Loc}]
 				break
 
 				case Point
-				This:PlotPoint[${Me.ToActor.Loc}]
+				This:PlotPoint[${Me.Loc}]
 				break
 
 				case Sphere
-				This:PlotSphereFromPoint[${Me.ToActor.Loc}]
+				This:PlotSphereFromPoint[${Me.Loc}]
 				break
 
 				Default
-				This:PlotSphereFromPoint[${Me.ToActor.Loc}]
+				This:PlotSphereFromPoint[${Me.Loc}]
 				break
 			}
 		}
@@ -572,14 +572,14 @@ objectdef EQ2Topography
 	{
 		if ${LavishScript.RunningTime}-${This.SlopeCheck} > 500
 		{
-			This.TempLoc:Set[${Me.ToActor.Loc}]
+			This.TempLoc:Set[${Me.Loc}]
 			This.SlopeCheck:Set[${LavishScript.RunningTime}]
 		}
 	}
 
 	member IsFlat()
 	{
-		if ${This.IsSteep[${This.TempLoc},${Me.ToActor.Loc}]}
+		if ${This.IsSteep[${This.TempLoc},${Me.Loc}]}
 		{
 			This:Debug["Very steep!"]
 			This:UpdateTemp
