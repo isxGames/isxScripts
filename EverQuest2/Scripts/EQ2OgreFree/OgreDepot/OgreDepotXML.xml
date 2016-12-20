@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- UI for the free Ogre Scripts -->
+<!-- Updated by IDBurner 12/12/2016 -->
+<ISUI>
+	<!-- ***********Labels************** -->
+	<Text name='OPScriptName' template='Text'>
+		<X>15</X>
+		<Y>10</Y>
+		<Width>200</Width>
+		<Height>10</Height>
+		<Alignment>Left</Alignment>
+		<Text>Depot Type</Text>
+		<Font>
+			<Color>FFA9A9A9</Color>
+		</Font>
+	</Text>
+	<Text name='OPOptions' template='Text'>
+		<X>140</X>
+		<Y>10</Y>
+		<Width>200</Width>
+		<Height>10</Height>
+		<Alignment>Left</Alignment>
+		<Text>Options</Text>
+		<Font>
+			<Color>FFA9A9A9</Color>
+		</Font>
+	</Text>
+	<Text name='OPStatus' template='Text'>
+		<X>270</X>
+		<Y>10</Y>
+		<Width>200</Width>
+		<Height>10</Height>
+		<Alignment>Left</Alignment>
+		<Text>Status</Text>
+		<Font>
+			<Color>FFA9A9A9</Color>
+		</Font>
+	</Text>
+	<Text name='TextEQ2OgreTransmuteBot' template='Text'>
+		<X>75</X>
+		<Y>100</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Font>
+			<Color>FFBE5522</Color>
+			<Size>20</Size>
+		</Font>
+		<Text>Additional Depot Options</Text>
+	</Text>
+
+	<!-- ***********Ogre Depot************** -->
+	<Text name='OPStatusDepot' template='Text'>
+		<X>260</X>
+		<Y>40</Y>
+		<Width>200</Width>
+		<Height>10</Height>
+		<Alignment>Left</Alignment>
+		<Text>Loading...</Text>
+		<OnRender>
+			if ${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[--Running--]}
+				This:SetText[--Running--]
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[--Inactive--]}
+				This:SetText[--Inactive--]
+		</OnRender>
+	</Text>
+
+	<!-- Depot Selection Checkboxes -->
+	<checkbox name='ChkBoxDepotHarvestID' template='chkbox'>
+		<X>10</X>
+		<Y>58</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Harvests</Text>
+		<OnLoad>
+			declarevariable DepotHarvestID int global
+			DepotHarvestID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotHarvestID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotAmmoID' template='chkbox'>
+		<X>10</X>
+		<Y>133</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Ammo</Text>
+		<OnLoad>
+			declarevariable DepotAmmoID int global
+			DepotAmmoID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotAmmoID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotCollectiblesID' template='chkbox'>
+		<X>140</X>
+		<Y>133</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Collectibles</Text>
+		<OnLoad>
+			declarevariable DepotCollectiblesID int global
+			DepotCollectiblesID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotCollectiblesID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotScrollsID' template='chkbox'>
+		<X>10</X>
+		<Y>158</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Scrolls</Text>
+		<OnLoad>
+			declarevariable DepotScrollsID int global
+			DepotScrollsID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotScrollsID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotFoodDrinkID' template='chkbox'>
+		<X>140</X>
+		<Y>158</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Food and Drink</Text>
+		<OnLoad>
+			declarevariable DepotFoodDrinkID int global
+			DepotFoodDrinkID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotFoodDrinkID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotFuelID' template='chkbox'>
+		<X>10</X>
+		<Y>183</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Fuel</Text>
+		<OnLoad>
+			declarevariable DepotFuelID int global
+			DepotFuelID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotFuelID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotLoreLegendID' template='chkbox'>
+		<X>140</X>
+		<Y>183</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Lore and Legend</Text>
+		<OnLoad>
+			declarevariable DepotLoreLegendID int global
+			DepotLoreLegendID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotLoreLegendID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotAdornmentID' template='chkbox'>
+		<X>10</X>
+		<Y>208</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Adornments</Text>
+		<OnLoad>
+			declarevariable DepotAdornmentID int global
+			DepotAdornmentID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotAdornmentID
+		</OnUnLoad>
+	</checkbox>
+	<checkbox name='ChkBoxDepotPosionID' template='chkbox'>
+		<X>140</X>
+		<Y>208</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Posions/Potions/Totems</Text>
+		<OnLoad>
+			declarevariable DepotPosionID int global
+			DepotPosionID:Set[${This.ID}]
+			This:SetChecked
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotPosionID
+		</OnUnLoad>
+	</checkbox>
+
+	<combobox name='CmbBoxDepotTeir'>
+		<X>120</X>
+		<Y>60</Y>
+		<Width>85</Width> 
+		<Height>20</Height>
+		<AutoTooltip>Select Tier to Depot</AutoTooltip>
+		<OnLoad>
+			declarevariable DepotTierStr string global
+			DepotTierStr:Set[${This.SelectedItem.Text}]
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable DepotTierStr
+		</OnUnLoad>
+		<Items>
+			<Item Value='1' Default='1'>All</Item>
+			<Item Value='2'>Common</Item>
+			<Item Value='3'>Treasured</Item>
+			<Item Value='4'>Rare</Item>
+			<Item Value='5'>Legendary</Item>
+			<Item Value='6'>Fabled</Item>
+		</Items>
+		<OnSelect>
+			DepotTierStr:Set[${This.SelectedItem.Text}]
+		</OnSelect>
+	</combobox>
+	<Button Name="CmdOPDepot" template='Button'>
+		<X>235</X>
+		<Y>60</Y>
+		<Width>110</Width>
+		<Height>20</Height>
+		<Text>Loading...</Text>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Alignment>Center</Alignment>
+		<OnLeftClick>
+			if ${Script[eq2ogredepot](exists)}  &amp;&amp; ${This.Text.Equal[Stop]}
+				endscript EQ2OgreDepot
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]} &amp;&amp; ${DepotTierStr.Equal[All]}
+			{
+				runscript EQ2OgreFree/OgreDepot/EQ2OgreDepot all
+			}
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]} &amp;&amp; ${DepotTierStr.Equal[Common]}
+			{
+				runscript EQ2OgreFree/OgreDepot/EQ2OgreDepot common
+			}
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]} &amp;&amp; ${DepotTierStr.Equal[Treasured]}
+			{
+				runscript EQ2OgreFree/OgreDepot/EQ2OgreDepot treasured
+			}
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]} &amp;&amp; ${DepotTierStr.Equal[Rare]}
+			{
+				runscript EQ2OgreFree/OgreDepot/EQ2OgreDepot rare
+			}
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]} &amp;&amp; ${DepotTierStr.Equal[Legendary]}
+			{
+				runscript EQ2OgreFree/OgreDepot/EQ2OgreDepot legendary
+			}
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.Equal[Start]} &amp;&amp; ${DepotTierStr.Equal[Fabled]}
+			{
+				runscript EQ2OgreFree/OgreDepot/EQ2OgreDepot fabled
+			}
+			else
+				echo Error OPDepot1: Please report this to Kannkor. The bot is confused on if the bot is running as you clicked a button.
+		</OnLeftClick>
+		<OnRender>
+			if ${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[Stop]}
+			{
+				This:SetText[Stop]
+				This.Font:SetColor[FFFF0000]
+			}
+			elseif !${Script[eq2ogredepot](exists)} &amp;&amp; ${This.Text.NotEqual[Start]}
+			{
+				This:SetText[Start]
+				This.Font:SetColor[FF00FF00]
+			}
+		</OnRender>
+	</Button>
+
+	<!-- Green <Color>FF00FF00</Color> -->
+	<!-- Red <Color>FFFF0000</Color> -->
+	<!-- Gray (labels) <Color>FFA9A9A9</Color> -->
+
+</ISUI>

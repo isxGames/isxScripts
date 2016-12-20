@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- UI for OgreFree Universal Options -->
+<ISUI>
+	<!-- ***********Labels************** -->
+	<Text name='TextEQ2OgreOptions' template='Text'>
+		<X>75</X>
+		<Y>10</Y>
+		<Width>350</Width>
+		<Height>20</Height>
+		<Alignment>Left</Alignment>
+		<Font>
+			<Color>FFBE5522</Color>
+			<Size>20</Size>
+		</Font>
+		<Text>Universal OgreFree Options</Text>
+	</Text>
+
+	<!-- Options Selection Checkboxes -->
+	<checkbox name='ChkBoxMoveToID' template='chkbox'>
+		<X>10</X>
+		<Y>58</Y>
+		<Font>
+			<Color>FF00FF00</Color>
+		</Font>
+		<Text>Move to Actors (Depots and Hirelings)</Text>
+		<OnLoad>
+			declarevariable MoveToID int global
+			MoveToID:Set[${This.ID}]
+			This:SetChecked
+			echo Move To Actors requires clear path to target. (It is on by default, under Options.)
+		</OnLoad>
+		<OnUnLoad>
+			deletevariable MoveToID
+		</OnUnLoad>
+	</checkbox>
+
+	<!-- Green <Color>FF00FF00</Color> -->
+	<!-- Red <Color>FFFF0000</Color> -->
+	<!-- Gray (labels) <Color>FFA9A9A9</Color> -->
+
+</ISUI>
