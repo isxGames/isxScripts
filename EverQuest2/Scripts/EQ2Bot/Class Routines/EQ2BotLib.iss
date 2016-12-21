@@ -1335,7 +1335,7 @@ function CheckPotCures()
 function CastPotion(string Item)
 {
   	; Do not cast if we are moving, or if the potion is not ready, or if the first potion returned is in the bank
-	if ${Me.IsMoving} || !${Me.Inventory[ExactName,"${Item}"].IsReady} || ${Me.Inventory[ExactName,"${Item}"].InBank}
+	if ${Me.IsMoving} || !${Me.Inventory[ExactName,"${Item}"].IsReady} || ${Me.Inventory[ExactName,"${Item}"].Location.Find[Bank]}
 	{
 		return
 	}
