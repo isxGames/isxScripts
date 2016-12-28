@@ -850,12 +850,7 @@ function DoJesterCap()
 	if ${UIElement[lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}==0
 		return
 
-	Me:InitializeEffects
-
-	while ${Me.InitializingEffects}
-	{
-		wait 2
-	}
+	Me:RequestEffectsInfo
 
 	;if I don't have potm on me, and it is ready, and I can be jcapped, jcap myself and cast potm
 	if !${Me.Effect[beneficial,${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady}

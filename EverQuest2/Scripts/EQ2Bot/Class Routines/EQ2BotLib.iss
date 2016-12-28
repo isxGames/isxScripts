@@ -356,11 +356,11 @@ function AmIInvis(string param1)
 function RemoveSKFD(string parm1)
 {
     variable int i = 1
-    Me:InitializeEffects
+    Me:RequestEffectsInfo
 
     do
     {
-        if (${SKFDSpells.Element[${Me.Effect[${i}].Name}](exists)})
+        if (${SKFDSpells.Element[${Me.Effect[${i}].ToEffectInfo.Name}](exists)})
         {
             Debug:Echo["I am feigning death due to a Shadowknight...cancelling.  (Called By: ${param1})"]
             Me.Effect[${i}]:Cancel
@@ -380,14 +380,14 @@ function CheckForMez(string param1)
 
     variable int i = 1
 
-    Target:InitializeEffects
+    Target:RequestEffectsInfo
     wait 5
     if (${Target.NumEffects} > 0)
     {
         do
         {
-            ;Debug:Echo["Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"]
-            if (${MezSpells.Element[${Target.Effect[${i}].Name}](exists)})
+            ;Debug:Echo["Checking Target Effect #${i}: ${Target.Effect[${i}].ToEffectInfo.Name}"]
+            if (${MezSpells.Element[${Target.Effect[${i}].ToEffectInfo.Name}](exists)})
             {
                 ;Debug:Echo["${Target} is Mezzed!  (Called By: ${param1})"]
                 return TRUE
@@ -409,14 +409,14 @@ function CheckForStun()
 
     variable int i = 1
 
-    Target:InitializeEffects
+    Target:RequestEffectsInfo
     wait 5
     if (${Target.NumEffects} > 0)
     {
         do
         {
-            ;Debug:Echo["Checking Target Effect #${i}: ${Target.Effect[${i}].Name}"]
-            if (${MezSpells.Element[${Target.Effect[${i}].Name}](exists)})
+            ;Debug:Echo["Checking Target Effect #${i}: ${Target.Effect[${i}].ToEffectInfo.Name}"]
+            if (${MezSpells.Element[${Target.Effect[${i}].ToEffectInfo.Name}](exists)})
                 return FALSE
         }
         while ${i:Inc} < ${Target.NumEffects}

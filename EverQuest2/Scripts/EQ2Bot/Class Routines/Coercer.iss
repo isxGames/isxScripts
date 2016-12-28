@@ -618,10 +618,7 @@ function Combat_Routine(int xAction)
 	;;;; Piece of Mind after mob has been beat on a bit
 	if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Actor[${KillTarget}].Health}<90
 	{
-		Me:InitializeEffects
-
-		while ${Me.InitializingEffects}
-			wait 2
+		Me:RequestEffectsInfo
 
 		;don't PoM if PoM is up
 		if !${Me.Effect[beneficial,${SpellType[501]}](exists)} && ${Me.Ability[${SpellType[501]}].IsReady}

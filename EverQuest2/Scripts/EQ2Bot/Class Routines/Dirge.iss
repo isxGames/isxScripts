@@ -457,14 +457,7 @@ function Combat_Routine(int xAction)
 	;Always use Cacophony of Blades if available and not under the effects of it from someone else.
 	if ${Me.Ability[${SpellType[155]}].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
-		Me:InitializeEffects
-
-		do
-		{
-			echo ISXEQ2.InitializingActorEffects
-			waitframe
-		}
-		while ${ISXEQ2.InitializingActorEffects}
+		Me:RequestEffectsInfo
 
 		;don't CoB if CoB is up
 		if !${Me.Effect[beneficial,${SpellType[155]}](exists)} && (${Actor[${KillTarget}].Health}>=10 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
