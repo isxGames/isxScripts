@@ -1498,7 +1498,7 @@ objectdef HeroicOp
 				Found:Set[FALSE]
 				if ${Me.Ability[${Counter}].HOIconID}==${HoIconID}
 				{
-					IconID:Set[${Me.Ability[${Counter}].MainIconID}${Me.Ability[${Counter}].BackDropIconID.LeadingZeroes[4]}]
+					IconID:Set[${Me.Ability[${Counter}].ToAbilityInfo.MainIconID}${Me.Ability[${Counter}]..ToAbilityInfo.BackDropIconID.LeadingZeroes[4]}]
 					for ( iter:Set[1] ; ${iter} <= ${Spl.Used} ; iter:Inc )
 					{
 						if (${Spl[${iter}].Icon} == ${IconID})
@@ -1514,7 +1514,7 @@ objectdef HeroicOp
 						}
 					}
 					if !${Found}
-						Spl:Insert[${Me.Ability[${Counter}].Name},${Me.Ability[${Counter}].MainIconID}${Me.Ability[${Counter}].BackDropIconID.LeadingZeroes[4]},${Me.Ability[${Counter}].Class[1].Level}]
+						Spl:Insert[${Me.Ability[${Counter}].Name},${Me.Ability[${Counter}].ToAbilityInfo.MainIconID}${Me.Ability[${Counter}]..ToAbilityInfo.BackDropIconID.LeadingZeroes[4]},${Me.Ability[${Counter}].Class[1].Level}]
 				}
 			}
 			while ${Counter:Inc}<=${Me.NumAbilities}
@@ -1530,7 +1530,7 @@ objectdef HeroicOp
 			{
 				if ${Me.Ability[${Counter}].HOIconID}==${HoIconID}
 				{
-					UIElement[${ElementFQN}]:AddItem[${Me.Ability[${Counter}].Name},"${Me.Ability[${Counter}].MainIconID.LeadingZeroes[4]}${Me.Ability[${Counter}].BackDropIconID.LeadingZeroes[4]}${Me.Ability[${Counter}].Class[1].Level.LeadingZeroes[2]}"]
+					UIElement[${ElementFQN}]:AddItem[${Me.Ability[${Counter}].Name},"${Me.Ability[${Counter}].ToAbilityInfo.MainIconID.LeadingZeroes[4]}${Me.Ability[${Counter}]..ToAbilityInfo.BackDropIconID.LeadingZeroes[4]}${Me.Ability[${Counter}].Class[1].Level.LeadingZeroes[2]}"]
 				}
 			}
 			while ${Counter:Inc}<=${Me.NumAbilities}

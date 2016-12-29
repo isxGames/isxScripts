@@ -676,7 +676,7 @@ function FindAfflicted()
 	;check for single target cures
 	do
 	{
-		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Distance}<=${Me.Ability[${SpellType[210]}].Range}
+		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Distance}<=${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range}
 		{
 			if ${Me.Group[${temphl}].Arcane}>0
 				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
@@ -987,7 +987,7 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
-	if !${Me.Group[${gMember}](exists)} || ${Me.Group[${gMember}].IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].Distance}>${Me.Ability[${SpellType[210]}].Range}
+	if !${Me.Group[${gMember}](exists)} || ${Me.Group[${gMember}].IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].Distance}>${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range}
 		return
 
 	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<6 && ${Me.Group[${gMember}](exists)} && !${Me.Group[${gMember}].IsDead}
@@ -1027,7 +1027,7 @@ function CheckReactives()
 
 		if ${KeepReactiveUp} || ${PreHealMode}
 		{
-			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].PowerCost}&& !${Me.Maintained[${SpellType[7]}](exists)}
+			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}&& !${Me.Maintained[${SpellType[7]}](exists)}
 			{
 				call CastSpellRange 7 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
 				hot1:Set[1]
@@ -1036,7 +1036,7 @@ function CheckReactives()
 
 		if ${KeepGroupReactiveUp} || ${PreHealMode} && !${Me.Maintained[${SpellType[15]}](exists)}
 		{
-			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].PowerCost}
+			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
 				call CastSpellRange 15
 		}
 	}

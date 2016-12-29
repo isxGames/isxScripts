@@ -1375,7 +1375,7 @@ function CastSpellRange(... Args)
 			AbilityID:Set[${Me.Ability[${AbilityName}].ID}]
 		}
 		else
-			AbilityName:Set[${Me.Ability[id,${AbilityID}].Name}]
+			AbilityName:Set[${Me.Ability[id,${AbilityID}].ToAbilityInfo.Name}]
 
 		;; This should never happen..but just in case...
 		if ${AbilityID} <= 0
@@ -1410,12 +1410,12 @@ function CastSpellRange(... Args)
 				if !${fndspell}
 				{
 					; if no range is passed, lets make sure we're not out of range and adjust
-					if !${xvar1} && ${Me.Ability[id,${AbilityID}].MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}
+					if !${xvar1} && ${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}
 					{
 						;lets not move beyond defined threshold
-						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}]}<${OORThreshold}
+						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}]}<${OORThreshold}
 						{
-							;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
+							;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
 							call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
 						}
 					}
@@ -1645,13 +1645,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 	if (!${Me.Ability[id,${spellid}].IsQueued})
 		wait 4
 
-	if (${Me.Ability[id,${spellid}].CastingTime} < .6)
+	if (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} < .6)
 	{
-		;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"]
+		;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime}) --> Returning"]
 		LastQueuedAbility:Set[${spell}]
 		return
 	}
-	elseif (${Me.Ability[id,${spellid}].CastingTime} <= 7)
+	elseif (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} <= 7)
 	{
 		; if we're not casting a spell and the current spell is not queued, then we have a problem
 		if !${Me.Ability[id,${spellid}].IsQueued} && !${Me.CastingSpell}
@@ -1674,13 +1674,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			wait 4
 			if (!${Me.Ability[id,${spellid}].IsQueued})
 				wait 4
-			if (${Me.Ability[id,${spellid}].CastingTime} < .6)
+			if (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} < .6)
 			{
-				;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"]
+				;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime}) --> Returning"]
 				LastQueuedAbility:Set[${spell}]
 				return
 			}
-			elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
+			elseif (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} > 7 || ${WaitWhileCasting})
 			{
 				wait 4
 				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
@@ -1710,7 +1710,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			}
 		}
 	}
-	elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
+	elseif (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} > 7 || ${WaitWhileCasting})
 	{
 		wait 4
 		; if we're not casting a spell and the current spell is not queued, then we have a problem
@@ -1734,13 +1734,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			wait 4
 			if (!${Me.Ability[id,${spellid}].IsQueued})
 				wait 4
-			if (${Me.Ability[id,${spellid}].CastingTime} < .6)
+			if (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} < .6)
 			{
-				;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].CastingTime}) --> Returning"]
+				;Debug:Echo["EQ2Bot-Debug:: ${spell}'s CastingTime < .6 (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime}) --> Returning"]
 				LastQueuedAbility:Set[${spell}]
 				return
 			}
-			elseif (${Me.Ability[id,${spellid}].CastingTime} > 7 || ${WaitWhileCasting})
+			elseif (${Me.Ability[id,${spellid}].ToAbilityInfo.CastingTime} > 7 || ${WaitWhileCasting})
 			{
 				wait 4
 				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
@@ -1808,7 +1808,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		Counter:Set[0]
 		;Debug:Echo["EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}' to finish casting..."]
 		CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}' to finish casting...]
-		TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
+		TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]}]
 		do
 		{
 			wait 2
@@ -1830,13 +1830,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 
 			if ${Counter} >= 50 && ${Me.InCombatMode}
 			{
-				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]})"
 				CurrentAction:Set[]
 				return
 			}
 			elseif !${Me.InCombatMode} && ${Counter} > 100
 			{
-				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+				echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]})"
 				CurrentAction:Set[]
 				return
 			}
@@ -1852,7 +1852,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		{
 			;Debug:Echo["EQ2Bot-Debug:: ---Waiting for ${spell} to cast"]
 			CurrentAction:Set[---Waiting for ${spell} to cast]
-			TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]}]
+			TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]}]
 			;Debug:Echo["TimeOut: ${TimeOut}"]
 			do
 			{
@@ -1877,13 +1877,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 
 				if ${Counter} >= 50 && ${Me.InCombatMode}
 				{
-					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]})"
 					CurrentAction:Set[]
 					return
 				}
 				elseif !${Me.InCombatMode} && ${Counter} > 100
 				{
-					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].CastingTime}*10]})"
+					echo "EQ2Bot-Debug:: ---Timed out waiting for ${spell} to cast....(${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]})"
 					CurrentAction:Set[]
 					return
 				}
@@ -2601,13 +2601,13 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget},int A
 			else
 			{
 				minrange:Set[4]
-				maxrange:Set[${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[${AbilityID}]}].MaxRange}]}]
+				maxrange:Set[${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[${AbilityID}]}].ToAbilityInfo.MaxRange}]}]
 			}
 			break
 		case 3
 			minrange:Set[${Math.Calc[${Me.Equipment[Ranged].MinRange}]}+.75+${Position.GetBaseMaxRange[${TID}]}]}]
 			if ${Me.Equipment[Ranged].Type.Equal[Weapon]}
-				maxrange:Set[${Position.GetSpellMaxRange[${TID},${Me.Equipment[Ranged].Range}]}]
+				maxrange:Set[${Position.GetSpellMaxRange[${TID},${Me.Equipment[Ranged].ToAbilityInfo.Range}]}]
 			else
 				maxrange:Set[${Position.GetSpellMaxRange[${TID}]}]
 			break
@@ -3322,24 +3322,24 @@ function Pull(string npcclass)
 			{
 				if (${PullType.Equal[Spell or CA Pull]})
 				{
-					if ${Target.Distance} > ${Math.Calc[${Me.Ability[${PullSpell}].Range}-4]}
+					if ${Target.Distance} > ${Math.Calc[${Me.Ability[${PullSpell}].ToAbilityInfo.Range}-4]}
 					{
 						;Debug:Echo["Moving within range for your pull spell or combat art..."]
-						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}]}
+						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].ToAbilityInfo.Range}]}
 					}
 					;; Check again....stupid moving mobs...
-					if ${Target.Distance} > ${Me.Ability[${PullSpell}].Range}
+					if ${Target.Distance} > ${Me.Ability[${PullSpell}].ToAbilityInfo.Range}
 					{
 						;Debug:Echo["Moving within range for your pull spell or combat art..."]
-						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].Range}-2]}
+						call FastMove ${Target.X} ${Target.Z} ${Math.Calc[${Me.Ability[${PullSpell}].ToAbilityInfo.Range}-2]}
 					}
 				}
 				elseif (${PullType.Equal[Bow Pull]})
 				{
-					if ${Target.Distance} > ${Me.Equipment[ranged].Range}
+					if ${Target.Distance} > ${Me.Equipment[ranged].ToAbilityInfo.Range}
 					{
 						;Debug:Echo["Moving within range for your bow..."]
-						call FastMove ${Target.X} ${Target.Z} ${Me.Equipment[ranged].Range}
+						call FastMove ${Target.X} ${Target.Z} ${Me.Equipment[ranged].ToAbilityInfo.Range}
 					}
 				}
 			}
@@ -3584,9 +3584,9 @@ function Pull(string npcclass)
 			Me.Ability[${PullSpell}]:Use
 
 			; Round up the wait time to ensure we're only sending an int to 'wait'
-			;Debug:Echo["Waiting ${Math.Calc[${Me.Ability[${PullSpell}].CastingTime}*10].Ceil}ms for spell to cast"]
-			CurrentAction:Set["Waiting ${Math.Calc[${Me.Ability[${PullSpell}].CastingTime}*10].Ceil}ms for spell to cast"]
-			wait ${Math.Calc[${Me.Ability[${PullSpell}].CastingTime}*10].Ceil}
+			;Debug:Echo["Waiting ${Math.Calc[${Me.Ability[${PullSpell}].ToAbilityInfo.CastingTime}*10].Ceil}ms for spell to cast"]
+			CurrentAction:Set["Waiting ${Math.Calc[${Me.Ability[${PullSpell}].ToAbilityInfo.CastingTime}*10].Ceil}ms for spell to cast"]
+			wait ${Math.Calc[${Me.Ability[${PullSpell}].ToAbilityInfo.CastingTime}*10].Ceil}
 
 			while ${Me.CastingSpell}
 			{

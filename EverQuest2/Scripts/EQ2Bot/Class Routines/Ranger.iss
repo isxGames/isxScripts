@@ -355,7 +355,7 @@ function Combat_Routine(int xAction)
 		if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[96]}].IsReady}
 		{
 			call CalcAutoAttackTimer				
-			if ${TimeUntilNextAutoAttack} >  ${Me.Ability[${SpellType[96]}].CastingTime}				
+			if ${TimeUntilNextAutoAttack} >  ${Me.Ability[${SpellType[96]}].ToAbilityInfo.CastingTime}				
 			{
 				call CastSpellRange 96 0 0 0 ${KillTarget}
 				spellsused:Inc

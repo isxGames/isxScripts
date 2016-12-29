@@ -556,7 +556,7 @@ function Post_Combat_Routine(int xAction)
 		case AA_Possessed_Minion
 			;check if we are possessed minion and cancel
 			if ${Me.Race.Equal[Unknown]}
-				Me.Ability[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
+				Me.Maintained[${SpellType[${PostSpellRange[${xAction},1]}]}]:Cancel
 			break
 		default
 			return PostCombatRoutineComplete

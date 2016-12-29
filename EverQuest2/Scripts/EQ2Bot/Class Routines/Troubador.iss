@@ -642,7 +642,7 @@ function RefreshPower()
    		{
    		  if ${Me.Raid[${tempvar}].Name.NotEqual[${Me.Name}]}
    			{
-					if ${Me.Raid[${tempvar}].Power}<25 && !${Me.Raid[${tempvar}].IsDead} && ${Me.Raid[${tempvar}].Distance}<=${Me.Ability[${SpellType[409]}].Range}
+					if ${Me.Raid[${tempvar}].Power}<25 && !${Me.Raid[${tempvar}].IsDead} && ${Me.Raid[${tempvar}].Distance}<=${Me.Ability[${SpellType[409]}].ToAbilityInfo.Range}
     			{
     				if (${Me.Raid[${tempvar}].Power} < ${Me.Raid[${MemberLowestPower}].Health}) || ${MemberLowestPower}==0
     					MemberLowestPower:Set[${tempvar}]
@@ -867,7 +867,7 @@ function DoJesterCap()
 		return
 	}
 
-	if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].Range}]}
+	if ${Actor[${JCActor.Token[2,:]},${JCActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[156]}].ToAbilityInfo.Range}]}
 	{
 		;Jester Cap immunity is 2 mins so make sure we havn't cast on this Actor in the past 120 seconds
 		if ${Math.Calc[${Time.Timestamp} - ${BuffJesterCapTimers.Element[${JCActor}]}]}>120
