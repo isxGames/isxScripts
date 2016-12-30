@@ -460,11 +460,11 @@ function Advantages()
 		return 0
 	}
 	
-	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}>=${PrimalUse}
+	if ${Me.GetGameData[Self.SavageryLevel].Label}>=${PrimalUse}
 		call Primals
 
 	;buff advantage gain if not at target savagery
-	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}<=${PrimalUse} && ${Me.Ability[${SpellType[392]}].IsReady}
+	if ${Me.GetGameData[Self.SavageryLevel].Label}<=${PrimalUse} && ${Me.Ability[${SpellType[392]}].IsReady}
 		call CastSpellRange 392
 		
 	declare counter int local
@@ -526,16 +526,16 @@ function Advantages()
 function Primals()
 {
 	;use Savage Blaze to raise savagery
-	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}>=${Math.Calc[${PrimalUse}-2]} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}<=${PrimalUse} && ${Me.Ability[${SpellType[399]}].IsReady} && !${Me.Maintained[${SpellType[399]}](exists)}
+	if ${Me.GetGameData[Self.SavageryLevel].Label}>=${Math.Calc[${PrimalUse}-2]} && ${Me.GetGameData[Self.SavageryLevel].Label}<=${PrimalUse} && ${Me.Ability[${SpellType[399]}].IsReady} && !${Me.Maintained[${SpellType[399]}](exists)}
 	{
 		call CastSpellRange 399
 		echo Blaze
 	}
 	;dump function if savagery not high enough
-	if ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}<${PrimalUse}
+	if ${Me.GetGameData[Self.SavageryLevel].Label}<${PrimalUse}
 	{
 		echo Not enough Savagery
-		echo ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}<=${PrimalUse}
+		echo ${Me.GetGameData[Self.SavageryLevel].Label}<=${PrimalUse}
 		return 0
 	}
 	else
@@ -544,7 +544,7 @@ function Primals()
 	}
 	
 	;Savagery Freeze
-	if ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].Health}>50 || ${Actor[${KillTarget}].IsEpic}) && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}>=${PrimalUse} && ${Me.Ability[${SpellType[480]}].IsReady} && !${Me.Maintained[${SpellType[480]}](exists)}
+	if ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].Health}>50 || ${Actor[${KillTarget}].IsEpic}) && ${Me.GetGameData[Self.SavageryLevel].Label}>=${PrimalUse} && ${Me.Ability[${SpellType[480]}].IsReady} && !${Me.Maintained[${SpellType[480]}](exists)}
 	{
 		echo Savagery Freeze
 		call CastSpellRange 480
@@ -566,7 +566,7 @@ function Primals()
 			counter:Set[441]
 			do
 			{			
-				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}>=${Math.Calc[${PrimalUse}-1]}
+				if ${Actor[${KillTarget}](exists)} && ${Me.Ability[${SpellType[${counter}]}].IsReady} && !${Me.Maintained[${SpellType[${counter}]}](exists)} && ${Me.GetGameData[Self.SavageryLevel].Label}>=${Math.Calc[${PrimalUse}-1]}
 				{
 					call CastSpellRange ${counter} 0 0 0 ${KillTarget}
 			  }
@@ -622,7 +622,7 @@ function Primals()
 				if ${counter}>0
 					call Advantages  
 			}
-			while ${Actor[${KillTarget}](exists)} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Self.SavageryLevel].Label}>=${PrimalUse}
+			while ${Actor[${KillTarget}](exists)} && ${Me.GetGameData[Self.SavageryLevel].Label}>=${PrimalUse}
 		}			
 	}	
 	return

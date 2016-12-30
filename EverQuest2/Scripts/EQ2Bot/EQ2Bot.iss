@@ -1186,7 +1186,7 @@ function CalcAutoAttackTimer()
 
 	if !${AutoAttackReady}
 	{
-		PrimaryDelay:Set[${EQ2DataSourceContainer[GameData].GetDynamicData[Stats.Primary_Delay].Label}]
+		PrimaryDelay:Set[${Me.GetGameData[Stats.Primary_Delay].Label}]
 		RunningTimeInSeconds:Set[${Script.RunningTime}/1000]
 		TimeUntilNextAutoAttack:Set[${PrimaryDelay}-(${RunningTimeInSeconds}-${LastAutoAttack})]
 	}
@@ -1685,7 +1685,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				wait 4
 				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 				;; more than 7 seconds to cast.
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
+				if (${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 				{
 					do
 					{
@@ -1696,7 +1696,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 					wait 5
 				}
 		
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
+				if (${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Equal[${spell}]})
 				{
 					do
 					{
@@ -1745,7 +1745,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				wait 4
 				;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 				;; more than 7 seconds to cast.
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
+				if (${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 				{
 					do
 					{
@@ -1756,7 +1756,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 					wait 5
 				}
 		
-				if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
+				if (${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Equal[${spell}]})
 				{
 					do
 					{
@@ -1773,7 +1773,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		{
 			;; Long casting spells such as pets, diety pets, etc.. are a pain -- this is a decent solution to those few abilities that take
 			;; more than 7 seconds to cast.
-			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
+			if (${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 			{
 				do
 				{
@@ -1784,7 +1784,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				wait 5
 			}
 	
-			if (${Me.CastingSpell} && ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
+			if (${Me.CastingSpell} && ${Me.GetGameData[Spells.Casting].Label.Equal[${spell}]})
 			{
 				do
 				{
@@ -1800,14 +1800,14 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 
 	;Debug:Echo["EQ2Bot-Debug:: Queuing: ${spell}"]
 	;Debug:Echo["EQ2Bot-Debug:: Me.CastingSpell: ${Me.CastingSpell}"]
-	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}"]
+	;Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${Me.GetGameData[Spells.Casting].Label}"]
 
 
-	if (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
+	if (${Me.CastingSpell} && !${Me.GetGameData[Spells.Casting].Label.Equal[${spell}]})
 	{
 		Counter:Set[0]
-		;Debug:Echo["EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}' to finish casting..."]
-		CurrentAction:Set[---${spell} Queued ... waiting for '${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}' to finish casting...]
+		;Debug:Echo["EQ2Bot-Debug:: ---${spell} Queued ... waiting for '${Me.GetGameData[Spells.Casting].Label}' to finish casting..."]
+		CurrentAction:Set[---${spell} Queued ... waiting for '${Me.GetGameData[Spells.Casting].Label}' to finish casting...]
 		TimeOut:Set[${Math.Calc[${Me.Ability[${LastQueuedAbility}].ToAbilityInfo.CastingTime}*10]}]
 		do
 		{
@@ -1842,13 +1842,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			}
 			;Debug:Echo["EQ2Bot-Debug:: Waiting..."]
 		}
-		while (${Me.CastingSpell} && !${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${spell}]})
+		while (${Me.CastingSpell} && !${Me.GetGameData[Spells.Casting].Label.Equal[${spell}]})
 	}
 
 	Counter:Set[0]
 	if (!${LastQueuedAbility.Equal[${spell}]})
 	{
-		if (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
+		if (${Me.GetGameData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 		{
 			;Debug:Echo["EQ2Bot-Debug:: ---Waiting for ${spell} to cast"]
 			CurrentAction:Set[---Waiting for ${spell} to cast]
@@ -1890,7 +1890,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				;Debug:Echo["EQ2Bot-Debug:: Waiting..."]
 				CurrentAction:Set[---Waiting for ${spell} to cast]
 			}
-			while (${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
+			while (${Me.GetGameData[Spells.Casting].Label.Equal[${LastQueuedAbility}]})
 		}
 	}
 
@@ -1901,7 +1901,7 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 	{
 		;Debug:Echo["EQ2Bot-Debug:: We should be casting a spell now, but we're not!?"]
 		;Debug:Echo["EQ2Bot-Debug:: Me.Ability[${spell}].IsQueued} == ${Me.Ability[${spell}].IsQueued}"]
-		;Debug:Echo["EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].Label == ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label}"]
+		;Debug:Echo["EQ2Bot-Debug:: EQ2DataSourceContainerGameData].GetDynamicData[Spells.Casting].Label == ${Me.GetGameData[Spells.Casting].Label}"]
 		wait 2
 	}
 
@@ -4943,7 +4943,7 @@ function CheckBuffsOnce()
 
 	if ${Me.CastingSpell}
 	{
-		CurrentAction:Set["Waiting for ${EQ2DataSourceContainer[GameData].GetDynamicData[Spells.Casting].Label} to finish casting..."]
+		CurrentAction:Set["Waiting for ${Me.GetGameData[Spells.Casting].Label} to finish casting..."]
 		do
 		{
 			waitframe
