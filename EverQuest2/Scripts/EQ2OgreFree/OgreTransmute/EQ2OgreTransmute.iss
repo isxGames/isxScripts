@@ -39,7 +39,7 @@ function main(string methodType=Transmute)
 			VarCopy:Set[${OgreBagInfoOb.BagContents[${ContainerCounter},${x}]}]
 
 			;If the item is refinable we go straight to TransmuteIt. There may be a few treasured items in game that match this check and are not Rare harvest. - IDBurner
-			if ${Me.Inventory[id,${VarCopy}].NoValue} && ${useMethod.Equal[Refine]} && ${Me.Inventory[id,${VarCopy}].Tier.Equal[TREASURED]} && ${Me.Inventory[id,${VarCopy}](exists)}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.NoValue} && ${useMethod.Equal[Refine]} && ${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[TREASURED]} && ${Me.Inventory[id,${VarCopy}](exists)}
 			{
 				call TransmuteIt ${VarCopy}
 			}
@@ -49,26 +49,26 @@ function main(string methodType=Transmute)
 				continue
 
 			;Lets eliminate items that can't be transmuted period.
-			if ${Me.Inventory[id,${VarCopy}].NoValue} || ${Me.Inventory[id,${VarCopy}].Level}<=0 || ${Me.Inventory[id,${VarCopy}].Ornate}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.NoValue} || ${Me.Inventory[id,${VarCopy}].ToItemInfo.Level}<=0 || ${Me.Inventory[id,${VarCopy}].ToItemInfo.Ornate}
 				continue
 
-			if !${Me.Inventory[id,${VarCopy}].Tier.Equal[TREASURED]} && !${Me.Inventory[id,${VarCopy}].Tier.Equal[Legendary]} && !${Me.Inventory[id,${VarCopy}].Tier.Equal[Fabled]} && !${Me.Inventory[id,${VarCopy}].Tier.Equal[mastercrafted]} 
+			if !${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[TREASURED]} && !${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[Legendary]} && !${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[Fabled]} && !${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[mastercrafted]} 
 				continue
 
 			;Lets eliminate items that can't be transmuted based on the UI selection
-			if ${Me.Inventory[id,${VarCopy}].Tier.Equal[TREASURED]} &&  !${UIElement[${EQ2OgreTransmuteTreasuredID}].Checked}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[TREASURED]} &&  !${UIElement[${EQ2OgreTransmuteTreasuredID}].Checked}
 				continue
 
-			if ${Me.Inventory[id,${VarCopy}].Tier.Equal[Legendary]} &&  !${UIElement[${EQ2OgreTransmuteLegendaryID}].Checked}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[Legendary]} &&  !${UIElement[${EQ2OgreTransmuteLegendaryID}].Checked}
 				continue
 
-			if ${Me.Inventory[id,${VarCopy}].Tier.Equal[Fabled]} &&  !${UIElement[${EQ2OgreTransmuteFabledID}].Checked}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[Fabled]} &&  !${UIElement[${EQ2OgreTransmuteFabledID}].Checked}
 				continue
 
-			if ${Me.Inventory[id,${VarCopy}].Tier.Equal[mastercrafted]} &&  !${UIElement[${EQ2OgreTransmuteMasterCraftedID}].Checked}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.Tier.Equal[mastercrafted]} &&  !${UIElement[${EQ2OgreTransmuteMasterCraftedID}].Checked}
 				continue
 
-			if ${Me.Inventory[id,${VarCopy}].Level} < ${Int[${UIElement[${TEBoxEQ2OgreTransmuteMinLevelID}].Text}]} || ${Me.Inventory[id,${VarCopy}].Level} > ${Int[${UIElement[${TEBoxEQ2OgreTransmuteMaxLevelID}].Text}]}
+			if ${Me.Inventory[id,${VarCopy}].ToItemInfo.Level} < ${Int[${UIElement[${TEBoxEQ2OgreTransmuteMinLevelID}].Text}]} || ${Me.Inventory[id,${VarCopy}].ToItemInfo.Level} > ${Int[${UIElement[${TEBoxEQ2OgreTransmuteMaxLevelID}].Text}]}
 				continue
 
 			if ${Me.Inventory[id,${VarCopy}](exists)}
