@@ -413,7 +413,7 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
-	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].MaxRange}]}
+	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].ToAbilityInfo.MaxRange}]}
 	{
 		if ${BowAttacksMode} && ${Me.Equipment[Ranged].SubType.Equal[Bow]} && ${Me.Equipment[Ammo].NextSlotOpen}
 		{
@@ -563,7 +563,7 @@ function Combat_Routine(int xAction)
 						if ${ManageAutoAttackTiming}
 						{
 							call CalcAutoAttackTimer
-							if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}
+							if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}
 								call CastSpellRange ${SpellRange[${xAction},2]} 0 1 0 ${KillTarget} 0 0 1 0 2 0
 						}
 					}
@@ -651,7 +651,7 @@ function Combat_Routine(int xAction)
 				if ${ManageAutoAttackTiming}
 				{
 					call CalcAutoAttackTimer
-					if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}
+					if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 3 0 ${KillTarget} 0 0 1 0 2 0
 				}
 				else	
@@ -666,7 +666,7 @@ function Combat_Routine(int xAction)
 				if ${ManageAutoAttackTiming}
 				{
 					call CalcAutoAttackTimer
-					if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}
+					if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 				}
 				else
@@ -681,7 +681,7 @@ function Combat_Routine(int xAction)
 				if ${ManageAutoAttackTiming}
 				{
 					call CalcAutoAttackTimer				
-					if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}
+					if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}
 						call CastSpellRange ${SpellRange[${xAction},1]} 0 1 1 ${KillTarget} 0 0 1 0 2 0
 				}
 				else
@@ -698,7 +698,7 @@ function Combat_Routine(int xAction)
 					if ${ManageAutoAttackTiming}
 					{
 						call CalcAutoAttackTimer				
-						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}				
+						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}				
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 					}
 					else
@@ -718,7 +718,7 @@ function Combat_Routine(int xAction)
 					if ${ManageAutoAttackTiming}
 					{
 						call CalcAutoAttackTimer				
-						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}								
+						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}								
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 					else
@@ -735,7 +735,7 @@ function Combat_Routine(int xAction)
 					if ${ManageAutoAttackTiming}
 					{
 						call CalcAutoAttackTimer				
-						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}													
+						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}													
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 					else
@@ -753,7 +753,7 @@ function Combat_Routine(int xAction)
 					if ${ManageAutoAttackTiming}
 					{
 						call CalcAutoAttackTimer				
-						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}																		
+						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}																		
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 1
 					}
 					else
@@ -778,7 +778,7 @@ function Combat_Routine(int xAction)
 					if ${ManageAutoAttackTiming}
 					{
 						call CalcAutoAttackTimer				
-						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].RecoveryTime}]}																							
+						if ${TimeUntilNextAutoAttack} > ${Math.Calc[${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.CastingTime}+${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.RecoveryTime}]}																							
 							call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget} 0 0 1
 					}
 					else

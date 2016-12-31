@@ -213,7 +213,7 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
-	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].MaxRange}]}
+	if ${Actor[${KillTarget}].Distance}>${Position.GetMeleeMaxRange[${KillTarget}]} && ${Actor[${KillTarget}].Distance}<${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[250]}].ToAbilityInfo.MaxRange}]}
 	{
 		eq2execute /useability ${SpellType[250]}
 		eq2execute /auto 2

@@ -709,7 +709,7 @@ function RefreshPower()
    		{
    		  if ${Me.Raid[${tempvar}].Name.NotEqual[${Me.Name}]}
    			{
-					if ${Me.Raid[${tempvar}].Power}<95 && !${Me.Raid[${tempvar}].IsDead} && ${Me.Raid[${tempvar}].Distance}<=${Me.Ability[${SpellType[390]}].Range}
+					if ${Me.Raid[${tempvar}].Power}<95 && !${Me.Raid[${tempvar}].IsDead} && ${Me.Raid[${tempvar}].Distance}<=${Me.Ability[${SpellType[390]}].ToAbilityInfo.Range}
     			{
     				if (${Me.Raid[${tempvar}].Power} < ${Me.Raid[${MemberLowestPower}].Health}) || ${MemberLowestPower}==0
     					MemberLowestPower:Set[${tempvar}]
@@ -962,7 +962,7 @@ function DoDMind()
 	if ${UIElement[lbDMind@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItems}==0
 		return
 
-	if ${Actor[${DMActor.Token[2,:]},${DMActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[72]}].Range}]}
+	if ${Actor[${DMActor.Token[2,:]},${DMActor.Token[1,:]}].Distance}<${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[72]}].ToAbilityInfo.Range}]}
 	{
 		EQ2Execute /useabilityonplayer ${DMActor.Token[1,:]} ${SpellType[72]}
 		wait 5

@@ -235,7 +235,7 @@ function Buff_Routine(int xAction)
 					{
 						if (${Me.Raid[${ArmamentTarget.Token[1,:]}](exists)})
 						{
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 								wait 2
@@ -246,7 +246,7 @@ function Buff_Routine(int xAction)
 					{
 						if (${Me.Group[${ArmamentTarget.Token[1,:]}](exists)})
 						{
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 								wait 2
@@ -256,7 +256,7 @@ function Buff_Routine(int xAction)
 				}
 				else
 				{
-					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 					{
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
 						wait 2
@@ -425,7 +425,7 @@ function Buff_Routine(int xAction)
 			
 			ActorID:Set[${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]},exactname].ID}]
 			
-			if (${Actor[${ActorID}].Distance} > ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range})
+			if (${Actor[${ActorID}].Distance} > ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range})
 			{
 				echo "Tactics_Target:: '${TacticsTarget.Token[1,:]}' is out-of-range ....giving up."
 				TacticsTargetExists:Set[FALSE]
@@ -444,7 +444,7 @@ function Buff_Routine(int xAction)
 					{
 						if (${Me.Raid[${TacticsTarget.Token[1,:]}](exists)})
 						{
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								do 
 								{
@@ -462,7 +462,7 @@ function Buff_Routine(int xAction)
 					{
 						if (${Me.Group[${TacticsTarget.Token[1,:]}](exists)})
 						{
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								do 
 								{
@@ -478,7 +478,7 @@ function Buff_Routine(int xAction)
 				}
 				else
 				{
-					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 					{
 						do 
 						{

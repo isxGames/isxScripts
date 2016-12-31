@@ -356,7 +356,7 @@ function Combat_Routine(int xAction)
 	;echo in combat
 	if ${FullAutoMode}
 	{
-		;echo ${xAction} - ${SpellType[${SpellRange[${xAction},1]}]} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].Name} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+		;echo ${xAction} - ${SpellType[${SpellRange[${xAction},1]}]} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].ToAbilityInfo.Name} - ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 		switch ${Action[${xAction}]}
 		{
 			case LayWaste

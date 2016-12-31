@@ -522,9 +522,9 @@ function Buff_Routine(int xAction)
 							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
 								;echo "Debug.RAPIDITY:: --- Actor is in Group"
-								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 								{
-									;echo "Debug.RAPIDITY:: --- Actor distance: ${Actor[${ActorID}].Distance} (within ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range})"
+									;echo "Debug.RAPIDITY:: --- Actor distance: ${Actor[${ActorID}].Distance} (within ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range})"
 									if (!${IllyDPSBuffsOn.Element[${ActorID}](exists)})
 									{
 										;echo "Debug.RAPIDITY:: ---- Casting RAPIDITY" 
@@ -536,9 +536,9 @@ function Buff_Routine(int xAction)
 						else
 						{
 							;echo "Debug.RAPIDITY:: --- Actor is *NOT* a 'PC'"
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
-								;echo "Debug.RAPIDITY:: --- Actor distance: ${Actor[${ActorID}].Distance} (within ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range})"
+								;echo "Debug.RAPIDITY:: --- Actor distance: ${Actor[${ActorID}].Distance} (within ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range})"
 								if (!${IllyDPSBuffsOn.Element[${ActorID}](exists)})
 								{
 									;echo "Debug.RAPIDITY:: ---- Casting RAPIDITY" 
@@ -622,7 +622,7 @@ function Buff_Routine(int xAction)
 						{
 							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
-								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 								{
 									if (!${IllyCasterBuffsOn.Element[${ActorID}](exists)})
 									{
@@ -633,7 +633,7 @@ function Buff_Routine(int xAction)
 						}
 						else
 						{
-							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								if (!${IllyCasterBuffsOn.Element[${ActorID}](exists)})
 								{
@@ -674,13 +674,13 @@ function Buff_Routine(int xAction)
 				{
 					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
 					{
-						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 					}
 				}
 				else
 				{
-					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 				}
 			}
@@ -713,13 +713,13 @@ function Buff_Routine(int xAction)
 				{
 					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
 					{
-						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 					}
 				}
 				else
 				{
-					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 				}
 			}
@@ -752,13 +752,13 @@ function Buff_Routine(int xAction)
 				{
 					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
 					{
-						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 					}
 				}
 				else
 				{
-					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].Range} || !${NoAutoMovement})
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
 				}
 			}
@@ -1011,7 +1011,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 				{
 					if (${Me.Ability[${SpellType[396]}].IsReady})
 					{
-						if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].MaxRange}]})
+						if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 						{
 							call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 							LastSpellCast:Set[396]
@@ -1568,7 +1568,7 @@ function Combat_Routine(int xAction)
 	{
 		if (${Me.Ability[${SpellType[396]}].IsReady})
 		{
-			if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].MaxRange}]})
+			if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 			{
 				call _CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
@@ -2133,7 +2133,7 @@ function CastSomething()
 				{
 					if (${Me.Ability[${SpellType[396]}].IsReady})
 					{
-						if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].MaxRange}]})
+						if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 						{
 							call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 							LastSpellCast:Set[396]
@@ -3003,8 +3003,8 @@ function DoTheTimeWarp()
 					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...2"
 					if (${Actor[${ActorID}].IsDead})
 						break
-					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...3 (is ${Actor[${ActorID}].Distance} < ${Me.Ability[Time Warp].Range}?)"
-					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].Range} || !${NoAutoMovement})
+					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...3 (is ${Actor[${ActorID}].Distance} < ${Me.Ability[Time Warp].ToAbilityInfo.Range}?)"
+					if (${Actor[${ActorID}].Distance} <= ${Me.Ability[Time Warp].ToAbilityInfo.Range} || !${NoAutoMovement})
 					{
 						LastTimeWarp:Set[${TimeWarpers.Element[${Actor[${ActorID}].Name}]}]
 						;echo "DEBUG::DoTheTimeWarp() - Checking if ${Actor[${ActorID}].Name} is ready for Time Warp... (${LastTimeWarp} vs. ${Time.Timestamp})"
@@ -3063,7 +3063,7 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 	{
 		if (${Me.Ability[${SpellType[396]}].IsReady})
 		{
-			if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].MaxRange}]})
+			if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 			{
 				call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 				LastSpellCast:Set[396]

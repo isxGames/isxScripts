@@ -55,7 +55,7 @@ function Pulse()
 
 	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]}) && \
 		${Me.Ability[${SpellType[7]}].IsReady} && \
-		(!${Me.Maintained[${SpellType[7]}](exists)} || ${Me.Maintained[${SpellType[7]}].Duration} < ${Me.Ability[${SpellType[7]}].CastingTime})
+		(!${Me.Maintained[${SpellType[7]}](exists)} || ${Me.Maintained[${SpellType[7]}].Duration} < ${Me.Ability[${SpellType[7]}].ToAbilityInfo.CastingTime})
 	{
 		if ${Target.Type.Equal[NPC]}
 		{
