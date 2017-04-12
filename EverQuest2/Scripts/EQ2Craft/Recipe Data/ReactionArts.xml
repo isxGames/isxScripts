@@ -251,6 +251,11 @@
 		<Setting Name="Dull Luster">3</Setting>
 		<Setting Name="Minor Dull Luster">3</Setting>
 		<Setting Name="Major Dull Luster">3</Setting>
+		<Setting Name="Critical Channelling Instability">2</Setting>
+		<Setting Name="Lethal Flaws">2</Setting>
+		<Setting Name="Lethal Meltdown">3</Setting>
+		<Setting Name="Major Power Overload">3</Setting>
+		<Setting Name="Critical Channelling">2</Setting>
 	</Set>
 	<Set Name="Geomancy">
 		<Setting Name="Dense Material">1</Setting>
@@ -262,6 +267,11 @@
 		<Setting Name="Dull Luster">3</Setting>
 		<Setting Name="Minor Dull Luster">3</Setting>
 		<Setting Name="Major Dull Luster">3</Setting>
+		<Setting Name="Critical Channelling Instability">2</Setting>
+		<Setting Name="Lethal Flaws">2</Setting>
+		<Setting Name="Lethal Meltdown">3</Setting>
+		<Setting Name="Major Power Overload">3</Setting>
+		<Setting Name="Critical Channelling">2</Setting>
 	</Set>
 	<Set Name="Weaving">
 		<Setting Name="Major Ripped Material">1</Setting>
