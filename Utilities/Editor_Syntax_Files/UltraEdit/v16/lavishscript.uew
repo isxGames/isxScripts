@@ -1,0 +1,98 @@
+/L20"InnerSpace" Line Comment = ; Block Comment On = /* Block Comment Off = */ String Chars = '" Line Comment Preceding Chars = [ ^t] DisableMLS File Extensions = ISS ICE
+/Colors = 0,8421376,8421376,8421504,255,
+/Colors Back = 16777215,16777215,16777215,16777215,16777215,
+/Colors Auto Back = 1,1,1,1,1,
+/Font Style = 0,0,0,0,0,
+/Delimiters = ~!@#%^&$*()-+=|\/{}[]:;"'<>	, . ?
+/Function String 1 = "%[ ^t]++function[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/Function String 2 = "%[ ^t]++method[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/Function String 3 = "%[ ^t]++member[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/Function String 4 = "%[ ^t]++atom[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/Indent Strings = "{"
+/Unindent Strings = "}"
+/Open Brace Strings =  "{" "(" "["
+/Close Brace Strings = "}" ")" "]"
+/C1"ISS Commands (blue) - From Commands function output" STYLE_COMMAND Colors = 16711680 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+APICall AddAtom AddTrigger Alias Arg
+Bind
+Cat ClipMouse Commands Console ConsoleClear ConsoleRedirect
+DeclareVariable DeleteAtom DeleteVariable Diagnostics DisplayInfo DotNet
+Echo End EndRecord EndScript Execute ExecuteAtom Exit Extension
+FPS FileRedirect
+Gamma GlobalBind
+HTTPGet HUD HUDGroup HUDSet Head
+INIRedirect Input InputBox
+LSType LSVersion Line Log
+Macro MaxFPS MessageBox Module MouseClick MouseTo
+NavPath NavPoint Navigation
+OSExecute
+Press Processor
+Record Redirect Relay RemoveTrigger RunScript
+Scripts Services Squelch
+Tail Test TimedCommand TopLevelObject Type
+UI UIElement Uplink
+Version
+WaitFrame WindowFrame WindowPosition WindowScale WindowSize WindowTaskbar WindowText WindowVisibility
+Wireframe
+XMLSetting
+call cd cp
+mkdir
+rename rm rmdir
+/C2"Function Declarations" STYLE_FUNCTION Colors = 255 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+atom
+function
+member method
+objectdef
+/C3"Variable Declarations" STYLE_VARIABLE Colors = 33023 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+global globalkeep
+local
+object
+script
+variable
+/C4"ISS Built-in Object Types" STYLE_IDENTIFIER Colors = 32768 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+array
+binary bool boolptr byte byteptr
+collection
+event
+file filelist filelistentry filepath float floatptr
+index int int64 int64ptr intptr iterator
+mutablestring
+objectcontainer
+point3f
+queue
+rgb rgbptr
+set stack string stringptr
+time
+uint uintptr
+variablescope
+/C5"ISS datatypes (green)" STYLE_IDENTIFIER Colors = 4210816 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+define endmac include macro
+Keyboard
+Mouse
+bind
+console
+dataset display
+exists extension
+isuibutton isuicheckbox isuicombobox isuiconsole isuielement isuifont isuiframe isuigauge isuihudelement
+isuilistbox isuilistboxitem isuimessagebox isuiscrollbar isuislider isuitab isuiwindow
+lavishscript
+math
+system
+type
+/C6"Brackets" Colors = 16711680 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+[
+]
+/C7"Parentheses" STYLE_VARIABLE Colors = 16711680 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+$
+{
+}
+/C8"ISS Control Structures" STYLE_KEYWORD Colors = 16711680 Colors Back = 16777215 Colors Auto Back = 1 Font Style = 0
+break
+case continue
+default do
+else elseif
+for
+if
+switch
+variablecase
+whole

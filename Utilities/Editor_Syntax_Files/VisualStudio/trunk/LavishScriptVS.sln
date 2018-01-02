@@ -1,0 +1,134 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LavishScriptVS", "LavishScriptVS\LavishScriptVS.csproj", "{4A848DB5-5770-4AD3-BC66-B94C00496908}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LavishScriptVS_IntegrationTests", "LavishScriptVS\LavishScriptVS_IntegrationTests\LavishScriptVS_IntegrationTests.csproj", "{B3A2B05C-6A11-4390-A85E-2EF5E7D7F8AF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE39B99A-412C-417F-9F2B-99F612E47484}"
+	ProjectSection(SolutionItems) = preProject
+		IntegrationTests.testsettings = IntegrationTests.testsettings
+		Test.iss = Test.iss
+		Test2.iss = Test2.iss
+		UnitTests.testsettings = UnitTests.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LavishScriptVS_UnitTests", "LavishScriptVS\LavishScriptVS_UnitTests\LavishScriptVS_UnitTests.csproj", "{CF8037C3-CC2B-41C9-BBD0-428155E06CD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LavishParser", "LavishParser\LavishParser.csproj", "{A797C42D-152D-4AC9-95F3-0076027004FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reference", "Reference", "{E765814D-8077-4ED4-B95B-824EF7DA3045}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Antlr", "Antlr", "{FE8F9236-537C-4983-B1DA-E809A27E9321}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Antlr3.exe = Reference\Antlr\Antlr3.exe
+		Reference\Antlr\Antlr3.exe.config = Reference\Antlr\Antlr3.exe.config
+		Reference\Antlr\Antlr3.Runtime.Debug.dll = Reference\Antlr\Antlr3.Runtime.Debug.dll
+		Reference\Antlr\Antlr3.Runtime.dll = Reference\Antlr\Antlr3.Runtime.dll
+		Reference\Antlr\Antlr3.Runtime.JavaExtensions.dll = Reference\Antlr\Antlr3.Runtime.JavaExtensions.dll
+		Reference\Antlr\Antlr3.targets = Reference\Antlr\Antlr3.targets
+		Reference\Antlr\Antlr4.StringTemplate.dll = Reference\Antlr\Antlr4.StringTemplate.dll
+		Reference\Antlr\Antlr4.StringTemplate.Visualizer.dll = Reference\Antlr\Antlr4.StringTemplate.Visualizer.dll
+		Reference\Antlr\AntlrBuildTask.dll = Reference\Antlr\AntlrBuildTask.dll
+		Reference\Antlr\LICENSE.txt = Reference\Antlr\LICENSE.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tool", "Tool", "{8581F32F-2783-4C98-A89B-4E33BC0D8559}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{2631644E-466D-434F-813E-1AD5D53BF917}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Tool\Templates\depend.stg = Reference\Antlr\Tool\Templates\depend.stg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "messages", "messages", "{7B24DA82-0B0C-447C-9C45-134B42D6F437}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "languages", "languages", "{11007B77-7FD1-4E96-BC0F-9AE7C9F1E9A5}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Tool\Templates\messages\languages\en.stg = Reference\Antlr\Tool\Templates\messages\languages\en.stg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "formats", "formats", "{14610A4B-D3B9-4F65-9BA3-8DECC7EA1AB0}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Tool\Templates\messages\formats\antlr.stg = Reference\Antlr\Tool\Templates\messages\formats\antlr.stg
+		Reference\Antlr\Tool\Templates\messages\formats\vs2005.stg = Reference\Antlr\Tool\Templates\messages\formats\vs2005.stg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Targets", "Targets", "{BC62DB5E-2338-43E6-9CF3-777717800E98}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Targets\Antlr3.Targets.CSharp2.dll = Reference\Antlr\Targets\Antlr3.Targets.CSharp2.dll
+		Reference\Antlr\Targets\Antlr3.Targets.CSharp3.dll = Reference\Antlr\Targets\Antlr3.Targets.CSharp3.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Codegen", "Codegen", "{9CFF3339-E03D-4519-A5D2-D2E03D893494}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{7A45B543-1D98-49D4-BD45-5910CFED4A3C}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Codegen\Templates\LeftRecursiveRules.stg = Reference\Antlr\Codegen\Templates\LeftRecursiveRules.stg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp3", "CSharp3", "{E9335704-1EEE-4AD1-9C6D-A9941D4D9528}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Codegen\Templates\CSharp3\AST.stg = Reference\Antlr\Codegen\Templates\CSharp3\AST.stg
+		Reference\Antlr\Codegen\Templates\CSharp3\ASTDbg.stg = Reference\Antlr\Codegen\Templates\CSharp3\ASTDbg.stg
+		Reference\Antlr\Codegen\Templates\CSharp3\ASTParser.stg = Reference\Antlr\Codegen\Templates\CSharp3\ASTParser.stg
+		Reference\Antlr\Codegen\Templates\CSharp3\ASTTreeParser.stg = Reference\Antlr\Codegen\Templates\CSharp3\ASTTreeParser.stg
+		Reference\Antlr\Codegen\Templates\CSharp3\CSharp3.stg = Reference\Antlr\Codegen\Templates\CSharp3\CSharp3.stg
+		Reference\Antlr\Codegen\Templates\CSharp3\Dbg.stg = Reference\Antlr\Codegen\Templates\CSharp3\Dbg.stg
+		Reference\Antlr\Codegen\Templates\CSharp3\ST.stg = Reference\Antlr\Codegen\Templates\CSharp3\ST.stg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp2", "CSharp2", "{CACA7A5F-020E-47BC-95A7-D9970469ED5A}"
+	ProjectSection(SolutionItems) = preProject
+		Reference\Antlr\Codegen\Templates\CSharp2\AST.stg = Reference\Antlr\Codegen\Templates\CSharp2\AST.stg
+		Reference\Antlr\Codegen\Templates\CSharp2\ASTDbg.stg = Reference\Antlr\Codegen\Templates\CSharp2\ASTDbg.stg
+		Reference\Antlr\Codegen\Templates\CSharp2\ASTParser.stg = Reference\Antlr\Codegen\Templates\CSharp2\ASTParser.stg
+		Reference\Antlr\Codegen\Templates\CSharp2\ASTTreeParser.stg = Reference\Antlr\Codegen\Templates\CSharp2\ASTTreeParser.stg
+		Reference\Antlr\Codegen\Templates\CSharp2\CSharp2.stg = Reference\Antlr\Codegen\Templates\CSharp2\CSharp2.stg
+		Reference\Antlr\Codegen\Templates\CSharp2\Dbg.stg = Reference\Antlr\Codegen\Templates\CSharp2\Dbg.stg
+		Reference\Antlr\Codegen\Templates\CSharp2\ST.stg = Reference\Antlr\Codegen\Templates\CSharp2\ST.stg
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A848DB5-5770-4AD3-BC66-B94C00496908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A848DB5-5770-4AD3-BC66-B94C00496908}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A848DB5-5770-4AD3-BC66-B94C00496908}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A848DB5-5770-4AD3-BC66-B94C00496908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3A2B05C-6A11-4390-A85E-2EF5E7D7F8AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3A2B05C-6A11-4390-A85E-2EF5E7D7F8AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3A2B05C-6A11-4390-A85E-2EF5E7D7F8AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3A2B05C-6A11-4390-A85E-2EF5E7D7F8AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF8037C3-CC2B-41C9-BBD0-428155E06CD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF8037C3-CC2B-41C9-BBD0-428155E06CD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF8037C3-CC2B-41C9-BBD0-428155E06CD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF8037C3-CC2B-41C9-BBD0-428155E06CD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A797C42D-152D-4AC9-95F3-0076027004FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A797C42D-152D-4AC9-95F3-0076027004FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A797C42D-152D-4AC9-95F3-0076027004FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A797C42D-152D-4AC9-95F3-0076027004FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE8F9236-537C-4983-B1DA-E809A27E9321} = {E765814D-8077-4ED4-B95B-824EF7DA3045}
+		{8581F32F-2783-4C98-A89B-4E33BC0D8559} = {FE8F9236-537C-4983-B1DA-E809A27E9321}
+		{BC62DB5E-2338-43E6-9CF3-777717800E98} = {FE8F9236-537C-4983-B1DA-E809A27E9321}
+		{9CFF3339-E03D-4519-A5D2-D2E03D893494} = {FE8F9236-537C-4983-B1DA-E809A27E9321}
+		{2631644E-466D-434F-813E-1AD5D53BF917} = {8581F32F-2783-4C98-A89B-4E33BC0D8559}
+		{7B24DA82-0B0C-447C-9C45-134B42D6F437} = {2631644E-466D-434F-813E-1AD5D53BF917}
+		{11007B77-7FD1-4E96-BC0F-9AE7C9F1E9A5} = {7B24DA82-0B0C-447C-9C45-134B42D6F437}
+		{14610A4B-D3B9-4F65-9BA3-8DECC7EA1AB0} = {7B24DA82-0B0C-447C-9C45-134B42D6F437}
+		{7A45B543-1D98-49D4-BD45-5910CFED4A3C} = {9CFF3339-E03D-4519-A5D2-D2E03D893494}
+		{E9335704-1EEE-4AD1-9C6D-A9941D4D9528} = {9CFF3339-E03D-4519-A5D2-D2E03D893494}
+		{CACA7A5F-020E-47BC-95A7-D9970469ED5A} = {9CFF3339-E03D-4519-A5D2-D2E03D893494}
+	EndGlobalSection
+EndGlobal

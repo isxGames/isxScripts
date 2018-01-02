@@ -1,1 +1,0 @@
-This folder is for non-game specific projects.

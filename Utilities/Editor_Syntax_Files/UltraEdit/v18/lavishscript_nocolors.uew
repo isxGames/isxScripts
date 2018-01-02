@@ -1,0 +1,135 @@
+/L19"LavishScript" Nocase EnableSpellasYouType EnableCFByIndent DisableMLS File Extensions = ISS ICE
+/Colors = 16777215,32768,32768,8026746,720895,
+/Colors Back = 0,1381653,1381653,1907997,0,
+/Colors Auto Back = 0,0,0,0,1,
+/Font Style = 0,0,0,0,0,
+/Line Comment = ;
+/Line Comment Preceding Chars = [ ^t]
+/Block Comment On = /*
+/Block Comment Off = */
+/String Chars = '"
+/Escape Char = \
+/TGBegin "Function"
+/TGFindStr = "%[ ^t]++function[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/TGFindStr = "%[ ^t]++method[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/TGFindStr = "%[ ^t]++member[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/TGFindStr = "%[ ^t]++atom[~ ^t]++[ ^t]+[a-zA-Z0-9_.]+(*)[ ^p^r^n]"
+/TGEnd
+/Delimiters = ~!@$%^&*()+{}[]:;"'	, .?
+/Indent Strings = "{"
+/Unindent Strings = "}"
+/Open Brace Strings =  "{" "(" "["
+/Close Brace Strings = "}" ")" "]"
+/Open Fold Strings = "{"
+/Close Fold Strings = "}"
+/C6"LavishScript Commands" Colors = 11505963 Colors Back = 0 Colors Auto Back = 1 Font Style = 0
+AddAtom AddTrigger Alias APICall Arg
+Bind
+Cat cd Commands Console ConsoleClear ConsoleRedirect cp
+DeclareVariable DeleteAtom DeleteVariable Diagnostics DisplayInfo DotNet DotScript
+Echo Encode EndScript Execute ExecuteAtom Exit Extension
+Focus FPS
+Gamma GlobalBind GlobalKey
+Head HTTPGet HUD HUDGroup HUDSet
+InputBox
+Kill
+Line Log LSType LSVersion
+Macro MainWindow MakeShortcut MaxFPS MessageBox mkdir Module MouseClick MouseTo MouseWheel
+Navigation NavPath NavPoint
+Open OSExecute
+PlaySound Press Processor
+Redirect Relay RemoteUplink RemoveTrigger rename RestoreGamma rm rmdir RunScript
+Scripts Services Sessions Squelch
+Tail Test TimedCommand TopLevelObject Type
+UI UIElement
+Version
+WaitFrame Wireframe
+XMLSetting
+/C2"LavishScript TLOs" Colors = 16777215 Colors Back = 0 Colors Auto Back = 1 Font Style = 0
+Arg
+Bool
+Console
+Display
+Event Execute Extension
+Float
+Game
+If InnerSpace Input Int ISMenu
+Keyboard
+LavishGUI LavishNav LavishScript LavishSettings LicenseServer LNavConnection LNavRegion LNavRegionGroup
+Localization
+Math Mouse
+Navigation NavPath NETObject
+PersistentObject Profile
+Query QueuedCommands
+RemoteUplink Return Returning
+Script Select Session Sessions SettingXML String System
+This Time Type
+UIElement UserInput
+Variable VariableScope VideoFeed
+WaitFor
+/C3"Parentheses for Var" STYLE_METHOD Colors = 1535 Colors Back = 0 Colors Auto Back = 1 Font Style = 0
+! !=
+$
+%
+& &&
+(
+)
+*
++
+-
+// /
+< << <=
+==
+> >= >>
+[
+\
+]
+^ ^^
+{
+| ||
+}
+~
+/C4"LavishScript datatypes" STYLE_VARIABLE Colors = 16776960 Colors Back = 0 Colors Auto Back = 1 Font Style = 0
+array astarpathfinder axis
+binary bind bool boolptr button byte byteptr
+collection console
+dataset dijkstrapathfinder display dpad
+event eventvar exists extension
+file filelist filelistentry filepath float float64 float64ptr floatptr
+g15 gdiwindow
+index innerspace input inputdevice int int64 int64ptr intptr ismenu ismenucommand ismenuitem
+ismenuseparator isuisequenceedit iterator
+keyboard
+lavishgui lavishnav lavishscript lavishsettings lguibutton lguicheckbox lguicombobox lguiconsole
+lguielement lguifont lguiframe lguigauge lguihudelement lguilistbox lguilistboxitem lguimap lguimapblip
+lguimessagebox lguiscrollbar lguislider lguitab lguitabcontrol lguitext lguitextentry lguitexture
+lguitooltip lguitree lguitreenode lguiwindow licenseserver lnavaggregate lnavbox lnavconnection
+lnavconnectionref lnavincline lnavpath lnavpathfinder lnavpoint lnavprism lnavradius lnavrect lnavregion
+lnavregiongroup lnavregionref lnavsphere lnavtriangle lnavuniverse localization
+math monitor mouse mutablefilepath mutablestring
+navigation navpath navpoint navworld
+objectcontainer
+persistentref point3f
+query queue
+remoteuplink rgb rgbptr
+script scriptobject scriptobjectref scriptobjecttype session set setting settingattribute settingcomment
+settingnode settingset settingsetref stack string stringptr system
+time type
+uint uintptr unistring
+variable variablescope videofeed
+/C5"LavishScript Control Structures" Colors = 11510059 Colors Back = 0 Colors Auto Back = 1 Font Style = 0
+break
+Case continue
+Default Do
+else elseif
+if
+Switch
+VariableCase
+while
+/C7"LavishScript Var Declarations" Colors = 11505963 Colors Back = 0 Colors Auto Back = 1 Font Style = 0
+#else #elseif #end #endif #endmac #error #if #ifdef #ifndef #include #macro
+declarevariable
+global globalkeep
+local
+script
+variable
