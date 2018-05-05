@@ -129,7 +129,7 @@ EVE:DronesEngageMyTarget[a]
 
 
 #macro MODRELOADING(a)
-	${MyShip.Module[a].IsReloadingAmmo}
+	${MyShip.Module[a].IsReloading}
 #endmac
 
 

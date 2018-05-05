@@ -166,7 +166,7 @@ function main(... Args)
     j:Set[1]
     do
     {
-      if (${Lasers.Get[${j}].IsChangingAmmo})
+      if (${Lasers.Get[${j}].IsReloading})
       {
         wait 15
       }	
