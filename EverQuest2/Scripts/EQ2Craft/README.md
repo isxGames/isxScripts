@@ -1,7 +1,3 @@
-==EQ2Craft
+##EQ2Craft
 
-This directory contains the support files used with the /craft command included with ISXEQ2.   The author and collaborators
-working on /craft work with another (private) repository and then the files are copied here by Amadeus so that the ISXEQ2
-patcher has the files available for download without authentication.
-
-If you are interested in working on /craft, please send Amadeus a PM on IRC.
+This is the EQ2Craft script included with ISXEQ2.  If you wish to add new features to the script, or submit any changes, fixes, etc. simply make a pull request here on github and then let Amadeus know on Discord.

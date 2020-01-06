@@ -23,24 +23,24 @@
 					</Font>
 					<Text>Craft Lite</Text>
 					<OnLeftClick>
-						if ${Script[Buffer:Craft].Variable[CraftLite]}
+						if ${Script[EQ2Craft].Variable[CraftLite]}
 						{
 						UIElement[Main Frame@Craft Selection]:Show
-						Script[Buffer:Craft].Variable[Craft]:SetMode[normal]
+						Script[EQ2Craft].Variable[Craft]:SetMode[normal]
 						UIElement[Craft Selection]:Unminimize
 						This:SetText[Craft Lite]
 						}
 						else
 						{
 						UIElement[Main Frame@Craft Selection]:Hide
-						Script[Buffer:Craft].Variable[Craft]:SetMode[lite]
+						Script[EQ2Craft].Variable[Craft]:SetMode[lite]
 						UIElement[Craft Selection]:Minimize
 						This:SetText[Craft Full]
 						}
 					</OnLeftClick>
 				</Button>
 				<commandbutton name='Custom Close Button' Template='window.Titlebar.Close'>
-					<Command>Script[Buffer:Craft]:End</Command>
+					<Command>Script[EQ2Craft]:End</Command>
 				</commandbutton>
 			</Children>
 		</TitleBar>
@@ -148,13 +148,13 @@
 									<Height>20</Height>
 									<Text>by Name</Text>
 									<OnLoad>
-										if ${Script[Buffer:Craft].Variable[SortLevel]}
+										if ${Script[EQ2Craft].Variable[SortLevel]}
 										{
 										UIElement[Sort Name@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
-										Script[Buffer:Craft]:QueueCommand[Craft:SortbyName]
+										Script[EQ2Craft]:QueueCommand[Craft:SortbyName]
 									</OnLeftClick>
 								</Checkbox>
 								<Checkbox Name='Sort Level'>
@@ -169,13 +169,13 @@
 									<Height>20</Height>
 									<Text>by Level</Text>
 									<OnLoad>
-										if !${Script[Buffer:Craft].Variable[SortLevel]}
+										if !${Script[EQ2Craft].Variable[SortLevel]}
 										{
 										UIElement[Sort Level@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
 									</OnLoad>
 									<OnLeftClick>
-										Script[Buffer:Craft]:QueueCommand[Craft:SortbyLevel]
+										Script[EQ2Craft]:QueueCommand[Craft:SortbyLevel]
 									</OnLeftClick>
 								</Checkbox>
 								<Textentry Name='Level Min'>
@@ -235,7 +235,7 @@
 										{
 										thisbuttondisabled:Set[1]
 										UIElement[Craft Selection].FindUsableChild[Add Recipe,commandbutton]:Hide
-										Script[Buffer:Craft]:QueueCommand[Craft:AddRecipe]
+										Script[EQ2Craft]:QueueCommand[Craft:AddRecipe]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -258,8 +258,8 @@
 									<OnLeftClick>
 										if !${thisbuttonrefresh}
 										{
-										thisbuttonrefresh:Set[1]
-										Script[Buffer:Craft]:QueueCommand[Craft:RefreshList]
+											thisbuttonrefresh:Set[1]
+											Script[EQ2Craft]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -287,7 +287,7 @@
 									<Height>20</Height>
 									<Text>Standard</Text>
 									<OnLoad>
-										if ${Script[Buffer:Craft].Variable[StandardFilter]}
+										if ${Script[EQ2Craft].Variable[StandardFilter]}
 										{
 										UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
@@ -295,19 +295,19 @@
 									<OnLeftClick>
 										if ${UIElement[Standard Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-										Script[Buffer:Craft].Variable[StandardFilter]:Set[TRUE]
+										Script[EQ2Craft].Variable[StandardFilter]:Set[TRUE]
 										}
 										else
 										{
-										Script[Buffer:Craft].Variable[StandardFilter]:Set[FALSE]
+										Script[EQ2Craft].Variable[StandardFilter]:Set[FALSE]
 										}
 
-										Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
+										Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
 
 										if !${thisbuttonrefresh}
 										{
 										thisbuttonrefresh:Set[1]
-										Script[Buffer:Craft]:QueueCommand[Craft:RefreshList]
+										Script[EQ2Craft]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
 								</Checkbox>
@@ -323,7 +323,7 @@
 									<Height>20</Height>
 									<Text>Imbued</Text>
 									<OnLoad>
-										if ${Script[Buffer:Craft].Variable[ImbuedFilter]}
+										if ${Script[EQ2Craft].Variable[ImbuedFilter]}
 										{
 										UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
@@ -331,19 +331,19 @@
 									<OnLeftClick>
 										if ${UIElement[Imbued Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-										Script[Buffer:Craft].Variable[ImbuedFilter]:Set[TRUE]
+										Script[EQ2Craft].Variable[ImbuedFilter]:Set[TRUE]
 										}
 										else
 										{
-										Script[Buffer:Craft].Variable[ImbuedFilter]:Set[FALSE]
+										Script[EQ2Craft].Variable[ImbuedFilter]:Set[FALSE]
 										}
 
-										Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
+										Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
 
 										if !${thisbuttonrefresh}
 										{
 										thisbuttonrefresh:Set[1]
-										Script[Buffer:Craft]:QueueCommand[Craft:RefreshList]
+										Script[EQ2Craft]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
 								</Checkbox>
@@ -359,7 +359,7 @@
 									<Height>20</Height>
 									<Text>Rare</Text>
 									<OnLoad>
-										if ${Script[Buffer:Craft].Variable[RareFilter]}
+										if ${Script[EQ2Craft].Variable[RareFilter]}
 										{
 										UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
@@ -367,19 +367,19 @@
 									<OnLeftClick>
 										if ${UIElement[Rare Filter@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-										Script[Buffer:Craft].Variable[RareFilter]:Set[TRUE]
+										Script[EQ2Craft].Variable[RareFilter]:Set[TRUE]
 										}
 										else
 										{
-										Script[Buffer:Craft].Variable[RareFilter]:Set[FALSE]
+										Script[EQ2Craft].Variable[RareFilter]:Set[FALSE]
 										}
 
-										Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
+										Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
 
 										if !${thisbuttonrefresh}
 										{
 										thisbuttonrefresh:Set[1]
-										Script[Buffer:Craft]:QueueCommand[Craft:RefreshList]
+										Script[EQ2Craft]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
 								</Checkbox>
@@ -395,7 +395,7 @@
 									<Width>20%</Width>
 									<Height>20</Height>
 									<OnLoad>
-										if ${Script[Buffer:Craft].Variable[SecondaryTS]}
+										if ${Script[EQ2Craft].Variable[SecondaryTS]}
 										{
 										UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection]:SetChecked
 										}
@@ -403,19 +403,19 @@
 									<OnLeftClick>
 										if ${UIElement[Secondary Tradeskill@Recipes@Craft Main@Main Frame@Craft Selection].Checked}
 										{
-										Script[Buffer:Craft].Variable[SecondaryTS]:Set[TRUE]
+										Script[EQ2Craft].Variable[SecondaryTS]:Set[TRUE]
 										}
 										else
 										{
-										Script[Buffer:Craft].Variable[SecondaryTS]:Set[FALSE]
+										Script[EQ2Craft].Variable[SecondaryTS]:Set[FALSE]
 										}
 
-										Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
+										Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
 
 										if !${thisbuttonrefresh}
 										{
 										thisbuttonrefresh:Set[1]
-										Script[Buffer:Craft]:QueueCommand[Craft:RefreshList]
+										Script[EQ2Craft]:QueueCommand[Craft:RefreshList]
 										}
 									</OnLeftClick>
 								</Checkbox>
@@ -441,9 +441,9 @@
 									<Width>50</Width>
 									<Height>20</Height>
 									<Text>1</Text>
-									<Command>noop ${Script[Buffer:Craft].Variable[Quality1]:Set[TRUE]} noop ${Script[Buffer:Craft].Variable[Quality2]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality3]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality4]:Set[FALSE]}</Command>
+									<Command>noop ${Script[EQ2Craft].Variable[Quality1]:Set[TRUE]} noop ${Script[EQ2Craft].Variable[Quality2]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality3]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality4]:Set[FALSE]}</Command>
 									<CommandChecked />
-									<Data>${Script[Buffer:Craft].Variable[Quality1]}</Data>
+									<Data>${Script[EQ2Craft].Variable[Quality1]}</Data>
 								</Commandcheckbox>
 								<Commandcheckbox Name='Quality 2'>
 									<Font Template='Tahoma'>
@@ -454,9 +454,9 @@
 									<Width>50</Width>
 									<Height>20</Height>
 									<Text>2</Text>
-									<Command>noop ${Script[Buffer:Craft].Variable[Quality1]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality2]:Set[TRUE]} noop ${Script[Buffer:Craft].Variable[Quality3]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality4]:Set[FALSE]}</Command>
+									<Command>noop ${Script[EQ2Craft].Variable[Quality1]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality2]:Set[TRUE]} noop ${Script[EQ2Craft].Variable[Quality3]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality4]:Set[FALSE]}</Command>
 									<CommandChecked />
-									<Data>${Script[Buffer:Craft].Variable[Quality2]}</Data>
+									<Data>${Script[EQ2Craft].Variable[Quality2]}</Data>
 								</Commandcheckbox>
 								<Commandcheckbox Name='Quality 3'>
 									<Font Template='Tahoma'>
@@ -467,9 +467,9 @@
 									<Width>50</Width>
 									<Height>20</Height>
 									<Text>3</Text>
-									<Command>noop ${Script[Buffer:Craft].Variable[Quality1]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality2]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality3]:Set[TRUE]} noop ${Script[Buffer:Craft].Variable[Quality4]:Set[FALSE]}</Command>
+									<Command>noop ${Script[EQ2Craft].Variable[Quality1]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality2]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality3]:Set[TRUE]} noop ${Script[EQ2Craft].Variable[Quality4]:Set[FALSE]}</Command>
 									<CommandChecked />
-									<Data>${Script[Buffer:Craft].Variable[Quality3]}</Data>
+									<Data>${Script[EQ2Craft].Variable[Quality3]}</Data>
 								</Commandcheckbox>
 								<Commandcheckbox Name='Quality 4'>
 									<Font Template='Tahoma'>
@@ -480,9 +480,9 @@
 									<Width>50</Width>
 									<Height>20</Height>
 									<Text>4</Text>
-									<Command>noop ${Script[Buffer:Craft].Variable[Quality1]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality2]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality3]:Set[FALSE]} noop ${Script[Buffer:Craft].Variable[Quality4]:Set[TRUE]}</Command>
+									<Command>noop ${Script[EQ2Craft].Variable[Quality1]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality2]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality3]:Set[FALSE]} noop ${Script[EQ2Craft].Variable[Quality4]:Set[TRUE]}</Command>
 									<CommandChecked />
-									<Data>${Script[Buffer:Craft].Variable[Quality4]}</Data>
+									<Data>${Script[EQ2Craft].Variable[Quality4]}</Data>
 								</Commandcheckbox>
 								<Text Name='Gauge Label'>
 									<Visible>0</Visible>
@@ -499,7 +499,7 @@
 								</Text>
 								<VariableGauge Name='Process Recipe'>
 									<Visible>0</Visible>
-									<Data>${Script[Buffer:Craft].Variable[gaugelevel]}</Data>
+									<Data>${Script[EQ2Craft].Variable[gaugelevel]}</Data>
 									<X>106</X>
 									<Y>152</Y>
 									<Border>3</Border>
@@ -514,7 +514,7 @@
 									<Height>20</Height>
 									<Text>Begin Crafting</Text>
 									<OnLeftClick>
-										Script[Buffer:Craft].Variable[startrecipe]:Set[TRUE]
+										Script[EQ2Craft].Variable[startrecipe]:Set[TRUE]
 										UIElement[CraftLite@Titlebar@Craft Selection]:Hide
 									</OnLeftClick>
 								</Commandbutton>
@@ -526,7 +526,7 @@
 									<Height>20</Height>
 									<Text>Resume Crafting</Text>
 									<OnLeftClick>
-										Script[Buffer:Craft].Variable[resumecraft]:Set[TRUE]
+										Script[EQ2Craft].Variable[resumecraft]:Set[TRUE]
 									</OnLeftClick>
 								</Commandbutton>
 								<Commandcheckbox Name='Save List'>
@@ -539,9 +539,9 @@
 									<Width>100</Width>
 									<Height>20</Height>
 									<Text>Save Recipe List</Text>
-									<Command>noop ${Script[Buffer:Craft].Variable[SaveList]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-									<CommandChecked>noop ${Script[Buffer:Craft].Variable[SaveList]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-									<Data>${Script[Buffer:Craft].Variable[SaveList]}</Data>
+									<Command>noop ${Script[EQ2Craft].Variable[SaveList]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+									<CommandChecked>noop ${Script[EQ2Craft].Variable[SaveList]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+									<Data>${Script[EQ2Craft].Variable[SaveList]}</Data>
 								</Commandcheckbox>
 								<Text Name='Resume Label'>
 									<Visible>0</Visible>
@@ -588,7 +588,7 @@
 									This.ItemByText[${Me.TSSubClass}]:Select
 									</OnLoad>
 									<OnSelect>
-										Script[Buffer:Craft].VariableScope.Craft:PopulateFavorites[${This.SelectedItem.Text}]
+										Script[EQ2Craft].VariableScope.Craft:PopulateFavorites[${This.SelectedItem.Text}]
 									</OnSelect>
 									<Items>
 										<Item Value='1'>ALL</Item>
@@ -621,7 +621,7 @@
 									<Height>20</Height>
 									<Text>Load</Text>
 									<OnLeftClick>
-										Script[Buffer:Craft]:QueueCommand[Craft:LoadRecipeList]
+										Script[EQ2Craft]:QueueCommand[Craft:LoadRecipeList]
 									</OnLeftClick>
 								</Commandbutton>
 								<Text Name='Remove Title'>
@@ -641,7 +641,7 @@
 									<Height>20</Height>
 									<Text>Remove</Text>
 									<OnLeftClick>
-										Script[Buffer:Craft]:QueueCommand[Craft:RemoveRecipe]
+										Script[EQ2Craft]:QueueCommand[Craft:RemoveRecipe]
 									</OnLeftClick>
 								</Commandbutton>
 								<Text Name='Add Level Title'>
@@ -681,7 +681,7 @@
 										{
 										thisbuttonadd:Set[1]
 										UIElement[Craft Selection].FindUsableChild[Add Level,commandbutton]:Hide
-										Script[Buffer:Craft]:QueueCommand[Craft:LoadLevel]
+										Script[EQ2Craft]:QueueCommand[Craft:LoadLevel]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -695,7 +695,7 @@
 										if !${thisbuttonsubmit}
 										{
 										thisbuttonsubmit:Set[1]
-										Script[Buffer:Craft]:QueueCommand[call ProcessQueue]
+										Script[EQ2Craft]:QueueCommand[call ProcessQueue]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -706,7 +706,7 @@
 									<Height>30</Height>
 									<Text>Save Queue</Text>
 									<OnLeftClick>
-										Script[Buffer:Craft]:QueueCommand[call SaveQueueList]
+										Script[EQ2Craft]:QueueCommand[call SaveQueueList]
 									</OnLeftClick>
 								</Commandbutton>
 								<Commandbutton Name='Clear Recipe Queue'>
@@ -719,7 +719,7 @@
 										if !${thisbuttonlist}
 										{
 										thisbuttonlist:Set[1]
-										Script[Buffer:Craft]:QueueCommand[Craft:ClearAllRecipes]
+										Script[EQ2Craft]:QueueCommand[Craft:ClearAllRecipes]
 										}
 									</OnLeftClick>
 								</Commandbutton>
@@ -736,7 +736,7 @@
 								</Text>
 								<VariableGauge Name="List Recipe">
 									<Visible>0</Visible>
-									<Data>${Script[Buffer:Craft].Variable[gaugelevel]}</Data>
+									<Data>${Script[EQ2Craft].Variable[gaugelevel]}</Data>
 									<X>106</X>
 									<Y>114</Y>
 									<Border>3</Border>
@@ -794,9 +794,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Wait for Power to Regenerate to:              % before crafting Recipe</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[WaitforPower]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[WaitforPower]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[WaitforPower]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[WaitforPower]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[WaitforPower]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[WaitforPower]}</Data>
 											</Commandcheckbox>
 											<Textentry Name='Power Regen'>
 												<X>190</X>
@@ -815,9 +815,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Camp out if this craft session has exceeded                   mins</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[CampOut]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[CampOut]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[CampOut]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[CampOut]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[CampOut]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[CampOut]}</Data>
 											</Commandcheckbox>
 											<Textentry Name='Camp Timer'>
 												<X>240</X>
@@ -826,11 +826,11 @@
 												<Height>20</Height>
 												<MaxLength>4</MaxLength>
 												<Color>FFDDBB00</Color>
-												<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[CampTimer]}]</OnLoad>
+												<OnLoad>This:SetText[${Script[EQ2Craft].Variable[CampTimer]}]</OnLoad>
 												<OnChange>
 													LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Camp out after a specified time has elapsed for a crafting session?]:Set[${This.Text}]
-													Script[Buffer:Craft].Variable[CampTimer]:Set[${This.Text}]
-													LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+													Script[EQ2Craft].Variable[CampTimer]:Set[${This.Text}]
+													LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 												</OnChange>
 											</Textentry>
 											<Commandcheckbox name='Auto Transmute'>
@@ -842,9 +842,9 @@
 												<Width>150</Width>
 												<Height>20</Height>
 												<Text>Automatically Transmute Master Crafted Items after Creation</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[AutoTransmute]:Set[TRUE]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[AutoTransmute]:Set[FALSE]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[AutoTransmute]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[AutoTransmute]:Set[TRUE]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[AutoTransmute]:Set[FALSE]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[AutoTransmute]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox name='Stop Crafting At Secondary Max Level'>
 												<Font Template='Tahoma'>
@@ -855,9 +855,9 @@
 												<Width>150</Width>
 												<Height>20</Height>
 												<Text>Stop crafting when secondary tradeskill achieves maximum level</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[StopCraftingAtSecondaryMaxLevel]:Set[TRUE]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[StopCraftingAtSecondaryMaxLevel]:Set[FALSE]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[StopCraftingAtSecondaryMaxLevel]:Set[TRUE]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[StopCraftingAtSecondaryMaxLevel]:Set[FALSE]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[StopCraftingAtSecondaryMaxLevel]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='Save Recipe List Range'>
 												<Font Template='Tahoma'>
@@ -868,9 +868,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Save recipe list range</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[RecipeListRange]:Set[TRUE]} ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[RecipeListRange]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[RecipeListRange]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[RecipeListRange]:Set[TRUE]} ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[RecipeListRange]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[RecipeListRange]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='GuildPrivacy'>
 												<Font Template='Tahoma'>
@@ -881,9 +881,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Disable guild notifications while crafting writs</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[GuildPrivacy]:Set[TRUE]} ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[GuildPrivacy]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[GuildPrivacy]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[GuildPrivacy]:Set[TRUE]} ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[GuildPrivacy]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[GuildPrivacy]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='GuildPrivacyAlways'>
 												<Font Template='Tahoma'>
@@ -894,9 +894,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Disable guild notifications while craft is running (ALWAYS)</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[GuildPrivacyAlways]:Set[TRUE]} ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[GuildPrivacyAlways]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[GuildPrivacyAlways]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[GuildPrivacyAlways]:Set[TRUE]} ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[GuildPrivacyAlways]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[GuildPrivacyAlways]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='DeclineInvites'>
 												<Font Template='Tahoma'>
@@ -908,11 +908,11 @@
 												<Height>20</Height>
 												<Text>Ignore Duels, Trades, and Groups when craft script is running</Text>
 												<OnLeftClick>
-													Script[Buffer:Craft].Variable[DeclineInvites]:Set[${This.Checked}]
-													Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
-													Script[Buffer:Craft].VariableScope.Craft:DoIgnores[${This.Checked}]
+													Script[EQ2Craft].Variable[DeclineInvites]:Set[${This.Checked}]
+													Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
+													Script[EQ2Craft].VariableScope.Craft:DoIgnores[${This.Checked}]
 												</OnLeftClick>
-												<Data>${Script[Buffer:Craft].VariableScope.DeclineInvites}</Data>
+												<Data>${Script[EQ2Craft].VariableScope.DeclineInvites}</Data>
 											</Commandcheckbox>
 											<Text Name='Craft Delay Text'>
 												<X>30</X>
@@ -931,11 +931,11 @@
 												<Height>20</Height>
 												<MaxLength>4</MaxLength>
 												<Color>FFDDBB00</Color>
-												<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[CraftDelay]}]</OnLoad>
+												<OnLoad>This:SetText[${Script[EQ2Craft].Variable[CraftDelay]}]</OnLoad>
 												<OnChange>
 													LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Time to wait between combines?]:Set[${This.Text}]
-													Script[Buffer:Craft].Variable[CraftDelay]:Set[${This.Text}]
-													LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+													Script[EQ2Craft].Variable[CraftDelay]:Set[${This.Text}]
+													LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 												</OnChange>
 											</Textentry>
 											<Commandcheckbox Name='Craft TTS'>
@@ -949,10 +949,10 @@
 													Requires LSMTTS.dll, available separately in the Modules folder of SVN.
 												</Autotooltip>
 												<OnLeftClick>
-													Script[Buffer:Craft].VariableScope.EnableTTS:Set[${This.Checked}]
-													Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
+													Script[EQ2Craft].VariableScope.EnableTTS:Set[${This.Checked}]
+													Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
 												</OnLeftClick>
-												<Data>${Script[Buffer:Craft].VariableScope.EnableTTS}</Data>
+												<Data>${Script[EQ2Craft].VariableScope.EnableTTS}</Data>
 											</Commandcheckbox>
 
 										</Tab>
@@ -966,9 +966,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Show entire Shopping List</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[ShowAllLists]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[ShowAllLists]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[ShowAllLists]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[ShowAllLists]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[ShowAllLists]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='Prompt Resume'>
 												<Font Template='Tahoma'>
@@ -979,9 +979,9 @@
 												<Width>100</Width>
 												<Height>20</Height>
 												<Text>Prompt 'Resume Crafting' when buying Harvests</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[PromptResume]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[PromptResume]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[PromptResume]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[PromptResume]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[PromptResume]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[PromptResume]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='BuyCommon'>
 												<Font Template='Tahoma'>
@@ -992,9 +992,9 @@
 												<Width>150</Width>
 												<Height>20</Height>
 												<Text>Buy ALL Vendor bought COMMON components automatically.</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[BuyCommon]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[BuyCommon]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[BuyCommon]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[BuyCommon]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[BuyCommon]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[BuyCommon]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='BuyFuel'>
 												<Font Template='Tahoma'>
@@ -1005,9 +1005,9 @@
 												<Width>150</Width>
 												<Height>20</Height>
 												<Text>Buy ALL FUEL components automatically.</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[BuyFuel]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[BuyFuel]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[BuyFuel]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[BuyFuel]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[BuyFuel]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[BuyFuel]}</Data>
 											</Commandcheckbox>
 											<Commandcheckbox Name='BuyHarvest'>
 												<Font Template='Tahoma'>
@@ -1018,9 +1018,9 @@
 												<Width>150</Width>
 												<Height>20</Height>
 												<Text>Buy ALL Harvests from Broker to a MAX PRICE:                  (Silver)</Text>
-												<Command>noop ${Script[Buffer:Craft].Variable[BuyHarvest]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-												<CommandChecked>noop ${Script[Buffer:Craft].Variable[BuyHarvest]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-												<Data>${Script[Buffer:Craft].Variable[BuyHarvest]}</Data>
+												<Command>noop ${Script[EQ2Craft].Variable[BuyHarvest]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+												<CommandChecked>noop ${Script[EQ2Craft].Variable[BuyHarvest]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+												<Data>${Script[EQ2Craft].Variable[BuyHarvest]}</Data>
 											</Commandcheckbox>
 											<Textentry Name='Max Buy Price'>
 												<X>280</X>
@@ -1029,11 +1029,11 @@
 												<Height>20</Height>
 												<MaxLength>5</MaxLength>
 												<Color>FFDDBB00</Color>
-												<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[MaxBuyPrice]}]</OnLoad>
+												<OnLoad>This:SetText[${Script[EQ2Craft].Variable[MaxBuyPrice]}]</OnLoad>
 												<OnChange>
 													LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Specify the MAXIMUM price for purchasing Resources]:Set[${This.Text}]
-													Script[Buffer:Craft].Variable[MaxBuyPrice]:Set[${This.Text}]
-													LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+													Script[EQ2Craft].Variable[MaxBuyPrice]:Set[${This.Text}]
+													LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 												</OnChange>
 											</Textentry>
 
@@ -1072,7 +1072,7 @@
 														<Height>20</Height>
 														<MaxLength>20</MaxLength>
 														<Color>FFDDBB00</Color>
-														<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[AutoRunKey]}]</OnLoad>
+														<OnLoad>This:SetText[${Script[EQ2Craft].Variable[AutoRunKey]}]</OnLoad>
 														<OnChange>
 															if ${ICraft.Version} >= 8.97
 															{
@@ -1082,9 +1082,9 @@
 															{
 
 																LavishSettings[Craft Config File].FindSet[General Options].FindSetting[AutoRun Key]:Set[${This.Text}]
-																Script[Buffer:Craft].Variable[AutoRunKey]:Set[${This.Text}]
-																LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-																Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+																Script[EQ2Craft].Variable[AutoRunKey]:Set[${This.Text}]
+																LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
+																Script[EQ2Craft]:QueueCommand[Craft:UpdateNavKeys]
 															}
 														</OnChange>
 													</Textentry>
@@ -1105,7 +1105,7 @@
 														<Height>20</Height>
 														<MaxLength>20</MaxLength>
 														<Color>FFDDBB00</Color>
-														<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[BackwardKey]}]</OnLoad>
+														<OnLoad>This:SetText[${Script[EQ2Craft].Variable[BackwardKey]}]</OnLoad>
 														<OnChange>
 															if ${ICraft.Version} >= 8.97
 															{
@@ -1114,9 +1114,9 @@
 															else
 															{
 																LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Backwards Key]:Set[${This.Text}]
-																Script[Buffer:Craft].Variable[BackwardKey]:Set[${This.Text}]
-																LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-																Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+																Script[EQ2Craft].Variable[BackwardKey]:Set[${This.Text}]
+																LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
+																Script[EQ2Craft]:QueueCommand[Craft:UpdateNavKeys]
 															}
 														</OnChange>
 													</Textentry>
@@ -1137,7 +1137,7 @@
 														<Height>20</Height>
 														<MaxLength>20</MaxLength>
 														<Color>FFDDBB00</Color>
-														<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[StrafeRightKey]}]</OnLoad>
+														<OnLoad>This:SetText[${Script[EQ2Craft].Variable[StrafeRightKey]}]</OnLoad>
 														<OnChange>
 															if ${ICraft.Version} >= 8.97
 															{
@@ -1146,9 +1146,9 @@
 															else
 															{
 																LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeRight Key]:Set[${This.Text}]
-																Script[Buffer:Craft].Variable[StrafeRightKey]:Set[${This.Text}]
-																LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-																Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+																Script[EQ2Craft].Variable[StrafeRightKey]:Set[${This.Text}]
+																LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
+																Script[EQ2Craft]:QueueCommand[Craft:UpdateNavKeys]
 															}
 														</OnChange>
 													</Textentry>
@@ -1169,7 +1169,7 @@
 														<Height>20</Height>
 														<MaxLength>20</MaxLength>
 														<Color>FFDDBB00</Color>
-														<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[StrafeLeftKey]}]</OnLoad>
+														<OnLoad>This:SetText[${Script[EQ2Craft].Variable[StrafeLeftKey]}]</OnLoad>
 														<OnChange>
 															if ${ICraft.Version} >= 8.97
 															{
@@ -1178,9 +1178,9 @@
 															else
 															{
 																LavishSettings[Craft Config File].FindSet[General Options].FindSetting[StrafeLeft Key]:Set[${This.Text}]
-																Script[Buffer:Craft].Variable[StrafeLeftKey]:Set[${This.Text}]
-																LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-																Script[Buffer:Craft]:QueueCommand[Craft:UpdateNavKeys]
+																Script[EQ2Craft].Variable[StrafeLeftKey]:Set[${This.Text}]
+																LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
+																Script[EQ2Craft]:QueueCommand[Craft:UpdateNavKeys]
 															}
 														</OnChange>
 													</Textentry>
@@ -1193,9 +1193,9 @@
 														<Width>100</Width>
 														<Height>20</Height>
 														<Text>Use the current TARGETTED Station ONLY (No movement)</Text>
-														<Command>noop ${Script[Buffer:Craft].Variable[CurrentStation]:Set[TRUE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</Command>
-														<CommandChecked>noop ${Script[Buffer:Craft].Variable[CurrentStation]:Set[FALSE]} noop ${Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
-														<Data>${Script[Buffer:Craft].Variable[CurrentStation]}</Data>
+														<Command>noop ${Script[EQ2Craft].Variable[CurrentStation]:Set[TRUE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</Command>
+														<CommandChecked>noop ${Script[EQ2Craft].Variable[CurrentStation]:Set[FALSE]} noop ${Script[EQ2Craft]:ExecuteAtom[UpdateSettings]}</CommandChecked>
+														<Data>${Script[EQ2Craft].Variable[CurrentStation]}</Data>
 													</Commandcheckbox>
 
 												</Children>
@@ -1226,11 +1226,11 @@
 														<Height>20</Height>
 														<MaxLength>4</MaxLength>
 														<Visible>FALSE</Visible>
-														<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[PathPrecision]}]</OnLoad>
+														<OnLoad>This:SetText[${Script[EQ2Craft].Variable[PathPrecision]}]</OnLoad>
 														<OnChange>
 															LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Pather Precision]:Set[${This.Text}]
-															Script[Buffer:Craft].Variable[PathPrecision]:Set[${This.Text}]
-															LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+															Script[EQ2Craft].Variable[PathPrecision]:Set[${This.Text}]
+															LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 														</OnChange>
 														<Color>FFDDBB00</Color>
 													</Textentry>
@@ -1338,7 +1338,7 @@
 														<Height>20</Height>
 														<Text>Save Threshold</Text>
 														<OnLeftClick>
-															Script[Buffer:Craft]:QueueCommand[Craft:SaveThreshold]
+															Script[EQ2Craft]:QueueCommand[Craft:SaveThreshold]
 														</OnLeftClick>
 													</Commandbutton>
 													<Commandbutton Name='Reset Threshold'>
@@ -1348,7 +1348,7 @@
 														<Height>20</Height>
 														<Text>Reset Threshold</Text>
 														<OnLeftClick>
-															Script[Buffer:Craft]:QueueCommand[Craft:ResetThreshold]
+															Script[EQ2Craft]:QueueCommand[Craft:ResetThreshold]
 														</OnLeftClick>
 													</Commandbutton>
 												</Children>
@@ -1380,7 +1380,7 @@
 			<OnRender>
 				if ${CG_Frame_Counter} == 0
 				{
-				if ${Script[Buffer:Craft].Variable[CraftVersion]} &gt; 8.93
+				if ${Script[EQ2Craft].Variable[CraftVersion]} &gt; 8.93
 				{
 					if ${Zone.ShortName.Find[guildhall]}
 					{
@@ -1407,47 +1407,45 @@
 				}
 				CG_Frame_Counter:Set[${Math.Calc[(${CG_Frame_Counter}+1)%10]}]
 			</OnRender>
-								</Text>
-								<Textentry Name='Writ Count'>
-									<X>130</X>
-									<Y>100</Y>
-									<Width>35</Width>
-									<Height>20</Height>
-									<MaxLength>4</MaxLength>
-									<Color>FFDDBB00</Color>
+			</Text>
+			<Textentry Name='Writ Count'>
+				<X>130</X>
+				<Y>100</Y>
+				<Width>35</Width>
+				<Height>20</Height>
+				<MaxLength>4</MaxLength>
+				<Color>FFDDBB00</Color>
 			<Visible>0</Visible>
 <!--
-									<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[WritCount]}]</OnLoad>
-									<OnChange>
-										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${This.Text}]
-										Script[Buffer:Craft].Variable[WritCount]:Set[${This.Text}]
-										LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
-									</OnChange>
-									<AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
+			<OnLoad>This:SetText[${Script[EQ2Craft].Variable[WritCount]}]</OnLoad>
+			<OnChange>
+				LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${This.Text}]
+				Script[EQ2Craft].Variable[WritCount]:Set[${This.Text}]
+				LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
+			</OnChange>
+			<AutoTooltip>Number of writs to complete before stopping. Max: 5</AutoTooltip>
 -->
-								</Textentry>
+		</Textentry>
 		<Text Name='NumWrits'>
 			<X>130</X>
-									<Y>15</Y>
-									<Width>35</Width>
-									<Height>20</Height>
-									<Color>FFDDBB00</Color>
+			<Y>15</Y>
+			<Width>35</Width>
+			<Height>20</Height>
+			<Color>FFDDBB00</Color>
 			<OnLoad>
-				if ${Script[Buffer:Craft].Variable[CraftVersion]} &lt;= 8.93
+				if ${Script[EQ2Craft].Variable[CraftVersion]} &lt;= 8.93
 				{
 					This:Hide
 				}
-				This:SetText[${Script[Buffer:Craft].Variable[WritCount]}]
+				This:SetText[${Script[EQ2Craft].Variable[WritCount]}]
 			</OnLoad>
-
 		</Text>
 		<Text Name='NumWritsOOG'>
 			<X>130</X>
-									<Y>15</Y>
-									<Width>35</Width>
-									<Height>20</Height>
-									<Color>FFDDBB00</Color>
-
+			<Y>15</Y>
+			<Width>35</Width>
+			<Height>20</Height>
+			<Color>FFDDBB00</Color>
 		</Text>
 		<Slider Name='WritSlider'>
 			<X>30</X>
@@ -1458,7 +1456,7 @@
 			<OnLoad>
 				This:SetValue[${Math.Calc[${This.Parent.FindChild[NumWrits].Text} - 1].Int}]
 				This.Parent.FindChild[NumWritsOOG]:SetText[${Math.Calc[(${This.Value}/2)+1].Int}]
-				if ${Script[Buffer:Craft].Variable[CraftVersion]} &lt;= 8.93
+				if ${Script[EQ2Craft].Variable[CraftVersion]} &lt;= 8.93
 				{
 					This.Parent.FindChild[Writ Count]:SetText[${This.Parent.FindChild[NumWritsOOG].Text}]
 										}
@@ -1467,13 +1465,13 @@
 				variable int ThisValue=${Math.Calc[${This.Value}+1].Int}
 				This.Parent.FindChild[NumWrits]:SetText[${ThisValue}]
 				This.Parent.FindChild[NumWritsOOG]:SetText[${Math.Calc[(${This.Value}/2)+1].Int}]
-				if ${Script[Buffer:Craft].Variable[CraftVersion]} &lt;= 8.93
+				if ${Script[EQ2Craft].Variable[CraftVersion]} &lt;= 8.93
 				{
 					This.Parent.FindChild[Writ Count]:SetText[${This.Parent.FindChild[NumWritsOOG].Text}]
 										}
 										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Writs to create per craft session?]:Set[${ThisValue}]
-										Script[Buffer:Craft].Variable[WritCount]:Set[${ThisValue}]
-										LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+										Script[EQ2Craft].Variable[WritCount]:Set[${ThisValue}]
+										LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 
 			</OnChange>
 		</Slider>
@@ -1497,11 +1495,11 @@
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-									<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[WritQty]}]</OnLoad>
+									<OnLoad>This:SetText[${Script[EQ2Craft].Variable[WritQty]}]</OnLoad>
 									<OnChange>
 										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[How many Recipes per Writ?]:Set[${This.Text}]
-										Script[Buffer:Craft].Variable[WritQty]:Set[${This.Text}]
-										LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+										Script[EQ2Craft].Variable[WritQty]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 									</OnChange>
 								</Textentry> -->
 								<Text Name='Tier Label'>
@@ -1524,11 +1522,11 @@
 									<Height>20</Height>
 									<MaxLength>4</MaxLength>
 									<Color>FFDDBB00</Color>
-									<OnLoad>This:SetText[${Script[Buffer:Craft].Variable[Tier]}]</OnLoad>
+									<OnLoad>This:SetText[${Script[EQ2Craft].Variable[Tier]}]</OnLoad>
 									<OnChange>
 										LavishSettings[Craft Config File].FindSet[General Options].FindSetting[Which Writ Tier to use?]:Set[${This.Text}]
-										Script[Buffer:Craft].Variable[Tier]:Set[${This.Text}]
-										LavishSettings[Craft Config File]:Export[${Script[Buffer:Craft].Variable[configfile]}]
+										Script[EQ2Craft].Variable[Tier]:Set[${This.Text}]
+										LavishSettings[Craft Config File]:Export[${Script[EQ2Craft].Variable[configfile]}]
 									</OnChange>
 									<AutoTooltip>Conversation choice for writ selection, starting with 1 at the top.</AutoTooltip>
 								</Textentry>
@@ -1635,7 +1633,7 @@
 									<Font Template='Tahoma'>
 										<Color>FFEBDEAA</Color>
 									</Font>
-									<Text>Automatic Crafting Bot v${Script[Buffer:Craft].Variable[CraftVersion]}</Text>
+									<Text>Automatic Crafting Bot v${Script[EQ2Craft].Variable[CraftVersion]}</Text>
 								</Text>
 								<Text Name='Craft About By'>
 									<X>0</X>
@@ -1736,7 +1734,7 @@ Valerian
 						<Height>20</Height>
 						<Text>Quit</Text>
 						<OnLeftClick>
-							Script[Buffer:Craft].Variable[endcraft]:Set[TRUE]
+							Script[EQ2Craft].Variable[endcraft]:Set[TRUE]
 							UIElement[Craft Selection].FindUsableChild[Quit Button,commandbutton]:Hide
 							UIElement[Craft Selection].FindUsableChild[Pause Button,commandbutton]:Hide
 						</OnLeftClick>
@@ -1772,7 +1770,7 @@ Valerian
 						<Height>20</Height>
 						<Text>Camp out after Craft Session is complete</Text>
 						<OnLoad>
-							if ${Script[Buffer:Craft].Variable[CampNow]}
+							if ${Script[EQ2Craft].Variable[CampNow]}
 							{
 							UIElement[Camp Now@Craft Selection]:SetChecked
 							}
@@ -1780,13 +1778,13 @@ Valerian
 						<OnLeftClick>
 							if ${UIElement[Camp Now@Craft Selection].Checked}
 							{
-							Script[Buffer:Craft].Variable[CampNow]:Set[TRUE]
+							Script[EQ2Craft].Variable[CampNow]:Set[TRUE]
 							}
 							else
 							{
-							Script[Buffer:Craft].Variable[CampNow]:Set[FALSE]
+							Script[EQ2Craft].Variable[CampNow]:Set[FALSE]
 							}
-							Script[Buffer:Craft]:ExecuteAtom[UpdateSettings]
+							Script[EQ2Craft]:ExecuteAtom[UpdateSettings]
 						</OnLeftClick>
 					</Checkbox>
 					<Text Name='Writs Remaining'>
