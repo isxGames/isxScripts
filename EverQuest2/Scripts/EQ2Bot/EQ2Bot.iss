@@ -377,10 +377,10 @@ function main(string Args)
 	;;;;;;;;;;;;;;;;;
 	;;;; Set strings used in UI
 	;;;
-	if (${Me.Level} < 95)
-		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${CharacterSet.FindSet[Temporary Settings]:AddSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
-	elseif ${Me.TotalEarnedAPs} < 320
-		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
+	if (${Me.Level} < 120)
+		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings]:AddSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
+	elseif ${Me.TotalEarnedAPs} < 350
+		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 	else
 		GainedXPString:Set[Gained XP:  N/A]
 	;;;
@@ -445,10 +445,10 @@ function main(string Args)
 		;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
 		;;;; EVERY frame.  By moving things here, we can reduce the number of times things are called, increasing efficiency (when desired.)
 		;;;
-		if (${Me.Level} < 95)
-			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Me.Exp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
-		elseif ${Me.TotalEarnedAPs} < 320
-			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Me.APExp}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
+		if (${Me.Level} < 120)
+			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
+		elseif ${Me.TotalEarnedAPs} < 350
+			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
 		else
 			GainedXPString:Set[Gained XP:  N/A]
 		;;;
@@ -1147,11 +1147,11 @@ function main(string Args)
 		}
 		
 		; Check if we have leveled and reset XP Calculations in UI
-		if ${Me.Level} < 95
+		if ${Me.Level} < 120
 		{
 			if ${Me.Level} > ${StartLevel} && !${CloseUI}
 			{
-				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Me.Exp}]
+				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Int[${Me.GetGameData[Self.Experience].Label}]}]
 				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 			}
 		}
@@ -1160,13 +1160,13 @@ function main(string Args)
 		;{
 		;	if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
 		;	{
-		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Me.APExp}]
+		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Int[${Me.GetGameData[Achievement.Points].Label}]}]
 		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 		;	}
 		;}
 
 		; Check if we have leveled and reload spells
-		if ${Me.Level}>${StartLevel} && ${Me.Level}<95
+		if ${Me.Level}>${StartLevel} && ${Me.Level}<120
 		{
 			EQ2Bot:Init_Config
 			call Buff_Init
@@ -4811,8 +4811,8 @@ function StartBot()
 	variable int tempvar1
 	variable int tempvar2
 
-	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Me.Exp}]
-	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Me.APExp}]
+	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Int[${Me.GetGameData[Self.Experience].Label}]}]
+	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Int[${Me.GetGameData[Achievement.Points].Label}]}]
 	CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
 
 	if ${CloseUI}
