@@ -1349,9 +1349,9 @@ function CastSpellRange(... Args)
 	}
 
 	;if a target was specified, and we can't find it, lets not try to cast
-	if ${TargetID}>0 && !${Actor[${TargetID}](exists)}
+	if ${TargetID}>0 && !${Actor[${TargetID}].Name(exists)}
 	{
-		;Debug:Echo["CastSpellRange() -- TargetID was greater than zero; however, it doesn't exist!"]
+		Debug:Echo["CastSpellRange() -- TargetID was greater than zero; however, it doesn't exist!"]
 		return -1
 	}
 
@@ -1575,11 +1575,11 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 	;echo CastSpell ${spell}
 	variable int Counter
 	variable float TimeOut
-	;Debug:Echo["EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${TargetID},${castwhilemoving},${WaitWhileCasting})"]
-	;Debug:Echo["EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"]
-	;Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
-	;Debug:Echo["EQ2Bot-Debug:: castwhilemoving: ${castwhilemoving} - WaitWhileCasting: ${WaitWhileCasting}"]
-	;Debug:Echo["EQ2Bot-Debug:: ------------------------------------------------"]
+	Debug:Echo["EQ2Bot-Debug:: CastSpell('${spell}',${spellid},${TargetID},${castwhilemoving},${WaitWhileCasting})"]
+	Debug:Echo["EQ2Bot-Debug:: LastQueuedAbility: ${LastQueuedAbility}"]
+	Debug:Echo["EQ2Bot-Debug:: ${spell} ready?  ${Me.Ability[${spell}].IsReady}"]
+	Debug:Echo["EQ2Bot-Debug:: castwhilemoving: ${castwhilemoving} - WaitWhileCasting: ${WaitWhileCasting}"]
+	Debug:Echo["EQ2Bot-Debug:: ------------------------------------------------"]
 
 	if !${spellid}
 		spellid:Set[${Me.Ability[${spell}].ID}]
@@ -1620,6 +1620,13 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			wait 10 ${Target.ID}==${TargetID}
 		}
 	}
+
+	if (${TargetID} > 0 && !${Actor[${TargetID}].Name(exists)})
+	{
+		Debug:Echo["EQ2Bot-Debug:: TargetID > 0 (${TargetID}) but does not exist! --> Returning"]
+		LastQueuedAbility:Set[]
+		return
+	}		
 
 	;Debug:Echo["EQ2Bot-Debug:: Queueing '${spell}'"]
 	CurrentAction:Set[Queueing '${spell}']
@@ -4465,9 +4472,9 @@ atom(script) LootWDw(string ID)
 	if ${PauseBot} || !${StartBot}
 		return
 
-	;Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
-	;Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
-	;Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
+	Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
+	Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
+	Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
 
 	declare i int local
 	variable int tmpcnt=1
@@ -4486,22 +4493,23 @@ atom(script) LootWDw(string ID)
 			break
 	}
 
-	if (${ID.Equal[${LastWindow}]})
+	if (${ID.Equal[${LastWindow}]} && !${LootMethod.Equal[Idle]})
 	{
-			switch ${LootWindow[${ID}].Type}
-			{
-				case Free For All
-				case Lottery
-					LootWindow[${ID}]:DeclineLotto
-					return
-				case Need Before Greed
-					LootWindow[${ID}]:DeclineNBG
-					return
-				case Unknown
-				Default
-					echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
-					return
-			}
+		Debug:Echo["Already processed this LootWindow.  Declining..."]
+		switch ${LootWindow[${ID}].Type}
+		{
+			case Free For All
+			case Lottery
+				LootWindow[${ID}]:DeclineLotto
+				return
+			case Need Before Greed
+				LootWindow[${ID}]:DeclineNBG
+				return
+			case Unknown
+			Default
+				echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
+				return
+		}
 	}
 	
 	LastWindow:Set[${ID}]
@@ -4799,7 +4807,7 @@ function VerifyTarget(uint TargetID=0)
 					return "FALSE"
 				}
 			}
-			elseif (!${Actor[${TargetID}](exists)} || ${Actor[${TargetID}].IsDead})
+			elseif (!${Actor[${TargetID}].Name(exists)} || ${Actor[${TargetID}].IsDead})
 				return "FALSE"
 		}
 

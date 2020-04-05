@@ -322,9 +322,9 @@ function Buff_Routine(int xAction)
 		case Tactics_Target
 			variable bool TacticsTargetExists = FALSE	
 			
-			if (${Me.Group} < 2)
+			if (${Me.Group} < 2 || ${Me.Level} < 21)
 			{
-				UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText["No one"]:Select
+				UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText["No One"]:Select
 				TacticsTarget:Set[]
 				break
 			}
@@ -352,7 +352,7 @@ function Buff_Routine(int xAction)
 						TacticsTarget:Set["${MainTankPC}:PC"]
 						
 						
-          UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${TacticsTarget}]
+          			UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${TacticsTarget}]
 					UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${TacticsTarget}]:Select
 					echo "Tactics_Target:: UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]: '${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}'"
 				}			
