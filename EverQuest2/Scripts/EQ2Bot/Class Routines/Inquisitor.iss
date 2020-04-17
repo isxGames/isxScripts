@@ -85,7 +85,7 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		call CheckHeals
 
@@ -366,14 +366,14 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffAuraGroupMember.Token[1,:]}]}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}](exists)}
+			if ${Actor[${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffAuraGroupMember.Token[2,:]},${BuffAuraGroupMember.Token[1,:]}].ID}
 			break
 		case BuffShieldAlly
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.Name.Equal[${BuffShieldAllyGroupMember.Token[1,:]}]}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}](exists)}
+			if ${Actor[${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[exactname,${BuffShieldAllyGroupMember.Token[2,:]},${BuffShieldAllyGroupMember.Token[1,:]}].ID}
 			break
 		case BuffArcane
@@ -446,7 +446,7 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 326  
 
 	;CHILLING INVIGORATION
-	if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} && ${Me.Ability[${SpellType[509]}].IsReady} && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} && ${Me.Ability[${SpellType[509]}].IsReady} && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}].Name(exists)}
 		call CastSpellRange 509 0 0 0 ${MainTankID}	
 
 	if ${BattleClericMode}
@@ -553,7 +553,7 @@ function Post_Combat_Routine(int xAction)
 			tempgrp:Set[1]
 			do
 			{
-				if ${Me.Group[${tempgrp}].IsDead} && ${Me.Group[${tempgrp}](exists)}
+				if ${Me.Group[${tempgrp}].IsDead} && ${Me.Group[${tempgrp}].InZone} && ${Me.Group[${tempgrp}].Health(exists)}
 					call CastSpellRange ${PostSpellRange[${xAction},1]} ${PostSpellRange[${xAction},2]} 0 0 ${Me.Group[${tempgrp}].ID} 1
 			}
 			while ${tempgrp:Inc} <= ${Me.GroupCount}
@@ -569,7 +569,7 @@ function RefreshPower()
 	if ${ShardMode}
 		call Shard
 
-	if ${Me.Power}<40 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<40 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].Location.Equal[Inventory]} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use	
 }
 
@@ -608,7 +608,7 @@ function CheckCures()
 		do
 		{
 			;make sure they are in zone and in range
-			if ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].Distance}<30
+			if ${Me.Group[${temphl}].Health(exists)} && ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].Distance}<30
 			{
 				if ${Me.Group[${temphl}].Arcane}>0 || ${Me.Group[${temphl}].Elemental}>0 || ${Me.Group[${temphl}].Noxious}>0 || ${Me.Group[${temphl}].Trauma}>0
 					grpcure:Inc
@@ -676,7 +676,7 @@ function FindAfflicted()
 	;check for single target cures
 	do
 	{
-		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Distance}<=${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range}
+		if ${Me.Group[${temphl}].IsAfflicted} && ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Distance}<=${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range} && ${Me.Group[${temphl}].Health(exists)}
 		{
 			if ${Me.Group[${temphl}].Arcane}>0
 				tmpafflictions:Set[${Math.Calc[${tmpafflictions}+${Me.Group[${temphl}].Arcane}]}]
@@ -794,7 +794,7 @@ function CheckHeals()
 	else
 		MainTankID:Set[${Actor[PC,ExactName,${MainTankPC}].ID}]
 
-    if !${Actor[${MainTankID}](exists)}
+    if !${Actor[${MainTankID}].Name(exists)}
     {
         ;Debug:Echo["EQ2Bot-CheckHeals() -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"]
         MainTankExists:Set[FALSE]
@@ -811,7 +811,7 @@ function CheckHeals()
   {
 		do
 		{
-			if ${Me.Group[${temphl}](exists)}
+			if ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)}
 			{
 				if ${Me.Group[${temphl}].Health}<100 && !${Me.Group[${temphl}].IsDead}
 				{
@@ -874,7 +874,7 @@ function CheckHeals()
 	{
 		call UseCrystallizedSpirit 60
 
-		if ${Me.Group[${lowest}](exists)} && ${Me.Group[${lowest}].Health}<70 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}].Distance}<=30
+		if ${Me.Group[${lowest}].InZone} && ${Me.Group[${lowest}].Health(exists)} && ${Me.Group[${lowest}].Health}<70 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}].Distance}<=30
 		{
 			if ${Me.Ability[${SpellType[4]}].IsReady}
 				call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
@@ -894,7 +894,7 @@ function CheckHeals()
 		call CheckCures
 
 	;PET HEALS
-	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}](exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode}
+	if ${PetToHeal} && ${Actor[ExactName,${PetToHeal}].Name(exists)} && ${Actor[ExactName,${PetToHeal}].InCombatMode} && !${EpicMode}
 		call CastSpellRange 4 0 0 0 ${PetToHeal}
 
 	;Check Rezes
@@ -903,7 +903,7 @@ function CheckHeals()
 		temphl:Set[1]
 		do
 		{
-			if ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Distance}<=20
+			if ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)} && ${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Distance}<=20
 			{
 				if !${Me.InCombat} && ${Me.Ability[${SpellType[500]}].IsReady}
 					call CastSpellRange 506 0 0 0 ${Me.Group[${temphl}].ID} 1 0 0 0 2 0
@@ -921,11 +921,11 @@ function HealMT(int MainTankID, int MTInMyGroup)
 		call CastSpellRange 211 0 0 0 ${Me.ID}
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${MainTankID}].Health}<30 && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}].Name(exists)}
 		call EmergencyHeal ${MainTankID}
 
 	;CHILLING INVIGORATION
-	if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}](exists)}
+	if ${Actor[${KillTarget}].Type.Equal[NamedNPC]} && !${Actor[${MainTankID}].IsDead} && ${Actor[${MainTankID}].Name(exists)}
 	{
 		if ${Me.Ability[${SpellType[509]}].IsReady}
 		{
@@ -935,7 +935,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 	}
 
 	;MAINTANK HEALS
-	if ${Actor[${MainTankID}].Health}<50 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
+	if ${Actor[${MainTankID}].Health}<50 && ${Actor[${MainTankID}].Name(exists)} && !${Actor[${MainTankID}].IsDead}
 	{
 		if ${Me.Ability[${SpellType[4]}].IsReady}
 			call CastSpellRange 4 0 0 0 ${MainTankID}
@@ -943,7 +943,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 			call CastSpellRange 1 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<70 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
+	if ${Actor[${MainTankID}].Health}<70 && ${Actor[${MainTankID}].Name(exists)} && !${Actor[${MainTankID}].IsDead}
 	{
 		if !${Me.Maintained[${SpellType[7]}](exists)} && ${Me.Ability[${SpellType[7]}].IsReady}
 		{
@@ -961,7 +961,7 @@ function HealMT(int MainTankID, int MTInMyGroup)
 			call CastSpellRange 4 0 0 0 ${MainTankID}
 	}
 
-	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}](exists)} && !${Actor[${MainTankID}].IsDead}
+	if ${Actor[${MainTankID}].Health}<90 && ${Actor[${MainTankID}].Name(exists)} && !${Actor[${MainTankID}].IsDead}
 	{
 		if ${MTInMyGroup} && ${EpicMode} && ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)}
 			call CastSpellRange 15
@@ -987,10 +987,10 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
-	if !${Me.Group[${gMember}](exists)} || ${Me.Group[${gMember}].IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].Distance}>${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range}
+	if !${Me.Group[${gMember}].InZone} || ${Me.Group[${gMember}].IsDead} || !${Me.Group[${gMember}].IsAfflicted} || ${Me.Group[${gMember}].Distance}>${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range} || !${Me.Group[${gMember}].Health(exists)}
 		return
 
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<6 && ${Me.Group[${gMember}](exists)} && !${Me.Group[${gMember}].IsDead}
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<6 && ${Me.Group[${gMember}].InZone} && !${Me.Group[${gMember}].IsDead} && ${Me.Group[${gMember}].Health(exists)}
 	{
 		if ${Me.Group[${gMember}].Arcane}>0 || ${Me.Group[${gMember}].Noxious}>0 || ${Me.Group[${gMember}].Elemental}>0 || ${Me.Group[${gMember}].Trauma}>0
 		{
@@ -1084,7 +1084,7 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}].Name(exists)}
 		call 300 301 1 0 ${Actor[exactname,${MainTankPC}].ID} 1
 }
 
@@ -1096,7 +1096,7 @@ function Cancel_Root()
 function CastVerdict()
 {
 
-	if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}<=2 && ${Actor[${KillTarget}](exists)}
+	if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].Health}<=2 && ${Actor[${KillTarget}].Name(exists)}
 	{
 		call CastSpellRange 93 0 0 0 ${KillTarget}
 		return
@@ -1106,7 +1106,7 @@ function CastVerdict()
 	{
 		case -3
 		case -2
-			if ${Actor[${KillTarget}].Health}<=50 && ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Health}<=50 && ${Actor[${KillTarget}].Name(exists)}
 			{
 				call CastSpellRange 93 0 0 0 ${KillTarget}
 				return
@@ -1116,7 +1116,7 @@ function CastVerdict()
 		case -1
 		case 0
 		case 1
-			if ${Actor[${KillTarget}].Health}<=25 && ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Health}<=25 && ${Actor[${KillTarget}].Name(exists)}
 			{
 				call CastSpellRange 93 0 0 0 ${KillTarget}
 				return
@@ -1125,7 +1125,7 @@ function CastVerdict()
 
 		case 2
 		case 3
-			if ${Actor[${KillTarget}].Health}<=5 && ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Health}<=5 && ${Actor[${KillTarget}].Name(exists)}
 			{
 				call CastSpellRange 93 0 0 0 ${KillTarget}
 				return
@@ -1147,7 +1147,7 @@ function Mezmerise_Targets()
 
 	do
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
+		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}].Name(exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
 		{
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
 				continue

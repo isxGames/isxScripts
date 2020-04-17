@@ -89,14 +89,14 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		call CheckHeals
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
 
-	if ${MezzMode} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+2000]})
+	if (${StartBot} && ${MezzMode} && (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer2}+2000]}))
 	{
 		CurrentAction:Set[Out of Combat Checking Mezzes]
 		call Mezmerise_Targets
@@ -225,7 +225,7 @@ if !${InitialBuffsDone}
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${BuffHate} && ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${BuffHate} && ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -235,7 +235,7 @@ if !${InitialBuffsDone}
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${BuffCoerciveHealing} && ${Actor[${BuffTarget.Token[1,:]}](exists)}
+			if ${BuffCoerciveHealing} && ${Actor[${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -683,7 +683,7 @@ function RefreshPower()
 	declare tempvar int local
 	declare MemberLowestPower int local
 
-	if ${Me.Power}<10 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<10 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].Location.Equal[Inventory]} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use
 
 	if ${ShardMode}
@@ -705,7 +705,7 @@ function RefreshPower()
 		
 		do
 		{
-   		if ${Me.Raid[${tempvar}](exists)} && ${Me.Raid[${tempvar}](exists)}
+   		if ${Me.Raid[${tempvar}].InZone} && ${Me.Raid[${tempvar}].Power(exists)}
    		{
    		  if ${Me.Raid[${tempvar}].Name.NotEqual[${Me.Name}]}
    			{
@@ -719,7 +719,7 @@ function RefreshPower()
 		}
 		while ${tempvar:Inc}<=24
 
-		if ${Me.Raid[${MemberLowestPower}](exists)} && ${Me.Raid[${MemberLowestPower}].Distance}<30
+		if ${Me.Raid[${MemberLowestPower}].InZone} && ${Me.Raid[${MemberLowestPower}].Power(exists)} && ${Me.Raid[${MemberLowestPower}].Distance}<30
 		{	
 			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
 			eq2execute em Flow to ${Me.Raid[${raidlowest}].Name}
@@ -733,7 +733,7 @@ function RefreshPower()
 		MemberLowestPower:Set[0]
 		do
 		{
-			if ${Me.Group[${tempvar}].Power}<55 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}](exists)}
+			if ${Me.Group[${tempvar}].Power(exists)} && ${Me.Group[${tempvar}].Power}<55 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}].InZone}
 			{
 				if ${Me.Group[${tempvar}].Power}<=${Me.Group[${MemberLowestPower}].Power}
 					MemberLowestPower:Set[${tempvar}]
@@ -742,7 +742,7 @@ function RefreshPower()
 		while ${tempvar:Inc}<${Me.GroupCount}
 
 
-		if ${Me.Group[${MemberLowestPower}](exists)} && ${Me.Group[${MemberLowestPower}].Power}<65 && ${Me.Group[${MemberLowestPower}].Distance}<30 && ${Me.Ability[${SpellType[390]}].IsReady}
+		if ${Me.Group[${MemberLowestPower}].InZone} && ${Me.Group[${MemberLowestPower}].Power(exists)} && ${Me.Group[${MemberLowestPower}].Power}<65 && ${Me.Group[${MemberLowestPower}].Distance}<30 && ${Me.Ability[${SpellType[390]}].IsReady}
 		{
 			
 			if ${Me.Group[${MemberLowestPower}].ID} > 0
@@ -758,14 +758,14 @@ function RefreshPower()
 		call CastSpellRange 51 0 0 0 ${KillTarget}
 			
 	;Channel if group member is below 20 and we are in combat and manaflow isnt ready and it isn't the MT
-	if ${Me.InCombat} && ${Me.Grouped} && ${Me.Group[${MemberLowestPower}](exists)} && ${Me.Group[${MemberLowestPower}].Power}<30 && ${Me.Group[${MemberLowestPower}].Distance}<50
+	if ${Me.InCombat} && ${Me.Grouped} && ${Me.Group[${MemberLowestPower}].Name(exists)} && ${Me.Group[${MemberLowestPower}].Power}<30 && ${Me.Group[${MemberLowestPower}].Distance}<50
 	{
 	if  ${Me.Group[${MemberLowestPower}].ID}!=${Actor[pc,ExactName,${MainTankPC}].ID}
 		call CastSpellRange 310
 	}
 
 	;Mana Cloak the group if the Main Tank is low on power
-	if ${Actor[${MainTankPC}].Power}<50 && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
+	if ${Actor[${MainTankPC}].Power}<50 && ${Actor[${MainTankPC}].Name(exists)} && ${Actor[${MainTankPC}].Distance}<50  && ${Actor[${MainTankPC}].InCombatMode}
 		call CastSpellRange 354
 
 }
@@ -800,7 +800,7 @@ function CheckHeals()
 		{
 			call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
 
-			if ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Name(exists)}
 				Target ${KillTarget}
 		}
 	}
@@ -881,7 +881,7 @@ function Mezmerise_Targets()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
+	if ${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
 	{
 		Target ${KillTarget}
 		wait 20 ${Me.Target.ID}==${KillTarget}
@@ -942,11 +942,11 @@ function DoCharm()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${CharmTarget}](exists)}
+	if ${Actor[${CharmTarget}].Name(exists)}
 	{
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
 
-		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
+		if ${Actor[${KillTarget}].Name(exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
 			call PetAttack
 		else
 			EQ2Execute /target_none

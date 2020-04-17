@@ -294,7 +294,7 @@ function Buff_Routine(int xAction)
 			if ${BuffVielShield}
 			{
 
-				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				{
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				}
@@ -755,7 +755,7 @@ function CheckHeals()
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
 
-		if ${Actor[${KillTarget}](exists)}
+		if ${Actor[${KillTarget}].Name(exists)}
 		{
 			Target ${KillTarget}
 		}
@@ -764,11 +764,11 @@ function CheckHeals()
 	do
 	{
 		; Cure Arcane
-		if ${Me.Group[${temphl}].Arcane}>0 && ${Me.Group[${temphl}](exists)}
+		if ${Me.Group[${temphl}].Arcane}>0 && ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)}
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
 
-			if ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Name(exists)}
 			{
 				Target ${KillTarget}
 			}

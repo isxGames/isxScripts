@@ -40,7 +40,9 @@ function Class_Declaration()
 	declare HaveMythical bool script FALSE
 	declare LastSpellCast int script 0
 	declare InPostDeathRoutine bool script FALSE
+	declare IllyCasterBuffsOnSet bool script FALSE
 	declare IllyCasterBuffsOn collection:string script
+	declare IllyDPSBuffsOnSet bool script FALSE
 	declare IllyDPSBuffsOn collection:string script
 	declare MakePetWhileInCombat bool script TRUE
 	declare ChainStunMode bool script FALSE
@@ -108,6 +110,7 @@ function Class_Declaration()
 		HaveAbility_Perpetuality:Set[TRUE]
 		
 	;; Set this to TRUE, as desired, for testing
+	;Debug:Enable
 	;IllyDebugMode:Set[TRUE]
 }
 
@@ -131,11 +134,11 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	if (${DoNoCombat})
+	if (${StartBot} && ${DoNoCombat})
 		return
 
-	;; check this at least every 1 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
+	;; check this at least every 1 seconds, after bot has been started.
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
 	{
 		; Check mezzmode
 		if ${MezzMode}
@@ -170,7 +173,7 @@ function Pulse()
 						BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 						if !${BuffTarget.Equal["No one"]}
 						{
-							if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+							if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 							{
 								call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 								LastSpellCast:Set[72]
@@ -195,8 +198,25 @@ function Pulse()
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; The following routines are only called once.  They just need to wait until specific conditions have occurred
+	;;;;;;
+	;; Wait to populate "haste" listbox until after in a group of at least 3.  (Can be manually updated any time via UI.)
+	if (!${IllyDPSBuffsOnSet} && (${Me.Group} > 2 || ${Me.Raid} > 2))
+	{
+		IllyDPSBuffsOnSet:Set[TRUE]
+		Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList["lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot",BuffDPS,1,1,0]
+	}
+
+	;; Wait to populate "caster proc spell" listbox until after in a group of at least 3.  (Can be manually updated any time via UI.)
+	if (!${IllyCasterBuffsOnSet} && (${Me.Group} > 2 || ${Me.Raid} > 2))
+	{
+		IllyCasterBuffsOnSet:Set[TRUE]
+		Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList["lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot",BuffCasterDPS,1,1,1]
+	}
 	;;
-	;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 }
 
 function Class_Shutdown()
@@ -354,7 +374,7 @@ function Buff_Routine(int xAction)
 							BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 							if !${BuffTarget.Equal["No one"]}
 							{
-								if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+								if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 								{
 									call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 									LastSpellCast:Set[72]
@@ -419,17 +439,16 @@ function Buff_Routine(int xAction)
 			if ${Makepet}
 			{
 				if (!${MakePetWhileInCombat} && ${Me.InCombatMode})
-					break
-				; needs to be equipped for the pet conc thing.
-				if (${HaveMythical} && ${Me.Equipment[Mirage Star](exists)}) || (${Math.Calc[${Me.MaxConc}-${Me.UsedConc}]} >= 3)
 				{
-					if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
-					{
-						call CastSpellRange ${PreSpellRange[${xAction},1]}
-						wait 2
-						if (${Me.Ability[${SpellType[382]}].IsReady})
-							call CastSpellRange 382 0 0 0 ${Me.Pet.ID} 0 0 0 1
-					}
+					break
+				}
+
+				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+				{
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+					wait 2
+					if (${Me.Ability[${SpellType[382]}].IsReady})
+						call CastSpellRange 382 0 0 0 ${Me.Pet.ID} 0 0 0 1
 				}
 			}
 			break
@@ -512,14 +531,14 @@ function Buff_Routine(int xAction)
 				{
 					BuffTarget:Set[${UIElement[lbBuffDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
 					;echo "Debug.RAPIDITY:: - BuffTarget: ${BuffTarget} (Counter: ${Counter})"
-					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].Name(exists)})
 					{
 						ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
 						;echo "Debug.RAPIDITY:: -- ActorID: ${ActorID}"
 						if ${Actor[${ActorID}].Type.Equal[PC]}
 						{
 							;echo "Debug.RAPIDITY:: --- Actor is 'PC'"
-							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
+							if (${Me.Group[${BuffTarget.Token[1,:]}].InZone} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
 								;echo "Debug.RAPIDITY:: --- Actor is in Group"
 								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
@@ -555,7 +574,7 @@ function Buff_Routine(int xAction)
 		case Caster_Buff
 			if ${Me.Level} < 35
 				break
-				
+			
 			Counter:Set[1]
 			tempvar:Set[1]
 			IllyCasterBuffsOn:Clear
@@ -600,10 +619,10 @@ function Buff_Routine(int xAction)
 			}
 			while ${Counter:Inc}<=${Me.CountMaintained}
 			
-			echo "Debug.Synergism:: ${InternalBuffCounter} players are buffed (${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems} should be, according to the UI"
+			;echo "Debug.Synergism:: ${InternalBuffCounter} players are buffed (${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems} should be, according to the UI"
 			if (${InternalBuffCounter} == ${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItems})
 			{
-				echo "Debug.Synergism:: No players need buffed ...breaking."
+				;echo "Debug.Synergism:: No players need buffed ...breaking."
 				break
 			}
 			
@@ -615,12 +634,12 @@ function Buff_Routine(int xAction)
 				do
 				{
 					BuffTarget:Set[${UIElement[lbBuffCasterDPS@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem[${Counter}].Text}]
-					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)})
+					if (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].Name(exists)})
 					{
 						ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
 						if ${Actor[${ActorID}].Type.Equal[PC]}
 						{
-							if (${Me.Group[${BuffTarget.Token[1,:]}](exists)} || ${Me.Raid[${BuffTarget.Token[1,:]}](exists)} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
+							if (${Me.Group[${BuffTarget.Token[1,:]}].InZone} || ${Me.Raid[${BuffTarget.Token[1,:]}].InZone} || ${Me.Name.Equal[${BuffTarget.Token[1,:]}]})
 							{
 								if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 								{
@@ -667,12 +686,12 @@ function Buff_Routine(int xAction)
 				}
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].Name(exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
 				if ${Actor[${ActorID}].Type.Equal[PC]}
 				{
-					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					if (${Me.Group[${BuffTarget.Token[1,:]}].InZone})
 					{
 						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
@@ -706,12 +725,12 @@ function Buff_Routine(int xAction)
 				}
 			}
 			
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].Name(exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
 				if ${Actor[${ActorID}].Type.Equal[PC]}
 				{
-					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					if (${Me.Group[${BuffTarget.Token[1,:]}].InZone})
 					{
 						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
@@ -745,12 +764,12 @@ function Buff_Routine(int xAction)
 				}
 			}
 			
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].Name(exists)}
 			{
 				ActorID:Set[${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID}]
 				if ${Actor[${ActorID}].Type.Equal[PC]}
 				{
-					if (${Me.Group[${BuffTarget.Token[1,:]}](exists)})
+					if (${Me.Group[${BuffTarget.Token[1,:]}].InZone})
 					{
 						if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1 0 0
@@ -968,7 +987,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 				}
 			}
 		}
-		elseif (${Actor[${MainTankID}](exists)} && ${Actor[${MainTankID}].Distance} > 20)
+		elseif (${Actor[${MainTankID}].Name(exists)} && ${Actor[${MainTankID}].Distance} > 20)
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["_CastSpellRange():: Out of Range - Moving to within 20m of tank"]
@@ -1032,7 +1051,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 					BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 					if !${BuffTarget.Equal["No one"]}
 					{
-						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 						{
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
@@ -1121,7 +1140,7 @@ function Combat_Routine(int xAction)
 	if ${IllyDebugMode}
 		Debug:Echo["Combat_Routine(${xAction}) called"]
 
-	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
+	if (!${Actor[${KillTarget}].Name(exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
@@ -1301,7 +1320,7 @@ function Combat_Routine(int xAction)
 	else
 		spellsused:Inc[${Int[${Return}]}]
 
-	if ${Me.Pet(exists)}
+	if ${Me.Pet.Name(exists)}
 	{
 		if (${Me.Pet.Target.ID} != ${KillTarget} || !${Me.Pet.InCombatMode})
 			call PetAttack 1
@@ -1519,7 +1538,7 @@ function Combat_Routine(int xAction)
 		{
 			variable string TargetsTarget = ${Actor[${KillTarget}].Target.Name}
 			variable string TargetsTargetClass = ${Actor[PC,${TargetsTarget},exactname].Class}
-			if (!${TargetsTarget.Equal[${MainTankPC}]} && ${Actor[pc,${TargetsTarget},exactname](exists)} && ${Me.Group[${TargetsTarget}](exists)})
+			if (!${TargetsTarget.Equal[${MainTankPC}]} && ${Actor[pc,${TargetsTarget},exactname].Name(exists)} && ${Me.Group[${TargetsTarget}].InZone})
 			{
 				switch ${TargetsTargetClass}
 				{
@@ -1752,6 +1771,7 @@ function Combat_Routine(int xAction)
 			FlushQueued Mezmerise_Targets		
 			break
 
+		;; Aneurysm
 		case NukeDaze
 			if (${Me.Ability[${SpellType[61]}].IsReady})
 			{
@@ -1919,7 +1939,7 @@ function Combat_Routine(int xAction)
 			break
 			
 		case SmiteOfConsistency
-			if (${Me.Level} < 20)
+			if (${Me.Level} < 20 && ${Actor[${KillTarget}].Distance2D} <= 5)
 			{
 				if (${Me.Ability[${SpellType[400]}].IsReady})
 				{
@@ -2155,7 +2175,7 @@ function CastSomething()
 					BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 					if !${BuffTarget.Equal["No one"]}
 					{
-						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 						{
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
@@ -2463,7 +2483,7 @@ function RefreshPower()
 				MemberLowestPower:Set[1]
 				do
 				{
-					if ${Me.Group[${tempvar}].Power}<60 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}](exists)}
+					if (${Me.Group[${tempvar}].InZone} && ${Me.Group[${tempvar}].Power(exists)} && ${Me.Group[${tempvar}].Power}<60 && ${Me.Group[${tempvar}].Distance}<30)
 					{
 						if ${Me.Group[${tempvar}].Power}<=${Me.Group[${MemberLowestPower}].Power}
 						{
@@ -2476,7 +2496,7 @@ function RefreshPower()
 	
 				if (${Me.InCombatMode} && ${IllyDebugMode})
 					Debug:Echo["- Checking Mana Flow (lowest: ${MemberLowestPower}, ${Me.Group[${MemberLowestPower}].Power} vs. ${ManaFlowThreshold})"]
-				if (${Me.Group[${MemberLowestPower}](exists)})
+				if (${Me.Group[${MemberLowestPower}].InZone} && ${Me.Group[${MemberLowestPower}].Power(exists)})
 				{
 					if (${Me.Group[${MemberLowestPower}].Power} < ${ManaFlowThreshold} && ${Me.Group[${MemberLowestPower}].Distance} < 30  && ${Me.Health} > 30)
 					{
@@ -2491,7 +2511,7 @@ function RefreshPower()
 	;Mana Cloak the group if the Main Tank is low on power
 	if (${Me.Ability[${SpellType[354]}].IsReady} && ${Me.InCombatMode})
 	{
-		if ${Me.Group[${MainTankPC}](exists)}
+		if ${Me.Group[${MainTankPC}].InZone}
 		{
 			if ${IllyDebugMode}
 				Debug:Echo["- Checking Mana Cloak"]
@@ -2601,7 +2621,7 @@ function CheckHeals()
 			LastSpellCast:Set[210]
 			bReturn:Set[TRUE]
 
-			if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
+			if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
 				Target ${KillTarget}
 		}
 		if ${Me.Group} > 1
@@ -2610,7 +2630,7 @@ function CheckHeals()
 			{
 				;;;;;;;;;;;;;
 				;; Cure Arcane
-				if (${Me.Group[${temphl}](exists)} && !${Me.Group[${temph1}].IsDead})
+				if (${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].InZone} && !${Me.Group[${temph1}].IsDead})
 				{
 					if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
 					{
@@ -2619,7 +2639,7 @@ function CheckHeals()
 						bReturn:Set[TRUE]
 						wait 1
 
-						if (${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead})
+						if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
 							Target ${KillTarget}
 					}
 				}
@@ -2734,7 +2754,7 @@ function Mezmerise_Targets()
 		if ${CustomActor[${tcount}].Type.Equal[NoKillNPC]}
 			continue
 
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
+		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
 		{
 			;if its the kill target skip it
 			if (${CustomActor[${tcount}].ID} == ${KillTarget})
@@ -2766,7 +2786,7 @@ function Mezmerise_Targets()
 			{
 				do
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
+					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet.Name(exists)})
 					{
 						aggrogrp:Set[TRUE]
 						break
@@ -2885,7 +2905,7 @@ function Mezmerise_Targets()
 
 	if ${Me.IsHated}
 	{
-		if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Health}>1
+		if ${Actor[${KillTarget}].Name(exists)} && ${Actor[${KillTarget}].Health}>1
 		{
 			Target ${KillTarget}
 			wait 20 ${Target.ID}==${KillTarget}
@@ -2893,7 +2913,7 @@ function Mezmerise_Targets()
 		else
 		{
 			EQ2Execute /target_none
-			wait 20 !${Target(exists)}
+			wait 20 !${Target.Name(exists)}
 			KillTarget:Set[]
 		}
 	}
@@ -2906,7 +2926,7 @@ function CheckSKFD()
 	if !${Me.IsFD}
 		return
 
-	if !${Actor[${MainTankID}](exists)}
+	if !${Actor[${MainTankID}].Name(exists)}
 		return
 
 	if ${Actor[${MainTankID}].IsDead}
@@ -2921,7 +2941,7 @@ function CheckSKFD()
 
 atom(script) Illusionist_FinishedZoning(string TimeInSeconds)
 {
-	if ${KillTarget} && ${Actor[${KillTarget}](exists)}
+	if ${KillTarget} && ${Actor[${KillTarget}].Name(exists)}
 	{
 		if !${Actor[${KillTarget}].InCombatMode}
 			KillTarget:Set[0]
@@ -2997,7 +3017,7 @@ function DoTheTimeWarp()
 			{
 				case PC
 					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...1"
-					if (!${Me.Group[${Actor[${ActorID}].Name}](exists)})
+					if (!${Me.Group[${Actor[${ActorID}].Name}].InZone})
 						break
 				case Me
 					;echo "DEBUG::DoTheTimeWarp() - Checking ${Actor[${ActorID}].Name}...2"
@@ -3202,7 +3222,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 		if !${BuffTarget.Equal["No one"]}
 		{
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["Casting ''Prismatic Chaos'"]

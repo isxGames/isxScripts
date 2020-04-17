@@ -96,7 +96,7 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 		{
@@ -222,7 +222,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
 
 			break
@@ -624,7 +624,7 @@ function RefreshPower()
 	declare tempvar int local
 	declare MemberLowestPower int local
 
-	if ${Me.Power}<10 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<10 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].Location.Equal[Inventory]} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use
 
 	if ${ShardMode}
@@ -638,7 +638,7 @@ function RefreshPower()
 		
 		do
 		{
-   		if ${Me.Raid[${tempvar}](exists)} && ${Me.Raid[${tempvar}](exists)}
+   		if ${Me.Raid[${tempvar}].InZone} && ${Me.Raid[${tempvar}].Health(exists)}
    		{
    		  if ${Me.Raid[${tempvar}].Name.NotEqual[${Me.Name}]}
    			{
@@ -652,7 +652,7 @@ function RefreshPower()
 		}
 		while ${tempvar:Inc}<=24
 
-		if ${Me.Raid[${MemberLowestPower}](exists)} && ${Me.Raid[${MemberLowestPower}].Distance}<30
+		if ${Me.Raid[${MemberLowestPower}].InZone} && ${Me.Raid[${MemberLowestPower}].Distance}<30 && ${Me.Raid[${MemberLowestPower}].Health(exists)}
 		{	
 			call CastSpellRange 390 0 0 0 ${Me.Raid[${raidlowest}].ID}
 			eq2execute em Energizing Ballad to ${Me.Raid[${MemberLowestPower}].Name}
@@ -666,7 +666,7 @@ function RefreshPower()
 		MemberLowestPower:Set[0]
 		do
 		{
-			if ${Me.Group[${tempvar}].Power}<25 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}](exists)}
+			if ${Me.Group[${tempvar}].Power}<25 && ${Me.Group[${tempvar}].Distance}<30 && ${Me.Group[${tempvar}].InZone} && ${Me.Group[${tempvar}].Power(exists)}
 			{
 				if ${Me.Group[${tempvar}].Power}<=${Me.Group[${MemberLowestPower}].Power}
 					MemberLowestPower:Set[${tempvar}]
@@ -675,10 +675,10 @@ function RefreshPower()
 		while ${tempvar:Inc}<${Me.GroupCount}
 
 
-		if ${Me.Group[${MemberLowestPower}](exists)} && ${Me.Group[${MemberLowestPower}].Power}<25 && ${Me.Group[${MemberLowestPower}].Distance}<30 && ${Me.Ability[${SpellType[409]}].IsReady}
+		if ${Me.Group[${MemberLowestPower}].InZone} && ${Me.Group[${MemberLowestPower}].Power}<25 && ${Me.Group[${MemberLowestPower}].Distance}<30 && ${Me.Ability[${SpellType[409]}].IsReady} && ${Me.Group[${MemberLowestPower}].Power(exists)}
 		{
 			call CastSpellRange 409 0 0 0 ${Me.Group[${MemberLowestPower}].ID}	
-			if ${Me.Group[${MemberLowestPower}](exists)}	
+			if ${Me.Group[${MemberLowestPower}].InZone}	&& ${Me.Group[${MemberLowestPower}].Power(exists)}
 				eq2execute em Energizing Ballad to ${Me.Group[${MemberLowestPower}].Name}	
 		}
 	}
@@ -732,7 +732,7 @@ function Mezmerise_Targets()
 
 	do
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
+		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}].Name(exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
 		{
 			if ${CustomActor[${tcount}].ID}==${mezTarget1} || ${CustomActor[${tcount}].ID}==${mezTarget2} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
 			{
@@ -765,7 +765,7 @@ function Mezmerise_Targets()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${KillTarget}](exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
+	if ${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
 	{
 		Target ${KillTarget}
 		wait 20 ${Me.Target.ID}==${KillTarget}
@@ -796,7 +796,7 @@ function DoCharm()
 
 	do
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}](exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
+		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}].Name(exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
 		{
 
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
@@ -814,11 +814,11 @@ function DoCharm()
 	}
 	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
-	if ${Actor[${CharmTarget}](exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actor[${MainAssist}].Target.ID}!=${CharmTarget} && ${aggrogrp}
+	if ${Actor[${CharmTarget}].Name(exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actor[${MainAssist}].Target.ID}!=${CharmTarget} && ${aggrogrp}
 	{
 		call CastSpellRange 351 0 0 0 ${CharmTarget}
 
-		if ${Actor[${KillTarget}](exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
+		if ${Actor[${KillTarget}].Name(exists)} && (${Me.Maintained[${SpellType[351]}].Target.ID}!=${KillTarget}) && ${Me.Maintained[${SpellType[351]}](exists)} && !${Actor[${KillTarget}].IsDead}
 		{
 			call PetAttack
 		}

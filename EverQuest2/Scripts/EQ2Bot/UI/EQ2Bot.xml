@@ -124,7 +124,7 @@
                   </Items>
                   <Sort>Text</Sort>
                   <OnLoad>
-                    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}](exists)}
+                    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainTankPC]}].Name(exists)}
                     {
                     This:AddItem[${Script[EQ2Bot].Variable[MainTankPC]}]
                     This.ItemByText[${Script[EQ2Bot].Variable[MainTankPC]}]:Select
@@ -155,7 +155,7 @@
                     {
                     do
                     {
-                    if ${Me.Raid[${tmpvar}](exists)}
+                    if ${Me.Raid[${tmpvar}].InZone}
                     {
                     if !${Me.Raid[${tmpvar}].Name.Equal[${Me.Name}]}
                     {
@@ -169,15 +169,15 @@
                     {
                     do
                     {
-                    if ${Me.Group[${tmpvar}](exists)} &amp;&amp; !${Me.Group[${tmpvar}].Name.Equal[${Me.Name}]}
+                    if ${Me.Group[${tmpvar}].InZone} &amp;&amp; !${Me.Group[${tmpvar}].Name.Equal[${Me.Name}]}
                     {
                     This:AddItem[${Me.Group[${tmpvar}].Name}]
                     }
-                    if ${Me.Group[${tmpvar}].PetID(exists)}
+                    if ${Me.Group[${tmpvar}].InZone}
                     {
-                    if ${Actor[${Me.Group[${tmpvar}].PetID}](exists)}
+                    if ${Actor[${Me.Group[${tmpvar}].Pet.Name}].Name(exists)}
                     {
-                    This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+                    This:AddItem[${Me.Group[${tmpvar}].Pet.Name}]
                     }
                     }
                     }
@@ -317,7 +317,7 @@
                   </Items>
                   <Sort>Text</Sort>
                   <OnLoad>
-                    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}](exists)}
+                    if ${Actor[exactname,${Script[EQ2Bot].Variable[MainAssist]}].Name(exists)}
                     {
                     This:AddItem[${Script[EQ2Bot].Variable[MainAssist]}]
                     This.ItemByText[${Script[EQ2Bot].Variable[MainAssist]}]:Select
@@ -348,7 +348,7 @@
                     {
                     do
                     {
-                    if ${Me.Raid[${tmpvar}](exists)}
+                    if ${Me.Raid[${tmpvar}].InZone}
                     {
                     This:AddItem[${Me.Raid[${tmpvar}].Name}]
                     }
@@ -359,15 +359,15 @@
                     {
                     do
                     {
-                    if ${Me.Group[${tmpvar}](exists)}
+                    if ${Me.Group[${tmpvar}].InZone}
                     {
                     This:AddItem[${Me.Group[${tmpvar}].Name}]
                     }
                     if ${Me.Group[${tmpvar}].PetID(exists)}
                     {
-                    if ${Actor[${Me.Group[${tmpvar}].PetID}](exists)}
+                    if ${Actor[${Me.Group[${tmpvar}].PetID}].Name(exists)}
                     {
-                    This:AddItem[${Me.Group[${tmpvar}].ToActor.Pet.Name}]
+                    This:AddItem[${Me.Group[${tmpvar}].Pet.Name}]
                     }
                     }
                     }
@@ -465,7 +465,7 @@
                   <Items>
                   </Items>
                   <OnLoad>
-                    if ${Actor[exactname,${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}](exists)}
+                    if ${Actor[exactname,${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}].Name(exists)}
                     {
                     This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]
                     This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[AutoFollowee]}]:Select
@@ -483,7 +483,7 @@
                     tmpvar:Set[1]
                     do
                     {
-                    if ${Me.Group[${tmpvar}](exists)}
+                    if ${Me.Group[${tmpvar}].InZone}
                     {
                     This:AddItem[${Me.Group[${tmpvar}].Name}]
                     }
@@ -765,7 +765,7 @@
                   <Height>25</Height>
                   <Alignment>Left</Alignment>
                   <Wrap />
-                  <Text>Current Target:   ${If[${Script[EQ2Bot].Variable[MainTank]},${If[${Target(exists)},${Target.Name},No Target]},${If[${Actor[${Script[EQ2Bot].Variable[KillTarget]}](exists)},${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name},No Target]}]}</Text>
+                  <Text>Current Target:   ${If[${Script[EQ2Bot].Variable[MainTank]},${If[${Target(exists)},${Target.Name},No Target]},${If[${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name(exists)},${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name},No Target]}]}</Text>
                 </Text>
                 <!--
 								<Text Name='Target Aggro'>

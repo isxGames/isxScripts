@@ -69,7 +69,7 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		call CheckHeals
 		;; This has to be set WITHIN any 'if' block that uses the timer.
@@ -510,7 +510,7 @@ function CheckHeals()
 	do
 	{
 		;Check Group members
-		if ${Me.Group[${temphl}].Health}<30 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
+		if ${Me.Group[${temphl}].Health}<30 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)}
 		{
 			call CastSpellRange 366 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1
 

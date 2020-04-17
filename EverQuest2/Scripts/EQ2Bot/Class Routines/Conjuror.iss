@@ -96,7 +96,7 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		;check if we have a pet or a hydromancy not up
 		if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[379]}](exists)} && ${PetMode}
@@ -297,7 +297,7 @@ function Buff_Routine(int xAction)
 
 			if ${BuffDamageShield}
 			{
-				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
 			else
@@ -502,7 +502,7 @@ function Combat_Routine(int xAction)
 			call CastSpellRange ${PostSpellRange[${xAction},1]}
 			break
 		case Master_Strike
-			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}].Name(exists)}
 			{
 				Target ${KillTarget}
 				Me.Ability[Master's Strike]:Use
@@ -671,13 +671,13 @@ function CheckHeals()
 
 function QueueShardRequest(string line, string sender)
 {
-	if ${Actor[${sender}](exists)}
+	if ${Actor[${sender}].Name(exists)}
 		ShardQueue:Queue[${sender}]
 }
 
 function AnswerShardRequest()
 {
-	if ${Actor[${ShardQueue.Peek}](exists)}
+	if ${Actor[${ShardQueue.Peek}].Name(exists)}
 	{
 		if ${Actor[${ShardQueue.Peek}].Distance}<10  && !${Me.IsMoving}  &&  ${Me.Ability[${SpellType[360]}].IsReady}
 		{

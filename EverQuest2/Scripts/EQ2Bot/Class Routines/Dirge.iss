@@ -92,22 +92,18 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+500]})
 	{
-		
 		call DoBladeDance
-		
 	}
 
-	if (${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+1500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc[${ClassPulseTimer}+1500]})
 	{
-		
 		ISXEQ2:ClearAbilitiesCache
 		
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
-	
 }
 
 function Class_Shutdown()
@@ -346,7 +342,7 @@ function Buff_Routine(int xAction)
 				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}!=${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 	
-					if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+					if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
 				}
 				else
@@ -360,7 +356,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID} 0 0 0 0 2
 			break
 		case Buff_Self
@@ -637,7 +633,7 @@ function Combat_Routine(int xAction)
 				break
 			}
 
-			if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+			if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}].Name(exists)}
 			{
 				Target ${KillTarget}
 				call CheckPosition 1 1 ${KillTarget}
@@ -858,7 +854,7 @@ function CheckHeals()
 	do
 	{
 		;oration of sacrifice heal
-		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].Health}<70 && !${Me.Group[${temphl}].IsDead} && ${Me.Health}>75 && ${Me.Group[${temphl}].Distance}<=20
+		if !${MainTank} && ${Me.Ability[${SpellType[1]}].IsReady} && ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)} && ${Me.Group[${temphl}].Health}<70 && !${Me.Group[${temphl}].IsDead} && ${Me.Health}>75 && ${Me.Group[${temphl}].Distance}<=20
 		{
 			EQ2Echo healing ${Me.Group[${temphl}].Name}
 			call CastSpellRange 1 0 0 0 ${Me.Group[${temphl}].ID} 0 0 1 0 2 0

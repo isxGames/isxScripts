@@ -273,7 +273,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
 		Default
@@ -382,7 +382,7 @@ function Combat_Routine(int xAction)
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
 			{
-				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}].Name(exists)}
 				{
 					Target ${KillTarget}
 					call CheckPosition 1 1 ${KillTarget}

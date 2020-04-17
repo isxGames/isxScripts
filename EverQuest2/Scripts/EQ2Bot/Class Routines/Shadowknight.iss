@@ -202,13 +202,13 @@ function Buff_Routine(int xAction)
 			variable string ArmamentTarget = ${UIElement[cbBuffArmamentGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}
 			variable bool ArmamentTargetExists = FALSE
 				
-			if (${ArmamentTarget.Equal["No One"]} || ${ArmamentTarget.Length} == 0 || !${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]}](exists)})
+			if (${ArmamentTarget.Equal["No One"]} || ${ArmamentTarget.Length} == 0 || !${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]}].Name(exists)})
 			{
 				;; if someone other than the SK is the MainTank, we can use that as a default
 				ArmamentTarget:Set["${MainTankPC}:PC"]
 
 				;; double-check				
-				if (${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]}](exists)})
+				if (${Actor[${ArmamentTarget.Token[2,:]},${ArmamentTarget.Token[1,:]}].Name(exists)})
 					ArmamentTargetExists:Set[TRUE]
 			}
 			else
@@ -233,7 +233,7 @@ function Buff_Routine(int xAction)
 				{
 					if ${Me.InRaid}
 					{
-						if (${Me.Raid[${ArmamentTarget.Token[1,:]}](exists)})
+						if (${Me.Raid[${ArmamentTarget.Token[1,:]}].InZone})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
@@ -244,7 +244,7 @@ function Buff_Routine(int xAction)
 					}
 					else
 					{
-						if (${Me.Group[${ArmamentTarget.Token[1,:]}](exists)})
+						if (${Me.Group[${ArmamentTarget.Token[1,:]}].InZone})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
@@ -331,7 +331,7 @@ function Buff_Routine(int xAction)
 				
 			if (${TacticsTarget.Length} == 0)
 			{
-				echo "Tactics_Target:: TacticsTarget.Length == 0"
+				Debug:Echo["Tactics_Target:: TacticsTarget.Length == 0"]
 				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -340,7 +340,7 @@ function Buff_Routine(int xAction)
 				
 				if (${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text.Equal["No One"]} || ${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text.Length} == 0 || !${Actor[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text.Token[2,:]},${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text.Token[1,:]}](exists)})
 				{
-					echo "Tactics_Target:: Invalid TacticsTarget -- setting automatically"
+					Debug:Echo["Tactics_Target:: Invalid TacticsTarget -- setting automatically"]
 					if (${MainTank})
 					{
 						if (${Me.Group[1].Type.Equal[Mercenary]})
@@ -354,14 +354,14 @@ function Buff_Routine(int xAction)
 						
           			UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${TacticsTarget}]
 					UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${TacticsTarget}]:Select
-					echo "Tactics_Target:: UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]: '${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}'"
+					Debug:Echo["Tactics_Target:: UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]: '${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}'"]
 				}			
 				else
 					TacticsTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]	
 			}
 			elseif (!${TacticsTarget.Equal[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]})
 			{
-				echo "Tactics_Target:: ${TacticsTarget} != ${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}"
+				Debug:Echo["Tactics_Target:: ${TacticsTarget} != ${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}"]
 				if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 				{
 					Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
@@ -369,7 +369,7 @@ function Buff_Routine(int xAction)
 				}
 				TacticsTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 				
-				if (!${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}](exists)})
+				if (!${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}].Name(exists)})
 				{
 					if (${MainTank})
 					{
@@ -383,19 +383,19 @@ function Buff_Routine(int xAction)
 						
 					UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]:AddItem[${TacticsTarget}]
 					UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${TacticsTarget}]:Select
-					echo "Tactics_Target:: UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]: '${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}'"
+					Debug:Echo["Tactics_Target:: UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot]: '${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}'"]
 				}					
 			}
 			else	
 			{
-				;echo "Tactics_Target::  Tactics is already set and the correct group member has the buff ...breaking (TacticsTarget is '${TacticsTarget}')"
+				;Debug:Echo["Tactics_Target::  Tactics is already set and the correct group member has the buff ...breaking (TacticsTarget is '${TacticsTarget}')"]
 				;TacticsTarget:Set[${UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 				break
 			}
 				
-			echo "Tactics_Target:: TacticsTarget is '${TacticsTarget}' ...casting"	
+			Debug:Echo["Tactics_Target:: TacticsTarget is '${TacticsTarget}' ...casting"]
 			
-			if (${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}](exists)})
+			if (${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}].Name(exists)})
 				TacticsTargetExists:Set[TRUE]
 			else
 			{
@@ -413,7 +413,7 @@ function Buff_Routine(int xAction)
 				UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText[${TacticsTarget}]:Select
 			}
 			
-			if (${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}](exists)})
+			if (${Actor[${TacticsTarget.Token[2,:]},${TacticsTarget.Token[1,:]}].Name(exists)})
 				TacticsTargetExists:Set[TRUE]
 			else
 			{
@@ -427,29 +427,29 @@ function Buff_Routine(int xAction)
 			
 			if (${Actor[${ActorID}].Distance} > ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range})
 			{
-				echo "Tactics_Target:: '${TacticsTarget.Token[1,:]}' is out-of-range ....giving up."
+				Debug:Echo["Tactics_Target:: '${TacticsTarget.Token[1,:]}' is out-of-range ....giving up."]
 				TacticsTargetExists:Set[FALSE]
 				TacticsTarget:Set[]
 				UIElement[cbBuffTacticsGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].ItemByText["No one"]:Select
 			}
 			
-			echo "Tactics_Target:: Checking... '${TacticsTargetExists}' && '${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}'"
+			Debug:Echo["Tactics_Target:: Checking... '${TacticsTargetExists}' && '${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}'"]
 			if (${TacticsTargetExists} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
-				echo "Tactics_Target:: TacticsTargetExists and spell is not being currently maintained."
+				Debug:Echo["Tactics_Target:: TacticsTargetExists and spell is not being currently maintained."]
 				
 				if ${Actor[${ActorID}].Type.Equal[PC]}
 				{
 					if ${Me.InRaid}
 					{
-						if (${Me.Raid[${TacticsTarget.Token[1,:]}](exists)})
+						if (${Me.Raid[${TacticsTarget.Token[1,:]}].InZone})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								do 
 								{
 									waitframe
-									echo "waiting..."
+									Debug:Echo["waiting..."]
 								}
 								while !${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 								
@@ -460,14 +460,14 @@ function Buff_Routine(int xAction)
 					}
 					else
 					{
-						if (${Me.Group[${TacticsTarget.Token[1,:]}](exists)})
+						if (${Me.Group[${TacticsTarget.Token[1,:]}].InZone})
 						{
 							if (${Actor[${ActorID}].Distance} <= ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].ToAbilityInfo.Range} || !${NoAutoMovement})
 							{
 								do 
 								{
 									waitframe
-									echo "waiting..."
+									Debug:Echo["waiting..."]
 								}
 								while !${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 								call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
@@ -483,7 +483,7 @@ function Buff_Routine(int xAction)
 						do 
 						{
 							waitframe
-							echo "waiting..."
+							Debug:Echo["waiting..."]
 						}
 						while !${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 						call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${ActorID} 0 0 1
@@ -875,7 +875,7 @@ function Combat_Routine(int xAction)
 		;; Unending Agony
 		if (${Me.Ability[${SpellType[96]}].IsReady})
 		{
-			echo "${SpellType[96]}..."
+			;echo "${SpellType[96]}..."
 			call _CastSpellRange 96 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -1077,7 +1077,7 @@ function CheckGroupOrRaidAggro()
 	        {
 	            if ${Me.InRaid}
 	            {
-            	    if (${Me.Raid[${CustomActor[${Counter}].Target.Name}](exists)})
+            	    if (${Me.Raid[${CustomActor[${Counter}].Target.Name}].InZone})
             	    {
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
         	            {
@@ -1153,7 +1153,7 @@ function CheckGroupOrRaidAggro()
 	            }
 	            else
 	            {
-            	    if (${Me.Group[${CustomActor[${Counter}].Target.Name}](exists)})
+            	    if (${Me.Group[${CustomActor[${Counter}].Target.Name}].Health(exists)} && ${Me.Group[${CustomActor[${Counter}].Target.Name}].InZone})
             	    {
             	        echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
@@ -1337,7 +1337,7 @@ function PostDeathRoutine()
 
 atom(script) Shadowknight_FinishedZoning(string TimeInSeconds)
 {
-	if ${KillTarget} && ${Actor[${KillTarget}](exists)}
+	if ${KillTarget} && ${Actor[${KillTarget}].Name(exists)}
 	{
 		if !${Actor[${KillTarget}].InCombatMode}
 			KillTarget:Set[0]

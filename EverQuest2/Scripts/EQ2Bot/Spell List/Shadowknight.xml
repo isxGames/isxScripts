@@ -13,6 +13,7 @@
 		<Setting name="5,151">Soulrend</Setting>
 		<Setting name="5,303">Fighting Chance</Setting>
 		<Setting name="6,270">Intercept</Setting>
+		<Setting name="6,150">Painbringer II</Setting>
 		<Setting name="7,95">Death Cloud</Setting>
 		<Setting name="8,170">Blasphemy</Setting>
 		<Setting name="9,160">Insidious Whisper II</Setting>
@@ -48,11 +49,10 @@
 		<Setting name="13,62">Malice II</Setting>
 		<Setting name="14,96">Unending Agony</Setting>
 		<Setting name="15,152">Cleave Flesh</Setting>
-		<Setting name="15,150">Painbringer II</Setting>
 		<Setting name="16,295">Lucan\'s Pact II</Setting>
 		<Setting name="17,160">Insidious Whisper III</Setting>
 		<Setting name="17,30">Pledge of Armament</Setting>
-		<Setting name="19,21">Unholy Strength</Setting>
+		<Setting name="18,21">Unholy Strength</Setting>
 		<Setting name="19,151">Soulrend II</Setting>
 		<Setting name="20,63">Harm Touch</Setting>
 		<Setting name="20,270">Intercept II</Setting>

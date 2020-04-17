@@ -265,7 +265,7 @@ function CheckHeals()
 		if ${Me.Group[${temphl}].ZoneName.Equal["${Zone.Name}"]}
 		{
 
-			if ${Me.Group[${temphl}].Health} < 100 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
+			if ${Me.Group[${temphl}].Health(exists)} && ${Me.Group[${temphl}].Health} < 100 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].InZone}
 			{
 				if ${Me.Group[${temphl}].Health} < ${Me.Group[${lowest}].Health}
 				{
@@ -273,7 +273,7 @@ function CheckHeals()
 				}
 			}
 
-			if ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].Health}<60
+			if ${Me.Group[${temphl}].Health(exists)} && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].Health}<60 && ${Me.Group[${temphl}].InZone}
 			{
 				grpheal:Inc
 			}

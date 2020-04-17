@@ -316,39 +316,38 @@
 		<Items></items>
 		<Sort>Text</Sort>
 		<OnLoad>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffDPS,1,1,0]
 		</OnLoad>
 		<OnSelect>
-		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffDPS]
+			declare tmpvar int
+		  	LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffDPS]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:Clear
 		  
-		  tmpvar:Set[1]
-		  if ${This.SelectedItems}&gt;0
-		  {
-		  	do
-		  	{
-		  		LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
-		 	 	}
-		  	while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-		  }
-		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnDeselect>
-		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffDPS]
+			declare tmpvar int
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffDPS]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:Clear
 
-		  tmpvar:Set[1]
-		  if ${This.SelectedItems}&gt;0
-		  {
-			  do
-			  {
-			  	LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
-			  }
-			  while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-		  }
-		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+				LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>
@@ -378,42 +377,39 @@
 		<width>150</width>
 		<height>110</height>
 		<SelectMultiple>1</SelectMultiple>
-		<Sort>Text</Sort>
-		<Items></items>
 		<OnLoad>
-			Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffCasterDPS,1,1,1]
 		</OnLoad>
 		<OnSelect>
 			declare tmpvar int
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffCasterDPS]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:Clear
 
-	  	tmpvar:Set[1]
-	  	if ${This.SelectedItems}&gt;0
-	  	{
-	  		do
-	  		{
-	  			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
-	  		}
-	  		while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-	  	}
-	  	Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnDeselect>
-		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffCasterDPS]
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:Clear
+			declare tmpvar int
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffCasterDPS]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:Clear
 
-		  tmpvar:Set[1]
-		  if ${This.SelectedItems}&gt;0
-		  {
-		  	do
-		  	{
-		  		LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
-		  	}
-		  	while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-		  }
-		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffCasterDPS]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>	
@@ -428,12 +424,12 @@
 		<OnLeftClick>
 			UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:ClearItems
 			if (!${Me.Ability[time warp](exists)})
-		  {
+			{
 				UIElement[lbBuffTimeWarp@${This.Parent.FullName}]:AddItem["N/A"]			
 				UIElement[lbBuffTimeWarp@${This.Parent.FullName}].ItemByText["N/A"]:Select
 			}	
 			else
-				 Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,1,0,0,1]
+				Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[lbBuffTimeWarp@${This.Parent.FullName},BuffTimeWarp,1,0,0,1]
 		</OnLeftClick>
 	</Commandbutton>	
 	<Text Name='lblBuffTimeWarp'>
@@ -455,7 +451,7 @@
 		<Items></items>
 		<OnLoad>
 			if (!${Me.Ability[time warp](exists)})
-		  {
+			{
 				This:AddItem["N/A"]			
 				This.ItemByText["N/A"]:Select
 			}	
@@ -467,32 +463,32 @@
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffTimeWarp]
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:Clear
 
-	  	tmpvar:Set[1]
-	  	if ${This.SelectedItems}&gt;0
-	  	{
-	  		do
-	  		{
-	  			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
-	  		}
-	  		while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-	  	}
-	  	Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnSelect>
 		<OnDeselect>
-		  declare tmpvar int
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffTimeWarp]
-		  LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:Clear
+			declare tmpvar int
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSet[BuffTimeWarp]
+			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:Clear
 
-		  tmpvar:Set[1]
-		  if ${This.SelectedItems}&gt;0
-		  {
-		  	do
-		  	{
-		  		LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
-		  	}
-		  	while ${tmpvar:Inc}&lt;=${This.SelectedItems}
-		  }
-		  Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+			tmpvar:Set[1]
+			if ${This.SelectedItems}&gt;0
+			{
+				do
+				{
+					LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSet[BuffTimeWarp]:AddSetting[${tmpvar},${This.SelectedItem[${tmpvar}].Text}]
+				}
+				while ${tmpvar:Inc}&lt;=${This.SelectedItems}
+			}
+			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		</OnDeselect>
 		<OnLeftClick></OnLeftClick>
 	</listbox>		

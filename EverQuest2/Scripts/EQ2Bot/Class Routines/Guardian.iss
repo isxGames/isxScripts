@@ -241,7 +241,7 @@ function Buff_Routine(int xAction)
 			if ${BuffTarget.Equal["None"]}
 				break
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)} && !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[1,:]}].ID}
 				wait 5
@@ -285,7 +285,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 
 			break
@@ -298,7 +298,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)} && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
 		Default
@@ -530,7 +530,7 @@ function CheckHeals()
 			if ${Me.Group[${temphl}].ZoneName.Equal["${Zone.Name}"]}
 			{
 
-				if ${Me.Group[${temphl}].Health} < 100 && !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}](exists)}
+				if ${Me.Group[${temphl}].Health(exists)} && ${Me.Group[${temphl}].Health} < 100 && !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].InZone}
 				{
 					if ${Me.Group[${temphl}].Health} < ${Me.Group[${lowest}].Health}
 						lowest:Set[${temphl}]
@@ -547,7 +547,7 @@ function CheckHeals()
 		while ${temphl:Inc}<${grpcnt}
 	}
 	;MAINTANK EMERGENCY Mitigation
-	if ${Me.Group[${lowest}].Health}<30 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}](exists)}
+	if ${Me.Group[${lowest}].Health(exists)} && ${Me.Group[${lowest}].Health}<30 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}].Name.Equal[${MainTankPC}]} && ${Me.Group[${lowest}].InZone}
 	{
 		call CastSpellRange 317
 		call CastSpellRange 155 156

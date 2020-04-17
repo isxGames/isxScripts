@@ -428,7 +428,7 @@ function CheckForStun()
 function ReacquireTargetFromMA()
 {
     ;Debug:Echo["DEBUG (ReacquireTargetFromMA): Old Target: ${Target}"]
-    if (${Actor[${MainAssistID}](exists)})
+    if (${Actor[${MainAssistID}].Name(exists)})
     {
         target ${MainAssist}
         wait 2
@@ -465,7 +465,7 @@ atom AutoFollowTank()
 		if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
 		{
 			;Debug:Echo["DEBUG-AutoFollowTank(): Following...."]
-			if !${Me.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}](exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
+			if !${Me.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}].Name(exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
 			{
 				if !${Me.WhoFollowing.Equal[${AutoFollowee}]}
 				{
@@ -515,7 +515,7 @@ atom EQ2_FinishedZoning(string TimeInSeconds)
 {
     if ${AutoFollowMode}
     {
-        if (${Actor[pc,${AutoFollowee}](exists)})
+        if (${Actor[pc,${AutoFollowee}].Name(exists)})
         {
             if (!${Me.WhoFollowing.Equal[${AutoFollowee}]})
             {
@@ -693,7 +693,7 @@ function CommonPower(int sPower)
 		}
 	}
 
-	if ${Me.Inventory[ExactName,ManaStone].IsReady} && !${Me.Inventory[ExactName,ManaStone].InBank} && ${Me.Power}<50
+	if (${Me.Power} < 50 && ${Me.Inventory[ExactName,ManaStone].Location.Equal[Inventory]} && ${Me.Inventory[ExactName,ManaStone].IsReady})
 	{
 		Me.Inventory[ExactName,ManaStone]:Use
 		wait 2
@@ -785,12 +785,16 @@ function CheckGroupHealth(int MinHealth)
 
 	do
 	{
+		;;; ADDED
+		if (!${Me.Group[${counter}].InZone} || !${Me.Group[${counter}].Health(exists)})
+			continue
+
 		;check groupmates health
-		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Health} < ${MinHealth} && ${Me.Group[${counter}].Health} > 0
+		if ${Me.Group[${counter}].Health} < ${MinHealth} && ${Me.Group[${counter}].Health} > 0
 			Return FALSE
 
 		;check health of summoner pets
-		if ${Me.Group[${counter}](exists)} && ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
+		if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[illusionist]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
 		{
 			if ${Me.Group[${counter}].Pet.Health} < ${MinHealth} && ${Me.Group[${counter}].Pet.Health} > 0
 				Return FALSE
@@ -806,15 +810,15 @@ function PetAttack(bool NoChecks=0)
 {
 	;Debug:Echo["Calling PetAttack() -- Me.Pet.Target.ID: ${Me.Pet.Target.ID}"]
 
-	if !${Me.Pet(exists)}
+	if !${Me.Pet.Name(exists)}
 		return
 
-	if (!${Actor[${KillTarget}](exists)} || ${Actor[${KillTarget}].IsDead})
+	if (!${Actor[${KillTarget}].Name(exists)} || ${Actor[${KillTarget}].IsDead})
 		return
 
 	if ${NoChecks}
 	{
-		if ${Me.Pet.Target(exists)}
+		if ${Me.Pet.Target.Name(exists)}
 		{
 			EQ2Execute /pet backoff
 			wait 2
@@ -833,7 +837,7 @@ function PetAttack(bool NoChecks=0)
 
 	if ${Me.Pet.Target.ID} != ${KillTarget} && ${Actor[${KillTarget}].Distance}<${AssistHP}
 	{
-		if ${Me.Pet.Target(exists)}
+		if ${Me.Pet.Target.Name(exists)}
 		{
 			EQ2Execute /pet backoff
 			wait 2
@@ -865,7 +869,7 @@ atom CheckStuck()
 {
 	if (${AutoFollowMode})
 	{
-		if (${Actor[${Me.WhoFollowing}](exists)})
+		if (${Actor[${Me.WhoFollowing}].Name(exists)})
 		{
 			if ${Actor[${Me.WhoFollowing}].Distance}>25 && (${Math.Calc64[${Time.Timestamp} - ${StuckWarningTime}]}>=10)
 			{
@@ -972,16 +976,16 @@ function CommonHeals(int Health)
 
 		do
 		{
-			if ${Me.Group[${temphl}](exists)}
-			{
-				if !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Health}<${Health}
-					grpheal:Inc
+			if (!${Me.Group[${counter}].InZone} || !${Me.Group[${counter}].Health(exists)})
+				continue
 
-				if ${Me.Group[${temphl}].Class.Equal[conjuror]} || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[beastlord]}
-				{
-					if ${Me.Group[${temphl}].Pet.Health}<${Health} && ${Me.Group[${temphl}].Pet.Health}>0
-						grpheal:Inc
-				}
+			if !${Me.Group[${temphl}].IsDead} && ${Me.Group[${temphl}].Health}<${Health}
+				grpheal:Inc
+
+			if ${Me.Group[${temphl}].Class.Equal[conjuror]} || ${Me.Group[${temphl}].Class.Equal[necromancer]} || ${Me.Group[${temphl}].Class.Equal[beastlord]}
+			{
+				if ${Me.Group[${temphl}].Pet.Health}<${Health} && ${Me.Group[${temphl}].Pet.Health}>0
+					grpheal:Inc
 			}
 		}
 		while ${temphl:Inc}<=${grpcnt}
@@ -1125,7 +1129,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 		do
 		{
 			;check groupmates health
-			if (${Me.Group[${counter}](exists)} && !${Me.Group[${counter}].IsDead})
+			if (${Me.Group[${counter}].InZone} && !${Me.Group[${counter}].IsDead} && ${Me.Group[${counter}].Health(exists)})
 			{
 				if (${Me.Group[${counter}].Health} < ${GroupHealth})
 					return FALSE
@@ -1133,7 +1137,7 @@ function CheckHealthiness(int GroupHealth, int MTHealth, int MyHealth)
 				;check health of summoner pets .. TO DO -- why do we care about these on epic/raid fights?
 				if ${Me.Group[${counter}].Class.Equal[conjuror]} || ${Me.Group[${counter}].Class.Equal[necromancer]} || ${Me.Group[${counter}].Class.Equal[beastlord]}
 				{
-					if (${Me.Group[${counter}].Pet(exists)} && !${Me.Group[${counter}].Pet.IsDead})
+					if (${Me.Group[${counter}].Pet.Name(exists)} && !${Me.Group[${counter}].Pet.IsDead})
 					{
 						if ${Me.Group[${counter}].Pet.Health} < ${GroupHealth}
 							return FALSE

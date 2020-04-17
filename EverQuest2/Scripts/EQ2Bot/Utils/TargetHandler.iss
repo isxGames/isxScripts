@@ -25,7 +25,7 @@ function main()
 		}
 		else
 		{
-		  if ${Actor[${ltarget}](exists)}
+		  if ${Actor[${ltarget}].Name(exists)}
 		  {
 				if (${Actor[${ltarget}].Health}<=0)
 				{

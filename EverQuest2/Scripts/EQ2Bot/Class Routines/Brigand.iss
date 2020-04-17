@@ -361,7 +361,7 @@ function Combat_Routine(int xAction)
 
 	if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
 	{
-		if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+		if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}].Name(exists)} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
 		{
 			Target ${KillTarget}
 			call CheckPosition 1 1 ${KillTarget}

@@ -66,7 +66,7 @@ function Pulse()
 	;;;;;;;;;;;;
 
 
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+7000]}) && !${Me.IsMoving}
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+7000]}) && !${Me.IsMoving}
 	{
 		if ${PreBuffShield}
 			call CastSpellRange 355 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
@@ -192,7 +192,7 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			}
@@ -600,7 +600,7 @@ function RefreshPower()
 	if ${ShardMode}
 		call Shard
 
-	if ${Me.Power}<40 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].IsReady}
+	if ${Me.Power}<40 && ${Me.Health}>60 && ${Me.Inventory[${Manastone}](exists)} && ${Me.Inventory[${Manastone}].Location.Equal[Inventory]} && ${Me.Inventory[${Manastone}].IsReady}
 		Me.Inventory[${Manastone}]:Use
 
 	;Conjuror Shard
@@ -625,7 +625,7 @@ function CheckHeals()
 	{
 		call CastSpellRange 213 0 0 0 ${Me.ID}
 
-		if ${Actor[${KillTarget}](exists)}
+		if ${Actor[${KillTarget}].Name(exists)}
 			Target ${KillTarget}
 	}
 
@@ -636,7 +636,7 @@ function CheckHeals()
 		{
 			call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
 
-			if ${Actor[${KillTarget}](exists)}
+			if ${Actor[${KillTarget}].Name(exists)}
 				Target ${KillTarget}
 		}
 	}

@@ -41,7 +41,7 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+20000]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+20000]})
 	{
 		ClassPulseTimer:Set[${Script.RunningTime}]
 		ISXEQ2:ClearAbilitiesCache
@@ -221,13 +221,13 @@ function Combat_Routine(int xAction)
 
 
 	
-	if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Distance}>25
+	if ${Actor[${KillTarget}].Name(exists)} && ${Actor[${KillTarget}].Distance}>25
 	{
 		echo We are over 25 Meters
 		call FastMove ${Actor[${KillTarget}].X} ${Actor[${KillTarget}].Z} 10 1 1
 	}
 	
-	if ${Actor[${KillTarget}](exists)} && ${Actor[${KillTarget}].Distance}<8
+	if ${Actor[${KillTarget}].Name(exists)} && ${Actor[${KillTarget}].Distance}<8
 	{
 		echo We are under 8 meters
 		press -hold s

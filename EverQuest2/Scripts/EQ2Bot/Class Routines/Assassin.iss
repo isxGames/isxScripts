@@ -524,7 +524,7 @@ function Combat_Routine(int xAction)
 		case Mastery
 			if !${MainTank} && ${Target.Target.ID}!=${Me.ID}
 			{
-				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+				if ${Me.Ability[Sinister Strike].IsReady} && ${Actor[${KillTarget}].Name(exists)}
 				{
 					Target ${KillTarget}
 					call CheckPosition 1 1

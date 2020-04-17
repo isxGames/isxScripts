@@ -116,10 +116,10 @@ function Pulse()
 	;;;;;;;;;;;;
 
 	;; check this at least every 0.5 seconds
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
 	{
 		;check if we have a pet or a ooze not up
-		if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
+		if !${Me.Pet.Name(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 		{
 			call SummonPet
 			waitframe
@@ -269,7 +269,7 @@ function Buff_Routine(int xAction)
 	declare BuffTarget string local
 
 	;check if we have a pet or a ooze not up
-	if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
+	if !${Me.Pet.Name(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 	{
 		call SummonPet
 		waitframe
@@ -317,7 +317,7 @@ function Buff_Routine(int xAction)
 			break
 
 		case Pet_Buff
-			if ${Me.Pet(exists)} || ${Me.Maintained[${SpellType[395]}](exists)}
+			if ${Me.Pet.Name(exists)} || ${Me.Maintained[${SpellType[395]}](exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]}
 			break
 		case SeeInvis
@@ -359,7 +359,7 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
-	if ${Me.Pet(exists)}
+	if ${Me.Pet.Name(exists)}
 		call PetAttack
 
 	if ${Me.Ability[${SpellType[450]}].IsReady}
@@ -422,7 +422,7 @@ function Combat_Routine(int xAction)
 		call CheckCures
 
 	;check if we have a pet or a ooze not up
-	if !${Me.Pet(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
+	if !${Me.Pet.Name(exists)} && !${Me.Maintained[${SpellType[395]}](exists)} && ${PetMode}
 		call SummonPet
 
 	call CheckHeals
@@ -437,7 +437,7 @@ function Combat_Routine(int xAction)
 	call AnswerShardRequest
 
 	;Keep Consumption Up
-	if ${Me.Pet(exists)}
+	if ${Me.Pet.Name(exists)}
 		call CastSpellRange 351
 
 	;keep distracting strike up if we have a scout pet
@@ -474,11 +474,11 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		case UndeadTide
-			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.Pet(exists)} && ${PetMode} && ${Undead_Army}
+			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.Pet.Name(exists)} && ${PetMode} && ${Undead_Army}
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			break
 		case AA_Lifeburn
-			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.Pet(exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${LifeburnMode}
+			if (${Actor[${KillTarget}].Type.Equal[NamedNPC]} || ${Actor[${KillTarget}].IsEpic}) && ${Me.Pet.Name(exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}](exists)} && ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && ${LifeburnMode}
 				call CastSpellRange ${SpellRange[${xAction},1]}
 			break
 		case Cloud
@@ -486,7 +486,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 1 0 ${KillTarget}
 			break
 		case Shockwave
-			if ${AoEMode} && ${Me.Pet(exists)}  && ${Me.Maintained[${SpellType[357]}](exists)}
+			if ${AoEMode} && ${Me.Pet.Name(exists)}  && ${Me.Maintained[${SpellType[357]}](exists)}
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		case AoE
@@ -525,7 +525,7 @@ function Combat_Routine(int xAction)
 				call CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
 			break
 		case Master_Strike
-			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}](exists)}
+			if ${Me.Ability[Master's Strike].IsReady} && ${Actor[${KillTarget}].Name(exists)}
 			{
 				Target ${KillTarget}
 				Me.Ability[Master's Strike]:Use
@@ -665,7 +665,7 @@ function CheckHeals()
 	}
 
 	;Res the MT if they are dead
-	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].Distance}<25
+	if ${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}].Name(exists)} && ${Actor[${MainTankPC}].Distance}<25
 	{
 		call CastSpellRange 300 0 0 0 ${Actor[${MainTankPC}].ID}
 	}
@@ -674,7 +674,7 @@ function CheckHeals()
 	{
 		do
 		{
-			if ${Me.Group[${temphl}](exists)}
+			if ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)}
 			{
 
 				if ${Me.Group[${temphl}].Health}<100 && !${Me.Group[${temphl}].IsDead}
@@ -740,7 +740,7 @@ function CheckHeals()
 
 
 	;ME HEALS
-	if ${Me.Health}<=${Me.Group[${lowest}].Health} && ${Me.Group[${lowest}](exists)} || ${Me.ID}==${Actor[${MainTankPC}].ID}
+	if ${Me.Group[${lowest}].Health(exists)} && ${Me.Health}<=${Me.Group[${lowest}].Health} && ${Me.Group[${lowest}].InZone} || ${Me.ID}==${Actor[${MainTankPC}].ID}
 	{
 		if ${Me.Health}<75
 		{
@@ -752,7 +752,7 @@ function CheckHeals()
 			{
 				call CastSpellRange 396 0 0 0 ${Me.ID}
 
-				if ${Actor[${KillTarget}](exists)}
+				if ${Actor[${KillTarget}].Name(exists)}
 				{
 					Target ${KillTarget}
 				}
@@ -763,7 +763,7 @@ function CheckHeals()
 	if ${HealMode}
 	{
 		;MAINTANK HEALS
-		if ${Actor[${MainTankPC}].Health}<60 && !${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}](exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
+		if ${Actor[${MainTankPC}].Health}<60 && !${Actor[${MainTankPC}].IsDead} && ${Actor[${MainTankPC}].Name(exists)} && ${Actor[${MainTankPC}].ID}!=${Me.ID}
 		{
 				call CastSpellRange 4 0 0 0 ${Actor[${MainTankPC}].ID}
 		}
@@ -774,19 +774,19 @@ function CheckHeals()
 	{
 		call CastSpellRange 396 0 0 0 ${Me.ID}
 
-		if ${Actor[${KillTarget}](exists)}
+		if ${Actor[${KillTarget}].Name(exists)}
 		{
 			Target ${KillTarget}
 		}
 	}
 
-	if ${Me.Group[${lowest}].Health}<70 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}](exists)} && ${Me.Group[${lowest}].ID}!=${Me.ID} && ${HealMode}
+	if ${Me.Group[${lowest}].Health(exists)} && ${Me.Group[${lowest}].Health}<70 && !${Me.Group[${lowest}].IsDead} && ${Me.Group[${lowest}].InZone} && ${Me.Group[${lowest}].ID}!=${Me.ID} && ${HealMode}
 	{
 			call CastSpellRange 4 0 0 0 ${Me.Group[${lowest}].ID}
 	}
 
 	;PET HEALS (other)
-	if ${PetToHeal} && ${Actor[${PetToHeal}](exists)} && ${HealMode}
+	if ${PetToHeal} && ${Actor[${PetToHeal}].Name(exists)} && ${HealMode}
 	{
 		if ${Actor[${PetToHeal}].InCombatMode}
 		{
@@ -822,12 +822,12 @@ function CheckHeals()
 	}
 
 	;My Pet Heals
-	if ${Me.Pet.Health}<70 && ${Me.Pet(exists)}
+	if ${Me.Pet.Health}<70 && ${Me.Pet.Name(exists)}
 	{
 		call CastSpellRange 1
 	}
 
-	if ${Me.Pet.Health}<40 && ${Me.Pet(exists)} && ${Me.Health}>40
+	if ${Me.Pet.Health}<40 && ${Me.Pet.Name(exists)} && ${Me.Health}>40
 	{
 		call CastSpellRange 4 0 0 0 ${Me.Pet.ID}
 	}
@@ -862,12 +862,12 @@ function CureGroupMember(int gMember)
 			call CastSpellRange 213 0 0 0 ${Me.Group[${gMember}].ID}
 		}
 	}
-	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}](exists)}
+	while ${Me.Group[${gMember}].IsAfflicted} && ${CureMode} && ${tmpcure:Inc}<3 && ${Me.Group[${gMember}].InZone} && ${Me.Group[${gMember}].Health(exists)}
 }
 
 function QueueShardRequest(string line, string sender)
 {
-	if ${Actor[${sender}](exists)}
+	if ${Actor[${sender}].Name(exists)}
 	{
 		ShardQueue:Queue[${sender}]
 	}
@@ -875,7 +875,7 @@ function QueueShardRequest(string line, string sender)
 
 function AnswerShardRequest()
 {
-	if ${Actor[${ShardQueue.Peek}](exists)}
+	if ${Actor[${ShardQueue.Peek}].Name(exists)}
 	{
 		if ${Actor[${ShardQueue.Peek}].Distance}<10  && !${Me.IsMoving}  &&  ${Me.Ability[${SpellType[360]}].IsReady}
 		{

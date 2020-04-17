@@ -329,22 +329,22 @@
 		<Items></items>
 		<Sort>Text</Sort>
 		<OnLoad>
-	    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember](exists)})
-	    {
-	      This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]
-		    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]:Select
+			if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember](exists)})
+			{
+				This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]
+		    	This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffArmamentGroupMember]}]:Select
 			}
 			else
 			{
 			    This:AddItem["No one"]
 			    This.ItemByText["No one"]:Select
-			}			
+			}	
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffArmamentGroupMember,${This.SelectedItem.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffArmamentGroupMember,0,1,1]
+		  	Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffArmamentGroupMember,0,1,1]
 		</OnLeftClick>
 	</combobox>
     <Text Name='lblBuffTacticsGroupMember'>
@@ -364,22 +364,22 @@
 		<AutoTooltip>The Group/Raid Member to Evasion Buff</AutoTooltip>
 		<Items></items>
 		<OnLoad>
-	    if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember](exists)})
-	    {
-	      This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]
-		    This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]:Select
+			if (${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember](exists)})
+			{
+	      		This:AddItem[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]
+		    	This.ItemByText[${LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}].FindSetting[BuffTacticsGroupMember]}]:Select
 			}
 			else
 			{
-			  This:AddItem["No one"]
-			  This.ItemByText["No one"]:Select
+			  	This:AddItem["No one"]
+			  	This.ItemByText["No one"]:Select
 			}
 		</OnLoad>
 		<OnSelect>
 			LavishSettings[EQ2Bot].FindSet[Character].FindSet[${Me.SubClass}]:AddSetting[BuffTacticsGroupMember,${This.SelectedItem.Text}]
 			Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 		<OnLeftClick>
-		  Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTacticsGroupMember,0,1,1]
+		  	Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList[${This.FullName},BuffTacticsGroupMember,0,1,1]
 		</OnLeftClick>
     </combobox>
 </ISUI>

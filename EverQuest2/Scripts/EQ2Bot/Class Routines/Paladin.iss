@@ -53,7 +53,7 @@ function Pulse()
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
 
-	if (${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]}) && \
+	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]}) && \
 		${Me.Ability[${SpellType[7]}].IsReady} && \
 		(!${Me.Maintained[${SpellType[7]}](exists)} || ${Me.Maintained[${SpellType[7]}].Duration} < ${Me.Ability[${SpellType[7]}].ToAbilityInfo.CastingTime})
 	{
@@ -142,7 +142,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
 		case SA_Buff
@@ -153,7 +153,7 @@ function Buff_Routine(int xAction)
 				if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 					;Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+				if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 					call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				break
 			}
@@ -170,7 +170,7 @@ function Buff_Routine(int xAction)
 			if !${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}].Target.ID}==${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 
-			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}](exists)}
+			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 				call CastSpellRange ${PreSpellRange[${xAction},1]} 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].ID}
 			break
 		case Self_Buffs
@@ -637,7 +637,7 @@ function CheckHeals()
 	{
 		if ${Me.Group[${temphl}].ZoneName.Equal[${Zone.Name}]}
 		{
-			if ${Me.Group[${temphl}].Health}<80 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}](exists)}
+			if ${Me.Group[${temphl}].Health}<80 && ${Me.Group[${temphl}].Health}>-99 && ${Me.Group[${temphl}].InZone}
 			{
 				grpheal:Inc
 				if ${Me.Group[${temphl}].Health}<=${Me.Group[${lowest}].Health}
@@ -651,19 +651,19 @@ function CheckHeals()
 		grpheal:Inc
 
 	;MAINTANK EMERGENCY HEAL
-	if ${Me.Group[${lowest}].Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}](exists)}
+	if ${Me.Group[${lowest}].Health(exists)} && ${Me.Group[${lowest}].Health}<30 && ${Me.Group[${lowest}].Name.Equal[${MainAssist}]} && ${Me.Group[${lowest}].InZone}
 		call EmergencyHeal ${Actor[${MainAssist}].ID}
 
 	;ME HEALS
-	if ${Me.Health}<=${Me.Group[${lowest}].Health} && ${Me.Group[${lowest}](exists)}
+	if ${Me.Health}<=${Me.Group[${lowest}].Health}
 	{
 		call MeHeals
 	}
 	;MAINTANK HEALS
-	if ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].Health}<50 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].Name(exists)}
 		call CastSpellRange 5 0 0 0 ${Actor[${MainAssist}].ID}
 
-	if ${Actor[${MainTankPC}].Health}<25 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}](exists)}
+	if ${Actor[${MainTankPC}].Health}<25 && ${Actor[${MainTankPC}].Health}>-99 && ${Actor[${MainTankPC}].Name(exists)}
 		call CastSpellRange 9 0 0 0 ${Actor[${MainAssist}].ID}
 
 	;GROUP HEALS
@@ -673,13 +673,13 @@ function CheckHeals()
 			call CastSpellRange 15
 	}
 
-	if ${Me.Group[${lowest}].Health}<50 && ${Me.Group[${lowest}](exists)}
+	if ${Me.Group[${lowest}].Health(exists)} && ${Me.Group[${lowest}].Health}<50 && ${Me.Group[${lowest}].InZone}
 	{
-		if ${Me.Ability[${SpellType[393]}].IsReady} && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
+		if ${Me.Ability[${SpellType[393]}].IsReady} && ${Me.Group[${lowest}].Health}>-99
 			call CastSpellRange 393 0 0 0 ${Me.Group[${lowest}].ID}
-		elseif ${Me.Ability[${SpellType[5]}].IsReady} && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
+		elseif ${Me.Ability[${SpellType[5]}].IsReady} && ${Me.Group[${lowest}].Health}>-99
 			call CastSpellRange 5 0 0 0 ${Me.Group[${lowest}].ID}
-		elseif && ${Me.Group[${lowest}].Health}>-99 && ${Me.Group[${lowest}](exists)}
+		elseif && ${Me.Group[${lowest}].Health}>-99
 			call CastSpellRange 9 0 0 0 ${Me.Group[${lowest}].ID}
 
 	}

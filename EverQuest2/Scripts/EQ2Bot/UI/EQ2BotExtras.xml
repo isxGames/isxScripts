@@ -117,7 +117,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			{
 				do
 				{
-					if ${Me.Raid[${tmpvar}](exists)} &amp;&amp; (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})
+					if ${Me.Raid[${tmpvar}].InZone} &amp;&amp; (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})
 					{
 						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
@@ -128,7 +128,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			{
 				do
 				{
-					if ${Me.Group[${tmpvar}](exists)} &amp;&amp; (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})
+					if ${Me.Group[${tmpvar}].InZone} &amp;&amp; (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})
 					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}]
 					}
@@ -185,7 +185,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			{
 				do
 				{
-					if ${Me.Raid[${tmpvar}](exists)} &amp;&amp; ${Me.Raid[${tmpvar}].Class.Equal[necromancer]}
+					if ${Me.Raid[${tmpvar}].InZone} &amp;&amp; ${Me.Raid[${tmpvar}].Class.Equal[necromancer]}
 					{
 						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
@@ -196,7 +196,7 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings</OnSelect>
 			{
 				do
 				{
-					if ${Me.Group[${tmpvar}](exists)} &amp;&amp; ${Me.Group[${tmpvar}].Class.Equal[necromancer]}
+					if ${Me.Group[${tmpvar}].InZone} &amp;&amp; ${Me.Group[${tmpvar}].Class.Equal[necromancer]}
 					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}]
 					}
