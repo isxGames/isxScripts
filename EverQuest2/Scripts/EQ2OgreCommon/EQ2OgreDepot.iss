@@ -249,7 +249,7 @@ objectdef Object_GenericDepot
 	function Depot()
 	{
 		variable int64 DepotID
-		if ${Actor[special,${This.DepotName}](exists)}
+		if ${Actor[special,${This.DepotName}].Name(exists)}
 			DepotID:Set[${Actor[special,${This.DepotName}].ID}]
 		else
 		{
@@ -279,7 +279,7 @@ objectdef Object_AmmoDepot
 	function Depot()
 	{
 		variable int64 DepotID
-		if ${Actor[special,Ammo Depot](exists)}
+		if ${Actor[special,Ammo Depot].Name(exists)}
 			DepotID:Set[${Actor[special,Ammo Depot].ID}]
 		else
 		{
@@ -364,11 +364,11 @@ objectdef Object_HarvestDepot
 	function Depot()
 	{
 		variable int64 DepotID
-		if ${Actor[tradeskill unit,"Harvesting Supply Depot"](exists)}
+		if ${Actor[tradeskill unit,"Harvesting Supply Depot"].Name(exists)}
 			DepotID:Set[${Actor[tradeskill unit,"Harvesting Supply Depot"].ID}]
-		elseif ${Actor[special,"Tinkered Personal Harvest Depot"](exists)}
+		elseif ${Actor[special,"Tinkered Personal Harvest Depot"].Name(exists)}
 			DepotID:Set[${Actor[special,"Tinkered Personal Harvest Depot"].ID}]
-		elseif ${Actor[special,"Personal Harvest Depot (small)"](exists)}
+		elseif ${Actor[special,"Personal Harvest Depot (small)"].Name(exists)}
 			DepotID:Set[${Actor[special,"Personal Harvest Depot (small)"].ID}]
 		else
 		{

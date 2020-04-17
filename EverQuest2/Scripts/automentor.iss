@@ -28,7 +28,7 @@ function main(string mtarget)
 	{
 		if !${AutoLowest}
 		{
-			if ${Actor[${mtarget}](exists)} && !${Actor[${mtarget}].Name.Equal[${Me}]} && ${Me.EffectiveLevel} > ${Actor[pc,exactname,${mtarget}].Level} && !${Me.InCombat}
+			if ${Actor[${mtarget}].Name(exists)} && !${Actor[${mtarget}].Name.Equal[${Me}]} && ${Me.EffectiveLevel} > ${Actor[pc,exactname,${mtarget}].Level} && !${Me.InCombat}
 			{
 				Echo [${Time}] automentor:  mentoring ${mtarget}
 				EQ2Execute apply_verb ${Actor[pc,exactname,${mtarget}].ID} mentor
@@ -72,7 +72,7 @@ function main(string mtarget)
 
 			if ${Me.EffectiveLevel} != ${Me.Level} /* I'm mentored */
 			{
-				if ${Actor[pc,exactname,${Mentored}](exists)}
+				if ${Actor[pc,exactname,${Mentored}].Name(exists)}
 				{
 					eq2execute /apply_verb ${Actor[pc,exactname,${Mentored}].ID} stop mentoring
 					Echo [${Time}] automentor:  Unmentoring ${Mentored}
@@ -83,7 +83,7 @@ function main(string mtarget)
 			
 			/* At this point, we are not mentored. Time to mentor! */
 
-			if ${Actor[pc,exactname,${LowestMember}](exists)} && !${Me.InCombat}
+			if ${Actor[pc,exactname,${LowestMember}].Name(exists)} && !${Me.InCombat}
 			{
 				eq2execute /apply_verb ${Actor[pc,exactname,${LowestMember}].ID} mentor
 				Echo [${Time}] automentor:  mentoring ${LowestMember}
@@ -99,7 +99,7 @@ function atexit()
 {
 	if ${Me.Level} != ${Me.EffectiveLevel} /* We're still mentored. Attempt to unmentor */
 	{
-		if ${Actor[pc,exactname,${Mentored}](exists)}
+		if ${Actor[pc,exactname,${Mentored}].Name(exists)}
 		{
 			eq2execute /apply_verb ${Actor[pc,exactname,${Mentored}].ID} stop mentoring
 			Echo [${Time}] automentor:  Unmentoring ${Mentored}

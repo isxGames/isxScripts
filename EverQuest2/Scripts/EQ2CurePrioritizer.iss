@@ -54,7 +54,7 @@ function CureCurse(int ActorID)
 {
 	echo Function CureCusre Started
 
-	if ${Me.InRaid} && ${Me.ID}!=${ActorID} && ${Me.Raid[id,${ActorID}](exists)}
+	if ${Me.InRaid} && ${Me.ID}!=${ActorID} && ${Me.Raid[id,${ActorID}].Name(exists)}
 	{
 		if !${Me.Raid[id,${ActorID}].Cursed}
 		{
@@ -63,7 +63,7 @@ function CureCurse(int ActorID)
 		}
 	}
 
-	if ${Me.GroupCount} && ${Me.ID}!=${ActorID} && ${Me.Group[${Actor[id,${ActorID}].Name}](exists)}
+	if ${Me.GroupCount} && ${Me.ID}!=${ActorID} && ${Me.Group[${Actor[id,${ActorID}].Name}].Name(exists)}
 	{
 		if !${Me.Group[${Actor[id,${ActorID}].Name}].Cursed}
 		{
@@ -82,7 +82,7 @@ function CureCurse(int ActorID)
 		}
 	}
 
-	if !${Actor[id,${ActorID}](exists)}
+	if !${Actor[id,${ActorID}].Name(exists)}
 	{
 		echo Function CureCurse Finished - ${ActorID} not found
 		return
@@ -181,7 +181,7 @@ function stCure(int ActorID)
 	variable(local) int count = 0
 	echo Function stCure Started
 
-	if ${Me.InRaid} && ${Me.ID}!=${ActorID} && ${Me.Raid[id,${ActorID}](exists)}
+	if ${Me.InRaid} && ${Me.ID}!=${ActorID} && ${Me.Raid[id,${ActorID}].Name(exists)}
 	{
 		if !${Me.Raid[id,${ActorID}].IsAfflicted}
 		{
@@ -190,7 +190,7 @@ function stCure(int ActorID)
 		}
 	}
 
-	if ${Me.GroupCount} && ${Me.ID}!=${ActorID} && ${Me.Group[${Actor[id,${ActorID}].Name}](exists)}
+	if ${Me.GroupCount} && ${Me.ID}!=${ActorID} && ${Me.Group[${Actor[id,${ActorID}].Name}].Name(exists)}
 	{
 		if !${Me.Group[${Actor[id,${ActorID}].Name}].IsAfflicted}
 		{
@@ -205,7 +205,7 @@ function stCure(int ActorID)
 		return
 	}
 
-	if !${Actor[id,${ActorID}](exists)}
+	if !${Actor[id,${ActorID}].Name(exists)}
 	{
 		echo stCure - ${ActorID} does not exist
 		return
@@ -315,7 +315,7 @@ atom GroupAfflicted(int ActorID, int tCounter, int aCounter, int nCounter, int e
 		do
 		{
 			;make sure they in zone and in range
-			if ${Me.Group[${temphl}](exists)} && ${Me.Group[${temphl}].IsAfflicted}
+			if ${Me.Group[${temphl}].Name(exists)} && ${Me.Group[${temphl}].IsAfflicted}
 			{
 				if ${Me.Group[${temphl}].Trauma}>0
 					acount:Inc
@@ -430,7 +430,7 @@ function inmygroup(uint ActorID)
 	
 	do
 	{
-		if ${Me.Group[${gmember}](exists)} && ${Me.Group[${gmember}].ID}==${ActorID}
+		if ${Me.Group[${gmember}].Name(exists)} && ${Me.Group[${gmember}].ID}==${ActorID}
 			return ${gmember}
 	}
 	while ${gmember:Inc}<6
@@ -445,7 +445,7 @@ function inmyraid(uint ActorID)
 	
 	do
 	{
-		if ${Me.Raid[${rmember}](exists)} && ${Me.Raid[${rmember}].ID}==${ActorID}
+		if ${Me.Raid[${rmember}].Name(exists)} && ${Me.Raid[${rmember}].ID}==${ActorID}
 			return ${rmember}
 	}
 	while ${rmember:Inc}<24
@@ -486,7 +486,7 @@ function eq2botStart()
 {
 	if ${Script[Eq2bot](exists)}
 	{
-		Script[Eq2bot]:Resume
+		ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Resumed EQ2Bot"]
 	}
 }
@@ -497,13 +497,13 @@ function eq2botStop()
 	if ${Script[Eq2bot](exists)}
 	{
 		Script[Eq2bot].VariableScope.CurrentAction:Set["Cure Process Handler has Paused EQ2Bot"]
-		Script[Eq2bot]:Pause
+		ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 	}
 }
 function atexit()
 {
 	if ${Script[Eq2bot](exists)}
-		Script[EQ2Bot]:Resume
+		ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 	
 	echo CurePrioritizer Script Ending...
 }

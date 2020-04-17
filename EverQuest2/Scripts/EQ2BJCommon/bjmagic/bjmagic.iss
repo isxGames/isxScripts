@@ -41,7 +41,7 @@ function main()
 			
 			echo ${Time}: Attempt number ${Count} to click shrine
 			
-			if ${Actor[special,"Druzaic Shrine"](exists)} && ${Actor[special,"Druzaic Shrine"].Distance} <= 10
+			if ${Actor[special,"Druzaic Shrine"].Name(exists)} && ${Actor[special,"Druzaic Shrine"].Distance} <= 10
 			{
 			
 				EQ2execute "/apply_verb ${Actor[druzaic shrine].ID} inspect"
@@ -68,7 +68,7 @@ function main()
 				
 			}
 
-			if !${Actor[special,"Druzaic Shrine"](exists)} || ${Actor[special,"Druzaic Shrine"].Distance} > 10
+			if !${Actor[special,"Druzaic Shrine"].Name(exists)} || ${Actor[special,"Druzaic Shrine"].Distance} > 10
 			{
 				echo ${Time}: Shrine not detected.
 				echo ${Time}: Waiting [${Math.Calc[(${timeuntilnextmilli.TimeLeft}/1000)/60].Centi}] minutes before next attempt.

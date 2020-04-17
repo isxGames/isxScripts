@@ -64,7 +64,7 @@ function main(int TempNum=12, bool LoopScript=TRUE)
 	{
 		Communication:Set[Waiting]
 		;Target Guild Hunter, hail to check his conversation
-		if !${HunterDone} && ${Actor[guild, guild hunter](exists)}
+		if !${HunterDone} && ${Actor[guild, guild hunter].Name(exists)}
 		{
 			Actor[guild, guild hunter]:DoTarget
 			Face "${Actor[guild, guild hunter]}"
@@ -96,7 +96,7 @@ function main(int TempNum=12, bool LoopScript=TRUE)
 				HunterDone:Set[TRUE]
 			}
 		}
-		elseif !${MinerDone} && ${Actor[guild, guild miner](exists)}
+		elseif !${MinerDone} && ${Actor[guild, guild miner].Name(exists)}
 		{
 			Actor[guild, guild miner]:DoTarget
 			Face "${Actor[guild, guild miner]}"
@@ -128,7 +128,7 @@ function main(int TempNum=12, bool LoopScript=TRUE)
 				MinerDone:Set[TRUE]
 			}
 		}
-		elseif !${GathererDone} && ${Actor[guild, guild gatherer](exists)}
+		elseif !${GathererDone} && ${Actor[guild, guild gatherer].Name(exists)}
 		{
 			Actor[guild, guild gatherer]:DoTarget
 			Face "${Actor[guild, guild gatherer]}"

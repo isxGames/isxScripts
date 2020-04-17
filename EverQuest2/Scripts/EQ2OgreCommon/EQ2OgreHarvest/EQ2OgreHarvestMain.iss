@@ -107,7 +107,7 @@ function main()
 		}
 
 		;Lets see if our CurrentResourceID is within range, if it is, lets harvest it up.
-		if ${Actor[${CurrentResourceID}](exists)} && ${CurrentResourceID}!=0 && ${Math.Distance[${Me.X},${Math.Calc[${Me.Y}+0]},${Me.Z},${Actor[${CurrentResourceID}].X},${Math.Calc[${Actor[${CurrentResourceID}].Y}+0]},${Actor[${CurrentResourceID}].Z}]} <= ${EQ2OgreHarvestResourceDistance}
+		if ${Actor[${CurrentResourceID}].Name(exists)} && ${CurrentResourceID}!=0 && ${Math.Distance[${Me.X},${Math.Calc[${Me.Y}+0]},${Me.Z},${Actor[${CurrentResourceID}].X},${Math.Calc[${Actor[${CurrentResourceID}].Y}+0]},${Actor[${CurrentResourceID}].Z}]} <= ${EQ2OgreHarvestResourceDistance}
 		{
 			;If we're close enough to harvest, lets break all movement
 			EQ2OgreHarvestMovementTypeAllowed:Set[NONE]
@@ -124,7 +124,7 @@ function main()
 			wait 5
 			continue
 		}
-		if ${Actor[${CurrentResourceID}](exists)} && ${CurrentResourceID}!=0
+		if ${Actor[${CurrentResourceID}].Name(exists)} && ${CurrentResourceID}!=0
 		{
 			if ${EQ2OgreHarvestMovementTypeAllowed.Equal[NONE]} && !${Me.IsMoving}
 			{

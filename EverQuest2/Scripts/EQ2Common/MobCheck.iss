@@ -43,7 +43,7 @@ objectdef mobcheck
 			tempvar:Set[1]
 			do
 			{
-				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID}
+				if (${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].ID} && ${Me.Group[${tempvar}].Name(exists)}) || ${Actor[${actorid}].Target.ID}==${Me.Group[${tempvar}].PetID}
 				{
 					return TRUE
 				}
@@ -56,7 +56,7 @@ objectdef mobcheck
 				tempvar:Set[1]
 				do
 				{
-					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}](exists)}) || ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
+					if (${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID} && ${Me.Raid[${tempvar}].Name(exists)}) || ${Actor[${actorid}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID}
 					{
 						return TRUE
 					}
@@ -65,7 +65,7 @@ objectdef mobcheck
 			}
 		}
 
-		if ${Actor[MyPet](exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
+		if ${Actor[MyPet].Name(exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
 		{
 			return TRUE
 		}
@@ -78,7 +78,7 @@ objectdef mobcheck
 		variable int tcount=2
 		variable int mobcount
 
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+		if !${Actor[NPC,range,15].Name(exists)} && !(${Actor[NamedNPC,range,15].Name(exists)} && !${IgnoreNamed})
 		{
 			return 0
 		}
@@ -101,7 +101,7 @@ objectdef mobcheck
 	{
 		variable int tcount=2
 
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)}
+		if !${Actor[NPC,range,15].Name(exists)} && !(${Actor[NamedNPC,range,15].Name(exists)}
 		{
 			return FALSE
 		}
@@ -147,7 +147,7 @@ objectdef mobcheck
 		variable int tcount=2
 		haveaggro:Set[FALSE]
 
-		if !${Actor[NPC,range,15](exists)} && !(${Actor[NamedNPC,range,15](exists)} && !${IgnoreNamed})
+		if !${Actor[NPC,range,15].Name(exists)} && !(${Actor[NamedNPC,range,15].Name(exists)} && !${IgnoreNamed})
 		{
 			return
 		}

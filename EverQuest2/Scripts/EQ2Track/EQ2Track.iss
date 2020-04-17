@@ -253,7 +253,7 @@ objectdef TrackHelper
 		variable string TypeString
 		variable string HealthString
 
-		if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)} && !${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}](exists)}
+		if ${UIElement[TrackItems@EQ2 Track].SelectedItem(exists)} && !${Actor[${UIElement[TrackItems@EQ2 Track].SelectedItem.Value}].Name(exists)}
 		{
 			eq2execute /waypoint_cancel
 			UIElement[TrackItems@EQ2 Track].SelectedItem:Remove
@@ -262,7 +262,7 @@ objectdef TrackHelper
 		do
 		{
 			aID:Set[${UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}].Value}]
-			if (!${Actor[${aID}](exists)} || ${BadActors.Element[${aID}](exists)})
+			if (!${Actor[${aID}].Name(exists)} || ${BadActors.Element[${aID}](exists)})
 			{
 				UIElement[TrackItems@EQ2 Track].OrderedItem[${tcount}]:Remove
 			}

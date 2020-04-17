@@ -71,7 +71,7 @@ objectdef EQ2FaceClass
 	/* User-Callable Functions Start */
 	method FaceActor(int ActorID, bool ImmediateFace=FALSE)
 	{
-		if !${Actor[id,${ActorID}](exists)}
+		if !${Actor[id,${ActorID}].Name(exists)}
 		{
 			return
 		}

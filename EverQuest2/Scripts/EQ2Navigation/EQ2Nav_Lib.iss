@@ -327,7 +327,7 @@ objectdef EQ2Nav
 	{
 		EQ2:CreateCustomActorArray[byDist,15]
 
-		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
+		if ${CustomActor[chest,radius,15].Name(exists)} || ${CustomActor[corpse,radius,15].Name(exists)}
 		{
 			This:Debug["Loot nearby..."]
 			This.LootNearby:Set[TRUE]
@@ -893,7 +893,7 @@ objectdef EQ2Nav
 		;; If eq2bot is running and we are in combat...then return
 		if ${Script[eq2bot](exists)}
 		{
-			if ${Me.InCombat} || ${Actor[${Scipt[eq2bot].Variable[KillTarget]}](exists)}
+			if ${Me.InCombat} || ${Actor[${Scipt[eq2bot].Variable[KillTarget]}].Name(exists)}
 			{
 				if ${Me.IsMoving}
 					This:StopRunning

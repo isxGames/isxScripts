@@ -42,7 +42,7 @@
 			tmpvar:Set[1]
 				do
 				{
-					if ${Me.Group[${tmpvar}](exists)}
+					if ${Me.Group[${tmpvar}].Name(exists)}
 					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}]
 					}
@@ -116,7 +116,7 @@
 			{
 				do
 				{
-					if ${Me.Raid[${tmpvar}](exists)} &amp;&amp; (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})
+					if ${Me.Raid[${tmpvar}].Name(exists)} &amp;&amp; (${Me.Raid[${tmpvar}].Class.Equal[conjuror]} || ${Me.Raid[${tmpvar}].Class.Equal[necromancer]})
 					{
 						This:AddItem[${Me.Raid[${tmpvar}].Name}]
 					}
@@ -127,7 +127,7 @@
 			{
 				do
 				{
-					if ${Me.Group[${tmpvar}](exists)} &amp;&amp; (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})
+					if ${Me.Group[${tmpvar}].Name(exists)} &amp;&amp; (${Me.Group[${tmpvar}].Class.Equal[conjuror]} || ${Me.Group[${tmpvar}].Class.Equal[necromancer]})
 					{
 						This:AddItem[${Me.Group[${tmpvar}].Name}]
 					}

@@ -26,13 +26,13 @@ function main(string ShadowTarget, float srange)
 
 	do
 	{
-		while ${Actor[${ShadowTarget}](exists)} && !${Actor[${ShadowTarget}].IsDead}
+		while ${Actor[${ShadowTarget}].Name(exists)} && !${Actor[${ShadowTarget}].IsDead}
 		{
 			if ${Actor[${ShadowTarget}].Distance}>${srange}
 			{
-				Script[EQ2Bot]:Pause
+				ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 				call FastMove ${Actor[${ShadowTarget}].ID} ${srange}
-				Script[EQ2Bot]:Resume
+				ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 			}
 			waitframe
 		}

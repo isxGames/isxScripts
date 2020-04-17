@@ -221,7 +221,7 @@ function CheckTriggers(string Message, string Speaker, int MsgType)
 function MySays(string Line, string speaker, string message)
 {
 	
-	if ${TriggerSays} && ${Actor[pc,exactname,${speaker}](exists)}
+	if ${TriggerSays} && ${Actor[pc,exactname,${speaker}].Name(exists)}
 
 	{
 		CountSays:Inc[1]

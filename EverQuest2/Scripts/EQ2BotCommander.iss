@@ -237,13 +237,13 @@ function StartPauseEQ2Bot()
 	{
 		Pause:Set[TRUE]
 		UIElement[EQ2Bot Commander].FindChild[GUITabs].FindChild[Main].FindChild[StartEQ2Bot].Font:SetColor[FFFF0000]
-		Relay all Script[EQ2Bot]:Resume
+		Relay all ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 	}
 	else
 	{
 		Pause:Set[FALSE]
 		UIElement[EQ2Bot Commander].FindChild[GUITabs].FindChild[Main].FindChild[StartEQ2Bot].Font:SetColor[FF32CD32]
-		Relay all Script[EQ2Bot]:Pause
+		Relay all ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 		Relay all "Press ${forward}"
 		Relay all "Press ${strafeleft}"
 	}

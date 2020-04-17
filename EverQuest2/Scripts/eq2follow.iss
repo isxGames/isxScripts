@@ -98,7 +98,7 @@ function main(string ftarget, int leash=DEFAULT_LEASH_DISTANCE , int noise=DEFAU
 		call TaskStatus
 
 
-		if !${Actor[${ftarget}](exists)}
+		if !${Actor[${ftarget}].Name(exists)}
 		{
 
 			if ${Me.IsMoving}

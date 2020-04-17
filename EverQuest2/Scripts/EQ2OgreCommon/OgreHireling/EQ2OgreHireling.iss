@@ -69,14 +69,14 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 	variable int RenderCounter
 	for ( RenderCounter:Set[1] ; ${RenderCounter} < 20  ; RenderCounter:Inc )
 	{
-		if !${Actor[guild, guild hunter](exists)} || !${Actor[guild, guild miner](exists)} || !${Actor[guild, guild gatherer](exists)}
+		if !${Actor[guild, guild hunter].Name(exists)} || !${Actor[guild, guild miner].Name(exists)} || !${Actor[guild, guild gatherer].Name(exists)}
 			wait 10
 		else
 			break
 	}
-	if !${Actor[guild, guild hunter](exists)} || !${Actor[guild, guild miner](exists)} || !${Actor[guild, guild gatherer](exists)}
+	if !${Actor[guild, guild hunter].Name(exists)} || !${Actor[guild, guild miner].Name(exists)} || !${Actor[guild, guild gatherer].Name(exists)}
 	{
-		echo ${Time}: OgreHireling: Unable to find a hireling: !${Actor[guild, guild hunter](exists)} || !${Actor[guild, guild miner](exists)} || !${Actor[guild, guild gatherer](exists)}
+		echo ${Time}: OgreHireling: Unable to find a hireling: !${Actor[guild, guild hunter].Name(exists)} || !${Actor[guild, guild miner].Name(exists)} || !${Actor[guild, guild gatherer].Name(exists)}
 		return
 	}
 
@@ -84,7 +84,7 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 	{
 		Communication:Set[Waiting]
 		;// Target Guild Hunter, hail to check his conversation
-		if !${HunterDone} && ${Actor[guild, guild hunter](exists)}
+		if !${HunterDone} && ${Actor[guild, guild hunter].Name(exists)}
 		{
 			Actor[guild, guild hunter]:DoTarget
 			wait 100 ${Target.Guild.Equal[guild hunter]}
@@ -122,7 +122,7 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 				HunterDone:Set[TRUE]
 			}
 		}
-		elseif !${MinerDone} && ${Actor[guild, guild miner](exists)}
+		elseif !${MinerDone} && ${Actor[guild, guild miner].Name(exists)}
 		{
 			Actor[guild, guild miner]:DoTarget
 			wait 100 ${Target.Guild.Equal[guild miner]}
@@ -160,7 +160,7 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 				MinerDone:Set[TRUE]
 			}
 		}
-		elseif !${GathererDone} && ${Actor[guild, guild gatherer](exists)}
+		elseif !${GathererDone} && ${Actor[guild, guild gatherer].Name(exists)}
 		{
 			Actor[guild, guild gatherer]:DoTarget
 			wait 100 ${Target.Guild.Equal[guild gatherer]}

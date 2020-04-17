@@ -293,9 +293,9 @@ function TakeSnapShot()
 	{
 		do
 		{
-			if ${Me.Raid[${i}](exists)}
+			if ${Me.Raid[${i}].Name(exists)}
 			{
-				if (${CurMembers.Element[${Me.Raid[${i}].Name}](exists)})
+				if (${CurMembers.Element[${Me.Raid[${i}].Name}].Name(exists)})
 				{
 					SSCount:Set[${CurMembers.Element[${Me.Raid[${i}].Name}]}]
 					CurMembers:Set[${Me.Raid[${i}].Name},${Math.Calc[${SSCount}+1].Precision[0]}]

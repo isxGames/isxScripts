@@ -22,7 +22,7 @@ function main()
 	{
 		while ${LooterPause} == FALSE
 		{
-			if ${Actor[chest,"Exquisite Chest"](exists)} && ${UIElement[${EnableExquisiteChestCheckboxVar}].Checked} && ${Actor[chest,"Exquisite Chest"].Distance} <= ${ScanRangeTextEntry}
+			if ${Actor[chest,"Exquisite Chest"].Name(exists)} && ${UIElement[${EnableExquisiteChestCheckboxVar}].Checked} && ${Actor[chest,"Exquisite Chest"].Distance} <= ${ScanRangeTextEntry}
 			{
 				echo ${Time}:  Exquisite Chest Found...
 				
@@ -58,7 +58,7 @@ function main()
 					wait 10
 				}
 			}
-			elseif ${Actor[chest,"Ornate Chest"](exists)} && ${UIElement[${EnableOrnateChestCheckboxVar}].Checked} && ${Actor[chest,"Ornate Chest"].Distance} <= ${ScanRangeTextEntry}
+			elseif ${Actor[chest,"Ornate Chest"].Name(exists)} && ${UIElement[${EnableOrnateChestCheckboxVar}].Checked} && ${Actor[chest,"Ornate Chest"].Distance} <= ${ScanRangeTextEntry}
 			{
 				echo ${Time}:  Ornate Chest Found...
 			
@@ -94,7 +94,7 @@ function main()
 					wait 10
 				}
 			}
-			elseif ${Actor[chest,"Treasure Chest"](exists)} && ${UIElement[${EnableTreasureChestCheckboxVar}].Checked} && ${Actor[chest,"Treasure Chest"].Distance} <= ${ScanRangeTextEntry}
+			elseif ${Actor[chest,"Treasure Chest"].Name(exists)} && ${UIElement[${EnableTreasureChestCheckboxVar}].Checked} && ${Actor[chest,"Treasure Chest"].Distance} <= ${ScanRangeTextEntry}
 			{
 				echo ${Time}:  Treasure Chest Found...
 			
@@ -130,7 +130,7 @@ function main()
 					wait 10
 				}
 			}
-			elseif ${Actor[chest,"Small Chest"](exists)} && ${UIElement[${EnableSmallChestCheckboxVar}].Checked} && ${Actor[chest,"Small Chest"].Distance} <= ${ScanRangeTextEntry}
+			elseif ${Actor[chest,"Small Chest"].Name(exists)} && ${UIElement[${EnableSmallChestCheckboxVar}].Checked} && ${Actor[chest,"Small Chest"].Distance} <= ${ScanRangeTextEntry}
 			{
 				echo ${Time}:  Small Chest Found...
 			
@@ -166,7 +166,7 @@ function main()
 					wait 10
 				}
 			}
-			elseif ${Actor[npc,"corpse"](exists)} && ${UIElement[${EnableLootBodyCheckboxVar}].Checked} && ${Actor[npc,"corpse"].Distance} <= ${ScanRangeTextEntry}
+			elseif ${Actor[npc,"corpse"].Name(exists)} && ${UIElement[${EnableLootBodyCheckboxVar}].Checked} && ${Actor[npc,"corpse"].Distance} <= ${ScanRangeTextEntry}
 			{
 	;//			echo ${Time}:  Corpse Found...
 			

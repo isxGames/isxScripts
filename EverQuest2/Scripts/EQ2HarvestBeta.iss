@@ -386,7 +386,7 @@ function CheckAggro()
 
 		EQ2:CreateCustomActorArray[byDist,15]
 
-		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
+		if ${CustomActor[chest,radius,15].Name(exists)} || ${CustomActor[corpse,radius,15].Name(exists)}
 		{
 			CurrentAction:Set[Loot nearby waiting 5 seconds...]
 			wait 50
@@ -530,7 +530,7 @@ function Harvest()
 
 		call ProcessTriggers
 	}
-	while ${Actor[id,${NodeID}](exists)}
+	while ${Actor[id,${NodeID}].Name(exists)}
 
 	if ${NodeDelay}
 	{
@@ -884,7 +884,7 @@ objectdef EQ2HarvestBot
 					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
 					{
 						; Check to make sure it is not a bad node
-						if (${BadNodes.Element[${CustomActor[${tcount}].ID}](exists)})
+						if (${BadNodes.Element[${CustomActor[${tcount}].ID}].Name(exists)})
 						    break		
 						; make sure that it is close enough to our mapped zone
 						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
@@ -916,7 +916,7 @@ objectdef EQ2HarvestBot
 			{
 				if ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Actor[${NodeID}].X},${Actor[${NodeID}].Z}]}<20
 				{
-				    if (!${Me.Group[${CustomActor[${tcount}].Name}](exists)})
+				    if (!${Me.Group[${CustomActor[${tcount}].Name}].Name(exists)})
 				    {
     				    echo "DEBUG: A player (${CustomActor[${tcount}].Name}) was detected within 20 meters...adding destination to BadNodes"
     					This:SetBadNode[${NodeID}]

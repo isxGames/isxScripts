@@ -99,7 +99,7 @@ function startharvest(int scan)
 			harvestcount:Set[${EQ2.CustomActorArraySize}]
 			do
 			{
-				if ${CustomActor[${harvestloop}](exists)}
+				if ${CustomActor[${harvestloop}].Name(exists)}
 				{
 					actorname:Set[${CustomActor[${harvestloop}]}]
 					if ${CustomActor[${harvestloop}].Type.Equal[resource]} && !${actorname.Equal[NULL]}
@@ -124,10 +124,10 @@ function startharvest(int scan)
 								call checknodename ${tempvar} "${actorname}"
 								if ${Return}
 								{
-									if ${CustomActor[${harvestloop}](exists)}
+									if ${CustomActor[${harvestloop}].Name(exists)}
 									{
 										HID:Set[${CustomActor[${harvestloop}].ID}]
-										if !${BadNodes.Element[${CustomActor[${harvestloop}].ID}](exists)}
+										if !${BadNodes.Element[${CustomActor[${harvestloop}].ID}].Name(exists)}
 										{
 											BadNode:Set[FALSE]
 											call harvestnode
@@ -300,7 +300,7 @@ function checkPC()
 	{
 		if ${CustomActor[${PCloop}].Type.Equal[PC]} && !${CustomActor[${PCloop}].Name.Equal[${Me.Name}]}
 		{
-			if !${Me.Group[${CustomActor[${PCloop}].Name}](exists)}
+			if !${Me.Group[${CustomActor[${PCloop}].Name}].Name(exists)}
 			{
 				if ${Math.Distance[${Actor[${HID}].X},${CustomActor[${PCloop}].X}]} <= 7 && ${Math.Distance[${Actor[${HID}].Z},${CustomActor[${PCloop}].Z}]} <= 7
 				{
@@ -410,7 +410,7 @@ function LOScircle(bool node,float CX, float CY, float CZ, int distancecheck)
 						; check to see if mid-point is available
 						if !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${CY},${pz}]} || !${EQ2.CheckCollision[${Me.X},${Me.Y},${Me.Z},${px},${Math.Calc[${CY}+1]},${pz}]}
 						{	
-							if ${Actor[${HID}](exists)}
+							if ${Actor[${HID}].Name(exists)}
 							{
 								; check to see if there is LOS from that mid-loc to the node
 								if !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${CY},${CZ}]} || !${EQ2.CheckCollision[${px},${CY},${pz},${CX},${Math.Calc[${CY}+1]},${CZ}]}
@@ -679,7 +679,7 @@ function CheckAggro()
 
 		EQ2:CreateCustomActorArray[byDist,15]
 
-		if ${CustomActor[chest,radius,15](exists)} || ${CustomActor[corpse,radius,15](exists)}
+		if ${CustomActor[chest,radius,15].Name(exists)} || ${CustomActor[corpse,radius,15].Name(exists)}
 		{
 			Echo Loot nearby waiting 5 seconds...
 			wait 50

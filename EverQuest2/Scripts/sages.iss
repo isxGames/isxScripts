@@ -11,7 +11,7 @@ function main()
 
 		do
 		{
-			if ${Me.Group[${Count}](exists)} && ${Me.Group[${Count}].Noxious} < 0
+			if ${Me.Group[${Count}].Name(exists)} && ${Me.Group[${Count}].Noxious} < 0
 			{
 				echo Curing ${Me.Group[${Count}].Name}
 					

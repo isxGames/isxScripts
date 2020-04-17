@@ -9,7 +9,7 @@ function main()
 
 	do
 	{
-		if ${Actor[Drusella](exists)}
+		if ${Actor[Drusella].Name(exists)}
 		{
 			Actor[Drusella]:InitializeEffects
 
@@ -25,7 +25,7 @@ function main()
 			if ${Actor[Drusella].Effect[Drusella's Necromantic Aura](exists)}
 			{
 				Echo EQ2Drusella - Drusella is protected!
-				Script[EQ2Bot]:Pause
+				ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 				Echo EQ2Drusella - Eq2bot paused
 
 				if ${Me.Pet(exists)}
@@ -47,7 +47,7 @@ function main()
 				}
 				while ${Actor[Drusella].Effect[Drusella's Necromantic Aura](exists)}
 
-				Script[EQ2Bot]:Resume
+				ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 				Echo EQ2Drusella - Eq2bot Resumed
 			}
 
@@ -58,6 +58,6 @@ function main()
 
 function atexit()
 {
-	Script[EQ2Bot]:Resume
+	ScriptScript[EQ2Bot]:QueueCommand[call PauseBot]
 	echo Drusella Control Script Ending...
 }

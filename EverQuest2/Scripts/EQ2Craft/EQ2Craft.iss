@@ -1238,9 +1238,9 @@ function GetWrit()
 	call MovetoDevice "Invoices"
 	wait 5
 	; TODO - Expand the exists check below to check for other specific desk names, before falling back to desk substring
-	if ${Actor[xzrange,10,${WorkOrderClipboard}](exists)}
+	if ${Actor[xzrange,10,${WorkOrderClipboard}].Name(exists)}
 		Actor[${WorkOrderClipboard}]:DoubleClick
-	elseif ${Actor[xzrange,10,${WorkOrdersDesk}](exists)}
+	elseif ${Actor[xzrange,10,${WorkOrdersDesk}].Name(exists)}
 		Actor[${WorkOrdersDesk}]:DoubleClick
 	else
 		Actor[${Desk}]:DoubleClick
@@ -1650,7 +1650,7 @@ function MovetoDevice(string devicename, int devicenum)
 	if ${devicename.Equal[Rushorder]}
 	{
 		;; TS Instances  (For English Servers, ${RushOrder_GuildTag} == "Rush Orders")
-		if ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].ID}"
@@ -1666,7 +1666,7 @@ function MovetoDevice(string devicename, int devicenum)
 			return
 		}
 		;; Guildhalls   (For English Servers, ${RushOrder_GuildTag2} == "Tradeskill Rush Order Agent")
-		elseif ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].Type.Equal[NoKill NPC]}
+		elseif ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].ID}"
@@ -1685,7 +1685,7 @@ function MovetoDevice(string devicename, int devicenum)
 	elseif ${devicename.Equal[Workorder]}
 	{
 		;; TS Instances  (For English Servers, ${WorkOrder_GuildTag} == "Work Orders")
-		if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].ID}"
@@ -1701,7 +1701,7 @@ function MovetoDevice(string devicename, int devicenum)
 			return
 		}
 		;; Guildhalls   (For English Servers, ${WorkOrder_GuildTag2} == "Tradeskill Writ Agent")
-		if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].ID}"
@@ -1720,7 +1720,7 @@ function MovetoDevice(string devicename, int devicenum)
 	elseif ${devicename.Equal[Broker]}
 	{
 		;; TS Instances  (For English Servers, ${Broker_GuildTag} == "Broker")
-		if ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].ID}"
@@ -1748,7 +1748,7 @@ function MovetoDevice(string devicename, int devicenum)
 			return
 		}
 		;; Guild Halls  (For English Servers, ${Broker_GuildTag2} == "Guild World Market Broker")
-		elseif ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].Type.Equal[NoKill NPC]}
+		elseif ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].ID}"
@@ -1777,7 +1777,7 @@ function MovetoDevice(string devicename, int devicenum)
 		}
 		;;;
 		; Hack for using craft in Paineel Commons
-		elseif ${Actor[xzrange,10,yrange,2,"Raml'iut"](exists)} && ${Actor[xzrange,10,yrange,2,"Raml'iut"].Type.Equal[NoKill NPC]}
+		elseif ${Actor[xzrange,10,yrange,2,"Raml'iut"].Name(exists)} && ${Actor[xzrange,10,yrange,2,"Raml'iut"].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,"Raml'iut"]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,Raml'iut].ID}"
@@ -1802,7 +1802,7 @@ function MovetoDevice(string devicename, int devicenum)
 	}
 	elseif ${devicename.Equal[Wholesaler]}
 	{
-		if ${Actor[xzrange,10,yrange,2,${Wholesaler}](exists)} && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,${Wholesaler}].Loc}]}
+		if ${Actor[xzrange,10,yrange,2,${Wholesaler}].Name(exists)} && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,${Wholesaler}].Loc}]}
 		{
 			Actor[xzrange,10,yrange,2,${Wholesaler}]:DoTarget
 			wait 10 ${Target.ID}==${Actor[xzrange,10,yrange,2,${Wholesaler}].ID}
@@ -1817,7 +1817,7 @@ function MovetoDevice(string devicename, int devicenum)
 		{
 			do
 			{
-				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]} &&  && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Loc}]}
+				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]} &&  && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Loc}]}
 				{
 					Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"]:DoTarget
 					wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].ID}"
@@ -1832,13 +1832,13 @@ function MovetoDevice(string devicename, int devicenum)
 	}
 	elseif ${devicename.Equal[Invoices]}
 	{
-		if ${Actor[xzrange,10,${WorkOrderClipboard}](exists)} && ${Actor[xzrange,10,${WorkOrderClipboard}].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,${WorkOrderClipboard}].Name(exists)} && ${Actor[xzrange,10,${WorkOrderClipboard}].Type.Equal[NoKill NPC]}
 		{
 			face "${WorkOrderClipboard}"
 			lastdevice:Set[${devicename}]
 			return
 		}
-		elseif ${Actor[xzrange,10,${WorkOrdersDesk}](exists)} && ${Actor[xzrange,10,${WorkOrdersDesk}].Type.Equal[NoKill NPC]}
+		elseif ${Actor[xzrange,10,${WorkOrdersDesk}].Name(exists)} && ${Actor[xzrange,10,${WorkOrdersDesk}].Type.Equal[NoKill NPC]}
 		{
 			face "${WorkOrdersDesk}"
 			lastdevice:Set[${devicename}]
@@ -1847,7 +1847,7 @@ function MovetoDevice(string devicename, int devicenum)
 		; No invoices available nearby, find the closest and use it
 		devicenum:Set[${Nav.ClosestRegionToPoint[${Me.X}, ${Me.Y}, ${Me.Z}, "Invoices", "Invoices 1", "Invoices 2", "Invoices 3", "Invoices 4", "Invoices 5"].Token[2, " "]}]
 	}
-	elseif ${Actor[${ldevicename},xzrange,${DistToTable},yrange,2](exists)}
+	elseif ${Actor[${ldevicename},xzrange,${DistToTable},yrange,2].Name(exists)}
 	{
 		if ${InGuildHall}
 		{
@@ -1987,7 +1987,7 @@ function MovetoDevice(string devicename, int devicenum)
 			;    press -release "${Nav.STRAFERIGHT}"
 			;}
 			;; TS Instances  (For English Servers, ${RushOrder_GuildTag} == "Rush Orders")
-			if ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].Type.Equal[NoKill NPC]}
+			if ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag}].ID}"
@@ -2002,7 +2002,7 @@ function MovetoDevice(string devicename, int devicenum)
 				lastdevice:Set[Rushorder]
 			}
 			;; Guildhalls   (For English Servers, ${RushOrder_GuildTag2} == "Tradeskill Rush Order Agent")
-			elseif ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].Type.Equal[NoKill NPC]}
+			elseif ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${RushOrder_GuildTag2}].ID}"
@@ -2019,7 +2019,7 @@ function MovetoDevice(string devicename, int devicenum)
 			break
 		case Workorder
 			;; TS Instances  (For English Servers, ${WorkOrder_GuildTag} == "Work Orders")
-			if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].Type.Equal[NoKill NPC]}
+			if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag}].ID}"
@@ -2034,7 +2034,7 @@ function MovetoDevice(string devicename, int devicenum)
 				lastdevice:Set[Workorder]
 			}
 			;; Guildhalls   (For English Servers, ${WorkOrder_GuildTag2} == "Tradeskill Writ Agent")
-			if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].Type.Equal[NoKill NPC]}
+			if ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${WorkOrder_GuildTag2}].ID}"
@@ -2051,7 +2051,7 @@ function MovetoDevice(string devicename, int devicenum)
 			break
 		case Broker
 			;; TS Instances  (For English Servers, ${Broker_GuildTag} == "Broker")
-			if ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].Type.Equal[NoKill NPC]}
+			if ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag}].ID}"
@@ -2078,7 +2078,7 @@ function MovetoDevice(string devicename, int devicenum)
 				}
 			}
 			;; Guild Halls  (For English Servers, ${Broker_GuildTag2} == "Guild World Market Broker")
-			elseif ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].Type.Equal[NoKill NPC]}
+			elseif ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,${Broker_GuildTag2}].ID}"
@@ -2106,7 +2106,7 @@ function MovetoDevice(string devicename, int devicenum)
 			}
 			;;;
 			; Hack for using craft in Paineel Commons
-			elseif ${Actor[xzrange,10,yrange,2,"Raml'iut"](exists)} && ${Actor[xzrange,10,yrange,2,"Raml'iut"].Type.Equal[NoKill NPC]}
+			elseif ${Actor[xzrange,10,yrange,2,"Raml'iut"].Name(exists)} && ${Actor[xzrange,10,yrange,2,"Raml'iut"].Type.Equal[NoKill NPC]}
 			{
 				Actor[xzrange,15,yrange,2,"Raml'iut"]:DoTarget
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,Raml'iut].ID}"
@@ -2117,7 +2117,7 @@ function MovetoDevice(string devicename, int devicenum)
 		case Wholesaler
 			; coming down those stairs blows...
 			wait 4
-			if ${Actor[xzrange,10,yrange,2,${Wholesaler}](exists)}
+			if ${Actor[xzrange,10,yrange,2,${Wholesaler}].Name(exists)}
 			{
 				Actor[xzrange,10,yrange,2,${Wholesaler}]:DoTarget
 				wait 10 ${Target.ID}==${Actor[xzrange,10,yrange,2,${Wholesaler}].ID}
@@ -2131,7 +2131,7 @@ function MovetoDevice(string devicename, int devicenum)
 					do
 					{
 						Debug:Echo[Wholesaler Iterator key = ${Iterator.Key}]
-						if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]}
+						if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]}
 						{
 							Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"]:DoTarget
 							wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].ID}"
@@ -2165,12 +2165,12 @@ function MovetoDevice(string devicename, int devicenum)
 			wait 1
 			break
 		case Invoices
-			if ${Actor[xzrange,10,${WorkOrderClipboard}](exists)}
+			if ${Actor[xzrange,10,${WorkOrderClipboard}].Name(exists)}
 			{
 				face "${WorkOrderClipboard}"
 				lastdevice:Set[${devicename}]
 			}
-			elseif ${Actor[xzrange,10,${WorkOrdersDesk}](exists)}
+			elseif ${Actor[xzrange,10,${WorkOrdersDesk}].Name(exists)}
 			{
 				face "${WorkOrdersDesk}"
 				lastdevice:Set[${devicename}]
@@ -2633,7 +2633,7 @@ function BuyComponents()
 		{
 			do
 			{
-				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]}
+				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]}
 				{
 					Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"]:DoTarget
 					wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].ID}"

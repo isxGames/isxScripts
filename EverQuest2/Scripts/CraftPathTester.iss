@@ -180,7 +180,7 @@ function MovetoDevice(string devicename, int devicenum)
 
 	if ${devicename.Equal[Rushorder]}
 	{
-		if ${Actor[xzrange,10,yrange,2,guild,"Rush Orders"](exists)} && ${Actor[xzrange,10,yrange,2,guild,"Rush Orders"].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,"Rush Orders"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,"Rush Orders"].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,"Rush Orders"]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,Rush Orders].ID}"
@@ -193,7 +193,7 @@ function MovetoDevice(string devicename, int devicenum)
 	} 
 	elseif ${devicename.Equal[Workorder]}
 	{
-		if ${Actor[xzrange,10,yrange,2,guild,"Work Orders"](exists)} && ${Actor[xzrange,10,yrange,2,guild,"Work Orders"].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,"Work Orders"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,"Work Orders"].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,"Work Orders"]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,Work Orders].ID}"
@@ -206,7 +206,7 @@ function MovetoDevice(string devicename, int devicenum)
 	}  
 	elseif ${devicename.Equal[Broker]}
 	{
-		if ${Actor[xzrange,10,yrange,2,guild,"Broker"](exists)} && ${Actor[xzrange,10,yrange,2,guild,"Broker"].Type.Equal[NoKill NPC]}
+		if ${Actor[xzrange,10,yrange,2,guild,"Broker"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,"Broker"].Type.Equal[NoKill NPC]}
 		{
 			Actor[xzrange,10,yrange,2,guild,"Broker"]:DoTarget
 			wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,Broker].ID}"
@@ -231,7 +231,7 @@ function MovetoDevice(string devicename, int devicenum)
 	}  
 	elseif ${devicename.Equal[Wholesaler]}
 	{
-		if ${Actor[xzrange,10,yrange,2,"Wholesaler"](exists)} && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,"Wholesaler"].Loc}]}
+		if ${Actor[xzrange,10,yrange,2,"Wholesaler"].Name(exists)} && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,"Wholesaler"].Loc}]}
 		{
 			Actor[xzrange,10,yrange,2,"Wholesaler"]:DoTarget
 			wait 10 ${Target.ID}==${Actor[xzrange,10,yrange,2,"Wholesaler"].ID}
@@ -246,7 +246,7 @@ function MovetoDevice(string devicename, int devicenum)
 		{
 			do
 			{
-				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]} &&  && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Loc}]}
+				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]} &&  && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Loc}]}
 				{
 					Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"]:DoTarget
 					wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].ID}"
@@ -259,7 +259,7 @@ function MovetoDevice(string devicename, int devicenum)
 			while ${Iterator:Next(exists)}
 		}
 	}
-	elseif ${Actor[${devicename},xzrange,6,yrange,2](exists)}
+	elseif ${Actor[${devicename},xzrange,6,yrange,2].Name(exists)}
 	{
 		if (!${Actor[${devicename},xzrange,6,yrange,2].CheckCollision})
 		{
@@ -350,7 +350,7 @@ function MovetoDevice(string devicename, int devicenum)
 		case Wholesaler
 			; coming down those stairs blows...
 			wait 4
-			if ${Actor[xzrange,10,yrange,2,"Wholesaler"](exists)}
+			if ${Actor[xzrange,10,yrange,2,"Wholesaler"].Name(exists)}
 			{
 				Actor[xzrange,10,yrange,2,"Wholesaler"]:DoTarget
 				wait 10 ${Target.ID}==${Actor[xzrange,10,yrange,2,"Wholesaler"].ID}
@@ -364,7 +364,7 @@ function MovetoDevice(string devicename, int devicenum)
 					do
 					{
 						echo EQ2Craft-DEBUG:: Wholesaler Iterator key = ${Iterator.Key}
-						if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"](exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]}
+						if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]}
 						{
 							Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"]:DoTarget
 							wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].ID}"

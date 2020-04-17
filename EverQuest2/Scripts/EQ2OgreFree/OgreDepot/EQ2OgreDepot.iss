@@ -41,7 +41,7 @@ function main(string TypeToDeposit=all)
 	  	{
 		  	chkBox:Set[${setEQ2DepotInfo.FindSetting["${SettingIterator.Key}"].FindAttribute[ChkBox].String}]
 		  	
-		  	if ${Actor[${SettingIterator.Key}](exists)} && ${setEQ2DepotInfo.FindSetting[${SettingIterator.Key}].FindAttribute[Options].String.Equal[Full]} && ${UIElement[${chkBox}].Checked}
+		  	if ${Actor[${SettingIterator.Key}].Name(exists)} && ${setEQ2DepotInfo.FindSetting[${SettingIterator.Key}].FindAttribute[Options].String.Equal[Full]} && ${UIElement[${chkBox}].Checked}
 		  	{
 
 				Face "${SettingIterator.Key}"
@@ -88,7 +88,7 @@ function main(string TypeToDeposit=all)
 				wait 10
 		    }
 
-		    if  ${Actor[${SettingIterator.Key}](exists)} && ${setEQ2DepotInfo.FindSetting[${SettingIterator.Key}].FindAttribute[Options].String.Equal[One]} && ${UIElement[${chkBox}].Checked}
+		    if  ${Actor[${SettingIterator.Key}].Name(exists)} && ${setEQ2DepotInfo.FindSetting[${SettingIterator.Key}].FindAttribute[Options].String.Equal[One]} && ${UIElement[${chkBox}].Checked}
 			{
 				echo Targeting ${SettingIterator.Key}
 				Actor[${SettingIterator.Key}]:DoTarget
