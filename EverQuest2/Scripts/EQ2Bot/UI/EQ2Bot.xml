@@ -767,45 +767,6 @@
                   <Wrap />
                   <Text>Current Target:   ${If[${Script[EQ2Bot].Variable[MainTank]},${If[${Target(exists)},${Target.Name},No Target]},${If[${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name(exists)},${Actor[${Script[EQ2Bot].Variable[KillTarget]}].Name},No Target]}]}</Text>
                 </Text>
-                <!--
-								<Text Name='Target Aggro'>
-									<X>5%</X>
-									<Y>55</Y>
-									<Width>40%</Width>
-									<Height>25</Height>
-									<Alignment>Left</Alignment>
-									<Wrap />
-									<Text>Aggro Status: ${Actor[${Target.ID}].IsAggro}</Text>
-								</Text>
-								<Text Name='Target Combat'>
-									<X>50%</X>
-									<Y>55</Y>
-									<Width>40%</Width>
-									<Height>25</Height>
-									<Alignment>Left</Alignment>
-									<Wrap />
-									<Text>InCombat: ${Actor[${Target.ID}].InCombatMode}</Text>
-								</Text> -->
-                <Text Name='Gained XP'>
-                  <X>5%</X>
-                  <Y>90</Y>
-                  <Width>90%</Width>
-                  <Height>10</Height>
-                  <Alignment>Left</Alignment>
-                  <Wrap />
-                  <Text>
-                    ${Script[eq2bot].Variable[GainedXPString]}
-                  </Text>
-                </Text>
-                <Text Name='Runtime'>
-                  <X>55%</X>
-                  <Y>90</Y>
-                  <Width>90%</Width>
-                  <Height>10</Height>
-                  <Alignment>Left</Alignment>
-                  <Wrap />
-                  <Text>Runtime: ${Math.Calc[(${Time.Timestamp}-${LavishSettings[EQ2Bot].FindSet[Character].FindSet[Temporary Settings].FindSetting[StartTime]})/60].Precision[2]} min.</Text>
-                </Text>
               </Children>
             </Frame>
             <Commandbutton name='Start EQ2Bot'>

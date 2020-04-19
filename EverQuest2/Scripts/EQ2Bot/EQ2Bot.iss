@@ -229,7 +229,6 @@ variable(script) int TempDoNotPullListTimer
 variable(script) bool IsMoving
 variable bool UseCustomRoutines=FALSE
 variable int gRtnCtr=1
-variable string GainedXPString
 variable string LastQueuedAbility
 variable int LastCastTarget
 variable int OORThreshold
@@ -377,12 +376,7 @@ function main(string Args)
 	;;;;;;;;;;;;;;;;;
 	;;;; Set strings used in UI
 	;;;
-	if (${Me.Level} < 120)
-		GainedXPString:Set[Gained XP:  ${Math.Calc[(${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings]:AddSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
-	elseif ${Me.TotalEarnedAPs} < 350
-		GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
-	else
-		GainedXPString:Set[Gained XP:  N/A]
+
 	;;;
 	;;;;;;;;;;;;;;;;;
 
@@ -447,12 +441,7 @@ function main(string Args)
 		;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
 		;;;; EVERY frame.  By moving things here, we can reduce the number of times things are called, increasing efficiency (when desired.)
 		;;;
-		if (${Me.Level} < 120)
-			GainedXPString:Set[Gained XP:  ${Math.Calc[(${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Self.Experience].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartXP]})+((${Me.Level}-${Script[eq2bot].Variable[StartLevel]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
-		elseif ${Me.TotalEarnedAPs} < 350
-			GainedXPString:Set[Gained APExp:  ${Math.Calc[(${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100)].Precision[1]} ( ${Math.Calc[((${Int[${Me.GetGameData[Achievement.Points].Label}]}-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartAPXP]})+((${Me.TotalEarnedAPs}-${Script[eq2bot].Variable[StartAP]})*100))/(((${Time.Timestamp}+1)-${CharacterSet.FindSet[Temporary Settings].FindSetting[StartTime]})/3600)].Precision[2]} / hr)]
-		else
-			GainedXPString:Set[Gained XP:  N/A]
+
 		;;;
 		;;;;;;;;;;;;;;;;;
 
