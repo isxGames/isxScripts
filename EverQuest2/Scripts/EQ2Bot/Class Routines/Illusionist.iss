@@ -1005,6 +1005,11 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; Things we should be checking EVERY time
+	if (${Me.InCombatMode} && ${Me.Pet.Name(exists)})
+	{
+		if (${Me.Pet.Target.ID} != ${TargetID} || !${Me.Pet.InCombatMode})
+			call PetAttack 1
+	}
 	if !${MainTank} || ${AutoMelee}
 	{
 		if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
