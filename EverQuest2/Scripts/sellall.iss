@@ -60,7 +60,7 @@ function sellshit()
 		;if not on protected list, sell the item
 		if ${sell}
 		{
-			Me.Merchandise[${Me.CustomInventory[${tempvar2}].Name}]:Sell
+			MerchantWindow.MyInventory[${Me.CustomInventory[${tempvar2}].Name}]:Sell
 			
 			if ${Me.CustomInventory[${tempvar2}].NoValue}
 			{

@@ -53,13 +53,13 @@ gold:Set[${Math.Calc[${gp}*100]}]
 silver:Set[${sp}]
 copper:Set[${Math.Calc[${cp}/100]}]
 price:Set[${Math.Calc[${platina}+${gold}+${silver}+${copper}]}]
-itemsForSale:Set[${Me.Vending[${cnt}].NumItems}]
+itemsForSale:Set[${BrokerWindow.VendingContainer[${cnt}].NumItems}]
 
 Do
 {
-  if ${Me.Vending[${cnt}].Consignment[${counter}].Name.Find[${itemName}]} || ${itemName.Equal["All"]}
+  if ${BrokerWindow.VendingContainer[${cnt}].Consignment[${counter}].Name.Find[${itemName}]} || ${itemName.Equal["All"]}
   {
-    Me.Vending[${cnt}].Consignment[${counter}]:SetPrice[${price}]
+    BrokerWindow.VendingContainer[${cnt}].Consignment[${counter}]:SetPrice[${price}]
   }
 
   counter:Set[${counter}+1]

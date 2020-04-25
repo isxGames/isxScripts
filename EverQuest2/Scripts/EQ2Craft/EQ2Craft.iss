@@ -2665,7 +2665,7 @@ function BuyComponents()
 				tempvar:Set[0]
 				while ${tempvar:Inc}<=${stackcount}
 				{
-					Vendor.Item[${StatComNme[${xvar}]}]:Buy[${stackmaximum}]
+					MerchantWindow.MerchantInventory[${StatComNme[${xvar}]}]:Buy[${stackmaximum}]
 					wait 10
 					call CheckInventory
 					Craft:InitGUI
@@ -2673,7 +2673,7 @@ function BuyComponents()
 
 				if ${stackremaining}
 				{
-					Vendor.Item[${StatComNme[${xvar}]}]:Buy[${stackremaining}]
+					MerchantWindow.MerchantInventory[${StatComNme[${xvar}]}]:Buy[${stackremaining}]
 					wait 10
 					call CheckInventory
 					Craft:InitGUI
@@ -2706,7 +2706,7 @@ function BuyComponents()
 				tempvar:Set[0]
 				while ${tempvar:Inc}<=${stackcount}
 				{
-					Vendor.Item[${StatFuelNme[${xvar}]}]:Buy[${stackmaximum}]
+					MerchantWindow.MerchantInventory[${StatFuelNme[${xvar}]}]:Buy[${stackmaximum}]
 					wait 10
 					call CheckInventory
 					Craft:InitGUI
@@ -2714,7 +2714,7 @@ function BuyComponents()
 
 				if ${stackremaining}
 				{
-					Vendor.Item[${StatFuelNme[${xvar}]}]:Buy[${stackremaining}]
+					MerchantWindow.MerchantInventory[${StatFuelNme[${xvar}]}]:Buy[${stackremaining}]
 					wait 10
 					call CheckInventory
 					Craft:InitGUI
@@ -2784,9 +2784,9 @@ function BuyHarvests()
 			wait 10
 			broker name "${StatResNme[${xvar}]}" Sort ByPriceAsc MaxPrice ${Math.Calc[${MaxBuyPrice}*100]}
 			wait 20
-			wait 30 ${Vendor.Item[1](exists)}
+			wait 30 ${BrokerWindow.SearchResult[1](exists)}
 
-			if ${Vendor.NumItemsForSale}
+			if ${BrokerWindow.NumSearchResults}
 			{
 				tempvar1:Set[1]
 				do
@@ -2796,9 +2796,9 @@ function BuyHarvests()
 
 					if ${tempvar1}>1
 					{
-						Vendor:GotoSearchPage[${tempvar1}]
+						BrokerWindow:GotoSearchPage[${tempvar1}]
 						wait 20
-						wait 30 ${Vendor.Item[1](exists)}
+						wait 30 ${BrokerWindow.SearchResult[1](exists)}
 					}
 
 					tempvar2:Set[1]
@@ -2807,26 +2807,26 @@ function BuyHarvests()
 						if !${buyqty}
 							break
 
-						if ${Vendor.Item[${tempvar2}].Name.Equal[${StatResNme[${xvar}]}]}
+						if ${BrokerWindow.SearchResult[${tempvar2}].Name.Equal[${StatResNme[${xvar}]}]}
 						{
 							while ${buyqty}>0
 							{
-								if ${buyqty}<=${Vendor.Item[${tempvar2}].Quantity}
+								if ${buyqty}<=${BrokerWindow.SearchResult[${tempvar2}].Quantity}
 								{
 									if ${buyqty}>200
 									{
-				            			CurrentQuantity:Set[${Vendor.Item[${tempvar2}].Quantity}]
+				            			CurrentQuantity:Set[${BrokerWindow.SearchResult[${tempvar2}].Quantity}]
 										buyqty:Dec[200]
-										Vendor.Item[${tempvar2}]:Buy[200]
-										wait 200 ${Vendor.Item[${tempvar2}].Quantity} != ${CurrentQuantity}
+										BrokerWindow.SearchResult[${tempvar2}]:Buy[200]
+										wait 200 ${BrokerWindow.SearchResult[${tempvar2}].Quantity} != ${CurrentQuantity}
 										call CheckInventory
 										Craft:InitGUI
 									}
 									else
 									{
-										CurrentQuantity:Set[${Vendor.Item[${tempvar2}].Quantity}]
-										Vendor.Item[${tempvar2}]:Buy[${buyqty}]
-										wait 200 ${Vendor.Item[${tempvar2}].Quantity} != ${CurrentQuantity}
+										CurrentQuantity:Set[${BrokerWindow.SearchResult[${tempvar2}].Quantity}]
+										BrokerWindow.SearchResult[${tempvar2}]:Buy[${buyqty}]
+										wait 200 ${BrokerWindow.SearchResult[${tempvar2}].Quantity} != ${CurrentQuantity}
 										buyqty:Set[0]
 										call CheckInventory
 										Craft:InitGUI
@@ -2837,18 +2837,18 @@ function BuyHarvests()
 								{
 									if ${buyqty}>200
 									{
-				            			CurrentQuantity:Set[${Vendor.Item[${tempvar2}].Quantity}]
+				            			CurrentQuantity:Set[${BrokerWindow.SearchResult[${tempvar2}].Quantity}]
 										buyqty:Dec[200]
-										Vendor.Item[${tempvar2}]:Buy[200]
-										wait 200 ${Vendor.Item[${tempvar2}].Quantity} != ${CurrentQuantity}
+										BrokerWindow.SearchResult[${tempvar2}]:Buy[200]
+										wait 200 ${BrokerWindow.SearchResult[${tempvar2}].Quantity} != ${CurrentQuantity}
 										call CheckInventory
 										Craft:InitGUI
 									}
 									else
 									{
-										CurrentQuantity:Set[${Vendor.Item[${tempvar2}].Quantity}]
-										Vendor.Item[${tempvar2}]:Buy[${CurrentQuantity}]
-										wait 200 ${Vendor.Item[${tempvar2}].Quantity} != ${CurrentQuantity}
+										CurrentQuantity:Set[${BrokerWindow.SearchResult[${tempvar2}].Quantity}]
+										BrokerWindow.SearchResult[${tempvar2}]:Buy[${CurrentQuantity}]
+										wait 200 ${BrokerWindow.SearchResult[${tempvar2}].Quantity} != ${CurrentQuantity}
 										buyqty:Dec[${CurrentQuantity}]
 										call CheckInventory
 										Craft:InitGUI
@@ -2858,9 +2858,9 @@ function BuyHarvests()
 							}
 						}
 					}
-					while ${tempvar2:Inc}<=${Vendor.NumItemsForSale}
+					while ${tempvar2:Inc}<=${BrokerWindow.NumSearchResults}
 				}
-				while ${tempvar1:Inc}<=${Vendor.TotalSearchPages}
+				while ${tempvar1:Inc}<=${BrokerWindow.TotalSearchPages}
 			}
 		}
 		; CheckInventory() should be called after each purchase above -- now we check again to see if we are ok ...we will make 3 attempts before giving up.

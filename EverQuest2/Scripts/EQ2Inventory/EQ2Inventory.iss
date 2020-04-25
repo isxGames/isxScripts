@@ -358,7 +358,7 @@ function PlaceItemsFromSet(settingsetref SSR, int Container)
 			if ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
 			{
 				call AddLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Broker" FF11CCFF
-				Me.CustomInventory[ExactName,${iter.Key}]:AddToConsignment[${Me.CustomInventory[ExactName,${iter.Key}].Quantity},${Container},${Me.Vending[${Container}].Consignment[${iter.Key}].SerialNumber}]
+				Me.CustomInventory[ExactName,${iter.Key}]:AddToConsignment[${Me.CustomInventory[ExactName,${iter.Key}].Quantity},${Container},${BrokerWindow.VendingContainer[${Container}].Consignment[${iter.Key}].SerialNumber}]
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 			call CheckFocus
@@ -405,7 +405,7 @@ function PlaceCollection()
 				Do
 				{
 					call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
-					Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${CLBox},${Me.Vending[${CLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+					Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${CLBox},${BrokerWindow.VendingContainer[${CLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 					wait ${Math.Rand[30]:Inc[20]}
 				}
 				while ${Me.CustomInventory[${ArrayPosition}].Name(exists)} && ${Me.CustomInventory[${ArrayPosition}].Name.Length}>4
@@ -625,7 +625,7 @@ function PlaceBooks()
 				if ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter1}]} || ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter2}]} || ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter3}]}
 				{
 					call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to broker" FF11CCFF
-					Me.CustomInventory[ExactName,${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${ArrayPosition}].Quantity},${UseBox},${Me.Vending[${UseBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+					Me.CustomInventory[ExactName,${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${ArrayPosition}].Quantity},${UseBox},${BrokerWindow.VendingContainer[${UseBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 					wait ${Math.Rand[30]:Inc[20]}
 				}
 	}
@@ -685,8 +685,8 @@ function PlaceLoreAndLegend()
 				if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
 				{
 						call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
-						echo DEBUG: Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${Me.Vending[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
-						Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${Me.Vending[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+						echo DEBUG: Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${BrokerWindow.VendingContainer[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+						Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${BrokerWindow.VendingContainer[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
 						wait ${Math.Rand[30]:Inc[20]}
 				}
 			}
@@ -796,14 +796,14 @@ function SellJunk()
 		{
 			do
 			{			
-				if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${Me.Merchandise[${iter.Key}].IsForSale}
+				if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${MerchantWindow.MyInventory[${iter.Key}].IsForSale}
 				{
 					do
 					{
 						Debug:Echo["${iter.Key}"]
-						Debug:Echo["Selling ${Me.Merchandise[${iter.Key}]}"]
-						call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.Merchandise[${iter.Key}]}" FF11CCFF
-						Me.Merchandise[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
+						Debug:Echo["Selling ${MerchantWindow.MyInventory[${iter.Key}]}"]
+						call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${MerchantWindow.MyInventory[${iter.Key}]}" FF11CCFF
+						MerchantWindow.MyInventory[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
 						wait 15
 					}
 					while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0 
@@ -868,7 +868,7 @@ function SellStatus()
 		if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
 		{
 			call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-			Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+			MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 		}
 	}
 	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
@@ -886,14 +886,14 @@ function SellTreasured()
 	wait 5
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[TREASURED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+		if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[TREASURED]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
 				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 				{
 					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 					{
 						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 						wait 15
 					}
 				}
@@ -909,14 +909,14 @@ function SellHandcrafted()
 	wait 5
 	Do
 	{
-	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[HANDCRAFTED]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[HANDCRAFTED]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
 				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 				{
 					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 					{
 						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 						wait 15
 					}
 				}
@@ -932,14 +932,14 @@ function SellUncommon()
 	wait 5
 	Do
 	{
-	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[UNCOMMON]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[UNCOMMON]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
 			{
 				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 				{
 					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 					{
 						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
 						wait 15
 					}
 				}
@@ -955,14 +955,14 @@ function SellAdeptI()
 
 	Do
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[(Adept)]} && ${Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk}
+		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[(Adept)]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk}
 			{
 				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
 				{
 					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
 					{
 						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						Me.Merchandise[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
+						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
 						wait ${Math.Rand[30]:Inc[20]}
 					}
 				}

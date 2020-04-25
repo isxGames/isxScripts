@@ -272,11 +272,11 @@ function main(string goscan, string goscan2)
 				
 				; check where the container is being sold from to get the commission %
 
-				SellLoc:Set[${Me.Vending[${i}].Market}]
-				SellCon:Set[${Me.Vending[${i}]}]
+				SellLoc:Set[${BrokerWindow.VendingContainer[${i}].Market}]
+				SellCon:Set[${BrokerWindow.VendingContainer[${i}]}]
 
-				if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
-					Me.Vending[${i}]:TakeCoin
+				if ${BrokerWindow.VendingContainer[${i}].CurrentCoin} > 0 && ${TakeCoin}
+					BrokerWindow.VendingContainer[${i}]:TakeCoin
 
 				if ${SellLoc.Equal["Haven"]}
 					Commission:Set[40]
@@ -298,14 +298,14 @@ function main(string goscan, string goscan2)
 					ItemUnlisted:Set[TRUE]
 
 					; is the item listed for sale ?
-					if ${Me.Vending[${i}].Consignment[${j}].IsListed}
+					if ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed}
 						ItemUnlisted:Set[FALSE]
 					
 					if (${ItemUnlisted} && ${SetUnlistedPrices}) ||  !${SetUnlistedPrices}
 					{
 						; Calclulate the price someone would pay with commission
-						MyBasePrice:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
-						MerchPrice:Set[${Me.Vending[${i}].Consignment[${j}].Value}]
+						MyBasePrice:Set[${BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice}]
+						MerchPrice:Set[${BrokerWindow.VendingContainer[${i}].Consignment[${j}].Value}]
 						MyPrice:Set[${Math.Calc[((${MyBasePrice}/100)*${Math.Calc[100+${Commission}]})]}]
 						; If increase price is flag set
 						if ${IncreasePrice}
@@ -315,13 +315,13 @@ function main(string goscan, string goscan2)
 							do
 							{
 								Call CheckFocus
-								Me.Vending[${i}].Consignment[${j}]:Unlist
+								BrokerWindow.VendingContainer[${i}].Consignment[${j}]:Unlist
 								wait 10
 								; check the item hasn't moved in the list because it was unlisted
 								call FindItem ${i} "${ItemName}"
 								j:Set[${Return}]
 							}
-							while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+							while ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 						}
 						call SetColour Sell ${currentpos} FF0B0301
 						
@@ -467,7 +467,7 @@ function main(string goscan, string goscan2)
 													call SetColour Sell ${currentpos} FF00FF00
 													Call echolog "<Main> (Match Price change)"
 													call SetItemPrice ${i} ${j} ${MinBasePrice}
-													Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+													BrokerWindow.VendingContainer[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
 												}
 											}
 											else
@@ -475,7 +475,7 @@ function main(string goscan, string goscan2)
 												call SetColour Sell ${currentpos} FF00FF00
 												Call echolog "<Main> (Match Price change)"
 												call SetItemPrice ${i} ${j} ${MinBasePrice}
-												Me.Vending[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
+												BrokerWindow.VendingContainer[${i}].Consignment[${j}]:SetPrice[${MinBasePrice}]
 											}
 										}
 									}
@@ -704,23 +704,23 @@ function checkitemcount(string ItemName, float MyPrice)
 			; if checkbox set to ignore broker fee when matching prices
 			if ${MatchActual}
 			{
-				TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].BasePrice}]
+				TempMinPrice:Set[${BrokerWindow.SearchResult[${CurrentItem}].BasePrice}]
 			}
 			else
 			{
-				TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+				TempMinPrice:Set[${BrokerWindow.SearchResult[${CurrentItem}].Price}]
 			}
 
 			
 			if ${TempMinPrice} > ${MyPrice} || ${ItemCount} >= ${ItemLimit}
 				break
 				
-			if ${ItemName.Equal["${Vendor.Item[${CurrentItem}].Name}"]}
-				ItemCount:Inc[${Vendor.Item[${CurrentItem}].Quantity}]
+			if ${ItemName.Equal["${MerchantWindow.MerchantInventory[${CurrentItem}].Name}"]}
+				ItemCount:Inc[${MerchantWindow.MerchantInventory[${CurrentItem}].Quantity}]
 		}
-		while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale}
+		while ${CurrentItem:Inc}<=${BrokerWindow.NumSearchResults}
 	}
-	while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages}
+	while ${CurrentPage:Inc}<=${BrokerWindow.TotalSearchPages}
 
 	If ${ItemCount} >= ${ItemLimit}
 		Return TRUE
@@ -764,14 +764,14 @@ function:int FindItem(int i, string ItemName)
 	do
 	{
 
-		ConName:Set["${Me.Vending[${i}].Consignment[${j}]}"]
+		ConName:Set["${BrokerWindow.VendingContainer[${i}].Consignment[${j}]}"]
 		
 		if ${ConName.Equal["${ItemName}"]}
 		{
 			Return ${j}
 		}
 	}
-	while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
+	while ${j:Inc} <= ${BrokerWindow.VendingContainer[${i}].NumItems}
 	call echolog "<- FindItem -1"
 	Return -1
 }
@@ -788,23 +788,23 @@ function ReListItem(int i, string ItemName)
 	j:Set[${Return}]
 	if ${j} != -1
 	{
-		if !${Me.Vending[${i}].Consignment[${j}].IsListed}
+		if !${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed}
 		{
-			call echolog "${ItemName} (${i}, ${j}) is not listed for sale : ${Me.Vending[${i}].Consignment[${j}].IsListed}"
-			call echolog "Me.Vending[${i}].Consignment[${j}].BasePrice Returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+			call echolog "${ItemName} (${i}, ${j}) is not listed for sale : ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed}"
+			call echolog "BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice Returned ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice}"
 
-			if ${Me.Vending[${i}].Consignment[${j}].BasePrice} >0
+			if ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice} >0
 			{
 				; Re-List the item for sale
 				loopcount:Set[0]
 				do
 				{
-					Me.Vending[${i}].Consignment[${j}]:List
+					BrokerWindow.VendingContainer[${i}].Consignment[${j}]:List
 					wait 15
 					Call FindItem ${i} "${ItemName}"
 					j:Set[${Return}]
 				}
-				while !${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+				while !${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 
 				if ${loopcount} == 10
 					call AddLog "*** ERROR - unable to mark ${ItemName} as listed for sale" FFFF0000
@@ -815,13 +815,13 @@ function ReListItem(int i, string ItemName)
 				loopcount:Set[0]
 				do
 				{
-					Me.Vending[${i}].Consignment[${j}]:Unlist
+					BrokerWindow.VendingContainer[${i}].Consignment[${j}]:Unlist
 					wait 15
 					; check the item hasn't moved in the list because it was unlisted
 					call FindItem ${i} "${ItemName}"
 					j:Set[${Return}]
 				}
-				while ${Me.Vending[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
+				while ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed} && ${loopcount:Inc} < 10
 
 				if ${loopcount} == 10
 					call AddLog "*** ERROR - unable to mark ${ItemName} as Unlisted" FFFF0000
@@ -1046,7 +1046,7 @@ function buy(string tabname, string action)
 								i:Set[1]
 								do
 								{
-									if ${Me.Vending[${i}](exists)} 
+									if ${BrokerWindow.VendingContainer[${i}](exists)} 
 									{			
 										call FindItem ${i} "${BuyIterator.Key}"
 										waitframe
@@ -1190,16 +1190,16 @@ function BuyItems()
 				Break
 			}
 			
-			Vendor:GotoSearchPage[${CurrentPage}]
+			BrokerWindow:GotoSearchPage[${CurrentPage}]
 			wait 5
 			do
 			{
 				; calculate how much coin this character has on it
 				MyCash:Set[${Math.Calc[(${Me.Platinum}*10000)+(${Me.Gold}*100)+(${Me.Silver})+(${Me.Copper}/100)]}]
 				; How many items for sale on the current broker entry
-				BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
+				BrokerNumber:Set[${BrokerWindow.SearchResult[${CurrentItem}].Quantity}]
 				; How much each single item costs
-				BrokerPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+				BrokerPrice:Set[${BrokerWindow.SearchResult[${CurrentItem}].Price}]
 
 				; if it's more than I want to pay then stop
 				if ${BrokerPrice} > ${Money} || ${BrokerPrice} > ${MaxMoney}
@@ -1214,7 +1214,7 @@ function BuyItems()
 					Call CheckFocus
 					do
 					{
-						BrokerNumber:Set[${Vendor.Broker[${CurrentItem}].Quantity}]
+						BrokerNumber:Set[${BrokerWindow.SearchResult[${CurrentItem}].Quantity}]
 
 						if ${BrokerNumber} == 0
 							break
@@ -1245,23 +1245,23 @@ function BuyItems()
 							Call CheckFocus
 
 							; make sure you don't already have an item and it's lore
-							call checklore "${Vendor.Item[${CurrentItem}].Name}"
+							call checklore "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}"
 
 							; if the item is lore or collectible and you already have it then stop and move on
 							if ${Return}
 							{
-								Echo ${Vendor.Item[${CurrentItem}].Name} is LORE/collectible and you already have one
+								Echo ${MerchantWindow.MerchantInventory[${CurrentItem}].Name} is LORE/collectible and you already have one
 								Break
 							}
 							
 							if ${Collectible} 
 							{
-								call Rejected "${Vendor.Item[${CurrentItem}].Name}"
+								call Rejected "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}"
 								
 								if !${Return}
 								{
 									Call CheckFocus
-									Vendor.Item[${CurrentItem}]:Examine
+									MerchantWindow.MerchantInventory[${CurrentItem}]:Examine
 
 									; Wait till the examine window is open
 									do
@@ -1278,10 +1278,10 @@ function BuyItems()
 									{
 										Call CheckFocus
 
-										call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+										call numinventoryitems "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}" TRUE
 										CurrentQuantity:Set[${Return}]
 										
-										Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+										BrokerWindow.SearchResult[${CurrentItem}]:Buy[${StackBuySize}]
 										NewCollection:Set[FALSE]
 
 										; make the script wait till the inventory total has changed (item was added)
@@ -1290,7 +1290,7 @@ function BuyItems()
 										loopcount:Set[1]
 										do
 										{
-											call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+											call numinventoryitems "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}" TRUE
 											
 											if ${Return} != ${CurrentQuantity}
 											Break
@@ -1317,10 +1317,10 @@ function BuyItems()
 							{
 								Call CheckFocus
 
-								call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+								call numinventoryitems "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}" TRUE
 								CurrentQuantity:Set[${Return}]
 								
-								Vendor.Broker[${CurrentItem}]:Buy[${StackBuySize}]
+								BrokerWindow.SearchResult[${CurrentItem}]:Buy[${StackBuySize}]
 
 
 								; make the script wait till the inventory total has changed (item was added)
@@ -1329,7 +1329,7 @@ function BuyItems()
 								loopcount:Set[1]
 								do
 								{
-									call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+									call numinventoryitems "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}" TRUE
 									
 									if ${Return} != ${CurrentQuantity}
 										Break
@@ -1344,7 +1344,7 @@ function BuyItems()
 
 							}
 							if ${AutoTransmute}
-								Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
+								Call GoTransmute "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}"
 							
 							if ${InventorySlotsFree}<=0
 							{
@@ -1355,15 +1355,15 @@ function BuyItems()
 
 							; if unable to buy the required stack due to stack limitations then change to buying singles
 							
-							if ${Vendor.Item[${CurrentItem}].Quantity} == ${BrokerNumber} && ${Vendor.Item[${CurrentItem}].Quantity} != 0 && !${Collectible}
+							if ${MerchantWindow.MerchantInventory[${CurrentItem}].Quantity} == ${BrokerNumber} && ${MerchantWindow.MerchantInventory[${CurrentItem}].Quantity} != 0 && !${Collectible}
 							{
 								; make sure you don't already have an item and it's lore
-								call checklore "${Vendor.Item[${CurrentItem}].Name}"
+								call checklore "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}"
 								
 								; if the item is lore and you already have it then stop and move on
 								if ${Return}
 								{
-									Echo ${Vendor.Item[${CurrentItem}].Name} is LORE and you already have one
+									Echo ${MerchantWindow.MerchantInventory[${CurrentItem}].Name} is LORE and you already have one
 									Break
 								}
 
@@ -1372,10 +1372,10 @@ function BuyItems()
 								{
 									Call CheckFocus
 
-									call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+									call numinventoryitems "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}" TRUE
 									CurrentQuantity:Set[${Return}]
 
-									Vendor.Broker[${CurrentItem}]:Buy[1]
+									BrokerWindow.SearchResult[${CurrentItem}]:Buy[1]
 
 
 									; make the script wait till the inventory total has changed (item was added)
@@ -1384,7 +1384,7 @@ function BuyItems()
 									loopcount:Set[1]
 									do
 									{
-										call numinventoryitems "${Vendor.Item[${CurrentItem}].Name}" TRUE
+										call numinventoryitems "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}" TRUE
 											
 										if ${Return} != ${CurrentQuantity}
 											Break
@@ -1398,7 +1398,7 @@ function BuyItems()
 									while ${loopcount:Inc} <= 10
 									
 									if ${AutoTransmute}
-										Call GoTransmute "${Vendor.Item[${CurrentItem}].Name}"
+										Call GoTransmute "${MerchantWindow.MerchantInventory[${CurrentItem}].Name}"
 									
 									if !${QueuedCommands}
 										WaitFrame
@@ -1415,7 +1415,7 @@ function BuyItems()
 									if ${Exitmyprices} || ${Pausemyprices}
 										break
 								}
-								while ${StackBuySize:Dec} >= 0 && ${Vendor.Item[${CurrentItem}].Quantity} != 0
+								while ${StackBuySize:Dec} >= 0 && ${MerchantWindow.MerchantInventory[${CurrentItem}].Quantity} != 0
 			
 							}
 							
@@ -1465,7 +1465,7 @@ function BuyItems()
 				if ${Exitmyprices} || ${Pausemyprices}
 					break
 			}
-			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && ${Number} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
+			while ${CurrentItem:Inc}<=${BrokerWindow.NumSearchResults} && ${Number} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 			CurrentItem:Set[1]
 			
 			if !${QueuedCommands}
@@ -1482,7 +1482,7 @@ function BuyItems()
 
 		}
 		; keep going till all items listed have been scanned and bought or you have reached your limit
-		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${Number} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
+		while ${CurrentPage:Inc}<=${BrokerWindow.TotalSearchPages} && ${Number} > 0 && !${Exitmyprices} && !${Pausemyprices} && !${StopSearch}
 
 		; now we've bought all that are available , save the number we've still got left to buy
 		Call Saveitem BuyUpdate
@@ -1712,39 +1712,39 @@ function:float BrokerSearch(string ItemName, bool NameOnly)
 	; check if broker has any listed to compare with your item
 	if !${NameOnly}
 	{
-		if ${Vendor.NumItemsForSale} >0
+		if ${BrokerWindow.NumSearchResults} >0
 			Return TRUE
 		else
 			Return FALSE
 	}
 	
-	if ${Vendor.NumItemsForSale} >0
+	if ${BrokerWindow.NumSearchResults} >0
 	{
 		; Work through the brokers list page by page
 		do
 		{
-			Vendor:GotoSearchPage[${CurrentPage}]
+			BrokerWindow:GotoSearchPage[${CurrentPage}]
 			
 			do
 			{
 				waitframe
 			}
-			while ${Vendor.CurrentSearchPage} != ${CurrentPage}
+			while ${BrokerWindow.CurrentSearchPage} != ${CurrentPage}
 			
 			CurrentItem:Set[1]
 			do
 			{
 				; check that the items name being looked at is an exact match and not just a partial match
-				if ${ItemName.Equal["${Vendor.Broker[${CurrentItem}]}"]}
+				if ${ItemName.Equal["${BrokerWindow.SearchResult[${CurrentItem}]}"]}
 				{
 					; if checkbox set to ignore broker fee when matching prices
 					if ${MatchActual}
 					{
-						TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].BasePrice}]
+						TempMinPrice:Set[${BrokerWindow.SearchResult[${CurrentItem}].BasePrice}]
 					}
 					else
 					{
-						TempMinPrice:Set[${Vendor.Broker[${CurrentItem}].Price}]
+						TempMinPrice:Set[${BrokerWindow.SearchResult[${CurrentItem}].Price}]
 					}
 					waitframe
 					stopsearch:Set[TRUE]
@@ -1752,9 +1752,9 @@ function:float BrokerSearch(string ItemName, bool NameOnly)
 				}
 				waitframe
 			}
-			while ${CurrentItem:Inc}<=${Vendor.NumItemsForSale} && !${stopsearch}
+			while ${CurrentItem:Inc}<=${BrokerWindow.NumSearchResults} && !${stopsearch}
 		}
-		while ${CurrentPage:Inc}<=${Vendor.TotalSearchPages} && ${TempMinPrice} == -1 && !${stopsearch}
+		while ${CurrentPage:Inc}<=${BrokerWindow.TotalSearchPages} && ${TempMinPrice} == -1 && !${stopsearch}
 	}
 	; Return the Lowest Price Found or -1 if nothing found.
 	call echolog "<- BrokerSearch ${TempMinPrice}"
@@ -1808,9 +1808,9 @@ function LoadList()
 	; open boxes to refresh broker list data
 	do
 	{
-		if ${Me.Vending[${i}](exists)}
+		if ${BrokerWindow.VendingContainer[${i}](exists)}
 		{
-			ItemName:Set[${Me.Vending[${i}].Consignment[1]}]
+			ItemName:Set[${BrokerWindow.VendingContainer[${i}].Consignment[1]}]
 			waitframe
 		}
 	}
@@ -1825,36 +1825,36 @@ function LoadList()
 	do
 	{
 		
-		if (${Me.Vending[${i}](exists)})  && ${box[${i}]}
+		if (${BrokerWindow.VendingContainer[${i}](exists)})  && ${box[${i}]}
 		{
-			if ${Me.Vending[${i}].CurrentCoin} > 0 && ${TakeCoin}
+			if ${BrokerWindow.VendingContainer[${i}].CurrentCoin} > 0 && ${TakeCoin}
 			{
-				Me.Vending[${i}]:TakeCoin
+				BrokerWindow.VendingContainer[${i}]:TakeCoin
 				wait 10
 			}
-			ItemName:Set[${Me.Vending[${i}].Consignment[1]}]
+			ItemName:Set[${BrokerWindow.VendingContainer[${i}].Consignment[1]}]
 			wait 5
-			if ${Me.Vending[${i}].NumItems}>0
+			if ${BrokerWindow.VendingContainer[${i}].NumItems}>0
 			{
 				do
 				{
 					call CheckFocus
 					numitems:Inc
-					ItemName:Set["${Me.Vending[${i}].Consignment[${j}]}"]
+					ItemName:Set["${BrokerWindow.VendingContainer[${i}].Consignment[${j}]}"]
 					waitframe
 					
 					; add the item name onto the sell tab list
 					UIElement[ItemList@Sell@GUITabs@MyPrices]:AddItem["${ItemName}"]
 					
-					Cost:Inc[${Math.Calc[${Me.Vending[${i}].Consignment[${j}].Value} * ${Me.Vending[${i}].Consignment[${j}].Quantity}]}]
-					Profit:Inc[${Math.Calc[${Me.Vending[${i}].Consignment[${j}].BasePrice} * ${Me.Vending[${i}].Consignment[${j}].Quantity}]}]
+					Cost:Inc[${Math.Calc[${BrokerWindow.VendingContainer[${i}].Consignment[${j}].Value} * ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].Quantity}]}]
+					Profit:Inc[${Math.Calc[${BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice} * ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].Quantity}]}]
 
 					; if the item is flagged as a craft item then add the total number on the broker
 					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
 						call SetColour Sell ${numitems} FFFFFF00
 
 					; keep a total of how many items there are
-					call addtotals "${ItemName}" ${Me.Vending[${i}].Consignment[${j}].Quantity}
+					call addtotals "${ItemName}" ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].Quantity}
 					
 					; store the items box number
 					itemprice:Set[${numitems},${i}]
@@ -1866,7 +1866,7 @@ function LoadList()
 						call SetColour Sell ${numitems} FF0000FF
 						call AddLog "Item Missing from Settings File,  Adding : ${ItemName}" FF00CCFF
 						
-						Money:Set[${Me.Vending[${i}].Consignment[${j}].BasePrice}]
+						Money:Set[${BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice}]
 
 						if ${BoxMaxDefault[${i}]} > 0
 							Money:Set[${BoxMaxDefault[${i}]}]
@@ -1876,11 +1876,11 @@ function LoadList()
 					}
 					
 					; Item sold before but currently unlisted
-					if !${Me.Vending[${i}].Consignment[${j}].IsListed}
+					if !${BrokerWindow.VendingContainer[${i}].Consignment[${j}].IsListed}
 						call SetColour Sell ${numitems} FF990099
 
 				}
-				while ${j:Inc} <= ${Me.Vending[${i}].NumItems}
+				while ${j:Inc} <= ${BrokerWindow.VendingContainer[${i}].NumItems}
 				waitframe
 			}
 			j:Set[1]
@@ -2174,13 +2174,13 @@ function FillMinPrice(int ItemID)
 
 	if ${j} != -1
 	{
-		ItemName:Set["${Me.Vending[${itemprice.Element[${ItemID}]}].Consignment[${j}].Name}"]
+		ItemName:Set["${BrokerWindow.VendingContainer[${itemprice.Element[${ItemID}]}].Consignment[${j}].Name}"]
 
 		UIElement[ItemName@Sell@GUITabs@MyPrices]:SetText["${ItemName}"]
 
 		; Display your current Price for that Item
 
-		Money:Set[${Me.Vending[${itemprice.Element[${ItemID}]}].Consignment[${j}].BasePrice}]
+		Money:Set[${BrokerWindow.VendingContainer[${itemprice.Element[${ItemID}]}].Consignment[${j}].BasePrice}]
 
 		Platina:Set[${Math.Calc[${Money}/10000]}]
 		Money:Set[${Math.Calc[${Money}-(${Platina}*10000)]}]
@@ -2697,16 +2697,16 @@ function SetItemPrice(int i, int j, float price, bool UL)
 {
 	declare currentitem  string  local
 	Call CheckFocus
-	currentitem:Set[${Me.Vending[${i}].Consignment[${j}]}]
-	call echolog "--------- Set Item Price for ${Me.Vending[${i}].Consignment[${j}]} using Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]"
-	Me.Vending[${i}].Consignment[${j}]:SetPrice[${price}]
+	currentitem:Set[${BrokerWindow.VendingContainer[${i}].Consignment[${j}]}]
+	call echolog "--------- Set Item Price for ${BrokerWindow.VendingContainer[${i}].Consignment[${j}]} using BrokerWindow.VendingContainer[${i}].Consignment[${j}]:SetPrice[${price}]"
+	BrokerWindow.VendingContainer[${i}].Consignment[${j}]:SetPrice[${price}]
 	if ${UL}
 	{
 		call FindItem ${i} "${currentitem}"
 		j:Set[${Return}]
 
 		if ${j} != -1
-			Me.Vending[${i}].Consignment[${j}]:Unlist
+			BrokerWindow.VendingContainer[${i}].Consignment[${j}]:Unlist
 
 	}
 	wait 10
@@ -2715,7 +2715,7 @@ function SetItemPrice(int i, int j, float price, bool UL)
 		; check if the item was moved
 		call FindItem ${i} "${currentitem}"
 		j:Set[${Return}]
-		call echolog	"--------- Me.Vending[${i}].Consignment[${j}].BasePrice (${Me.Vending[${i}].Consignment[${j}]}) returned ${Me.Vending[${i}].Consignment[${j}].BasePrice}"
+		call echolog	"--------- BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice (${BrokerWindow.VendingContainer[${i}].Consignment[${j}]}) returned ${BrokerWindow.VendingContainer[${i}].Consignment[${j}].BasePrice}"
 	}
 }
 
@@ -2812,23 +2812,23 @@ objectdef BrokerBot
 		PlaceUncommon:Set[${General.FindSetting[PlaceUncommon]}]
 		ShiniesBox:Set[${General.FindSetting[ShiniesBox]}]
 
-		if ${ShiniesBox} > ${brokerslots} || !${Me.Vending[${ShiniesBox}](exists)}
+		if ${ShiniesBox} > ${brokerslots} || !${BrokerWindow.VendingContainer[${ShiniesBox}](exists)}
 			ShiniesBox:Set[0]
 		
 		RawsBox:Set[${General.FindSetting[RawsBox]}]
 		
-		if ${RawsBox} > ${brokerslots} || !${Me.Vending[${RawsBox}](exists)}
+		if ${RawsBox} > ${brokerslots} || !${BrokerWindow.VendingContainer[${RawsBox}](exists)}
 			RawsBox:Set[0]
 		
 		RaresBox:Set[${General.FindSetting[RaresBox]}]
 		
-		if ${RaresBox} > ${brokerslots} || !${Me.Vending[${RaresBox}](exists)}
+		if ${RaresBox} > ${brokerslots} || !${BrokerWindow.VendingContainer[${RaresBox}](exists)}
 			RaresBox:Set[0]
 
 		UncommonBox:Set[${General.FindSetting[UncommonBox]}]
 		
 
-		if ${UncommonBox} > ${brokerslots} || !${Me.Vending[${UncommonBox}](exists)}
+		if ${UncommonBox} > ${brokerslots} || !${BrokerWindow.VendingContainer[${UncommonBox}](exists)}
 			UncommonBox:Set[0]
 		
 		i:Set[1]
@@ -2932,7 +2932,7 @@ function placeitem(string ItemName, int ItemBox)
 		}
 			
 		if ${box} > 0
-			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+			space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
 
 		if ${box} > 0 && ${space} > 0
 		{
@@ -2952,7 +2952,7 @@ function placeitem(string ItemName, int ItemBox)
 					if ${Return} != -1
 					{
 						; check the box has free space
-						space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+						space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${i}].TotalCapacity}-${BrokerWindow.VendingContainer[${i}].UsedCapacity}]}]
 		
 						if ${space} > 0
 						{
@@ -3002,9 +3002,9 @@ function inventorylist()
 
 	do
 	{
-		if (${Me.Vending[${i}](exists)})
+		if (${BrokerWindow.VendingContainer[${i}](exists)})
 		{
-			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+			space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${i}].TotalCapacity}-${BrokerWindow.VendingContainer[${i}].UsedCapacity}]}]
 			if ${space} == 0
 			{
 				UIElement[B${i}@Inventory@GUITabs@MyPrices]:Hide
@@ -3062,7 +3062,7 @@ function placeinventory(int box, int inventorynumber)
 	Declare itemcount int local
 	Declare loopcount int local 1
 
-	space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+	space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
 
 
 	if ${space} > 0
@@ -3076,7 +3076,7 @@ function placeinventory(int box, int inventorynumber)
 			xvar:Set[${InventoryList.Element[${inventorynumber}]}]
 	
 			; place the item into the consignment system , grouping it with similar items
-			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
+			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
 
 			loopcount:Set[1]
 			do
@@ -3093,7 +3093,7 @@ function placeinventory(int box, int inventorynumber)
 			
 			InventoryList:Erase[${inventorynumber}]
 	
-			space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+			space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
 			
 			if ${space} == 0
 			{
@@ -3120,7 +3120,7 @@ function:int placeitems(string ItemName, int box, int numitems)
 	
 	if ${numitems} >0
 	{
-		space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+		space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
 		call echolog "placing ${numitems} ${ItemName} in box ${box}"
 		do
 		{
@@ -3133,13 +3133,13 @@ function:int placeitems(string ItemName, int box, int numitems)
 				if !${Me.CustomInventory[${xvar}].Attuned} && !${NoSale[${Return}]}
 				{
 					; check current used capacity
-					lasttotal:Set[${Me.Vending[${box}].UsedCapacity}]
+					lasttotal:Set[${BrokerWindow.VendingContainer[${box}].UsedCapacity}]
 	
 					; place the item into the consignment system , grouping it with similar items
 					
 					itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
 					
-					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
+					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemName}"].SerialNumber}]
 	
 					; make the script wait till the inventory total has changed (item was added)
 					; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
@@ -3206,7 +3206,7 @@ function:int placeitems(string ItemName, int box, int numitems)
 								itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
 								
 								; place the item into the consignment system , grouping it with similar items
-								Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${Me.Vending[${box}].Consignment["${ItemName}"].SerialNumber}]
+								Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemName}"].SerialNumber}]
 								
 								; make the script wait till the inventory total has changed (item was added)
 								; skips to the next item if nothing changes within 10/30 seconds (one of the items was unplaceable)
@@ -3246,7 +3246,7 @@ function:int placeitems(string ItemName, int box, int numitems)
 							}
 						}
 					}
-					space:Set[${Math.Calc[${Me.Vending[${box}].TotalCapacity}-${Me.Vending[${box}].UsedCapacity}]}]
+					space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
 					numitems:Dec
 				}
 			}
@@ -3299,7 +3299,7 @@ function:int boxwithmostspace(string ItemName)
 		; if that box has not been marked as a no-place box for that item
 		if ${ItemList.FindSet["${ItemName}"].FindSetting[Box${i}]} != 3
 		{
-			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+			space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${i}].TotalCapacity}-${BrokerWindow.VendingContainer[${i}].UsedCapacity}]}]
 
 			if ${space} > ${max}
 				max:Set[${i}]
@@ -3398,7 +3398,7 @@ function CheckPrimary(string UITab, int boxnum, int ID)
 {
 	Declare xvar int local 1
 	
-	if ${boxnum} <= ${brokerslots} && ${Me.Vending[${boxnum}](exists)}
+	if ${boxnum} <= ${brokerslots} && ${BrokerWindow.VendingContainer[${boxnum}](exists)}
 	{
 
 		if ${UIElement[${boxnum}@${UITab}@GUITabs@MyPrices].Selection} == 0
@@ -3624,9 +3624,9 @@ function StartUp()
 	i:Set[1]
 	do
 	{
-		if (${Me.Vending[${i}](exists)})
+		if (${BrokerWindow.VendingContainer[${i}](exists)})
 		{
-			space:Set[${Math.Calc[${Me.Vending[${i}].TotalCapacity}-${Me.Vending[${i}].UsedCapacity}]}]
+			space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${i}].TotalCapacity}-${BrokerWindow.VendingContainer[${i}].UsedCapacity}]}]
 
 			if ${space} == 0
 				UIElement[B${i}@Inventory@GUITabs@MyPrices]:Hide
