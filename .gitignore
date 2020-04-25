@@ -1,3 +1,4 @@
 /EverQuest2/Scripts/EQ2Bot/Character Config
-/Archive/Vanguard/.NET Programs/ISXVGDotNet (Empty with forms)/obj/Debug/*.cache
 *.cache
+/EverQuest2/.NET Programs/EQ2Suite/EQ2ParseBrowser/obj/Debug
+/EverQuest2/.NET Programs/EQ2Suite/EQ2SuiteLib/obj/Debug
