@@ -16,7 +16,7 @@ function main()
 		
 		if !${ltarget}
 		{
-			if (${ltanktargetID} != ${ltankID} && ${Actor[${ltankID}].InCombatMode} && (${Actor[${ltankID}].Target(exists)})
+			if (${ltanktargetID} != ${ltankID} && ${Actor[${ltankID}].InCombatMode} && (${Actor[${ltankID}].Target.Name(exists)})
 			{
 				Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something (1) [ltarget: ${ltarget}, ltankID: ${ltankID}, tank's target ID: ${ltanktargetID})"]
 				Script[EQ2Bot].VariableScope.KillTarget:Set[${ltanktargetID}]
@@ -29,7 +29,7 @@ function main()
 		  {
 				if (${Actor[${ltarget}].Health}<=0)
 				{
-					if (${ltanktargetID} != ${ltankID} && ${Actor[${ltankID}].InCombatMode} && ${Actor[${ltankID}].Target(exists)})
+					if (${ltanktargetID} != ${ltankID} && ${Actor[${ltankID}].InCombatMode} && ${Actor[${ltankID}].Target.Name(exists)})
 					{
 						Debug:Echo["TargetHandler:: TargetCheck - no killtarget and tank is targeting something (2)"]
 						Script[EQ2Bot].VariableScope.KillTarget:Set[${Actor[${ltanktargetID}]
@@ -39,7 +39,7 @@ function main()
 		  }
 		  else
 		  {
-				if (${ltanktargetID} != ${ltankID} && ${Actor[${ltankID}].InCombatMode} && ${Actor[${ltankID}].Target(exists)})
+				if (${ltanktargetID} != ${ltankID} && ${Actor[${ltankID}].InCombatMode} && ${Actor[${ltankID}].Target.Name(exists)})
 				{
 					Debug:Echo["TargetHandler:: TargetCheck - KillTarget doesn't exist -- setting to MT's target"]
 					Script[EQ2Bot].VariableScope.KillTarget:Set[${ltanktargetID}]

@@ -439,15 +439,15 @@
                   <OnLeftClick>
                     if ${This.Checked}
                     {
-                    Script[EQ2Bot].Variable[AutoFollowMode]:Set[TRUE]
-                    LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
-                    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                      Script[EQ2Bot].Variable[AutoFollowMode]:Set[TRUE]
+                      LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",TRUE]
+                      Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                     }
                     else
                     {
-                    Script[EQ2Bot].Variable[AutoFollowMode]:Set[FALSE]
-                    LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",FALSE]
-                    Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                      Script[EQ2Bot].Variable[AutoFollowMode]:Set[FALSE]
+                      LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras]:AddSetting["Auto Follow Mode",FALSE]
+                      Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
                     }
                   </OnLeftClick>
                   <Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[Auto Follow Mode]}</Data>

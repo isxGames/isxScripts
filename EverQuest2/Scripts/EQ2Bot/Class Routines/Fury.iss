@@ -123,8 +123,8 @@ function Class_Declaration()
 		MaxHealthModified:Set[80]
 		
 	;; Set these to TRUE, as desired, for testing
-	Debug:Enable
-	FuryDebugMode:Set[TRUE]
+	;Debug:Enable
+	;FuryDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -163,8 +163,8 @@ function Pulse()
 			call CheckHOTs
 
 
-		;; TODO:  Make the "speed at which you are with no buffs in a dungeon" settable in the UI  (Note:  25 is with the Journeyman's Boots of Adventure)
-		if ((${Me.Speed} == 10 || ${Me.Speed} == 25) && !${Me.InCombat} && !${Me.InCombatMode})
+		;; TODO:  Make the "speed at which you are with no buffs in a dungeon" settable in the UI  (Note:  25 is with the Journeyman's Boots of Adventure, 35 is with HQ boots on top of that)
+		if ((${Me.Speed} == 10 || ${Me.Speed} == 25 || ${Me.Speed} == 35) && !${Me.InCombat} && !${Me.InCombatMode})
 		{
 			call CastSpell "Spirit of the Wolf" 2119211019 0 1 1
 			wait 10
@@ -660,9 +660,9 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 		return CombatComplete	
 	
 
-	if (${OffenseMode} && ${Me.Power} > 40 && ${Me.InCombat} && ${Me.InCombatMode})
+	if (${OffenseMode} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode})
 	{
-		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 50)
+		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 70)
 		{
 			;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
 			;; Death Swarm
@@ -1903,9 +1903,9 @@ function CheckHeals()
 
 	;;;;;;;;;;;;;;;;;;;;;;;
 	;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
-	if (${OffenseMode} && ${Me.Power} > 40 && ${Me.InCombat} && ${Me.InCombatMode})
+	if (${OffenseMode} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode})
 	{
-		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 50)
+		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 70)
 		{
 			variable bool ContinueOffense = TRUE
 

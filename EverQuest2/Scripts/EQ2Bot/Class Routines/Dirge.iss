@@ -908,7 +908,7 @@ function DoMagneticNote()
 
 	do
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
+		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
 		{
 
 			

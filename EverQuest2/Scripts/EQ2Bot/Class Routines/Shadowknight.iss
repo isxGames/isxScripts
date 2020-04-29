@@ -214,7 +214,7 @@ function Buff_Routine(int xAction)
 			else
 				ArmamentTargetExists:Set[TRUE]
 			
-			echo "EQ2Bot.SK-Debug:: ArmamentTarget is '${ArmamentTarget}'"
+			Debug:Echo["EQ2Bot.SK-Debug:: ArmamentTarget is '${ArmamentTarget}'"]
 				
 			if ${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}
 			{
@@ -791,7 +791,7 @@ function Combat_Routine(int xAction)
 	    call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
-		}
+	}
     
 	  ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
     if (${Me.Ability[${SpellType[55]}].IsReady})
@@ -819,7 +819,7 @@ function Combat_Routine(int xAction)
 		;; Zealous Smite
 		if (${Me.Ability[${SpellType[508]}].IsReady})
 		{
-			echo "${SpellType[508]}..."
+			;echo "${SpellType[508]}..."
 			call _CastSpellRange 508 0 0 0 ${KillTarget} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -892,7 +892,10 @@ function Combat_Routine(int xAction)
 	
 	;; Divine Aura
 	if ${Me.Health}<70 && ${Me.Ability[${SpellType[502]}].IsReady}
+	{
+		Debug:Echo["\arHealth < 70% -- Casting Divine Aura!\ax"]
 		call CastSpellRange 502 
+	}
 
 	;; SK's Furor
 	if ${Me.Health}<=60 && ${Me.Ability[${SpellType[507]}].IsReady}
@@ -1073,7 +1076,7 @@ function CheckGroupOrRaidAggro()
 	{
 	    if (!${CustomActor[${Counter}].IsSolo} || ${NumNPCs} > 2)
 	    {
-	        if (${CustomActor[${Counter}].Target(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
+	        if (${CustomActor[${Counter}].Target.Name(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
 	        {
 	            if ${Me.InRaid}
 	            {
@@ -1092,7 +1095,7 @@ function CheckGroupOrRaidAggro()
             	                	{
             	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
             	                		{
-            	                			echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+            	                			Debug:Echo["EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"]
             	                			CustomActor[${Counter}]:DoTarget
             	                			wait 2
             	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
@@ -1102,47 +1105,47 @@ function CheckGroupOrRaidAggro()
             	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"]
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
                 	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"]
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
                 	                elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"]
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
             	                }
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"]
             	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
             	                    return 1
             	                }
             	                if ${Me.Ability[${SpellType[160]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"]
             	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
             	                    return 1
             	                }
             	                if !${Me.Maintained[${SpellType[240]}](exists)}
             	                {
                 	                if ${Me.Ability[${SpellType[240]}].IsReady}
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"]
                 	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
                 	            }
@@ -1155,7 +1158,7 @@ function CheckGroupOrRaidAggro()
 	            {
             	    if (${Me.Group[${CustomActor[${Counter}].Target.Name}].Health(exists)} && ${Me.Group[${CustomActor[${Counter}].Target.Name}].InZone})
             	    {
-            	        echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"
+            	        Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"]
         	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
         	            {
         	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
@@ -1169,7 +1172,7 @@ function CheckGroupOrRaidAggro()
             	                	{
             	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
             	                		{
-            	                			echo "EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"
+            	                			Debug:Echo["EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"]
             	                			CustomActor[${Counter}]:DoTarget
             	                			wait 2
             	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
@@ -1179,47 +1182,47 @@ function CheckGroupOrRaidAggro()
             	                	}
                 	                if ${Me.Ability[${SpellType[320]}].IsReady}
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"]
                 	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
                 	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"]
                 	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
                 	                elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"]
                 	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
             	                }
             	                if ${Me.Ability[${SpellType[270]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"]
             	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
             	                    return 1
             	                }
             	                if ${Me.Ability[${SpellType[160]}].IsReady}
             	                {
-            	                    echo "EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"]
             	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-            	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
             	                    return 1
             	                }
             	                if !${Me.Maintained[${SpellType[240]}](exists)}
             	                {
                 	                if ${Me.Ability[${SpellType[240]}].IsReady}
                 	                {
-                	                    echo "EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"]
                 	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-                	                    echo "EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"
+                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
                 	                    return 1
                 	                }
                 	            }

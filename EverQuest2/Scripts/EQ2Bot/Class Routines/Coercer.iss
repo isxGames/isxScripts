@@ -819,7 +819,7 @@ function Mezmerise_Targets()
 
 	do
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
+		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
 		{
 			;if its the kill target skip it
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
@@ -910,7 +910,7 @@ function DoCharm()
 
 	do
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && !${CustomActor[${tcount}].IsEpic} && ${CustomActor[${tcount}].Target(exists)}
+		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && !${CustomActor[${tcount}].IsEpic} && ${CustomActor[${tcount}].Target.Name(exists)}
 		{
 			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} && ${grpcnt}>1
 				continue
@@ -994,7 +994,7 @@ function DoAmnesia()
 
 	do
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target(exists)}
+		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
 		{
 			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}) || (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})
 				continue

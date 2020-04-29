@@ -3139,7 +3139,7 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	variable int spellsused
 	variable string BuffTarget
 	
-	echo "EQ2Bot.Illusionist.DoInitialiSpellLineup():: Begin..."
+	Debug:Echo["DoInitialiSpellLineup():: Begin..."]
 	
 	if ${IllyDebugMode}
 		Debug:Echo["DoInitialSpellLineup(${FightingEpicMob}, ${FightingHeroicMob})"]
