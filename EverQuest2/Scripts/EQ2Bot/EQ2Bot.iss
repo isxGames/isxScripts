@@ -252,6 +252,8 @@ variable bool DoNoCombat
 variable string Me_SubClass
 variable string Me_Name
 variable bool IsPetClass = FALSE
+variable bool LevelChanged = FALSE
+variable uint LevelChangedTimer = 0
 
 ;===================================================
 ;===          AutoAttack Timing                 ====
@@ -431,7 +433,6 @@ function main(string Args)
 		call Custom__PostCombat_Init
 	}
 
-
 	UIElement[EQ2 Bot].FindUsableChild[Pause EQ2Bot,commandbutton]:Show
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	do
@@ -468,6 +469,15 @@ function main(string Args)
 				call ProcessTriggers
 			}
 			while !${StartBot}
+		}
+
+		if (${LevelChanged} && ${Math.Calc[${Time.SecondsSinceMidnight}-${LevelChangedTimer}]} >= 25 && !${Me.InCombatMode} && ${EQ2.Zoning} == 0)
+		{
+			;; This should run about 25 seconds after leveling.  This allows for plenty of time for the abilities to be added, etc.
+			echo "[EQ2Bot] Level changed; updating ability list..."
+			SpellType:Clear
+			call CheckAbilities ${Me.SubClass} 
+			LevelChanged:Set[FALSE]
 		}
 
 		;;;;;;;;;;;;;;
@@ -2284,9 +2294,9 @@ function Combat(bool PVP=0)
 		if !${MainTank} && ${Actor[${MainAssistID}].Name(exists)}
 		{
 			if ${Mob.Detect}
-				wait 50 ${Actor[${MainAssistID}].Target(exists)}
+				wait 50 ${Actor[${MainAssistID}].Target.Name(exists)}
 
-			if ((${Actor[${MainAssistID}].Target(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID}]}) || ${PVP})
+			if ((${Actor[${MainAssistID}].Target.Name(exists)} && ${Mob.ValidActor[${Actor[${MainAssistID}].Target.ID}]}) || ${PVP})
 			{
 				KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 				Actor[${KillTarget}]:DoTarget
@@ -2310,7 +2320,7 @@ function Combat(bool PVP=0)
 					if ${KillTarget} != ${AggroMob}
 					{
 						CurrentAction:Set["Targetting Nearest Aggro Mob and continuing combat"]
-						echo "EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"
+						Debug:Echo["EQ2Bot-Combat():: Targetting Nearest Aggro Mob and continuing combat"]
 						KillTarget:Set[${AggroMob}]
 					}
 					target ${AggroMob}
@@ -3494,7 +3504,7 @@ function Pull(string npcclass)
 							}
 						}
 					}
-					while !(${Target.Target(exists)})
+					while !(${Target.Target.Name(exists)})
 
 					if ${bContinue}
 					{
@@ -3558,7 +3568,7 @@ function Pull(string npcclass)
 							}
 						}
 					}
-					while (((${Target.Distance} > ${MARange}) && (${Target.Target(exists)})) || !${Me.TargetLOS})
+					while (((${Target.Distance} > ${MARange}) && (${Target.Target.Name(exists)})) || !${Me.TargetLOS})
 
 					if ${Target(exists)}
 					{
@@ -4384,9 +4394,12 @@ function ScanAdds()
 	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 }
 
-;atom(script) EQ2_onIncomingChatText(int ChatType, string sMessage, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
-;{
-;}
+atom(script) EQ2_onLevelChange(int OldLevel, int NewLevel)
+{
+	LevelChanged:Set[TRUE]
+	LevelChangedTimer:Set[${Time.SecondsSinceMidnight}]
+	return
+}
 
 atom(script) EQ2_onIncomingText(string Text)
 {
@@ -4431,7 +4444,7 @@ atom(script) EQ2_onIncomingText(string Text)
 	;elseif (${Text.Equal["Target is not alive"]})
 	;	Debug:Echo["TARGET IS NOT ALIVE!"]
 
-
+	return
 }
 
 atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker, string sTarget, string SpeakerIsNPC, string ChannelName)
@@ -4452,6 +4465,8 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 			}
 		}
 	}
+
+	return
 }
 
 atom(script) LootWDw(string ID)
@@ -4578,6 +4593,8 @@ atom(script) LootWDw(string ID)
 			echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
 			break
 	}
+
+	return
 }
 
 function CantSeeTarget(string Line)
@@ -4724,7 +4741,7 @@ function ReacquireKillTargetFromMA(int WaitTime=5)
 			return FAILED
 		}
 
-		if ${Actor[${MainAssistID}].Target(exists)}
+		if ${Actor[${MainAssistID}].Target.Name(exists)}
 		{
 			NextKillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
 			if (${NextKillTarget})
@@ -4831,12 +4848,12 @@ function StartBot()
 		;; Any subclass that can "Feign Death" can be added here; however, be sure that you add a "function FeignDeath()"
 		;; to the class file (see Shadowknight.iss class file for example)
 	if ${Me.SubClass.Equal[shadowknight]}
-				UIElement[EQ2 Bot].FindUsableChild[Feign Death,commandbutton]:Show
+		UIElement[EQ2 Bot].FindUsableChild[Feign Death,commandbutton]:Show
 
 		;; Any subclass that can "Harm Touch" can be added here; however, be sure that you add a "function HarmTouch()"
 		;; to the class file (see Shadowknight.iss class file for example)
 	if ${Me.SubClass.Equal[shadowknight]}
-				UIElement[EQ2 Bot].FindUsableChild[Harm Touch,commandbutton]:Show
+		UIElement[EQ2 Bot].FindUsableChild[Harm Touch,commandbutton]:Show
 
 
 	switch ${PathType}
@@ -5694,6 +5711,7 @@ objectdef EQ2BotObj
 		;Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 		Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
+		Event[EQ2_onLevelChange]:AttachAtom[EQ2_onLevelChange]
 	}
 
 	method Init_Triggers()
@@ -6841,6 +6859,7 @@ function atexit()
 	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
+	Event[EQ2_onLevelChange]:DetachAtom[EQ2_onLevelChange]
 
 	press -release ${forward}
 	press -release ${backward}
