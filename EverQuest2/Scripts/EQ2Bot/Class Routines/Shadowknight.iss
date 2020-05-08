@@ -579,7 +579,7 @@ function Buff_Routine(int xAction)
 
 }
 
-function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
+function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	variable bool bReturn
 	variable string sReturn
@@ -1250,11 +1250,11 @@ function FeignDeath()
 
 function HarmTouch()
 {
-  ;; Cast Harmtouch on current KillTarget
-  if ${Me.Ability[${SpellType[63]}].IsReady}
-  {
- 		CurrentAction:Set[Combat :: Casting Harm Touch!]
-    call CastSpellRange 63 0 0 0 ${KillTarget} 0 0 0 1
+	;; Cast Harmtouch on current KillTarget
+	if ${Me.Ability[${SpellType[63]}].IsReady}
+	{
+		CurrentAction:Set[Combat :: Casting Harm Touch!]
+		call CastSpellRange 63 0 0 0 ${KillTarget} 0 0 0 1
 	}
 }
 
