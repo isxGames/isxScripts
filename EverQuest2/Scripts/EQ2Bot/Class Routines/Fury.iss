@@ -1,10 +1,5 @@
 ;*************************************************************
-;Fury.iss 20100316
-;version
-;
-; 20100316
-; * Massive Combat_Routine() re-write (Pygar)
-;
+; Fury
 ;*************************************************************
 
 #ifndef _Eq2Botlib_
@@ -14,13 +9,11 @@
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-	declare ClassFileVersion int script 20100316
+	declare ClassFileVersion int script 20200507
 	;;;;
 
-	declare OffenseMode bool script
 	declare DebuffMode bool script
 	declare AoEMode bool script
-	declare UseRingOfFire bool script
 	declare CureMode bool script
 	declare CureCurseSelfMode bool script 0
 	declare CureCurseOthersMode bool script 0
@@ -31,7 +24,6 @@ function Class_Declaration()
 	declare BuffThorns bool script 1
 	declare VortexMode bool script 1
 	declare CombatRez bool script 1
-	declare UseMeleeProcSpells bool script 1
 	declare StartHO bool script 1
 	declare KeepMTHOTUp bool script 0
 	declare KeepGroupHOTUp bool script 0
@@ -40,9 +32,6 @@ function Class_Declaration()
 	declare PactOfNature string script
 	declare AnimalForm string script
 	declare SpamHealMode bool script 0
-	declare UseRootSpells boot script 0
-	declare FeastAction int script 9
-	declare UseBallLightning bool script 0
 	declare UseWrathOfNature bool script 0
 	declare UseMythicalOn string script
 	declare HaveAbility_TunaresGrace bool script FALSE
@@ -60,6 +49,8 @@ function Class_Declaration()
 	declare BuffMask bool script FALSE
 	declare PrimaryHealer bool script TRUE
 	declare FuryDebugMode bool script FALSE
+	declare CastTortoiseShell bool script FALSE
+	declare CastTortoiseShellCaller string script 
 
 	declare EquipmentChangeTimer int script
 
@@ -69,11 +60,8 @@ function Class_Declaration()
 	UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
 	ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}_Buffs.xml"
 	
-
-	OffenseMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Offensive Spells,FALSE]}]
 	DebuffMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Debuff Spells,TRUE]}]
 	AoEMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast AoE Spells,FALSE]}]
-	UseRingOfFire:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRingOfFire,FALSE]}]
 	CureMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Cast Cure Spells,FALSE]}]
 	CureCurseSelfMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseSelfMode,FALSE]}]
 	CureCurseOthersMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseOthersMode,FALSE]}]
@@ -84,11 +72,9 @@ function Class_Declaration()
 	KeepReactiveUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepReactiveUp,FALSE]}]
 	CombatRez:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Combat Rez,FALSE]}]
 	StartHO:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Start HOs,FALSE]}]
-	UseMeleeProcSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Melee Proc Spells,FALSE]}]
 	KeepMTHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepMTHOTUp,FALSE]}]
 	KeepGroupHOTUp:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[KeepGroupHOTUp,FALSE]}]
 	RaidHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[Use Raid Heals,FALSE]}]
-	UseBallLightning:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseBallLightning,FALSE]}]
 	UseWrathOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseWrathOfNature,FALSE]}]
 	UseMythicalOn:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseMythicalOn,"No One"]}]
 	PrimaryHealer:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PrimaryHealer,TRUE]}]
@@ -103,10 +89,9 @@ function Class_Declaration()
 	PactOfNature:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PactOfNature,]}]
 	AnimalForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[AnimalForm,]}]
 	SpamHealMode:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[SpamHealMode,]}]
-	UseRootSpells:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[UseRootSpells,]}]
 	CureCurseGroupMember:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[CureCurseGroupMember,]}]
-
 	NoEQ2BotStance:Set[TRUE]
+	CastTortoiseShellCaller:Set[""]
 
 	Event[EQ2_FinishedZoning]:AttachAtom[Fury_FinishedZoning]
 	
@@ -123,8 +108,8 @@ function Class_Declaration()
 		MaxHealthModified:Set[80]
 		
 	;; Set these to TRUE, as desired, for testing
-	;Debug:Enable
-	;FuryDebugMode:Set[TRUE]
+	Debug:Enable
+	FuryDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -141,6 +126,7 @@ function Pulse()
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
+	variable bool CastSpeedBuff = FALSE
 
 	;; check this at least every 0.5 seconds, after bot has been started.
 	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
@@ -163,12 +149,37 @@ function Pulse()
 			call CheckHOTs
 
 
-		;; TODO:  Make the "speed at which you are with no buffs in a dungeon" settable in the UI  (Note:  25 is with the Journeyman's Boots of Adventure, 35 is with HQ boots on top of that)
-		if ((${Me.Speed} == 10 || ${Me.Speed} == 25 || ${Me.Speed} == 35) && !${Me.InCombat} && !${Me.InCombatMode})
+		if (${Zone.Name.Find[Unrest]} > 0)
+		{
+			if (${Me.Speed} < 10 && !${Me.InCombat} && !${Me.InCombatMode})
+				CastSpeedBuff:Set[TRUE]
+		}
+		else
+		{
+			;; (Note:  25 is with the Journeyman's Boots of Adventure, 35 is with HQ boots on top of that)
+			if ((${Me.Speed} == 10 || ${Me.Speed} == 25 || ${Me.Speed} == 35) && !${Me.InCombat} && !${Me.InCombatMode})
+			{
+				CastSpeedBuff:Set[TRUE]
+			}
+		}
+
+		if (${CastSpeedBuff})
 		{
 			call CastSpell "Spirit of the Wolf" 2119211019 0 1 1
 			wait 10
+			CastSpeedBuff:Set[FALSE]
 		}
+
+		;;;; Use Tortoise Shell
+		;; This variable is intended to be set by a 'controller' script.  In other words, the tank character might issue a command that would
+		;; instigate the fury's "controller" script to set this variable to TRUE in order to have the fury cast Tortoise Shell immediately.  
+		;; The syntax to use would be: 
+		;;		Script[EQ2Bot].VariableScope.CastTortoiseShellCaller:Set[WHO_CALLED_NAME]    (if you want the script to send the player a /tell)
+		;;		Script[EQ2Bot].VariableScope.CastTortoiseShell:Set[TRUE]
+		;;		
+		;; Note:  This will typically be handled in _CastSpellRange or Combat_Routine; it's included here primarily for testing purposes
+		if (${CastTortoiseShell})
+			call TortoiseShell
 
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
@@ -248,77 +259,6 @@ function Buff_Init()
 
 function Combat_Init()
 {
-	Action[1]:Set[Nuke]
-	Power[1,1]:Set[30]
-	Power[1,2]:Set[100]
-	SpellRange[1,1]:Set[60]
-
-	Action[2]:Set[RingOfFire]
-	Power[2,1]:Set[40]
-	Power[2,2]:Set[100]
-	SpellRange[2,1]:Set[95]
-
-	Action[3]:Set[BallLightning]
-	Power[3,1]:Set[40]
-	Power[3,2]:Set[100]
-	SpellRange[3,1]:Set[97]
-
-	Action[4]:Set[AoE]
-	Power[4,1]:Set[30]
-	Power[4,2]:Set[100]
-	SpellRange[4,1]:Set[90]
-
-	Action[5]:Set[DoT2]
-	Power[5,1]:Set[30]
-	Power[5,2]:Set[100]
-	SpellRange[5,1]:Set[51]
-
-	Action[6]:Set[AANuke]
-	Power[6,1]:Set[30]
-	Power[6,2]:Set[100]
-	SpellRange[6,1]:Set[379]
-
-	Action[7]:Set[Proc]
-	Power[7,1]:Set[40]
-	Power[7,2]:Set[100]
-	SpellRange[7,1]:Set[157]
-
-	Action[8]:Set[Mastery]
-	SpellRange[8,1]:Set[509]
-
-	Action[9]:Set[DoT]
-	Power[9,1]:Set[30]
-	Power[9,2]:Set[100]
-	SpellRange[9,1]:Set[70]
-
-  Action[10]:Set[Feast]
-	Power[10,1]:Set[30]
-	Power[10,2]:Set[100]
-	SpellRange[10,1]:Set[312]
-	FeastAction:Set[10]
-
-	Action[11]:Set[Storms]
-	Power[11,1]:Set[40]
-	Power[11,2]:Set[100]
-	SpellRange[11,1]:Set[96]
-
-	Action[12]:Set[AA_Thunderspike]
-	Power[12,1]:Set[40]
-	Power[12,2]:Set[100]
-	SpellRange[12,1]:Set[383]
-
-	Action[13]:Set[AA_Primordial_Strike]
-	Power[13,1]:Set[40]
-	Power[13,2]:Set[100]
-	SpellRange[13,1]:Set[382]
-
-	Action[14]:Set[AA_Nature_Blade]
-	Power[14,1]:Set[40]
-	Power[14,2]:Set[100]
-	SpellRange[14,1]:Set[381]
-	
-	Action[15]:Set[RootSpells]
-	SpellRange[15,1]:Set[306]
 }
 
 function PostCombat_Init()
@@ -340,8 +280,8 @@ function Buff_Routine(int xAction)
 	; Pass out feathers on initial script startup
 	if !${InitialBuffsDone}
 	{
-		if (${Me.GroupCount} > 1)
-			call CastSpell "Favor of the Phoenix" 4278308521 0 1 1
+		;if (${Me.GroupCount} > 1)
+		;	call CastSpell "Favor of the Phoenix" 4278308521 0 1 1
 		InitialBuffsDone:Set[TRUE]
 	}
 
@@ -354,7 +294,7 @@ function Buff_Routine(int xAction)
 	if ${ShardMode}
 		call Shard
 
-  if ${xAction}== 1 || ${xAction} == 10
+  	if ${xAction}== 1 || ${xAction} == 10
 	{
 		call CheckHeals
 		if ${CureMode}
@@ -364,7 +304,7 @@ function Buff_Routine(int xAction)
 	if ${Me.Power}>85
 		call CheckHOTs
 
-  ;call CheckSKFD
+  	;call CheckSKFD
   
 	switch ${PreAction[${xAction}]}
 	{
@@ -634,12 +574,12 @@ function Buff_Routine(int xAction)
 			break
 			
 		Default
-			return Buff Complete
+			return "Buff Complete"
 	}
 	call ProcessTriggers
 }
 
-function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
+function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	;; Notes:
 	;; - For Fury, this function is utilized throughout the Combat_Routine to make sure that we are making desired checks before any spell cast
@@ -647,81 +587,86 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int Target
 	;;;;;;;
 	
 	variable int iReturn
+	variable uint MTHealthThreshold
 
-	call CheckEmergencyHeals
+	if (${PrimaryHealer})
+		MTHealthThreshold:Set[70]
+	else
+		MTHealthThreshold:Set[40]
+
+	;call CheckEmergencyHeals
 
 	if ${FuryDebugMode}
-		Debug:Echo["_CastSpellRange() -- Casting ${SpellType[${start}]}..."]
+		Debug:Echo["\atFury:_CastSpellRange()\ax -- Casting ${SpellType[${start}]}..."]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	iReturn:Set[${Return}]
 	
 	call VerifyTarget ${KillTarget}
 	if ${Return.Equal[FALSE]}
-		return CombatComplete	
-	
+		return CombatComplete
 
-	if (${OffenseMode} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode})
+	if (${Me.InCombat} && ${Me.InCombatMode})
 	{
-		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 70)
+		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} >= ${MTHealthThreshold})
 		{
-			;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
-			;; Death Swarm
-			if ${Me.Ability[${SpellType[51]}].IsReady}
+			;; Thunderbolt
+			if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 40)
 			{
-				call CheckActorForEffect ${KillTarget} 369 315
-				if ${Return.Equal[FALSE]}
+				call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+				if ${Return.Equal[CombatComplete]}
 				{
 					if ${FuryDebugMode}
-						Debug:Echo["_CastSpellRange() -- Casting Death Swarm..."]
-					call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-					iReturn:Set[${Return}]
-
-					call VerifyTarget ${KillTarget}
-					if ${Return.Equal[FALSE]}
-						return CombatComplete
+						Debug:Echo["\atFury:_CastSpellRange()\ax - Casting Thunderbolt..."]
+					return CombatComplete						
 				}
-			}		
-
-			;; Thunderbolt
-			if ${Me.Ability[${SpellType[60]}].IsReady}
+			}	
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
 			{
 				if ${FuryDebugMode}
-					Debug:Echo["_CastSpellRange() -- Casting Thunderbolt..."]
-				call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-				iReturn:Set[${Return}]
-
-				call VerifyTarget ${KillTarget}
-				if ${Return.Equal[FALSE]}
-					return CombatComplete
-			}	
+					Debug:Echo["\atFury:_CastSpellRange()\ax - Exiting after Thunderbolt (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 		}
 	}
+
+	;;;; Use Tortoise Shell
+	;; This variable is intended to be set by a 'controller' script.  In other words, the tank character might issue a command that would
+	;; instigate the fury's "controller" script to set this variable to TRUE in order to have the fury cast Tortoise Shell immediately.  
+	;; The syntax to use would be:
+	;;		Script[EQ2Bot].VariableScope.CastTortoiseShellCaller:Set[WHO_CALLED_NAME]    (if you want the script to send the player a /tell)
+	;;		Script[EQ2Bot].VariableScope.CastTortoiseShell:Set[TRUE]
+	if (${CastTortoiseShell})
+		call TortoiseShell
 	
-	if ${FuryDebugMode}
-		Debug:Echo["_CastSpellRange() -- COMPLETE (returning ${iReturn})"]
+	;if ${FuryDebugMode}
+	;	Debug:Echo["\atFury:_CastSpellRange()\ax -- COMPLETE (returning ${iReturn})"]
 	return ${iReturn}
 }
 
 function Combat_Routine(int xAction)
 {
-	declare SpellCnt int local
-	declare SpellMax int local
-	declare DebuffCnt int local
 	declare TankToTargetDistance float local
 	declare BuffTarget string local
 
-	;if ${FuryDebugMode}
-	;	Debug:Echo["Combat_Routine() -- STARTING..."]
+	if ${FuryDebugMode}
+		Debug:Echo["\atFury:Combat_Routine(\ax\ay${xAction}\ax\at)\ax"]
+
+	;;;; Use Tortoise Shell
+	;; This variable is intended to be set by a 'controller' script.  In other words, the tank character might issue a command that would
+	;; instigate the fury's "controller" script to set this variable to TRUE in order to have the fury cast Tortoise Shell immediately.  
+	;; The syntax to use would be:
+	;;		Script[EQ2Bot].VariableScope.CastTortoiseShellCaller:Set[WHO_CALLED_NAME]    (if you want the script to send the player a /tell)
+	;;		Script[EQ2Bot].VariableScope.CastTortoiseShell:Set[TRUE]
+	if (${CastTortoiseShell})
+		call TortoiseShell
 
 	if (!${Actor[${KillTarget}].Name(exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
 	{
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [1]"]		
+			Debug:Echo["\atFury:Combat_Routine()\ax - FINISHED (Returning 'CombatComplete') [1]"]		
 		return CombatComplete
 	}
-
-	;this should be a var based upon our dps to damage ratio, it could even be 0
-	SpellMax:Set[2]
 
 	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
@@ -764,7 +709,7 @@ function Combat_Routine(int xAction)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Animal Form
 	;; (If an 'animal form' target is selected in the UI, then we should cast it 
-	;;  whenever the spell is ready.)   [TODO:  Test and see if this should go in _CastSpellRange()]
+	;;  whenever the spell is ready.)
 	if (${HaveAbility_AnimalForm})
 	{
 		if (${Me.Group} > 1 || ${Me.Raid} > 1)
@@ -789,123 +734,314 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
-	
 	;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; IF "Cast Offensive Spells" is NOT checked
-  ;;;;;
-  if !${OffenseMode}
-  {
-    CurrentAction:Set[OffenseMode: OFF]
-
-    if ${EpicMode} || ${RaidHealMode}
-    {
-  		if ${CureMode}
-      	call CheckCures
-  		call CheckHeals			; Note: CheckHeals() calls CheckHOTs()
-    }
-    else
-    {
-    	call CheckHeals			; Note: CheckHeals() calls CheckHOTs()
-    	if ${CureMode}
-    		call CheckCures
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Primary Healer
+	;; - If serving as a primary healer, the combat routine involves fewer spells in the rotation and we ignore ${xAction}
+	if (${PrimaryHealer})
+	{
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
 		}
 
-    ;call CheckSKFD
-    call RefreshPower
-    if ${ShardMode}
-   		call Shard
+		;; Is this still necessary?
+		;call CheckSKFD
 
-  	;maintain debuffs
-  	DebuffCnt:Set[0]
-  	if (${DebuffMode})
-  	{
-  		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.Power}>30
-  		{
-   			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady}
-  			{
-  				call _CastSpellRange 51 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				}
-  				DebuffCnt:Inc
-  			}
-  			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady} && ${DebuffCnt}<1
-  			{
-  				call _CastSpellRange 50 0 0 0 ${KillTarget}
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}  				
-  				DebuffCnt:Inc
-  			}
-  			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
-  			{
-  				call _CastSpellRange 52 0 0 0 ${KillTarget}
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}  				
-  				DebuffCnt:Inc
-  			}
-  		}
-  		elseif ${Actor[${KillTarget}].IsHeroic}
-  		{
-			;; Fast-casting encounter debuff that should be used always
-			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady}
+		;; Is this still necessary?
+		call RefreshPower
+		if ${ShardMode}
+			call Shard
+
+		;; Fae Fire
+		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 80 && ${Me.Ability[${SpellType[157]}].IsReady} && ${Me.Power} > 40)
+		{
+			call CastSpellRange start=157 TargetID=0 IgnoreMaintained=1
+			if ${Return.Equal[CombatComplete]}
 			{
-				call _CastSpellRange 52 0 0 0 ${KillTarget}
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after Fae Fire (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+		}	
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Porcupine
+		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 40)
+		{
+			call CastSpellRange start=360 TargetID=0 IgnoreMaintained=1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after Porcupine (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+		}
+		elseif (${Me.Power} < 40 && ${Me.Maintained[${SpellType[360]}](exists)})
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Cancelling Porcupine due to low power"]
+			Me.Maintained[${SpellType[360]}]:Cancel
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Maddening Swarm, Death Swarm, Intimidation
+		call CheckDebuffs
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckDebuffs (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Start HOs (if applicable)
+		if (${StartHO})
+		{
+			if (!${EQ2.HOWindowActive} && ${Me.InCombat})
+			{
+				call _CastSpellRange 304
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					} 
+				} 			
+		}
+
+		;; Feast
+		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Power} > 40)
+		{
+			call CheckActorForEffect ${KillTarget} 471 315
+			if ${Return.Equal[FALSE]}
+			{
+				call _CastSpellRange 312 0 0 0 ${KillTarget}
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Feast (Target no longer valid: CombatComplete)"]
 					return CombatComplete						
 				}					
-				DebuffCnt:Inc
 			}
-   			if !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady}
-  			{
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Thunderbolt
+		if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 40)
+		{
+			call _CastSpellRange 60 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
 				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Casting encounter debuff (i.e., Death Swarm) on Heroic mob"] 
-  				call _CastSpellRange 51 0 0 0 ${KillTarget}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after Thunderbolt (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+		}	
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Tempest
+		if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 40)
+		{
+			call CheckActorForEffect ${KillTarget} 511 315
+			if ${Return.Equal[FALSE]}
+			{
+				call _CastSpellRange 70 0 0 0 ${KillTarget}
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Tempest (Target no longer valid: CombatComplete)"]
 					return CombatComplete						
-				}  				
-  				DebuffCnt:Inc
-  			}				
+				}					
+			}
 		}
-  	}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
 
-  	;if we cast a debuff, check heals again before continue
-  	if (${DebuffCnt} > 0)
-  	{
-      if ${EpicMode} || ${RaidHealMode}
-      {
-      	if ${CureMode}
-	       	call CheckCures
-      	call CheckHeals
-      }
-      else
-      {
-      	call CheckHeals
+		;; Master's Smite
+		if ${Me.Ability[id,817383112].IsReady} && ${Mob.CheckActor[${KillTarget}]}
+		{
+			call CastSpellRange AbilityID=817383112 TargetID=${KillTarget} IgnoreMaintained=1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Master's Smite (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}	
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
 
-      	if ${CureMode}
-      		call CheckCures
-  		}
-  	}
+		if (${AoEMode})
+		{
+			;; Ball Lightning 
+			if (${Me.Level} >= 70 && ${Me.Ability[${SpellType[97]}].IsReady} && ${Me.Power} > 50)
+			{
+				call _CastSpellRange 97
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["\atCombat_Routine()\ax - Exiting after Ball Lightning (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
+			}
+			call CheckCuresAndHeals
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
 
+			;; Call of Storms
+			if (${Me.Level} >= 65 && ${Me.Ability[${SpellType[96]}].IsReady} && ${Me.Power} > 50)
+			{
+				call _CastSpellRange 96
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["\atCombat_Routine()\ax - Exiting after Call of Storms (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
+			}
+			call CheckCuresAndHeals
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+
+			;; Ring of Fire
+			if (${Me.Level} >= 55 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Me.Power} > 50)
+			{
+				call _CastSpellRange 95
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["\atCombat_Routine()\ax - Exiting after Ring of Fire (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
+			}
+			call CheckCuresAndHeals
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+		}
+
+		;; Starnova
+		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 60 && ${Me.Ability[${SpellType[90]}].IsReady} && ${Me.Power} > 60)
+		{
+			call _CastSpellRange 90 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Starnova (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}					
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Wrath of Nature
+		if (${UseWrathOfNature} && !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 40 && ${Me.Ability[${SpellType[379]}].IsReady})
+		{
+			call _CastSpellRange 379 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Wrath of Nature (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}					
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;;; End Combat Routine when ${PrimaryHealer} == TRUE
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - FINISHED (Returning 'CombatComplete') [END]"]		
+		return CombatComplete
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; NOT Primary Healer
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
+	}
+
+	;; Is this still necessary?
+	;call CheckSKFD
+
+	;; Is this still necessary?
+	call RefreshPower
+	if ${ShardMode}
+		call Shard
+
+	;; Start HOs (if applicable)
   	if (${StartHO})
   	{
   		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
@@ -920,567 +1056,383 @@ function Combat_Routine(int xAction)
 			} 			
   	}
 
-  	;;
-  	;;;; FEAST
-  	;;
-	if !${Actor[${KillTarget}].IsEpic}
-	{
-		if (${Actor[${KillTarget}].IsHeroic} && ${Actor[${KillTarget}].Health} <= 15)
-		{
-			call CheckCondition Power ${Power[${FeastAction},1]} ${Power[${FeastAction},2]}
-			if ${Return.Equal[OK]}
-			{
-				call _CastSpellRange ${SpellRange[${FeastAction},1]} 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				}					
-			}
-		}
-	}
-	
-	if ${DoHOs}
-	{
-		call CheckGroupHealth 60
-		if ${Return}
-			objHeroicOp:DoHO
-	}
-		
-	CurrentAction:Set[OffenseMode: OFF]
-	if ${FuryDebugMode}
-		Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [2]"]		
-    return CombatComplete
-  }
-  ;;;;
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	else
-		call CheckHeals
-
-	if ${CureMode}
-		call CheckCures
-
-
-	;maintain debuffs
-	DebuffCnt:Set[0]
-	if (${DebuffMode})
-	{
-		if ${Actor[${KillTarget}].IsEpic} && ${Actor[${KillTarget}].IsNamed} && ${Me.Power}>30
-		{
-			if !${Me.Maintained[${SpellType[50]}](exists)} && ${Me.Ability[${SpellType[50]}].IsReady}
-			{
-				call _CastSpellRange 50 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				}
-				DebuffCnt:Inc
-			}
-			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady} && ${DebuffCnt}<1
-			{
-				call _CastSpellRange 52 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				}				
-				DebuffCnt:Inc
-			}
-		}
-		elseif ${Actor[${KillTarget}].IsHeroic}
-		{
-			;; Fast-casting encounter debuff that should be used always
-			if !${Me.Maintained[${SpellType[52]}](exists)} && ${Me.Ability[${SpellType[52]}].IsReady}
-			{
-				call _CastSpellRange 52 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				}				
-				DebuffCnt:Inc
-			}	
-		}
-	}
-	
-	if ${DebuffCnt}
-	{
-		call CheckHeals	
-		if ${CureMode}
-			call CheckCures	
-	}
-
-	if (${StartHO})
-	{
-		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
-		{
-			call _CastSpellRange 304
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-		}			
-	}
-
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
-
-	;; Vortex
-	if (${VortexMode})
-		Me.Ability[${SpellType[395]}]:Use
-	if ${PrimaryHealer}
-	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
-	}
-
 	;; Fae Fire
-	if ${Me.Ability[${SpellType[157]}].IsReady}
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 80 && ${Me.Ability[${SpellType[157]}].IsReady} && ${Me.Power} > 10)
 	{
-		call CheckCondition Power 10 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 157
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}			
-			SpellCnt:Inc
+		call _CastSpellRange 157
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after Fae Fire (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
 		}
-	}
-	if (${SpellCnt} >= ${SpellMax})
+	}	
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard	
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [3]"]		
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
-	elseif ${PrimaryHealer}
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures
-	}
-
 
 	;; Porcupine
-	if ${Me.Ability[${SpellType[360]}].IsReady}
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 10)
 	{
-		call CheckCondition Power 10 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 360
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}			
-			SpellCnt:Inc
+		call _CastSpellRange 360
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after Porcupine (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
 		}
 	}
-	if (${SpellCnt} >= ${SpellMax})
+	elseif (${Me.Power} < 10 && ${Me.Maintained[${SpellType[360]}](exists)})
 	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard	
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [3]"]		
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Cancelling Porcupine due to low power"]
+		Me.Maintained[${SpellType[360]}]:Cancel
 	}
-	elseif ${PrimaryHealer}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
 
-	
-	;; Ball Lightning
-	if ${UseBallLightning} && ${Me.Ability[${SpellType[97]}].IsReady}
-	{
-		call CheckCondition Power 40 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 97
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-			SpellCnt:Inc
-		}
-	}
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [4]"]		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
-	}
-	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
+	;; Maddening Swarm, Death Swarm, Intimidation
+	call CheckDebuffs
+	if ${Return.Equal[CombatComplete]}
 	{
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckDebuffs (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
-	
-	;; Stormbolt
-	if ${AoEMode} && ${Me.Ability[${SpellType[96]}].IsReady}
-	{
-		call CheckCondition Power 40 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 96
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-			SpellCnt:Inc
-		}
-	}
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [5]"]		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
-	}
-	
-	;; StarNova
-	if ${Me.Ability[${SpellType[90]}].IsReady}
-	{
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 90 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-			SpellCnt:Inc
-		}
-	}	
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [6]"]		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures
-	}
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
-	
-	
-	;; Ring of Fire
-	if ${UseRingOfFire} && ${Me.Ability[${SpellType[95]}].IsReady}
-	{
-		call CheckCondition Power 40 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 95
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-			SpellCnt:Inc
-		}
-	}
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [7]"]		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures
-	}
-	
 
-	;; Wrath of Nature
-	if ${Me.Ability[${SpellType[379]}].IsReady}
+	;; Feast
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Power} > 15)
 	{
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 379 0 0 0 ${KillTarget}
+		call CheckActorForEffect ${KillTarget} 471 315
+		if ${Return.Equal[FALSE]}
+		{
+			call _CastSpellRange 312 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Feast (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
-			}
-			SpellCnt:Inc
+			}					
 		}
 	}
-	if (${SpellCnt} >= ${SpellMax})
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [8]"]		
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
-	elseif ${PrimaryHealer}
+
+	;; Thunderbolt
+	if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 15)
 	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures
-	}
-	
-	; Thunderbolt  (should be able to remove this since it's now checked in _CastSpellRange())
-	if ${Me.Ability[${SpellType[60]}].IsReady}
-	{
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 60 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-			SpellCnt:Inc
+		call _CastSpellRange 60 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after Thunderbolt (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
 		}
 	}	
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard	
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [9]"]		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
-	}
-	
-	;; Master Strike
-	if ${Me.Ability[Master's Smite].IsReady} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		Target ${KillTarget}
-		Me.Ability[Master's Smite]:Use
-		SpellCnt:Inc
-	}
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard	
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [10]"]		
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
-	}
-	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
-	
+
 	;; Tempest
-	if ${Me.Ability[${SpellType[70]}].IsReady}
+	if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 15)
 	{
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- Casting Tempest"]
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
+		call CheckActorForEffect ${KillTarget} 511 315
+		if ${Return.Equal[FALSE]}
+		{
 			call _CastSpellRange 70 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Tempest (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
-			}
-			SpellCnt:Inc
+			}					
 		}
 	}
-	if (${SpellCnt} >= ${SpellMax})
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard		
 		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [11]"]		
-		return CombatComplete
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
 	}
-	elseif ${PrimaryHealer}
+
+	;; Master's Smite
+	if ${Me.Ability[id,817383112].IsReady} && ${Mob.CheckActor[${KillTarget}]}
 	{
-  	call CheckHeals
-  	if ${CureMode}
-  		call CheckCures
+		call CastSpellRange AbilityID=817383112 TargetID=${KillTarget} IgnoreMaintained=1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Master's Smite (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}	
 	}
-	
-	;; ThunderSpike
-	if ${Me.Ability[${SpellType[383]}].IsReady}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
 	{
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 383 0 0 0 ${KillTarget}
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
+	}
+
+	;; Vortex
+	if (${VortexMode} && ${Me.Ability[${SpellType[395]}].IsReady} && ${Me.Power} > 15)
+	{
+		call _CastSpellRange 395 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Vortex (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}					
+	}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
+	}
+
+	if (${AoEMode})
+	{
+		;; Ball Lightning 
+		if (${Me.Level} >= 70 && ${Me.Ability[${SpellType[97]}].IsReady} && ${Me.Power} > 20)
+		{
+			call _CastSpellRange 97
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["\atCombat_Routine()\ax - Exiting after Ball Lightning (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			SpellCnt:Inc
 		}
-	}
-	if (${SpellCnt} >= ${SpellMax})
-	{
-		call CheckHeals
-		if ${CureMode}
-			call CheckCures		
-		call RefreshPower
-		if ${ShardMode}
-			call Shard	
-		if ${FuryDebugMode}
-			Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [12]"]			
-		return CombatComplete
-	}
-	elseif ${PrimaryHealer}
-	{
-  		call CheckHeals
-  		if ${CureMode}
-  			call CheckCures
-	}
-	
-	;; Melee Spike
-	if ${Actor[${KillTarget}].Distance}<6 && ${Me.Ability[${SpellType[383]}].IsReady}
-	{
-		call CheckCondition Power 20 100
-		if ${Return.Equal[OK]}
-		{	
-			call _CastSpellRange 383 0 0 0 ${KillTarget}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Call of Storms
+		if (${Me.Level} >= 65 && ${Me.Ability[${SpellType[96]}].IsReady} && ${Me.Power} > 20)
+		{
+			call _CastSpellRange 96
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${FuryDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["\atCombat_Routine()\ax - Exiting after Call of Storms (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			SpellCnt:Inc
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+
+		;; Ring of Fire
+		if (${Me.Level} >= 55 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Me.Power} > 20)
+		{
+			call _CastSpellRange 95
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atCombat_Routine()\ax - Exiting after Ring of Fire (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+		}
+		call CheckCuresAndHeals
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
 		}
 	}
 
-	call CheckHeals
-	if ${CureMode}
-		call CheckCures
-	call RefreshPower
-	if ${ShardMode}
-		call Shard
+	;; Starnova
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 40 && ${Me.Ability[${SpellType[90]}].IsReady} && ${Me.Power} > 15)
+	{
+		call _CastSpellRange 90 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Starnova (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}					
+	}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
+	}
+
+	;; Wrath of Nature
+	if (${UseWrathOfNature} && !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 40 && ${Me.Ability[${SpellType[379]}].IsReady} && ${Me.Power} > 15)
+	{
+		call _CastSpellRange 379 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Wrath of Nature (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}					
+	}
+	call CheckCuresAndHeals
+	if ${Return.Equal[CombatComplete]}
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
+		return CombatComplete						
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 	;if ${FuryDebugMode}
 	;	Debug:Echo["Combat_Routine() -- FINISHED (Returning 'CombatComplete') [END]"]		
 	return CombatComplete
 }
 
+function CheckDebuffs()
+{
+	variable bool Continue = TRUE
+	if (!${DebuffMode})
+		return 0
+
+	if (${Actor[${KillTarget}].IsEpic} && ${Me.Power} > 55)
+	{
+		if (${Me.Ability[${SpellType[51]}].IsReady})
+		{
+			call CheckActorForEffect ${KillTarget} 369 315
+			if ${Return.Equal[FALSE]}
+			{
+				if (${Me.Power} > 45 || !${PrimaryHealer})
+				{
+					call CastSpellRange start=51 TargetID=${KillTarget} IgnoreMaintained=1
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Death Swarm (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}
+					Continue:Set[FALSE]		
+				}
+			}
+		}
+		if (${Me.Ability[${SpellType[50]}].IsReady} && ${Continue})
+		{
+			call CheckActorForEffect ${KillTarget} 241 315
+			if ${Return.Equal[FALSE]}
+			{
+				if (${Me.Power} > 45 || !${PrimaryHealer})
+				{
+					call CastSpellRange start=50 TargetID=${KillTarget} IgnoreMaintained=1
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Intimidation (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}	
+					Continue:Set[FALSE]		
+				}
+			}			
+		}
+		if (${Me.Ability[${SpellType[52]}].IsReady} && ${Continue})
+		{
+			call CheckActorForEffect ${KillTarget} 369 312
+			if ${Return.Equal[FALSE]}
+			{
+				if (${Me.Power} > 45 || !${PrimaryHealer})
+				{
+					call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Maddening Swarm (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}
+					Continue:Set[FALSE]					
+				}
+			}				
+		}
+	}
+	elseif (${Actor[${KillTarget}].IsHeroic} && ${Me.Power} > 40)
+	{
+		;; Fast-casting encounter debuff that should be used always
+		if (${Me.Ability[${SpellType[52]}].IsReady})
+		{
+			call CheckActorForEffect ${KillTarget} 369 312
+			if ${Return.Equal[FALSE]}
+			{
+				if (${Me.Power} > 45 || !${PrimaryHealer})
+				{
+					call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Maddening Swarm (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}
+					Continue:Set[FALSE]				
+				}
+			}				
+		}
+		if (${Me.Ability[${SpellType[51]}].IsReady} && ${Continue})
+		{
+			call CheckActorForEffect ${KillTarget} 369 315
+			if ${Return.Equal[FALSE]}
+			{
+				if (${Me.Power} > 45 || !${PrimaryHealer})
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["\atFury:CheckDebuffs()\ax -- Casting Defense debuff (Death Swarm) on Heroic mob"] 
+					call _CastSpellRange 51 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${FuryDebugMode}
+							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Death Swarm (Target no longer valid: CombatComplete)"]
+						return CombatComplete						
+					}
+					Continue:Set[FALSE]		
+				}
+			}
+		}				
+	}
+
+	return OK
+}
 
 function Post_Combat_Routine(int xAction)
 {
@@ -1596,10 +1548,12 @@ function RefreshPower()
 
 function Have_Aggro()
 {
+	if ${FuryDebugMode}
+		Debug:Echo["\atFury:Have_Aggro()\ax -- \ar I HAVE AGGRO!\ax"]
 
 	if !${TellTank} && ${WarnTankWhenAggro}
 	{
-		eq2execute /tell ${MainTankPC}  ${Actor[${aggroid}].Name} On Me!
+		eq2execute /tell ${MainTankPC} ${Actor[${aggroid}].Name} On Me!
 		TellTank:Set[TRUE]
 	}
 
@@ -1615,9 +1569,79 @@ function Have_Aggro()
 		}
 	}
 
-	if ${Actor[${aggroid}].Distance}<${Me.Ability[${SpellType[180]}].ToAbilityInfo.MaxRange}
+	if (${Actor[${aggroid}].Distance} <= 10 && ${Me.Ability[${SpellType[180]}].IsReady})
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Have_Aggro()\ax -- \ay Casting Brambles on ${Actor[${aggroid}].Name}!"]
 		call CastSpellRange 180 0 0 0 ${aggroid}
+	}
+	else
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Have_Aggro()\ax -- \ay${Actor[${aggroid}].Name} is too far away for Brambles... (${Actor[${aggroid}].Distance}m)"]
+	}
+}
 
+function CheckCuresAndHeals()
+{
+	variable bool CombatComplete = FALSE
+	variable string sReturn 
+
+	;;;; Use Tortoise Shell
+	;; This variable is intended to be set by a 'controller' script.  In other words, the tank character might issue a command that would
+	;; instigate the fury's "controller" script to set this variable to TRUE in order to have the fury cast Tortoise Shell immediately.  
+	;; The syntax to use would be:
+	;;		Script[EQ2Bot].VariableScope.CastTortoiseShellCaller:Set[WHO_CALLED_NAME]    (if you want the script to send the player a /tell)
+	;;		Script[EQ2Bot].VariableScope.CastTortoiseShell:Set[TRUE]
+	if (${CastTortoiseShell})
+		call TortoiseShell
+
+	if ${CureMode}
+	{
+		call CheckCures
+		call VerifyTarget
+		if ${Return.Equal[FALSE]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:CheckCuresAndHeals()\ax -- Exiting after CheckCures() (Target no longer valid: CombatComplete)"]
+			sReturn:Set[CombatComplete]
+			CombatComplete:Set[TRUE]
+		}
+	}
+	if (!${CombatComplete})
+	{
+		;; Note:  CheckHeals also calls CheckHoTs
+		call CheckHeals
+		call VerifyTarget
+		if ${Return.Equal[FALSE]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:CheckCuresAndHeals()\ax -- Exiting after CheckHeals (Target no longer valid: CombatComplete)"]
+			sReturn:Set[CombatComplete]
+			CombatComplete:Set[TRUE]
+		}
+	}
+
+	if (${Me.InCombat} && ${Me.InCombatMode})
+	{
+		;; If our health is low, cast Brambles just to be safe.  Otherwise, check aggro
+		if (${Me.Health} < 50)
+		{
+			call CastSpellRange 180 0 0 0 ${KillTarget}
+		}
+		else
+		{
+			Mob:CheckMYAggro
+			if ${haveaggro} && !${MainTank} && ${Actor[${aggroid}].Name(exists)}
+			{
+				call Have_Aggro ${aggroid}
+				if ${UseCustomRoutines}
+					call Custom__Have_Aggro ${aggroid}
+			}
+		}
+	}
+
+	return ${sReturn}
 }
 
 function CheckHeals()
@@ -1643,10 +1667,9 @@ function CheckHeals()
 	;Debug:Echo["CheckHeals():: START...."]
 
 
-		; Check to see if Healer needs cured of the curse and cure it first.
+	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
-
 	if ${DoCallCheckPosition}
 	{
 		if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
@@ -1677,7 +1700,7 @@ function CheckHeals()
 		}
 		DoCallCheckPosition:Set[FALSE]
 	}
-
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;; *********************
   	if !${Actor[${MainTankID}].Name(exists)}
   	{
 		if (${MainTankID} > 0)
@@ -1903,7 +1926,7 @@ function CheckHeals()
 
 	;;;;;;;;;;;;;;;;;;;;;;;
 	;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
-	if (${OffenseMode} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode})
+	if (!${PrimaryHealer} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode})
 	{
 		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 70)
 		{
@@ -1952,44 +1975,6 @@ function CheckHeals()
 	}
 	;;
 	;;;;;;;;;;;;;;;;;;;;;;;
-}
-
-function CheckActorForEffect(uint ActorID, int MainIconID, int BackDropIconID)
-{
-	variable int i = 1
-
-	do
-	{
-		;Debug:Echo["CheckActorForEffect(${ActorID}, ${MainIconID}, ${BackDropIconID}) -- Checking ${Actor[${ActorID}].Name} Effect #${i} - MainIconID: ${Actor[${ActorID}].Effect[${i}].MainIconID} - BackDropIconID: ${Actor[${ActorID}].Effect[${i}].BackDropIconID}"]
-		if (${Actor[${ActorID}].Effect[${i}].MainIconID} == ${MainIconID} && ${Actor[${ActorID}].Effect[${i}].BackDropIconID} == ${BackDropIconID})
-		{
-			Debug:Echo["CheckActorForEffect(${ActorID}, ${MainIconID}, ${BackDropIconID}) -- Returning TRUE!"]
-			return "TRUE"
-		}
-	}
-	while (${i:Inc} < ${Actor[${ActorID}].NumEffects})
-
-	Debug:Echo["CheckActorForEffect(${ActorID}, ${MainIconID}, ${BackDropIconID}) -- Returning FALSE!"]
-	return "FALSE"
-}
-
-function CheckMeForEffect(int MainIconID, int BackDropIconID)
-{
-	variable int i = 1
-
-	do
-	{
-		Debug:Echo["CheckMeForEffect(${MainIconID}, ${BackDropIconID}) -- Checking Effect #${i} - MainIconID: ${Me.Effect[${i}].MainIconID} - BackDropIconID: ${Me.Effect[${i}].BackDropIconID}"]
-		if (${Me.Effect[${i}].MainIconID} == ${MainIconID} && ${Me.Effect[${i}].BackDropIconID} == ${BackDropIconID})
-		{
-			Debug:Echo["CheckMeForEffect(${MainIconID}, ${BackDropIconID}) -- Returning TRUE!"]
-			return "TRUE"
-		}
-	}
-	while (${i:Inc} < ${Me.NumEffects})
-
-	Debug:Echo["CheckMeForEffect(${MainIconID}, ${BackDropIconID}) -- Returning FALSE!"]
-	return "FALSE"
 }
 
 function HealMe()
@@ -2145,6 +2130,7 @@ function CureGroupMember(int gMember)
 {
 	declare tmpcure int local 0
 
+	echo "\atCureGroupMember(\ax\ay${gMember}\ax\at)\ax"
 	;Debug:Echo["CureGroupMember(${gMember})"]
 
 	if !${Me.Group[${gMember}].InZone} || ${Me.Group[${gMember}].IsDead} || !${Me.Group[${gMember}].IsAfflicted} || !${Me.Group[${gMember}].Health(exists)} || ${Me.Group[${gMember}].Health} < 0 || ${Me.Group[${gMember}].Distance}>=${Me.Ability[${SpellType[210]}].ToAbilityInfo.Range}
@@ -2193,7 +2179,7 @@ function CureMe()
 
 function CheckCures(int InCombat=1)
 {
-	variable int i = 1
+	variable int i = 0
 	declare grpcure int local 0
 	declare Affcnt int local 0
 	declare CureTarget string local	
@@ -2293,87 +2279,37 @@ function CheckCures(int InCombat=1)
 		return
 	}
   
-  if (${Me.GroupCount} > 1)
-  {
-  	;; Tunare's Grace (Group Cure AA)
-	  if (${HaveAbility_TunaresGrace})
-	  {
-	  	;Debug:Echo["CheckCures() - Tunare's Grace available..."]
-	  	if ${Me.Ability[${SpellType[385]}].IsReady}
-	  	{
-	  		;Debug:Echo["CheckCures() - Tunare's Grace READY!"]
-				if (${Me.Arcane} != -1)
-				{
-		  		if (${Me.IsAfflicted})	
-		  		{
-		  			;Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
-		  			grpcure:Inc
-		  		}
-		  	}
-			
-				do
-				{
-					if (${Me.Group[${i}].Arcane} == -1)
-						continue
-						
-					if (${Me.Group[${i}].InZone} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].Distance} <= 25)
-					{
-						;Debug:Echo["Group member ${i}. ${Me.Group[${i}].Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].Distance}]"]
-						grpcure:Inc
-					}
-				}
-				while ${i:Inc} <= ${Me.GroupCount}  	
-			
-				if ${grpcure} > 0
-				{
-					Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"]
-					call CastSpellRange 385 0 0 0 ${Me.ID} 0 0 0 0 1 0
-					wait 5
-					while ${Me.CastingSpell}
-					{
-						waitframe
-					}	
-	  			;;;;; This is what we would do if we wanted to keep checking for cures after doing the "group cure"
-	  			;wait 5
-	  			;call FindAfflicted
-	  			;if ${Return} <= 0
-	  			;   return		
-	  			CheckCuresTimer:Set[${Time.Timestamp}]					
-					return
-				}
-				else
-					return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
-	  	}
-	  }
-	  
-		;; Abolishment (Group Cure Spell)
-	  if ${Me.Ability[${SpellType[220]}].IsReady}
+	if ( (${Me.GroupCount} > 1) && (${HaveAbility_TunaresGrace} || ${Me.Ability[${SpellType[220]}].IsReady}))
+  	{
+		i:Set[0]
+		do
 		{
-			;Debug:Echo["CheckCures() - Abolishment READY!"]
-			if (${Me.Arcane} != -1)
+			if (${Me.Group[${i}].Arcane} == -1 || ${Me.Group[${i}].Elemental} == -1)
+				continue
+				
+			if (${Me.Group[${i}].InZone} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].Distance} <= 25)
 			{
-	  		if (${Me.IsAfflicted})	
-	  		{
-	  			;Debug:Echo["I am afflicted. [${Me.IsAfflicted} - ${Me.Arcane}]"]
-	  			grpcure:Inc
-	  		}
-	  	}
-		
-			do
-			{
-				if (${Me.Group[${i}].Arcane} == -1)
-					continue
-					
-				if (${Me.Group[${i}].InZone} && ${Me.Group[${i}].IsAfflicted} && ${Me.Group[${i}].Distance} <= 25)
-				{
-					;Debug:Echo["Group member ${i}. ${Me.Group[${i}].Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].Distance}]"]
-					grpcure:Inc
-				}
+				;Debug:Echo["Group member ${i}. ${Me.Group[${i}].Name} (${Me.Group[${i}].Name}) is afflicted.  [${Me.Group[${i}].IsAfflicted} - ${Me.Group[${i}].Distance}]"]
+				grpcure:Inc
 			}
-			while ${i:Inc} <= ${Me.GroupCount}  	
-		
-			if ${grpcure} > 0
+		}
+		while ${i:Inc} <= ${Me.GroupCount}  	
+	
+		if ${grpcure} > 0
+		{
+			if (${HaveAbility_TunaresGrace} && ${Me.Ability[${SpellType[385]}].IsReady})
 			{
+				Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Tunare's Grace"]
+				call CastSpellRange 385 0 0 0 ${Me.ID} 0 0 0 0 1 0
+				wait 5
+				while ${Me.CastingSpell}
+				{
+					waitframe
+				}	
+			}
+			elseif (${Me.Ability[${SpellType[220]}].IsReady})
+			{
+				echo "\aoDEBUG\ax:: \aygrpcure at ${grpcure} casting Abolishment\ax"
 				Debug:Echo["DEBUG:: grpcure at ${grpcure} casting Abolishment"]
 				call CastSpellRange 220 0 0 0 ${Me.ID} 0 0 0 0 1 0
 				wait 5
@@ -2381,20 +2317,20 @@ function CheckCures(int InCombat=1)
 				{
 					waitframe
 				}	
-  			;;;;; This is what we would do if we wanted to keep checking for cures after doing the "group cure"
-  			;wait 5
-  			;call FindAfflicted
-  			;if ${Return} <= 0
-  			;   return			
-  			CheckCuresTimer:Set[${Time.Timestamp}]	
-				return
 			}
-			else
-				return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
-	  }
-  }	
+			;;;;; This is what we would do if we wanted to keep checking for cures after doing the "group cure"
+			;wait 5
+			;call FindAfflicted
+			;if ${Return} <= 0
+			;   return		
+			CheckCuresTimer:Set[${Time.Timestamp}]					
+			return
+		}
+		else
+			return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
+	}	
   	
-  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
+	if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
 		call CureMe
 
 	;Cure Group Members - This will cure a single person unless epicmode is checkd on extras tab, in which case it will cure
@@ -2412,7 +2348,7 @@ function CheckCures(int InCombat=1)
 			break
 
 		;Cure Ourselves first
-	  if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
+	  	if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
 			call CureMe
 
 		;Check MT health and heal him if needed
@@ -2430,7 +2366,6 @@ function CheckCures(int InCombat=1)
 			break
 	}
 }
-
 
 function FindAfflicted()
 {
@@ -2623,9 +2558,9 @@ function MA_Lost_Aggro()
 
 function MA_Dead()
 {
-	if (${Actor[${MainTankID}].Name(exists)} && ${CombatRez})
+	if (${CombatRez} && ${Actor[${MainTankID}].Name(exists)})
 	{
-  	if (${Actor[${MainTankID}].IsDead})
+		if (${Actor[${MainTankID}].IsDead})
 			call CastSpellRange 300 303 1 0 ${MainTankID} 1
 	}
 }
@@ -2633,7 +2568,6 @@ function MA_Dead()
 function Cancel_Root()
 {
 }
-
 
 function HandleGroupWiped()
 {
@@ -2690,7 +2624,6 @@ function CheckRezzes()
 
 	if ${Me.GroupCount}	<= 1
 		return
-
 
 	tempgrp:Set[1]
 	do
@@ -2751,4 +2684,27 @@ function CheckRezzes()
 	}
 	while ${tempgrp:Inc}<=${Me.GroupCount}
 
+}
+
+function TortoiseShell()
+{
+	if ${Me.Ability[id,4031903609].IsReady}
+	{
+		CurrentAction:Set[Combat :: Casting Tortoise Shell!]
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:TortoiseShell()\ax -- Casting \ayTortoise Shell\ax..."]
+
+		call CastSpellNOW "Tortoise Shell" 4031903609 ${Me.ID} TRUE
+	}
+
+	wait 5
+	if (${Me.Ability[id,4031903609].IsReady})
+	{
+		if (${CastTortoiseShellCaller.Length} > 1)
+		{
+			eq2execute /tell ${CastTortoiseShellCaller} Tortoise Shell Active!
+			CastTortoiseShellCaller:Set[""]
+		}
+		CastTortoiseShell:Set[FALSE]
+	}
 }
