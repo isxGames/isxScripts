@@ -60,6 +60,7 @@ function Class_Declaration()
 	declare FightingEpicMob bool script FALSE
 	declare FightingHeroicMob bool script FALSE
 	declare KillTargetCheck int script 0
+	declare CureMagicIsInstantCast bool script FALSE
 	
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -108,6 +109,20 @@ function Class_Declaration()
 		HaveAbility_PeaceOfMind:Set[TRUE]
 	if (${Me.Ability[Perpetuality](exists)} || ${Me.Ability[id,2869627733](exists)})
 		HaveAbility_Perpetuality:Set[TRUE]
+	if (${Me.Ability[Cure Magic](exists)})
+	{
+		do 
+		{
+			waitframe
+		}
+		while (!${Me.Ability[Cure Magic].IsAbilityInfoAvailable})
+
+		if (${Me.Ability[Cure Magic].ToAbilityInfo.CastingTime} <= 0)
+		{
+			echo "[EQ2Bot-Illusionist] \ay Cure Magic is an Instant Cast Ability\ax"
+			CureMagicIsInstantCast:Set[TRUE]
+		}
+	}
 		
 	;; Set this to TRUE, as desired, for testing
 	;Debug:Enable
@@ -941,7 +956,7 @@ function CheckNonDps(... Args)
 	call RefreshPower
 }
 
-function _CastSpellRange(int start, int finish, int xvar1, int xvar2, int TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
+function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
 {
 	declare BuffTarget string local
 	variable float TankToTargetDistance
@@ -2545,6 +2560,7 @@ function RefreshPower()
 						if ${Me.Group[${tempvar}].Power}<60
 						{
 							call CastSpellRange 389
+							break
 						}
 					}
 					while ${tempvar:Inc} < ${Me.GroupCount}
@@ -2619,10 +2635,16 @@ function CheckHeals()
 	if (${DoCures})
 	{
 		;;;;;;;;;;;;;
-		;; Cure Arcane
+		;; Cure Magic
 		if (${Me.Arcane} >= 1 || ${Me.Elemental} >= 1 || ${Me.Noxious} >= 1 || ${Me.Trauma} >= 1)
 		{
-			call CastSpellRange 210 0 0 0 ${Me.ID}
+			if (${CureMagicIsInstantCast})
+			{
+				eq2execute /useabilityonplayer ${Me.Name} Cure Magic
+				wait 3
+			}
+			else
+				call CastSpellRange 210 0 0 0 ${Me.ID}
 			LastSpellCast:Set[210]
 			bReturn:Set[TRUE]
 
@@ -2634,12 +2656,19 @@ function CheckHeals()
 			do
 			{
 				;;;;;;;;;;;;;
-				;; Cure Arcane
-				if (${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].InZone} && !${Me.Group[${temph1}].IsDead})
+				;; Cure Magic
+				if (${Me.Group[${temphl}].InZone} && !${Me.Group[${temph1}].IsDead})
 				{
 					if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
 					{
-						call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+						echo "\ayCuring ${Me.Group[${temphl}].Name}!\ax"
+						if (${CureMagicIsInstantCast})
+						{
+							eq2execute /useabilityonplayer ${Me.Group[${temphl}].Name} Cure Magic
+							wait 3
+						}
+						else
+							call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
 						LastSpellCast:Set[210]
 						bReturn:Set[TRUE]
 						wait 1
