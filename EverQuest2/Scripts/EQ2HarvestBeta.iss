@@ -547,6 +547,10 @@ function Harvest()
 	return OK
 }
 
+;;;;;;;;
+;; CustomInventory (and related routines) are removed from ISXEQ2. All functionality can be done with queries 
+;; (see http://forge.isxgames.com/projects/isxeq2/knowledgebase/articles/40).   This routine was written using
+;; CustomInventory in a very convoluted way, so it will have to be completely revamped/reworked.
 function CheckInventory(string destroyname, int number)
 {
 	variable int tempvar
@@ -639,6 +643,10 @@ function CheckInventory(string destroyname, int number)
 	}
 }
 
+;;;;;;;;
+;; CustomInventory (and related routines) are removed from ISXEQ2. All functionality can be done with queries 
+;; (see http://forge.isxgames.com/projects/isxeq2/knowledgebase/articles/40).   This routine will have to be 
+;; revamped/reworked.
 function DestroyItem(string destroyname)
 {
 	variable int slotchk
@@ -1064,22 +1072,28 @@ objectdef EQ2HarvestBot
 
 	method SearchInventory(string itemsearch)
 	{
-		variable int xvar
+		variable index:item Items
+		variable iterator ItemIterator
 
-		xvar:Set[1]
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
+
 		itotal:Set[0]
 		stackcount:Set[0]
-		do
+		if ${ItemIterator:First(exists)}
 		{
-			if ${Me.CustomInventory[${xvar}].Name.Equal[${itemsearch}]}
+			do
 			{
-				stackcount:Inc
-				ItemID[${stackcount}]:Set[${xvar}]
-				ItemCount[${stackcount}]:Set[${Me.CustomInventory[${xvar}].Quantity}]
-				itotal:Inc[${Me.CustomInventory[${xvar}].Quantity}]
+				if ${ItemIterator.Value.Name.Equal[${itemsearch}]}
+				{
+					stackcount:Inc
+					ItemID[${stackcount}]:Set[${xvar}]
+					ItemCount[${stackcount}]:Set[${ItemIterator.Value.Quantity}]
+					itotal:Inc[${ItemIterator.Value.Quantity}]
+				}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
-		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
 
 	method FindLowest()

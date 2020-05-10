@@ -1695,7 +1695,7 @@ function searchbrokerlist(string ItemName, int StartLevel, int EndLevel, int Tie
 			
 	}
 	
-	call echolog "<- searchbrokerlist
+	call echolog "<- searchbrokerlist"
 }	
 
 ; Search the broker for items , return the cheapest price found
@@ -1794,7 +1794,6 @@ function LoadList()
 	LavishSettings[craft]:Clear
 	waitframe
 	
-	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 5
 	
 	; keep a reference directly to the Item set.
@@ -2901,8 +2900,6 @@ function placeitem(string ItemName, int ItemBox)
 	CraftItemsPlaced:Set[FALSE]
 	nospace:Set[FALSE]
 	storebox:Set[0]
-
-	Me:CreateCustomInventoryArray[nonbankonly]
 	
 	UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
 
@@ -2994,7 +2991,8 @@ function inventorylist()
 {
 	call echolog "<start> inventorylist"
 	
-	Declare xvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 	Declare i int local 0
 	Declare space int local 0
 	
@@ -3021,36 +3019,42 @@ function inventorylist()
 
 	UIElement[ItemList@Inventory@GUITabs@MyPrices]:ClearItems
 	Wait 10
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	waitframe
-	do
+
+	if ${ItemIterator:First(exists)}
 	{
-		call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
-
-		if ${Me.CustomInventory[${xvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${xvar}].IsInventoryContainer}
+		do
 		{
-			if !${Me.CustomInventory[${xvar}].Attuned} && !${Me.CustomInventory[${xvar}].NoTrade} && !${Me.CustomInventory[${xvar}].Heirloom} 
+			call InventoryContainer ${ItemIterator.Value.InContainerID}
+
+			if ${ItemIterator.Value.InInventory} && !${NoSale[${Return}]} && !${ItemIterator.Value.IsInventoryContainer}
 			{
-				ItemName:Set["${Me.CustomInventory[${xvar}].Name}"]
-				if ${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text.Length} == 0 || ${ItemName.Find[${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text}]} != NULL
+				if !${ItemIterator.Value.Attuned} && !${ItemIterator.Value.NoTrade} && !${ItemIterator.Value.Heirloom} 
 				{
-					UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${ItemName}"]
+					ItemName:Set["${ItemIterator.Value.Name}"]
+					if ${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text.Length} == 0 || ${ItemName.Find[${UIElement[InventoryFilter@Inventory@GUITabs@MyPrices].Text}]} != NULL
+					{
+						UIElement[ItemList@Inventory@GUITabs@MyPrices]:AddItem["${ItemName}"]
 
-					InventoryList:Set[${i:Inc},${xvar}]
+						InventoryList:Set[${i:Inc},${xvar}]
 
-					; Is item a craft item?
-					if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
-						call SetColour Inventory ${i} FFFFFF00
+						; Is item a craft item?
+						if ${ItemList.FindSet["${ItemName}"].FindSetting[CraftItem]}
+							call SetColour Inventory ${i} FFFFFF00
 
-					; is item a collectible ?
-					if ${Me.CustomInventory[${xvar}].IsCollectible}
-						call SetColour Inventory ${i} CCFF3300
+						; is item a collectible ?
+						if ${ItemIterator.Value.IsCollectible}
+							call SetColour Inventory ${i} CCFF3300
 
+					}
 				}
 			}
 		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
+
 	call echolog "<end> inventorylist"
 }
 
@@ -3071,17 +3075,17 @@ function placeinventory(int box, int inventorynumber)
 		{
 			; check current used capacity
 					
-			itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
+			itemcount:Set[${ItemIterator.Value.Quantity}]
 	
 			xvar:Set[${InventoryList.Element[${inventorynumber}]}]
 	
 			; place the item into the consignment system , grouping it with similar items
-			Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${Me.CustomInventory[${xvar}].Name}"].SerialNumber}]
+			ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemIterator.Value.Name}"].SerialNumber}]
 
 			loopcount:Set[1]
 			do
 			{
-				if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
+				if ${ItemIterator.Value.Quantity} < ${itemcount}
 				Break
 
 				wait 10
@@ -3112,146 +3116,153 @@ function:int placeitems(string ItemName, int box, int numitems)
 {
 	call echolog "<start> placeitems ${ItemName} ${box} ${numitems}"
 	; attempts to place the items in the defined box
-	Declare xvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 	Declare lasttotal int local
 	Declare space int local
 	Declare loopcount int local 1
 	Declare itemcount int local
 	
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+
 	if ${numitems} >0
 	{
 		space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
 		call echolog "placing ${numitems} ${ItemName} in box ${box}"
-		do
+
+		if ${ItemIterator:First(exists)}
 		{
-
-			; if an item in your inventory matches the crafted item from your crafted item list
-			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
+			do
 			{
-				call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
-
-				if !${Me.CustomInventory[${xvar}].Attuned} && !${NoSale[${Return}]}
+				; if an item in your inventory matches the crafted item from your crafted item list
+				if ${ItemIterator.Value.Name.Equal["${ItemName}"]}
 				{
-					; check current used capacity
-					lasttotal:Set[${BrokerWindow.VendingContainer[${box}].UsedCapacity}]
-	
-					; place the item into the consignment system , grouping it with similar items
-					
-					itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
-					
-					Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemName}"].SerialNumber}]
-	
-					; make the script wait till the inventory total has changed (item was added)
-					; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
-					
-					loopcount:Set[1]
-					do
-					{
-						if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
-							Break
+					call InventoryContainer ${ItemIterator.Value.InContainerID}
 
-						if ${BadItem}
-							{
-								BadItems:Set["${ItemName}"]
-								echo BadItems now has ${BadItems.Used} items in it.
-								Break
-							}
-	
-						wait 10
+					if !${ItemIterator.Value.Attuned} && !${NoSale[${Return}]}
+					{
+						; check current used capacity
+						lasttotal:Set[${BrokerWindow.VendingContainer[${box}].UsedCapacity}]
+		
+						; place the item into the consignment system , grouping it with similar items
 						
-
-						if ${HighLatency}
-							wait 20
-
-					}
-					while ${loopcount:Inc} <= 10
-					
-					; if a part used item.....skip it
-					if ${BadItem}
-					{
-						Echo Bad Item (Part Used) , Skipping
-						BadItem:Set[FALSE]
-					}
-					else
-					{
-						; if the system reports that an item will not fit into the container chosen
-						if ${BadContainer}
+						itemcount:Set[${ItemIterator.Value.Quantity}]
+						
+						ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemName}"].SerialNumber}]
+		
+						; make the script wait till the inventory total has changed (item was added)
+						; skips to the next item if nothing changes within 10 seconds (one of the items was unplaceable)
+						
+						loopcount:Set[1]
+						do
 						{
-							; change the setting for that item so the container is marked as ignore
-							if !${ItemList.FindSet["${ItemName}"]}
-								ItemList:AddSet["${ItemName}"]
-							
-							Item:Set[${ItemList.FindSet["${ItemName}"]}]
-							Item:AddSetting[Box${box},3]
-						
-							; reset the bad Container Flag
-							BadContainer:Set[FALSE]
-						
-							echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
-						
-							; Get a new container number
-							call boxwithmostspace "${ItemName}"
-							box:Set[${Return}]
-						
-							; if no container is available then stop placing that set of items
-							if ${box} == 0
-							{
-								nospace:Set[TRUE]
-								break
-							}
-							else
-							{
-								; Otherwise try and place item in the new container
-							
-								itemcount:Set[${Me.CustomInventory[${xvar}].Quantity}]
-								
-								; place the item into the consignment system , grouping it with similar items
-								Me.CustomInventory[${xvar}]:AddToConsignment[${Me.CustomInventory[${xvar}].Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemName}"].SerialNumber}]
-								
-								; make the script wait till the inventory total has changed (item was added)
-								; skips to the next item if nothing changes within 10/30 seconds (one of the items was unplaceable)
-	
-								loopcount:Set[1]
+							if ${ItemIterator.Value.Quantity} < ${itemcount}
+								Break
 
-								do
+							if ${BadItem}
 								{
-									if ${Me.CustomInventory[${xvar}].Quantity} < ${itemcount}
-										Break
+									BadItems:Set["${ItemName}"]
+									echo BadItems now has ${BadItems.Used} items in it.
+									Break
+								}
+		
+							wait 10
+							
 
-									if ${BadItem}
-										Break
+							if ${HighLatency}
+								wait 20
 
-									wait 10
+						}
+						while ${loopcount:Inc} <= 10
+						
+						; if a part used item.....skip it
+						if ${BadItem}
+						{
+							Echo Bad Item (Part Used) , Skipping
+							BadItem:Set[FALSE]
+						}
+						else
+						{
+							; if the system reports that an item will not fit into the container chosen
+							if ${BadContainer}
+							{
+								; change the setting for that item so the container is marked as ignore
+								if !${ItemList.FindSet["${ItemName}"]}
+									ItemList:AddSet["${ItemName}"]
+								
+								Item:Set[${ItemList.FindSet["${ItemName}"]}]
+								Item:AddSetting[Box${box},3]
+							
+								; reset the bad Container Flag
+								BadContainer:Set[FALSE]
+							
+								echo Error in container ${box} settings for "${ItemName}" , marking that container as bad
+							
+								; Get a new container number
+								call boxwithmostspace "${ItemName}"
+								box:Set[${Return}]
+							
+								; if no container is available then stop placing that set of items
+								if ${box} == 0
+								{
+									nospace:Set[TRUE]
+									break
+								}
+								else
+								{
+									; Otherwise try and place item in the new container
+								
+									itemcount:Set[${ItemIterator.Value.Quantity}]
 									
-									if ${HighLatency}
-										wait 20
+									; place the item into the consignment system , grouping it with similar items
+									ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${box},${BrokerWindow.VendingContainer[${box}].Consignment["${ItemName}"].SerialNumber}]
+									
+									; make the script wait till the inventory total has changed (item was added)
+									; skips to the next item if nothing changes within 10/30 seconds (one of the items was unplaceable)
+		
+									loopcount:Set[1]
+
+									do
+									{
+										if ${ItemIterator.Value.Quantity} < ${itemcount}
+											Break
+
+										if ${BadItem}
+											Break
+
+										wait 10
+										
+										if ${HighLatency}
+											wait 20
+
+									}
+									while ${loopcount:Inc} <= 10
+
+									if ${BadContainer}
+									{
+										if !${ItemList.FindSet["${ItemName}"]}
+											ItemList:AddSet["${ItemName}"]
+
+										; change the setting for that item so the container is marked as ignore
+										Item:Set[${ItemList.FindSet["${ItemName}"]}]
+										Item:AddSetting[Box${box},3]
+							
+										; reset the bad Container Flag
+										BadContainer:Set[FALSE]
+									}					
+
 
 								}
-								while ${loopcount:Inc} <= 10
-
-								if ${BadContainer}
-								{
-									if !${ItemList.FindSet["${ItemName}"]}
-										ItemList:AddSet["${ItemName}"]
-
-									; change the setting for that item so the container is marked as ignore
-									Item:Set[${ItemList.FindSet["${ItemName}"]}]
-									Item:AddSetting[Box${box},3]
-						
-									; reset the bad Container Flag
-									BadContainer:Set[FALSE]
-								}					
-
-
 							}
 						}
+						space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
+						numitems:Dec
 					}
-					space:Set[${Math.Calc[${BrokerWindow.VendingContainer[${box}].TotalCapacity}-${BrokerWindow.VendingContainer[${box}].UsedCapacity}]}]
-					numitems:Dec
 				}
 			}
+			while ${ItemIterator:Next(exists)} && ${space} > 0 && ${numitems} > 0
 		}
-		while ${xvar:Inc}<=${Me.CustomInventoryArraySize} && ${space} > 0 && ${numitems} > 0
 	}
 	call echolog "<end> placeitems ${numitems}"
 	return ${numitems}
@@ -3263,27 +3274,32 @@ function:int numinventoryitems(string ItemName, bool num, bool NoSaleContainer)
 	; returns the number of stacks/number of items in your inventory , num TRUE = total , FALSE = stacks
 	; NoSaleContainer = look in inventory slots in a box/bag marked as items not for sale
 	
-	Declare xvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 	Declare numitems int local 0
 
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 
-	do
+	if ${ItemIterator:First(exists)}
 	{
-		if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && ${Me.CustomInventory[${xvar}].InInventory}
+		do
 		{
-			call InventoryContainer ${Me.CustomInventory[${xvar}].InContainerID}
-
-			if  !${NoSale[${Return}]} || ${NoSaleContainer}
+			if ${ItemIterator.Value.Name.Equal["${ItemName}"]} && ${ItemIterator.Value.InInventory}
 			{
-				if ${num}
-					numitems:Inc[${Me.CustomInventory[${xvar}].Quantity}]
-				else
-					numitems:Inc
+				call InventoryContainer ${ItemIterator.Value.InContainerID}
+
+				if  !${NoSale[${Return}]} || ${NoSaleContainer}
+				{
+					if ${num}
+						numitems:Inc[${ItemIterator.Value.Quantity}]
+					else
+						numitems:Inc
+				}
 			}
 		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 
 	return ${numitems}
 }
@@ -3333,11 +3349,12 @@ function:int ChooseNextItem(int numitems)
 
 function GoTransmute(string ItemName)
 {
-	
 	Declare numitems int local
-	Declare xvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	
 	; check for number of items not in NoSale Container
 	call numinventoryitems "${ItemName}" FALSE FALSE
@@ -3346,18 +3363,21 @@ function GoTransmute(string ItemName)
 	; if the item is in your bags
 	if ${numitems} > 0
 	{
-		do
+		if ${ItemIterator:First(exists)}
 		{
-			; if an item in your inventory matches the name of the item
-			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]} && !${Me.CustomInventory[${xvar}].Attuned}
+			do
 			{
-					Me.CustomInventory[${xvar}]:Transmute
-					wait 200 ${RewardWindow(exists)}
-					RewardWindow:Receive
-				break
+				; if an item in your inventory matches the name of the item
+				if ${ItemIterator.Value.Name.Equal["${ItemName}"]} && !${ItemIterator.Value.Attuned}
+				{
+						ItemIterator.Value:Transmute
+						wait 200 ${RewardWindow(exists)}
+						RewardWindow:Receive
+					break
+				}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
-		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
 }
 
@@ -3366,10 +3386,11 @@ function:bool checklore(string ItemName)
 {
 	
 	Declare numitems int local
-	Declare xvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 
-	
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	
 	; check for number of items in all Inventory Containers
 	call numinventoryitems "${ItemName}" FALSE TRUE
@@ -3378,18 +3399,20 @@ function:bool checklore(string ItemName)
 	; if the item is in your bags
 	if ${numitems} > 0
 	{
-		do
+		if ${ItemIterator:First(exists)}
 		{
-			; if an item in your inventory matches the name of the item
-			if ${Me.CustomInventory[${xvar}].Name.Equal["${ItemName}"]}
+			do
 			{
-				
-				if ${Collectible} || ${Me.CustomInventory[${xvar}].Lore}
-					Return TRUE
+				; if an item in your inventory matches the name of the item
+				if ${ItemIterator.Value.Name.Equal["${ItemName}"]}
+				{
 					
+					if ${Collectible} || ${ItemIterator.Value.Lore}
+						Return TRUE
+				}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
-		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
 	Return FALSE
 }
@@ -3426,45 +3449,41 @@ function CheckPrimary(string UITab, int boxnum, int ID)
 
 function refreshbags()
 {
-	Declare xvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 	Declare rbxvar int local 1
 	Declare bcheck string local
 	Declare acheck string local
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	waitframe
 
-	do
-	{
-		if ${Me.CustomInventory[${xvar}].InInventory}
-			Break
-	}
-	while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
-
 	; nothing recognised as in bags so return FALSE
-	if ${xvar} == ${Me.CustomInventoryArraySize}
+	if (${Items.Used} == 0)
 	{
 		Echo Unable to read inventory data
 		Return FALSE
 	}
 	
-	do
+	eq2execute /togglebags
+	wait 10
+	eq2execute /togglebags
+	wait 10
+
+	if ${ItemIterator:First(exists)}
 	{
-		eq2execute /togglebags
-		wait 10
-		eq2execute /togglebags
-		wait 10
+		do
+		{
+			acheck:Set[${ItemIterator.Value.ToItemInfo.Attuned}]
+			bcheck:Set[${ItemIterator.Value.ToItemInfo.IsCollectible}]
 
-		acheck:Set[${Me.CustomInventory[${xvar}].Attuned}]
-		bcheck:Set[${Me.CustomInventory[${xvar}].IsCollectible}]
-
-		if !${bcheck.Equal[NULL]} && !${acheck.Equal[NULL]}
-			Return TRUE
-			
-		Me:CreateCustomInventoryArray[nonbankonly]
-		waitframe
-
+			if !${bcheck.Equal[NULL]} && !${acheck.Equal[NULL]}
+				Return TRUE
+				
+			waitframe
+		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${rbxvar:Inc} <= 10
 
 	Echo Unable to read inventory data
 	Return FALSE
@@ -3474,7 +3493,8 @@ function placeshinies()
 {
 	call echolog "<start> placeshinies"
 	
-	Declare PSxvar int local 1
+	variable index:item Items
+	variable iterator ItemIterator
 	Declare windowopentimer int local
 	Event[EQ2_ExamineItemWindowAppeared]:AttachAtom[EQ2_ExamineItemWindowAppeared]
 
@@ -3488,86 +3508,110 @@ function placeshinies()
 	if ${Return}
 	{
 		UIElement[Errortext@Sell@GUITabs@MyPrices]:SetText["Placing Items"]
-		Me:CreateCustomInventoryArray[nonbankonly]
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
 		waitframe
 
-		do
+		if ${ItemIterator:First(exists)}
 		{
-			call InventoryContainer ${Me.CustomInventory[${PSxvar}].InContainerID} 
-			if ${Me.CustomInventory[${PSxvar}].InInventory} && !${NoSale[${Return}]} && !${Me.CustomInventory[${PSxvar}].IsInventoryContainer} && !${BadItems.Element["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
+			do
 			{
-				if !${Me.CustomInventory[${PSxvar}].Attuned} && !${Me.CustomInventory[${PSxvar}].NoTrade} && !${Me.CustomInventory[${PSxvar}].Heirloom} 
+				call InventoryContainer ${ItemIterator.Value.InContainerID} 
+				if ${ItemIterator.Value.InInventory} && !${NoSale[${Return}]} && !${ItemIterator.Value.IsInventoryContainer} && !${BadItems.Element["${ItemIterator.Value.Name}"](exists)}
 				{
-					; is item a collectible ?
-					if ${Me.CustomInventory[${PSxvar}].IsCollectible} && ${Shinies} 
+					if !${ItemIterator.Value.Attuned} && !${ItemIterator.Value.NoTrade} && !${ItemIterator.Value.Heirloom} 
 					{
-					
-						NewCollection:Set[FALSE]
-						windowopentimer:Set[1]
-						Me.CustomInventory[${PSxvar}]:Examine
-						
-						
-						; Wait till the examine window is open
-						do
+						; is item a collectible ?
+						if ${ItemIterator.Value.IsCollectible} && ${Shinies} 
 						{
-							waitframe
-						}
-						while !${ExamineOpen} && ${windowopentimer:Inc} < 100
-								
-						if ${windowopentimer:Inc} < 100
-						{
-							wait 5
-							ExamineOpen:Set[FALSE]
-	
-							if !${NewCollection}
+						
+							NewCollection:Set[FALSE]
+							windowopentimer:Set[1]
+							ItemIterator.Value:Examine
+							
+							
+							; Wait till the examine window is open
+							do
 							{
-								NewCollection:Set[FALSE]
-								call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${ShiniesBox}
-	
-								PSxvar:Set[1]
-								Me:CreateCustomInventoryArray[nonbankonly]
 								waitframe
 							}
+							while !${ExamineOpen} && ${windowopentimer:Inc} < 100
+									
+							if ${windowopentimer:Inc} < 100
+							{
+								wait 5
+								ExamineOpen:Set[FALSE]
+		
+								if !${NewCollection}
+								{
+									NewCollection:Set[FALSE]
+									call placeitem "${ItemIterator.Value.Name}" ${ShiniesBox}
+		
+									Me:QueryInventory[Items, Location == "Inventory"]
+									Items:GetIterator[ItemIterator]
+									waitframe
+									if ${ItemIterator:First(exists)}
+										continue
+									else
+										break
+								}
+							}
+							else
+							{
+								BadItems:Set["${ItemIterator.Value.Name}"]
+								echo BadItems now has ${BadItems.Used} items in it.
+								EQ2Execute /close_top_window
+							}
 						}
-						else
+						elseif ${PlaceRaws} && ${Raws.FindSetting["${ItemIterator.Value.Name}"](exists)}
 						{
-							BadItems:Set["${Me.CustomInventory[${PSxvar}].Name}"]
-							echo BadItems now has ${BadItems.Used} items in it.
-							EQ2Execute /close_top_window
+							call placeitem "${ItemIterator.Value.Name}" ${RawsBox}
+							Me:QueryInventory[Items, Location == "Inventory"]
+							Items:GetIterator[ItemIterator]
+							waitframe
+							if ${ItemIterator:First(exists)}
+								continue
+							else
+								break
 						}
-					}
-					elseif ${PlaceRaws} && ${Raws.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
-					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${RawsBox}
-						PSxvar:Set[1]
-						Me:CreateCustomInventoryArray[nonbankonly]
-						waitframe
-					}
-					elseif ${PlaceRares} && ${Rares.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
-					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${RaresBox}
-						PSxvar:Set[1]
-						Me:CreateCustomInventoryArray[nonbankonly]
-						waitframe
-					}
-					elseif ${PlaceUncommon} && ${Uncommon.FindSetting["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
-					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}" ${UncommonBox}
-						PSxvar:Set[1]
-						Me:CreateCustomInventoryArray[nonbankonly]
-						waitframe
-					}
-					elseif ${ItemList.FindSet["${Me.CustomInventory[${PSxvar}].Name}"].FindSetting[CraftItem]} && !${BadItems.Element["${Me.CustomInventory[${PSxvar}].Name}"](exists)}
-					{
-						call placeitem "${Me.CustomInventory[${PSxvar}].Name}"
-						PSxvar:Set[1]
-						Me:CreateCustomInventoryArray[nonbankonly]
-						waitframe
+						elseif ${PlaceRares} && ${Rares.FindSetting["${ItemIterator.Value.Name}"](exists)}
+						{
+							call placeitem "${ItemIterator.Value.Name}" ${RaresBox}
+							Me:QueryInventory[Items, Location == "Inventory"]
+							Items:GetIterator[ItemIterator]
+							waitframe
+							if ${ItemIterator:First(exists)}
+								continue
+							else
+								break
+						}
+						elseif ${PlaceUncommon} && ${Uncommon.FindSetting["${ItemIterator.Value.Name}"](exists)}
+						{
+							call placeitem "${ItemIterator.Value.Name}" ${UncommonBox}
+							Me:QueryInventory[Items, Location == "Inventory"]
+							Items:GetIterator[ItemIterator]
+							waitframe
+							if ${ItemIterator:First(exists)}
+								continue
+							else
+								break
+						}
+						elseif ${ItemList.FindSet["${ItemIterator.Value.Name}"].FindSetting[CraftItem]} && !${BadItems.Element["${ItemIterator.Value.Name}"](exists)}
+						{
+							call placeitem "${ItemIterator.Value.Name}"
+							Me:QueryInventory[Items, Location == "Inventory"]
+							Items:GetIterator[ItemIterator]
+							waitframe
+							if ${ItemIterator:First(exists)}
+								continue
+							else
+								break
+						}
 					}
 				}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
-		while ${PSxvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
 	else
 	{
@@ -3580,7 +3624,8 @@ function placeshinies()
 
 function StartUp()
 {
-	Declare i int local
+	variable index:item Items
+	variable iterator ItemIterator
 	Declare xvar int local
 	Declare space int local
 
@@ -3644,22 +3689,24 @@ function StartUp()
 	
 	UIElement[InventoryNumber@Inventory@GUITabs@MyPrices]:Hide
 
-
-	i:Set[1]
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 
 	wait 5
 
-	do
+	if ${ItemIterator:First(exists)}
 	{
-		if ${Me.CustomInventory[${i}].IsInventoryContainer}
+		do
 		{
-			UIElement[Bag${Me.CustomInventory[${i}].Slot}@Admin@GUITabs@MyPrices]:SetText["${Me.CustomInventory[${i}].Name}"]
-			xvar:Set[${Math.Calc[${Me.CustomInventory[${i}].Slot} + 1]}]
-			NoSaleID[${xvar}]:Set[${Me.CustomInventory[${i}].ContainerID}]
+			if ${ItemIterator.Value.IsInventoryContainer}
+			{
+				UIElement[Bag${ItemIterator.Value.Slot}@Admin@GUITabs@MyPrices]:SetText["${ItemIterator.Value.Name}"]
+				xvar:Set[${Math.Calc[${ItemIterator.Value.Slot} + 1]}]
+				NoSaleID[${xvar}]:Set[${ItemIterator.Value.ContainerID}]
+			}
 		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${i:Inc}<=${Me.CustomInventoryArraySize}
 
 	call LoadList
 

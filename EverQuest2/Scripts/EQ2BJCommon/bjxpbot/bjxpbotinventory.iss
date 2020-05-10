@@ -4,7 +4,6 @@ function main()
 	while 1
 	{
 		ExecuteQueued
-		Me:CreateCustomInventoryArray[nonbankonly]
 	}
 	waitframe
 }
@@ -20,25 +19,33 @@ function RefreshInventoryQueue()
 
 function RefreshInventory()
 {
-	variable int ArrayPosition=0
+	variable index:item Items
+	variable iterator ItemIterator
 	UIElement[FullInventoryListBox@Potions_Frame@bjxpbotsettings]:ClearItems
 	call AddItemtoInvList 
 
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+
+	if ${ItemIterator:First(exists)}
 	{
-		if !${Me.CustomInventory[${ArrayPosition}].IsContainer} 
+		do
 		{
-			if ${Me.CustomInventory[${ArrayPosition}].InInventory}
+			if !${ItemIterator.Value.IsContainer} 
 			{
-				if ${Me.CustomInventory[${ArrayPosition}].Heirloom} || ${Me.CustomInventory[${ArrayPosition}].NoTrade}
+				if ${ItemIterator.Value.InInventory}
 				{
-					if ${Me.CustomInventory[${ArrayPosition}].NoValue}
+					if ${ItemIterator.Value.Heirloom} || ${ItemIterator.Value.NoTrade}
 					{
-						call AddItemtoInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
+						if ${ItemIterator.Value.NoValue}
+						{
+							call AddItemtoInvList "${ItemIterator.Value.Name}"
+						}	
 					}	
-				}	
-		  	}
+				}
+			}
 		}
+		while ${ItemIterator:Next(exists)}
 	}
 }
 function AddItemtoInvList(string textline)

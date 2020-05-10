@@ -202,12 +202,10 @@ function main()
 	
 	while 1
 	{
-	;// Conditions Check Loop
+		;// Conditions Check Loop
 		while ${BJXPBotPause} == 0
 		{
-	;//echo ${Time}: Loop 1	
-			Me:CreateCustomInventoryArray[nonbankonly]
-		
+			;//echo ${Time}: Loop 1	
 			if ${CurrentMaxAdvLevelEntryVar} == NULL
 			{
 				echo ${Time}: Please enter the current EQ2 max ADV level.
@@ -474,9 +472,7 @@ function main()
 	;// Main Loop
 		while ${BJXPBotPause} == 0
 		{
-	;// echo ${Time}: Loop 2
-			Me:CreateCustomInventoryArray[nonbankonly]
-			
+			;// echo ${Time}: Loop 2
 			call xpcalclevelnexttime
 			
 			ExecuteQueued
@@ -554,7 +550,7 @@ function ConsumeVitalityItem()
 		
 		if ${UIElement[${EnableVitalityPotionsCheckboxVar}].Checked}
 		{						
-			if ${Me.CustomInventory[Orb of Concentrated Memories](exists)}  && ${Me.CustomInventory[Orb of Concentrated Memories].IsReady} && ${Me.Vitality} == 0
+			if ${Me.Inventory[Orb of Concentrated Memories](exists)}  && ${Me.Inventory[Orb of Concentrated Memories].IsReady} && ${Me.Vitality} == 0
 			{
 				echo ${Time}: Orb of Concentrated Memories Detected
 				statusvar:Set["Orb of Concentrated Memories Detected"]
@@ -575,7 +571,7 @@ function ConsumeVitalityItem()
 				if ${Script[Buffer:OgreBot](exists)} && ${b_OB_Paused}
 					Script[${OgreBotScriptName}]:ExecuteAtom[TogglePause]
 			}		
-			elseif ${Me.CustomInventory[Potion of Vitality](exists)} && ${Me.Vitality} == 0
+			elseif ${Me.Inventory[Potion of Vitality](exists)} && ${Me.Vitality} == 0
 			{
 				echo ${Time}: Potion of Vitality Detected
 				statusvar:Set["Potion of Vitality Detected"]
@@ -620,7 +616,7 @@ function ConsumePotion()
 				wait 30
 			if ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items} > 0 && ${PotionCount} <= ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items}
 			{
-				if ${Me.CustomInventory[${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}](exists)}
+				if ${Me.Inventory[${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}](exists)}
 				{
 					echo ${Time}: ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]} Detected
 					statusvar:Set["${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]} Detected"]
@@ -679,7 +675,7 @@ function ConsumePotion()
 					
 					if ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items} > 0 && ${PotionCount} <= ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].Items}
 					{
-						if ${Me.CustomInventory[${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}](exists)}
+						if ${Me.Inventory[${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]}](exists)}
 						{
 							echo ${Time}: ${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]} Detected
 							statusvar:Set["${UIElement[PotionPriorityListBox@Potions_Frame@bjxpbotsettings].OrderedItem[${PotionCount}]} Detected"]

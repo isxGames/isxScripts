@@ -339,7 +339,6 @@ function PlaceRare()
 	for (i:Set[1];${i}<=9;i:Inc)
 	{
 		call CheckFocus
-		Me:CreateCustomInventoryArray[nonbankonly]
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[RHarvestT${i},checkbox].Checked}
 		{
@@ -355,10 +354,10 @@ function PlaceItemsFromSet(settingsetref SSR, int Container)
 	{
 		do
 		{
-			if ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
+			if ${Me.Inventory[ExactName,${iter.Key}].Quantity} > 0
 			{
-				call AddLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Broker" FF11CCFF
-				Me.CustomInventory[ExactName,${iter.Key}]:AddToConsignment[${Me.CustomInventory[ExactName,${iter.Key}].Quantity},${Container},${BrokerWindow.VendingContainer[${Container}].Consignment[${iter.Key}].SerialNumber}]
+				call AddLog "Adding ${Me.Inventory[${iter.Key}].Quantity} ${iter.Key} to Broker" FF11CCFF
+				Me.Inventory[ExactName,${iter.Key}]:AddToConsignment[${Me.Inventory[ExactName,${iter.Key}].Quantity},${Container},${BrokerWindow.VendingContainer[${Container}].Consignment[${iter.Key}].SerialNumber}]
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 			call CheckFocus
@@ -382,8 +381,6 @@ function PlaceHarvest()
 	for (i:Set[1];${i}<=9;i:Inc)
 	{
 		call CheckFocus
-		Me:CreateCustomInventoryArray[nonbankonly]
-
 		if ${UIElement[EQ2Inventory].FindUsableChild[CHarvestT${i},checkbox].Checked}
 		{
 			call PlaceItemsFromSet ${Harvests.FindSet[CHarvestT${i}]} ${CHBox}
@@ -394,24 +391,32 @@ function PlaceHarvest()
 
 function PlaceCollection()
 {
-	variable int ArrayPosition=1
-	Me:CreateCustomInventoryArray[nonbankonly]
-	wait 5
-	call AddLog "**Checking Previously Collected Collections**"	FFFF00FF
-	Do
+	variable index:item Items
+	variable iterator ItemIterator
+
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+
+	if ${ItemIterator:First(exists)}
 	{
-		if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked} && ${Me.CustomInventory[${ArrayPosition}].IsCollectible} && ${Me.CustomInventory[${ArrayPosition}].AlreadyCollected}
+		do
+		{
+			if ${UIElement[Collections@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked} && ${ItemIterator.Value.IsCollectible} && ${ItemIterator.Value.AlreadyCollected}
 			{
-				Do
+				do
 				{
-					call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
-					Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${CLBox},${BrokerWindow.VendingContainer[${CLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
+					call AddLog "Adding ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name} to Broker" FF11CCFF
+					ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${CLBox},${BrokerWindow.VendingContainer[${CLBox}].Consignment[${ItemIterator.Value.Name}].SerialNumber}]
 					wait ${Math.Rand[30]:Inc[20]}
 				}
-				while ${Me.CustomInventory[${ArrayPosition}].Name(exists)} && ${Me.CustomInventory[${ArrayPosition}].Name.Length}>4
+				while ${ItemIterator.Value.Name(exists)} && ${ItemIterator.Value.Name.Length}>4
 			}
+		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
+
+	wait 5
+	call AddLog "**Checking Previously Collected Collections**"	FFFF00FF
 }
 
 function PlaceTradeskillBooks()
@@ -613,23 +618,30 @@ function PlaceSpellBooks()
 
 function PlaceBooks()
 {
-	variable int ArrayPosition=1
-	Me:CreateCustomInventoryArray[nonbankonly]
+	variable index:item Items
+	variable iterator ItemIterator
+
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+
+	if ${ItemIterator:First(exists)}
+	{
+		do
+		{
+			if ${ItemIterator.Value.Type.Equal[${ItemType}]}
+				if ${ItemIterator.Value.Class[1].Name.Equal[${ClassName}]}
+					if ${ItemIterator.Value.Name.Find[${NameFilter1}]} || ${ItemIterator.Value.Name.Find[${NameFilter2}]} || ${ItemIterator.Value.Name.Find[${NameFilter3}]}
+					{
+						call AddLog "Adding ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name} to broker" FF11CCFF
+						ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${UseBox},${BrokerWindow.VendingContainer[${UseBox}].Consignment[${ItemIterator.Value.Name}].SerialNumber}]
+						wait ${Math.Rand[30]:Inc[20]}
+					}
+		}
+		while ${ItemIterator:Next(exists)} && ${RunBroker}
+	}
+
 	call CheckFocus
 	wait 5
-	Do
-	{
-
-		if ${Me.CustomInventory[${ArrayPosition}].Type.Equal[${ItemType}]}
-			if ${Me.CustomInventory[${ArrayPosition}].Class[1].Name.Equal[${ClassName}]}
-				if ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter1}]} || ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter2}]} || ${Me.CustomInventory[${ArrayPosition}].Name.Find[${NameFilter3}]}
-				{
-					call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to broker" FF11CCFF
-					Me.CustomInventory[ExactName,${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${ArrayPosition}].Quantity},${UseBox},${BrokerWindow.VendingContainer[${UseBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
-					wait ${Math.Rand[30]:Inc[20]}
-				}
-	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker}
 }
 
 function PlaceStatusItems()
@@ -642,7 +654,6 @@ function PlaceStatusItems()
 	for (i:Set[1];${i}<=8;i:Inc)
 	{
 		call CheckFocus
-		Me:CreateCustomInventoryArray[nonbankonly]
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[StatusItemT${i},checkbox].Checked}
 		{
@@ -661,7 +672,6 @@ function PlaceFertilizer()
 	for (i:Set[1];${i}<=7;i:Inc)
 	{
 		call CheckFocus
-		Me:CreateCustomInventoryArray[nonbankonly]
 
 		if ${UIElement[EQ2Inventory].FindUsableChild[FertT${i},checkbox].Checked}
 		{
@@ -672,33 +682,39 @@ function PlaceFertilizer()
 
 function PlaceLoreAndLegend()
 {
-	variable int ArrayPosition=1
+	variable index:item Items
+	variable iterator ItemIterator
+
 	NameFilter1:Set[could be studied to learn]
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+
 	wait 5
 	call CheckFocus
 	call AddLog "**Checking Lore & Legend Items**" FFFF00FF
 	if ${UIElement[LoreAndLegend@EQ2Broker Setup@GUITabs@EQ2Inventory].Checked}
+	{
+		if ${ItemIterator:First(exists)}
 		{
-			Do
+			do
 			{
-				if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
+				if ${ItemIterator.Value.Description.Find[${NameFilter1}]}
 				{
-						call AddLog "Adding ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name} to Broker" FF11CCFF
-						echo DEBUG: Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${BrokerWindow.VendingContainer[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
-						Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:AddToConsignment[${Me.CustomInventory[${Me.CustomInventory[${ArrayPosition}].Name}].Quantity},${LLBox},${BrokerWindow.VendingContainer[${LLBox}].Consignment[${Me.CustomInventory[${ArrayPosition}].Name}].SerialNumber}]
-						wait ${Math.Rand[30]:Inc[20]}
+					call AddLog "Adding ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name} to Broker" FF11CCFF
+					echo DEBUG: ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${LLBox},${BrokerWindow.VendingContainer[${LLBox}].Consignment[${ItemIterator.Value.Name}].SerialNumber}]
+					ItemIterator.Value:AddToConsignment[${ItemIterator.Value.Quantity},${LLBox},${BrokerWindow.VendingContainer[${LLBox}].Consignment[${ItemIterator.Value.Name}].SerialNumber}]
+					wait ${Math.Rand[30]:Inc[20]}
 				}
 			}
-			while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunBroker}
+			while ${ItemIterator:Next(exists)} && ${RunBroker}
 		}
+	}
 }
 
 function PlaceCustom()
 {
 	call CheckFocus
 	call AddLog "**Checking Custom Items List**" FFFF00FF
-	Me:CreateCustomInventoryArray[nonbankonly]
 
 	call PlaceItemsFromSet ${CustomItems.FindSet[CustomItems].GUID} ${CustBox}
 }
@@ -709,7 +725,7 @@ function DestroyItems()
 	wait 5
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Destroy v2 By Syliac**" FF00FF00
-	Me:CreateCustomInventoryArray[nonbankonly]
+
 	wait 5
 	call AddSellLog "**Destroying Items**" FFFF00FF
 	wait 5
@@ -719,10 +735,10 @@ function DestroyItems()
 	{
 		do
 		{
-			if ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0
+			if ${Me.Inventory[ExactName,${iter.Key}].Quantity} > 0
 			{
-				call AddSellLog "Destroying  ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.CustomInventory[${iter.Key}]}" FFFF0000
-				Me.CustomInventory[${iter.Key}]:Destroy[${Me.CustomInventory[${iter.Key}].Quantity}]
+				call AddSellLog "Destroying  ${Me.Inventory[${iter.Key}].Quantity}  ${Me.Inventory[${iter.Key}]}" FFFF0000
+				Me.Inventory[${iter.Key}]:Destroy[${Me.Inventory[${iter.Key}].Quantity}]
 				wait ${Math.Rand[30]:Inc[20]}
 			}
 		}
@@ -785,7 +801,6 @@ function SellJunk()
 	EQ2Execute /togglebags
 	wait 15
 	EQ2Execute /togglebags
-	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 10
 	call AddSellLog "**Selling Junk Items**" FFFF00FF
 	variable iterator iter
@@ -796,17 +811,17 @@ function SellJunk()
 		{
 			do
 			{			
-				if ${Me.CustomInventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${MerchantWindow.MyInventory[${iter.Key}].IsForSale}
+				if ${Me.Inventory[${iter.Key}].Quantity} >= 1 && ${iter.Key.NotEqual[NULL]} && ${MerchantWindow.MyInventory[${iter.Key}].IsForSale}
 				{
 					do
 					{
 						Debug:Echo["${iter.Key}"]
 						Debug:Echo["Selling ${MerchantWindow.MyInventory[${iter.Key}]}"]
-						call AddSellLog "Selling ${Me.CustomInventory[${iter.Key}].Quantity}  ${MerchantWindow.MyInventory[${iter.Key}]}" FF11CCFF
-						MerchantWindow.MyInventory[${iter.Key}]:Sell[${Me.CustomInventory[${iter.Key}].Quantity}]
+						call AddSellLog "Selling ${Me.Inventory[ExactName, ${iter.Key}].Quantity}  ${MerchantWindow.MyInventory[${iter.Key}]}" FF11CCFF
+						MerchantWindow.MyInventory[${iter.Key}]:Sell[${Me.Inventory[ExactName, ${iter.Key}].Quantity}]
 						wait 15
 					}
-					while ${Me.CustomInventory[ExactName,${iter.Key}].Quantity} > 0 
+					while ${Me.Inventory[ExactName,${iter.Key}].Quantity} > 0 
 				}
 			}
 			while ${iter:Next(exists)} && ${RunJunk}
@@ -849,7 +864,9 @@ function SellJunk()
 
 function SellStatus()
 {
-	variable int ArrayPosition=1
+	variable index:item Items
+	variable iterator ItemIterator
+	
 	NameFilter1:Set[awarded a great amount of status]
 	UIElement[SellItemList@EQ2junk@GUITabs@EQ2Inventory]:ClearItems
 	wait 5
@@ -859,19 +876,24 @@ function SellStatus()
 	Target:DoFace
 	wait 5
 	Target:DoubleClick
-	Me:CreateCustomInventoryArray[nonbankonly]
-	wait 20
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+	wait 10
 	call AddSellLog "**Selling Status Items to Status Vendor**" FFFF00FF
 
-	Do
+	if ${ItemIterator:First(exists)}
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Description.Find[${NameFilter1}]}
+		do
 		{
-			call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-			MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+			if ${ItemIterator.Value.Description.Find[${NameFilter1}]}
+			{
+				call AddSellLog "Selling ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name}"
+				MerchantWindow.MyInventory[${ItemIterator.Value.Name}]:Sell[${ItemIterator.Value.Quantity}]
+			}
 		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
+
 	call AddSellLog "**Status Items Sold to Status Vendor**" FFFF00FF
 
 	press ESC
@@ -881,94 +903,116 @@ function SellStatus()
 
 function SellTreasured()
 {
-	variable int ArrayPosition=1
-	Me:CreateCustomInventoryArray[nonbankonly]
-	wait 5
-	Do
+	variable index:item Items
+	variable iterator ItemIterator
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+
+	if ${ItemIterator:First(exists)}
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[TREASURED]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+		do
+		{
+			if ${ItemIterator.Value.Tier.Equal[TREASURED]} && ${MerchantWindow.MyInventory[${ItemIterator.Value.Name}].IsForSale}
 			{
-				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				if !${ItemIterator.Value.InNoSaleContainer}
 				{
-					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					if !${ItemIterator.Value.IsContainer}
 					{
-						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						call AddSellLog "Selling ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name}"
+						MerchantWindow.MyInventory[${ItemIterator.Value.Name}]:Sell[${ItemIterator.Value.Quantity}]
 						wait 15
 					}
 				}
 			}
+		}
+		while ${ItemIterator:Next(exists)} && ${RunJunk}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
 function SellHandcrafted()
 {
-	variable int ArrayPosition=1
-	Me:CreateCustomInventoryArray[nonbankonly]
+	variable index:item Items
+	variable iterator ItemIterator
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	wait 5
-	Do
+
+	if ${ItemIterator:First(exists)}
 	{
-	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[HANDCRAFTED]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+		do
+		{
+			if ${ItemIterator.Value.Tier.Equal[HANDCRAFTED]} && ${MerchantWindow.MyInventory[${ItemIterator.Value.Name}].IsForSale}
 			{
-				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				if !${ItemIterator.Value.InNoSaleContainer}
 				{
-					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					if !${ItemIterator.Value.IsContainer}
 					{
-						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						call AddSellLog "Selling ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name}"
+						MerchantWindow.MyInventory[${ItemIterator.Value.Name}]:Sell[${ItemIterator.Value.Quantity}]
 						wait 15
 					}
 				}
 			}
+		}
+		while ${ItemIterator:Next(exists)} && ${RunJunk}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
 function SellUncommon()
 {
-	variable int ArrayPosition=1
-	Me:CreateCustomInventoryArray[nonbankonly]
+	variable index:item Items
+	variable iterator ItemIterator
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	wait 5
-	Do
+
+	if ${ItemIterator:First(exists)}
 	{
-	  	if ${Me.CustomInventory[${ArrayPosition}].Tier.Equal[UNCOMMON]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale}
+		do
+		{
+	  		if ${ItemIterator.Value.Tier.Equal[UNCOMMON]} && ${MerchantWindow.MyInventory[${ItemIterator.Value.Name}].IsForSale}
 			{
-				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				if !${ItemIterator.Value.InNoSaleContainer}
 				{
-					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					if !${ItemIterator.Value.IsContainer}
 					{
-						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell[${Me.CustomInventory[${ArrayPosition}].Quantity}]
+						call AddSellLog "Selling ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name}"
+						MerchantWindow.MyInventory[${ItemIterator.Value.Name}]:Sell[${ItemIterator.Value.Quantity}]
 						wait 15
 					}
 				}
 			}
+		}
+		while ${ItemIterator:Next(exists)} && ${RunJunk}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 function SellAdeptI()
 {
-	variable int ArrayPosition=1
-	Me:CreateCustomInventoryArray[nonbankonly]
+	variable index:item Items
+	variable iterator ItemIterator
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 	wait 5
 
-	Do
+	if ${ItemIterator:First(exists)}
 	{
-		if ${Me.CustomInventory[${ArrayPosition}].Name.Find[(Adept)]} && ${MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}].IsForSale} && ${RunJunk}
+		do
+		{
+			if ${ItemIterator.Value.Name.Find[(Adept)]} && ${MerchantWindow.MyInventory[${ItemIterator.Value.Name}].IsForSale} && ${RunJunk}
 			{
-				if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+				if !${ItemIterator.Value.InNoSaleContainer}
 				{
-					if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+					if !${ItemIterator.Value.IsContainer}
 					{
-						call AddSellLog "Selling ${Me.CustomInventory[${ArrayPosition}].Quantity} ${Me.CustomInventory[${ArrayPosition}].Name}"
-						MerchantWindow.MyInventory[${Me.CustomInventory[${ArrayPosition}].Name}]:Sell
+						call AddSellLog "Selling ${ItemIterator.Value.Quantity} ${ItemIterator.Value.Name}"
+						MerchantWindow.MyInventory[${ItemIterator.Value.Name}]:Sell
 						wait ${Math.Rand[30]:Inc[20]}
 					}
 				}
 			}
+		}
+		while ${ItemIterator:Next(exists)} && ${RunJunk}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize} && ${RunJunk}
 }
 
 function TradeItems()
@@ -985,7 +1029,6 @@ function TradeItems()
 	EQ2Execute /togglebags
 	wait 5
 	EQ2Execute /togglebags
-	Me:CreateCustomInventoryArray[nonbankonly]
 	wait 10
 	UIElement[TradeItemList@Trade Items@GUITabs@EQ2Inventory]:ClearItems
 	wait 10
@@ -1015,18 +1058,18 @@ function TradeItemsFromSet(settingsetref SSR)
 		{
 			do
 			{
-				while ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} > ${iItemsTraded}
+				while ${Me.Inventory[${iter.Key}].Quantity} > 0 && ${HowMany} > ${iItemsTraded}
 				{
 					do
 					{
-						call AddTradeLog "Adding ${Me.CustomInventory[${iter.Key}].Quantity} ${iter.Key} to Trade Window" FF11CCFF
+						call AddTradeLog "Adding ${Me.Inventory[${iter.Key}].Quantity} ${iter.Key} to Trade Window" FF11CCFF
 						wait 10
-						EQ2Execute /add_trade_item ${Math.Calc[${Me.CustomInventory[${iter.Key}].Index}-1]} ${iItemsTraded} ${Me.CustomInventory[${iter.Key}].Quantity}
+						EQ2Execute /add_trade_item ${Math.Calc[${Me.Inventory[${iter.Key}].Index}-1]} ${iItemsTraded} ${Me.Inventory[${iter.Key}].Quantity}
 						wait 5
 						iItemsTraded:Inc
 						wait 5
 					}
-					while (${iter:Next(exists)}) && ${Me.CustomInventory[${iter.Key}].Quantity} > 0 && ${HowMany} < ${iItemsTraded}
+					while (${iter:Next(exists)}) && ${Me.Inventory[${iter.Key}].Quantity} > 0 && ${HowMany} < ${iItemsTraded}
 				}	
 				if ${iItemsTraded} > 0
 				{
@@ -1119,18 +1162,16 @@ function DeleteMeat()
 	variable int KeyNum=1
 	call AddLog "**Deleting Meats**" FFFF0000
 
-	Me:CreateCustomInventoryArray[nonbankonly]
-
 	variable iterator iter
 	DeleteMeats.FindSet[Meats]:GetSettingIterator[iter]
 	if (${iter:First(exists)})
 	{
 		Do
 		{
-			if ${Me.CustomInventory[${iter.Key}].Quantity} > 0
+			if ${Me.Inventory[${iter.Key}].Quantity} > 0
 			{
-				call AddLog "Deleting  ${Me.CustomInventory[${iter.Key}].Quantity}  ${Me.CustomInventory[${iter.Key}]}" FFFF0000
-				Me.CustomInventory[${iter.Key}]:Destroy[${Me.CustomInventory[${iter.Key}].Quantity}]
+				call AddLog "Deleting  ${Me.Inventory[${iter.Key}].Quantity}  ${Me.Inventory[${iter.Key}]}" FFFF0000
+				Me.Inventory[${iter.Key}]:Destroy[${Me.Inventory[${iter.Key}].Quantity}]
 				wait 15
 			}
 		}
@@ -1213,23 +1254,28 @@ function InvList()
 
 function CreateInventorylist()
 {
-	variable int ArrayPosition=1
+	variable index:item Items
+	variable iterator ItemIterator
 	UIElement[AddItemList@Add Items@GUITabs@EQ2Inventory]:ClearItems
-	Me:CreateCustomInventoryArray[nonbankonly]
-	call AddInvList "**Creating Inventory List ${Me.CustomInventoryArraySize} Items**" FFFF00FF
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+	call AddInvList "**Creating Inventory List ${Items.Used} Items**" FFFF00FF
 
-	Do
+	if ${ItemIterator:First(exists)}
 	{
-		if !${Me.CustomInventory[${ArrayPosition}].InNoSaleContainer}
+		do
 		{
-			if !${Me.CustomInventory[${ArrayPosition}].IsContainer}
+			if !${ItemIterator.Value.InNoSaleContainer}
 			{
-				if ${Me.CustomInventory[${ArrayPosition}].InInventory}
-					call AddInvList "${Me.CustomInventory[${ArrayPosition}].Name}"
+				if !${ItemIterator.Value.IsContainer}
+				{
+					if ${ItemIterator.Value.InInventory}
+						call AddInvList "${ItemIterator.Value.Name}"
+				}
 			}
-	  }
+		}
+		while ${ItemIterator:Next(exists)}
 	}
-	while ${ArrayPosition:Inc} <= ${Me.CustomInventoryArraySize}
 }
 
 function AddLog(string textline, string colour)

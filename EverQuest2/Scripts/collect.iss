@@ -36,34 +36,40 @@ function main()
 
 function addShinny()
 {
-    variable int i = 1
+	variable index:item Items
+	variable iterator ItemIterator
  
-    Me:CreateCustomInventoryArray[nonbankonly]
-	    wait 5
- 
-    do
-    {
-        if !${Me.CustomInventory[${i}](exists)}
-            continue
-        if !${Me.CustomInventory[${i}].IsCollectible}
-            continue
-			
-echo ${Me.CustomInventory[${i}]}
-			Me.Inventory[${Me.CustomInventory[${i}]}]:Examine
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
+	wait 5
+
+	if ${ItemIterator:First(exists)}
+	{
+		do
+		{
+			if !${ItemIterator.Value(exists)}
+				continue
+			if !${ItemIterator.Value.IsCollectible}
+				continue
+				
+			echo ${ItemIterator.Value}
+			Me.Inventory[${ItemIterator.Value}]:Examine
 			wait 5
 			EQ2UIPage[Journals,JournalsQuest].Child[button,TabPages.Collection.CollectionTemplate.AddButton]:LeftClick
 			call ClickAddButton
 			waitframe
-		EQ2Execute /close_top_window
-;        echo "DEBUG:: Transmuting ${Me.CustomInventory[${i}]}."
- 
-		;Me.CustomInventory[${i}]:Transmute
-        wait 5
-    }
-    while ${i:Inc}<=${Me.CustomInventoryArraySize}
-InvChanged:Set[FALSE]
- echo "All Done"
-; Me:Clear
+			EQ2Execute /close_top_window
+	;        echo "DEBUG:: Transmuting ${ItemIterator.Value}."
+	
+			;ItemIterator.Value:Transmute
+			wait 5
+		}
+		while ${ItemIterator:Next(exists)}
+	}
+
+	InvChanged:Set[FALSE]
+ 	echo "All Done"
+	; Me:Clear
 }
 
 atom CloseWindow()

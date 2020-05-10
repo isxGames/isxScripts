@@ -269,6 +269,9 @@ objectdef Object_AmmoDepot
 	variable bool Shurikens
 	variable bool Arrows
 	variable bool UseDepotAll
+	variable index:item Items
+	variable iterator ItemIterator
+
 	member:bool UseAmmoDepot()
 	{
 		;// Just checking to see if anything is checked
@@ -295,52 +298,58 @@ objectdef Object_AmmoDepot
 		;// This is not using the depot all button. Since all the aboves return, no reason for an else
 		call LoadAmmoResources
 		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
-		variable int xx=0
-		Me:CreateCustomInventoryArray[nonbankonly]
+
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
 		variable iterator _Iterator
 		setEQ2OgreDepotAmmoInfo:GetSettingIterator[_Iterator]
 		
-		while ${xx:Inc} <= ${Me.CustomInventoryArraySize}
+		if ${ItemIterator:First(exists)}
 		{
-			CurrentResource:Set["${Me.CustomInventory[${xx}].Name}"]
-			;// echo ${Me.CustomInventory[${xx}].Name} - ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Type]} - ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Tier]}
-			;// if ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Type].String.Equal[${TypeToDeposit}]} || ( ${TypeToDeposit.Equal[all]} && ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}](exists)} )
-			if ${FullResources.Element["${CurrentResource}"](exists)}
-				continue
-			;// Won't be an exact name match like harvests. Can use an iterator
-			
-			if ${_Iterator:First(exists)}
+			do
 			{
-				do
+				CurrentResource:Set["${ItemIterator.Value.Name}"]
+				;// echo ${ItemIterator.Value.Name} - ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Type]} - ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Tier]}
+				;// if ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Type].String.Equal[${TypeToDeposit}]} || ( ${TypeToDeposit.Equal[all]} && ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}](exists)} )
+				if ${FullResources.Element["${CurrentResource}"](exists)}
+					continue
+				;// Won't be an exact name match like harvests. Can use an iterator
+				
+				if ${_Iterator:First(exists)}
 				{
-					if ${CurrentResource.Find["${_Iterator.Key}"](exists)}
+					do
 					{
-						switch ${setEQ2OgreDepotAmmoInfo.FindSetting["${_Iterator.Key}"].FindAttribute[Type].String}
+						if ${CurrentResource.Find["${_Iterator.Key}"](exists)}
 						{
-							case arrow
-								if ${This.Arrows}
-								{
-									echo Adding arrow to Depot: ${Me.CustomInventory[${xx}].Name}
-									Me.CustomInventory[${xx}]:AddToDepot[${DepotID}]
-									wait 5
-								}
-							break
-							case shuriken
-								if ${This.Shurikens}
-								{
-									echo Adding shuriken to Depot: ${Me.CustomInventory[${xx}].Name}
-									Me.CustomInventory[${xx}]:AddToDepot[${DepotID}]
-									wait 5
-								}
+							switch ${setEQ2OgreDepotAmmoInfo.FindSetting["${_Iterator.Key}"].FindAttribute[Type].String}
+							{
+								case arrow
+									if ${This.Arrows}
+									{
+										echo Adding arrow to Depot: ${ItemIterator.Value.Name}
+										ItemIterator.Value:AddToDepot[${DepotID}]
+										wait 5
+									}
+								break
+								case shuriken
+									if ${This.Shurikens}
+									{
+										echo Adding shuriken to Depot: ${ItemIterator.Value.Name}
+										ItemIterator.Value:AddToDepot[${DepotID}]
+										wait 5
+									}
+								break
+							}
 							break
 						}
-						break
-					}
 
+					}
+					while ${_Iterator:Next(exists)}
 				}
-				while ${_Iterator:Next(exists)}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
+
 		Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	}
 }
@@ -384,48 +393,53 @@ objectdef Object_HarvestDepot
 		;// This is not using the depot all button. Since all the aboves return, no reason for an else
 		call LoadResources
 		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
-		variable int xx=0
-		Me:CreateCustomInventoryArray[nonbankonly]
 
-		while ${xx:Inc} <= ${Me.CustomInventoryArraySize}
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
+
+		if ${ItemIterator:First(exists)}
 		{
-			CurrentResource:Set["${Me.CustomInventory[${xx}].Name}"]
-			;// echo ${Me.CustomInventory[${xx}].Name} - ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Type]} - ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Tier]}
-			;// if ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Type].String.Equal[${TypeToDeposit}]} || ( ${TypeToDeposit.Equal[all]} && ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}](exists)} )
-			if ${FullResources.Element["${CurrentResource}"](exists)}
-				continue
-			switch ${setEQ2OgreDepotResourceInfo.FindSetting["${Me.CustomInventory[${xx}].Name}"].FindAttribute[Type].String}
+			do
 			{
-				case raw
-					if ${This.Commons}
-					{
-						echo Adding Raw to Depot: ${Me.CustomInventory[${xx}].Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Tier]}
-						Me.CustomInventory[${xx}]:AddToDepot[${DepotID}]
-						wait 5
-					}
-				break
-				case rare
-					if ${This.Rares}
-					{
-						echo Adding Rare to Depot: ${Me.CustomInventory[${xx}].Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Tier]}
-						Me.CustomInventory[${xx}]:AddToDepot[${DepotID}]
-						wait 5
-					}
-				break
-				case mute
-					if ( ${Me.CustomInventory[${xx}].Name.Find[fragment](exists)} && ${This.Fragments} ) || \
-						( ${Me.CustomInventory[${xx}].Name.Find[Powder](exists)} && ${This.Powders} ) || \
-						( ${Me.CustomInventory[${xx}].Name.Find[Infusion](exists)} && ${This.Infusions} ) || \
-						( ${Me.CustomInventory[${xx}].Name.Find[Mana](exists)} && ${This.Manas} ) 
-					{
-						echo Adding Mutable to Depot: ${Me.CustomInventory[${xx}].Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${Me.CustomInventory[${xx}].Name}].FindAttribute[Tier]}
-						Me.CustomInventory[${xx}]:AddToDepot[${DepotID}]
-						wait 5
-					}
-				break
+				CurrentResource:Set["${ItemIterator.Value.Name}"]
+				;// echo ${ItemIterator.Value.Name} - ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Type]} - ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Tier]}
+				;// if ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Type].String.Equal[${TypeToDeposit}]} || ( ${TypeToDeposit.Equal[all]} && ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}](exists)} )
+				if ${FullResources.Element["${CurrentResource}"](exists)}
+					continue
+				switch ${setEQ2OgreDepotResourceInfo.FindSetting["${ItemIterator.Value.Name}"].FindAttribute[Type].String}
+				{
+					case raw
+						if ${This.Commons}
+						{
+							echo Adding Raw to Depot: ${ItemIterator.Value.Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Tier]}
+							ItemIterator.Value:AddToDepot[${DepotID}]
+							wait 5
+						}
+					break
+					case rare
+						if ${This.Rares}
+						{
+							echo Adding Rare to Depot: ${ItemIterator.Value.Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Tier]}
+							ItemIterator.Value:AddToDepot[${DepotID}]
+							wait 5
+						}
+					break
+					case mute
+						if ( ${ItemIterator.Value.Name.Find[fragment](exists)} && ${This.Fragments} ) || \
+							( ${ItemIterator.Value.Name.Find[Powder](exists)} && ${This.Powders} ) || \
+							( ${ItemIterator.Value.Name.Find[Infusion](exists)} && ${This.Infusions} ) || \
+							( ${ItemIterator.Value.Name.Find[Mana](exists)} && ${This.Manas} ) 
+						{
+							echo Adding Mutable to Depot: ${ItemIterator.Value.Name} - Tier: ${setEQ2OgreDepotResourceInfo.FindSetting[${ItemIterator.Value.Name}].FindAttribute[Tier]}
+							ItemIterator.Value:AddToDepot[${DepotID}]
+							wait 5
+						}
+					break
+				}
 			}
-			
+			while ${ItemIterator:Next(exists)}
 		}
+
 		Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	}
 }

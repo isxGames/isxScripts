@@ -30,45 +30,52 @@ objectdef OgreBagInfoObject
 
 	variable int BagContents[6,100]
 	variable int BagSize[6]
-	variable int BagInfoCounter
 	variable int BagInfoCounter2
+	variable index:item Items
+	variable iterator ItemIterator
 
 	method Initialize()
 	{
-		;Me:CreateCustomInventoryArray[nonbankonly]
 		This:UpdateInfo
 	}
 	method UpdateInfo()
 	{
 		This:ClearInformation
-		Me:CreateCustomInventoryArray[nonbankonly]
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
 
 		;Create the bag listing
-		BagInfoCounter:Set[0]
-		while ${BagInfoCounter:Inc}<=${Me.CustomInventoryArraySize}
+		if ${ItemIterator:First(exists)}
 		{
-			if ${Me.CustomInventory[${BagInfoCounter}].IsInventoryContainer}
+			do
 			{
-				BagInformation[${Math.Calc[${Me.CustomInventory[${BagInfoCounter}].Slot}+1]},1]:Set[${Me.CustomInventory[${BagInfoCounter}].ContainerID}]
-				BagInformation[${Math.Calc[${Me.CustomInventory[${BagInfoCounter}].Slot}+1]},2]:Set[${Me.CustomInventory[${BagInfoCounter}].ID}]
-			}
-		}
-		
-		;Now that we have the bag listing, create a list of each box contents
-		BagInfoCounter:Set[0]
-		while ${BagInfoCounter:Inc}<=${Me.CustomInventoryArraySize}
-		{
-			BagInfoCounter2:Set[0]
-			while ${BagInfoCounter2:Inc}<=6
-			{
-				if ${BagInformation[${BagInfoCounter2},1]}==${Me.CustomInventory[${BagInfoCounter}].InContainerID}
+				if ${ItemIterator.Value.IsInventoryContainer}
 				{
-					;echo ${Me.CustomInventory[${BagInfoCounter}]} ID: ${Me.CustomInventory[${BagInfoCounter}].ID}
-					BagContents[${BagInfoCounter2},${BagSize[${BagInfoCounter2}]:Inc}]:Set[${Me.CustomInventory[${BagInfoCounter}].ID}]
-					;echo BagSize: ${BagSize[${BagInfoCounter2}]}					
-					break
+					BagInformation[${Math.Calc[${ItemIterator.Value.Slot}+1]},1]:Set[${ItemIterator.Value.ContainerID}]
+					BagInformation[${Math.Calc[${ItemIterator.Value.Slot}+1]},2]:Set[${ItemIterator.Value.ID}]
 				}
 			}
+			while ${ItemIterator:Next(exists)}
+		}
+
+		;Now that we have the bag listing, create a list of each box contents
+		if ${ItemIterator:First(exists)}
+		{
+			do
+			{
+				BagInfoCounter2:Set[0]
+				while ${BagInfoCounter2:Inc}<=6
+				{
+					if ${BagInformation[${BagInfoCounter2},1]}==${ItemIterator.Value.InContainerID}
+					{
+						;echo ${ItemIterator.Value} ID: ${ItemIterator.Value.ID}
+						BagContents[${BagInfoCounter2},${BagSize[${BagInfoCounter2}]:Inc}]:Set[${ItemIterator.Value.ID}]
+						;echo BagSize: ${BagSize[${BagInfoCounter2}]}					
+						break
+					}
+				}
+			}
+			while ${ItemIterator:Next(exists)}
 		}
 	}
 	method ClearInformation()

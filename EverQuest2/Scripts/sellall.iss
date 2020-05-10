@@ -20,16 +20,14 @@ function main(param1)
 function addjunk(string junkname)
 {
 	SettingXML["./XML/sellall.xml"].Set[Vendor Junk]:Set["${junkname}",Sell]
-
-	;ANNOUNCE IS BROKEN announce "\\#FF6E6EProtected item { ${junkname} } Added" 1 2
-
 	SettingXML["./XML/sellall.xml"]:Save
 }
 
 function sellshit()
 {
+	variable index:item Items
+	variable iterator ItemIterator
 	variable int tempvar=1
-	variable int tempvar2=1
 	variable bool sell=TRUE
 		
 	Actor[nokillnpc]:DoTarget
@@ -39,47 +37,44 @@ function sellshit()
 	Target:DoubleClick
 	wait 1	
 
-	;ANNOUNCE IS BROKEN announce "making inventory array" 1 1
-	Me:CreateCustomInventoryArray[nonbankonly]
+	Me:QueryInventory[Items, Location == "Inventory"]
+	Items:GetIterator[ItemIterator]
 
-	do
+	if ${ItemIterator:First(exists)}
 	{
 		do
-		{	
-
-			; if the current item is on the list, set to not sell.
-			if ${Me.CustomInventory[${tempvar2}].Name.Equal[${SettingXML[./XML/sellall.xml].Set[Vendor Junk].Key[${tempvar}]}]}
-			{
-			 sell:Set[FALSE]
-			}
-		} 
-		while ${tempvar:Inc} <= ${SettingXML[./XML/sellall.xml].Set[Vendor Junk].Keys}
-		;check next item in xml list.
-
-		
-		;if not on protected list, sell the item
-		if ${sell}
 		{
-			MerchantWindow.MyInventory[${Me.CustomInventory[${tempvar2}].Name}]:Sell
+			do
+			{	
+				; if the current item is on the list, set to not sell.
+				if ${ItemIterator.Value.Name.Equal[${SettingXML[./XML/sellall.xml].Set[Vendor Junk].Key[${tempvar}]}]}
+				{
+				sell:Set[FALSE]
+				}
+			} 
+			while ${tempvar:Inc} <= ${SettingXML[./XML/sellall.xml].Set[Vendor Junk].Keys}
+			;check next item in xml list.
+
 			
-			if ${Me.CustomInventory[${tempvar2}].NoValue}
+			;if not on protected list, sell the item
+			if ${sell}
 			{
-			Me.CustomInventory[${tempvar2}]:Destroy
+				MerchantWindow.MyInventory[${ItemIterator.Value.Name}]:Sell
+				
+				if ${ItemIterator.Value.NoValue}
+				{
+				ItemIterator.Value:Destroy
+				}
 			}
 
-
+			; setup for next item
+			sell:Set[TRUE]
+			; tempvar is for the xml file, so we will start it from beginning for next item
+			tempvar:Set[1]
 		}
-
-		; setup for next item
-		sell:Set[TRUE]
-		; tempvar is for the xml file, so we will start it from beginning for next item
-		tempvar:Set[1]
-
+		while ${ItemIterator:Next(exists)}
 	}
-	while "${tempvar2:Inc}<=${Me.CustomInventoryArraySize}"
-	;check next item in inventory
 
-	;ANNOUNCE IS BROKEN announce "\You have sold Junk" 1 2
 	press ESC
 	press ESC
 	press ESC
@@ -88,5 +83,5 @@ function sellshit()
 function atexit()
 {
 	SettingXML["./XML/sellall.xml"]:Save
-		SettingXML["./XML/sellall.xml"]:Unload
+	SettingXML["./XML/sellall.xml"]:Unload
 }

@@ -33,90 +33,103 @@ objectdef OgreBagInfoObject
 	;Second number (3), is the Name.
 	variable int BagContents[7,100]
 	variable int BagSize[7]
-	variable int BagInfoCounter
 	variable int BagInfoCounter2
+	variable index:item Items
+	variable iterator ItemIterator
 
 	method Initialize()
 	{
-		;Me:CreateCustomInventoryArray[nonbankonly]
 		This:UpdateInfo
 	}
 	method UpdateInfo()
 	{
 		This:ClearInformation
-		Me:CreateCustomInventoryArray[nonbankonly]
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
 
 		;Create the bag listing
-		BagInfoCounter:Set[0]
-		while ${BagInfoCounter:Inc}<=${Me.CustomInventoryArraySize}
+
+		if ${ItemIterator:First(exists)}
 		{
-			if ${Me.CustomInventory[${BagInfoCounter}].IsInventoryContainer}
+			do
 			{
-				;// echo Slot: ${Math.Calc64[${Me.CustomInventory[${BagInfoCounter}].Slot}+1]}: ${Me.CustomInventory[${BagInfoCounter}].Name} ${Me.CustomInventory[${BagInfoCounter}].ID} ${Me.CustomInventory[${BagInfoCounter}].EmptySlots}
-				BagInformation[${Math.Calc[${Me.CustomInventory[${BagInfoCounter}].Slot}+1]},1]:Set[${Me.CustomInventory[${BagInfoCounter}].ContainerID}]
-				BagInformation[${Math.Calc[${Me.CustomInventory[${BagInfoCounter}].Slot}+1]},2]:Set[${Me.CustomInventory[${BagInfoCounter}].ID}]
-				BagInformation[${Math.Calc[${Me.CustomInventory[${BagInfoCounter}].Slot}+1]},3]:Set[${Me.CustomInventory[${BagInfoCounter}].Name}]
+				if ${ItemIterator.Value.IsInventoryContainer}
+				{
+					;// echo Slot: ${Math.Calc64[${ItemIterator.Value.Slot}+1]}: ${ItemIterator.Value.Name} ${ItemIterator.Value.ID} ${ItemIterator.Value.EmptySlots}
+					BagInformation[${Math.Calc[${ItemIterator.Value.Slot}+1]},1]:Set[${ItemIterator.Value.ContainerID}]
+					BagInformation[${Math.Calc[${ItemIterator.Value.Slot}+1]},2]:Set[${ItemIterator.Value.ID}]
+					BagInformation[${Math.Calc[${ItemIterator.Value.Slot}+1]},3]:Set[${ItemIterator.Value.Name}]
+				}
+				else
+				{
+					continue
+					;// This previously was used to determine your ammo slot type. Instead, just using Equipment[ammo]
+					;// Finding the quiver
+					if ${ItemIterator.Value.Type.NotEqual[container]}
+						continue
+					if ${ItemIterator.Value.NumSlots} <= 0
+						continue
+					if ${ItemIterator.Value.IsSharedBankContainer}
+						continue
+					if !${ItemIterator.Value.IsContainer}
+						continue
+					if ${ItemIterator.Value.InInventory}
+						continue
+					if ${ItemIterator.Value.InInventorySlot}
+						continue
+					if ${ItemIterator.Value.InBank}
+						continue
+					if ${ItemIterator.Value.InContainer}
+						continue
+					;// echo Ranged slot iteM? ${ItemIterator.Value.Name} - ID: ${ItemIterator.Value.ID}
+					BagInformation[7,1]:Set[${ItemIterator.Value.ContainerID}]
+					BagInformation[7,2]:Set[${ItemIterator.Value.ID}]
+					BagInformation[7,3]:Set[${ItemIterator.Value.Name}]
+				}
 			}
-			else
-			{
-				continue
-				;// This previously was used to determine your ammo slot type. Instead, just using Equipment[ammo]
-				;// Finding the quiver
-				if ${Me.CustomInventory[${BagInfoCounter}].Type.NotEqual[container]}
-					continue
-				if ${Me.CustomInventory[${BagInfoCounter}].NumSlots} <= 0
-					continue
-				if ${Me.CustomInventory[${BagInfoCounter}].IsSharedBankContainer}
-					continue
-				if !${Me.CustomInventory[${BagInfoCounter}].IsContainer}
-					continue
-				if ${Me.CustomInventory[${BagInfoCounter}].InInventory}
-					continue
-				if ${Me.CustomInventory[${BagInfoCounter}].InInventorySlot}
-					continue
-				if ${Me.CustomInventory[${BagInfoCounter}].InBank}
-					continue
-				if ${Me.CustomInventory[${BagInfoCounter}].InContainer}
-					continue
-				;// echo Ranged slot iteM? ${Me.CustomInventory[${BagInfoCounter}].Name} - ID: ${Me.CustomInventory[${BagInfoCounter}].ID}
-				BagInformation[7,1]:Set[${Me.CustomInventory[${BagInfoCounter}].ContainerID}]
-				BagInformation[7,2]:Set[${Me.CustomInventory[${BagInfoCounter}].ID}]
-				BagInformation[7,3]:Set[${Me.CustomInventory[${BagInfoCounter}].Name}]
-			}
+			while ${ItemIterator:Next(exists)}
 		}
 		BagInformation[7,1]:Set[${Me.Equipment[ammo].ContainerID}]
 		BagInformation[7,2]:Set[${Me.Equipment[ammo].ID}]
 		BagInformation[7,3]:Set[${Me.Equipment[ammo].Name}]
 		
 		;// Now that we have the bag listing, create a list of each box contents
-		BagInfoCounter:Set[0]
-		while ${BagInfoCounter:Inc}<=${Me.CustomInventoryArraySize}
+		if ${ItemIterator:First(exists)}
 		{
-			BagInfoCounter2:Set[0]
-			while ${BagInfoCounter2:Inc}<=7
+			do
 			{
-				if ${BagInformation[${BagInfoCounter2},1]}==${Me.CustomInventory[${BagInfoCounter}].InContainerID}
+				BagInfoCounter2:Set[0]
+				while ${BagInfoCounter2:Inc}<=7
 				{
-					;echo ${Me.CustomInventory[${BagInfoCounter}]} ID: ${Me.CustomInventory[${BagInfoCounter}].ID}
-					BagContents[${BagInfoCounter2},${BagSize[${BagInfoCounter2}]:Inc}]:Set[${Me.CustomInventory[${BagInfoCounter}].ID}]
-					;echo BagSize: ${BagSize[${BagInfoCounter2}]}					
-					break
+					if ${BagInformation[${BagInfoCounter2},1]}==${ItemIterator.Value.InContainerID}
+					{
+						;echo ${ItemIterator.Value} ID: ${ItemIterator.Value.ID}
+						BagContents[${BagInfoCounter2},${BagSize[${BagInfoCounter2}]:Inc}]:Set[${ItemIterator.Value.ID}]
+						;echo BagSize: ${BagSize[${BagInfoCounter2}]}					
+						break
+					}
 				}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
 	}
 	member:string GetIDOfItemIn(int _Bag=1, int _Slot=0)
 	{
 		_Slot:Dec
-		Me:CreateCustomInventoryArray[nonbankonly]
-		BagInfoCounter:Set[0]
-		while ${BagInfoCounter:Inc}<=${Me.CustomInventoryArraySize}
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
+
+		if ${ItemIterator:First(exists)}
 		{
-			if ${Me.CustomInventory[${BagInfoCounter}].InContainerID} != ${This.BagInformation[${_Bag},1]}
-				continue
-			if ${Me.CustomInventory[${BagInfoCounter}].Slot} != ${_Slot}
-				continue
-			return ${Me.CustomInventory[${BagInfoCounter}].ID}
+			do
+			{
+				if ${ItemIterator.Value.InContainerID} != ${This.BagInformation[${_Bag},1]}
+					continue
+				if ${ItemIterator.Value.Slot} != ${_Slot}
+					continue
+				return ${ItemIterator.Value.ID}
+			}
+			while ${ItemIterator:Next(exists)}
 		}
 		return 0
 	}
