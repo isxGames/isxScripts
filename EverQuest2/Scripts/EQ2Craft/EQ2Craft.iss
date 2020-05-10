@@ -545,9 +545,6 @@ function main(... recipeFavourite)
 		}
 	}
 
-	Me:CreateCustomInventoryArray[nonbankonly]
-	wait 5
-
 	checkinv:Set[TRUE]
 
 	if ${CraftLiteMode}
@@ -3863,59 +3860,63 @@ objectdef EQ2Craft
 
 	method ProcessPartialInventory(string itemsearch, int partial)
 	{
-		variable int xvar
+		variable index:item Items
+		variable iterator ItemIterator
 		variable string tempstr
 		variable int tmpprefix
 
-		Me:CreateCustomInventoryArray[nonbankonly]
+		Me:QueryInventory[Items, Location == "Inventory"]
+		Items:GetIterator[ItemIterator]
 
-		xvar:Set[1]
-		do
+		if ${ItemIterator:First(exists)}
 		{
-			tempstr:Set[${Me.CustomInventory[${xvar}].Name}]
-
-			if ${tempstr.Equal[${itemsearch}]}
+			do
 			{
-				if ${tempstr.Find[arrow]} || ${tempstr.Find[scraps]} || ${tempstr.Find[totem]}
+				tempstr:Set[${ItemIterator.Value.Name}]
+
+				if ${tempstr.Equal[${itemsearch}]}
 				{
-					tmpprefix:Set[4]
+					if ${tempstr.Find[arrow]} || ${tempstr.Find[scraps]} || ${tempstr.Find[totem]}
+					{
+						tmpprefix:Set[4]
+					}
+					else
+					{
+						tmpprefix:Set[3]
+					}
+					StatCraftCnt[${partial},${tmpprefix}]:Inc[${ItemIterator.Value.Quantity}]
+					StatCraftNme[${partial}]:Set[${itemsearch}]
 				}
 				else
 				{
-					tmpprefix:Set[3]
-				}
-				StatCraftCnt[${partial},${tmpprefix}]:Inc[${Me.CustomInventory[${xvar}].Quantity}]
-				StatCraftNme[${partial}]:Set[${itemsearch}]
-			}
-			else
-			{
-				if ${tempstr.Right[${itemsearch.Length}].Equal[${itemsearch}]}
-				{
-					QualityPrefix:GetSettingIterator[sIterator]
-					if ${sIterator:First(exists)}
+					if ${tempstr.Right[${itemsearch.Length}].Equal[${itemsearch}]}
 					{
-						do
+						QualityPrefix:GetSettingIterator[sIterator]
+						if ${sIterator:First(exists)}
 						{
-							if ${tempstr.Left[${sIterator.Key.Length}].Equal[${sIterator.Key}]}
+							do
 							{
-								if ${Math.Calc[${sIterator.Key.Length}+${itemsearch.Length}+1]}==${tempstr.Length}
+								if ${tempstr.Left[${sIterator.Key.Length}].Equal[${sIterator.Key}]}
 								{
-									tmpprefix:Set[${sIterator.Value}]
+									if ${Math.Calc[${sIterator.Key.Length}+${itemsearch.Length}+1]}==${tempstr.Length}
+									{
+										tmpprefix:Set[${sIterator.Value}]
+									}
 								}
 							}
+							while ${sIterator:Next(exists)}
 						}
-						while ${sIterator:Next(exists)}
-					}
 
-					if ${tmpprefix}
-					{
-						StatCraftCnt[${partial},${tmpprefix}]:Inc[${Me.CustomInventory[${xvar}].Quantity}]
-						StatCraftNme[${partial}]:Set[${itemsearch}]
+						if ${tmpprefix}
+						{
+							StatCraftCnt[${partial},${tmpprefix}]:Inc[${ItemIterator.Value.Quantity}]
+							StatCraftNme[${partial}]:Set[${itemsearch}]
+						}
 					}
 				}
 			}
+			while ${ItemIterator:Next(exists)}
 		}
-		while ${xvar:Inc}<=${Me.CustomInventoryArraySize}
 	}
 
 	member:float CalculateCraft(string tempname, int tempqlt, int tempproc, int tempid, int tempprod)
