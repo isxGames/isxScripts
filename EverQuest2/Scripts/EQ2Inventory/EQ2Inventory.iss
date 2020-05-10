@@ -262,7 +262,7 @@ function PlaceItems()
 	wait 5
 	UIElement[ItemList@EQ2Broker@GUITabs@EQ2Inventory]:ClearItems
 	call AddLog "**Starting EQ2Broker v3 By Syliac**" FF00FF00
-	EQ2:CreateCustomActorArray[byDist,15]
+
 	if ${Actor[guild,Guild World Market Broker](exists)}
 	{
 		Actor[guild,Guild World Market Broker]:DoTarget
@@ -758,7 +758,7 @@ function SellJunk()
 
 	UIElement[SellItemList@EQ2Junk@GUITabs@EQ2Inventory]:ClearItems
 	call AddSellLog "**Starting EQ2Junk v2 By Syliac**" FF00FF00
-	EQ2:CreateCustomActorArray[byDist,15]
+
 	if ${Actor[guild,Guild Commodities Exporter](exists)}
 	{
 		Actor[guild,Guild Commodities Exporter]:DoTarget

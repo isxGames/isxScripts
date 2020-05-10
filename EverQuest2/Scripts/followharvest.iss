@@ -30,70 +30,73 @@ variable int triggerCheckTimer=5
 
 function main(string FollowMember, int MaxRange)
 {
+	variable index:actor Actors
+	variable iterator ActorIterator
 
-	variable int tcount=0
-	variable int hcount=0
 	do
 	{
-
 		if !${Me.InCombat} && !${Me.IsMoving}
 		{
-			tcount:Set[1]
-			EQ2:CreateCustomActorArray[byDist,${MaxRange}]
+			EQ2:QueryActors[Actors, Distance <= ${MaxRange}]
+			Actors:GetIterator[ActorIterator]
 			;echo scanning actors
 
-			while ${tcount:Inc}<${EQ2.CustomActorArraySize} && ${Actor[pc,${FollowMember}].Distance}<${MaxRange}
+			if ${ActorIterator:First(exists)}
 			{
-				echo nearest actor is ${CustomActor[${tcount}].Name}
-				;if the nearest actor is a resource, harvest it
-				if ${CustomActor[${tcount}].Type.Equal[resource]}
-				{
-					if
+				do
+				{	
+					echo nearest actor is ${ActorIterator.Value.Name}
+					;if the nearest actor is a resource, harvest it
+					if ${ActorIterator.Value.Type.Equal[resource]}
 					{
-						echo ${CustomActor[${tcount}].Name} is a pc or pet and nearer than a resource, ending harvest
-						continue
-					}
-
-					CustomActor[${tcount}]:DoFace
-					call moveto ${CustomActor[${tcount}].X} ${CustomActor[${tcount}].Z} 5 0 3 1
-
-					if ${return.equal[stuck]}
-					{
-						continue
-					}
-
-					CustomActor[${tcount}]:DoTarget
-					echo found a resource - harvesting ${CustomActor[${tcount}].Name}
-
-					hcount:Set[0]
-					do
-					{
-						if ${Target.ID}==${CustomActor[${tcount}].ID}
+						if
 						{
-							call DoHarvest ${CustomActor[${tcount}].ID}
+							echo ${ActorIterator.Value.Name} is a pc or pet and nearer than a resource, ending harvest
+							continue
 						}
-					}
-					while (${CustomActor[${tcount}].ID(exists)} && ${CustomActor[${tcount}].Distance}<6) || ${hcount:Inc}<6
 
+						ActorIterator.Value:DoFace
+						call moveto ${ActorIterator.Value.X} ${ActorIterator.Value.Z} 5 0 3 1
+
+						if ${return.equal[stuck]}
+						{
+							continue
+						}
+
+						ActorIterator.Value:DoTarget
+						echo found a resource - harvesting ${ActorIterator.Value.Name}
+
+						hcount:Set[0]
+						do
+						{
+							if ${Target.ID}==${ActorIterator.Value.ID}
+							{
+								call DoHarvest ${ActorIterator.Value.ID}
+							}
+						}
+						while (${ActorIterator.Value.ID(exists)} && ${ActorIterator.Value.Distance}<6) || ${hcount:Inc}<6
+
+					}
+					elseif ${ActorIterator.Value.Target.ID}==${Actor[${FollowMember}].ID}
+					{
+						;echo ${ActorIterator.Value.Name} is agro on follower, ignore it.
+					}
+					elseif ${ActorIterator.Value.ID}==${Actor[${FollowMember}].ID} || ${ActorIterator.Value.ID}==${Me.ID}
+					{
+						;echo ${ActorIterator.Value.Name} is me or follower
+					}
+					elseif ${ActorIterator.Value.Type.Equal[PC]} || ${ActorIterator.Value.Type.Equal[Pet]}
+					{
+						;echo ${ActorIterator.Value.Name} is not a resource ignoring
+					}
+					else
+					{
+						;echo nearest actor is not a resource, pc, or pet it is ${ActorIterator.Value.Name}
+						call ResumeFollow ${FollowMember}
+						break
+					}
 				}
-				elseif ${CustomActor[${tcount}].Target.ID}==${Actor[${FollowMember}].ID}
-				{
-					;echo ${CustomActor[${tcount}].Name} is agro on follower, ignore it.
-				}
-				elseif ${CustomActor[${tcount}].ID}==${Actor[${FollowMember}].ID} || ${CustomActor[${tcount}].ID}==${Me.ID}
-				{
-					;echo ${CustomActor[${tcount}].Name} is me or follower
-				}
-				elseif ${CustomActor[${tcount}].Type.Equal[PC]} || ${CustomActor[${tcount}].Type.Equal[Pet]}
-				{
-					;echo ${CustomActor[${tcount}].Name} is not a resource ignoring
-				}
-				else
-				{
-					;echo nearest actor is not a resource, pc, or pet it is ${CustomActor[${tcount}].Name}
-					call ResumeFollow ${FollowMember}
-					tcount:Set[${EQ2.CustomActorArraySize}]
-				}
+				while ${ActorIterator:Next(exists)} && ${Actor[pc,${FollowMember}].Distance}<${MaxRange}
 			}
 		}
 		waitframe

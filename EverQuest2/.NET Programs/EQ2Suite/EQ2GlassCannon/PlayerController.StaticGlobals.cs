@@ -651,6 +651,9 @@ namespace EQ2GlassCannon
 		/************************************************************************************/
 		protected static IEnumerable<Actor> EnumActors(params string[] astrParams)
 		{
+			// The following routine needs to be updated to use the new Query system, as "CreateCustomActorArray"
+			// has been removed.  See http://forge.isxgames.com/projects/isxeq2/knowledgebase/articles/40
+
 			s_EQ2.CreateCustomActorArray(astrParams);
 
 			for (int iIndex = 1; iIndex <= s_EQ2.CustomActorArraySize; iIndex++)

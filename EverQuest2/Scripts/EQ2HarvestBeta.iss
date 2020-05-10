@@ -384,9 +384,7 @@ function CheckAggro()
 
 		CurrentAction:Set[Checking For Loot...]
 
-		EQ2:CreateCustomActorArray[byDist,15]
-
-		if ${CustomActor[chest,radius,15].Name(exists)} || ${CustomActor[corpse,radius,15].Name(exists)}
+		if ${Actor[chest,radius,15].Name(exists)} || ${Actor[corpse,radius,15].Name(exists)}
 		{
 			CurrentAction:Set[Loot nearby waiting 5 seconds...]
 			wait 50
@@ -867,63 +865,73 @@ objectdef EQ2HarvestBot
 	member:int Node(float lastWP_X, float lastWP_Y, float lastWP_Z)
 	{
 		variable int tempvar
-		variable int tcount=1
+		variable index:actor Actors
+		variable iterator ActorIterator
 
 		tempvar:Set[1]
-		EQ2:CreateCustomActorArray[byDist]
+		EQ2:QueryActors[Actors, Type =- "Resource"]
+		Actors:GetIterator[ActorIterator]
 
-		while ${tcount:Inc} <= ${EQ2.CustomActorArraySize}
+		if ${ActorIterator:First(exists)}
 		{
-			tempvar:Set[0]
-			while ${tempvar:Inc} <= 9
-			{
-				if ${CustomActor[${tcount}].Name.Equal[${NodeName[${tempvar}]}]} && ${CustomActor[${tcount}].Type.Equal[resource]} && ${HarvestNode[${tempvar}]}
+			do
+			{	
+				tempvar:Set[0]
+				while ${tempvar:Inc} <= 9
 				{
-					; Check Distance and Roaming Distance is within range.
-					;echo "EQ2Harvest-Debug:: Distance to nearest mapped area: ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}"
-					if ${Math.Distance[${CustomActor[${tcount}].Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Me.X},${Me.Z}]}<${HarvestClose})
+					if ${ActorIterator.Value.Name.Equal[${NodeName[${tempvar}]}]} && ${HarvestNode[${tempvar}]}
 					{
-						; Check to make sure it is not a bad node
-						if (${BadNodes.Element[${CustomActor[${tcount}].ID}].Name(exists)})
-						    break		
-						; make sure that it is close enough to our mapped zone
-						if ${Math.Distance[${CustomActor[${tcount}].Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
+						; Check Distance and Roaming Distance is within range.
+						;echo "EQ2Harvest-Debug:: Distance to nearest mapped area: ${Math.Distance[${ActorIterator.Value.X},${ActorIterator.Value.Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}"
+						if ${Math.Distance[${ActorIterator.Value.Y},${Me.Y}]}<${FilterY} && (${Math.Distance[${ActorIterator.Value.X},${ActorIterator.Value.Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${ActorIterator.Value.X},${ActorIterator.Value.Z},${Me.X},${Me.Z}]}<${HarvestClose})
 						{
-    						NodeType:Set[${tempvar}]
-    						return ${CustomActor[${tcount}].ID}						    						    
-						}
-						else
-						{
-						    echo "DEBUG: '${CustomActor[${tcount}].Name}' was too far away from the mapped zone...we'll come back to it I'm sure"
-						    break
+							; Check to make sure it is not a bad node
+							if (${BadNodes.Element[${ActorIterator.Value.ID}].Name(exists)})
+								break		
+							; make sure that it is close enough to our mapped zone
+							if ${Math.Distance[${ActorIterator.Value.Y},${lastWP_Y}]}<${FilterY} && (${Math.Distance[${ActorIterator.Value.X},${ActorIterator.Value.Z},${NearestRegion.CenterPoint.X},${NearestRegion.CenterPoint.Z}]}<${MaxRoaming} || ${Math.Distance[${ActorIterator.Value.X},${ActorIterator.Value.Z},${lastWP_X},${lastWP_Z}]}<${HarvestClose})
+							{
+								NodeType:Set[${tempvar}]
+								return ${ActorIterator.Value.ID}						    						    
+							}
+							else
+							{
+								echo "DEBUG: '${ActorIterator.Value.Name}' was too far away from the mapped zone...we'll come back to it I'm sure"
+								break
+							}
 						}
 					}
 				}
 			}
+			while ${ActorIterator:Next(exists)}
 		}
+
 		return 0
 	}
 
 	member:bool PCDetected()
 	{
-		variable int tcount=1
+		variable index:actor Actors
+		variable iterator ActorIterator
 
-		EQ2:CreateCustomActorArray[byDist]
+		EQ2:QueryActors[Actors, Type =- "PC"]
+		Actors:GetIterator[ActorIterator]
 
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
+		if ${ActorIterator:First(exists)}
 		{
-			if ${CustomActor[${tcount}].Type.Equal[PC]}
-			{
-				if ${Math.Distance[${CustomActor[${tcount}].X},${CustomActor[${tcount}].Z},${Actor[${NodeID}].X},${Actor[${NodeID}].Z}]}<20
+			do
+			{	
+				if ${Math.Distance[${ActorIterator.Value.X},${ActorIterator.Value.Z},${Actor[${NodeID}].X},${Actor[${NodeID}].Z}]}<20
 				{
-				    if (!${Me.Group[${CustomActor[${tcount}].Name}].Name(exists)})
-				    {
-    				    echo "DEBUG: A player (${CustomActor[${tcount}].Name}) was detected within 20 meters...adding destination to BadNodes"
-    					This:SetBadNode[${NodeID}]
-    					return TRUE
-    				}
+					if (!${Me.Group[${ActorIterator.Value.Name}].Name(exists)})
+					{
+						echo "DEBUG: A player (${ActorIterator.Value.Name}) was detected within 20 meters...adding destination to BadNodes"
+						This:SetBadNode[${NodeID}]
+						return TRUE
+					}
 				}
 			}
+			while ${ActorIterator:Next(exists)}
 		}
 
 		return FALSE

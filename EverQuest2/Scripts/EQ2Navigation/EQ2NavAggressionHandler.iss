@@ -75,55 +75,55 @@ objectdef MobCheck
 	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
 	member:int Count()
 	{
-		variable int tcount=2
+		variable index:actor Actors
+		variable iterator ActorIterator
 		variable int mobcount
 
-		if !${Actor[NPC,range,15].Name(exists)} && !(${Actor[NamedNPC,range,15].Name(exists)} && !${IgnoreNamed})
-		{
-			return 0
-		}
+		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 15]
+		Actors:GetIterator[ActorIterator]
 
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
+		if ${ActorIterator:First(exists)}
 		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].InCombatMode}
-			{
-				mobcount:Inc
+			do
+			{	
+				if ${This.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.InCombatMode}
+				{
+					mobcount:Inc
+				}
 			}
+			while ${ActorIterator:Next(exists)}
 		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-
 		return ${mobcount}
 	}
 
 	;returns true if you, group, raidmember, or pets have agro from mob in range
 	member:bool Detect()
 	{
-		variable int tcount=2
+		variable index:actor Actors
+		variable iterator ActorIterator
 
-		if !${Actor[NPC,range,15].Name(exists)} && !(${Actor[NamedNPC,range,15].Name(exists)}
+		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 15]
+		Actors:GetIterator[ActorIterator]
+
+		if ${ActorIterator:First(exists)}
 		{
-			return FALSE
-		}
-
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
-		{
-			if ${CustomActor[${tcount}].InCombatMode}
-			{
-				if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
+			do
+			{	
+				if ${ActorIterator.Value.InCombatMode}
 				{
-					return TRUE
-				}
+					if ${ActorIterator.Value.Target.ID}==${Me.ID}
+					{
+						return TRUE
+					}
 
-				if ${This.AggroGroup[${CustomActor[${tcount}].ID}]}
-				{
-					return TRUE
+					if ${This.AggroGroup[${ActorIterator.Value.ID}]}
+					{
+						return TRUE
+					}
 				}
 			}
+			while ${ActorIterator:Next(exists)}
 		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
-
 		return FALSE
 	}
 
@@ -144,25 +144,26 @@ objectdef MobCheck
 
 	method CheckMYAggro()
 	{
-		variable int tcount=2
+		variable index:actor Actors
+		variable iterator ActorIterator
 		haveaggro:Set[FALSE]
 
-		if !${Actor[NPC,range,15].Name(exists)} && !(${Actor[NamedNPC,range,15].Name(exists)} && !${IgnoreNamed})
-		{
-			return
-		}
+		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 15]
+		Actors:GetIterator[ActorIterator]
 
-		EQ2:CreateCustomActorArray[byDist,15]
-		do
+		if ${ActorIterator:First(exists)}
 		{
-			if ${This.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.ID}==${Me.ID} && ${CustomActor[${tcount}].InCombatMode}
-			{
-				haveaggro:Set[TRUE]
-				aggroid:Set[${CustomActor[${tcount}].ID}]
-				return
+			do
+			{	
+				if ${This.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.Target.ID}==${Me.ID} && ${ActorIterator.Value.InCombatMode}
+				{
+					haveaggro:Set[TRUE]
+					aggroid:Set[${ActorIterator.Value.ID}]
+					return
+				}
 			}
+			while ${ActorIterator:Next(exists)}
 		}
-		while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 	}
 
 	method ClearAggroMatrix()

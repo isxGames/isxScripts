@@ -50,6 +50,9 @@ function main()
 		waitframe
 }
 
+;;;;;;
+;; CustomActorArrays are no longer supported by ISXEQ2.  This object would have to be redone/reworked/updated
+;; to use Queries, as explained here:  http://forge.isxgames.com/projects/isxeq2/knowledgebase/articles/40
 objectdef OgreCustomArrayControllerObect
 {
 	variable int UpdateInterval=1000
@@ -60,7 +63,7 @@ objectdef OgreCustomArrayControllerObect
 		if ${DistanceToUse} > 0 && !${CACTimerOb.TimeLeft}
 		{
 			;// echo ${Time} Command: EQ2 - CreateCustomActorArray[byDist,${DistanceToUse}]
-			EQ2:CreateCustomActorArray[byDist,${DistanceToUse}]
+			;EQ2:CreateCustomActorArray[byDist,${DistanceToUse}]
 			CACTimerOb:Set[${UpdateInterval}]
 			;// echo CACTimerOb:Set[${UpdateInterval}]
 		}

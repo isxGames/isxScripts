@@ -70,7 +70,8 @@ function main()
 function startharvest(int scan)
 {
 	variable int harvestcount
-	variable int harvestloop
+	variable index:actor Actors
+	variable iterator ActorIterator
 	variable string actorname
 
 	variable int tempvar
@@ -88,35 +89,36 @@ function startharvest(int scan)
 		{
 			if ${MaxDistance}
 			{
-				EQ2:CreateCustomActorArray[byDist,${Math.Calc[${scan}*2]}]
+				EQ2:QueryActors[Actors, Type =- "Resource" && Distance <= ${Math.Calc[${scan}*2]}]
 			}
 			else
 			{
-				EQ2:CreateCustomActorArray[byDist,${scan}]
+				EQ2:QueryActors[Actors, Type =- "Resource" && Distance <= ${scan}]
 			}
-		
-			harvestloop:Set[1]
-			harvestcount:Set[${EQ2.CustomActorArraySize}]
-			do
+
+			Actors:GetIterator[ActorIterator]
+			harvestcount:Set[${Actors.Used}]
+
+			if ${ActorIterator:First(exists)}
 			{
-				if ${CustomActor[${harvestloop}].Name(exists)}
-				{
-					actorname:Set[${CustomActor[${harvestloop}]}]
-					if ${CustomActor[${harvestloop}].Type.Equal[resource]} && !${actorname.Equal[NULL]}
+				do
+				{	
+					if ${ActorIterator.Value.Name(exists)}
 					{
+						actorname:Set[${ActorIterator.Value.Name}]
 						tempvar:Set[1]
 						do
 						{
 							if ${MaxDistance} 
 							{
-								if ${Math.Distance[${CustomActor[${harvestloop}].X},${SX}]} > ${scan} || ${Math.Distance[${CustomActor[${harvestloop}].Z},${SZ}]} > ${scan}
+								if ${Math.Distance[${ActorIterator.Value.X},${SX}]} > ${scan} || ${Math.Distance[${ActorIterator.Value.Z},${SZ}]} > ${scan}
 								{
 									break
 								}
 								else
 								{
-									UIElement[XDistance@Harvest@GUITabs@GoHarvest]:SetText[${Math.Distance[${CustomActor[${harvestloop}].X},${SX}]}]
-									UIElement[ZDistance@Harvest@GUITabs@GoHarvest]:SetText[${Math.Distance[${CustomActor[${harvestloop}].Z},${SZ}]}]
+									UIElement[XDistance@Harvest@GUITabs@GoHarvest]:SetText[${Math.Distance[${ActorIterator.Value.X},${SX}]}]
+									UIElement[ZDistance@Harvest@GUITabs@GoHarvest]:SetText[${Math.Distance[${ActorIterator.Value.Z},${SZ}]}]
 								}
 							}
 							if ${HarvestNode[${tempvar}]}
@@ -124,10 +126,10 @@ function startharvest(int scan)
 								call checknodename ${tempvar} "${actorname}"
 								if ${Return}
 								{
-									if ${CustomActor[${harvestloop}].Name(exists)}
+									if ${ActorIterator.Value.Name(exists)}
 									{
-										HID:Set[${CustomActor[${harvestloop}].ID}]
-										if !${BadNodes.Element[${CustomActor[${harvestloop}].ID}].Name(exists)}
+										HID:Set[${ActorIterator.Value.ID}]
+										if !${BadNodes.Element[${ActorIterator.Value.ID}].Name(exists)}
 										{
 											BadNode:Set[FALSE]
 											call harvestnode
@@ -135,15 +137,19 @@ function startharvest(int scan)
 											{
 												if ${MaxDistance}
 												{
-													EQ2:CreateCustomActorArray[byDist,${Math.Calc[${scan}*2]}]
+													EQ2:QueryActors[Actors, Type =- "Resource" && Distance <= ${Math.Calc[${scan}*2]}]
 												}
 												else
 												{
-													EQ2:CreateCustomActorArray[byDist,${scan}]
+													EQ2:QueryActors[Actors, Type =- "Resource" && Distance <= ${scan}]
 												}
 												waitframe
-												harvestloop:Set[1]
-												harvestcount:Set[${EQ2.CustomActorArraySize}]
+												Actors:GetIterator[ActorIterator]
+												harvestcount:Set[${Actors.Used}]
+												if ${ActorIterator:First(exists)}
+													continue
+												else
+													break
 											}
 										}
 									}
@@ -153,11 +159,11 @@ function startharvest(int scan)
 						}
 						while ${tempvar:Inc} <=10
 					}
+					if ${pauseharvest} || ${Me.InCombat} || ${Me.Health}<90
+					break
 				}
-				if ${pauseharvest} || ${Me.InCombat} || ${Me.Health}<90
-				break
+				while ${ActorIterator:Next(exists)}
 			}
-			while ${harvestloop:Inc} <= ${harvestcount}
 		}
 	}
 }
@@ -294,24 +300,32 @@ function hitnode(float HID)
 
 function checkPC()
 {
-	variable int PCloop=1
-	EQ2:CreateCustomActorArray[byDist,9}]
-	do
+	variable index:actor Actors
+	variable iterator ActorIterator
+
+	EQ2:QueryActors[Actors, Type =- "PC" && Distance <= 9]
+	Actors:GetIterator[ActorIterator]
+
+	if ${ActorIterator:First(exists)}
 	{
-		if ${CustomActor[${PCloop}].Type.Equal[PC]} && !${CustomActor[${PCloop}].Name.Equal[${Me.Name}]}
-		{
-			if !${Me.Group[${CustomActor[${PCloop}].Name}].Name(exists)}
+		do
+		{	
+			if !${ActorIterator.Value.Name.Equal[${Me.Name}]}
 			{
-				if ${Math.Distance[${Actor[${HID}].X},${CustomActor[${PCloop}].X}]} <= 7 && ${Math.Distance[${Actor[${HID}].Z},${CustomActor[${PCloop}].Z}]} <= 7
+				if !${Me.Group[${ActorIterator.Value.Name}].Name(exists)}
 				{
-					; non-grouped PC near a node - ignore it and move on
-					Echo Someone at that node - ignore
-					return TRUE
+					if ${Math.Distance[${Actor[${HID}].X},${ActorIterator.Value.X}]} <= 7 && ${Math.Distance[${Actor[${HID}].Z},${ActorIterator.Value.Z}]} <= 7
+					{
+						; non-grouped PC near a node - ignore it and move on
+						Echo Someone at that node - ignore
+						return TRUE
+					}
 				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${PCloop:Inc} <= ${EQ2.CustomActorArraySize}
+
 	return FALSE
 }
 
@@ -677,9 +691,7 @@ function CheckAggro()
 		}
 		while ${MobCheck.Detect} || ${Me.Health}<90
 
-		EQ2:CreateCustomActorArray[byDist,15]
-
-		if ${CustomActor[chest,radius,15].Name(exists)} || ${CustomActor[corpse,radius,15].Name(exists)}
+		if ${Actor[chest,radius,15].Name(exists)} || ${Actor[corpse,radius,15].Name(exists)}
 		{
 			Echo Loot nearby waiting 5 seconds...
 			wait 50

@@ -225,9 +225,8 @@ function CheckMovingAggro()
 		while ${MobCheck.Detect} || ${Me.Health}<90 || ${Me.IsHated}
 
 		Echo Scanning Loot in moveto
-		EQ2:CreateCustomActorArray[byDist,15]
 
-		if ${CustomActor[chest,radius,15].Name(exists)} || ${CustomActor[corpse,radius,15].Name(exists)}
+		if ${Actor[chest,radius,15].Name(exists)} || ${Actor[corpse,radius,15].Name(exists)}
 		{
 			;echo Loot Nearby, waiting 5 seconds...
 			wait 50

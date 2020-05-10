@@ -10,6 +10,9 @@ Updated a few routines to help with NULLS / CAA changing
 
 Version 1.006 - Kannkor
 Changed CustomActorArray to use OgreCustomArrayControllerScript
+	;;;;;; UPDATE!
+	;; CustomActorArrays are no longer supported by ISXEQ2.  This object would have to be redone/reworked/updated
+	;; to use Queries, as explained here:  http://forge.isxgames.com/projects/isxeq2/knowledgebase/articles/40
 
 To-do
 Make pause actually pause everything
