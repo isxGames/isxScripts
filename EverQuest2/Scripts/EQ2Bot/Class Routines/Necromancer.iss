@@ -962,23 +962,19 @@ function CheckEssense()
 	;keeps 1 stack of anguish and destroys the next stack
 	variable int Counter=1
 	variable bool StackFound=FALSE
-	Me:CreateCustomInventoryArray[nonbankonly]
-	do
+
+	if ${Me.Inventory[AtHand, "essence of anguish"]}
 	{
-		if ${Me.CustomInventory[${Counter}].Name.Equal[essence of anguish]}
+		if ${StackFound}
 		{
-			if ${StackFound}
-			{
-				;we already have a stack so destroy this one and return
-				return STACKFOUND
-			}
-			else
-			{
-				StackFound:Set[TRUE]
-			}
+			;we already have a stack so destroy this one and return
+			return STACKFOUND
+		}
+		else
+		{
+			StackFound:Set[TRUE]
 		}
 	}
-	while ${Counter:Inc}<=${Me.CustomInventoryArraySize}
 
 	return NOSTACK
 }

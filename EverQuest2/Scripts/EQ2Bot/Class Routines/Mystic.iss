@@ -931,26 +931,32 @@ function EmergencyHeal(int healtarget)
 
 function CheckHealerMob()
 {
-	declare tcount int local 2
+	variable index:actor Actors
+	variable iterator ActorIterator
 
-	EQ2:CreateCustomActorArray[byDist,15]
-	do
+	EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 15]
+	Actors:GetIterator[ActorIterator]
+
+	if ${ActorIterator:First(exists)}
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]}
+		do
 		{
-			switch ${CustomActor[${tcount}].Class}
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]}
 			{
-				case templar
-				case inquisitor
-				case fury
-				case warden
-				case defiler
-				case mystic
-					return TRUE
+				switch ${ActorIterator.Value.Class}
+				{
+					case templar
+					case inquisitor
+					case fury
+					case warden
+					case defiler
+					case mystic
+						return TRUE
+				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<=${EQ2.CustomActorArraySize}
 
 	return FALSE
 }

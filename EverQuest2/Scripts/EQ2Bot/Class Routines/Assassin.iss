@@ -67,7 +67,7 @@ function Class_Declaration()
 	declare MaintainPoison bool Script FALSE
 	declare CloakMode bool Script FALSE
 	declare DebuffPoisonShort string script
-	declare DammagePoisonShort string script
+	declare DamagePoisonShort string script
 	declare UtilityPoisonShort string script
 
 	;Custom Equipment
@@ -102,7 +102,7 @@ function Class_Declaration()
 	;POISON DECLERATIONS - Still Experimental, but is working for these 3 for me.
 	;EDIT THESE VALUES FOR THE POISONS YOU WISH TO USE
 	;The SHORT name is the name of the poison buff icon
-	DammagePoisonShort:Set[caustic poison]
+	DamagePoisonShort:Set[caustic poison]
 	DebuffPoisonShort:Set[enfeebling poison]
 	UtilityPoisonShort:Set[ignorant bliss]
 
@@ -337,20 +337,19 @@ function Buff_Routine(int xAction)
 		case Poisons
 			if ${MaintainPoison}
 			{
-				Me:CreateCustomInventoryArray[nonbankonly]
-				if !${Me.Maintained[${DammagePoisonShort}](exists)} && ${Me.CustomInventory[${DammagePoisonShort}](exists)}
+				if !${Me.Maintained[${DamagePoisonShort}](exists)} && ${Me.Inventory[AtHand,${DamagePoisonShort}](exists)}
 				{
-					Me.CustomInventory[${DammagePoisonShort}]:Use
+					Me.Inventory[AtHand,${DamagePoisonShort}]:Use
 				}
 
-				if !${Me.Maintained[${DebuffPoisonShort}](exists)} && ${Me.CustomInventory[${DebuffPoisonShort}](exists)}
+				if !${Me.Maintained[${DebuffPoisonShort}](exists)} && ${Me.Inventory[AtHand,${DebuffPoisonShort}](exists)}
 				{
-					Me.CustomInventory[${DebuffPoisonShort}]:Use
+					Me.Inventory[AtHand,${DebuffPoisonShort}]:Use
 				}
 
-				if !${Me.Maintained[${UtilityPoisonShort}](exists)} && ${Me.CustomInventory[${UtilityPoisonShort}](exists)}
+				if !${Me.Maintained[${UtilityPoisonShort}](exists)} && ${Me.Inventory[AtHand,${UtilityPoisonShort}](exists)}
 				{
-					Me.CustomInventory[${UtilityPoisonShort}]:Use
+					Me.Inventory[AtHand,${UtilityPoisonShort}]:Use
 				}
 			}
 			break

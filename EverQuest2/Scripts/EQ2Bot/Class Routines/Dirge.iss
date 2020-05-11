@@ -893,7 +893,8 @@ function CheckHeals()
 
 function DoMagneticNote()
 {
-	declare tcount int local
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
@@ -904,22 +905,24 @@ function DoMagneticNote()
 	if !${Me.Ability[${SpellType[383]}].IsReady}
 		return
 
-	EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= ${ScanRange}]
+	Actors:GetIterator[ActorIterator]
 
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
+		do
 		{
-
-			
-			if (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})  && (${CustomActor[${tcount}].Target.ID}!=${Actor[${MainTankPC}].ID})
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.Target.Name(exists)}
 			{
-				call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID} 0 0 0 0 1 0
-				return
+				if (${Actor[${MainTankPC}].Target.ID}==${ActorIterator.Value.ID})  && (${ActorIterator.Value.Target.ID}!=${Actor[${MainTankPC}].ID})
+				{
+					call CastSpellRange 383 0 0 0 ${Actor[${MainTankPC}].ID} 0 0 0 0 1 0
+					return
+				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 }
 
 function DoGravitas()

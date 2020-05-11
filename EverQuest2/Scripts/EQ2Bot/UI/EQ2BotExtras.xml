@@ -428,20 +428,21 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<height>20</height>
 		<AutoTooltip>Potion to use for Arcane</AutoTooltip>
 		<OnLeftClick>
-			declare Counter int
-			declare ArcaneShort string "Arcane Remedy"
-			Counter:Set[1]
+			variable string ArcaneShort = "Arcane Remedy"
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; Name =- "${ArcaneShort}"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].Name.Right[13].Equal[${ArcaneShort}]}
+				do
 				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
 				if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${ArcaneShort}]}
@@ -477,23 +478,24 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<height>20</height>
 		<AutoTooltip>Potion to use for Elemental</AutoTooltip>
 		<OnLeftClick>
-			declare Counter int
-			declare ElementalShort string "Elemental Remedy"
-			Counter:Set[1]
+			variable string ElementalShort = "Elemental Remedy"
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; Name =- "${ElementalShort}"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].Name.Right[16].Equal[${ElementalShort}]}
+				do
 				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].Name.Right[16].Equal[${ElementalShort}]}
+				if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${ElementalShort}]}
 				{
 					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
@@ -526,23 +528,24 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<height>20</height>
 		<AutoTooltip>Potion to use for Noxious</AutoTooltip>
 		<OnLeftClick>
-			declare Counter int
-			declare NoxiousShort string "Noxious Remedy"
-			Counter:Set[1]
+			variable string NoxiousShort = "Noxious Remedy"
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; Name =- "${NoxiousShort}"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].Name.Right[14].Equal[${NoxiousShort}]}
+				do
 				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].Name.Right[14].Equal[${NoxiousShort}]}
+				if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${NoxiousShort}]}
 				{
 					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
@@ -575,20 +578,21 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<height>20</height>
 		<AutoTooltip>Potion to use for Trauma</AutoTooltip>
 		<OnLeftClick>
-			declare Counter int
-			declare TraumaShort string "Trauma Remedy"
-			Counter:Set[1]
+			variable string TraumaShort = "Trauma Remedy"
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; Name =- "${TraumaShort}"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].Name.Right[13].Equal[${TraumaShort}]}
+				do
 				{
-					This:AddItem[${Me.CustomInventory[${Counter}].Name}]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
 				if ${Me.Equipment[${Counter}].Name.Right[13].Equal[${TraumaShort}]}

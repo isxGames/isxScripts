@@ -239,7 +239,6 @@ function Class_Shutdown()
 	Event[EQ2_FinishedZoning]:DetachAtom[Illusionist_FinishedZoning]
 }
 
-
 function Buff_Init()
 {
 	PreAction[1]:Set[Self_Buff]
@@ -884,11 +883,12 @@ function CheckCastBeam()
 
 /* This function will be called between every spell or spell group regardless of
    DPS or UltraDPS mode. */
-
 function CheckNonDps(... Args)
 {
 	variable int spellsused
-	
+
+	; check heals/cures
+	call CheckHeals
 	
 	if ${ChainStunMode}
 		call ChainStunMez
@@ -949,9 +949,6 @@ function CheckNonDps(... Args)
 		return ${spellsused}
 	}
 
-	; check heals/cures
-	call CheckHeals
-
 	; check power
 	call RefreshPower
 }
@@ -979,7 +976,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 		
 	call VerifyTarget ${TargetID}
 	if ${Return.Equal[FALSE]}
-		return CombatComplete		
+		return CombatComplete
 		
 	if ${DoCallCheckPosition}
 	{
@@ -1023,7 +1020,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	if (${Me.InCombatMode} && ${Me.Pet.Name(exists)})
 	{
 		if (${Me.Pet.Target.ID} != ${TargetID} || !${Me.Pet.InCombatMode})
-			call PetAttack 1
+			EQ2Execute /pet attack
 	}
 	if !${MainTank} || ${AutoMelee}
 	{
@@ -1346,16 +1343,11 @@ function Combat_Routine(int xAction)
 			call PetAttack 1
 	}
 
-	call CheckHeals
-	if ${Return.Length}
-		call RefreshPower
-
 	;; Add back later...(TODO)
 		;call CheckSKFD
 
 	ExecuteQueued Mezmerise_Targets
 	FlushQueued Mezmerise_Targets
-	
 	
 	call DoShortTermBuffs ${DoShortTermBuffs}
 	if ${Return.Equal[CombatComplete]}
@@ -1717,13 +1709,8 @@ function Combat_Routine(int xAction)
 		return CombatComplete
 	}
 
-	; Cure Arcane
-	if (${Me.Arcane} >= 1 || ${Me.Elemental} >= 1 || ${Me.Noxious} >= 1 || ${Me.Trauma} >= 1)
-	{
-		call CastSpellRange 210 0 0 0 ${Me.ID}
-		LastSpellCast:Set[210]
-		spellsused:Inc
-	}
+	; check heals/cures
+	call CheckHeals
 	
 	call CheckCastBeam
 	if ${Return.Equal[CombatComplete]}
@@ -1993,8 +1980,7 @@ function Combat_Routine(int xAction)
 				FlushQueued Mezmerise_Targets			
 			}	
 			break
-			
-
+		
 		case Theorems
 			;if ${UltraDPSMode}
 			;{
@@ -2612,7 +2598,7 @@ function RefreshPower()
 
 function CheckHeals()
 {
-	variable int temphl=1
+	variable int temphl = 0
 	variable bool DoCures
 	variable bool bReturn
 	bReturn:Set[FALSE]
@@ -2632,54 +2618,47 @@ function CheckHeals()
 		call CommonHeals 60
 	}
 
-	if (${DoCures})
+	if (${DoCures} && ${Me.Ability[${SpellType[210]}].IsReady})
 	{
+		;echo "[${Time.SecondsSinceMidnight}]\ao Checking for Cures\ax"
 		;;;;;;;;;;;;;
 		;; Cure Magic
-		if (${Me.Arcane} >= 1 || ${Me.Elemental} >= 1 || ${Me.Noxious} >= 1 || ${Me.Trauma} >= 1)
+		do
 		{
-			if (${CureMagicIsInstantCast})
+			if (${Me.Group[${temphl}].InZone} && !${Me.Group[${temphl}].IsDead})
 			{
-				eq2execute /useabilityonplayer ${Me.Name} Cure Magic
-				wait 3
-			}
-			else
-				call CastSpellRange 210 0 0 0 ${Me.ID}
-			LastSpellCast:Set[210]
-			bReturn:Set[TRUE]
-
-			if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
-				Target ${KillTarget}
-		}
-		if ${Me.Group} > 1
-		{
-			do
-			{
-				;;;;;;;;;;;;;
-				;; Cure Magic
-				if (${Me.Group[${temphl}].InZone} && !${Me.Group[${temph1}].IsDead})
+				if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
 				{
-					if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
+					;echo "\ayCuring ${Me.Group[${temphl}].Name}!\ax"
+					if (${CureMagicIsInstantCast})
 					{
-						echo "\ayCuring ${Me.Group[${temphl}].Name}!\ax"
-						if (${CureMagicIsInstantCast})
+						if ${Me.CastingSpell}
 						{
-							eq2execute /useabilityonplayer ${Me.Group[${temphl}].Name} Cure Magic
-							wait 3
+							do
+							{
+								eq2execute /cancel_spellcast
+								wait 2
+							}
+							while ${Me.CastingSpell}
 						}
-						else
-							call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
-						LastSpellCast:Set[210]
-						bReturn:Set[TRUE]
-						wait 1
-
-						if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
-							Target ${KillTarget}
+						wait 2
+						eq2execute /useabilityonplayer ${Me.Name} Cure Magic
+						waitframe
 					}
+					else
+						call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
+					LastSpellCast:Set[210]
+					bReturn:Set[TRUE]
+					wait 1
+
+					if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
+						Target ${KillTarget}
+					
+					break
 				}
 			}
-			while ${temphl:Inc} <= ${Me.Group}
 		}
+		while ${temphl:Inc} <= ${Me.Group}
 	}
 	return ${bReturn}
 }
@@ -2717,7 +2696,8 @@ function Mezmerise_Targets()
 	variable int Counter=1
 	variable uint bufftgt
 	variable uint originaltarget
-	declare tcount int local 1
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
@@ -2780,85 +2760,87 @@ function Mezmerise_Targets()
 	}
 	while ${Counter:Inc}<=${Me.CountMaintained}
 
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= ${ScanRange}]
+	Actors:GetIterator[ActorIterator]
 
-	EQ2:CreateCustomActorArray[byDist,${ScanRange},npc]
-
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if ${CustomActor[${tcount}].Type.Equal[NoKillNPC]}
-			continue
-
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
+		do
 		{
-			;if its the kill target skip it
-			if (${CustomActor[${tcount}].ID} == ${KillTarget})
-			    continue
-			if ${Actor[${MainAssistID}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankID}].Target.ID}==${CustomActor[${tcount}].ID}
+			if ${ActorIterator.Value.Type.Equal[NoKillNPC]}
 				continue
 
-			;if it's an epic, skip it
-			if ${CustomActor[${tcount}].IsEpic}
-				continue
-
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-
-			;check if its agro on a raid member or raid member's pet
-			if ${Me.InRaid}
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.Target.Name(exists)}
 			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Raid[${tempvar}].Pet.ID})
-					{
-						aggrogrp:Set[TRUE]
-						break
-					}
-				}
-				while ${tempvar:Inc} <= ${Me.Raid}
-			}
-			elseif ${Me.GroupCount} > 1 /* check if its agro on a group member or group member's pet */
-			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet.Name(exists)})
-					{
-						aggrogrp:Set[TRUE]
-						break
-					}
-				}
-				while ${tempvar:Inc} <= ${Me.GroupCount}
-			}
-
-			;check if its agro on me
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-				aggrogrp:Set[TRUE]
-
-			;if i have a mob charmed check if its agro on my charmed pet
-			if ${Me.Maintained[${SpellType[351]}](exists)}
-			{
-				if ${CustomActor[${tcount}].Target.IsMyPet}
-					aggrogrp:Set[TRUE]
-			}
-
-			if ${aggrogrp}
-			{
-				if !${MezzTargets.Element[${CustomActor[${tcount}].ID}](exists)}
-					MezzTargets:Set[${CustomActor[${tcount}].ID},""]
-				if ${MezzTargets.Element[${CustomActor[${tcount}].ID}].IsMezzed}
+				;if its the kill target skip it
+				if (${ActorIterator.Value.ID} == ${KillTarget})
 					continue
-			}
-			aggrogrp:Set[FALSE]
-		}
-	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
+				if ${Actor[${MainAssistID}].Target.ID}==${ActorIterator.Value.ID} || ${Actor[${MainTankID}].Target.ID}==${ActorIterator.Value.ID}
+					continue
 
+				;if it's an epic, skip it
+				if ${ActorIterator.Value.IsEpic}
+					continue
+
+				tempvar:Set[1]
+				aggrogrp:Set[FALSE]
+
+				;check if its agro on a raid member or raid member's pet
+				if ${Me.InRaid}
+				{
+					do
+					{
+						if ${ActorIterator.Value.Target.ID}==${Me.Raid[${tempvar}].ID} || (${ActorIterator.Value.Target.ID}==${Me.Raid[${tempvar}].Pet.ID})
+						{
+							aggrogrp:Set[TRUE]
+							break
+						}
+					}
+					while ${tempvar:Inc} <= ${Me.Raid}
+				}
+				elseif ${Me.GroupCount} > 1 /* check if its agro on a group member or group member's pet */
+				{
+					do
+					{
+						if ${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].ID} || (${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet.Name(exists)})
+						{
+							aggrogrp:Set[TRUE]
+							break
+						}
+					}
+					while ${tempvar:Inc} <= ${Me.GroupCount}
+				}
+
+				;check if its agro on me
+				if ${ActorIterator.Value.Target.ID}==${Me.ID}
+					aggrogrp:Set[TRUE]
+
+				;if i have a mob charmed check if its agro on my charmed pet
+				if ${Me.Maintained[${SpellType[351]}](exists)}
+				{
+					if ${ActorIterator.Value.Target.IsMyPet}
+						aggrogrp:Set[TRUE]
+				}
+
+				if ${aggrogrp}
+				{
+					if !${MezzTargets.Element[${ActorIterator.Value.ID}](exists)}
+						MezzTargets:Set[${ActorIterator.Value.ID},""]
+					if ${MezzTargets.Element[${ActorIterator.Value.ID}].IsMezzed}
+						continue
+				}
+				aggrogrp:Set[FALSE]
+			}
+		}
+		while ${ActorIterator:Next(exists)}
+	}
 
 	if ${MezzTargets.FirstKey(exists)}
 	{
 		; Need to loop through checking for remezzes first
 		do
 		{
-/*		Debug:Echo[MEZ TARGETS FOR ${Actor[${MezzTargets.CurrentKey}].ID}]
+/*			Debug:Echo[MEZ TARGETS FOR ${Actor[${MezzTargets.CurrentKey}].ID}]
 			Debug:Echo[IsAoE: ${MezzTargets.CurrentValue.IsAoeMezzed}]
 			Debug:Echo[IsShort: ${MezzTargets.CurrentValue.IsShortMezzed}]
 			Debug:Echo[IsLong: ${MezzTargets.CurrentValue.IsLongMezzed}]

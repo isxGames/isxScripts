@@ -208,7 +208,7 @@
               <OnLoad>
               </OnLoad>
               <OnLeftClick>
-                Script[EQ2Bot]:QueueCommand[call ReacquireKillTargetFromMA]
+                Script[EQ2Bot]:QueueCommand[call ReacquireKillTargetFromMA 5]
               </OnLeftClick>
             </Commandbutton>
             <Commandbutton name='Set KillTarget'>

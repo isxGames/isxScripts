@@ -810,76 +810,83 @@ function CheckHeals()
 
 function Mezmerise_Targets()
 {
-	declare tcount int local 1
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
+	variable index:actor Actors
+	variable iterator ActorIterator
+
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 25]
+	Actors:GetIterator[ActorIterator]
 
 	grpcnt:Set[${Me.GroupCount}]
-	EQ2:CreateCustomActorArray[byDist,25]
-
-	do
+	
+	if ${ActorIterator:First(exists)}
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
+		do
 		{
-			;if its the kill target skip it
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
-				continue
-
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-
-			;check if its agro on a group member or group member's pet
-			if ${grpcnt}>1
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.Target.Name(exists)}
 			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
-					{
-						aggrogrp:Set[TRUE]
-						break
-					}
-				}
-				while ${tempvar:Inc}<=${grpcnt}
-			}
+				;if its the kill target skip it
+				if ${Actor[${MainAssist}].Target.ID}==${ActorIterator.Value.ID} || ${Actor[${MainTankPC}].Target.ID}==${ActorIterator.Value.ID}
+					continue
 
-			;check if its agro on a raid member or raid member's pet
-			if ${Me.InRaid}
-			{
-				do
-				{
-					if ${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID}  || (${CustomActor[${tcount}].Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
-					{
-						aggrogrp:Set[TRUE]
-						break
-					}
-				}
-				while ${tempvar:Inc}<=24
-			}
-			;check if its agro on me
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID} || ${CustomActor[${tcount}].Target.IsMyPet}
-				aggrogrp:Set[TRUE]
-
-			if ${aggrogrp}
-			{
-				if ${Me.AutoAttackOn}
-					eq2execute /toggleautoattack
-
-				if ${Me.RangedAutoAttackOn}
-					eq2execute /togglerangedattack
-
-				;try to AE mezz first and check if its not single target mezzed
-				if !${CustomActor[${tcount}].Effect[${SpellType[352]}](exists)}
-					call CastSpellRange 353 0 0 0 ${CustomActor[${tcount}].ID}
-
-				;if the actor is not AE Mezzed then single target Mezz
-				if !${CustomActor[${tcount}].Effect[${SpellType}[353]](exists)}
-					call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 10
-
+				tempvar:Set[1]
 				aggrogrp:Set[FALSE]
+
+				;check if its agro on a group member or group member's pet
+				if ${grpcnt}>1
+				{
+					do
+					{
+						if ${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].ID} || (${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
+						{
+							aggrogrp:Set[TRUE]
+							break
+						}
+					}
+					while ${tempvar:Inc}<=${grpcnt}
+				}
+
+				;check if its agro on a raid member or raid member's pet
+				if ${Me.InRaid}
+				{
+					do
+					{
+						if ${ActorIterator.Value.Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].ID}  || (${ActorIterator.Value.Target.ID}==${Actor[exactname,${Me.Raid[${tempvar}].Name}].Pet.ID})
+						{
+							aggrogrp:Set[TRUE]
+							break
+						}
+					}
+					while ${tempvar:Inc}<=24
+				}
+				;check if its agro on me
+				if ${ActorIterator.Value.Target.ID}==${Me.ID} || ${ActorIterator.Value.Target.IsMyPet}
+					aggrogrp:Set[TRUE]
+
+				if ${aggrogrp}
+				{
+					if ${Me.AutoAttackOn}
+						eq2execute /toggleautoattack
+
+					if ${Me.RangedAutoAttackOn}
+						eq2execute /togglerangedattack
+
+					;try to AE mezz first and check if its not single target mezzed
+					if !${ActorIterator.Value.Effect[${SpellType[352]}](exists)}
+						call CastSpellRange 353 0 0 0 ${ActorIterator.Value.ID}
+
+					;if the actor is not AE Mezzed then single target Mezz
+					if !${ActorIterator.Value.Effect[${SpellType}[353]](exists)}
+						call CastSpellRange 352 0 0 0 ${ActorIterator.Value.ID} 0 10
+
+					aggrogrp:Set[FALSE]
+				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
+
 
 	if ${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
 	{
@@ -895,7 +902,8 @@ function Mezmerise_Targets()
 
 function DoCharm()
 {
-	declare tcount int local
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
@@ -906,41 +914,45 @@ function DoCharm()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
+	Actors:GetIterator[ActorIterator]
 
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && !${CustomActor[${tcount}].IsEpic} && ${CustomActor[${tcount}].Target.Name(exists)}
+		do
 		{
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID} && ${grpcnt}>1
-				continue
-
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-			if ${grpcnt}>1
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]} && !${ActorIterator.Value.IsEpic} && ${ActorIterator.Value.Target.Name(exists)}
 			{
-				do
+				if ${Actor[${MainAssist}].Target.ID}==${ActorIterator.Value.ID} && ${grpcnt}>1
+					continue
+
+				tempvar:Set[1]
+				aggrogrp:Set[FALSE]
+				if ${grpcnt}>1
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
+					do
 					{
-						aggrogrp:Set[TRUE]
-						break
+						if ${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].ID} || (${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
+						{
+							aggrogrp:Set[TRUE]
+							break
+						}
 					}
+					while ${tempvar:Inc}<=${grpcnt}
 				}
-				while ${tempvar:Inc}<=${grpcnt}
-			}
 
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-				aggrogrp:Set[TRUE]
+				if ${ActorIterator.Value.Target.ID}==${Me.ID}
+					aggrogrp:Set[TRUE]
 
-			if ${aggrogrp} && (${CustomActor[${tcount}].Difficulty}>=0) && (${CustomActor[${tcount}].Difficulty}<=3)
-			{
-				CharmTarget:Set[${CustomActor[${tcount}].ID}]
-				break
+				if ${aggrogrp} && (${ActorIterator.Value.Difficulty}>=0) && (${ActorIterator.Value.Difficulty}<=3)
+				{
+					CharmTarget:Set[${ActorIterator.Value.ID}]
+					break
+				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
 	if ${Actor[${CharmTarget}].Name(exists)}
 	{
@@ -982,7 +994,8 @@ function DoDMind()
 
 function DoAmnesia()
 {
-	declare tcount int local
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
@@ -990,58 +1003,62 @@ function DoAmnesia()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	EQ2:CreateCustomActorArray[byDist,35]
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 35]
+	Actors:GetIterator[ActorIterator]
 
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if ${Mob.ValidActor[${CustomActor[${tcount}].ID}]} && ${CustomActor[${tcount}].Target.Name(exists)}
+		do
 		{
-			if (${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}) || (${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID})
-				continue
-
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-			if ${grpcnt}>1
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.Target.Name(exists)}
 			{
-				do
+				if (${Actor[${MainAssist}].Target.ID}==${ActorIterator.Value.ID}) || (${Actor[${MainTankPC}].Target.ID}==${ActorIterator.Value.ID})
+					continue
+
+				tempvar:Set[1]
+				aggrogrp:Set[FALSE]
+				if ${grpcnt}>1
 				{
-					if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID} || (${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
+					do
 					{
-						call IsFighter ${Me.Group[${tempvar}].ID}
-						if ${Return} || ${Me.Group[${tempvar}].Name.Equal[${MainAssist}]}
-							continue
-						else
+						if ${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].ID} || (${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].Pet.ID} && ${Me.Group[${tempvar}].Pet(exists)})
 						{
-							aggrogrp:Set[TRUE]
-							break
+							call IsFighter ${Me.Group[${tempvar}].ID}
+							if ${Return} || ${Me.Group[${tempvar}].Name.Equal[${MainAssist}]}
+								continue
+							else
+							{
+								aggrogrp:Set[TRUE]
+								break
+							}
 						}
 					}
+					while ${tempvar:Inc}<=${grpcnt}
 				}
-				while ${tempvar:Inc}<=${grpcnt}
-			}
 
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}  && !${MainTank}
-				aggrogrp:Set[TRUE]
+				if ${ActorIterator.Value.Target.ID}==${Me.ID}  && !${MainTank}
+					aggrogrp:Set[TRUE]
 
-			if ${aggrogrp}
-			{
-				;;;; Coercive Shout
-				if ${Me.Ability[${SpellType[509]}].IsReady}
+				if ${aggrogrp}
 				{
-					call CastSpellRange 509 0 0 0 ${MainTank}	
+					;;;; Coercive Shout
+					if ${Me.Ability[${SpellType[509]}].IsReady}
+					{
+						call CastSpellRange 509 0 0 0 ${MainTank}	
+					}
+					;Try AA Thought Snap next if we have it
+					if ${Me.Ability[${SpellType[376]}].IsReady}
+						call CastSpellRange 376 0 0 0 ${ActorIterator.Value.ID}
+					elseif ${Me.Ability[${SpellType[383]}].IsReady}
+						call CastSpellRange 383 0 0 0 ${KillTarget}
+					else
+						call CastSpellRange 193 0 0 0 ${ActorIterator.Value.ID}
+					return
 				}
-				;Try AA Thought Snap next if we have it
-				if ${Me.Ability[${SpellType[376]}].IsReady}
-					call CastSpellRange 376 0 0 0 ${CustomActor[${tcount}].ID}
-				elseif ${Me.Ability[${SpellType[383]}].IsReady}
-					call CastSpellRange 383 0 0 0 ${KillTarget}
-				else
-					call CastSpellRange 193 0 0 0 ${CustomActor[${tcount}].ID}
-				return
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 }
 
 function PostDeathRoutine()

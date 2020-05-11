@@ -1137,64 +1137,68 @@ function CastVerdict()
 
 function Mezmerise_Targets()
 {
-	declare tcount int local 1
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	EQ2:CreateCustomActorArray[byDist,15]
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
+	Actors:GetIterator[ActorIterator]
 
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}].Name(exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
+		do
 		{
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
-				continue
-
-			tempvar:Set[1]
-			aggrogrp:Set[FALSE]
-			do
+			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic}
 			{
-				if ${CustomActor[${tcount}].Target.ID}==${Me.Group[${tempvar}].ID}
+				if ${Actor[${MainAssist}].Target.ID}==${ActorIterator.Value.ID}
+					continue
+
+				tempvar:Set[1]
+				aggrogrp:Set[FALSE]
+				do
 				{
+					if ${ActorIterator.Value.Target.ID}==${Me.Group[${tempvar}].ID}
+					{
+						aggrogrp:Set[TRUE]
+						break
+					}
+				}
+				while ${tempvar:Inc}<${grpcnt}
+
+				if ${ActorIterator.Value.Target.ID}==${Me.ID}
 					aggrogrp:Set[TRUE]
+
+				if ${aggrogrp}
+				{
+					if ${Me.AutoAttackOn}
+						eq2execute /toggleautoattack
+
+					if ${Me.RangedAutoAttackOn}
+						eq2execute /togglerangedattack
+
+					;check for wonderous buckling
+					if ${Me.Ability[${SpellType[386]}](exists)}
+					{
+						;check if we have a our buckler equipped if not equip and cast wonderous buckling
+						if ${Me.Equipment[2].Name.Equal[${Buckler}]}
+							call CastSpellRange 386 0 1 0 ${ActorIterator.Value.ID}
+						elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
+						{
+							Me.Inventory[${Buckler}]:Equip
+							EquipmentChangeTimer:Set[${Time.Timestamp}]
+							call CastSpellRange 386 0 1 0 ${ActorIterator.Value.ID}
+						}
+					}
+					aggrogrp:Set[FALSE]
 					break
 				}
 			}
-			while ${tempvar:Inc}<${grpcnt}
-
-			if ${CustomActor[${tcount}].Target.ID}==${Me.ID}
-				aggrogrp:Set[TRUE]
-
-
-			if ${aggrogrp}
-			{
-				if ${Me.AutoAttackOn}
-					eq2execute /toggleautoattack
-
-				if ${Me.RangedAutoAttackOn}
-					eq2execute /togglerangedattack
-
-				;check for wonderous buckling
-				if ${Me.Ability[${SpellType[386]}](exists)}
-				{
-					;check if we have a our buckler equipped if not equip and cast wonderous buckling
-					if ${Me.Equipment[2].Name.Equal[${Buckler}]}
-						call CastSpellRange 386 0 1 0 ${CustomActor[${tcount}].ID}
-					elseif ${Math.Calc[${Time.Timestamp}-${EquipmentChangeTimer}]}>2
-					{
-						Me.Inventory[${Buckler}]:Equip
-						EquipmentChangeTimer:Set[${Time.Timestamp}]
-						call CastSpellRange 386 0 1 0 ${CustomActor[${tcount}].ID}
-					}
-				}
-				aggrogrp:Set[FALSE]
-				break
-			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
 	Target ${MainAssist}
 	wait 10 ${Me.Target.ID}==${Actor[${MainAssist}].ID}

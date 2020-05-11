@@ -1007,44 +1007,44 @@ function CommonHeals(int Health)
 	{
 		if !${Me.InRaid} && ${Actor[${MainTankID}].Health} < 60
 		{
-	    if (${Me.Ability[Salve].IsReady})
-	    {
-		    eq2execute /useabilityonplayer ${Actor[${MainTankID}].Name} Salve
+	    	if (${Me.Ability[Salve].IsReady})
+	    	{
+		    	eq2execute /useabilityonplayer ${Actor[${MainTankID}].Name} Salve
 				wait 2
 				do
 				{
 					waitframe
 				}
 				while ${Me.CastingSpell}
-		    return
+		    	return
 			}
 		}
 		elseif !${Me.InRaid} && !${MainTank} && ${Me.Health} < 75
 		{
-	    if (${Me.Ability[Salve].IsReady})
-	    {
-		    eq2execute /useabilityonplayer ${Actor[${MainTankID}].Name} Salve
+	    	if (${Me.Ability[Salve].IsReady})
+	    	{
+		    	eq2execute /useabilityonplayer ${Actor[${MainTankID}].Name} Salve
 				wait 2
 				do
 				{
 					waitframe
 				}
 				while ${Me.CastingSpell}
-		    return
+		    	return
 			}
 		}
 		elseif ${Me.InRaid} && !${MainTank} && ${Me.Health} < 35
 		{
-	    if (${Me.Ability[Salve].IsReady})
-	    {
-		    eq2execute /useabilityonplayer ${Me.Name} Salve
+	    	if (${Me.Ability[Salve].IsReady})
+	    	{
+		    	eq2execute /useabilityonplayer ${Me.Name} Salve
 				wait 2
 				do
 				{
 					waitframe
 				}
 				while ${Me.CastingSpell}
-		    return
+		    	return
 			}
 		}
 	}
@@ -1099,21 +1099,27 @@ function CommonHeals(int Health)
 ;function returns the Actor ID from a ActorName.  It prioritzes PCs over pets and npcs
 function GetActorID(string ActorName)
 {
-	variable int Counter=1
+	variable index:actor Actors
+	variable iterator ActorIterator
 
-	EQ2:CreateCustomActorArray[byDist,50]
-	do
+	EQ2:QueryActors[Actors, Distance <= 50]
+	Actors:GetIterator[ActorIterator]
+
+	if ${ActorIterator:First(exists)}
 	{
-		if ${CustomActor[${Counter}].Name.Equal[${ActorName}]}
+		do
 		{
-			if ${CustomActor[${Counter}].Type.Equal[PC]}
+			if ${ActorIterator.Value.Name.Equal[${ActorName}]}
 			{
-				;There is a PC by this name so return it
-				return ${CustomActor[${Counter}].ID}
+				if ${ActorIterator.Value.Type.Equal[PC]}
+				{
+					;There is a PC by this name so return it
+					return ${ActorIterator.Value.ID}
+				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${Counter:Inc}<=${EQ2.CustomActorArraySize}
 
 	;We either found no actor or a NPC so return that ID
 	return 0
@@ -1258,14 +1264,11 @@ function FindHealer()
 
 function CheckPotCures()
 {
-  ; Create our custom inventory array so that we are up to date with quantities
-  ; Possible furture feature - use counts to determine if we should fallback to a lesser potion
-	Me:CreateCustomInventoryArray[nonbankonly]
 
 	if ${Me.Arcane}>0
 	{
 	  ; check to see if we have more of our selected potion
-		if ${Me.CustomInventory[${ArcanePotion}](exists)}
+		if ${Me.Inventory[Query, Location == "Inventory" && Name =- ${ArcanePotion}](exists)}
 		{
 			; Debug: echo casting arcane potion
 			call CastPotion "${ArcanePotion}"
@@ -1286,7 +1289,7 @@ function CheckPotCures()
 
 	if ${Me.Elemental}>0
 	{
-		if ${Me.CustomInventory[${ElementalPotion}](exists)}
+		if ${Me.Inventory[Query, Location == "Inventory" && Name =- ${ElementalPotion}](exists)}
 		{
 			; Debug: echo casting elemental potion
 			call CastPotion "${ElementalPotion}"
@@ -1303,7 +1306,7 @@ function CheckPotCures()
 
 	if ${Me.Noxious}>0
 	{
-		if ${Me.CustomInventory[${NoxiousPotion}](exists)}
+		if ${Me.Inventory[Query, Location == "Inventory" && Name =- ${NoxiousPotion}](exists)}
 		{
 			; Debug: echo casting noxious potion
 			call CastPotion "${NoxiousPotion}"
@@ -1320,7 +1323,7 @@ function CheckPotCures()
 
 	if ${Me.Trauma}>0
 	{
-		if ${Me.CustomInventory[${TraumaPotion}](exists)}
+		if ${Me.Inventory[Query, Location == "Inventory" && Name =- ${TraumaPotion}](exists)}
 		{
 			; Debug: echo casting trauma potion
 			call CastPotion "${TraumaPotion}"

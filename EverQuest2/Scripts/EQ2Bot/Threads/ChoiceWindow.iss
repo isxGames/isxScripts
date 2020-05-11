@@ -8,7 +8,7 @@ function main(... Args)
 	
 	Debug:Echo["ChoiceWindow.Begin"]
 	
-	if (${Args.Size} != 2)
+	if (${Args.Used} != 2)
 		return
 	
 	variable int Wait = ${Args[1]}

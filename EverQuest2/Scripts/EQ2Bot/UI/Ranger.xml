@@ -132,24 +132,25 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<width>60%</width>
 		<height>20</height>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; Type =- "Weapon"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
+				do
 				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
 				if ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
 				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
 			}
 			while ${Counter:Inc}&lt;=22
@@ -180,24 +181,25 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<height>20</height>
 		<AutoTooltip>Off hand item to equip when not using an AA off hand item</AutoTooltip>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; (Type =- "Weapon" || Type =- "Shield")]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].Type.Equal[Shield]} || ${Me.CustomInventory[${Counter}].Type.Equal[Weapon]}
+				do
 				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].Type.Equal[Shield]} || ${Me.Equipment[${Counter}].Type.Equal[Weapon]}
+				if ${Me.Equipment[${Counter}].Type.Equal[Weapon]} || ${Me.Equipment[${Counter}].Type.Equal[Shield]}
 				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
 			}
 			while ${Counter:Inc}&lt;=22
@@ -227,24 +229,25 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<width>60%</width>
 		<height>20</height>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; SubType =- "Dagger"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Dagger]}
+				do
 				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
 				if ${Me.Equipment[${Counter}].SubType.Equal[Dagger]}
 				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
 			}
 			while ${Counter:Inc}&lt;=22
@@ -274,24 +277,25 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<width>60%</width>
 		<height>20</height>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; SubType =- "Sword"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Sword]} || ${Me.CustomInventory[${Counter}].SubType.Equal[Great Sword]}
+				do
 				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Sword]} || ${Me.Equipment[${Counter}].SubType.Equal[Great Sword]}
+				if ${Me.Equipment[${Counter}].SubType.Equal[Sword]}
 				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
 			}
 			while ${Counter:Inc}&lt;=22
@@ -321,22 +325,25 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<width>60%</width>
 		<height>20</height>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; SubType =- "Rapier"]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Rapier]}						{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+				do
+				{
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Rapier]}							{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+				if ${Me.Equipment[${Counter}].SubType.Equal[Rapier]}
+				{
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
 			}
 			while ${Counter:Inc}&lt;=22
@@ -367,24 +374,25 @@ Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
 		<height>20</height>
 		<AutoTooltip>Spear to use during Spear required AA skills</AutoTooltip>
 		<OnLeftClick>
-			declare Counter int
-			Counter:Set[1]
+			variable index:item Items
+			variable iterator ItemIterator
+			variable int Counter = 1
 			This:ClearItems
-			Me:CreateCustomInventoryArray[nonbankonly]
-			do
+			Me:QueryInventory[Items, Location =- "Inventory" &amp;&amp; (SubType =- "Spear" || SubType =- "Great Spear")]
+			Items:GetIterator[ItemIterator]
+			if ${ItemIterator:First(exists)}
 			{
-				if ${Me.CustomInventory[${Counter}].SubType.Equal[Spear]}
+				do
 				{
-					This:AddItem["${Me.CustomInventory[${Counter}].Name}"]
+					This:AddItem[${ItemIterator.Value.Name}]
 				}
+				while ${ItemIterator:Next(exists)}
 			}
-			while ${Counter:Inc}&lt;=${Me.CustomInventoryArraySize}
-			Counter:Set[1]
 			do
 			{
-				if ${Me.Equipment[${Counter}].SubType.Equal[Spear]}
+				if ${Me.Equipment[${Counter}].SubType.Equal[Spear]} || ${Me.Equipment[${Counter}].SubType.Equal[Great Spear]}
 				{
-					This:AddItem["${Me.Equipment[${Counter}].Name}"]
+					This:AddItem[${Me.Equipment[${Counter}].Name}]
 				}
 			}
 			while ${Counter:Inc}&lt;=22

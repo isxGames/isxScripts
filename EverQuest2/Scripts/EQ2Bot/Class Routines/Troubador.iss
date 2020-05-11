@@ -721,49 +721,52 @@ function ActionChecks()
 
 function Mezmerise_Targets()
 {
-	declare tcount int local 1
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
 	grpcnt:Set[${Me.GroupCount}]
 
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
+	Actors:GetIterator[ActorIterator]
 
-	EQ2:CreateCustomActorArray[byDist,15,npc]
-
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}].Name(exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
+		do
 		{
-			if ${CustomActor[${tcount}].ID}==${mezTarget1} || ${CustomActor[${tcount}].ID}==${mezTarget2} || ${Actor[${MainTankPC}].Target.ID}==${CustomActor[${tcount}].ID}
+			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic}
 			{
-				continue
-			}
-
-
-			if ${Mob.Target[${CustomActor[${tcount}].ID}]}
-			{
-
-				if ${Me.AutoAttackOn}
+				if ${ActorIterator.Value.ID}==${mezTarget1} || ${ActorIterator.Value.ID}==${mezTarget2} || ${Actor[${MainTankPC}].Target.ID}==${ActorIterator.Value.ID}
 				{
-					eq2execute /toggleautoattack
+					continue
 				}
 
-				if ${Me.RangedAutoAttackOn}
+				if ${Mob.Target[${ActorIterator.Value.ID}]}
 				{
-					eq2execute /togglerangedattack
+
+					if ${Me.AutoAttackOn}
+					{
+						eq2execute /toggleautoattack
+					}
+
+					if ${Me.RangedAutoAttackOn}
+					{
+						eq2execute /togglerangedattack
+					}
+
+					;shut off aria so encounter debuffs dont break mezz
+					;if ${Me.Maintained[${SpellType[27]}](exists)}
+					;{
+					;	Me.Maintained[${SpellType[27]}]:Cancel
+					;}
+
+					call CastSpellRange 352 0 0 0 ${ActorIterator.Value.ID} 0 15
 				}
-
-				;shut off aria so encounter debuffs dont break mezz
-				;if ${Me.Maintained[${SpellType[27]}](exists)}
-				;{
-				;	Me.Maintained[${SpellType[27]}]:Cancel
-				;}
-
-				call CastSpellRange 352 0 0 0 ${CustomActor[${tcount}].ID} 0 15
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
 	if ${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead} && ${Mob.Detect}
 	{
@@ -779,7 +782,8 @@ function Mezmerise_Targets()
 
 function DoCharm()
 {
-	declare tcount int local
+	variable index:actor Actors
+	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
@@ -792,27 +796,29 @@ function DoCharm()
 
 	grpcnt:Set[${Me.GroupCount}]
 
-	EQ2:CreateCustomActorArray[npc,byDist,15]
+	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
+	Actors:GetIterator[ActorIterator]
 
-	do
+	if ${ActorIterator:First(exists)}
 	{
-		if (${CustomActor[${tcount}].Type.Equal[NPC]} || ${CustomActor[${tcount}].Type.Equal[NamedNPC]}) && ${CustomActor[${tcount}].Name(exists)} && !${CustomActor[${tcount}].IsLocked} && !${CustomActor[${tcount}].IsEpic}
+		do
 		{
-
-			if ${Actor[${MainAssist}].Target.ID}==${CustomActor[${tcount}].ID}
+			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic}
 			{
-				continue
-			}
+				if ${Actor[${MainAssist}].Target.ID}==${ActorIterator.Value.ID}
+				{
+					continue
+				}
 
-
-			if ${Mob.Target[${CustomActor[${tcount}].ID}]}
-			{
-				CharmTarget:Set[${CustomActor[${tcount}].ID}]
-				break
+				if ${Mob.Target[${ActorIterator.Value.ID}]}
+				{
+					CharmTarget:Set[${ActorIterator.Value.ID}]
+					break
+				}
 			}
 		}
+		while ${ActorIterator:Next(exists)}
 	}
-	while ${tcount:Inc}<${EQ2.CustomActorArraySize}
 
 	if ${Actor[${CharmTarget}].Name(exists)} && ${CharmTarget}!=${mezTarget1} && ${CharmTarget}!=${mezTarget2} && ${Actor[${MainAssist}].Target.ID}!=${CharmTarget} && ${aggrogrp}
 	{
