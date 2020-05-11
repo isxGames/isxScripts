@@ -32,6 +32,8 @@ function Class_Declaration()
 	declare AlwaysUseAEs bool script FALSE
 	declare UseFeignDeath bool script FALSE
 	declare TacticsTarget string script
+	declare UsePactOfNatureSalveAbility bool script FALSE
+	declare CheckGroupAggroTimer uint script 0
 
 	declare BuffArmamentMember string script
 	declare BuffTacticsGroupMember string script
@@ -590,47 +592,31 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 
 	if (${Me.IsRooted} || !${Me.CanTurn})
 	{
-    if ${Me.Ability[${SpellType[339]}].IsReady}
-    {
-      call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
-    }
-	}
-
-	if ${TargetID} != ${Me.ID}
-	{
-		call VerifyTarget ${TargetID}
-		if !${Return}
-			return CombatComplete		
-	}
-	else
-	{
-		call VerifyTarget
-		if !${Return}
+		if ${Me.Ability[${SpellType[339]}].IsReady}
 		{
-			bReturn:Set[TRUE]
-			sReturn:Set[CombatComplete]
+			call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
 		}
 	}
-
 
 	;; we should actually cast the spell we wanted to cast originally before doing anything else
 	LastSpellCast:Set[${start}]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
-	if ${bReturn}
-		return ${sReturn}
+
+	if (${TargetID} != ${Me.ID} && ${Me.InCombatMode})
+		call VerifyTarget ${TargetID}
 	else
-		bReturn:Set[${Return}]
+		call VerifyTarget
+	if (!${Return})
+		return CombatComplete
 
-
-	;; Anything else we want to do should go here...
-
-	return ${bReturn}
+	return
 }
-
 
 function Combat_Routine(int xAction)
 {
-  declare BuffTarget string local
+	variable index:actor Actors
+	variable iterator ActorIterator
+	declare BuffTarget string local
 	declare TankToTargetDistance float local
 	declare KillTargetIsSoloMob bool local
 	
@@ -646,11 +632,11 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-  if ${StartHO}
-  {
-  	if !${EQ2.HOWindowActive}
-  		call CastSpellRange 303
-  }
+	if ${StartHO}
+	{
+		if !${EQ2.HOWindowActive}
+			call CastSpellRange 303
+	}
 
 	if !${NoAutoMovementInCombat} && !${NoAutoMovement} && ${AutoMelee}
 	{
@@ -664,58 +650,70 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-  ;; uncomment for venril fight
-  ;if (${Zone.ShortName.Find[venril]} > 0)
-  ;{
-  ;	if (${Me.Power} <= 47)
-  ;	{
-  ;		do
-  ;		{
-  ;			waitframe
-  ;		}
-  ;		while ${Me.Power} < 49
-  ;	}
-  ;}
+	;; uncomment for venril fight
+	;if (${Zone.ShortName.Find[venril]} > 0)
+	;{
+	;	if (${Me.Power} <= 47)
+	;	{
+	;		do
+	;		{
+	;			waitframe
+	;		}
+	;		while ${Me.Power} < 49
+	;	}
+  	;}
 
 	if (${Me.IsRooted} || !${Me.CanTurn})
 	{
-    if ${Me.Ability[${SpellType[339]}].IsReady}
-    {
-      call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
-    }
+    	if ${Me.Ability[${SpellType[339]}].IsReady}
+    	{
+      		call CastSpellRange 339 0 0 0 ${Me.ID} 0 0 0 1
+    	}
 	}
 
 	;; AE Taunt and Debuff
-  if ${PBAoEMode} && !${KillTargetIsSoloMob}
-  {
-    if ${MainTank}
-    {
-    	;; Blasphemy
-	    if (${Me.Ability[${SpellType[170]}].IsReady})
-	    {
-	    	 call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
-  		   if ${Return.Equal[CombatComplete]}
-  		   	return CombatComplete
-    	}
-    }
-  }
+	if ${PBAoEMode} && !${KillTargetIsSoloMob}
+	{
+		if ${MainTank}
+		{
+			;; Blasphemy
+			if (${Me.Ability[${SpellType[170]}].IsReady})
+			{
+				call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
+				if ${Return.Equal[CombatComplete]}
+					return CombatComplete
+			}
+		}
+	}
+
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
   
 	;; Siphon Strength (Always cast this when it is ready!)
-  if (!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[80]}].IsReady})
-  {
-    call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+  	if (!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[80]}].IsReady})
+  	{
+    	call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	
 	;; Swift Attack
-  if (${Me.Ability[${SpellType[381]}].IsReady})
-  {
-    call _CastSpellRange 381 0 0 0 ${KillTarget} 0 0 0 1
+  	if (${Me.Ability[${SpellType[381]}].IsReady})
+  	{
+    	call _CastSpellRange 381 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
-	
+
+	call CheckHeals
+	call CheckGroupOrRaidAggro
+	;; I don't think it needs to be called again this soon in the routine.
+	;call VerifyTarget
+	;if ${Return.Equal[FALSE]}
+	;	return CombatComplete
+
 	DoAEs:Set[FALSE]
 	if ${PBAoEMode}
 	{
@@ -723,17 +721,17 @@ function Combat_Routine(int xAction)
 			DoAEs:Set[TRUE]
 		else
 		{
-		  EQ2:CreateCustomActorArray[ByDist,12,npc]
-		  NumNPCs:Set[${EQ2.CustomActorArraySize}]
-		  DoAEs:Set[FALSE]
-		  if ${NumNPCs} > 2
-		  	DoAEs:Set[TRUE]
-		  elseif ${Actor[${KillTarget}].IsEpic}
-		  	DoAEs:Set[TRUE]
-		  elseif ${Actor[${KillTarget}].IsHeroic}
-		  {
-		  	if ${Actor[${KillTarget}].Difficulty} >= 2
-		  	{
+			EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 10]
+		  	NumNPCs:Set[${Actors.Used}]
+		  	DoAEs:Set[FALSE]
+		  	if ${NumNPCs} > 2
+		  		DoAEs:Set[TRUE]
+		  	elseif ${Actor[${KillTarget}].IsEpic}
+		  		DoAEs:Set[TRUE]
+		  	elseif ${Actor[${KillTarget}].IsHeroic}
+			{
+				if ${Actor[${KillTarget}].Difficulty} >= 2
+				{
 					switch ${Actor[${KillTarget}].ConColor}
 					{
 						case Red
@@ -750,72 +748,81 @@ function Combat_Routine(int xAction)
 		}
 	}
 	
-  ;; DeathMarch
-  if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
-  {
+	;; DeathMarch
+	if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
+	{
 		call _CastSpellRange 312 0 0 0 ${Me.ID} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
-  }
+	}
   
-  ;; Self Reverse DS (with life tap proc)
+  	;; Self Reverse DS (with life tap proc)
 	if ((!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[7]}].IsReady}) || (${MainTank} && ${Me.Health}<25))
 	{
-    if ${MainTank}
-    {
-	    call _CastSpellRange 7 0 0 0 ${Me.ID} 0 0 0 1
+		if ${MainTank}
+		{
+			call _CastSpellRange 7 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
-  	}
-    else
-    {
-	    call _CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
+		}
+		else
+		{
+			call _CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
-  	}
+		}
 	}
-	
-  if ${DoAEs}
-  {
-  	;; AE Taunt
-    if (${Me.Ability[${SpellType[340]}].IsReady})
-    {
-    	;Debug:Echo["${SpellType[340]}..."]
-	    call _CastSpellRange 340 0 0 0 ${Me.ID} 0 0 0 1
+
+	call CheckHeals
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
+	if ${DoAEs}
+  	{
+  		;; AE Taunt
+    	if (${Me.Ability[${SpellType[340]}].IsReady})
+    	{
+    		;Debug:Echo["${SpellType[340]}..."]
+	    	call _CastSpellRange 340 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}  
 		elseif (${Me.Ability[${SpellType[170]}].IsReady})
-    {
-    	;; Blaphemy
-	    call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-	}
-    
-	  ;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
-    if (${Me.Ability[${SpellType[55]}].IsReady})
-    {	
-      call _CastSpellRange 55 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-  	}   	
-  	;; Grave Sacrament
-    if (${MainTank} && ${Me.Ability[${SpellType[45]}].IsReady})
-    {
-    	;Debug:Echo["${SpellType[45]}..."]
-	    call _CastSpellRange 45 0 0 0 ${Me.ID} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-				return CombatComplete
-		}    	
-  	;; Tap Veins
-    if (${Me.Ability[${SpellType[98]}].IsReady})
-    {
-    	;Debug:Echo["${SpellType[98]}..."]
-	    call _CastSpellRange 98 0 0 0 ${Me.ID} 0 0 0 1
+    	{
+    		;; Blaphemy
+	    	call _CastSpellRange 170 0 0 0 ${KillTarget} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}
+    
+		;; MIST -- should be casted after AE taunt at the beginning of the fight  (Physical damage mit debuff)
+    	if (${Me.Ability[${SpellType[55]}].IsReady})
+    	{	
+      		call _CastSpellRange 55 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+  		}   	
+  		;; Grave Sacrament
+    	if (${MainTank} && ${Me.Ability[${SpellType[45]}].IsReady})
+    	{
+    		;Debug:Echo["${SpellType[45]}..."]
+	    	call _CastSpellRange 45 0 0 0 ${Me.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}    	
+  		;; Tap Veins
+    	if (${Me.Ability[${SpellType[98]}].IsReady})
+    	{
+    		;Debug:Echo["${SpellType[98]}..."]
+	    	call _CastSpellRange 98 0 0 0 ${Me.ID} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete
+		}
+
+		call CheckHeals
+
 		;; Zealous Smite
 		if (${Me.Ability[${SpellType[508]}].IsReady})
 		{
@@ -845,7 +852,7 @@ function Combat_Routine(int xAction)
 					return CombatComplete
 			}
 		}
-		if ${NumNPCs} > 4
+		if ${NumNPCs} > 3
 		{
 			;; Pestilence
 			if (${Me.Ability[${SpellType[99]}].IsReady})
@@ -864,6 +871,9 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}
+
+		call CheckHeals
+		
 		;; Death Cloud
 		if (${Me.Ability[${SpellType[95]}].IsReady})
 		{
@@ -880,7 +890,7 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}			
-  }	
+	}	
   
 	;Essence Siphon
 	if ${Me.Ability[${SpellType[503]}].IsReady}
@@ -897,38 +907,43 @@ function Combat_Routine(int xAction)
 		call CastSpellRange 502 
 	}
 
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	;; SK's Furor
 	if ${Me.Health}<=60 && ${Me.Ability[${SpellType[507]}].IsReady}
 		call CastSpellRange 507
 
-
-  ;;;;;
+  	;;;;;
 	;;; Quick Spells for aggro
 	; Hateful Slam (shield bash)
-  if (${Me.Ability[${SpellType[240]}].IsReady})
-  {
-    call _CastSpellRange 240 0 0 0 ${KillTarget}
+  	if (${Me.Ability[${SpellType[240]}].IsReady})
+  	{
+    	call _CastSpellRange 240 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	; Insidious Whisper
 	if (${MainTank} && ${Me.Ability[${SpellType[160]}].IsReady})
-  {
-    call _CastSpellRange 160 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 160 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	;;
 	;;;;
 
-	call CommonHeals 60
-  call CheckGroupOrRaidAggro
-  call CheckPower
+  	call CheckPower
+  	call CheckHeals
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
 
-  ;call CheckHeals
-
-  if ${UseMastersRage}
-  {
+  	if ${UseMastersRage}
+  	{
 		if ${Me.Ability["Master's Rage"].IsReady}
 		{
 			Target ${KillTarget}
@@ -940,10 +955,10 @@ function Combat_Routine(int xAction)
 			while ${Me.CastingSpell}
 			wait 1
 		}
-  }
+  	}
 
-  ;; Combat Leadership AA
-  ;; NOTE:  Removing this for now -- I do not think it is worth the effort...
+  	;; Combat Leadership AA
+  	;; NOTE:  Removing this for now -- I do not think it is worth the effort...
 	;if ${Me.Ability[${SpellType[333]}](exists)}
 	;{
 	;    if (${Me.Ability[${SpellType[333]}].IsReady} && ${Zone.ShortName.Find[venril]} <= 0)
@@ -952,95 +967,121 @@ function Combat_Routine(int xAction)
 	;	}
 	;}
 	
-	
 	;;;; DPS Lineup
 	;; Shadow Coil (dmg + dot)
 	if (${Me.Ability[${SpellType[60]}].IsReady})
-  {
-    call _CastSpellRange 60 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 60 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	;; Dreadful Wrath (dmg)
 	if (${Me.Ability[${SpellType[154]}].IsReady})
-  {
-    call _CastSpellRange 154 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 154 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}		
 	;; Devour Vitae (dmg, + heal)
 	if (${Me.Ability[${SpellType[153]}].IsReady})
-  {
-    call _CastSpellRange 153 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 153 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}	
+
+	call CheckHeals
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	;; Mana Sieve (dmg + DoT + power tap)
 	if (${Me.Ability[${SpellType[81]}].IsReady})
-  {
-    call _CastSpellRange 81 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 81 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}			
 	;; Joust (dmg)
 	if (${Me.Ability[${SpellType[344]}].IsReady} && ${Actor[${KillTarget}].Distance} <= 7)
-  {
-    call _CastSpellRange 344 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 344 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}		
 	;; Malice (dmg)
 	if (${Me.Ability[${SpellType[62]}].IsReady})
-  {
-    call _CastSpellRange 62 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 62 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}	
+
+	call CheckHeals
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	;; Siphon Strike (dmg, + dot)
 	if (${Me.Ability[${SpellType[61]}].IsReady})
-  {
-    call _CastSpellRange 61 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 61 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	;; Legionnaire's Smite (dmg)
 	if (${Me.Ability[${SpellType[332]}].IsReady})
-  {
-    call _CastSpellRange 332 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 332 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	;; Painbringer (low dmg)
 	if (${Me.Ability[${SpellType[150]}].IsReady})
-  {
-    call _CastSpellRange 150 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 150 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
+
+	call CheckHeals
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	;; Soulrend (low dmg + knockdown)
 	if (${Me.Ability[${SpellType[151]}].IsReady})
-  {
-    call _CastSpellRange 151 0 0 0 ${KillTarget}
+  	{
+    	call _CastSpellRange 151 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
 	;; Cleave Flesh (WIS debuff + dmg)
-  if (${Me.Ability[${SpellType[152]}].IsReady})
-  {
-    call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
+  	if (${Me.Ability[${SpellType[152]}].IsReady})
+  	{
+    	call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
-  }
+  	}
 	;; Strike of Consistency
 	if (${Me.Level} < 20)
 	{
-	  if (${Me.Ability[${SpellType[348]}].IsReady})
-	  {
-	    call _CastSpellRange 348 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Me.Ability[${SpellType[348]}].IsReady})
+	  	{
+	    	call _CastSpellRange 348 0 0 0 ${KillTarget} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
-	  }
+	  	}
 	}
+
+	call CheckHeals
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
   
 	CurrentAction:Set[Combat :: CombatComplete]
 	return CombatComplete
@@ -1048,6 +1089,8 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
+	CheckGroupAggroTimer:Set[0]
+
 	switch ${PostAction[${xAction}]}
 	{
 		default
@@ -1058,184 +1101,261 @@ function Post_Combat_Routine(int xAction)
 
 function CheckGroupOrRaidAggro()
 {
-  declare MobTargetID int local
-	variable int Counter = 1
-
-  ;if !${Me.Ability[${SpellType[270]}].IsReady} && !${Me.Ability[${SpellType[7]}].IsReady} && !${Me.Ability[${SpellType[160]}].IsReady}
-	;	return 0
-
-  ;; For now, do not do anything automatically when we are not maintank
-  if (!${MainTank})
-		return 0
-	        
-	;; The Custom Actor array and "NumNPCs" variable should be set before calling this function
-	;EQ2:CreateCustomActorArray[byDist,10,npc]
-	;NumNPCs:Set[${EQ2.CustomActorArraySize}]
-
-	do
+	if (${CheckGroupAggroTimer} > 0)
 	{
-	    if (!${CustomActor[${Counter}].IsSolo} || ${NumNPCs} > 2)
-	    {
-	        if (${CustomActor[${Counter}].Target.Name(exists)} && !${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
-	        {
-	            if ${Me.InRaid}
-	            {
-            	    if (${Me.Raid[${CustomActor[${Counter}].Target.Name}].InZone})
-            	    {
-        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
-        	            {
-        	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
-        	                call IsFighter ${MobTargetID}
-        	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
-        	                {
-        	                    ;Debug:Echo["Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"]
-            	                if ${Actor[${MobTargetID}].Health} < 85
-            	                {
-            	                	if (${HasMythical})
-            	                	{
-            	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
-            	                		{
-            	                			Debug:Echo["EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"]
-            	                			CustomActor[${Counter}]:DoTarget
-            	                			wait 2
-            	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
-            	                			wait 5
-            	                			return 1
-            	                		}
-            	                	}
-                	                if ${Me.Ability[${SpellType[320]}].IsReady}
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"]
-                	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-                	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"]
-                	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-                	                elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"]
-                	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-            	                }
-            	                if ${Me.Ability[${SpellType[270]}].IsReady}
-            	                {
-            	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"]
-            	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
-            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-            	                    return 1
-            	                }
-            	                if ${Me.Ability[${SpellType[160]}].IsReady}
-            	                {
-            	                    Debug:Echo["EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"]
-            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-            	                    return 1
-            	                }
-            	                if !${Me.Maintained[${SpellType[240]}](exists)}
-            	                {
-                	                if ${Me.Ability[${SpellType[240]}].IsReady}
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"]
-                	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-                	            }
-                	        }
-        	                return 0
-        	            }
-    	            }
-	            }
-	            else
-	            {
-            	    if (${Me.Group[${CustomActor[${Counter}].Target.Name}].Health(exists)} && ${Me.Group[${CustomActor[${Counter}].Target.Name}].InZone})
-            	    {
-            	        Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is ${CustomActor[${Counter}].Target.Name} (MainTankPC is ${MainTankPC})"]
-        	            if (!${CustomActor[${Counter}].Target.Name.Equal[${MainTankPC}]})
-        	            {
-        	                MobTargetID:Set[${CustomActor[${Counter}].Target.ID}]
-        	                call IsFighter ${MobTargetID}
-        	                if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
-        	                {
-        	                    ;Debug:Echo["Return = FALSE - CustomActor[${Counter}].Target.Health: ${CustomActor[${Counter}].Target.Health}"]
-            	                if ${Actor[${MobTargetID}].Health} < 80
-            	                {
-            	                	if (${HasMythical})
-            	                	{
-            	                		if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
-            	                		{
-            	                			Debug:Echo["EQ2Bot-DEBUG: Using Mythical on ${Actor[${MobTargetID}]}!"]
-            	                			CustomActor[${Counter}]:DoTarget
-            	                			wait 2
-            	                			Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
-            	                			wait 5
-            	                			return 1
-            	                		}
-            	                	}
-                	                if ${Me.Ability[${SpellType[320]}].IsReady}
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Rescuing ${Actor[${MobTargetID}]}!"]
-                	                    call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-                	                elseif ${Me.Ability[${SpellType[338]}].IsReady}
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Sneering ${Actor[${MobTargetID}]}!"]
-                	                    call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-                	                elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Feigning ${Actor[${MobTargetID}]}!"]
-                	                    call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-            	                }
-            	                if ${Me.Ability[${SpellType[270]}].IsReady}
-            	                {
-            	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"]
-            	                    call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
-            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-            	                    return 1
-            	                }
-            	                if ${Me.Ability[${SpellType[160]}].IsReady}
-            	                {
-            	                    Debug:Echo["EQ2Bot-DEBUG: Taunting ${CustomActor[${Counter}]}"]
-            	                    call CastSpellRange 160 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-            	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-            	                    return 1
-            	                }
-            	                if !${Me.Maintained[${SpellType[240]}](exists)}
-            	                {
-                	                if ${Me.Ability[${SpellType[240]}].IsReady}
-                	                {
-                	                    Debug:Echo["EQ2Bot-DEBUG: Casting 'Knock Down' (line) on ${CustomActor[${Counter}]}"]
-                	                    call CastSpellRange 240 0 0 0 ${CustomActor[${Counter}].ID} 0 0 0 1
-                	                    Debug:Echo["EQ2Bot-DEBUG: ${CustomActor[${Counter}]}'s target is now ${CustomActor[${Counter}].Target.Name}"]
-                	                    return 1
-                	                }
-                	            }
-                	        }
-        	                return 0
-        	            }
-    	            }
-    	        }
-	        }
-	    }
+		if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckGroupAggroTimer}+1]})
+			return 0
 	}
-	while ${Counter:Inc}<=${EQ2.CustomActorArraySize}
 
+	variable index:actor Actors
+	variable iterator ActorIterator
+	variable uint MobTargetID 
+	variable bool DebugEnabled = ${Debug.Enabled}
+	variable bool DebugThisFunction = TRUE
+	if (${DebugThisFunction} && !${DebugEnabled})
+		Debug:Enable
+
+	;; For now, do not do anything automatically when we are not maintank
+	if (!${MainTank})
+	{
+		CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+		if (!${DebugEnabled} && ${DebugThisFunction})
+			Debug:Disable
+		return 0
+	}
+
+	if (${Me.IsDead})
+	{
+		Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax I am dead..."]
+		CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+		if (!${DebugEnabled} && ${DebugThisFunction})
+			Debug:Disable
+		return 0
+	}
+	        
+	EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 10]
+	Actors:GetIterator[ActorIterator]
+	NumNPCs:Set[${Actors.Used}]
+
+	if ${ActorIterator:First(exists)}
+	{
+		Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Checking ${NumNPCs} NPCs..."]
+		do
+		{
+			if (!${ActorIterator.Value.IsSolo} || ${NumNPCs} > 2)
+			{
+				if (${ActorIterator.Value.Target.Name(exists)} && !${ActorIterator.Value.Target.Name.Equal[${MainTankPC}]})
+				{
+					if ${Me.InRaid}
+					{
+						if (${Me.Raid[${ActorIterator.Value.Target.Name}].InZone})
+						{
+							if (!${ActorIterator.Value.Target.Name.Equal[${MainTankPC}]})
+							{
+								MobTargetID:Set[${ActorIterator.Value.Target.ID}]
+								call IsFighter ${MobTargetID}
+								if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
+								{
+									;Debug:Echo["Return = FALSE - ActorIterator.Value.Target.Health: ${ActorIterator.Value.Target.Health}"]
+									if ${Actor[${MobTargetID}].Health} < 85
+									{
+										if (${HasMythical})
+										{
+											if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
+											{
+												Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Using Mythical on ${Actor[${MobTargetID}]}!"]
+												ActorIterator.Value:DoTarget
+												wait 2
+												Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
+												wait 5
+												if (!${DebugEnabled} && ${DebugThisFunction})
+													Debug:Disable
+												CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+												return 1
+											}
+										}
+										if ${Me.Ability[${SpellType[320]}].IsReady}
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Rescuing ${Actor[${MobTargetID}]}!"]
+											call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+										elseif ${Me.Ability[${SpellType[338]}].IsReady}
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Sneering ${Actor[${MobTargetID}]}!"]
+											call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+										elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Feigning ${Actor[${MobTargetID}]}!"]
+											call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+									}
+									if ${Me.Ability[${SpellType[270]}].IsReady}
+									{
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"]
+										call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+										if (!${DebugEnabled} && ${DebugThisFunction})
+											Debug:Disable
+										CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+										return 1
+									}
+									if ${Me.Ability[${SpellType[160]}].IsReady}
+									{
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Taunting ${ActorIterator.Value}"]
+										call CastSpellRange 160 0 0 0 ${ActorIterator.Value.ID} 0 0 0 1
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+										if (!${DebugEnabled} && ${DebugThisFunction})
+											Debug:Disable
+										CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+										return 1
+									}
+									if !${Me.Maintained[${SpellType[240]}](exists)}
+									{
+										if ${Me.Ability[${SpellType[240]}].IsReady}
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Casting 'Knock Down' (line) on ${ActorIterator.Value}"]
+											call CastSpellRange 240 0 0 0 ${ActorIterator.Value.ID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+									}
+								}
+								if (!${DebugEnabled} && ${DebugThisFunction})
+									Debug:Disable
+								CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+								return 0
+							}
+						}
+					}
+					else
+					{
+						if (${Me.Group[${ActorIterator.Value.Target.Name}].Health(exists)} && ${Me.Group[${ActorIterator.Value.Target.Name}].InZone})
+						{
+							Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is ${ActorIterator.Value.Target.Name} (MainTankPC is ${MainTankPC})"]
+							if (!${ActorIterator.Value.Target.Name.Equal[${MainTankPC}]})
+							{
+								MobTargetID:Set[${ActorIterator.Value.Target.ID}]
+								call IsFighter ${MobTargetID}
+								if (${Return.Equal[FALSE]} && ${MobTargetID} != ${Me.ID})
+								{
+									;Debug:Echo["Return = FALSE - ActorIterator.Value.Target.Health: ${ActorIterator.Value.Target.Health}"]
+									if ${Actor[${MobTargetID}].Health} < 80
+									{
+										if (${HasMythical})
+										{
+											if (${Me.Equipment[Sedition, Sword of the Bloodmoon].IsReady})
+											{
+												Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Using Mythical on ${Actor[${MobTargetID}]}!"]
+												ActorIterator.Value:DoTarget
+												wait 2
+												Me.Equipment[Sedition, Sword of the Bloodmoon]:Use
+												wait 5
+												if (!${DebugEnabled} && ${DebugThisFunction})
+													Debug:Disable
+												CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+												return 1
+											}
+										}
+										if ${Me.Ability[${SpellType[320]}].IsReady}
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Rescuing ${Actor[${MobTargetID}]}!"]
+											call CastSpellRange 320 0 0 0 ${MobTargetID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+										elseif ${Me.Ability[${SpellType[338]}].IsReady}
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Sneering ${Actor[${MobTargetID}]}!"]
+											call CastSpellRange 338 0 0 0 ${MobTargetID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+										elseif (${UseFeignDeath} && ${Me.Ability[${SpellType[330]}].IsReady})
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Feigning ${Actor[${MobTargetID}]}!"]
+											call CastSpellRange 330 0 0 0 ${MobTargetID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+									}
+									if ${Me.Ability[${SpellType[270]}].IsReady}
+									{
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Casting 'Intercept' (line) on ${Actor[${MobTargetID}]}"]
+										call CastSpellRange 270 0 0 0 ${MobTargetID} 0 0 0 1
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+										if (!${DebugEnabled} && ${DebugThisFunction})
+											Debug:Disable
+										CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+										return 1
+									}
+									if ${Me.Ability[${SpellType[160]}].IsReady}
+									{
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Taunting ${ActorIterator.Value}"]
+										call CastSpellRange 160 0 0 0 ${ActorIterator.Value.ID} 0 0 0 1
+										Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+										if (!${DebugEnabled} && ${DebugThisFunction})
+											Debug:Disable
+										CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+										return 1
+									}
+									if !${Me.Maintained[${SpellType[240]}](exists)}
+									{
+										if ${Me.Ability[${SpellType[240]}].IsReady}
+										{
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax Casting 'Knock Down' (line) on ${ActorIterator.Value}"]
+											call CastSpellRange 240 0 0 0 ${ActorIterator.Value.ID} 0 0 0 1
+											Debug:Echo["\at\[SK-CheckGroupOrRaidAggro\]\ax ${ActorIterator.Value}'s target is now ${ActorIterator.Value.Target.Name}"]
+											if (!${DebugEnabled} && ${DebugThisFunction})
+												Debug:Disable
+											CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+											return 1
+										}
+									}
+								}
+								if (!${DebugEnabled} && ${DebugThisFunction})
+									Debug:Disable
+								CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
+								return 0
+							}
+						}
+					}
+				}
+			}
+		}
+		while ${ActorIterator:Next(exists)}
+	}
+
+	if (!${DebugEnabled} && ${DebugThisFunction})
+		Debug:Disable
+	CheckGroupAggroTimer:Set[${Time.SecondsSinceMidnight}]
 	return 0
 }
 
@@ -1262,19 +1382,14 @@ function Have_Aggro()
 {
 }
 
-function Lost_Aggro(int mobid)
+function Lost_Aggro(uint mobid)
 {
-  ;; This is now handled in CheckGroupOrRaidAggro()
-  EQ2:CreateCustomActorArray[byDist,10,npc]
-  NumNPCs:Set[${EQ2.CustomActorArraySize}]
-  call CheckGroupOrRaidAggro
-  return
+  	call CheckGroupOrRaidAggro
+  	return
 }
 
 function MA_Lost_Aggro()
 {
-
-
 }
 
 function MA_Dead()
@@ -1290,7 +1405,54 @@ function Cancel_Root()
 
 function CheckHeals()
 {
-	;this was moved to CommonHeals in EQ2BotLib
+	variable int temphl = 0
+	variable bool CastSalve = FALSE
+	variable bool bReturn
+	bReturn:Set[FALSE]
+
+	;;;;; Salve (granted by Fury's "Pact of Nature" ability)
+	;; TODO:  Add option to set UsePactOfNatureSalveAbility in UI.  For now, it's hard-coded in the initialization routine earlier in this file
+	if (${UsePactOfNatureSalveAbility} && ${Me.Ability[id,1369045398].IsReady})
+	{
+		echo "[${Time.SecondsSinceMidnight}]\ao Checking for Heals/Cures\ax"
+		do
+		{
+			if (${Me.Group[${temphl}].InZone} && !${Me.Group[${temphl}].IsDead})
+			{
+				if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
+					CastSalve:Set[TRUE]
+				elseif (${Me.Group[${temphl}].Health} <= 75)
+					CastSalve:Set[TRUE]
+
+				if (${CastSalve})
+				{
+					echo "\ayCasting Salve!\ax"
+					if ${Me.CastingSpell}
+					{
+						do
+						{
+							eq2execute /cancel_spellcast
+							wait 2
+						}
+						while ${Me.CastingSpell}
+					}
+					wait 2
+					eq2execute /useabilityonplayer ${Me.Name} Salve
+					wait 2
+					do
+					{
+						waitframe
+					}
+					while ${Me.CastingSpell}
+					bReturn:Set[TRUE]
+					waitframe
+					break
+				}
+			}
+		}
+		while ${temphl:Inc} <= ${Me.Group}
+	}
+	return ${bReturn}
 }
 
 function CheckPower()
