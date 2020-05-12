@@ -4879,8 +4879,8 @@ function ReacquireKillTargetFromMA(int WaitTime)
 
 function VerifyTarget(uint TargetID)
 {
-	if (${Me.SubClass.Equal[illusionist]})
-		echo "\ao${Time.SecondsSinceMidnight} VerifyTarget(${TargetID})..."
+	;if (${Me.SubClass.Equal[illusionist]})
+	;	echo "\ao${Time.SecondsSinceMidnight} VerifyTarget(${TargetID})..."
 
 	; this is called a lot, so let's put this here...
 	if (${CurrentAction.Find[Casting]} && !${Me.CastingSpell})
@@ -6895,7 +6895,8 @@ atom(script) EQ2_onChoiceWindowAppeared()
 
 	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[cast]} && ${Me.Health}<1
 	{
-		run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+		if (!${Script[ChoiceWindow](exists)})
+			run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice1
 		if ${KillTarget} && ${Actor[${KillTarget}].Name(exists)}
 		{
 			if !${Actor[${KillTarget}].InCombatMode}
@@ -6907,44 +6908,44 @@ atom(script) EQ2_onChoiceWindowAppeared()
 
 	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[thoughtstone]}
 	{
-		;if (${Me.GroupCount} > 1)
-			run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+		if (!${Script[ChoiceWindow](exists)})
+			run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice1
 		return
 	}
 
 	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[Lore]} && ${Me.Health}>1
 	{
-		;if (${Me.GroupCount} > 1)
-		;{
+		if (!${Script[ChoiceWindow](exists)})
+		{
 			if ${LoreConfirm}
-				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+				run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice1
 			else
-				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2
-		;}
+				run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice2
+		}
 		return
 	}
 
 	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[No-Trade]} && ${Me.Health}>1
 	{
-		;if (${Me.GroupCount} > 1)
-		;{
+		if (!${Script[ChoiceWindow](exists)})
+		{
 			if ${NoTradeConfirm}
-				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+				run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice1
 			else
-				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2
-		;}
+				run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice2
+		}
 		return
 	}
 
 	if ${ChoiceWindow.Text.GetProperty[LocalText].Find[Heirloom]} && ${Me.Health}>1
 	{
-		;if (${Me.GroupCount} > 1)
-		;{
+		if (!${Script[ChoiceWindow](exists)})
+		{
 			if ${ConfirmHeirloomLoot}
-				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
+				run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice1
 			else
-				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2
-		;}
+				run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice2
+		}
 		return
 	}
 
