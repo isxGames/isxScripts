@@ -207,6 +207,7 @@ variable bool PullWithBow
 variable bool LoreConfirm
 variable bool NoTradeConfirm
 variable bool LootPrevCollectedShineys
+variable bool ConfirmHeirloomLoot
 variable bool CheckPriestPower
 variable int LootWndCount
 variable int LootDecline
@@ -5780,6 +5781,7 @@ objectdef EQ2BotObj
 		LoreConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot Lore Items?,TRUE]}]
 		NoTradeConfirm:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to Loot NoTrade Items?,FALSE]}]
 		LootPrevCollectedShineys:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to loot previously collected shineys?,FALSE]}]
+		ConfirmHeirloomLoot:Set[${CharacterSet.FindSet[General Settings].FindSetting[Do you want to confirm loot of all HEIRLOOM items?,FALSE]}]
 
 		BuffRoutinesTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[BuffRoutinesTimerInterval,4000]}]
 		OutOfCombatRoutinesTimerInterval:Set[${CharacterSet.FindSet[General Settings].FindSetting[OutOfCombatRoutinesTimerInterval,1000]}]
@@ -6887,7 +6889,7 @@ atom ExcludePOI()
 
 atom(script) EQ2_onChoiceWindowAppeared()
 {
-	Debug:Echo["EQ2_onChoiceWindowAppeared -- '${ChoiceWindow.Text.GetProperty[LocalText]}'"]
+	Debug:Echo["EQ2_onChoiceWindowAppeared - ${ChoiceWindow.Text.GetProperty[LocalText]}"]
 	if ${PauseBot} || !${StartBot}
 		return
 
@@ -6938,7 +6940,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 	{
 		;if (${Me.GroupCount} > 1)
 		;{
-			if ${NoTradeConfirm}
+			if ${ConfirmHeirloomLoot}
 				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice1
 			else
 				run "${PATH_THREADS}/ChoiceWindow.iss" 15 DoChoice2

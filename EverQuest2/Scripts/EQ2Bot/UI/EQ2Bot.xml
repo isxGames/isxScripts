@@ -1083,9 +1083,36 @@
                       }
                     </OnLeftClick>
                   </checkbox>
-                  <checkbox Name='Loot Previously Collected Shineys'>
+                  <checkbox Name='Confirm Heirloom Looting'>
                     <X>57%</X>
                     <Y>130</Y>
+                    <Width>30%</Width>
+                    <Height>20</Height>
+                    <Text>Roll on HEIRLOOM Items</Text>
+                    <OnLoad>
+                      if ${Script[EQ2Bot].Variable[ConfirmHeirloomLoot]}
+                      {
+                        This:SetChecked
+                      }
+                    </OnLoad>
+                    <OnLeftClick>
+                      if ${This.Checked}
+                      {
+                        Script[EQ2Bot].Variable[ConfirmHeirloomLoot]:Set[TRUE]
+                        LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to confirm loot of all HEIRLOOM items?,TRUE]
+                        Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                      }
+                      else
+                      {
+                        Script[EQ2Bot].Variable[ConfirmHeirloomLoot]:Set[FALSE]
+                        LavishSettings[EQ2Bot].FindSet[Character].FindSet[General Settings]:AddSetting[Do you want to confirm loot of all HEIRLOOM items?,FALSE]
+                        Script[EQ2Bot].VariableScope.EQ2Bot:Save_Settings
+                      }
+                    </OnLeftClick>
+                  </checkbox>
+                  <checkbox Name='Loot Previously Collected Shineys'>
+                    <X>57%</X>
+                    <Y>150</Y>
                     <Width>30%</Width>
                     <Height>20</Height>
                     <Text>Roll on prev. collected Shineys</Text>
@@ -1542,7 +1569,7 @@
                   </Frame>
                   <Frame name='Spell Pull Frame'>
                     <x>5%</x>
-                    <y>150</y>
+                    <y>175</y>
                     <Visible>0</Visible>
                     <Height>40</Height>
                     <Width>95%</Width>
@@ -1683,7 +1710,7 @@
                   </Frame>
                   <Text Name='ScanRange Text'>
                     <X>20</X>
-                    <Y>196</Y>
+                    <Y>216</Y>
                     <Width>50%</Width>
                     <Height>20</Height>
                     <Alignment>Left</Alignment>
@@ -1691,7 +1718,7 @@
                   </Text>
                   <Textentry Name='ScanRange'>
                     <X>90%</X>
-                    <Y>196</Y>
+                    <Y>216</Y>
                     <Width>7%</Width>
                     <Height>15</Height>
                     <Color>FFDDBB00</Color>
@@ -1713,7 +1740,7 @@
                   </Textentry>
                   <Slider Name='ScanRange Slider'>
                     <X>51%</X>
-                    <Y>193</Y>
+                    <Y>213</Y>
                     <Width>35%</Width>
                     <Height>20</Height>
                     <Range>45</Range>
@@ -1743,7 +1770,7 @@
                   </Slider>
                   <Text Name='MARange Text'>
                     <X>20</X>
-                    <Y>220</Y>
+                    <Y>240</Y>
                     <Width>50%</Width>
                     <Height>20</Height>
                     <Alignment>Left</Alignment>
@@ -1751,7 +1778,7 @@
                   </Text>
                   <Textentry Name='MARange'>
                     <X>90%</X>
-                    <Y>220</Y>
+                    <Y>240</Y>
                     <Width>7%</Width>
                     <Height>15</Height>
                     <Color>FFDDBB00</Color>
@@ -1773,7 +1800,7 @@
                   </Textentry>
                   <Slider Name='MARange Slider'>
                     <X>51%</X>
-                    <Y>216</Y>
+                    <Y>236</Y>
                     <Width>35%</Width>
                     <Height>20</Height>
                     <Range>45</Range>
