@@ -165,8 +165,7 @@ function Pulse()
 
 		if (${CastSpeedBuff})
 		{
-			call CastSpell "Spirit of the Wolf" 2119211019 0 1 1
-			wait 10
+			call SpiritOfTheWolf
 			CastSpeedBuff:Set[FALSE]
 		}
 
@@ -1704,7 +1703,10 @@ function CheckHeals()
   	{
 		if (${MainTankID} > 0)
 		{
-			echo "EQ2Bot-CheckHeals():: -- MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+			if (!${Me.Group[id,${MainTankID}](exists)})
+				echo "Fury-CheckHeals() - ERROR MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
+			;elseif (!${Me.Group[id,${MainTankID}].InZone})
+			;	echo "EQ2Bot-CheckHeals():: ERROR: MainTank does not exist! (MainTankID/MainTankPC: ${MainTankID}/${MainTankPC}"
 		}
 		MainTankExists:Set[FALSE]
   	}
@@ -2680,7 +2682,7 @@ function TortoiseShell()
 	{
 		CurrentAction:Set[Combat :: Casting Tortoise Shell!]
 		if ${FuryDebugMode}
-			Debug:Echo["\atFury:TortoiseShell()\ax -- Casting \ayTortoise Shell\ax..."]
+			Debug:Echo["\at\[Fury:TortoiseShell\]\ax Casting \ayTortoise Shell\ax..."]
 
 		call CastSpellNOW "Tortoise Shell" 4031903609 ${Me.ID} TRUE
 	}
@@ -2695,4 +2697,41 @@ function TortoiseShell()
 		}
 		CastTortoiseShell:Set[FALSE]
 	}
+}
+
+function SpiritOfTheWolf()
+{
+	variable uint TimerStart = ${Time.SecondsSinceMidnight}
+	variable bool AllGroupInZone = FALSE
+	variable uint GroupCounter = 1
+	;; Cast Spirit of the Wolf after all group members have finished zoning, are alive, and are in range or 10 seconds, whichever comes first
+	CurrentAction:Set[Checking 'Spirit of the Wolf']
+	do
+	{
+		do
+		{
+			if (${Me.Group[${GroupCounter}].InZone} && !${Me.Group[${GroupCounter}].IsDead} && ${Me.Group[${GroupCounter}].Distance} <= 50)
+				AllGroupInZone:Set[TRUE]
+			else
+				AllGroupInZone:Set[FALSE]
+		}
+		while ${GroupCounter:Inc} < ${Me.Group}
+
+		if (${AllGroupInZone})
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\at\[Fury:SpiritOfTheWolf\]\ax Casting \aySpirit of the Wolf\ax (all group members in zone, etc.)"]
+			call CastSpell "Spirit of the Wolf" 2119211019 0 1 1
+			wait 5
+			return
+		}
+
+	}
+	while (${Time.SecondsSinceMidnight} <= ${Math.Calc[${TimerStart}+10]})
+
+	if ${FuryDebugMode}
+		Debug:Echo["\at\[Fury:SpiritOfTheWolf\]\ax Casting \aySpirit of the Wolf\ax (waited 10 seconds...)"]
+	call CastSpell "Spirit of the Wolf" 2119211019 0 1 1
+	wait 5
+	return
 }
