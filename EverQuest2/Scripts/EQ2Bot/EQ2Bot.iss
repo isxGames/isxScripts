@@ -364,21 +364,27 @@ function main(string Args)
 
 	if !${ISXEQ2(exists)}
 	{
-		Debug:Echo["ISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!"]
+		echo "\ayISXEQ2 has not been loaded!  EQ2Bot can not run without it.  Good Bye!\ax"
 		NoAtExit:Set[TRUE]
 		return
 	}
 	elseif !${ISXEQ2.IsReady}
 	{
-		Debug:Echo["ISXEQ2 is not yet ready -- you must wait until the authentication and patching sequences have completed before running EQ2Bot."]
+		echo "\ayISXEQ2 is not yet ready -- you must wait until the authentication and patching sequences have completed before running EQ2Bot.\ax"
 		NoAtExit:Set[TRUE]
 		return
 	}
 	elseif (${EQ2.Zoning} != 0)
 	{
-		Debug:Echo["You cannot start EQ2Bot while zoning.  Wait until you have finished zoning, and then try again."]
+		echo "\ayYou cannot start EQ2Bot while zoning.  Wait until you have finished zoning, and then try again.\ax"
 		NoAtExit:Set[TRUE]
 		return
+	}
+	
+	if (${ISXEQ2.APIVersion} > 20200416.0004)
+	{
+		echo "\ayEQ2Bot was written for ISXEQ2 APIVersion 20200416.0004; however, the current APIVersion is ${ISXEQ2.APIVersion}.  EQ2Bot will attempt\ax"
+		echo "\ayto run; but, some things may be broken until it has been updated.\ax"
 	}
 
 	Turbo 50
@@ -483,8 +489,8 @@ function main(string Args)
 			DoCheckIfLeveled:Set[TRUE]
 			MainPulse3SecondTimer:Set[${Script.RunningTime}]
 		}
+		;;;; Uncomment the timers below as needed in the future
 		;;;;
-		;; Uncomment the timers below as needed in the future
 		;if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse4SecondTimer}+4000]})
 		;{
 		;	MainPulse4SecondTimer:Set[${Script.RunningTime}]
