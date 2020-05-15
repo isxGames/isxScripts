@@ -240,10 +240,19 @@ variable uint OutOfCombatRoutinesTimer = 0
 variable int OutOfCombatRoutinesTimerInterval = 1000
 variable uint AggroDetectionTimer = 0
 variable int AggroDetectionTimerInterval = 500
-variable uint ClassPulseTimer = 0
-variable uint ClassPulseTimer2 = 0
-variable uint ClassPulseTimer3 = 0
-variable uint ClassPulseTimer4 = 0
+variable int64 MainPulse1SecondTimer = 0
+variable int64 MainPulse1_5SecondTimer = 0
+variable int64 MainPulse2SecondTimer = 0
+variable int64 MainPulse3SecondTimer = 0
+variable int64 MainPulse4SecondTimer = 0
+variable int64 MainPulse5SecondTimer = 0
+variable int64 MainPulse10SecondTimer = 0
+variable int64 MainPulse15SecondTimer = 0
+variable int64 MainPulse20SecondTimer = 0
+variable int64 ClassPulseTimer = 0
+variable int64 ClassPulseTimer2 = 0
+variable int64 ClassPulseTimer3 = 0
+variable int64 ClassPulseTimer4 = 0
 variable bool IsReady = FALSE
 variable bool NoAutoMovementInCombat
 variable bool NoAutoMovement
@@ -255,6 +264,8 @@ variable string Me_Name
 variable bool IsPetClass = FALSE
 variable bool LevelChanged = FALSE
 variable uint LevelChangedTimer = 0
+variable uint VerifyTargetTimer = 0
+variable string VerifyTargetLastResult
 
 ;===================================================
 ;===          AutoAttack Timing                 ====
@@ -331,6 +342,11 @@ function main(string Args)
 	variable bool MobDetected
 	declare LastWindow string script
 	variable uint AggroMob
+	variable bool CheckIfDead = FALSE
+	variable bool DoCheckManaStone = FALSE
+	variable bool DoCheckMTChanged = FALSE
+	variable bool DoCheckForLoot = FALSE
+	variable bool DoCheckIfLeveled = FALSE
 
 	if ${Args.Find[debug]}
 	{
@@ -438,18 +454,69 @@ function main(string Args)
 	UIElement[EQ2 Bot].FindUsableChild[Resume EQ2Bot,commandbutton]:Hide
 	do
 	{
-		;Debug:Echo["Main Loop: Test-${Time.Timestamp}"]
+		;Debug:Echo["Main Pulse Loop: Test-${Time.Timestamp}"]
+
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		;; Unless specific throttling has been implimented, everything in this loop will be called EVERY frame pulse, so intensive routines may cause lag.
+		;; To assist with this, several throttling timers are defined below so that certain routines will only be called every x seconds, as shown below.
+		;;
+		;;;;;;;;;;;;
+		if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse1SecondTimer}+1000]})
+		{
+			DoCheckAutoPull:Set[TRUE]
+			DoCheckForLoot:Set[TRUE]
+			CheckIfDead:Set[TRUE]
+			MainPulse1SecondTimer:Set[${Script.RunningTime}]
+		}
+		if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse1_5SecondTimer}+1500]})
+		{
+			DoCheckMTChanged:Set[TRUE]
+			MainPulse1_5SecondTimer:Set[${Script.RunningTime}]
+		}
+		if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse2SecondTimer}+2000]})
+		{
+			DoCheckManaStone:Set[TRUE]
+			MainPulse2SecondTimer:Set[${Script.RunningTime}]
+		}
+		if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse3SecondTimer}+3000]})
+		{
+			DoCheckIfLeveled:Set[TRUE]
+			MainPulse3SecondTimer:Set[${Script.RunningTime}]
+		}
+		;;;;
+		;; Uncomment the timers below as needed in the future
+		;if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse4SecondTimer}+4000]})
+		;{
+		;	MainPulse4SecondTimer:Set[${Script.RunningTime}]
+		;}
+		;if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse5SecondTimer}+5000]})
+		;{
+		;	MainPulse5SecondTimer:Set[${Script.RunningTime}]
+		;}
+		;if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse10SecondTimer}+10000]})
+		;{
+		;	MainPulse10SecondTimer:Set[${Script.RunningTime}]
+		;}		
+		;if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse15SecondTimer}+15000]})
+		;{
+		;	MainPulse15SecondTimer:Set[${Script.RunningTime}]
+		;}
+		;if (${Script.RunningTime} >= ${Math.Calc64[${MainPulse20SecondTimer}+20000]})
+		;{
+		;	MainPulse20SecondTimer:Set[${Script.RunningTime}]
+		;}		
+
 		;;;;;;;;;;;;;;;;;
 		;;;; Set strings used in UI.  They are set here in order to make for custom strings based upon level, etc.  Also, any ${} called in the UI is accessed
 		;;;; EVERY frame.  By moving things here, we can reduce the number of times things are called, increasing efficiency (when desired.)
 		;;;
-
+			  ;; TODO
 		;;;
 		;;;;;;;;;;;;;;;;;
 
 		if (${EQ2.Zoning} != 0)
 		{
-			KillTarget:Set[]
+			KillTarget:Set[0]
 			do
 			{
 				wait 5
@@ -463,7 +530,7 @@ function main(string Args)
 
 		if !${StartBot}
 		{
-			KillTarget:Set[]
+			KillTarget:Set[0]
 			do
 			{
 				wait 5
@@ -483,7 +550,7 @@ function main(string Args)
 
 		;;;;;;;;;;;;;;
 		;; If DoNoCombat is TRUE, then the bot should avoid calling Combat() or any related functions.
-		if (${EQ2.OnBattleground} && ${BG_NoCombat})	
+		if (${BG_NoCombat} && ${EQ2.OnBattleground})	
 			DoNoCombat:Set[TRUE]
 		else
 			DoNoCombat:Set[FALSE]
@@ -492,7 +559,8 @@ function main(string Args)
 		
 		;Debug:Echo["main() -- DoNoCombat: ${DoNoCombat} (${EQ2.OnBattleground} - ${BG_NoCombat})"]
 		
-		if ${Me.IsDead}
+		;; Check if dead no more than once per second
+		if (${CheckIfDead} && ${Me.IsDead})
 		{
 			KillTarget:Set[]
 			CurrentAction:Set[Dead -- Waiting...]
@@ -510,9 +578,11 @@ function main(string Args)
 			;; call PostDeathRoutine(), which exists in each class file
 			call PostDeathRoutine
 			CurrentAction:Set[Idle...]
+			CheckIfDead:Set[FALSE]
 		}
 
-		if (${usemanastone})
+		;; Only check to use manastone no more than once every 2 seconds
+		if (${usemanastone} && ${DoCheckManaStone})
 		{
 			if !${Me.InCombatMode}
 			{
@@ -535,9 +605,11 @@ function main(string Args)
 					}
 				}
 			}	
+			DoCheckManaStone:Set[FALSE]
 		}
 
-		; Call "Pulse" function located within the class file
+		;;;; Call "Pulse" function located within the associated class file
+		;; Note:  It is the responsibility of the individual Pulse functions to handle their own throttling.
 		call Pulse
 
 		;;;;
@@ -953,23 +1025,32 @@ function main(string Args)
 			OutOfCombatRoutinesTimer:Set[${Script.RunningTime}]
 		}
 
-		;reset MT if it has changed
-		if ${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,pc,${OriginalMT}].Name(exists)} && ${Actor[exactname,pc,${OriginalMT}].Health}>80
+		;; Check no more than once every 1.5 seconds to see if MT has changed
+		if (${DoCheckMTChanged})
 		{
-			MainTankID:Set[${Actor[exactname,pc,${OriginalMT}].ID}]
-			MainTankPC:Set[${OriginalMT}]
-			Debug:Echo["${Script.RunningTime} -- Maintank Reset to UI Selection (${MainTankPC} - ID: ${MainTankID})"]
+			if ${MainTankPC.NotEqual[${OriginalMT}]} && ${Actor[exactname,pc,${OriginalMT}].Name(exists)} && ${Actor[exactname,pc,${OriginalMT}].Health}>80
+			{
+				MainTankID:Set[${Actor[exactname,pc,${OriginalMT}].ID}]
+				MainTankPC:Set[${OriginalMT}]
+				Debug:Echo["${Script.RunningTime} -- Maintank Reset to UI Selection (${MainTankPC} - ID: ${MainTankID})"]
+			}
+			DoCheckMTChanged:Set[FALSE]
 		}
 
 		;;;;;;;;;;;;;;
 		;;; END Pre-Combat Routines Loop (ie, Buff Routine, etc.)
 		;;;;;;;;;;;;;;
 
+		;; Check for loot, no more than once once per second
+		if (${DoCheckForLoot})
+		{
+			if ${AutoLoot} && ${Me.Health}>=${HealthCheck}
+				call CheckLoot
+			DoCheckForLoot:Set[FALSE]
+		}
 
-		if ${AutoLoot}  && ${Me.Health}>=${HealthCheck}
-			call CheckLoot
-
-		if ${AutoPull} && !${Me.InCombatMode}
+		;; Handle auto pulling (throttled to run no more than once every second)
+		if (${AutoPull} && !${Me.InCombatMode} && ${DoCheckAutoPull})
 		{
 			;Debug:Echo["AutoPull Loop: Test-${Time.Timestamp}"]
 			if ${PathType}==2 && (${Me.Ability[${PullSpell}].IsReady} || ${PullType.Equal[Pet Pull]} || ${PullType.Equal[Bow Pull]}) && ${Me.Power}>${PowerCheck} && ${Me.Health}>${HealthCheck} && ${EQ2Bot.PriestPower}
@@ -1076,10 +1157,9 @@ function main(string Args)
 				}
 			;Debug:Echo["END AutoPull Loop: Test-${Time.Timestamp}"]
 			}
+			DoCheckAutoPull:Set[FALSE]
 		}
 		
-		call ProcessTriggers
-
 		if (!${DoNoCombat})
 		{
 			if (${Script.RunningTime} >= ${Math.Calc64[${AggroDetectionTimer}+${AggroDetectionTimerInterval}]})
@@ -1148,39 +1228,20 @@ function main(string Args)
 			}
 		}
 		
-		; Check if we have leveled and reset XP Calculations in UI
-		if ${Me.Level} < 120
-		{
-			if ${Me.Level} > ${StartLevel} && !${CloseUI}
-			{
-				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartXP",${Int[${Me.GetGameData[Self.Experience].Label}]}]
-				CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
-			}
-		}
-		;;;; This is not proper logic...does not seem to work correctly if you ding AA...TO DO:  Redo.
-		;elseif ${Me.TotalEarnedAPs} < 200
-		;{
-		;	if ${Me.TotalEarnedAPs} > ${StartAP} && !${CloseUI}
-		;	{
-		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartAPXP",${Int[${Me.GetGameData[Achievement.Points].Label}]}]
-		;		CharacterSet.FindSet[Temporary Settings]:AddSetting["StartTime",${Time.Timestamp}]
-		;	}
-		;}
-
-		; Check if we have leveled and reload spells
-		if ${Me.Level}>${StartLevel} && ${Me.Level}<120
+		; Check if we have leveled and reload spells every 3 seconds
+		if (${DoCheckIfLeveled} && ${Me.Level} < 120 && ${Me.Level} > ${StartLevel})
 		{
 			EQ2Bot:Init_Config
 			call Buff_Init
 			call Combat_Init
 			call PostCombat_Init
 			StartLevel:Set[${Me.Level}]
+			DoCheckIfLeveled:Set[FALSE]
 		}
 
 		call ProcessTriggers
 	}
 	while ${CurrentTask}
-
 }
 
 function CalcAutoAttackTimer()
@@ -1214,19 +1275,16 @@ function CheckActorForEffect(uint ActorID, int MainIconID, int BackDropIconID)
 
 	do
 	{
-		;if ${FuryDebugMode}
-		;	Debug:Echo["\atFury:CheckActorForEffect(\ax\ay${ActorID}, ${MainIconID}, ${BackDropIconID}\ax\at)\ax - Checking ${Actor[${ActorID}].Name} Effect #${i} - MainIconID: ${Actor[${ActorID}].Effect[${i}].MainIconID} - BackDropIconID: ${Actor[${ActorID}].Effect[${i}].BackDropIconID}"]
+		;Debug:Echo["\at\[EQ2Bot:CheckActorForEffect(\ax\ay${ActorID}, ${MainIconID}, ${BackDropIconID}\ax\at)\ax\] Checking ${Actor[${ActorID}].Name} Effect #${i} - MainIconID: ${Actor[${ActorID}].Effect[${i}].MainIconID} - BackDropIconID: ${Actor[${ActorID}].Effect[${i}].BackDropIconID}"]
 		if (${Actor[${ActorID}].Effect[${i}].MainIconID} == ${MainIconID} && ${Actor[${ActorID}].Effect[${i}].BackDropIconID} == ${BackDropIconID})
 		{
-			;if ${FuryDebugMode}
-			;	Debug:Echo["\atCheckActorForEffect(\ax\ay${ActorID}, ${MainIconID}, ${BackDropIconID}\ax\at)\ax - Returning TRUE!"]
+			Debug:Echo["\at\[EQ2Bot:CheckActorForEffect(\ax\ay${ActorID}, ${MainIconID}, ${BackDropIconID}\ax\at)\ax\] - Returning \arTRUE\ax!"]
 			return "TRUE"
 		}
 	}
-	while (${i:Inc} < ${Actor[${ActorID}].NumEffects})
+	while (${i:Inc} <= ${Actor[${ActorID}].NumEffects})
 
-	;if ${FuryDebugMode}
-	;	Debug:Echo["\atCheckActorForEffect(\ax\ay${ActorID}, ${MainIconID}, ${BackDropIconID}\ax\at)\ax - Returning FALSE!"]
+	Debug:Echo["\at\[EQ2Bot:CheckActorForEffect(\ax\ay${ActorID}, ${MainIconID}, ${BackDropIconID}\ax\at)\ax\] - Returning \agFALSE\ax!"]
 	return "FALSE"
 }
 
@@ -1236,16 +1294,16 @@ function CheckMeForEffect(int MainIconID, int BackDropIconID)
 
 	do
 	{
-		Debug:Echo["\atCheckMeForEffect(\ax\ay${MainIconID}, ${BackDropIconID}\ax\at)\ax - Checking Effect #${i} - MainIconID: ${Me.Effect[${i}].MainIconID} - BackDropIconID: ${Me.Effect[${i}].BackDropIconID}"]
+		;Debug:Echo["\at\[EQ2Bot:CheckMeForEffect(\ax\ay${MainIconID}, ${BackDropIconID}\ax\at)\]\ax Checking Effect #${i} - MainIconID: ${Me.Effect[${i}].MainIconID} - BackDropIconID: ${Me.Effect[${i}].BackDropIconID}"]
 		if (${Me.Effect[${i}].MainIconID} == ${MainIconID} && ${Me.Effect[${i}].BackDropIconID} == ${BackDropIconID})
 		{
-			Debug:Echo["\atCheckMeForEffect(\ax\ay${MainIconID}, ${BackDropIconID}\ax\at)\ax - Returning TRUE!"]
+			Debug:Echo["\at\[EQ2Bot:CheckMeForEffect(\ax\ay${MainIconID}, ${BackDropIconID}\ax\at)\]\ax - Returning \arTRUE\ax!"]
 			return "TRUE"
 		}
 	}
-	while (${i:Inc} < ${Me.NumEffects})
+	while (${i:Inc} <= ${Me.NumEffects})
 
-	Debug:Echo["\atCheckMeForEffect(\ax\ay${MainIconID}, ${BackDropIconID}\ax\at)\ax - Returning FALSE!"]
+	Debug:Echo["\at\[EQ2Bot:CheckMeForEffect(\ax\ay${MainIconID}, ${BackDropIconID}\ax\at)\]\ax - Returning \agFALSE\ax!"]
 	return "FALSE"
 }
 
@@ -1349,7 +1407,6 @@ function CastSpellRange(... Args)
 		}
 	}
 
-
 	variable bool fndspell
 	variable int tempvar
 	variable uint originaltarget
@@ -1385,8 +1442,10 @@ function CastSpellRange(... Args)
 		return -1
 	}
 
-	;if casting on killtarget, lets make sure it is still valid and find new one if needed
-	if ${TargetID} && ${TargetID}==${KillTarget}
+	;;if casting on killtarget, lets make sure it is still valid and find new one if needed
+	;;
+	;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for Illusionists 
+	if (${TargetID} && ${TargetID}==${KillTarget} && !${Me.SubClass.Equal[Illusionist]})
 	{
 		call VerifyTarget ${TargetID}
 		if ${Return.Equal[FALSE]}
@@ -1858,7 +1917,6 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 		Debug:Echo["EQ2Bot-Debug:: Spells.Casting (GameData): ${Me.GetGameData[Spells.Casting].Label}"]
 	}
 
-
 	if (${Me.CastingSpell} && !${Me.GetGameData[Spells.Casting].Label.Equal[${spell}]})
 	{
 		Counter:Set[0]
@@ -1876,12 +1934,17 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 
 			if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
 			{
-				call VerifyTarget ${TargetID}
-				if ${Return.Equal[FALSE]}
+				;;;;;;
+				;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for Illusionists 
+				if (!${Me.SubClass.Equal[Illusionist]})
 				{
-					CurrentAction:Set[]
-					LastQueuedAbility:Set[${spell}]
-					return
+					call VerifyTarget ${TargetID}
+					if ${Return.Equal[FALSE]}
+					{
+						CurrentAction:Set[]
+						LastQueuedAbility:Set[${spell}]
+						return
+					}
 				}
 			}
 
@@ -4819,9 +4882,14 @@ function SetNewKillTarget()
 		return OK
 }
 
-function ReacquireKillTargetFromMA(int WaitTime)
+function ReacquireKillTargetFromMA(uint WaitTime)
 {
 	variable uint NextKillTarget
+	variable bool DebugEnabled = ${Debug.Enabled}
+	;; Set to "FALSE" to turn off debugging for this function
+	variable bool DebugThisFunction = TRUE
+	if (${DebugThisFunction} && !${DebugEnabled})
+		Debug:Enable
 
 	if (${WaitTime} > 0)
 	{
@@ -4833,8 +4901,10 @@ function ReacquireKillTargetFromMA(int WaitTime)
 	{
 		if !${Actor[${MainAssistID}].InCombatMode}
 		{
-			Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist is no longer in combat mode]"]
+			Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax MainAssist is no longer in combat mode..."]
 			KillTarget:Set[0]
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable
 			return FAILED
 		}
 
@@ -4846,85 +4916,205 @@ function ReacquireKillTargetFromMA(int WaitTime)
 				if ${Actor[${NextKillTarget}].Type.Find[NPC]} && !${Actor[${NextKillTarget}].IsDead}
 				{
 					KillTarget:Set[${NextKillTarget}]
-					Debug:Echo["KillTarget now set to ${Actor[${MainAssistID}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"]
+					Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax KillTarget now set to ${Actor[${MainAssistID}]}'s target: ${Actor[${KillTarget}]} (ID: ${KillTarget})"]
+					if (!${DebugEnabled} && ${DebugThisFunction})
+						Debug:Disable
 					return OK
 				}
 				else
 				{
-					Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist's target was not valid]"]
+					Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax MainAssist's target was not valid..."]
+					if (!${DebugEnabled} && ${DebugThisFunction})
+						Debug:Disable
 					return FAILED
 				}
 			}
 			else
 			{
-				Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist's target ID was zero]"]
+				Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax MainAssist's target ID was zero..."]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable
 				return FAILED
 			}
 		}
 		else
 		{
-			Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist does not currently have a target]"]
+			Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax MainAssist does not currently have a target..."]
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable
 			return FAILED
 		}
 	}
 	else
 	{
-		Debug:Echo["ReacquireKillTargetFromMA() -- [MainAssist doesn't exist!]"]
+		Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax MainAssist doesn't exist!"]
+		if (!${DebugEnabled} && ${DebugThisFunction})
+			Debug:Disable
 		return FAILED
 	}
 
-	Debug:Echo["ReacquireKillTargetFromMA() FAILED"]
+	Debug:Echo["\at\[EQ2Bot-ReacquireKillTargetFromMA\]\ax *FAILED*"]
+	if (!${DebugEnabled} && ${DebugThisFunction})
+		Debug:Disable
 	return FAILED
 }
 
-function VerifyTarget(uint TargetID)
+function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 {
-	;if (${Me.SubClass.Equal[illusionist]})
-	;	echo "\ao${Time.SecondsSinceMidnight} VerifyTarget(${TargetID})..."
-
-	; this is called a lot, so let's put this here...
-	if (${CurrentAction.Find[Casting]} && !${Me.CastingSpell})
-		CurrentAction:Set[Waiting...]
-
-	if (!${TargetID})
+	;; Call this function a maximum of one time each second while in combat mode.  Otherwise, a maximum of once every 5 seconds.
+	;; (Returns the last result "between seconds")
+	;;
+	;; Notes: (TODO:  Redo other classes so that they are only checking VerifyTarget before each spell/ability cast [ which includes editing a line in CastSpell() in this file]
+	;;        1. Illusionist.iss has been updated so as to not require throttling  
+	if (!${Me.SubClass.Equal[Illusionist]})
 	{
-		if (!${Actor[${KillTarget}].Name(exists)} || ${Actor[${KillTarget}].IsDead})
+		if (${VerifyTargetTimer} > 0 && !${IgnoreThrottle})
+		{
+			if (${Me.InCombatMode})
+			{
+				if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${VerifyTargetTimer}+1]})
+					return ${VerifyTargetLastResult}
+			}
+			else
+			{
+				if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${VerifyTargetTimer}+5]})
+					return ${VerifyTargetLastResult}
+			}
+		}
+	}
+
+	variable uint TargetID
+	variable string bReturn = "TRUE"
+	variable bool DebugEnabled = ${Debug.Enabled}
+	;; Set to "FALSE" to turn off debugging for this function
+	variable bool DebugThisFunction = TRUE
+	if (${DebugThisFunction} && !${DebugEnabled})
+		Debug:Enable
+
+	CurrentAction:Set[Verifying Target...]
+
+	if (!${ID})
+	{
+		if (${Actor[${KillTarget}].Name(exists)})
+			TargetID:Set[${Actor[${KillTarget}].ID}]
+		else
 		{
 			if ${MainAssist.Equal[${Me.Name}]}
+			{
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax KillTarget no longer valid and this character is the Main Assist; returning FALSE"]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable
+				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+				VerifyTargetLastResult:Set["FALSE"]
 				return "FALSE"
+			}
 
 			call ReacquireKillTargetFromMA 0
 			if ${Return.Equal[FAILED]}
 			{
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax Failed to acquire new KillTarget from Main Assist; returning FALSE"]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable
 				KillTarget:Set[0]
+				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+				VerifyTargetLastResult:Set["FALSE"]
 				return "FALSE"
+			}
+			else
+			{
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax Acquired new KillTarget from Main Assist; returning TRUE"]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable				
+				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+				VerifyTargetLastResult:Set["TRUE"]
+				return "TRUE"
 			}
 		}
 	}
 	else
+		TargetID:Set[${ID}]
+
+
+	if (!${Actor[${TargetID}].Name(exists)})
 	{
-		if (${TargetID}==${KillTarget} && (${Actor[${KillTarget}].IsDead} || !${Actor[${KillTarget}].Name(exists)}))
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID does not exist (or is invalid)"]
+		bReturn:Set["FALSE"]
+	}
+	elseif (${Actor[${TargetID}].IsDead})
+	{
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is dead"]
+		bReturn:Set["FALSE"]
+	}
+	elseif (${Actor[${TargetID}].Distance} > 35)
+	{
+		;; TODO:  Double-check to make sure this logic works with no issues.
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is farther than 35 meters away"]
+		bReturn:Set["FALSE"]
+	}
+	elseif (!${MainAssist.Equal[${Me.Name}]} && !${Actor[${TargetID}].InCombatMode})
+	{
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not in combat mode and I am not the main assist"]
+		bReturn:Set["FALSE"]
+	}
+	elseif (!${Actor[${TargetID}].Type.Equal[NPC]} && !${Actor[${TargetID}].Type.Equal[NamedNPC]})
+	{
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not an NPC or NamedNPC (${Actor[${TargetID}].Type})"]
+		bReturn:Set["FALSE"]
+	}
+	
+
+	if (${bReturn.Equal["FALSE"]})
+	{
+		if (${TargetID}==${KillTarget})
 		{
 			if ${MainAssist.Equal[${Me.Name}]}
+			{
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - KillTarget no longer valid and this character is the Main Assist; returning FALSE"]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable
+				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+				VerifyTargetLastResult:Set["FALSE"]
 				return "FALSE"
+			}
 
 			call ReacquireKillTargetFromMA 0
 			if ${Return.Equal[FAILED]}
 			{
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - Failed to acquire new KillTarget from Main Assist; returning FALSE"]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable
 				KillTarget:Set[0]
+				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+				VerifyTargetLastResult:Set["FALSE"]
 				return "FALSE"
 			}
+			else
+			{
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - Acquired new KillTarget from Main Assist; returning TRUE"]
+				if (!${DebugEnabled} && ${DebugThisFunction})
+					Debug:Disable
+				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+				VerifyTargetLastResult:Set["TRUE"]
+				return "TRUE"
+			}
 		}
-		elseif (!${Actor[${TargetID}].Name(exists)} || ${Actor[${TargetID}].IsDead})
-			return "FALSE"
-		elseif (${Actor[${TargetID}].Distance} > 35)
+		else
 		{
-			;; TODO:  Double-check to make sure that any target greater than 35m away should be "invalid".
-			;;        (i.e., ensure that it gets new target from MA when this happens.)
+			Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - returning FALSE"]
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable	
+			VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+			VerifyTargetLastResult:Set["FALSE"]
 			return "FALSE"
 		}
 	}
 
+	Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is valid; returning TRUE"]
+	if (!${DebugEnabled} && ${DebugThisFunction})
+		Debug:Disable
+	CurrentAction:Set[Waiting...]
+	VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+	VerifyTargetLastResult:Set["TRUE"]
 	return "TRUE"
 }
 
@@ -5114,6 +5304,9 @@ function CheckBuffsOnce()
 
 objectdef ActorCheck
 {
+	variable uint DetectTimer = 0
+	variable bool DetectLastResult
+
 	;returns true for valid targets
 	member:bool ValidActor(uint actorid)
 	{
@@ -5413,6 +5606,13 @@ objectdef ActorCheck
 	;returns true if you, group, raidmember, or pets have agro from mob in range
 	member:bool Detect(int iEngageDistance=${ScanRange})
 	{
+		;; Call this method a maximum of one time each second  (TODO:  Perhaps this throttling should be disabled if ${MainTank} is TRUE?)
+		;; (Returns the last result "between seconds")
+		if (${DetectTimer} > 0)
+		{
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${DetectTimer}+1]})
+				return ${DetectLastResult}
+		}
 		variable index:actor Actors
 		variable iterator ActorIterator
 		variable uint ActorID
@@ -5421,11 +5621,16 @@ objectdef ActorCheck
 			iEngageDistance:Set[30]
 
 		if (${iEngageDistance} == 0)
+		{
+			DetectTimer:Set[${Time.SecondsSinceMidnight}]
+			DetectLastResult:Set[FALSE]
 			return FALSE
+		}
 
 		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= ${iEngageDistance}]
 		Actors:GetIterator[ActorIterator]
-		Debug:Echo["Detect() -- ${Actors.Used} NPC and NamedNPC mobs within ${iEngageDistance} meters."]
+		if (${MainTank})
+			Debug:Echo["Detect() -- ${Actors.Used} NPC and NamedNPC mobs within ${iEngageDistance} meters."]
 
 		if ${ActorIterator:First(exists)}
 		{
@@ -5436,16 +5641,27 @@ objectdef ActorCheck
 				if (${This.CheckActor[${ActorID}]} && ${ActorIterator.Value.InCombatMode} && !${ActorIterator.Value.IsDead})
 				{
 					if (${ActorIterator.Value.Target.ID} == ${Me.ID})
+					{
+						DetectTimer:Set[${Time.SecondsSinceMidnight}]
+						DetectLastResult:Set[TRUE]
 						return TRUE
+					}
 
 					if ${This.AggroGroup[${ActorID}]}
+					{
+						DetectTimer:Set[${Time.SecondsSinceMidnight}]
+						DetectLastResult:Set[TRUE]
 						return TRUE
+					}
 				}
 			}
 			while ${ActorIterator:Next(exists)}
 		}
 
-		Debug:Echo["No NPC or NamedNPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."]
+		if (${MainTank})
+			Debug:Echo["No NPC or NamedNPC was found within ${iEngageDistance} meters that was aggro to you or anyone in your group."]
+		DetectTimer:Set[${Time.SecondsSinceMidnight}]
+		DetectLastResult:Set[FALSE]
 		return FALSE
 	}
 
