@@ -93,7 +93,6 @@ function Class_Shutdown()
 	Event[EQ2_FinishedZoning]:DetachAtom[Shadowknight_FinishedZoning]
 }
 
-
 function Buff_Init()
 {
    PreAction[1]:Set[Armament_Target]
@@ -629,6 +628,11 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
+	call CheckGroupOrRaidAggro
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
@@ -686,11 +690,6 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
-  
 	;; Siphon Strength (Always cast this when it is ready!)
   	if (!${KillTargetIsSoloMob} && ${Me.Ability[${SpellType[80]}].IsReady})
   	{
@@ -709,10 +708,9 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	;; I don't think it needs to be called again this soon in the routine.
-	;call VerifyTarget
-	;if ${Return.Equal[FALSE]}
-	;	return CombatComplete
+	call VerifyTarget
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
 
 	DoAEs:Set[FALSE]
 	if ${PBAoEMode}
@@ -1101,10 +1099,19 @@ function Post_Combat_Routine(int xAction)
 
 function CheckGroupOrRaidAggro()
 {
+	;; Call this function a maximum of one time each second while in combat mode.  Otherwise, a maximum of once every 5 seconds.
 	if (${CheckGroupAggroTimer} > 0)
 	{
-		if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckGroupAggroTimer}+1]})
-			return 0
+		if (${Me.InCombatMode})
+		{
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckGroupAggroTimer}+1]})
+				return 0
+		}
+		else
+		{
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckGroupAggroTimer}+5]})
+				return 0
+		}
 	}
 
 	variable index:actor Actors
