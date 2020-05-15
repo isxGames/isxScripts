@@ -61,6 +61,7 @@ function Class_Declaration()
 	declare FightingHeroicMob bool script FALSE
 	declare KillTargetCheck int script 0
 	declare CureMagicIsInstantCast bool script FALSE
+	declare CheckHealsTimer uint script 0
 	
 	BuffAspect:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffAspect,FALSE]}]
 	BuffRune:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[BuffRune,FALSE]}]
@@ -125,8 +126,8 @@ function Class_Declaration()
 	}
 		
 	;; Set this to TRUE, as desired, for testing
-	;Debug:Enable
-	;IllyDebugMode:Set[TRUE]
+	Debug:Enable
+	IllyDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -304,8 +305,8 @@ function Combat_Init()
 	SpellRange[4,1]:Set[501]
 	Action[4]:Set[Master_Strike]
 
-	;; Encounter DOT   (RENAME)
-	Action[5]:Set[Ego]
+	;; Chromatic Storm
+	Action[5]:Set[Storm]
 	SpellRange[5,1]:Set[91]
 
 	;; Slow recast, Encounter DOT
@@ -847,14 +848,11 @@ function CheckCastBeam()
 	;; Cast Beam if it is ready
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
-		LastSpellCast:Set[60]
-		call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["CheckCastBeam() -- Exiting (Target no longer valid: CombatComplete)"]
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
 			return CombatComplete
-		}
+		LastSpellCast:Set[60]
+		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 		spellsused:Inc
 		return ${spellsused}
 	}
@@ -864,14 +862,11 @@ function CheckCastBeam()
 			Debug:Echo["EQ2Bot-Debug:: LastSpellCast: ${LastSpellCast}"]
 		if (${Me.Ability[${SpellType[60]}].TimeUntilReady} <= 1)
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			LastSpellCast:Set[60]
-			call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1 0 1
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["CheckCastBeam() -- Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete
-		}
+			call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1 0 1
 			spellsused:Inc
 			return ${spellsused}
 		}
@@ -895,7 +890,11 @@ function CheckNonDps(... Args)
 	
 	; Check mezzmode
 	if ${MezzMode}
+	{
 		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 
 	; AA Bewilderment -- Use whenever it's up. It casts fast anyway.
 	if ${Me.Ability[id,3903537279].IsReady}
@@ -904,17 +903,13 @@ function CheckNonDps(... Args)
 		{
 			if ${Actor[${MainTankID}].InCombatMode}
 			{
+				call VerifyTarget ${KillTarget}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
 				call CastSpellRange AbilityID=3903537279 TargetID=${KillTarget} IgnoreMaintained=1
 				spellsused:Inc
 			}
 		}
-	}
-
-	if ${KillTarget}
-	{
-		call VerifyTarget
-		if ${Return.Equal[FALSE]}
-			return CombatComplete
 	}
 
 	; Check stunmode
@@ -931,6 +926,9 @@ function CheckNonDps(... Args)
 					{
 						if ${Me.Maintained[${SpellType[190]}].Target.ID} != ${KillTarget}
 						{
+							call VerifyTarget ${KillTarget}
+							if ${Return.Equal[FALSE]}
+								return CombatComplete
 							call CastSpellRange TargetID=${KillTarget} start=190 ignoremaintained=1
 							spellsused:Inc
 						}
@@ -939,6 +937,9 @@ function CheckNonDps(... Args)
 					{
 						if ${Me.Maintained[${SpellType[191]}].Target.ID} != ${KillTarget}
 						{
+							call VerifyTarget ${KillTarget}
+							if ${Return.Equal[FALSE]}
+								return CombatComplete
 							call CastSpellRange TargetID=${KillTarget} start=191 ignoremaintained=1
 							spellsused:Inc
 						}
@@ -963,7 +964,12 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
 	;;;;;;;
 
-	;; we should actually cast the spell we wanted to cast originally before doing anything else
+	;; Check to make sure the target is valid FIRST and then use the ability this function was called for before anything else
+	call VerifyTarget ${TargetID} "TRUE" "Illusionist-_CastSpellRange"
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
+	;; Cast the spell we wanted to cast originally before doing anything else
 	LastSpellCast:Set[${start}]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	bReturn:Set[${Int[${Return}]}]
@@ -972,11 +978,11 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 		return ${bReturn}
 		
 	if ${ChainStunMode}
+	{
 		call ChainStunMez
-		
-	call VerifyTarget ${TargetID}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 		
 	if ${DoCallCheckPosition}
 	{
@@ -1009,20 +1015,13 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	}
 
 	if ${MezzMode}
-		call Mezmerise_Targets
-
-	call VerifyTarget ${TargetID}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
-	
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;;; Things we should be checking EVERY time
-	if (${Me.InCombatMode} && ${Me.Pet.Name(exists)})
 	{
-		if (${Me.Pet.Target.ID} != ${TargetID} || !${Me.Pet.InCombatMode})
-			EQ2Execute /pet attack
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
-	if !${MainTank} || ${AutoMelee}
+
+	if (!${MainTank} || ${AutoMelee})
 	{
 		if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
 		{
@@ -1032,6 +1031,9 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 				{
 					if (${Me.Ability[${SpellType[387]}].IsReady})
 					{
+						call VerifyTarget ${KillTarget}
+						if ${Return.Equal[FALSE]}
+							return CombatComplete
 						call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 0 1
 						LastSpellCast:Set[387]
 					}
@@ -1039,8 +1041,15 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 				;; Chronosiphoning (Always cast this when it is ready!)
 				if (${UseChronosiphoning} && ${Me.Ability[${SpellType[385]}].IsReady})
 				{
-					call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
-					LastSpellCast:Set[385]
+					call CheckActorForEffect ${KillTarget} 654 -1
+					if ${Return.Equal[FALSE]}
+					{
+						call VerifyTarget ${KillTarget}
+						if ${Return.Equal[FALSE]}
+							return CombatComplete
+						call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+						LastSpellCast:Set[385]
+					}
 				}
 				;; 'Nullifying Staff' and the mob is within range
 				if ${UseNullifyingStaff}
@@ -1049,6 +1058,9 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 					{
 						if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 						{
+							call VerifyTarget ${KillTarget}
+							if ${Return.Equal[FALSE]}
+								return CombatComplete
 							call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 							LastSpellCast:Set[396]
 							spellsused:Inc
@@ -1070,18 +1082,28 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 					{
 						if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 						{
+							call VerifyTarget ${KillTarget}
+							if ${Return.Equal[FALSE]}
+								return CombatComplete
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
 							call CheckCastBeam
+							if ${Return.Equal[CombatComplete]}
+								return CombatComplete
 						}
 						else
 							echo "ERROR1: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
 					}
 					else
 					{
+						call VerifyTarget ${KillTarget}
+						if ${Return.Equal[FALSE]}
+							return CombatComplete
 						call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 						LastSpellCast:Set[72]
 						call CheckCastBeam
+						if ${Return.Equal[CombatComplete]}
+							return CombatComplete
 					}
 				}
 			}
@@ -1099,18 +1121,25 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	else
 		RefreshPowerTimer:Inc
 
-	call VerifyTarget ${TargetID}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
-		
 	call CheckCastBeam
+	if ${Return.Equal[CombatComplete]}
+		return CombatComplete
 
 	; Fast casting DoT
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
-		LastSpellCast:Set[80]
-		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		call CheckActorForEffect ${KillTarget} 476 315
+		if ${Return.Equal[FALSE]}
+		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+			LastSpellCast:Set[80]
+			call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		}
 		call CheckCastBeam
+		if ${Return.Equal[CombatComplete]}
+			return CombatComplete
 	}
 	
 	;; "Time Warp" (and/or any other skills that are dependent upon whether a mob is heroic, epic, or solo.
@@ -1136,7 +1165,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 			}
 		}			
 	}
-	
+
 	; Cure Arcane
 	if (${Me.Arcane} >= 1 || ${Me.Elemental} >= 1 || ${Me.Noxious} >= 1 || ${Me.Trauma} >= 1)
 	{
@@ -1160,14 +1189,14 @@ function Combat_Routine(int xAction)
 	if (!${Actor[${KillTarget}].Name(exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [1]"]
 		return CombatComplete
 	}
 
 	if ${InPostDeathRoutine} || ${CheckingBuffsOnce}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (In PostDeathRoutine or CheckingBuffsOnce)"]
+			Debug:Echo["Combat_Routine() -- Exiting (In PostDeathRoutine or CheckingBuffsOnce) [2]"]
 		return
 	}
 
@@ -1180,6 +1209,16 @@ function Combat_Routine(int xAction)
 		wait 3
 	}
 
+	if (${Me.Pet.Name(exists)})
+	{
+		if (${Me.Pet.Target.ID} != ${KillTarget} || !${Me.Pet.InCombatMode})
+		{
+			Actor[${KillTarget}]:DoTarget
+			wait 2
+			EQ2Execute /pet attack
+		}
+	}
+
 	if ${ChainStunMode}
 	{
 		; Entrance
@@ -1190,7 +1229,7 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [3]"]
 				return CombatComplete
 			}
 		}
@@ -1202,7 +1241,7 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [4]"]
 				return CombatComplete
 			}
 		}
@@ -1219,7 +1258,7 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [5]"]
 						return CombatComplete
 					}
 				}
@@ -1233,7 +1272,7 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [6]"]
 				return CombatComplete
 			}
 		}
@@ -1245,7 +1284,7 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [7]"]
 				return CombatComplete
 			}
 		}
@@ -1285,7 +1324,7 @@ function Combat_Routine(int xAction)
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Aggro Control...
+	;; Aggro Control...  [TODO:  Move to new function and mimic Fury's routine]
 	if (${Actor[${KillTarget}].Target.ID} == ${Me.ID} && !${MainTank})
 	{
 		if (${Me.Health} < 70)
@@ -1294,7 +1333,7 @@ function Combat_Routine(int xAction)
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["Casting 'Phase' on ${Actor[${KillTarget}].Name}!"]
-				call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
+				call _CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
 				LastSpellCast:Set[357]
 				spellsused:Inc
 			}
@@ -1302,7 +1341,7 @@ function Combat_Routine(int xAction)
 			{
 				if ${IllyDebugMode}
 					Debug:Echo["Casting 'Blink'!"]
-				call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
+				call _CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
 				LastSpellCast:Set[358]
 				spellsused:Inc
 			}
@@ -1331,43 +1370,38 @@ function Combat_Routine(int xAction)
 	if ${Return.Equal[CombatComplete]}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [8]"]
 		return CombatComplete
 	}
 	else
 		spellsused:Inc[${Int[${Return}]}]
 
-	if ${Me.Pet.Name(exists)}
-	{
-		if (${Me.Pet.Target.ID} != ${KillTarget} || !${Me.Pet.InCombatMode})
-			call PetAttack 1
-	}
-
 	;; Add back later...(TODO)
 		;call CheckSKFD
 
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
+	if ${MezzMode}
+	{
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 	
 	call DoShortTermBuffs ${DoShortTermBuffs}
 	if ${Return.Equal[CombatComplete]}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [9]"]
 		return CombatComplete
 	}
 	else
 		spellsused:Inc[${Int[${Return}]}]
 
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
+	if ${MezzMode}
 	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
 	
 	if ${StunMode}
 	{
@@ -1375,21 +1409,19 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 		{
 			if ${IllyDebugMode}
-				Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [11]"]
 			return CombatComplete
 		}
 		else
 			spellsused:Inc[${Int[${Return}]}]		
 	}
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
+
+	if ${MezzMode}
 	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
 	
 
 	if (${KillTargetCheck} != ${KillTarget})
@@ -1399,7 +1431,7 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 		{
 			if ${IllyDebugMode}
-				Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [13]"]
 			return CombatComplete
 		}
 		else
@@ -1407,7 +1439,7 @@ function Combat_Routine(int xAction)
 		if (${KillTarget} != ${KillTargetCheck})
 		{
 			if ${IllyDebugMode}
-				Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+				Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [14]"]
 			return CombatComplete
 		}
 	}
@@ -1417,29 +1449,25 @@ function Combat_Routine(int xAction)
 		if ${Return.Equal[CombatComplete]}
 		{
 			if ${IllyDebugMode}
-				Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [15]"]
 			return CombatComplete
 		}
 		else
 			spellsused:Inc[${Int[${Return}]}]
 	}
 	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
 	if (${KillTarget} != ${KillTargetCheck})
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [17]"]
 		return CombatComplete
 	}
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
-	
+	if ${MezzMode}
+	{
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 	
 	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
 	{
@@ -1468,23 +1496,16 @@ function Combat_Routine(int xAction)
 	if ${Return.Equal[CombatComplete]}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [18]"]
 		return CombatComplete
 	}
 	else
 		spellsused:Inc[${Int[${Return}]}]
 		
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
 	if (${KillTarget} != ${KillTargetCheck})
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [20]"]
 		return CombatComplete
 	}
 	
@@ -1492,13 +1513,12 @@ function Combat_Routine(int xAction)
 	if ${Return.Equal[CombatComplete]}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [21]"]
 		return CombatComplete
 	}
 	else
 		spellsused:Inc[${Int[${Return}]}]
 
-	
 	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
 		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
@@ -1507,41 +1527,45 @@ function Combat_Routine(int xAction)
 			{
 				switch ${Actor[${KillTarget}].ConColor}
 				{
-				case Red
-				case Orange
-				case Yellow
-					if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
-					{
-						;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
-						eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
-						wait 1
-						do
+					case Red
+					case Orange
+					case Yellow
+						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
 						{
-							waitframe
+							;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
+							eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
+							wait 1
+							do
+							{
+								waitframe
+							}
+							while ${Me.CastingSpell}
 						}
-						while ${Me.CastingSpell}
-					}
-					break
-				default
-					if (${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed})
-					{
-						;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
-						eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
-						wait 1
-						do
+						break
+					default
+						if (${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed})
 						{
-							waitframe
+							;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
+							eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
+							wait 1
+							do
+							{
+								waitframe
+							}
+							while ${Me.CastingSpell}
 						}
-						while ${Me.CastingSpell}
-					}
-					break
+						break
 				}
 			}
 		}
 	}
 
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
+	if ${MezzMode}
+	{
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 
 	;; Check Group members to see if anyone needs 'Touch of Empathy'
 	if ${UseTouchOfEmpathy} && ${Me.Group} > 1
@@ -1577,22 +1601,18 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
 	if (${KillTarget} != ${KillTargetCheck})
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [23]"]
 		return CombatComplete
 	}
-	
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
+	if ${MezzMode}
+	{
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 
 	;; 'Nullifying Staff' and the mob is within range
 	if ${UseNullifyingStaff}
@@ -1605,7 +1625,7 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [24]"]
 					return CombatComplete
 				}
 				LastSpellCast:Set[396]
@@ -1619,22 +1639,18 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
 	if (${KillTarget} != ${KillTargetCheck})
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [26]"]
 		return CombatComplete
 	}
-	
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
+	if ${MezzMode}
+	{
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 
 	;; Melee Debuff (Dismay) -- only for Epic mobs for now
 	if ${Me.Power} > 40
@@ -1643,15 +1659,16 @@ function Combat_Routine(int xAction)
 		{
 			if ${Me.Ability[${SpellType[50]}](exists)}
 			{
-				if !${Me.Maintained[${SpellType[50]}](exists)}
-				{
+				call CheckActorForEffect ${KillTarget} 265 315
+				if ${Return.Equal[FALSE]}
+				{	
 					if (${Me.Ability[${SpellType[50]}].IsReady})
 					{
 						call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
 						if ${Return.Equal[CombatComplete]}
 						{
 							if ${IllyDebugMode}
-								Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+								Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [27]"]
 							return CombatComplete						
 						}
 						LastSpellCast:Set[50]
@@ -1662,8 +1679,12 @@ function Combat_Routine(int xAction)
 		}
 	}
 
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
+	if ${MezzMode}
+	{
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 
 	;; If Target is Epic, be sure that the Daze Debuff (Aneurysm) is being used as often as possible, but only once we have casted our initial spells.)  (This is the slow casting Nuke.)
 	if ${FightingEpicMob}
@@ -1676,7 +1697,7 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [28]"]
 					return CombatComplete				
 				}
 				LastSpellCast:Set[61]
@@ -1689,23 +1710,17 @@ function Combat_Routine(int xAction)
 	if ${Return.Equal[CombatComplete]}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [29]"]
 		return CombatComplete
 	}
 	else
 		spellsused:Inc[${Int[${Return}]}]
 		
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
+
 	if (${KillTarget} != ${KillTargetCheck})
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [31]"]
 		return CombatComplete
 	}
 
@@ -1716,23 +1731,16 @@ function Combat_Routine(int xAction)
 	if ${Return.Equal[CombatComplete]}
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [32]"]
 		return CombatComplete
 	}
 	else
 		spellsused:Inc[${Int[${Return}]}]
 	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-		return CombatComplete
-	}
 	if (${KillTarget} != ${KillTargetCheck})
 	{
 		if ${IllyDebugMode}
-			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete)"]
+			Debug:Echo["Combat_Routine() -- Exiting (Target changed: CombatComplete) [34]"]
 		return CombatComplete
 	}
 		
@@ -1751,18 +1759,11 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [35]"]
 						return CombatComplete					
 					}
 					spellsused:Inc
 				}
-			}
-			call VerifyTarget
-			if ${Return.Equal[FALSE]}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -1770,12 +1771,16 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [37]"]
 					return CombatComplete
 				}
 			}
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets		
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}
 			break
 
 		;; Aneurysm
@@ -1786,17 +1791,10 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [38]"]
 					return CombatComplete				
 				}
 				spellsused:Inc
-			}
-			call VerifyTarget
-			if ${Return.Equal[FALSE]}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -1804,12 +1802,16 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [40]"]
 					return CombatComplete
 				}
 			}
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets				
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}			
 			break
 			
 		;; Single Target DoTs
@@ -1818,38 +1820,33 @@ function Combat_Routine(int xAction)
 				break
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				;;; For now, let's try casting this every time it's ready. More testing needed to see if this is
-				;;; detrimental to dps and/or power usage
-
-				;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-				;{
+				call CheckActorForEffect ${KillTarget} 168 315
+				if ${Return.Equal[FALSE]}
+				{
 					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [41]"]
 						return CombatComplete					
 					}
 					spellsused:Inc
 					if (${Me.Ability[${SpellType[80]}].IsReady})
 					{
-						call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-						if ${Return.Equal[CombatComplete]}
+						call CheckActorForEffect ${KillTarget} 476 315
+						if ${Return.Equal[FALSE]}
 						{
-							if ${IllyDebugMode}
-								Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-							return CombatComplete						
+							call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+							if ${Return.Equal[CombatComplete]}
+							{
+								if ${IllyDebugMode}
+									Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [42]"]
+								return CombatComplete						
+							}
+							spellsused:Inc
 						}
-						spellsused:Inc
 					}
-					call VerifyTarget
-					if ${Return.Equal[FALSE]}
-					{
-						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-						return CombatComplete
-					}
-				;}
+				}
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -1857,32 +1854,40 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [44]"]
 					return CombatComplete
 				}
 			}		
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets				
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}			
 			break
 
-		;; Group Encounter DoTs
+		;; TODO (Why does this break without a cast?)
 		case Shower
-		case Ego
+			break
+
+		;; Chromatic Storm
+		case Storm
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
 				break
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				;if !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)}
-				;{
+				call CheckActorForEffect ${KillTarget} 169 312
+				if ${Return.Equal[FALSE]}
+				{
 					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [45]"]
 						return CombatComplete					
 					}
 					spellsused:Inc
-				;}
+				}
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -1890,12 +1895,16 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [46]"]
 					return CombatComplete
 				}
 			}
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets				
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}			
 			break
 
 		case Master_Strike
@@ -1907,12 +1916,16 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [47]"]
 						return CombatComplete
 					}
 				}	
-				ExecuteQueued Mezmerise_Targets
-				FlushQueued Mezmerise_Targets				
+				if ${MezzMode}
+				{
+					call Mezmerise_Targets
+					if (${Return.Equal[CombatComplete]})
+						return CombatComplete
+				}			
 				break
 			}
 
@@ -1925,7 +1938,7 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [48]"]
 						return CombatComplete					
 					}
 					spellsused:Inc
@@ -1937,12 +1950,16 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [49]"]
 					return CombatComplete
 				}
 			}	
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}
 			break
 			
 		case SmiteOfConsistency
@@ -1954,17 +1971,10 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [50]"]
 						return CombatComplete				
 					}
 					spellsused:Inc
-				}
-				call VerifyTarget
-				if ${Return.Equal[FALSE]}
-				{
-					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete
 				}
 				if ${spellsused} < 1 && !${MezzMode}
 				{
@@ -1972,12 +1982,16 @@ function Combat_Routine(int xAction)
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [52]"]
 						return CombatComplete
 					}
 				}
-				ExecuteQueued Mezmerise_Targets
-				FlushQueued Mezmerise_Targets			
+				if ${MezzMode}
+				{
+					call Mezmerise_Targets
+					if (${Return.Equal[CombatComplete]})
+						return CombatComplete
+				}	
 			}	
 			break
 		
@@ -1988,11 +2002,15 @@ function Combat_Routine(int xAction)
 			;	if ${Return.Equal[CombatComplete]}
 			;	{
 			;		if ${IllyDebugMode}
-			;			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+			;			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [53]"]
 			;		return CombatComplete
 			;	}					
-			;	ExecuteQueued Mezmerise_Targets
-			;	FlushQueued Mezmerise_Targets
+			;	if ${MezzMode}
+			;	{
+			;		call Mezmerise_Targets
+			;		if (${Return.Equal[CombatComplete]})
+			;			return CombatComplete
+			;	}
 			;	break
 			;}
 			if ${Me.Level} < 32
@@ -2001,14 +2019,18 @@ function Combat_Routine(int xAction)
 				break
 			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
 			{
-				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
+				call CheckActorForEffect ${KillTarget} 218 315
+				if ${Return.Equal[FALSE]}
 				{
-					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete				
+					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+					if ${Return.Equal[CombatComplete]}
+					{
+						if ${IllyDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [54]"]
+						return CombatComplete				
+					}
+					spellsused:Inc
 				}
-				spellsused:Inc
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -2016,12 +2038,16 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [55]"]
 					return CombatComplete
 				}
 			}			
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}
 			break
 
 		case AbsorbMagic
@@ -2034,7 +2060,7 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [56]"]
 					return CombatComplete				
 				}
 				spellsused:Inc
@@ -2045,12 +2071,16 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [57]"]
 					return CombatComplete
 				}
 			}	
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets					
+			if ${MezzMode}
+			{
+				call Mezmerise_Targets
+				if (${Return.Equal[CombatComplete]})
+					return CombatComplete
+			}				
 			break
 			
 		default
@@ -2060,7 +2090,7 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [58]"]
 					return CombatComplete				
 				}
 				spellsused:Inc
@@ -2071,12 +2101,12 @@ function Combat_Routine(int xAction)
 				if ${Return.Equal[CombatComplete]}
 				{
 					if ${IllyDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [59]"]
 					return CombatComplete
 				}
 			}	
-			ExecuteQueued Mezmerise_Targets
-			FlushQueued Mezmerise_Targets
+			if ${MezzMode}
+				call Mezmerise_Targets
 			return CombatComplete
 	}
 
@@ -2088,13 +2118,14 @@ function Combat_Routine(int xAction)
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
-					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete)"]
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid per CastSomething(): CombatComplete) [60]"]
 				return CombatComplete
 			}
 		}	
 	}
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
+	if ${MezzMode}
+		call Mezmerise_Targets
+
 	if ${IllyDebugMode}
 	{
 		Debug:Echo["Combat_Routine() -- Exiting Switch (${Action[${xAction}]}) (spellsused: ${spellsused})"]
@@ -2109,10 +2140,6 @@ function CastSomething()
 	;; If this function is called, it is because we went through the combat routine without casting any spells.
 	;; This function is intended to cast SOMETHING in order to keep "Perpetuality" going.
 
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return "CombatComplete"
-		
 	if (!${HaveAbility_Perpetuality})
 	{
 		echo "CastSomething() -- We do not have Perpetuality; so, no reason to process this function."
@@ -2120,9 +2147,15 @@ function CastSomething()
 	}
 
 	if ${ChainStunMode}
+	{
 		call ChainStunMez
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
+	}
 
 	call CheckCastBeam
+	if ${Return.Equal[CombatComplete]}
+		return CombatComplete
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;;; Things we should be checking EVERY time
@@ -2138,21 +2171,31 @@ function CastSomething()
 				{
 					if (${Me.Ability[${SpellType[387]}].IsReady})
 					{
+						call VerifyTarget ${KillTarget}
+						if ${Return.Equal[FALSE]}
+							return "CombatComplete"
 						call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 0 1
 						LastSpellCast:Set[387]
 						call CheckCastBeam
-						if ${Return.Length}
-							return
+						if ${Return.Equal[CombatComplete]}
+							return CombatComplete
 					}
 				}
 				;; Chronosiphoning (Always cast this when it is ready!)
 				if (${UseChronosiphoning} && ${Me.Ability[${SpellType[385]}].IsReady})
 				{
-					call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
-					LastSpellCast:Set[385]
+					call CheckActorForEffect ${KillTarget} 654 -1
+					if ${Return.Equal[FALSE]}
+					{
+						call VerifyTarget ${KillTarget}
+						if ${Return.Equal[FALSE]}
+							return "CombatComplete"
+						call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+						LastSpellCast:Set[385]
+					}
 					call CheckCastBeam
-					if ${Return.Length}
-						return
+					if ${Return.Equal[CombatComplete]}
+						return CombatComplete
 				}
 				;; 'Nullifying Staff' and the mob is within range
 				if ${UseNullifyingStaff}
@@ -2161,6 +2204,9 @@ function CastSomething()
 					{
 						if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 						{
+							call VerifyTarget ${KillTarget}
+							if ${Return.Equal[FALSE]}
+								return "CombatComplete"
 							call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 							LastSpellCast:Set[396]
 							spellsused:Inc
@@ -2170,6 +2216,8 @@ function CastSomething()
 									EQ2Execute /toggleautoattack
 							}
 							call CheckCastBeam
+							if ${Return.Equal[CombatComplete]}
+								return CombatComplete
 						}
 					}
 				}
@@ -2186,7 +2234,10 @@ function CastSomething()
 							call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 							LastSpellCast:Set[72]
 							call CheckCastBeam
-							return
+							if ${Return.Equal[CombatComplete]}
+								return CombatComplete
+							else
+								return
 						}
 						else
 							echo "ERROR1: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
@@ -2196,7 +2247,10 @@ function CastSomething()
 						call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 						LastSpellCast:Set[72]
 						call CheckCastBeam
-						return
+						if ${Return.Equal[CombatComplete]}
+							return CombatComplete
+						else
+							return
 					}
 				}
 			}
@@ -2209,7 +2263,10 @@ function CastSomething()
 		call CheckCondition MobHealth 20 100
 		if ${Return.Equal[OK]}
 		{
-			call _CastSpellRange 501 0 0 0 ${KillTarget} 0 0 0 1
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return "CombatComplete"
+			call CastSpellRange 501 0 0 0 ${KillTarget} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
@@ -2224,50 +2281,74 @@ function CastSomething()
 	; Nightmare
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
-		call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
+		call CheckActorForEffect ${KillTarget} 476 315
+		if ${Return.Equal[FALSE]}
 		{
-			if ${IllyDebugMode}
-				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return "CombatComplete"
+			call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
+			LastSpellCast:Set[80]
+			return
 		}
-		LastSpellCast:Set[80]
-		return
 	}
 
 	; Brainburst
 	if (${Me.Ability[${SpellType[70]}].IsReady})
 	{
-		call _CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
+		call CheckActorForEffect ${KillTarget} 168 315
+		if ${Return.Equal[FALSE]}
 		{
-			if ${IllyDebugMode}
-				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete
-		}		
-		LastSpellCast:Set[70]
-		return
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return "CombatComplete"
+			call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}		
+			LastSpellCast:Set[70]
+			return
+		}
 	}
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-	;contruct
+	; Theorems
 	if (${Me.Ability[${SpellType[51]}].IsReady})
 	{
-		call _CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
+		call CheckActorForEffect ${KillTarget} 218 315
+		if ${Return.Equal[FALSE]}
 		{
-			if ${IllyDebugMode}
-				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete
-		}		
-		return
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return "CombatComplete"
+			call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}		
+			return
+		}
 	}
 
 	; fast-casting encounter stun
 	if (${Me.Ability[${SpellType[191]}].IsReady})
 	{
-		call _CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return "CombatComplete"
+		call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 		{
 			if ${IllyDebugMode}
@@ -2281,21 +2362,31 @@ function CastSomething()
 	; melee debuff
 	if (${Me.Ability[${SpellType[50]}].IsReady})
 	{
-		call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete
+		call CheckActorForEffect ${KillTarget} 265 315
+		if ${Return.Equal[FALSE]}
+		{	
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return "CombatComplete"
+			call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete
+			}
+			LastSpellCast:Set[50]
+			return
 		}
-		LastSpellCast:Set[50]
-		return
 	}
 
 	; extract mana
 	if (${Me.Power} < 65 && ${Me.Ability[${SpellType[309]}].IsReady})
 	{
-		call _CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return "CombatComplete"
+		call CastSpellRange 309 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 		{
 			if ${IllyDebugMode}
@@ -2311,7 +2402,10 @@ function CastSomething()
 	{
 		if (${Me.Ability[${SpellType[400]}].IsReady})
 		{
-			call _CastSpellRange 400 0 0 0 ${KillTarget} 0 0 0 1
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return "CombatComplete"
+			call CastSpellRange 400 0 0 0 ${KillTarget} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${IllyDebugMode}
@@ -2326,7 +2420,10 @@ function CastSomething()
 	; root (Disabling for now...Aug. 2015)   TODO -- Root logic!
 	;if (${Me.Ability[${SpellType[230]}].IsReady})
 	;{
-	;	call _CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1
+	;	call VerifyTarget ${KillTarget}
+	;	if ${Return.Equal[FALSE]}
+	;		return "CombatComplete"
+	;	call CastSpellRange 230 0 0 0 ${KillTarget} 0 0 0 1
 	;	if ${Return.Equal[CombatComplete]}
 	;	{
 	;		if ${IllyDebugMode}
@@ -2341,6 +2438,7 @@ function CastSomething()
 function Post_Combat_Routine(int xAction)
 {
 	TellTank:Set[FALSE]
+	CheckHealsTimer:Set[0]
 
 	; turn off auto attack if we were casting while the last mob died
 	if ${Me.AutoAttackOn}
@@ -2361,13 +2459,12 @@ function Have_Aggro()
 	;	return
 
 	;; Use this whenver we have aggro...regardless  (de-aggro "Bewilderment")
-;    if ${Me.Ability[id,3903537279].IsReady}
-;    {
-;        announce "I have aggro...\n\\#FF6E6EUsing Bewilderment!" 3 1
-;        call CastSpellRange AbilityID=3903537279 TargetID=${aggroid} IgnoreMaintained=1
-;        return
-;    }
-
+	;if ${Me.Ability[id,3903537279].IsReady}
+	;{
+	;	announce "I have aggro...\n\\#FF6E6EUsing Bewilderment!" 3 1
+	;	call CastSpellRange AbilityID=3903537279 TargetID=${aggroid} IgnoreMaintained=1
+	;	return
+	;}
 
 	;; Aggro Control...
 	if (${Me.Health} < 70 && ${Actor[${KillTarget}].Target.ID} == ${Me.ID})
@@ -2377,21 +2474,30 @@ function Have_Aggro()
 			call CastSpellRange 506 0 0 0 ${Me.ID} 0 0 0 1
 			LastSpellCast:Set[506]
 			call CheckCastBeam
-			return
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete			
+			else
+				return
 		}
 		elseif ${Me.Ability["Phase"].IsReady}
 		{
 			call CastSpellRange 357 0 0 0 ${aggroid} 0 0 0 1
 			LastSpellCast:Set[357]
 			call CheckCastBeam
-			return
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete			
+			else
+				return
 		}
 		elseif ${Me.Ability["Blink"].IsReady} && ${BlinkMode}
 		{
 			call CastSpellRange 358 0 0 0 ${Me.ID} 0 0 0 1
 			LastSpellCast:Set[358]
 			call CheckCastBeam
-			return
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete			
+			else
+				return
 		}
 	}
 
@@ -2598,6 +2704,21 @@ function RefreshPower()
 
 function CheckHeals()
 {
+	;; Call this function a maximum of one time each second while in combat mode.  Otherwise, a maximum of once every 5 seconds.
+	if (${CheckHealsTimer} > 0)
+	{
+		if (${Me.InCombatMode})
+		{
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckHealsTimer}+1]})
+				return FALSE
+		}
+		else
+		{
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckHealsTimer}+5]})
+				return FALSE
+		}
+	}
+
 	variable int temphl = 0
 	variable bool DoCures
 	variable bool bReturn
@@ -2620,30 +2741,55 @@ function CheckHeals()
 
 	if (${DoCures} && ${Me.Ability[${SpellType[210]}].IsReady})
 	{
-		;echo "[${Time.SecondsSinceMidnight}]\ao Checking for Cures\ax"
+		if (${Me.InCombatMode})
+			echo "[${Time.SecondsSinceMidnight}]\ao Checking for Cures\ax"
 		;;;;;;;;;;;;;
 		;; Cure Magic
 		do
 		{
 			if (${Me.Group[${temphl}].InZone} && !${Me.Group[${temphl}].IsDead})
 			{
+				if (${Me.InCombatMode})
+					echo "[${Time.SecondsSinceMidnight}]\ao - Checking \ax\at${Me.Group[${temphl}].Name} (${Me.Group[${temphl}].Arcane}, ${Me.Group[${temphl}].Elemental}, ${Me.Group[${temphl}].Noxious}, ${Me.Group[${temphl}].Trauma})\ax"
 				if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
 				{
-					;echo "\ayCuring ${Me.Group[${temphl}].Name}!\ax"
+					if (${Me.InCombatMode})
+						echo "[${Time.SecondsSinceMidnight}]\ay -- Curing ${Me.Group[${temphl}].Name}!\ax"
 					if (${CureMagicIsInstantCast})
 					{
 						if ${Me.CastingSpell}
 						{
-							do
+							if (${Me.CastingSpell})
 							{
-								eq2execute /cancel_spellcast
-								wait 2
+								do
+								{
+									eq2execute /cancel_spellcast
+									wait 3
+								}
+								while ${Me.CastingSpell}
 							}
-							while ${Me.CastingSpell}
 						}
 						wait 2
 						eq2execute /useabilityonplayer ${Me.Name} Cure Magic
-						waitframe
+						wait 5
+						if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
+						{
+							if ${Me.CastingSpell}
+							{
+								if (${Me.CastingSpell})
+								{
+									do
+									{
+										eq2execute /cancel_spellcast
+										wait 3
+									}
+									while ${Me.CastingSpell}
+								}
+							}
+							wait 5
+							eq2execute /useabilityonplayer ${Me.Name} Cure Magic
+							wait 2
+						}
 					}
 					else
 						call CastSpellRange 210 0 0 0 ${Me.Group[${temphl}].ID}
@@ -2660,6 +2806,7 @@ function CheckHeals()
 		}
 		while ${temphl:Inc} <= ${Me.Group}
 	}
+	CheckHealsTimer:Set[${Time.SecondsSinceMidnight}]
 	return ${bReturn}
 }
 
@@ -2695,13 +2842,14 @@ function Mezmerise_Targets()
 	variable collection:_meztargets MezzTargets
 	variable int Counter=1
 	variable uint bufftgt
-	variable uint originaltarget
+	variable uint originaltarget = ${Target.ID}
 	variable index:actor Actors
 	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
-	originaltarget:Set[${Target.ID}]
+	if (!${MezzMode})
+		return
 
 	; if we don't have a mez spell ready, no sense wasting time.
 	if !${Me.Ability[${SpellType[353]}].IsReady} && !${Me.Ability[${SpellType[352]}].IsReady} && !${Me.Ability[${SpellType[92]}].IsReady}
@@ -2840,14 +2988,14 @@ function Mezmerise_Targets()
 		; Need to loop through checking for remezzes first
 		do
 		{
-/*			Debug:Echo[MEZ TARGETS FOR ${Actor[${MezzTargets.CurrentKey}].ID}]
-			Debug:Echo[IsAoE: ${MezzTargets.CurrentValue.IsAoeMezzed}]
-			Debug:Echo[IsShort: ${MezzTargets.CurrentValue.IsShortMezzed}]
-			Debug:Echo[IsLong: ${MezzTargets.CurrentValue.IsLongMezzed}]
-			Debug:Echo[NeedRemez: ${MezzTargets.CurrentValue.NeedRemez}]
-			Debug:Echo[IsMezzed: ${MezzTargets.CurrentValue.IsMezzed}]
-			Debug:Echo[IsMultiMezzed: ${MezzTargets.CurrentValue.IsMultiMezzed}]
-*/
+			;Debug:Echo[MEZ TARGETS FOR ${Actor[${MezzTargets.CurrentKey}].ID}]
+			;Debug:Echo[IsAoE: ${MezzTargets.CurrentValue.IsAoeMezzed}]
+			;Debug:Echo[IsShort: ${MezzTargets.CurrentValue.IsShortMezzed}]
+			;Debug:Echo[IsLong: ${MezzTargets.CurrentValue.IsLongMezzed}]
+			;Debug:Echo[NeedRemez: ${MezzTargets.CurrentValue.NeedRemez}]
+			;Debug:Echo[IsMezzed: ${MezzTargets.CurrentValue.IsMezzed}]
+			;Debug:Echo[IsMultiMezzed: ${MezzTargets.CurrentValue.IsMultiMezzed}]
+
 			if ${MezzTargets.CurrentValue.NeedRemez}
 			{
 				if ${Me.AutoAttackOn}
@@ -2858,6 +3006,9 @@ function Mezmerise_Targets()
 
 				if ${Me.Ability[${SpellType[352]}].IsReady}
 				{
+					call VerifyTarget ${MezzTargets.CurrentKey}
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=352 TargetID=${MezzTargets.CurrentKey} IgnoreMaintained=1
 					LastSpellCast:Set[352]
 					MezzTargets.CurrentValue.NeedRemez:Set[FALSE]
@@ -2865,6 +3016,9 @@ function Mezmerise_Targets()
 				}
 				elseif ${Me.Ability[${SpellType[353]}].IsReady}
 				{
+					call VerifyTarget ${MezzTargets.CurrentKey}
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=353 TargetID=${MezzTargets.CurrentKey} IgnoreMaintained=1
 					LastSpellCast:Set[353]
 					MezzTargets.CurrentValue.NeedRemez:Set[FALSE]
@@ -2872,6 +3026,9 @@ function Mezmerise_Targets()
 				}
 				elseif ${Me.Ability[${SpellType[92]}].IsReady}
 				{
+					call VerifyTarget ${MezzTargets.CurrentKey}
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=92 TargetID=${MezzTargets.CurrentKey} IgnoreMaintained=1
 					LastSpellCast:Set[92]
 					MezzTargets.CurrentValue.NeedRemez:Set[FALSE]
@@ -2902,16 +3059,25 @@ function Mezmerise_Targets()
 
 			if ${Me.Ability[${SpellType[353]}].IsReady} /* AoE mez first */
 			{
+				call VerifyTarget ${MezzTargets.CurrentKey}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
 				call CastSpellRange start=353 TargetID=${MezzTargets.CurrentKey}
 				LastSpellCast:Set[353]
 			}
 			elseif ${Me.Ability[${SpellType[352]}].IsReady} /* Long term mez second */
 			{
+				call VerifyTarget ${MezzTargets.CurrentKey}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
 				call CastSpellRange start=352 TargetID=${MezzTargets.CurrentKey}
 				LastSpellCast:Set[352]
 			}
 			elseif ${Me.Ability[${SpellType[92]}].IsReady} /* Short term mez third */
 			{
+				call VerifyTarget ${MezzTargets.CurrentKey}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
 				call CastSpellRange start=92 TargetID=${MezzTargets.CurrentKey}
 				LastSpellCast:Set[92]
 			}
@@ -3078,19 +3244,29 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 	{
 		if (${Me.Ability[${SpellType[387]}].IsReady})
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 0 1
 			LastSpellCast:Set[387]
 			spellsused:Inc
 		}
 	}
-	;; Chronosiphoning (Always cast this when it is ready!
+	;; Chronosiphoning
 	if ${UseChronosiphoning}
 	{
 		if (${Me.Ability[${SpellType[385]}].IsReady})
 		{
-			call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
-			LastSpellCast:Set[385]
-			spellsused:Inc
+			call CheckActorForEffect ${KillTarget} 654 -1
+			if ${Return.Equal[FALSE]}
+			{
+				call VerifyTarget ${KillTarget}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+				call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+				LastSpellCast:Set[385]
+				spellsused:Inc
+			}
 		}
 	}
 	
@@ -3101,6 +3277,9 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 		{
 			if (${Actor[${KillTarget}].Distance2D} < ${Position.GetSpellMaxRange[${KillTarget},0,${Me.Ability[${SpellType[396]}].ToAbilityInfo.MaxRange}]})
 			{
+				call VerifyTarget ${KillTarget}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
 				call CastSpellRange 396 0 0 0 ${KillTarget} 0 0 0 1
 				LastSpellCast:Set[396]
 				spellsused:Inc
@@ -3118,6 +3297,9 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 		;; Short Duration Buff .. adds INT, Focus, Disruption, etc. (cast any time it's ready)
 		if (${Me.Ability[${SpellType[23]}].IsReady})
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 23 0 0 0 ${KillTarget} 0 0 0 1
 			LastSpellCast:Set[23]
 			spellsused:Inc
@@ -3126,6 +3308,9 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 		;; Short Duration Buff .. adds proc to group members for 20 seconds (Peace of Mind)
 		if (${HaveAbility_PeaceOfMind} && ${Me.Ability[${SpellType[383]}].IsReady})
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 383 0 0 0 ${KillTarget} 0 0 0 1
 			LastSpellCast:Set[383]
 			spellsused:Inc
@@ -3134,6 +3319,9 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 		;; Short Duration Buff .. adds proc to group members for 20 seconds (Destructive Rampage)
 		if (${Me.Ability[${SpellType[503]}].IsReady})
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 503 0 0 0 ${KillTarget} 0 0 0 1
 			LastSpellCast:Set[503]
 			spellsused:Inc
@@ -3150,23 +3338,29 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	variable int spellsused
 	variable string BuffTarget
 	
-	Debug:Echo["DoInitialiSpellLineup():: Begin..."]
+	;Debug:Echo["\at\[DoInitialiSpellLineup\]\ax Begin..."]
 	
 	if ${IllyDebugMode}
-		Debug:Echo["DoInitialSpellLineup(${FightingEpicMob}, ${FightingHeroicMob})"]
-		
+		Debug:Echo["\at\[DoInitialSpellLineup(${FightingEpicMob}, ${FightingHeroicMob})\]\ax Begin..."]
 		
 	;; Theorems
 	if (${Me.Ability[${SpellType[51]}].IsReady})
 	{
-		call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return.Equal[-1]})
+		call CheckActorForEffect ${KillTarget} 218 315
+		if ${Return.Equal[FALSE]}
 		{
-			if ${IllyDebugMode}
-				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-			return ${spellsused}
-		}		
-		spellsused:Inc
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+			call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+			if (${Return.Equal[-1]})
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+				return ${spellsused}
+			}		
+			spellsused:Inc
+		}
 	}
 	if ${KillTarget} != ${KillTargetCheck}
 	{
@@ -3178,6 +3372,9 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	;; Ultraviolet Beam
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 		if (${Return.Equal[-1]})
 		{
@@ -3187,42 +3384,38 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		}		
 		spellsused:Inc
 	}
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}
-	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
+	if ${MezzMode}
 	{
-		if ${IllyDebugMode}
-			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
-		return CombatComplete		
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
-	
-	if ${KillTarget} != ${KillTargetCheck}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
-		return ${spellsused}
-	}	
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
-	
 	
 	;; Fast Casting DOT (Nightmare)
 	if (${Me.Ability[${SpellType[80]}].IsReady})
 	{
-		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return.Equal[-1]})
+		call CheckActorForEffect ${KillTarget} 476 315
+		if ${Return.Equal[FALSE]}
 		{
-			if ${IllyDebugMode}
-				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-			return ${spellsused}
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+			call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+			if (${Return.Equal[-1]})
+			{
+				if ${IllyDebugMode}
+					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+				return ${spellsused}
+			}
+			spellsused:Inc
 		}
-		spellsused:Inc
 	}
 	
 	if ${KillTarget} != ${KillTargetCheck}
@@ -3240,6 +3433,9 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		{
 			if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
 			{
+				call VerifyTarget ${KillTarget}
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
 				if ${IllyDebugMode}
 					Debug:Echo["Casting ''Prismatic Chaos'"]
 				call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
@@ -3251,12 +3447,17 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 				}				
 				LastSpellCast:Set[72]
 				call CheckCastBeam
+				if ${Return.Equal[CombatComplete]}
+					return CombatComplete	
 			}
 			else
 				echo "ERROR1: Prismatic Chaos target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
 		}
 		else
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 			if (${Return.Equal[-1]})
 			{
@@ -3266,15 +3467,9 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 			}
 			LastSpellCast:Set[72]
 			call CheckCastBeam
+			if ${Return.Equal[CombatComplete]}
+				return CombatComplete	
 		}
-	}
-	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
-		return CombatComplete		
 	}
 	
 	if ${KillTarget} != ${KillTargetCheck}
@@ -3283,22 +3478,17 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}	
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
-	
-	
-	;; Ultraviolet Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+	if ${MezzMode}
 	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return.Equal[-1]})
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-			return ${spellsused}
-		}		
-		spellsused:Inc
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
+	
+	call CheckCastBeam
+	if ${Return.Equal[CombatComplete]}
+		return CombatComplete	
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}	
@@ -3307,10 +3497,14 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Brainburst
-	if !${Me.Maintained[${SpellType[70]}](exists)}
+	if (${Me.Ability[${SpellType[70]}].IsReady})
 	{
-		if (${Me.Ability[${SpellType[70]}].IsReady})
+		call CheckActorForEffect ${KillTarget} 168 315
+		if ${Return.Equal[FALSE]}
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
 			if (${Return.Equal[-1]})
 			{
@@ -3321,35 +3515,24 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 			spellsused:Inc
 		}
 	}
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]		
-		return CombatComplete		
-	}
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}
-		
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
-
-	;; Ultraviolet Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+	if ${MezzMode}
 	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return.Equal[-1]})
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-			return ${spellsused}
-		}		
-		spellsused:Inc
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
+
+	call CheckCastBeam
+	if ${Return.Equal[CombatComplete]}
+		return CombatComplete	
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
@@ -3358,10 +3541,14 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Chromatic Storm
-	if !${Me.Maintained[${SpellType[91]}](exists)}
+	if (${Me.Ability[${SpellType[91]}].IsReady})
 	{
-		if (${Me.Ability[${SpellType[91]}].IsReady})
+		call CheckActorForEffect ${KillTarget} 169 312
+		if ${Return.Equal[FALSE]}
 		{
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1
 			if (${Return.Equal[-1]})
 			{
@@ -3372,34 +3559,24 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 			spellsused:Inc
 		}
 	}
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
-		return CombatComplete
-	}
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
-
-	;; Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+	if ${MezzMode}
 	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return.Equal[-1]})
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-			return ${spellsused}
-		}		
-		spellsused:Inc
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
+
+	call CheckCastBeam
+	if ${Return.Equal[CombatComplete]}
+		return CombatComplete	
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
@@ -3408,10 +3585,14 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Chromatic Shower
-	if !${Me.Maintained[${SpellType[388]}](exists)}
+	if (${Me.Ability[${SpellType[388]}].IsReady})
 	{
-		if (${Me.Ability[${SpellType[388]}].IsReady})
-		{
+		call CheckActorForEffect ${KillTarget} 266 312
+		if ${Return.Equal[FALSE]}
+		{	
+			call VerifyTarget ${KillTarget}
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 1
 			if (${Return.Equal[-1]})
 			{
@@ -3423,35 +3604,23 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		}
 	}
 	
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-	{
-		if ${IllyDebugMode}
-			Debug:Echo["DoInitialSpellLineup() -- Exiting (Target no longer valid)"]
-		return CombatComplete]
-	}
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}
-	
-	ExecuteQueued Mezmerise_Targets
-	FlushQueued Mezmerise_Targets
-
-	;; Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+	if ${MezzMode}
 	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-		if (${Return.Equal[-1]})
-		{
-			if ${IllyDebugMode}
-				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-			return ${spellsused}
-		}		
-		spellsused:Inc
+		call Mezmerise_Targets
+		if (${Return.Equal[CombatComplete]})
+			return CombatComplete
 	}
+
+	call CheckCastBeam
+	if ${Return.Equal[CombatComplete]}
+		return CombatComplete	
+
 	if ${KillTarget} != ${KillTargetCheck}
 	{
 		if ${IllyDebugMode}
@@ -3508,6 +3677,9 @@ function CheckStuns()
 	;; Stun 1 (Paranoia)
 	if ${Me.Ability[${SpellType[190]}].IsReady}
 	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 190 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 		{
@@ -3527,6 +3699,9 @@ function CheckStuns()
 	;; Beam
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 		if (${Return.Equal[-1]})
 		{
@@ -3543,10 +3718,12 @@ function CheckStuns()
 		return ${spellsused}
 	}
 	
-	
 	;; Stun 2 (Bewilderment)
 	if ${Me.Ability[${SpellType[191]}].IsReady}
 	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 191 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
 		{
@@ -3566,6 +3743,9 @@ function CheckStuns()
 	;; Beam
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 		if (${Return.Equal[-1]})
 		{
@@ -3594,26 +3774,50 @@ objectdef custom_overrides
 
 function ChainStunMez()
 {
+	call VerifyTarget ${KillTarget}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	; Entrance
 	if (${Me.Ability[${SpellType[352]}].IsReady})
 	{
 		call CastSpellRange 352 0 0 0 ${KillTarget} 0 0 0 1
 	}
+
+	call VerifyTarget ${KillTarget}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	; Bewilderment
 	if (${Me.Ability[${SpellType[191]}].IsReady})
 	{
 		call CastSpellRange 191 0 0 0 ${KillTarget} 0 0 0 1
 	}
+
+	call VerifyTarget ${KillTarget}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	; Paranoia
 	if (${Me.Ability[${SpellType[190]}].IsReady})
 	{
 		call CastSpellRange 190 0 0 0 ${KillTarget} 0 0 0 1
 	}
+
+	call VerifyTarget ${KillTarget}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	; Regalia
 	if (${Me.Ability[${SpellType[92]}].IsReady})
 	{
 		call CastSpellRange 92 0 0 0 ${KillTarget} 0 0 0 1
 	}
+
+	call VerifyTarget ${KillTarget}
+	if ${Return.Equal[FALSE]}
+		return CombatComplete
+
 	; Entrance
 	if (${Me.Ability[${SpellType[352]}].IsReady})
 	{
