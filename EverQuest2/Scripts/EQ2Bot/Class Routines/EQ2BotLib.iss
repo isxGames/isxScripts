@@ -337,19 +337,37 @@ function PopulateMezSpells()
 
 function AmIInvis(string param1)
 {
+	;; TODO: Add other class invisibility spells
     variable int i = 1
+	variable bool bReturn = FALSE
+	;Debug:Enable
 
-    do
-    {
-        if (${InvisSpells.Element[${Me.Maintained[${i}].Name}](exists)})
-        {
-            Debug:Echo["I am invisible (therefore I will not cast spells.)  (Called By: ${param1})"]
-            return TRUE
-        }
+	do
+	{
+		;Debug:Echo["\at\[EQ2Bot:AmIInvis\]\ax ${i} = ${Me.Effect[${i}].MainIconID} / ${Me.Effect[${i}].BackDropIconID}"]
 
-    }
-    while ${i:Inc} <= ${Me.CountMaintained}
+		;; Illusory Mask (Illusionist) & Untamed Shroud (Fury)
+		if (${Me.Effect[${i}].MainIconID} == 231 && ${Me.Effect[${i}].BackDropIconID} == 314)
+		{
+			bReturn:Set[TRUE]
+			break
+		}
+		;; Veil of the Unseen (Illusionist)
+		elseif (${Me.Effect[${i}].MainIconID} == 165 && ${Me.Effect[${i}].BackDropIconID} == 316)
+		{
+			bReturn:Set[TRUE]
+			break
+		}
+	}
+	while (${i:Inc} <= ${Me.NumEffects})
 
+	if (${bReturn})
+	{
+		Debug:Echo["\at\[EQ2Bot:AmIInvis\]\ax Returning \arTRUE\ax! (Called By: ${param1})"]
+		return TRUE
+	}
+
+	;Debug:Echo["\at\[EQ2Bot:AmIInvis\]\ax Returning \agFALSE\ax! (Called By: ${param1})"]
     return FALSE
 }
 
