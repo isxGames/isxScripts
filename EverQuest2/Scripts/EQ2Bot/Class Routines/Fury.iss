@@ -148,26 +148,28 @@ function Pulse()
 		if ${Me.Power}>85
 			call CheckHOTs
 
-
 		if (${Zone.Name.Find[Unrest]} > 0)
 		{
 			if (${Me.Speed} < 10 && !${Me.InCombat} && !${Me.InCombatMode})
-				CastSpeedBuff:Set[TRUE]
+			{
+				call AmIInvis "Fury-Pulse()"
+				if (${Return.Equal[FALSE]})
+					CastSpeedBuff:Set[TRUE]
+			}
 		}
 		else
 		{
 			;; (Note:  25 is with the Journeyman's Boots of Adventure, 35 is with HQ boots on top of that)
 			if ((${Me.Speed} == 10 || ${Me.Speed} == 25 || ${Me.Speed} == 35) && !${Me.InCombat} && !${Me.InCombatMode})
 			{
-				CastSpeedBuff:Set[TRUE]
+				call AmIInvis "Fury-Pulse()"
+				if (${Return.Equal[FALSE]})
+					CastSpeedBuff:Set[TRUE]
 			}
 		}
 
 		if (${CastSpeedBuff})
-		{
 			call SpiritOfTheWolf
-			CastSpeedBuff:Set[FALSE]
-		}
 
 		;;;; Use Tortoise Shell
 		;; This variable is intended to be set by a 'controller' script.  In other words, the tank character might issue a command that would
