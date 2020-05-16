@@ -597,18 +597,20 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 		}
 	}
 
+	if (${TargetID} != ${Me.ID})
+	{
+		call VerifyTarget ${TargetID} "SK-_CastSpellRange-${SpellType[${start}]}"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+	}
+
 	;; we should actually cast the spell we wanted to cast originally before doing anything else
 	LastSpellCast:Set[${start}]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
+	bReturn:Set[${Int[${Return}]}]
 
-	if (${TargetID} != ${Me.ID} && ${Me.InCombatMode})
-		call VerifyTarget ${TargetID}
-	else
-		call VerifyTarget
-	if (!${Return})
-		return CombatComplete
 
-	return
+	return ${bReturn}
 }
 
 function Combat_Routine(int xAction)
@@ -629,9 +631,6 @@ function Combat_Routine(int xAction)
 	}
 
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	if ${DoHOs}
 		objHeroicOp:DoHO
@@ -708,9 +707,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	DoAEs:Set[FALSE]
 	if ${PBAoEMode}
@@ -749,6 +745,11 @@ function Combat_Routine(int xAction)
 	;; DeathMarch
 	if (${UseDeathMarch} && ${Me.Ability[${SpellType[312]}].IsReady})
 	{
+		;;;;
+		;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+		call VerifyTarget ${KillTarget} "SK-Combat-DeathMarch"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call _CastSpellRange 312 0 0 0 ${Me.ID} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
@@ -759,13 +760,19 @@ function Combat_Routine(int xAction)
 	{
 		if ${MainTank}
 		{
-			call _CastSpellRange 7 0 0 0 ${Me.ID} 0 0 0 1
+			call VerifyTarget ${KillTarget} "SK-Combat-UnholyBlessing"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+			call CastSpellRange 7 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}
 		else
 		{
-			call _CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
+			call VerifyTarget ${KillTarget} "SK-Combat-UnholyBlessing"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+			call CastSpellRange 7 0 0 0 ${MainTankID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
 		}
@@ -773,9 +780,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	if ${DoAEs}
   	{
@@ -783,6 +787,11 @@ function Combat_Routine(int xAction)
     	if (${Me.Ability[${SpellType[340]}].IsReady})
     	{
     		;Debug:Echo["${SpellType[340]}..."]
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-HatefulRespite"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 	    	call _CastSpellRange 340 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -806,6 +815,11 @@ function Combat_Routine(int xAction)
     	if (${MainTank} && ${Me.Ability[${SpellType[45]}].IsReady})
     	{
     		;Debug:Echo["${SpellType[45]}..."]
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-GraveSacrament"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 	    	call _CastSpellRange 45 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -814,6 +828,11 @@ function Combat_Routine(int xAction)
     	if (${Me.Ability[${SpellType[98]}].IsReady})
     	{
     		;Debug:Echo["${SpellType[98]}..."]
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-TapVeins"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 	    	call _CastSpellRange 98 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -833,6 +852,11 @@ function Combat_Routine(int xAction)
 		if ${Me.Ability[${SpellType[347]}](exists)}
 		{
 			;Debug:Echo["${SpellType[347]}..."]
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-Lance"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			if (${Me.Ability[${SpellType[347]}].IsReady})
 			{
 				call _CastSpellRange 347 0 0 0 ${Me.ID} 0 0 0 1
@@ -844,8 +868,13 @@ function Combat_Routine(int xAction)
 		if !${Actor[${KillTarget}].IsEpic}
 		{
 			if (${Me.Ability[${SpellType[505]}].IsReady})
-	    {
-		    call _CastSpellRange 505 0 0 0 ${Me.ID} 0 0 0 1
+	    	{
+				;;;;
+				;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+				call VerifyTarget ${KillTarget} "SK-Combat-HammerGround"
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+		   	 	call _CastSpellRange 505 0 0 0 ${Me.ID} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
 					return CombatComplete
 			}
@@ -865,6 +894,11 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[97]}].IsReady})
 		{
 			;Debug:Echo["${SpellType[97]}..."]
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-DoomJudgement"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call _CastSpellRange 97 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -876,6 +910,11 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[95]}].IsReady})
 		{
 			;Debug:Echo["${SpellType[95]}..."]
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-DeathCloud"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call _CastSpellRange 95 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -884,6 +923,11 @@ function Combat_Routine(int xAction)
 		if (${Me.Ability[${SpellType[96]}].IsReady})
 		{
 			;echo "${SpellType[96]}..."
+			;;;;
+			;; Note:  _CastSpellRange() does not call VerifyTarget when the TargetID is ${Me.ID}
+			call VerifyTarget ${KillTarget} "SK-Combat-UnendingAgony"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call _CastSpellRange 96 0 0 0 ${Me.ID} 0 0 0 1
 			if ${Return.Equal[CombatComplete]}
 				return CombatComplete
@@ -893,7 +937,7 @@ function Combat_Routine(int xAction)
 	;Essence Siphon
 	if ${Me.Ability[${SpellType[503]}].IsReady}
 	{
-		call _CastSpellRange 503 0 0 0 ${KillTarget}	0 0 0 1
+		call _CastSpellRange 503 0 0 0 ${KillTarget} 0 0 0 1
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
 	}
@@ -902,13 +946,13 @@ function Combat_Routine(int xAction)
 	if ${Me.Health}<70 && ${Me.Ability[${SpellType[502]}].IsReady}
 	{
 		Debug:Echo["\arHealth < 70% -- Casting Divine Aura!\ax"]
+		call VerifyTarget ${KillTarget} "SK-Combat-DivineAura"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 502 
 	}
 
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	;; SK's Furor
 	if ${Me.Health}<=60 && ${Me.Ability[${SpellType[507]}].IsReady}
@@ -936,14 +980,14 @@ function Combat_Routine(int xAction)
   	call CheckPower
   	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
   	if ${UseMastersRage}
   	{
 		if ${Me.Ability["Master's Rage"].IsReady}
 		{
+			call VerifyTarget ${KillTarget} "SK-Combat-MastersRage"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			Target ${KillTarget}
 			Me.Ability["Master's Rage"]:Use
 			do
@@ -961,6 +1005,9 @@ function Combat_Routine(int xAction)
 	;{
 	;    if (${Me.Ability[${SpellType[333]}].IsReady} && ${Zone.ShortName.Find[venril]} <= 0)
 	;    {
+	;		call VerifyTarget ${KillTarget} "SK-Combat-CombatLeadership"
+	;		if ${Return.Equal[FALSE]}
+	;			return CombatComplete
 	;	    call CastSpellRange 333 0 0 0 ${Me.ID}
 	;	}
 	;}
@@ -990,9 +1037,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	;; Mana Sieve (dmg + DoT + power tap)
 	if (${Me.Ability[${SpellType[81]}].IsReady})
@@ -1018,9 +1062,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	;; Siphon Strike (dmg, + dot)
 	if (${Me.Ability[${SpellType[61]}].IsReady})
@@ -1046,9 +1087,6 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
 
 	;; Soulrend (low dmg + knockdown)
 	if (${Me.Ability[${SpellType[151]}].IsReady})
@@ -1077,10 +1115,7 @@ function Combat_Routine(int xAction)
 
 	call CheckHeals
 	call CheckGroupOrRaidAggro
-	call VerifyTarget
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
-  
+
 	CurrentAction:Set[Combat :: CombatComplete]
 	return CombatComplete
 }
