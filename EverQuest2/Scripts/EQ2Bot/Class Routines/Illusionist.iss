@@ -965,7 +965,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	;;;;;;;
 
 	;; Check to make sure the target is valid FIRST and then use the ability this function was called for before anything else
-	call VerifyTarget ${TargetID} "TRUE" "Illusionist-_CastSpellRange"
+	call VerifyTarget ${TargetID}
 	if ${Return.Equal[FALSE]}
 		return CombatComplete
 
