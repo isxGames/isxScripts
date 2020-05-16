@@ -176,7 +176,6 @@ variable int stuckcntMa
 variable int grpcnt
 variable bool movinghome
 variable bool haveaggro=FALSE
-variable bool shwlootwdw
 variable bool hurt
 variable int currenthealth[5]
 variable int changehealth[5]
@@ -1450,8 +1449,9 @@ function CastSpellRange(... Args)
 
 	;;if casting on killtarget, lets make sure it is still valid and find new one if needed
 	;;
-	;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for Illusionists 
-	if (${TargetID} && ${TargetID}==${KillTarget} && !${Me.SubClass.Equal[Illusionist]})
+	;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for illusionists 
+	;; * Shadowknight Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for shadowknights 
+	if (${TargetID} && ${TargetID}==${KillTarget} && !${Me.SubClass.Equal[illusionist]} && !${Me.SubClass.Equal[shadowknight]})
 	{
 		call VerifyTarget ${TargetID}
 		if ${Return.Equal[FALSE]}
@@ -1941,8 +1941,9 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 			if ${Counter} == 10 || ${Counter} == 20 || ${Counter} == 30 || ${Counter} == 40
 			{
 				;;;;;;
-				;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for Illusionists 
-				if (!${Me.SubClass.Equal[Illusionist]})
+				;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for illusionists 
+				;; * Shadowknight Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for shadowknights 
+				if (!${Me.SubClass.Equal[Illusionist]} && !${Me.SubClass.Equal[shadowknight]})
 				{
 					call VerifyTarget ${TargetID}
 					if ${Return.Equal[FALSE]}
@@ -4443,10 +4444,10 @@ function LootWindowBusy(string Line)
 	{
 		switch ${LootWindow.Type}
 		{
-				case Free For All
+			case Free For All
 			case Lottery
 				LootWindow:DeclineLotto
-							return
+				return
 			case Need Before Greed
 				LootWindow:DeclineNBG
 				return
@@ -4634,12 +4635,12 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 	return
 }
 
-atom(script) LootWDw(string ID)
+atom(script) EQ2_onLootWindowAppeared(string ID)
 {
 	if ${PauseBot} || !${StartBot}
 		return
 
-	Debug:Echo["LootWDw(${ID}) -- (LastWindow: ${LastWindow})"]
+	Debug:Echo["EQ2_onLootWindowAppeared(${ID}) -- (LastWindow: ${LastWindow})"]
 	Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
 	Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
 
@@ -4648,7 +4649,7 @@ atom(script) LootWDw(string ID)
 	variable int deccnt=0
 
 	;; accept some items regardless
-	;Debug:Echo["LootWDw() - Item[1]: '${LootWindow[${ID}].Item[1].Name}'"]
+	;Debug:Echo["EQ2_onLootWindowAppeared() - Item[1]: '${LootWindow[${ID}].Item[1].Name}'"]
 	switch ${LootWindow[${ID}].Item[1].Name}
 	{
 		case Void Shard
@@ -4965,16 +4966,17 @@ function ReacquireKillTargetFromMA(uint WaitTime)
 	return FAILED
 }
 
-function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
+function VerifyTarget(uint ID, string Caller)
 {
 	;; Call this function a maximum of one time each second while in combat mode.  Otherwise, a maximum of once every 5 seconds.
 	;; (Returns the last result "between seconds")
 	;;
 	;; Notes: (TODO:  Redo other classes so that they are only checking VerifyTarget before each spell/ability cast [ which includes editing a line in CastSpell() in this file]
 	;;        1. Illusionist.iss has been updated so as to not require throttling  
-	if (!${Me.SubClass.Equal[Illusionist]})
+	;;		  2. Shadowknight.iss has been updated so as to not require throttling  
+	if (!${Me.SubClass.Equal[Illusionist]} && !${Me.SubClass.Equal[shadowknight]})
 	{
-		if (${VerifyTargetTimer} > 0 && !${IgnoreThrottle})
+		if (${VerifyTargetTimer} > 0)
 		{
 			if (${Me.InCombatMode})
 			{
@@ -5007,7 +5009,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 		{
 			if ${MainAssist.Equal[${Me.Name}]}
 			{
-				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax KillTarget no longer valid and this character is the Main Assist; returning FALSE"]
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax KillTarget no longer valid and this character is the Main Assist; returning \arFALSE\ax"]
 				if (!${DebugEnabled} && ${DebugThisFunction})
 					Debug:Disable
 				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
@@ -5018,7 +5020,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 			call ReacquireKillTargetFromMA 0
 			if ${Return.Equal[FAILED]}
 			{
-				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax Failed to acquire new KillTarget from Main Assist; returning FALSE"]
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax Failed to acquire new KillTarget from Main Assist; returning \arFALSE\ax"]
 				if (!${DebugEnabled} && ${DebugThisFunction})
 					Debug:Disable
 				KillTarget:Set[0]
@@ -5028,7 +5030,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 			}
 			else
 			{
-				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax Acquired new KillTarget from Main Assist; returning TRUE"]
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax Acquired new KillTarget from Main Assist; returning \agTRUE\ax"]
 				if (!${DebugEnabled} && ${DebugThisFunction})
 					Debug:Disable				
 				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
@@ -5043,28 +5045,28 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 
 	if (!${Actor[${TargetID}].Name(exists)})
 	{
-		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID does not exist (or is invalid)"]
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID does not exist (or is invalid) \[Called from '${Caller}'\]"]
 		bReturn:Set["FALSE"]
 	}
 	elseif (${Actor[${TargetID}].IsDead})
 	{
-		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is dead"]
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is dead \[Called from '${Caller}'\]"]
 		bReturn:Set["FALSE"]
 	}
 	elseif (${Actor[${TargetID}].Distance} > 35)
 	{
 		;; TODO:  Double-check to make sure this logic works with no issues.
-		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is farther than 35 meters away"]
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is farther than 35 meters away \[Called from '${Caller}'\]"]
 		bReturn:Set["FALSE"]
 	}
 	elseif (!${MainAssist.Equal[${Me.Name}]} && !${Actor[${TargetID}].InCombatMode})
 	{
-		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not in combat mode and I am not the main assist"]
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not in combat mode and I am not the main assist \[Called from '${Caller}'\]"]
 		bReturn:Set["FALSE"]
 	}
 	elseif (!${Actor[${TargetID}].Type.Equal[NPC]} && !${Actor[${TargetID}].Type.Equal[NamedNPC]})
 	{
-		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not an NPC or NamedNPC (${Actor[${TargetID}].Type})"]
+		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not an NPC or NamedNPC (${Actor[${TargetID}].Type}) \[Called from '${Caller}'\]"]
 		bReturn:Set["FALSE"]
 	}
 	
@@ -5075,7 +5077,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 		{
 			if ${MainAssist.Equal[${Me.Name}]}
 			{
-				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - KillTarget no longer valid and this character is the Main Assist; returning FALSE"]
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - KillTarget no longer valid and this character is the Main Assist; returning \arFALSE\ax"]
 				if (!${DebugEnabled} && ${DebugThisFunction})
 					Debug:Disable
 				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
@@ -5086,7 +5088,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 			call ReacquireKillTargetFromMA 0
 			if ${Return.Equal[FAILED]}
 			{
-				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - Failed to acquire new KillTarget from Main Assist; returning FALSE"]
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - Failed to acquire new KillTarget from Main Assist; returning \arFALSE\ax"]
 				if (!${DebugEnabled} && ${DebugThisFunction})
 					Debug:Disable
 				KillTarget:Set[0]
@@ -5096,7 +5098,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 			}
 			else
 			{
-				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - Acquired new KillTarget from Main Assist; returning TRUE"]
+				Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - Acquired new KillTarget from Main Assist; returning \agTRUE\ax"]
 				if (!${DebugEnabled} && ${DebugThisFunction})
 					Debug:Disable
 				VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
@@ -5106,7 +5108,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 		}
 		else
 		{
-			Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - returning FALSE"]
+			Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax - returning \arFALSE\ax"]
 			if (!${DebugEnabled} && ${DebugThisFunction})
 				Debug:Disable	
 			VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
@@ -5115,7 +5117,7 @@ function VerifyTarget(uint ID, bool IgnoreThrottle, string Caller)
 		}
 	}
 
-	Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is valid; returning TRUE"]
+	Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is valid; returning \agTRUE\ax"]
 	if (!${DebugEnabled} && ${DebugThisFunction})
 		Debug:Disable
 	CurrentAction:Set[Waiting...]
@@ -6044,7 +6046,7 @@ objectdef EQ2BotObj
 	method Init_Events()
 	{
 		Event[EQ2_onChoiceWindowAppeared]:AttachAtom[EQ2_onChoiceWindowAppeared]
-		Event[EQ2_onLootWindowAppeared]:AttachAtom[LootWdw]
+		Event[EQ2_onLootWindowAppeared]:AttachAtom[EQ2_onLootWindowAppeared]
 		;Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
 		Event[EQ2_onIncomingText]:AttachAtom[EQ2_onIncomingText]
 		Event[EQ2_onIncomingChatText]:AttachAtom[EQ2_onIncomingChatText]
@@ -7199,7 +7201,7 @@ function atexit()
 	DeleteVariable CurrentTask
 
 	Event[EQ2_onChoiceWindowAppeared]:DetachAtom[EQ2_onChoiceWindowAppeared]
-	Event[EQ2_onLootWindowAppeared]:DetachAtom[LootWdw]
+	Event[EQ2_onLootWindowAppeared]:DetachAtom[EQ2_onLootWindowAppeared]
 	Event[EQ2_onIncomingText]:DetachAtom[EQ2_onIncomingText]
 	Event[EQ2_onIncomingChatText]:DetachAtom[EQ2_onIncomingChatText]
 	Event[EQ2_onLevelChange]:DetachAtom[EQ2_onLevelChange]
