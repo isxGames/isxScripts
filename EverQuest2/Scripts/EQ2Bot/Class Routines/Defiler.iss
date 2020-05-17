@@ -1358,13 +1358,13 @@ function CheckWards()
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
 
-		if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}
+		if ${hot1}==0 && ${Me.CurrentPower}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}
 		{
 			call CastSpellRange 7 0 0 0 ${Actor[PC,ExactName,${MainTankPC}].ID} 0 0 0 0 2 0
 			hot1:Set[1]
 		}
 
-		if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
+		if ${grphot}==0 && ${Me.CurrentPower}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
 			call CastSpellRange 15
 	}
 }

@@ -1027,7 +1027,7 @@ function CheckReactives()
 
 		if ${KeepReactiveUp} || ${PreHealMode}
 		{
-			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}&& !${Me.Maintained[${SpellType[7]}](exists)}
+			if ${hot1}==0 && ${Me.CurrentPower}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}&& !${Me.Maintained[${SpellType[7]}](exists)}
 			{
 				call CastSpellRange 7 0 0 0 ${Actor[pc,exactname,${MainTankPC}].ID}
 				hot1:Set[1]
@@ -1036,7 +1036,7 @@ function CheckReactives()
 
 		if ${KeepGroupReactiveUp} || ${PreHealMode} && !${Me.Maintained[${SpellType[15]}](exists)}
 		{
-			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
+			if ${grphot}==0 && ${Me.CurrentPower}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
 				call CastSpellRange 15
 		}
 	}

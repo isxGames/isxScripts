@@ -889,7 +889,7 @@ function CheckWards()
 
 		if ${KeepMTWardUp}
 		{
-			if ${ward1}==0&&${Me.Power}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}
+			if ${ward1}==0&&${Me.CurrentPower}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost}
 			{
 				call CastSpellRange 7 0 0 0 ${Actor[${MainTankPC}].ID}
 				ward1:Set[1]
@@ -898,7 +898,7 @@ function CheckWards()
 
 		if ${KeepGroupWardUp}
 		{
-			if ${grpward}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
+			if ${grpward}==0 && ${Me.CurrentPower}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
 				call CastSpellRange 15
 		}
 
