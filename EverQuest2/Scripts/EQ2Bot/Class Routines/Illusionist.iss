@@ -2770,9 +2770,9 @@ function CheckHeals()
 							}
 						}
 						wait 2
-						eq2execute /useabilityonplayer ${Me.Name} Cure Magic
+						eq2execute /useabilityonplayer ${Me.Group[${temphl}].Name} Cure Magic
 						wait 5
-						if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
+						if (${Me.Ability[${SpellType[210]}].IsReady} && ${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
 						{
 							if ${Me.CastingSpell}
 							{
@@ -2787,7 +2787,7 @@ function CheckHeals()
 								}
 							}
 							wait 5
-							eq2execute /useabilityonplayer ${Me.Name} Cure Magic
+							eq2execute /useabilityonplayer ${Me.Group[${temphl}].Name} Cure Magic
 							wait 2
 						}
 					}
