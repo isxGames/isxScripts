@@ -146,7 +146,7 @@ function Pulse()
     		call CheckCures
 
 		if ${Me.Power}>85
-			call CheckHOTs
+			call CheckPreAndChainHOTs
 
 		if (${Zone.Name.Find[Unrest]} > 0)
 		{
@@ -303,7 +303,7 @@ function Buff_Routine(int xAction)
 	}
 
 	if ${Me.Power}>85
-		call CheckHOTs
+		call CheckPreAndChainHOTs
 
   	;call CheckSKFD
   
@@ -1611,7 +1611,7 @@ function CheckCuresAndHeals()
 	}
 	if (!${CombatComplete})
 	{
-		;; Note:  CheckHeals also calls CheckHoTs
+		;; Note:  CheckHeals also calls CheckPreAndChainHOTs
 		call CheckHeals
 		call VerifyTarget
 		if ${Return.Equal[FALSE]}
@@ -1724,7 +1724,7 @@ function CheckHeals()
 		}
 	}
 	
-	call CheckHOTs
+	call CheckPreAndChainHOTs
 
   	if (${MainTankExists})
 	{
@@ -2401,90 +2401,95 @@ function FindAfflicted()
 		return 0
 }
 
-function CheckHOTs()
+function CheckPreAndChainHOTs()
 {
-	declare tempvar int local 1
-	declare hot1 int local 0
-	declare grphot int local 0
-	hot1:Set[0]
-	grphot:Set[0]
+	variable int tempvar = 1
+	variable int hot1 = 0
+	variable int grphot = 0
 
-	;Debug:Echo["CheckHOTs():: START..."]
+	;if ${FuryDebugMode}
+	;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax BEGIN"]
 
-	if (${Me.InCombat} || ${Actor[${MainTankID}].InCombatMode})
+	if (${KeepMTHOTUp} && ${Actor[${MainTankID}].Name(exists)} && (${Me.InCombat} || ${Actor[${MainTankID}].InCombatMode}))
 	{
-		if ${KeepMTHOTUp}
-		{
-			if !${Me.InRaid} || !${Me.Group[${MainTankPC}].InZone}
-			{
-				tempvar:Set[1]
-				do
-				{
-					if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID}
-					{
-						;echo Single HoT is Present on MT
-						hot1:Set[1]
-						break
-					}
-				}
-				while ${tempvar:Inc}<=${Me.CountMaintained}
+		;if ${FuryDebugMode}
+		;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax Chain HoT MT is selected"]
 
-				if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost} && ${Actor[${MainTankID}].Name(exists)}
-				{
-					; Single Target HoT
-					call CastSpellRange 7 0 0 0 ${MainTankID}
-					hot1:Set[1]
-				}
-			}
-		}
-		if ${KeepGroupHOTUp}
-		{
-			if !${Me.InRaid} || ${Me.Group[${MainTankPC}].InZone}
-			{
-				tempvar:Set[1]
-				do
-				{
-					if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
-					{
-						;echo Group HoT is Present
-						grphot:Set[1]
-						break
-					}
-				}
-				while ${tempvar:Inc}<=${Me.CountMaintained}
-
-				if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
-				{
-					; group HoT
-					call CastSpellRange 15
-				}
-			}
-		}
-
-		; Hibernate
-		if ${Actor[${KillTarget}].IsEpic}
-		{
-			if ${Me.Power} > 55 && !${Me.Maintained[${SpellType[11]}](exists)}
-				call CastSpellRange 11
-		}
-	}
-	elseif (${KeepReactiveUp} && ${Me.Power} >= 85)
-	{
-		;; Pre HoT
 		tempvar:Set[1]
 		do
 		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Checking for Regrowth (does ${Me.Maintained[${tempvar}].Name} Equal ${SpellType[7]} AND ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID})"]
+			if (${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID})
+			{
+				;if ${FuryDebugMode}
+				;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax -- Regrowth active on MT"]
+				if (${Me.Maintained[${tempvar}].Duration} > 1 && ${Me.Maintained[${tempvar}].Duration} < 20)
+					hot1:Set[1]
+				break
+			}
+		}
+		while ${tempvar:Inc}<=${Me.CountMaintained}
+
+		if ${hot1} == 0 && ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.CurrentPower} > ${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost} && ${Actor[${MainTankID}].Name(exists)}
+		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Casting Regrowth on MT"]
+			call CastSpellRange 7 0 0 0 ${MainTankID} 0 0 1 1
+			hot1:Set[1]
+		}
+	}
+	if (${KeepGroupHOTUp} && (${Me.InCombat} || ${Actor[${MainTankID}].InCombatMode}))
+	{
+		;if ${FuryDebugMode}
+		;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax Chain HoT Group is selected"]
+		tempvar:Set[1]
+		do
+		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Checking Autumn's Kiss"]
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
+			{
+				;if ${FuryDebugMode}
+				;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax -- Autumn's Kiss is ACTIVE"]
+				grphot:Set[1]
+				break
+			}
+		}
+		while ${tempvar:Inc}<=${Me.CountMaintained}
+
+		if ${grphot}==0 && ${Me.Ability[${SpellType[15]}].IsReady} && ${Me.CurrentPower} > ${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
+		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Casting Autumn's Kiss"]
+			call CastSpellRange 15 0 0 0 ${Me.ID} 0 0 1 1
+		}
+	}
+	if (${KeepReactiveUp} && ${Me.Power} >= 55)
+	{
+		;if ${FuryDebugMode}
+		;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax Pre-HoT is selected and power > 55%"]
+		tempvar:Set[1]
+		do
+		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Checking for Regrowth (does ${Me.Maintained[${tempvar}].Name} Equal ${SpellType[7]} AND ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID})"]
 			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[7]}]} && ${Me.Maintained[${tempvar}].Target.ID} == ${MainTankID}
 			{
-				;echo Single HoT is Present on MT
-				hot1:Set[1]
+				;if ${FuryDebugMode}
+				;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax -- Regrowth active on MT"]
+				if (${Me.Maintained[${tempvar}].Duration} > 1 && ${Me.Maintained[${tempvar}].Duration} < 20)
+					hot1:Set[1]
 				if ${grphot} > 0
 					break
 				continue
 			}
-			elseif ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Checking Autumn's Kiss"]
+			if ${Me.Maintained[${tempvar}].Name.Equal[${SpellType[15]}]}
 			{
-				;echo Group HoT is Present
+				;if ${FuryDebugMode}
+				;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax -- Autumn's Kiss is ACTIVE"]
 				grphot:Set[1]
 				if ${hot1} > 0
 					break
@@ -2492,30 +2497,34 @@ function CheckHOTs()
 		}
 		while ${tempvar:Inc}<=${Me.CountMaintained}
 
-		if !${Me.InRaid} || !${Me.Group[${MainTankPC}].InZone}
+		if ${hot1} == 0 && ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.CurrentPower} > ${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost} && ${Actor[${MainTankID}].Name(exists)}
 		{
-			if ${hot1}==0 && ${Me.Power}>${Me.Ability[${SpellType[7]}].ToAbilityInfo.PowerCost} && ${Actor[${MainTankID}].Name(exists)}
-			{
-				; Single Target HoT
-				call CastSpellRange 7 0 0 0 ${MainTankID}
-				hot1:Set[1]
-			}
-		}
-		if !${Me.InRaid} || ${Me.Group[${MainTankPC}].InZone}
-		{
-			if ${grphot}==0 && ${Me.Power}>${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
-			{
-				; group HoT
-				call CastSpellRange 15
-			}
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Casting Regrowth on MT"]
+			call CastSpellRange 7 0 0 0 ${MainTankID} 0 0 1 1
 		}
 
-		; Hibernate
-		if !${Me.Maintained[${SpellType[11]}](exists)}
-			call CastSpellRange 11
+		if ${grphot} == 0 && ${Me.Ability[${SpellType[15]}].IsReady} && ${Me.CurrentPower} > ${Me.Ability[${SpellType[15]}].ToAbilityInfo.PowerCost}
+		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax - Casting Autumn's Kiss"]
+			call CastSpellRange 15 0 0 0 ${Me.ID} 0 0 1 1
+		}
 	}
 
-	;Debug:Echo["CheckHOTs():: END..."]
+	if (${KeepMTHOTUp} || ${KeepGroupHOTUp} || ${KeepReactiveUp})
+	{
+		;; Hibernation
+		if (!${Me.Maintained[${SpellType[11]}](exists)} && ${Me.Ability[${SpellType[11]}].IsReady})
+		{
+			;if ${FuryDebugMode}
+			;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax Casting Hibernation on group"]			
+			call CastSpellRange 11 0 0 0 ${Me.ID} 0 0 1 1
+		}
+	}
+
+	;if ${FuryDebugMode}
+	;	Debug:Echo["\at\[Fury:CheckPreAndChainHOTs()\]\ax END"]
 }
 
 function CheckEmergencyHeals()
