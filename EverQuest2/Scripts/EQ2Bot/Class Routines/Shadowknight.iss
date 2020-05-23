@@ -597,7 +597,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 		}
 	}
 
-	if (${TargetID} != ${Me.ID})
+	if (${TargetID} != ${Me.ID} && !${Actor[${TargetID}].Type.Equal[PC]})
 	{
 		call VerifyTarget ${TargetID} "SK-_CastSpellRange-${SpellType[${start}]}"
 		if ${Return.Equal[FALSE]}
