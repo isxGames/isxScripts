@@ -690,7 +690,7 @@ function main(string Args)
 							call FastMove ${Actor[${MainAssistID}].X} ${Actor[${MainAssistID}].Z} ${Math.Rand[3]:Inc[3]}
 					}
 	
-					if !${MainTank}
+					if (!${MainTank})
 					{
 						if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
 							KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
@@ -1451,7 +1451,8 @@ function CastSpellRange(... Args)
 	;;
 	;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for illusionists 
 	;; * Shadowknight Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for shadowknights 
-	if (${TargetID} && ${TargetID}==${KillTarget} && !${Me.SubClass.Equal[illusionist]} && !${Me.SubClass.Equal[shadowknight]})
+	;; * Fury Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for furies 
+	if (${TargetID} && ${TargetID}==${KillTarget} && !${Me.SubClass.Equal[illusionist]} && !${Me.SubClass.Equal[shadowknight]} && !${Me.SubClass.Equal[fury]})
 	{
 		call VerifyTarget ${TargetID}
 		if ${Return.Equal[FALSE]}
@@ -1943,7 +1944,8 @@ function CastSpell(string spell, uint spellid, uint TargetID, bool castwhilemovi
 				;;;;;;
 				;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for illusionists 
 				;; * Shadowknight Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for shadowknights 
-				if (!${Me.SubClass.Equal[Illusionist]} && !${Me.SubClass.Equal[shadowknight]})
+				;; * Fury Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for furies 
+				if (!${Me.SubClass.Equal[illusionist]} && !${Me.SubClass.Equal[shadowknight]} && !${Me.SubClass.Equal[fury]})
 				{
 					call VerifyTarget ${TargetID}
 					if ${Return.Equal[FALSE]}
@@ -4621,11 +4623,11 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 	{
 		if ${Me.Group[${Speaker}].InZone}
 		{
-			if (${Me.SubClass.Equal[Illusionist]} && ${Me.Level} >= 24)
+			if (${Me.SubClass.Equal[illusionist]} && ${Me.Level} >= 24)
 			{
 				eq2execute /useabilityonplayer ${Speaker} "Illusory Mask"
 			}
-			elseif (${Me.SubClass.Equal[Fury]} && ${Me.Level} >= 45)
+			elseif (${Me.SubClass.Equal[fury]} && ${Me.Level} >= 45)
 			{
 				eq2execute /useabilityonplayer ${Speaker} "Untamed Shroud"
 			}
@@ -4974,7 +4976,8 @@ function VerifyTarget(uint ID, string Caller)
 	;; Notes: (TODO:  Redo other classes so that they are only checking VerifyTarget before each spell/ability cast [ which includes editing a line in CastSpell() in this file]
 	;;        1. Illusionist.iss has been updated so as to not require throttling  
 	;;		  2. Shadowknight.iss has been updated so as to not require throttling  
-	if (!${Me.SubClass.Equal[Illusionist]} && !${Me.SubClass.Equal[shadowknight]})
+	;;		  3. Fury.iss has been updated so as to not require throttling  
+	if (!${Me.SubClass.Equal[illusionist]} && !${Me.SubClass.Equal[shadowknight]} && !${Me.SubClass.Equal[fury]})
 	{
 		if (${VerifyTargetTimer} > 0)
 		{
