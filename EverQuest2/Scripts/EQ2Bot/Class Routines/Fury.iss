@@ -140,10 +140,9 @@ function Pulse()
 				AutoFollowingMA:Set[FALSE]
 				waitframe
 			}
-		}		
-		call CheckHeals
-		if ${CureMode}
-    		call CheckCures
+		}
+
+		call CheckCuresAndHeals
 
 		if ${Me.Power}>85
 			call CheckPreAndChainHOTs
@@ -178,7 +177,8 @@ function Pulse()
 		;;		Script[EQ2Bot].VariableScope.CastTortoiseShellCaller:Set[WHO_CALLED_NAME]    (if you want the script to send the player a /tell)
 		;;		Script[EQ2Bot].VariableScope.CastTortoiseShell:Set[TRUE]
 		;;		
-		;; Note:  This will typically be handled in _CastSpellRange or Combat_Routine; it's included here primarily for testing purposes
+		;; Note:  This will typically be handled in _CastSpellRange or Combat_Routine; it's included here primarily for testing and documentation
+		;; purposes
 		if (${CastTortoiseShell})
 			call TortoiseShell
 
@@ -296,11 +296,7 @@ function Buff_Routine(int xAction)
 		call Shard
 
   	if ${xAction}== 1 || ${xAction} == 10
-	{
-		call CheckHeals
-		if ${CureMode}
-    		call CheckCures
-	}
+		call CheckCuresAndHeals
 
 	if ${Me.Power}>85
 		call CheckPreAndChainHOTs
@@ -597,37 +593,34 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 
 	;call CheckEmergencyHeals
 
+	if (${TargetID} != ${Me.ID} && !${Actor[${TargetID}].Type.Equal[PC]})
+	{
+		call VerifyTarget ${TargetID} "Fury-_CastSpellRange-${SpellType[${start}]}"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+	}
+
 	if ${FuryDebugMode}
 		Debug:Echo["\atFury:_CastSpellRange()\ax -- Casting ${SpellType[${start}]}..."]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	iReturn:Set[${Return}]
 	
-	call VerifyTarget ${KillTarget}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
-
 	if (${Me.InCombat} && ${Me.InCombatMode})
 	{
 		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} >= ${MTHealthThreshold})
 		{
 			;; Thunderbolt
-			if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 40)
+			if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 40 && ${Actor[${KillTarget}].Health} > 20)
 			{
+				call VerifyTarget ${KillTarget} "Fury-_CastSpellRange-Thunderbolt"
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:_CastSpellRange()\ax - Casting Thunderbolt..."]
 				call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["\atFury:_CastSpellRange()\ax - Casting Thunderbolt..."]
 					return CombatComplete						
-				}
 			}	
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["\atFury:_CastSpellRange()\ax - Exiting after Thunderbolt (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
 		}
 	}
 
@@ -717,7 +710,7 @@ function Combat_Routine(int xAction)
 		{
 			if ${Actor[${MainTankID}].InCombatMode}
 			{
-				if ${Me.Ability[${SpellType[386]}].IsReady}
+				if (${Me.Ability[${SpellType[386]}].IsReady} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} > 20))
 				{
 					BuffTarget:Set[${UIElement[AnimalForm@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 					if !${BuffTarget.Equal["No one"]}
@@ -726,7 +719,7 @@ function Combat_Routine(int xAction)
 						{
 							if ${FuryDebugMode}
 								Debug:Echo["Combat_Routine() -- Casting Animal Form on '${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name}' (${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID})"]
-							call CastSpellRange 386 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+							call _CastSpellRange 386 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
 						}
 						else
 							echo "ERROR3: Animal Form target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}), does not exist!"
@@ -760,8 +753,11 @@ function Combat_Routine(int xAction)
 			call Shard
 
 		;; Fae Fire
-		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 80 && ${Me.Ability[${SpellType[157]}].IsReady} && ${Me.Power} > 40)
+		if (!${Actor[${KillTarget}].IsSolo} && ${Me.Ability[${SpellType[157]}].IsReady} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 80))
 		{
+			call VerifyTarget ${KillTarget} "Fury-Combat_Routine-FaeFire"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange start=157 TargetID=0 IgnoreMaintained=1
 			if ${Return.Equal[CombatComplete]}
 			{
@@ -779,8 +775,11 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Porcupine
-		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 40)
+		if (!${Actor[${KillTarget}].IsSolo} && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 50))
 		{
+			call VerifyTarget ${KillTarget} "Fury-Combat_Routine-Porcupine"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange start=360 TargetID=0 IgnoreMaintained=1
 			if ${Return.Equal[CombatComplete]}
 			{
@@ -858,7 +857,7 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Thunderbolt
-		if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 40)
+		if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 20))
 		{
 			call _CastSpellRange 60 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -877,7 +876,7 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Tempest
-		if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 40)
+		if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 25))
 		{
 			call CheckActorForEffect ${KillTarget} 511 315
 			if ${Return.Equal[FALSE]}
@@ -900,8 +899,11 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Master's Smite
-		if ${Me.Ability[id,817383112].IsReady} && ${Mob.CheckActor[${KillTarget}]}
+		if (${Me.Ability[id,817383112].IsReady} && ${Mob.CheckActor[${KillTarget}]} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 20))
 		{
+			call VerifyTarget ${KillTarget} "Fury-Combat_Routine-MastersSmite"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
 			call CastSpellRange AbilityID=817383112 TargetID=${KillTarget} IgnoreMaintained=1
 			if ${Return.Equal[CombatComplete]}
 			{
@@ -921,7 +923,7 @@ function Combat_Routine(int xAction)
 		if (${AoEMode})
 		{
 			;; Ball Lightning 
-			if (${Me.Level} >= 70 && ${Me.Ability[${SpellType[97]}].IsReady} && ${Me.Power} > 50)
+			if (${Me.Level} >= 70 && ${Me.Ability[${SpellType[97]}].IsReady} && ${Me.Power} > 50 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 40))
 			{
 				call _CastSpellRange 97
 				if ${Return.Equal[CombatComplete]}
@@ -940,7 +942,7 @@ function Combat_Routine(int xAction)
 			}
 
 			;; Call of Storms
-			if (${Me.Level} >= 65 && ${Me.Ability[${SpellType[96]}].IsReady} && ${Me.Power} > 50)
+			if (${Me.Level} >= 65 && ${Me.Ability[${SpellType[96]}].IsReady} && ${Me.Power} > 50 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 40))
 			{
 				call _CastSpellRange 96
 				if ${Return.Equal[CombatComplete]}
@@ -959,7 +961,7 @@ function Combat_Routine(int xAction)
 			}
 
 			;; Ring of Fire
-			if (${Me.Level} >= 55 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Me.Power} > 50)
+			if (${Me.Level} >= 55 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Me.Power} > 50 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 50))
 			{
 				call _CastSpellRange 95
 				if ${Return.Equal[CombatComplete]}
@@ -979,7 +981,7 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Starnova
-		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 60 && ${Me.Ability[${SpellType[90]}].IsReady} && ${Me.Power} > 60)
+		if (!${Actor[${KillTarget}].IsSolo} && ${Me.Ability[${SpellType[90]}].IsReady} && ${Me.Power} > 60 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 50))
 		{
 			call _CastSpellRange 90 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -1058,7 +1060,7 @@ function Combat_Routine(int xAction)
   	}
 
 	;; Fae Fire
-	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 80 && ${Me.Ability[${SpellType[157]}].IsReady} && ${Me.Power} > 10)
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 55 && ${Me.Ability[${SpellType[157]}].IsReady} && ${Me.Power} > 10)
 	{
 		call _CastSpellRange 157
 		if ${Return.Equal[CombatComplete]}
@@ -1077,7 +1079,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Porcupine
-	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 10)
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 40 && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 10)
 	{
 		call _CastSpellRange 360
 		if ${Return.Equal[CombatComplete]}
@@ -1118,7 +1120,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Feast
-	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Power} > 15)
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 45 && ${Me.Power} > 15)
 	{
 		call CheckActorForEffect ${KillTarget} 471 315
 		if ${Return.Equal[FALSE]}
@@ -1141,7 +1143,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Thunderbolt
-	if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 15)
+	if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 15)
 	{
 		call _CastSpellRange 60 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
@@ -1160,7 +1162,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Tempest
-	if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 15)
+	if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 20)
 	{
 		call CheckActorForEffect ${KillTarget} 511 315
 		if ${Return.Equal[FALSE]}
@@ -1183,8 +1185,11 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Master's Smite
-	if ${Me.Ability[id,817383112].IsReady} && ${Mob.CheckActor[${KillTarget}]}
+	if (${Me.Ability[id,817383112].IsReady} && ${Mob.CheckActor[${KillTarget}]} && ${Actor[${KillTarget}].Health} >= 20)
 	{
+		call VerifyTarget ${KillTarget} "Fury-Combat_Routine-MastersSmite"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange AbilityID=817383112 TargetID=${KillTarget} IgnoreMaintained=1
 		if ${Return.Equal[CombatComplete]}
 		{
@@ -1223,7 +1228,7 @@ function Combat_Routine(int xAction)
 	if (${AoEMode})
 	{
 		;; Ball Lightning 
-		if (${Me.Level} >= 70 && ${Me.Ability[${SpellType[97]}].IsReady} && ${Me.Power} > 20)
+		if (${Me.Level} >= 70 && ${Me.Ability[${SpellType[97]}].IsReady} && ${Me.Power} > 20 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 40))
 		{
 			call _CastSpellRange 97
 			if ${Return.Equal[CombatComplete]}
@@ -1242,7 +1247,7 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Call of Storms
-		if (${Me.Level} >= 65 && ${Me.Ability[${SpellType[96]}].IsReady} && ${Me.Power} > 20)
+		if (${Me.Level} >= 65 && ${Me.Ability[${SpellType[96]}].IsReady} && ${Me.Power} > 20 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 40))
 		{
 			call _CastSpellRange 96
 			if ${Return.Equal[CombatComplete]}
@@ -1261,7 +1266,7 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Ring of Fire
-		if (${Me.Level} >= 55 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Me.Power} > 20)
+		if (${Me.Level} >= 55 && ${Me.Ability[${SpellType[95]}].IsReady} && ${Me.Power} > 20 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 50))
 		{
 			call _CastSpellRange 95
 			if ${Return.Equal[CombatComplete]}
@@ -1281,7 +1286,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Starnova
-	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 40 && ${Me.Ability[${SpellType[90]}].IsReady} && ${Me.Power} > 15)
+	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 30 && ${Me.Ability[${SpellType[90]}].IsReady} && ${Me.Power} > 15)
 	{
 		call _CastSpellRange 90 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
@@ -1332,7 +1337,7 @@ function CheckDebuffs()
 	if (!${DebuffMode})
 		return 0
 
-	if (${Actor[${KillTarget}].IsEpic} && ${Me.Power} > 55)
+	if (${Actor[${KillTarget}].IsEpic} && ${Me.Power} > 55 && ${Actor[${KillTarget}].Health} >= 10)
 	{
 		if (${Me.Ability[${SpellType[51]}].IsReady})
 		{
@@ -1341,6 +1346,9 @@ function CheckDebuffs()
 			{
 				if (${Me.Power} > 45 || !${PrimaryHealer})
 				{
+					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-DeathSwarm"
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=51 TargetID=${KillTarget} IgnoreMaintained=1
 					if ${Return.Equal[CombatComplete]}
 					{
@@ -1352,13 +1360,16 @@ function CheckDebuffs()
 				}
 			}
 		}
-		if (${Me.Ability[${SpellType[50]}].IsReady} && ${Continue})
+		if (${Continue} && ${Me.Ability[${SpellType[50]}].IsReady} && ${Actor[${KillTarget}].Health} >= 10)
 		{
 			call CheckActorForEffect ${KillTarget} 241 315
 			if ${Return.Equal[FALSE]}
 			{
 				if (${Me.Power} > 45 || !${PrimaryHealer})
 				{
+					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-Intimidation"
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=50 TargetID=${KillTarget} IgnoreMaintained=1
 					if ${Return.Equal[CombatComplete]}
 					{
@@ -1370,13 +1381,16 @@ function CheckDebuffs()
 				}
 			}			
 		}
-		if (${Me.Ability[${SpellType[52]}].IsReady} && ${Continue})
+		if (${Continue} && ${Me.Ability[${SpellType[52]}].IsReady} && ${Actor[${KillTarget}].Health} >= 10)
 		{
 			call CheckActorForEffect ${KillTarget} 369 312
 			if ${Return.Equal[FALSE]}
 			{
 				if (${Me.Power} > 45 || !${PrimaryHealer})
 				{
+					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-MaddeningSwarm"
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
 					if ${Return.Equal[CombatComplete]}
 					{
@@ -1389,7 +1403,7 @@ function CheckDebuffs()
 			}				
 		}
 	}
-	elseif (${Actor[${KillTarget}].IsHeroic} && ${Me.Power} > 40)
+	elseif (${Actor[${KillTarget}].IsHeroic} && ${Me.Power} > 40 && ${Actor[${KillTarget}].Health} >= 20)
 	{
 		;; Fast-casting encounter debuff that should be used always
 		if (${Me.Ability[${SpellType[52]}].IsReady})
@@ -1399,6 +1413,9 @@ function CheckDebuffs()
 			{
 				if (${Me.Power} > 45 || !${PrimaryHealer})
 				{
+					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-MaddeningSwarm"
+					if ${Return.Equal[FALSE]}
+						return CombatComplete
 					call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
 					if ${Return.Equal[CombatComplete]}
 					{
@@ -1410,7 +1427,7 @@ function CheckDebuffs()
 				}
 			}				
 		}
-		if (${Me.Ability[${SpellType[51]}].IsReady} && ${Continue})
+		if (${Continue} && ${Me.Ability[${SpellType[51]}].IsReady} && ${Actor[${KillTarget}].Health} >= 20)
 		{
 			call CheckActorForEffect ${KillTarget} 369 315
 			if ${Return.Equal[FALSE]}
@@ -1460,53 +1477,29 @@ function Post_Combat_Routine(int xAction)
     				{
     					if (${Me.InRaid} && ${Me.Ability[${SpellType[380]}].IsReady})
     					{
-    						call CastSpellRange 380 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						call _CastSpellRange 380 0 1 0 ${Me.Group[${tempgrp}].ID} 1
     						wait 5
-    						do
-    						{
-    							waitframe
-    						}
-    						while ${Me.CastingSpell}
     					}
     					elseif ${Me.Ability[${SpellType[300]}].IsReady}
     					{
-    						call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						call _CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
     						wait 5
-    						do
-    						{
-    							waitframe
-    						}
-    						while ${Me.CastingSpell}
     					}
     					elseif ${Me.Ability[${SpellType[301]}].IsReady}
     					{
-    						call CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						call _CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
     						wait 5
-    						do
-    						{
-    							waitframe
-    						}
-    						while ${Me.CastingSpell}
     					}
     					elseif ${Me.Ability[${SpellType[302]}].IsReady}
     					{
-    						call CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						call _CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
     						wait 5
-    						do
-    						{
-    							waitframe
-    						}
-    						while ${Me.CastingSpell}
+
     					}
     					else
     					{
-    						call CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
+    						call _CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
     						wait 5
-    						do
-    						{
-    							waitframe
-    						}
-    						while ${Me.CastingSpell}
     					}
     				}
     			}
@@ -1574,7 +1567,7 @@ function Have_Aggro()
 	{
 		if ${FuryDebugMode}
 			Debug:Echo["\atFury:Have_Aggro()\ax -- \ay Casting Brambles on ${Actor[${aggroid}].Name}!"]
-		call CastSpellRange 180 0 0 0 ${aggroid}
+		call _CastSpellRange 180 0 0 0 ${aggroid}
 	}
 	else
 	{
@@ -1598,29 +1591,12 @@ function CheckCuresAndHeals()
 		call TortoiseShell
 
 	if ${CureMode}
-	{
 		call CheckCures
-		call VerifyTarget
-		if ${Return.Equal[FALSE]}
-		{
-			if ${FuryDebugMode}
-				Debug:Echo["\atFury:CheckCuresAndHeals()\ax -- Exiting after CheckCures() (Target no longer valid: CombatComplete)"]
-			sReturn:Set[CombatComplete]
-			CombatComplete:Set[TRUE]
-		}
-	}
+
 	if (!${CombatComplete})
 	{
 		;; Note:  CheckHeals also calls CheckPreAndChainHOTs
 		call CheckHeals
-		call VerifyTarget
-		if ${Return.Equal[FALSE]}
-		{
-			if ${FuryDebugMode}
-				Debug:Echo["\atFury:CheckCuresAndHeals()\ax -- Exiting after CheckHeals (Target no longer valid: CombatComplete)"]
-			sReturn:Set[CombatComplete]
-			CombatComplete:Set[TRUE]
-		}
 	}
 
 	if (${Me.InCombat} && ${Me.InCombatMode})
@@ -1628,7 +1604,7 @@ function CheckCuresAndHeals()
 		;; If our health is low, cast Brambles just to be safe.  Otherwise, check aggro
 		if (${Me.Health} < 50)
 		{
-			call CastSpellRange 180 0 0 0 ${KillTarget}
+			call _CastSpellRange 180 0 0 0 ${KillTarget} 0 0 0 1
 		}
 		else
 		{
@@ -1647,6 +1623,9 @@ function CheckCuresAndHeals()
 
 function CheckHeals()
 {
+	;;;;;
+	;; This function should only be called by CheckCuresAndHeals().   All "checks" within the script should call CheckCuresAndHeals(), not CheckHeals()
+	;;;;;
 	variable int tempgrp = 1
 	variable int temphl = 0
 	variable int temph2 = 1
@@ -1923,51 +1902,45 @@ function CheckHeals()
 
 	;;;;;;;;;;;;;;;;;;;;;;;
 	;; Spells that should be cast whenever they're ready (if we're in Offensive Mode)
-	if (!${PrimaryHealer} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode})
+	if (!${PrimaryHealer} && ${Me.Power} > 45 && ${Me.InCombat} && ${Me.InCombatMode} && ${Actor[${KillTarget}].Health} > 20)
 	{
 		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} > 70)
 		{
 			variable bool ContinueOffense = TRUE
 
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[TRUE]}
+			;; Death Swarm
+			if (${Me.Ability[${SpellType[51]}].IsReady} && ${Actor[${KillTarget}].Health} > 35)
 			{
-				;; Death Swarm
-				if ${Me.Ability[${SpellType[51]}].IsReady}
-				{
-					call CheckActorForEffect ${KillTarget} 369 315
-					if ${Return.Equal[FALSE]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["CheckHeals() -- Routine Finished -- Casting Death Swarm on ${Actor[${KillTarget}].Name}..."]
-						call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-
-						call VerifyTarget ${KillTarget}
-						if ${Return.Equal[TRUE]}
-							ContinueOffense:Set[TRUE]
-						else
-							ContinueOffense:Set[FALSE]		
-					}
-					else
-					{
-						Debug:Echo["CheckHeals() -- Routine Finished -- ${Actor[${KillTarget}].Name} already has Death Swarm"]
-					}
-				}		
-
-				;; Thunderbolt
-				if (${ContinueOffense} && ${Me.Ability[${SpellType[60]}].IsReady})
+				call CheckActorForEffect ${KillTarget} 369 315
+				if ${Return.Equal[FALSE]}
 				{
 					if ${FuryDebugMode}
-						Debug:Echo["CheckHeals() -- Routine Finished -- Casting Thunderbolt on ${Actor[${KillTarget}].Name}..."]
-					call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
-
-					call VerifyTarget ${KillTarget}
-					if ${Return.Equal[TRUE]}
+						Debug:Echo["CheckHeals() -- Routine Finished -- Casting Death Swarm on ${Actor[${KillTarget}].Name}..."]
+					call _CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+					if (!${Return.Equal[CombatComplete]})
 						ContinueOffense:Set[TRUE]
 					else
-						ContinueOffense:Set[FALSE]	
-				}	
-			}
+						ContinueOffense:Set[FALSE]		
+				}
+				else
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["CheckHeals() -- Routine Finished -- ${Actor[${KillTarget}].Name} already has Death Swarm"]
+				}
+			}		
+
+			;; Thunderbolt
+			if (${ContinueOffense} && ${Me.Ability[${SpellType[60]}].IsReady})
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["CheckHeals() -- Routine Finished -- Casting Thunderbolt on ${Actor[${KillTarget}].Name}..."]
+				call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
+				if (!${Return.Equal[CombatComplete]})
+					ContinueOffense:Set[TRUE]
+				else
+					ContinueOffense:Set[FALSE]		
+			}	
+
 		}
 	}
 	;;
@@ -2139,7 +2112,7 @@ function CureGroupMember(int gMember)
 		{
 		    Debug:Echo["Curing ${Me.Group[${gMember}]} (${Me.Group[${gMember}].ID})"]
 			call CastSpellRange 210 0 0 0 ${Me.Group[${gMember}].ID}
-			wait 2
+			wait 5
 		}
 	}
 }
@@ -2161,7 +2134,7 @@ function CureMe()
 
 	while (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Elemental}>0 || ${Me.Trauma}>0) && ${CureCnt:Inc}<4
 	{
-		Debug:Echo["Curing ME ((${Me.ID})"]
+		Debug:Echo["Curing ME (${Me.ID})"]
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
 		if ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 70]} && ${EpicMode}
@@ -2403,6 +2376,14 @@ function FindAfflicted()
 
 function CheckPreAndChainHOTs()
 {
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;
+	;; This function does *NOTHING* unless one or more of the following options are selected in the UI:
+	;; - Pre-HoT    		(Keep Heal over Time spells up and active, even when not in combat [both single target on MT as well as the group HoT abilities)
+	;; - Chain HoT MT 		(Keep HoT abilities active on Main Tank [in combat only])
+	;; - Chain HoT Group    (Keep HoT abilities active on group [in combat only])
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	variable int tempvar = 1
 	variable int hot1 = 0
 	variable int grphot = 0
@@ -2574,9 +2555,6 @@ function HandleGroupWiped()
 {
 	;;; There was a full group wipe and now we are rebuffing
 
-	;assume that someone used a feather
-	if (${Me.GroupCount} > 1)
-		call CastSpell "Favor of the Phoenix" ${Me.Ability["Favor of the Phoenix"].ID} 1 1
 	return OK
 }
 
@@ -2602,7 +2580,12 @@ function CheckSKFD()
 
 function PostDeathRoutine()
 {
+	;;;;;
 	;; This function is called after a character has either revived or been rezzed
+	;;;;;
+
+	;; Just in case the Fury was asked to cast Tortoise Shell, and died before being able to cast it.
+	CastTortoiseShell:Set[FALSE]
 
 	return
 }
@@ -2635,51 +2618,26 @@ function CheckRezzes()
 			{
 				call CastSpellRange 380 0 1 0 ${Me.Group[${tempgrp}].ID} 1
 				wait 5
-				do
-				{
-					waitframe
-				}
-				while ${Me.CastingSpell}
 			}
 			elseif ${Me.Ability[${SpellType[300]}].IsReady}
 			{
 				call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID} 1
 				wait 5
-				do
-				{
-					waitframe
-				}
-				while ${Me.CastingSpell}
 			}
 			elseif ${Me.Ability[${SpellType[301]}].IsReady}
 			{
 				call CastSpellRange 301 0 1 0 ${Me.Group[${tempgrp}].ID} 1
 				wait 5
-				do
-				{
-					waitframe
-				}
-				while ${Me.CastingSpell}
 			}
 			elseif ${Me.Ability[${SpellType[302]}].IsReady}
 			{
 				call CastSpellRange 302 0 1 0 ${Me.Group[${tempgrp}].ID} 1
 				wait 5
-				do
-				{
-					waitframe
-				}
-				while ${Me.CastingSpell}
 			}
 			else
 			{
 				call CastSpellRange 303 0 1 0 ${Me.Group[${tempgrp}].ID} 1
 				wait 5
-				do
-				{
-					waitframe
-				}
-				while ${Me.CastingSpell}
 			}
 		}
 	}
