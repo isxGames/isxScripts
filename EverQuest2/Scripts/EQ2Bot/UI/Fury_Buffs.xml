@@ -28,7 +28,7 @@
 		<Y>30</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Spirit (Group)</Text>
+		<Text>Forest Spirit (Grp)</Text>
 		<AutoTooltip>Buff Group Int and Wis</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
@@ -51,7 +51,7 @@
 		<Y>50</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Hunt (Group)</Text>
+		<Text>Master of the Hunt (Grp)</Text>
 		<AutoTooltip>Buff Group Max Health and Cold/Heat</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
@@ -74,7 +74,7 @@
 		<Y>70</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Mask (Group)</Text>
+		<Text>Armor of Nature (Grp)</Text>
 		<AutoTooltip>Buff Group Mit and Health Regen</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
@@ -97,7 +97,7 @@
 		<Y>90</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Eel (Group)</Text>
+		<Text>Water Breathing (Grp)</Text>
 		<AutoTooltip>Buff Group Water Breathing</AutoTooltip>
 		<OnLeftClick>
 			if ${This.Checked}
@@ -121,7 +121,7 @@
 		<Y>110</Y>
 		<Width>30%</Width>
 		<Height>20</Height>
-		<Text>Buff Infusion</Text>
+		<Text>Buff Infusion (AA/Self)</Text>
 		<OnLeftClick>
 			if ${This.Checked}
 			{
@@ -173,7 +173,7 @@
 		<Width>25%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
-		<Text>Buff Spirit of Bat:</Text>
+		<Text>Spirit of the Bat:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
 	<combobox name='cbBuffBatGroupMember'>
@@ -200,7 +200,7 @@
 		<Width>25%</Width>
 		<Height>20</Height>
 		<Alignment>Left</Alignment>
-		<Text>Buff Savagery Proc:</Text>
+		<Text>Primal Fury:</Text>
 		<AutoTooltip></AutoTooltip>
 	</Text>
 	<combobox name='cbBuffSavageryGroupMember'>
