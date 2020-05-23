@@ -170,7 +170,7 @@ function Pulse()
 
 		;; Prismatic Proc
 		;; Melee Short-term buff (3 procs dmg -- ie, Prismatic Chaos)
-		if !${MainTank} || ${AutoMelee}
+		if (!${MainTank} || ${AutoMelee})
 		{
 			if (${Me.Group} > 1 || ${Me.Raid} > 1 || ${AutoMelee})
 			{
@@ -186,25 +186,29 @@ function Pulse()
 					}
 					if ${Me.Ability[${SpellType[72]}].IsReady}
 					{
-						BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
-						if !${BuffTarget.Equal["No one"]}
+						call VerifyTarget ${KillTarget}
+						if ${Return.Equal[TRUE]}
 						{
-							if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
+							BuffTarget:Set[${UIElement[cbBuffPrismOn@Buffs@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
+							if !${BuffTarget.Equal["No one"]}
 							{
-								call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+								if ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}].Name(exists)}
+								{
+									call CastSpellRange 72 0 0 0 ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]},exactname].ID} 0 0 0 1
+									LastSpellCast:Set[72]
+									ClassPulseTimer:Set[${Script.RunningTime}]
+									return
+								}
+								else
+									echo "ERROR2: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}),exactname]}, does not exist!"
+							}
+							else
+							{
+								call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
 								LastSpellCast:Set[72]
 								ClassPulseTimer:Set[${Script.RunningTime}]
 								return
 							}
-							else
-								echo "ERROR2: Prismatic proc target, ${Actor[${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]} (${BuffTarget.Token[2,:]},${BuffTarget.Token[1,:]}),exactname]}, does not exist!"
-						}
-						else
-						{
-							call CastSpellRange 72 0 0 0 ${MainTankID} 0 0 0 1
-							LastSpellCast:Set[72]
-							ClassPulseTimer:Set[${Script.RunningTime}]
-							return
 						}
 					}
 					call CastSomething	
@@ -965,9 +969,12 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	;;;;;;;
 
 	;; Check to make sure the target is valid FIRST and then use the ability this function was called for before anything else
-	call VerifyTarget ${TargetID}
-	if ${Return.Equal[FALSE]}
-		return CombatComplete
+	if (${TargetID} != ${Me.ID} && !${Actor[${TargetID}].Type.Equal[PC]})
+	{
+		call VerifyTarget ${TargetID} "Illusionist-_CastSpellRange-${SpellType[${start}]}"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+	}
 
 	;; Cast the spell we wanted to cast originally before doing anything else
 	LastSpellCast:Set[${start}]
