@@ -42,19 +42,19 @@ variable int Latest_DefilerVersion = 20120503
 variable int Latest_DirgeVersion = 20090711
 variable int Latest_FuryVersion = 20200507
 variable int Latest_GuardianVersion = 20090616
-variable int Latest_IllusionistVersion = 20090622
+variable int Latest_IllusionistVersion = 20200507
 variable int Latest_InquisitorVersion = 20090622
 variable int Latest_MonkVersion = 20090622
 variable int Latest_MysticVersion = 0
 variable int Latest_NecromancerVersion = 0
 variable int Latest_PaladinVersion = 20090623
 variable int Latest_RangerVersion = 0
-variable int Latest_ShadowknightVersion = 20161128
+variable int Latest_ShadowknightVersion = 20200507
 variable int Latest_SwashbucklerVersion = 20090616
 variable int Latest_TemplarVersion = 20090616
-variable int Latest_TroubadorVersion = 20090619
+variable int Latest_TroubadorVersion = 20200528
 variable int Latest_WardenVersion = 20090703
-variable int Latest_WarlockVersion = 20090622
+variable int Latest_WarlockVersion = 20200528
 variable int Latest_WizardVersion = 20090622
 variable int Latest_BeastlordVersion = 20111209
 ;===================================================
@@ -1511,13 +1511,13 @@ function CastSpellRange(... Args)
 						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}]}<${OORThreshold}
 						{
 							;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
-							call CheckPosition 2 ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
+							call CheckPosition 2 ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving}
 						}
 					}
 					elseif ${xvar1} || ${xvar2}
 					{
-						;echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar}
-						call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${tempvar} ${castwhilemoving}
+						;echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar} AbilityID: ${AbilityID}
+						call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving}
 					}
 					if ${Target(exists)}
 						originaltarget:Set[${Target.ID}]
@@ -2270,10 +2270,14 @@ function Combat(bool PVP=0)
 								else
 								{
 									TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-									;echo "Combat()-DEBUG:: TankToTargetDistance: ${TankToTargetDistance}"
+									;echo "\aoCombat()-DEBUG::\ax TankToTargetDistance: ${TankToTargetDistance}"
 									if (${TankToTargetDistance} <= 7.5)
 									{
-											call CheckPosition 1 1 ${KillTarget} 0 0
+										;;;; TODO
+										;; Previously, this call was "call CheckPosition 1 1 ${KillTarget} 0 0", which would move the player BEHIND the target.
+										;; Classes which NEED to be behind the target should call it within the class file at the beginning of the fight.  For
+										;; 'generic' placement, it should use 0, which means "anywhere" (rather than "behind")
+										call CheckPosition 1 0 ${KillTarget} 0 0
 									}
 								}
 							}
@@ -2678,7 +2682,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 	; rangetype (1=close, 2=max range, 3=bow shooting)
 	; quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
 
-	Debug:Echo["CheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving})"]
+	Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving})\ax"]
 
 	variable float minrange
 	variable float maxrange
@@ -2750,7 +2754,7 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 			else
 			{
 				minrange:Set[4]
-				maxrange:Set[${Position.GetSpellMaxRange[${TID},0,${Me.Ability[${SpellType[${AbilityID}]}].ToAbilityInfo.MaxRange}]}]
+				maxrange:Set[${Position.GetSpellMaxRange[${TID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}]
 			}
 			break
 		case 3
@@ -2806,7 +2810,6 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 				}
 				while ${Me.CastingSpell}
 			}
-
 			call FastMove ${HomeX} ${HomeZ} 5
 			return
 		}
@@ -2818,7 +2821,6 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 	; we now use Position object for this
 	;
 	destpoint:Set[${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]
-
 
 	;
 	;if distance over 75, its probably not safe to fastmove
