@@ -1,6 +1,9 @@
 ;*****************************************************
 ;Troubador.iss 20090619a
 ;by Pygar
+;
+;Significant updates/fixes/etc. by Amadeus in May 2020
+;
 ;*****************************************************
 
 #ifndef _Eq2Botlib_
@@ -10,7 +13,7 @@
 function Class_Declaration()
 {
   ;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
-  declare ClassFileVersion int script 20090619
+  declare ClassFileVersion int script 20200528
   ;;;;
 
 	declare OffenseMode bool script 1
@@ -30,13 +33,15 @@ function Class_Declaration()
 	declare BuffHealth bool script FALSE
 	declare BuffReflection bool script FALSE
 	declare BuffAria bool script FALSE
-	declare BuffStamina bool script FALSE
+	declare BuffStats bool script FALSE
 	declare BuffCasting bool script FALSE
 	declare BuffHate bool script FALSE
 	declare BuffSelf bool script FALSE
 	declare BuffDKTM bool script FALSE
 	declare BuffDexSonata bool script FALSE
 	declare Charm bool script FALSE
+	declare JestersCapRotationListBoxSet bool script FALSE
+	declare TroubDebugMode bool script FALSE
 
 	;Initialized by UI
 	declare BuffJesterCapTimers collection:int script
@@ -69,7 +74,7 @@ function Class_Declaration()
 	BuffHealth:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Health","FALSE"]}]
 	BuffReflection:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Reflection","FALSE"]}]
 	BuffAria:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Aria","FALSE"]}]
-	BuffStamina:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Stamina","FALSE"]}]
+	BuffStats:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Stats","FALSE"]}]
 	BuffCasting:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Casting","FALSE"]}]
 	BuffHate:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Hate","FALSE"]}]
 	BuffSelf:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Buff Self","FALSE"]}]
@@ -78,6 +83,10 @@ function Class_Declaration()
 
 	PosionCureItem:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting["Poison Cure Item","Antivenom Hypo Bracer"]}]
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
+
+	;; Set these to TRUE, as desired, for testing
+	Debug:Enable
+	TroubDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -94,6 +103,9 @@ function Pulse()
 	;         Also, do not forget that a 'pulse' of EQ2Bot may take as long as 2000 ms.  So, even if you use a lower value, it may not be called
 	;         that often (though, if the number is lower than a typical pulse duration, then it would automatically be called on the next pulse.)
 	;;;;;;;;;;;;
+
+	if (${StartBot} && ${DoNoCombat})
+		return
 
 	;; check this at least every 0.5 seconds
 	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+500]})
@@ -112,6 +124,18 @@ function Pulse()
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; The following routines are only called once.  They just need to wait until specific conditions have occurred
+	;;;;;;
+	;; Wait to populate "Jester's Cap" listbox until after in a group of at least 3.  (Can be manually updated any time via UI.)
+	if (!${JestersCapRotationListBoxSet} && (${Me.Group} > 2 || ${Me.Raid} > 2))
+	{
+		JestersCapRotationListBoxSet:Set[TRUE]
+		Script[EQ2Bot].VariableScope.EQ2Bot:RefreshList["lbBuffJesterCap@Class@EQ2Bot Tabs@EQ2 Bot",BuffJesterCap,1,0,1]
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 }
 
 function Class_Shutdown()
@@ -123,9 +147,11 @@ function Buff_Init()
 	PreAction[1]:Set[Buff_AAAllegro]
 	PreSpellRange[1,1]:Set[390]
 
+	;; Graceful Avoidance
 	PreAction[2]:Set[Buff_Defense]
 	PreSpellRange[2,1]:Set[31]
 
+	;; Bria's Inspiring Ballad
 	PreAction[3]:Set[Buff_Power]
 	PreSpellRange[3,1]:Set[21]
 
@@ -141,36 +167,45 @@ function Buff_Init()
 	PreAction[7]:Set[Selos]
 	PreSpellRange[7,1]:Set[381]
 
+	;; Requiem of Reflection
 	PreAction[8]:Set[Buff_Reflection]
 	PreSpellRange[8,1]:Set[26]
 
+	;; Aria of Magic
 	PreAction[9]:Set[Buff_Aria]
 	PreSpellRange[9,1]:Set[27]
 
-	PreAction[10]:Set[Buff_Stamina]
+	;; Raxxyl's Rousing Tune
+	PreAction[10]:Set[Buff_Stats]
 	PreSpellRange[10,1]:Set[28]
 
+	;; Song of Magic
 	PreAction[11]:Set[Buff_Casting]
 	PreSpellRange[11,1]:Set[29]
 
 	PreAction[12]:Set[Buff_AAHeroicStoryTelling]
 	PreSpellRange[12,1]:Set[404]
 
+	;; Alin's Serene Serenade
 	PreAction[13]:Set[Buff_Hate]
 	PreSpellRange[13,1]:Set[30]
 
+	;; Arcane Symphony
 	PreAction[14]:Set[Buff_Arcane]
 	PreSpellRange[14,1]:Set[22]
 
+	;; Elemental Concerto 
 	PreAction[15]:Set[Buff_Elemental]
 	PreSpellRange[15,1]:Set[23]
 
+	;; Allegretto
 	PreAction[16]:Set[Buff_Haste]
 	PreSpellRange[16,1]:Set[24]
 
 	PreAction[17]:Set[Buff_AAFortissimo]
 	PreSpellRange[17,1]:Set[398]
 
+	;; Daelis' Dance of Blades
 	PreAction[18]:Set[Buff_Self]
 	PreSpellRange[18,1]:Set[20]
 
@@ -180,6 +215,7 @@ function Buff_Init()
 	PreAction[20]:Set[Buff_AAUpTempo]
 	PreSpellRange[20,1]:Set[402]
 
+	;; Rejuvenating Celebration
 	PreAction[21]:Set[Buff_Health]
 	PreSpellRange[21,1]:Set[25]
 	
@@ -190,13 +226,10 @@ function Buff_Init()
 
 function Combat_Init()
 {
-
 }
-
 
 function PostCombat_Init()
 {
-
 }
 
 function Buff_Routine(int xAction)
@@ -228,79 +261,118 @@ function Buff_Routine(int xAction)
 			break
 		case Buff_AADexSonata
 			if ${BuffDexSonata}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Defense
 			if ${BuffDefense}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Power
 			if ${BuffPower}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Arcane
 			if ${BuffArcane}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Elemental
 			if ${BuffElemental}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Haste
 			if ${BuffHaste}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Health
 			if ${BuffHealth}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Reflection
 			if ${BuffReflection}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Aria
 			if ${BuffAria}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
-		case Buff_Stamina
-			if ${BuffStamina}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+		case Buff_Stats
+			if ${BuffStats}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Casting
 			if ${BuffCasting}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Hate
 			if ${BuffHate}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
 		case Buff_Self
 			if ${BuffSelf}
-				call CastSpellRange ${PreSpellRange[${xAction},1]}
+			{
+				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+					call CastSpellRange ${PreSpellRange[${xAction},1]}
+			}
 			else
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			break
@@ -313,13 +385,73 @@ function Buff_Routine(int xAction)
 		case Buff_AADontKillTheMessenger
 		case Buff_AAHeroicStoryTelling
 		case Mamba
-			call CastSpellRange ${PreSpellRange[${xAction},1]}
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		Default
 			return Buff Complete
 			break
 	}
 
+}
+
+function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint TargetID, int notall, int refreshtimer, bool castwhilemoving, bool IgnoreMaintained, bool CastSpellNOW, bool IgnoreIsReady)
+{
+	variable float TankToTargetDistance
+	variable int iReturn
+
+	;; Notes:
+	;; - IgnoreMaintained:  If TRUE, then the bot will cast the spell regardless of whether or not it is already being maintained (ie, DoTs)
+	;;;;;;;
+
+	;; Check to make sure the target is valid FIRST and then use the ability this function was called for before anything else
+	if (${TargetID} > 0 && ${TargetID} != ${Me.ID} && !${Actor[${TargetID}].Type.Equal[PC]})
+	{
+		call VerifyTarget ${TargetID} "Troubadour-_CastSpellRange-${SpellType[${start}]}"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+	}
+
+	;; Cast the spell we wanted to cast originally before doing anything else
+	if ${TroubDebugMode}
+		Debug:Echo["\atTroubadour:_CastSpellRange()\ax -- Casting ${SpellType[${start}]}..."]
+	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
+	iReturn:Set[${Int[${Return}]}]
+
+	if (${DoNoCombat})
+		return ${iReturn}
+		
+	;if ${DoCallCheckPosition}
+	;{
+	;	TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+	;	if ${TroubDebugMode}
+	;		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+;
+	;	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+	;	{
+	;		if ${MainTank}
+	;			call CheckPosition 1 0
+	;		else
+	;		{
+	;			if (${TankToTargetDistance} <= 7.5)
+	;			{
+	;				if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+	;					call CheckPosition 1 1
+	;				else
+	;					call CheckPosition 1 0
+	;			}
+	;		}
+	;	}
+	;	elseif (${Actor[${MainTankID}].Name(exists)} && ${Actor[${MainTankID}].Distance} > 20)
+	;	{
+	;		if ${TroubDebugMode}
+	;			Debug:Echo["_CastSpellRange():: Out of Range - Moving to within 20m of tank"]
+	;		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 20 1 1
+	;	}
+	;	DoCallCheckPosition:Set[FALSE]
+	;}
+
+	return ${iReturn}
 }
 
 function Combat_Routine(int xAction)
@@ -334,9 +466,27 @@ function Combat_Routine(int xAction)
 	spellsused:Set[0]
 	spellthreshold:Set[1]
 
+	if ${TroubDebugMode}
+		Debug:Echo["Combat_Routine(${xAction}) called"]
+
+	if (!${Actor[${KillTarget}].Name(exists)} || ${Actor[${KillTarget}].IsDead} || ${Actor[${KillTarget}].Health}<0 || ${KillTarget} == 0)
+	{
+		if ${IllyDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [1]"]
+		return CombatComplete
+	}
+
+	if ${InPostDeathRoutine} || ${CheckingBuffsOnce}
+	{
+		if ${TroubDebugMode}
+			Debug:Echo["Combat_Routine() -- Exiting (In PostDeathRoutine or CheckingBuffsOnce) [2]"]
+		return
+	}
 
 	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
+		if ${TroubDebugMode}
+			Debug:Echo["Combat_Routine() -- Stopping autofollow"]		
 		EQ2Execute /stopfollow
 		AutoFollowingMA:Set[FALSE]
 		wait 3
@@ -347,9 +497,11 @@ function Combat_Routine(int xAction)
 	elseif ${BowAttacksMode}
 		range:Set[3]
 
-
 	if ${BDStatus} && ${Me.Ability[${SpellType[388]}].IsReady}
 	{
+		call VerifyTarget ${KillTarget} "Troubadour-Combat_Routine-BladeDance"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 388
 		wait 5
 		if ${Me.Maintained[${SpellType[388]}](exists)}
@@ -378,79 +530,135 @@ function Combat_Routine(int xAction)
 	; PoTM
 	if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[155]}](exists)} && ${Me.Ability[${SpellType[155]}].IsReady} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]})
 	{
-		call CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 155 0 ${range} 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 
 		spellsused:Inc
 	}
 
 	call CheckHeals
 
-  ;Rhythym Blade
+  	;Rhythym Blade
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[397]}].IsReady} && !${Me.Maintained[${SpellType[397]}](exists)}
 	{
-		call CastSpellRange 397 0 1 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 397 0 1 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 		
 		spellsused:Inc
 	}
 
-  ;Cadence of Destruction
+  	;Cadence of Destruction
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[406]}].IsReady} && !${Me.Maintained[${SpellType[406]}](exists)}
 	{
-		call CastSpellRange 406 
+		call VerifyTarget ${KillTarget} "Troubadour-Combat_Routine-CadenceOfDestruction"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 406	
 		spellsused:Inc
 	}
 	
-	;;;; Need VC here	
-  ;Victorious Concerto
+  	;Victorious Concerto
 	if ${spellsused}<=${spellthreshold} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]}) && ${Me.Ability[${SpellType[407]}].IsReady} && !${Me.Maintained[${SpellType[407]}](exists)}
 	{
+		call VerifyTarget ${KillTarget} "Troubadour-Combat_Routine-Victorious Concerto"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 407 
 		spellsused:Inc
 	}
 
-  ;Victorious Concerto
+  	;Rhythmic Overture
 	if ${spellsused}<=${spellthreshold} && (${Actor[${KillTarget}].Health}>=40 || ${Actor[${KillTarget}].Type.Equal[NamedNPC]}) && ${Me.Ability[${SpellType[408]}].IsReady} && !${Me.Maintained[${SpellType[408]}](exists)}
 	{
+		call VerifyTarget ${KillTarget} "Troubadour-Combat_Routine-Rhythmic Overture"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
 		call CastSpellRange 408 
 		spellsused:Inc
 	}
 
-  ;Painful Lamentation
+  	;Painful Lamentation
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)}
 	{
-		call CastSpellRange 92 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 92 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}	
 
-  ;Perfect Shrill
+  	;Perfect Shrill
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[60]}].IsReady} && !${Me.Maintained[${SpellType[60]}](exists)}
 	{
-		call CastSpellRange 60 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}	
 
-  ;Thunderous Overature
+  	;Thunderous Overature
 	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[61]}].IsReady} && !${Me.Maintained[${SpellType[61]}](exists)}
 	{
-		call CastSpellRange 61 0 0 0 ${KillTarget} 0 0 1
-		spellsused:Inc
-	}	
-  ;reverberation
-	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[405]}].IsReady} && !${Me.Maintained[${SpellType[405]}](exists)}
-	{
-		call CastSpellRange 405 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 61 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}	
 
+  	;reverberation
+	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[405]}].IsReady} && !${Me.Maintained[${SpellType[405]}](exists)}
+	{
+		call _CastSpellRange 405 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
+		spellsused:Inc
+	}	
 
 	if ${spellsused}<=${spellthreshold} && ${DebuffMitMode} || (${FullDebuffNamed} && ${Actor[ID,${KillTarget}].Type.Equal[NamedNPC]})
 	{
 		if !${Me.Maintained[${SpellType[57]}](exists)} && ${Me.Ability[${SpellType[57]}].IsReady}
 		{
-			call CastSpellRange 57 0 ${range} 0 ${KillTarget} 0 0 1
+			call _CastSpellRange 57 0 ${range} 0 ${KillTarget} 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${TroubDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			} 				
 			spellsused:Inc
 		}
 		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[51]}](exists)} && ${Me.Ability[${SpellType[51]}].IsReady} && !${RangedAttackMode}
 		{
-			call CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
+			call _CastSpellRange 51 0 1 0 ${KillTarget} 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${TroubDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			} 				
 			spellsused:Inc
 		}
 	}
@@ -459,25 +667,49 @@ function Combat_Routine(int xAction)
 	{
 		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[55]}](exists)} && ${Me.Ability[${SpellType[55]}].IsReady}
 		{
-			call CastSpellRange 55 0 ${range} 0 ${KillTarget} 0 0 1
+			call _CastSpellRange 55 0 ${range} 0 ${KillTarget} 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${TroubDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			} 				
 			spellsused:Inc
 		}
 		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[56]}](exists)} && ${Me.Ability[${SpellType[56]}].IsReady}
 		{
-			call CastSpellRange 56 0 ${range} 0 ${KillTarget} 0 0 1
+			call _CastSpellRange 56 0 ${range} 0 ${KillTarget} 0 0 1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${TroubDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			} 				
 			spellsused:Inc
 		}
 		if ${spellsused}<=${spellthreshold} && !${Me.Maintained[${SpellType[58]}](exists)} && ${Me.Ability[${SpellType[58]}].IsReady}
 		{
-			call CastSpellRange 58 0 ${range} 0 ${KillTarget} 0 0 0
+			call _CastSpellRange 58 0 ${range} 0 ${KillTarget} 0 0 0
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${TroubDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			} 				
 			spellsused:Inc
 		}
 	}
 
-  ;Tap Essence
+  	;Tap Essence
 	if ${spellsused}<=${spellthreshold} && ${Mob.Count}>1 && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)}
 	{
-		call CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 62 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}	
 
@@ -486,88 +718,141 @@ function Combat_Routine(int xAction)
 	if ${DoHOs}
 		objHeroicOp:DoHO
 
-  ;Ceremonial Blade
+  	;Ceremonial Blade
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[151]}].IsReady} && !${Me.Maintained[${SpellType[151]}](exists)}
 	{
-		call CastSpellRange 151 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 151 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 
-  ;Night Strike
+  	;Night Strike
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[391]}].IsReady} && !${Me.Maintained[${SpellType[391]}](exists)}
 	{
-		eq2execute useability Bump
-		call CastSpellRange 130 0 1 1 ${KillTarget} 0 0 1
+		;eq2execute useability Bump    ;; ??
+		call _CastSpellRange 130 0 1 1 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 
-	; Master Strike
-	if  ${spellsused}<=${spellthreshold} && ${Me.Ability[Sinister Strike].IsReady} && (${Actor[${KillTarget}].Target.ID}!=${Me.ID} || !${Actor[${KillTarget}].CanTurn})
+	; Sinister Strike
+	if (${spellsused}<=${spellthreshold} && ${Me.Ability[id,1142797896].IsReady} && ${Mob.CheckActor[${KillTarget}]} && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 20))
 	{
-		Target ${KillTarget}
-		call CheckPosition 1 1
-		Me.Ability[Sinister Strike]:Use
-		do
+		call VerifyTarget ${KillTarget} "Troubadour-Combat_Routine-SinisterStrike"
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		;call CheckPosition 1 1
+		call CastSpellRange AbilityID=1142797896 TargetID=${KillTarget} IgnoreMaintained=1
+		if ${Return.Equal[CombatComplete]}
 		{
-			waitframe
-		}
-		while ${Me.CastingSpell}
-		wait 1
+			if ${FuryDebugMode}
+				Debug:Echo["\atTroubadour:Combat_Routine()\ax - Exiting after casting Sinister Strike (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}	
 	}
 
-  ;Evasive Manuevors
+  	;Evasive Manuevors
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[401]}].IsReady} && !${Me.Maintained[${SpellType[401]}](exists)}
 	{
-		call CastSpellRange 401 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 401 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 
-  ;Singing Shot
+  	;Singing Shot
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[250]}].IsReady} && !${Me.Maintained[${SpellType[250]}](exists)}
 	{
-		call CastSpellRange 250 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 250 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 
-  ;Turn Strike
+  	;Turn Strike
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[387]}].IsReady} && !${Me.Maintained[${SpellType[387]}](exists)}
 	{
-		call CastSpellRange 387 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 387 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 
-  ;Dancing Blade
+  	;Dancing Blade
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[110]}].IsReady} && !${Me.Maintained[${SpellType[110]}](exists)}
 	{
-		call CastSpellRange 110 0 1 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 110 0 1 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 
-  ;Sandras Strike
+  	;Sandras Strike
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[152]}].IsReady} && !${Me.Maintained[${SpellType[152]}](exists)}
 	{
-		call CastSpellRange 152 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 152 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}
 	
-  ;Vexing Verses
+  	;Vexing Verses
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}
 	{
-		call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}	
 
-  ;Mesenger
+  	;Mesenger
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[505]}].IsReady} && !${Me.Maintained[${SpellType[505]}](exists)}
 	{
-		call CastSpellRange 505 0 0 0 ${KillTarget} 0 0 1
+		call _CastSpellRange 505 0 0 0 ${KillTarget} 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 			
 		spellsused:Inc
 	}	
 
-			return CombatComplete
-		
-
-
+	return CombatComplete
 }
 
 function Post_Combat_Routine(int xAction)
@@ -685,7 +970,6 @@ function RefreshPower()
 		
 }
 
-
 function Lost_Aggro()
 {
 
@@ -718,7 +1002,6 @@ function ActionChecks()
 	}
 }
 
-
 function Mezmerise_Targets()
 {
 	variable index:actor Actors
@@ -735,7 +1018,7 @@ function Mezmerise_Targets()
 	{
 		do
 		{
-			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic}
+			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic})
 			{
 				if ${ActorIterator.Value.ID}==${mezTarget1} || ${ActorIterator.Value.ID}==${mezTarget2} || ${Actor[${MainTankPC}].Target.ID}==${ActorIterator.Value.ID}
 				{
@@ -803,7 +1086,7 @@ function DoCharm()
 	{
 		do
 		{
-			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic}
+			if (${ActorIterator.Value.Name(exists)} && !${ActorIterator.Value.IsLocked} && !${ActorIterator.Value.IsEpic})
 			{
 				if ${Actor[${MainAssist}].Target.ID}==${ActorIterator.Value.ID}
 				{
@@ -835,12 +1118,8 @@ function DoCharm()
 	}
 }
 
-
-
-
 function Cure()
 {
-
 }
 
 function DoJesterCap()
