@@ -824,13 +824,13 @@ function Combat_Routine(int xAction)
 			if (!${EQ2.HOWindowActive} && ${Me.InCombat})
 			{
 				call _CastSpellRange 304
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					} 
-				} 			
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				} 
+			} 			
 		}
 
 		;; Feast
@@ -1050,13 +1050,13 @@ function Combat_Routine(int xAction)
   		if (!${EQ2.HOWindowActive} && ${Me.InCombat})
   		{
   			call _CastSpellRange 304
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				} 
-			} 			
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			} 
+		} 			
   	}
 
 	;; Fae Fire
