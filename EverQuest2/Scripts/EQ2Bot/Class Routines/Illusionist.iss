@@ -1046,17 +1046,13 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 					}
 				}
 				;; Chronosiphoning (Always cast this when it is ready!)
-				if (${UseChronosiphoning} && ${Me.Ability[${SpellType[385]}].IsReady})
+				if (${UseChronosiphoning} && ${Me.Ability[${SpellType[385]}].IsReady} && !${Me.Maintained[${SpellType[385]}](exists)})
 				{
-					call CheckActorForEffect ${KillTarget} 654 -1
+					call VerifyTarget ${KillTarget}
 					if ${Return.Equal[FALSE]}
-					{
-						call VerifyTarget ${KillTarget}
-						if ${Return.Equal[FALSE]}
-							return CombatComplete
-						call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
-						LastSpellCast:Set[385]
-					}
+						return CombatComplete
+					call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+					LastSpellCast:Set[385]
 				}
 				;; 'Nullifying Staff' and the mob is within range
 				if ${UseNullifyingStaff}
@@ -1133,17 +1129,13 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 		return CombatComplete
 
 	; Fast casting DoT
-	if (${Me.Ability[${SpellType[80]}].IsReady})
+	if (${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 476 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
-		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return CombatComplete
-			LastSpellCast:Set[80]
-			call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-		}
+			return CombatComplete
+		LastSpellCast:Set[80]
+		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 		call CheckCastBeam
 		if ${Return.Equal[CombatComplete]}
 			return CombatComplete
@@ -1664,23 +1656,19 @@ function Combat_Routine(int xAction)
 	{
 		if ${FightingEpicMob}
 		{
-			if ${Me.Ability[${SpellType[50]}](exists)}
+			if (${Me.Ability[${SpellType[50]}](exists)} && !${Me.Maintained[${SpellType[50]}](exists)})
 			{
-				call CheckActorForEffect ${KillTarget} 265 315
-				if ${Return.Equal[FALSE]}
-				{	
-					if (${Me.Ability[${SpellType[50]}].IsReady})
+				if (${Me.Ability[${SpellType[50]}].IsReady})
+				{
+					call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+					if ${Return.Equal[CombatComplete]}
 					{
-						call _CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
-						if ${Return.Equal[CombatComplete]}
-						{
-							if ${IllyDebugMode}
-								Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [27]"]
-							return CombatComplete						
-						}
-						LastSpellCast:Set[50]
-						spellsused:Inc
+						if ${IllyDebugMode}
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [27]"]
+						return CombatComplete						
 					}
+					LastSpellCast:Set[50]
+					spellsused:Inc
 				}
 			}
 		}
@@ -1825,34 +1813,26 @@ function Combat_Routine(int xAction)
 		case MindDoT
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
 				break
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if (${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)})
 			{
-				call CheckActorForEffect ${KillTarget} 168 315
-				if ${Return.Equal[FALSE]}
+				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+				if ${Return.Equal[CombatComplete]}
 				{
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [41]"]
+					return CombatComplete					
+				}
+				spellsused:Inc
+				if (${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)})
+				{
+					call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
 					if ${Return.Equal[CombatComplete]}
 					{
 						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [41]"]
-						return CombatComplete					
+							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [42]"]
+						return CombatComplete						
 					}
 					spellsused:Inc
-					if (${Me.Ability[${SpellType[80]}].IsReady})
-					{
-						call CheckActorForEffect ${KillTarget} 476 315
-						if ${Return.Equal[FALSE]}
-						{
-							call _CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-							if ${Return.Equal[CombatComplete]}
-							{
-								if ${IllyDebugMode}
-									Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [42]"]
-								return CombatComplete						
-							}
-							spellsused:Inc
-						}
-					}
 				}
 			}
 			if ${spellsused} < 1 && !${MezzMode}
@@ -1881,20 +1861,16 @@ function Combat_Routine(int xAction)
 		case Storm
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 5
 				break
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if (${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)})
 			{
-				call CheckActorForEffect ${KillTarget} 169 312
-				if ${Return.Equal[FALSE]}
+				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
+				if ${Return.Equal[CombatComplete]}
 				{
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget} 0 0 0 1
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [45]"]
-						return CombatComplete					
-					}
-					spellsused:Inc
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [45]"]
+					return CombatComplete					
 				}
+				spellsused:Inc
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -2024,20 +2000,16 @@ function Combat_Routine(int xAction)
 				break
 			if ${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} < 30
 				break
-			if ${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady}
+			if (${Me.Ability[${SpellType[${SpellRange[${xAction},1]}]}].IsReady} && !${Me.Maintained[${SpellType[${SpellRange[${xAction},1]}]}](exists)})
 			{
-				call CheckActorForEffect ${KillTarget} 218 315
-				if ${Return.Equal[FALSE]}
+				call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
 				{
-					call _CastSpellRange ${SpellRange[${xAction},1]} 0 0 0 ${KillTarget}
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${IllyDebugMode}
-							Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [54]"]
-						return CombatComplete				
-					}
-					spellsused:Inc
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [54]"]
+					return CombatComplete				
 				}
+				spellsused:Inc
 			}
 			if ${spellsused} < 1 && !${MezzMode}
 			{
@@ -2189,17 +2161,13 @@ function CastSomething()
 					}
 				}
 				;; Chronosiphoning (Always cast this when it is ready!)
-				if (${UseChronosiphoning} && ${Me.Ability[${SpellType[385]}].IsReady})
+				if (${UseChronosiphoning} && ${Me.Ability[${SpellType[385]}].IsReady} && !${Me.Maintained[${SpellType[385]}](exists)})
 				{
-					call CheckActorForEffect ${KillTarget} 654 -1
+					call VerifyTarget ${KillTarget}
 					if ${Return.Equal[FALSE]}
-					{
-						call VerifyTarget ${KillTarget}
-						if ${Return.Equal[FALSE]}
-							return "CombatComplete"
-						call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
-						LastSpellCast:Set[385]
-					}
+						return "CombatComplete"
+					call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+					LastSpellCast:Set[385]
 					call CheckCastBeam
 					if ${Return.Equal[CombatComplete]}
 						return CombatComplete
@@ -2286,67 +2254,55 @@ function CastSomething()
 	}
 
 	; Nightmare
-	if (${Me.Ability[${SpellType[80]}].IsReady})
+	if (${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 476 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return "CombatComplete"
+		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return "CombatComplete"
-			call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete
-			}
-			LastSpellCast:Set[80]
-			return
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
 		}
+		LastSpellCast:Set[80]
+		return
 	}
 
 	; Brainburst
-	if (${Me.Ability[${SpellType[70]}].IsReady})
+	if (${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 168 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return "CombatComplete"
+		call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return "CombatComplete"
-			call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete
-			}		
-			LastSpellCast:Set[70]
-			return
-		}
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}		
+		LastSpellCast:Set[70]
+		return
 	}
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	; Theorems
-	if (${Me.Ability[${SpellType[51]}].IsReady})
+	if (${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 218 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return "CombatComplete"
+		call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return "CombatComplete"
-			call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete
-			}		
-			return
-		}
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
+		}		
+		return
 	}
 
 	; fast-casting encounter stun
@@ -2367,24 +2323,20 @@ function CastSomething()
 	}
 
 	; melee debuff
-	if (${Me.Ability[${SpellType[50]}].IsReady})
+	if (${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)}) 
 	{
-		call CheckActorForEffect ${KillTarget} 265 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
-		{	
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return "CombatComplete"
-			call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete
-			}
-			LastSpellCast:Set[50]
-			return
+			return "CombatComplete"
+		call CastSpellRange 50 0 0 0 ${KillTarget} 0 0 0 1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["CastSomething() -- Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete
 		}
+		LastSpellCast:Set[50]
+		return
 	}
 
 	; extract mana
@@ -2766,15 +2718,12 @@ function CheckHeals()
 					{
 						if ${Me.CastingSpell}
 						{
-							if (${Me.CastingSpell})
+							do
 							{
-								do
-								{
-									eq2execute /cancel_spellcast
-									wait 3
-								}
-								while ${Me.CastingSpell}
+								eq2execute /cancel_spellcast
+								wait 3
 							}
+							while ${Me.CastingSpell}
 						}
 						wait 2
 						eq2execute /useabilityonplayer ${Me.Group[${temphl}].Name} Cure Magic
@@ -2783,15 +2732,12 @@ function CheckHeals()
 						{
 							if ${Me.CastingSpell}
 							{
-								if (${Me.CastingSpell})
+								do
 								{
-									do
-									{
-										eq2execute /cancel_spellcast
-										wait 3
-									}
-									while ${Me.CastingSpell}
+									eq2execute /cancel_spellcast
+									wait 3
 								}
+								while ${Me.CastingSpell}
 							}
 							wait 5
 							eq2execute /useabilityonplayer ${Me.Group[${temphl}].Name} Cure Magic
@@ -3262,18 +3208,14 @@ function DoShortTermBuffs(bool DoShortTermBuffs)
 	;; Chronosiphoning
 	if ${UseChronosiphoning}
 	{
-		if (${Me.Ability[${SpellType[385]}].IsReady})
+		if (${Me.Ability[${SpellType[385]}].IsReady} && !${Me.Maintained[${SpellType[385]}](exists)})
 		{
-			call CheckActorForEffect ${KillTarget} 654 -1
+			call VerifyTarget ${KillTarget}
 			if ${Return.Equal[FALSE]}
-			{
-				call VerifyTarget ${KillTarget}
-				if ${Return.Equal[FALSE]}
-					return CombatComplete
-				call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
-				LastSpellCast:Set[385]
-				spellsused:Inc
-			}
+				return CombatComplete
+			call CastSpellRange 385 0 0 0 ${KillTarget} 0 0 0 1
+			LastSpellCast:Set[385]
+			spellsused:Inc
 		}
 	}
 	
@@ -3351,23 +3293,19 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 		Debug:Echo["\at\[DoInitialSpellLineup(${FightingEpicMob}, ${FightingHeroicMob})\]\ax Begin..."]
 		
 	;; Theorems
-	if (${Me.Ability[${SpellType[51]}].IsReady})
+	if (${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 218 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return CombatComplete
-			call CastSpellRange 51 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return.Equal[-1]})
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-				return ${spellsused}
-			}		
-			spellsused:Inc
-		}
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}		
+		spellsused:Inc
 	}
 	if ${KillTarget} != ${KillTargetCheck}
 	{
@@ -3406,23 +3344,19 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Fast Casting DOT (Nightmare)
-	if (${Me.Ability[${SpellType[80]}].IsReady})
+	if (${Me.Ability[${SpellType[80]}].IsReady} && !${Me.Maintained[${SpellType[80]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 476 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return CombatComplete
-			call CastSpellRange 80 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return.Equal[-1]})
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-				return ${spellsused}
-			}
-			spellsused:Inc
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
 		}
+		spellsused:Inc
 	}
 	
 	if ${KillTarget} != ${KillTargetCheck}
@@ -3504,23 +3438,19 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Brainburst
-	if (${Me.Ability[${SpellType[70]}].IsReady})
+	if (${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 168 315
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return CombatComplete
-			call CastSpellRange 70 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return.Equal[-1]})
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-				return ${spellsused}
-			}			
-			spellsused:Inc
-		}
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}			
+		spellsused:Inc
 	}
 
 	if ${KillTarget} != ${KillTargetCheck}
@@ -3548,23 +3478,19 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Chromatic Storm
-	if (${Me.Ability[${SpellType[91]}].IsReady})
+	if (${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 169 312
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
 		{
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return CombatComplete
-			call CastSpellRange 91 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return.Equal[-1]})
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-				return ${spellsused}
-			}			
-			spellsused:Inc
-		}
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}			
+		spellsused:Inc
 	}
 
 	if ${KillTarget} != ${KillTargetCheck}
@@ -3592,23 +3518,19 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 	}
 	
 	;; Chromatic Shower
-	if (${Me.Ability[${SpellType[388]}].IsReady})
+	if (${Me.Ability[${SpellType[388]}].IsReady} && !${Me.Maintained[${SpellType[388]}](exists)})
 	{
-		call CheckActorForEffect ${KillTarget} 266 312
+		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
-		{	
-			call VerifyTarget ${KillTarget}
-			if ${Return.Equal[FALSE]}
-				return CombatComplete
-			call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 1
-			if (${Return.Equal[-1]})
-			{
-				if ${IllyDebugMode}
-					Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
-				return ${spellsused}
-			}			
-			spellsused:Inc
-		}
+			return CombatComplete
+		call CastSpellRange 388 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}			
+		spellsused:Inc
 	}
 	
 	if ${KillTarget} != ${KillTargetCheck}
