@@ -50,6 +50,7 @@ function Class_Declaration()
 	declare PetForm int script 1
 	declare WarlockDebugMode bool script FALSE
 	declare BuffVenemousProcOnSet bool script FALSE
+	declare CheckHealsTimer uint script 0
 
 	;Custom Equipment
 	declare PoisonCureItem string script
@@ -96,6 +97,9 @@ function Pulse()
 	;; check this at least every 1 seconds
 	if (${StartBot} && ${Script.RunningTime} >= ${Math.Calc64[${ClassPulseTimer}+1000]})
 	{
+		; check heals/cures
+		call CheckHeals
+
 		;; This has to be set WITHIN any 'if' block that uses the timer.
 		ClassPulseTimer:Set[${Script.RunningTime}]
 	}
@@ -450,7 +454,6 @@ function Combat_Routine(int xAction)
 	variable int TargetDifficulty 
 	variable bool TargetIsEpic = FALSE
 	variable int EncounterSize
-	variable int MobCount
 	variable int WaitCounter = 0
 	
 	if ${WarlockDebugMode}
@@ -476,7 +479,6 @@ function Combat_Routine(int xAction)
 	if (${TargetIsEpic} && ${TargetDifficulty} < 3)
 		TargetDifficulty:Set[3]
 	EncounterSize:Set[${Actor[${KillTarget}].EncounterSize}]
-	MobCount:Set[${Mob.Count}]
 
 	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
@@ -493,8 +495,7 @@ function Combat_Routine(int xAction)
 	if ${StartHO} && !${EQ2.HOWindowActive} && ${Me.InCombat} && ${Me.Ability[${SpellType[303]}].IsReady}
 		Me.Ability[${SpellType[303]}]:Use
 
-	if ${CastCures}
-		call CheckHeals
+	call CheckHeals
 
 	;; Dark Siphoning, etc.
 	call RefreshPower
@@ -503,7 +504,7 @@ function Combat_Routine(int xAction)
 
 	;;;;;;;;;;;;;;;;;;;
 	;; This Combat_Routine now works as a "prioritized list" of abilities rather than a sequence of abilities.
-	;; The function will "elseif" until it comes across an ability that is ready and for which the conditions
+	;; The function will continue until it comes across an ability that is ready and for which the conditions
 	;; are appropriate.
 	;;;;;;;;;;;;;;;;;;;
 
@@ -594,7 +595,7 @@ function Combat_Routine(int xAction)
 	;-------- Cataclysm
 	if (${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)})
 	{
-		if (${TargetIsEpic} || ${MobCount} > 1)
+		if (${TargetIsEpic} || ${Mob.Count[12]} > 1)
 		{
 			call _CastSpellRange 95 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -675,17 +676,20 @@ function Combat_Routine(int xAction)
 		}
 	}
 	;-------- Rift
-	if (${PBAoEMode} && ${MobCount} > 1 && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)})
+	if (${PBAoEMode} && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)})
 	{
-		call _CastSpellRange 96 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
+		if (${Mob.Count[15]} > 1)
 		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
+			call _CastSpellRange 96 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
 		}
-		else
-			return
 	}
 	;-------- Dark Nebula
 	if (${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)})
@@ -992,38 +996,67 @@ function RefreshPower()
 
 function CheckHeals()
 {
-	declare temphl int local 1
-	grpcnt:Set[${Me.GroupCount}]
-
-	; Cure Arcane Me
-	if ${Me.Arcane}>0
+	;; Call this function a maximum of one time each second while in combat mode.  Otherwise, a maximum of once every 5 seconds.
+	if (${CheckHealsTimer} > 0)
 	{
-		call CastSpellRange 213 0 0 0 ${Me.ID}
-		if ${Actor[${KillTarget}].Name(exists)}
+		if (${Me.InCombatMode})
 		{
-			Target ${KillTarget}
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckHealsTimer}+1]})
+				return FALSE
+		}
+		else
+		{
+			if (${Time.SecondsSinceMidnight} <= ${Math.Calc[${CheckHealsTimer}+5]})
+				return FALSE
 		}
 	}
 
-	do
-	{
-		; Cure Arcane
-		if ${Me.Group[${temphl}].Arcane}>0 && ${Me.Group[${temphl}].InZone} && ${Me.Group[${temphl}].Health(exists)}
-		{
-			call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
+	variable int temphl = 0
+	variable bool DoCures
+	variable bool bReturn
+	bReturn:Set[FALSE]
+	
+	if ${CastCures} || ${EpicMode}
+		DoCures:Set[TRUE]
+	else
+		DoCures:Set[FALSE]
 
-			if ${Actor[${KillTarget}].Name(exists)}
+	if (${DoCures} && ${Me.Ability[${SpellType[213]}].IsReady})
+	{
+		if (${Me.InCombatMode})
+			echo "[${Time.SecondsSinceMidnight}]\ao Checking for Cures\ax"
+		;;;;;;;;;;;;;
+		;; Cure Magic
+		do
+		{
+			if (${Me.Group[${temphl}].InZone} && !${Me.Group[${temphl}].IsDead})
 			{
-				Target ${KillTarget}
+				if (${Me.InCombatMode})
+					echo "[${Time.SecondsSinceMidnight}]\ao - Checking \ax\at${Me.Group[${temphl}].Name} (${Me.Group[${temphl}].Arcane}, ${Me.Group[${temphl}].Elemental}, ${Me.Group[${temphl}].Noxious}, ${Me.Group[${temphl}].Trauma})\ax"
+				if (${Me.Group[${temphl}].Arcane} >= 1 || ${Me.Group[${temphl}].Elemental} >= 1 || ${Me.Group[${temphl}].Noxious} >= 1 || ${Me.Group[${temphl}].Trauma} >= 1)
+				{
+					if (${Me.InCombatMode})
+						echo "[${Time.SecondsSinceMidnight}]\ay -- Curing ${Me.Group[${temphl}].Name}!\ax"
+					
+					call CastSpellRange 213 0 0 0 ${Me.Group[${temphl}].ID}
+					bReturn:Set[TRUE]
+					wait 1
+
+					if (${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead})
+						Target ${KillTarget}
+					break
+				}
 			}
 		}
+		while ${temphl:Inc} <= ${Me.Group}
 	}
-	while ${temphl:Inc}<${grpcnt}
-
+	CheckHealsTimer:Set[${Time.SecondsSinceMidnight}]
+	return ${bReturn}
 }
 
 function PostDeathRoutine()
 {
 	;; This function is called after a character has either revived or been rezzed
+	CheckHealsTimer:Set[0]
 	return
 }
