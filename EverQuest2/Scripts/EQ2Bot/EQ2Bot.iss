@@ -1312,6 +1312,20 @@ function CheckMeForEffect(int MainIconID, int BackDropIconID)
 	return "FALSE"
 }
 
+function CheckActorForMaintained(uint ActorID, string AbilityName, uint RefreshTimer)
+{
+	variable uint tempgrp = 1
+
+	do
+	{
+		if ${Me.Maintained[${tempgrp}].Name.Equal[${AbilityName}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${ActorID} && (${Me.Maintained[${tempgrp}].Duration}>${RefreshTimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
+			return TRUE
+	}
+	while ${tempgrp:Inc}<=${Me.CountMaintained}
+
+	return FALSE
+}
+
 function CastSpellRange(... Args)
 {
 	;; This format still works.
@@ -1341,6 +1355,8 @@ function CastSpellRange(... Args)
 	variable bool IgnoreIsReady=0
 	variable uint AbilityID=0
 	variable string AbilityName
+	variable float TankToKillTargetDistance
+	variable int WaitCounter
 
 	variable int count=0
 	variable int test=${Args[1]}
@@ -1487,38 +1503,73 @@ function CastSpellRange(... Args)
 			;lets make sure the target doesn't already have the spell
 			if ${TargetID}
 			{
-				fndspell:Set[FALSE]
 				if !${IgnoreMaintained}
 				{
-					tempgrp:Set[1]
-					do
-					{
-						if ${Me.Maintained[${tempgrp}].Name.Equal[${AbilityName}]} && ${Me.Maintained[${tempgrp}].Target.ID}==${TargetID} && (${Me.Maintained[${tempgrp}].Duration}>${refreshtimer} || ${Me.Maintained[${tempgrp}].Duration}==-1)
-						{
-							fndspell:Set[TRUE]
-							break
-						}
-					}
-					while ${tempgrp:Inc}<=${Me.CountMaintained}
+					call CheckActorForMaintained ${TargetID} "${AbilityName}" ${refreshtimer}
+					fndspell:Set[${Return}]
 				}
 
 				if !${fndspell}
 				{
-					; if no range is passed, lets make sure we're not out of range and adjust
-					if !${xvar1} && ${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}
+					TankToKillTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+
+					if (${TankToKillTargetDistance} <= 6.4 || (${TargetID} != ${KillTarget} && (!${Actor[${TargetID}].Type.Equal[NPC]} && ${Actor[${TargetID}].Type.Equal[NamedNPC]})))	
 					{
-						;lets not move beyond defined threshold
-						if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}]}<${OORThreshold}
+						if !${xvar1} && ${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}
 						{
-							;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
-							call CheckPosition 2 ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving}
+							if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}]}<${OORThreshold}
+							{
+								;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
+								call CheckPosition 2 ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving} "CastSpellRange-1"
+							}
+						}
+						elseif ${xvar1} || ${xvar2}
+						{
+							; xvar1 = rangetype (1=close, 2=max range, 3=bow shooting)
+							; xvar2 = quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
+							;;echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar} AbilityID: ${AbilityID}
+							call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving} "CastSpellRange-2"
 						}
 					}
-					elseif ${xvar1} || ${xvar2}
+					else
 					{
-						;echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar} AbilityID: ${AbilityID}
-						call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving}
+						;; If the KillTarget is moving ...but just walking ...we'll wait 
+						if (${TargetID} == ${KillTarget} && (${Actor[${KillTarget}].IsWalking} || ${Actor[${KillTarget}].IsRunning}))
+						{
+							WaitCounter:Set[0]
+							do
+							{
+								TankToKillTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]	
+								wait 5
+								WaitCounter:Inc[5]
+							}
+							while (${WaitCounter} <= 50 && ${TankToKillTargetDistance} > 6.4 && ${Actor[${KillTarget}].Name(exists)} && !${Actor[${KillTarget}].IsDead} && (${Actor[${KillTarget}].IsWalking} || ${Actor[${KillTarget}].IsRunning}))
+
+							call VerifyTarget ${KillTarget}
+							if ${Return.Equal[FALSE]}
+								return -1
+
+							if (${TankToKillTargetDistance} <= 6.4)	
+							{
+								if !${xvar1} && ${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}>0 && ${Actor[${TargetID}].Distance}>${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}
+								{
+									if ${Math.Calc64[${Actor[${TargetID}].Distance} - ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}]}<${OORThreshold}
+									{
+										;echo DEBUG::CastSpellRange - OOR detected, Distance to mob - ${Actor[${TargetID}].Distance}, Distance to MaxRange ${Position.GetSpellMaxRange[${TargetID},0,${Me.Ability[id,${AbilityID}].ToAbilityInfo.MaxRange}]}, Ability = ${AbilityName}/${AbilityID}
+										call CheckPosition 2 ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving} "CastSpellRange-3"
+									}
+								}
+								elseif ${xvar1} || ${xvar2}
+								{
+									; xvar1 = rangetype (1=close, 2=max range, 3=bow shooting)
+									; xvar2 = quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
+									;;echo DEBUG::CastSpellRange - Position check: Range - ${xvar1} Position - ${xvar2} Target - ${TargetID} Ability - ${tempvar} AbilityID: ${AbilityID}
+									call CheckPosition ${xvar1} ${xvar2} ${TargetID} ${AbilityID} ${castwhilemoving} "CastSpellRange-4"
+								}
+							}
+						}
 					}
+
 					if ${Target(exists)}
 						originaltarget:Set[${Target.ID}]
 				}
@@ -2266,18 +2317,18 @@ function Combat(bool PVP=0)
 							else
 							{
 								if ${MainTank}
-									call CheckPosition 1 0 ${KillTarget} 0 1
+									call CheckPosition 1 0 ${KillTarget} 0 1 "Combat(MT)"
 								else
 								{
 									TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-									;echo "\aoCombat()-DEBUG::\ax TankToTargetDistance: ${TankToTargetDistance}"
-									if (${TankToTargetDistance} <= 7.5)
+									if (${TankToTargetDistance} <= 6.4)
 									{
+										;echo "\aoCombat()-DEBUG::\ax TankToTargetDistance: ${TankToTargetDistance}"
 										;;;; TODO
 										;; Previously, this call was "call CheckPosition 1 1 ${KillTarget} 0 0", which would move the player BEHIND the target.
 										;; Classes which NEED to be behind the target should call it within the class file at the beginning of the fight.  For
 										;; 'generic' placement, it should use 0, which means "anywhere" (rather than "behind")
-										call CheckPosition 1 0 ${KillTarget} 0 0
+										call CheckPosition 1 0 ${KillTarget} 0 0 "Combat(Non-MT)"
 									}
 								}
 							}
@@ -2677,33 +2728,42 @@ function GetinFront()
 	;wait 4
 }
 
-function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint AbilityID, bool castwhilemoving)
+function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint AbilityID, bool castwhilemoving, string Caller)
 {
 	; rangetype (1=close, 2=max range, 3=bow shooting)
 	; quadrant (0=anywhere, 1=behind, 2=front, 3=flank, 4=rear or flank, 5=front or flank)
-
-	Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving})\ax"]
-
 	variable float minrange
 	variable float maxrange
 	variable float destangle
 	variable point3f destpoint
 	variable point3f destminpoint
 	variable point3f destmaxpoint
-	variable uint xTimer
 	variable int MoveCount
+	variable uint xTimer
 	xTimer:Set[${Script.RunningTime}]
+
+	variable bool DebugEnabled = ${Debug.Enabled}
+	;; Set to "FALSE" to turn off debugging for this function
+	variable bool DebugThisFunction = FALSE
+	if (${DebugThisFunction} && !${DebugEnabled})
+		Debug:Enable
+
+	Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving},\ax\ag${Caller}\ax\ao)\ax [TankToKillTargetDistance: ${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}].Precision[2]}]"]
 
 	if ${NoAutoMovement}
 	{
-		Debug:Echo["CheckPosition() :: NoAutoMovement ON"]
+		Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving},\ax\ag${Caller}\ax\ao)\ax NoAutoMovement ON"]
+		if (!${DebugEnabled} && ${DebugThisFunction})
+			Debug:Disable
 		return
 	}
 
 	;if we can't move, we can't move
 	if ${Me.Speed}<-50 || ${Me.IsRooted}
 	{
-		Debug:Echo["CheckPosition() :: We are rooted or have 0 movement speed."]
+		Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving},\ax\ag${Caller}\ax\ao)\ax We are rooted or have 0 movement speed."]
+		if (!${DebugEnabled} && ${DebugThisFunction})
+			Debug:Disable
 		return
 	}
 
@@ -2711,7 +2771,9 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 	{
 		if ${NoAutoMovementInCombat}
 		{
-			Debug:Echo["CheckPosition() :: NoAutoMovementInCombat ON"]
+			Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving},\ax\ag${Caller}\ax\ao)\ax NoAutoMovementInCombat ON"]
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable
 			return
 		}
 	}
@@ -2811,26 +2873,25 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 				while ${Me.CastingSpell}
 			}
 			call FastMove ${HomeX} ${HomeZ} 5
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable
 			return
 		}
 	}
 
-
-	;
 	; ok which point is closer our min range or max range, will vary depending on our vector to mob
 	; we now use Position object for this
-	;
 	destpoint:Set[${Position.FindDestPoint[${TID},${minrange},${maxrange},${destangle}]}]
 
-	;
 	;if distance over 75, its probably not safe to fastmove
-	;
 	if ${Math.Distance[${Me.Loc},${destpoint}]}>75
+	{
+		if (!${DebugEnabled} && ${DebugThisFunction})
+			Debug:Disable
 		return TOOFARAWAY
+	}
 
-	;
 	; if we're as close as we need to be lets just strafe
-	;
 	if ${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange}
 	{
 		if ${quadrant}
@@ -2843,13 +2904,13 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 		{	
 			if ${TID}
 				face ${Actor[${TID}].X} ${Actor[${TID}].Z}
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable
 			return ${Return}
 		}
 	}
 
-	;
 	;if we didn't return already, we're too far away
-	;
 
 	;if melee is on we'll face the target if its killtarget
 	if ${Actor[${TID}].Name(exists)} && ${KillTarget}==${TID} && ${Me.AutoAttackOn}
@@ -2857,7 +2918,6 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 		;echo DEBUG::CheckPosition - Facing KillTarget
 		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 	}
-
 
 	;we'll loop over movement checks until we are there, or we've looped 3 times.
 	do
@@ -2873,15 +2933,11 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 	while ${MoveCount:Inc}<4 && !${isstuck} && (${Actor[${TID}].Distance2D}<${maxrange} && ${Actor[${TID}].Distance2D}>${minrange})
 
 
-	;
 	;check quadrant due to fastmove precision
-	;
 	;if ${quadrant}
 	;	call CheckQuadrant ${TID} ${quadrant}
 
-	;
 	;Final Positioning Tweaks
-	;
 	if ${AutoMelee} && ${Actor[${TID}].Distance}<15 && ${Actor[${TID}].Distance}>${maxrange}
 	{
 		xTimer:Set[${Script.RunningTime}]
@@ -2938,7 +2994,9 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 		;echo DEBUG::CheckPosition - Facing KillTarget
 		face ${Actor[${TID}].X} ${Actor[${TID}].Z}
 	}	
-	
+
+	if (!${DebugEnabled} && ${DebugThisFunction})
+		Debug:Disable
 }
 
 function CheckQuadrant(uint TID, int quadrant)
@@ -2952,19 +3010,19 @@ function CheckQuadrant(uint TID, int quadrant)
 
 	if ${NoAutoMovement}
 	{
-		Debug:Echo["CheckQuadrant() :: NoAutoMovement ON"]
+		Debug:Echo["\aoCheckQuadrant(${TID}, ${quadrant})\ax NoAutoMovement ON"]
 		return
 	}
 
 	;; CheckQuadrant() should only be called in combat, so 'in combat' checks should not be necessary
 	if ${NoAutoMovementInCombat}
 	{
-		Debug:Echo["CheckQuadrant() :: NoAutoMovementInCombat ON"]
+		Debug:Echo["\aoCheckQuadrant(${TID}, ${quadrant})\ax NoAutoMovementInCombat ON"]
 		return
 	}
 	if (!${Actor[${TID}].Name(exists)} || ${Actor[${TID}].IsDead})
 	{
-		Debug:Echo["CheckQuadrant() :: Current Target does not exist and/or is dead."]
+		Debug:Echo["\aoCheckQuadrant(${TID}, ${quadrant})\ax Current Target does not exist and/or is dead."]
 		return
 	}
 
@@ -2977,19 +3035,19 @@ function CheckQuadrant(uint TID, int quadrant)
 		case 1
 			if ${targetaspect}>0 && ${targetaspect}<45
 			{
-				Debug:Echo[CheckQuadrant - Checking Rear and we are Rear - ${targetaspect}]
+				Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax Checking Rear and we are Rear - ${targetaspect}]
 				return
 			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 1 Right Side Strafing to 30]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 1 Right Side Strafing to 30]
 					call StrafeToLeft ${TID} 30
 				}
 				else
 				{
-					Debug:Echo[Quadrant 1 Left Side Strafing to 30]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 1 Left Side Strafing to 30]
 					call StrafeToRight ${TID} 30
 				}
 				return
@@ -2998,19 +3056,19 @@ function CheckQuadrant(uint TID, int quadrant)
 		case 2
 			if ${targetaspect}>135 && ${targetaspect}<=180
 			{
-				Debug:Echo[CheckQuadrant - Checking Front and we are Front - ${targetaspect}]
+				Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax Checking Front and we are Front - ${targetaspect}]
 				return
 			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 2 Right Side Strafing to 150]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 2 Right Side Strafing to 150]
 					call StrafeToRight ${TID} 150
 				}
 				else
 				{
-					Debug:Echo[Quadrant 2 Left Side Strafing to 150]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 2 Left Side Strafing to 150]
 					call StrafeToLeft ${TID} 150
 				}
 				return
@@ -3019,7 +3077,7 @@ function CheckQuadrant(uint TID, int quadrant)
 		case 3
 			if ${targetaspect}>45 && ${targetaspect}<135
 			{
-				Debug:Echo[CheckQuadrant - Checking Flank and we are Flank - ${targetaspect}]
+				Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax Checking Flank and we are Flank - ${targetaspect}]
 				return
 			}
 			else
@@ -3028,12 +3086,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						Debug:Echo[Quadrant 3 Right Side Strafing to 120]
+						Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 3 Right Side Strafing to 120]
 						call StrafeToLeft ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						Debug:Echo[Quadrant 3 Right Side Strafing to 60]
+						Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 3 Right Side Strafing to 60]
 						call StrafeToRight ${TID} 60
 					}
 				}
@@ -3041,12 +3099,12 @@ function CheckQuadrant(uint TID, int quadrant)
 				{
 					if ${targetaspect}>45
 					{
-						Debug:Echo[Quadrant 3 Left Side Strafing to 120]
+						Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 3 Left Side Strafing to 120]
 						call StrafeToRight ${TID} 120
 					}
 					if ${targetaspect}<135
 					{
-						Debug:Echo[Quadrant 3 Left Side Strafing to 60]
+						Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 3 Left Side Strafing to 60]
 						call StrafeToLeft ${TID} 60
 					}
 				}
@@ -3056,19 +3114,19 @@ function CheckQuadrant(uint TID, int quadrant)
 		case 4
 			if ${targetaspect}>0 && ${targetaspect}<135
 			{
-				Debug:Echo[CheckQuadrant - Checking Rear or Flank and we are GOOD - ${targetaspect}]
+				Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax Checking Rear or Flank and we are GOOD - ${targetaspect}]
 				return
 			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 4 Right Side Strafing to 80]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 4 Right Side Strafing to 80]
 					call StrafeToLeft ${TID} 80
 				}
 				else
 				{
-					Debug:Echo[Quadrant 4 Right Side Strafing to 80]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 4 Right Side Strafing to 80]
 					call StrafeToRight ${TID} 80
 				}
 				return
@@ -3077,19 +3135,19 @@ function CheckQuadrant(uint TID, int quadrant)
 		case 5
 			if ${targetaspect}>45 && ${targetaspect}<180
 			{
-				Debug:Echo[CheckQuadrant - Checking Front or Flank and we are GOOD - ${targetaspect}]
+				Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax Checking Front or Flank and we are GOOD - ${targetaspect}]
 				return
 			}
 			else
 			{
 				if ${side.Equal[right]}
 				{
-					Debug:Echo[Quadrant 5 Right Side Strafing to 105]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 5 Right Side Strafing to 105]
 					call StrafeToRight ${TID} 105
 				}
 				else
 				{
-					Debug:Echo[Quadrant 5 Left Side Strafing to 105]
+					Debug:Echo[\aoCheckQuadrant(${TID}, ${quadrant})\ax - Quadrant 5 Left Side Strafing to 105]
 					call StrafeToLeft ${TID} 105
 				}
 				return
@@ -4605,14 +4663,14 @@ atom(script) EQ2_onIncomingText(string Text)
 	}
 	elseif (${Text.Find[Move closer!]} > 0)
 	{
-			;; This variable should be utilized in individual class files (see Illusionist.iss for example)
-			DoCallCheckPosition:Set[TRUE]
+		;; This variable should be utilized in individual class files (see Illusionist.iss for example)
+		DoCallCheckPosition:Set[TRUE]
 	}
 	elseif (${Text.Find[No Eligible Target]} > 0)
 		NoEligibleTarget:Set[TRUE]
 		;Debug:Echo["NO ELIGIBLE TARGET! ('${Text}')"]
 	;elseif (${Text.Equal["Target is not alive"]})
-	;	Debug:Echo["TARGET IS NOT ALIVE!"]
+		;Debug:Echo["TARGET IS NOT ALIVE!"]
 
 	return
 }
