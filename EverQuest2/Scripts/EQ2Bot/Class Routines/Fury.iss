@@ -2187,7 +2187,7 @@ function SpamHealTank()
 
 function CureGroupMember(int gMember)
 {
-	declare tmpcure int local 0
+	variable int tmpcure = 0
 
 	echo "\atCureGroupMember(\ax\ay${gMember}\ax\at)\ax"
 	;Debug:Echo["CureGroupMember(${gMember})"]
@@ -2235,16 +2235,23 @@ function CureMe()
 function CheckCures(int InCombat=1)
 {
 	variable int i = 0
-	declare grpcure int local 0
-	declare Affcnt int local 0
-	declare CureTarget string local	
-	declare TankToTargetDistance float local
+	variable int grpcure = 0
+	variable int Affcnt = 0
+	variable string CureTarget 
+	variable float TankToTargetDistance
+	variable bool MTInMyGroup = FALSE
+	if (${Me.Group[id,${MainTankID}](exists)})
+		MTInMyGroup:Set[TRUE]
 	
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0	
 	
 	if (!${CureMode})
+		return
+
+	;; If Main Tank is in my group, and their health is < 55%, then skip cures for now.  (This may require additional logic for specific fights/zones.)
+	if (${MTInMyGroup} && ${Actor[${MainTankID}].Health} < 55)
 		return
 	
 	if ${DoCallCheckPosition}
@@ -2382,7 +2389,10 @@ function CheckCures(int InCombat=1)
 			return
 		}
 		else
+		{
+			CheckCuresTimer:Set[${Time.Timestamp}]	
 			return 		; if grpcure is 1 or less, then we shouldn't need to do anything else other than curses..which we already did
+		}
 	}	
   	
 	if ${Me.IsAfflicted} && (${Me.Arcane}>0 || ${Me.Noxious}>0 || ${Me.Trauma}>0 || ${Me.Elemental}>0 || ${Me.Cursed})
@@ -2420,6 +2430,9 @@ function CheckCures(int InCombat=1)
 		if !${Return}
 			break
 	}
+
+	CheckCuresTimer:Set[${Time.Timestamp}]	
+	return
 }
 
 function FindAfflicted()
@@ -2673,9 +2686,11 @@ function PostDeathRoutine()
 	;; This function is called after a character has either revived or been rezzed
 	;;;;;
 
+	CheckCuresTimer:Set[0]
+
 	;; Just in case the Fury was asked to cast Tortoise Shell, and died before being able to cast it.
 	CastTortoiseShell:Set[FALSE]
-
+	
 	return
 }
 

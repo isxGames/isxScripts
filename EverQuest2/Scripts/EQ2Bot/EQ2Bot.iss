@@ -5648,13 +5648,16 @@ objectdef ActorCheck
 	}
 
 	;returns count of mobs engaged in combat near you.  Includes mobs not engaged to other pcs/groups
-	member:int Count()
+	member:int Count(int DistanceToCheck)
 	{
 		variable index:actor Actors
 		variable iterator ActorIterator
 		variable uint ActorID
 
-		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= 15]
+		if (${DistanceToCheck} <= 0)
+			DistanceToCheck:Set[15]
+
+		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= ${DistanceToCheck}]
 		Actors:GetIterator[ActorIterator]
 
 		if ${ActorIterator:First(exists)}
