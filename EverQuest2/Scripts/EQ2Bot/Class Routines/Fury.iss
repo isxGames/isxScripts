@@ -605,7 +605,7 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	iReturn:Set[${Return}]
 	
-	if (${Me.InCombat} && ${Me.InCombatMode})
+	if (!${SpamHealMode} && ${Me.InCombat} && ${Me.InCombatMode})
 	{
 		if (${Actor[${MainTankID}].Health(exists)} && ${Actor[${MainTankID}].Health} >= ${MTHealthThreshold})
 		{
@@ -699,7 +699,16 @@ function Combat_Routine(int xAction)
 		}
 		DoCallCheckPosition:Set[FALSE]
 	}
-	
+
+	;; Spam Heal Tank Mode
+	if (${SpamHealMode} || (${Actor[${KillTarget}].IsEpic} > 0 && ${Me.Raid} == 0)
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:Combat_Routine()\ax - 'Spam Heal Tank Mode' enabled.  Chain Healing"]
+		call SpamHealTank	
+		return CombatComplete
+	}
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Animal Form
 	;; (If an 'animal form' target is selected in the UI, then we should cast it 
@@ -836,8 +845,7 @@ function Combat_Routine(int xAction)
 		;; Feast
 		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 50 && ${Me.Power} > 40)
 		{
-			call CheckActorForEffect ${KillTarget} 471 315
-			if ${Return.Equal[FALSE]}
+			if (${Me.Ability[${SpellType[312]}].IsReady} && !${Me.Maintained[${SpellType[312]}](exists)})
 			{
 				call _CastSpellRange 312 0 0 0 ${KillTarget}
 				if ${Return.Equal[CombatComplete]}
@@ -876,19 +884,15 @@ function Combat_Routine(int xAction)
 		}
 
 		;; Tempest
-		if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 25))
+		if (${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 25))
 		{
-			call CheckActorForEffect ${KillTarget} 511 315
-			if ${Return.Equal[FALSE]}
+			call _CastSpellRange 70 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
 			{
-				call _CastSpellRange 70 0 0 0 ${KillTarget}
-				if ${Return.Equal[CombatComplete]}
-				{
-					if ${FuryDebugMode}
-						Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Tempest (Target no longer valid: CombatComplete)"]
-					return CombatComplete						
-				}					
-			}
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Tempest (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}					
 		}
 		call CheckCuresAndHeals
 		if ${Return.Equal[CombatComplete]}
@@ -1122,8 +1126,7 @@ function Combat_Routine(int xAction)
 	;; Feast
 	if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} >= 45 && ${Me.Power} > 15)
 	{
-		call CheckActorForEffect ${KillTarget} 471 315
-		if ${Return.Equal[FALSE]}
+		if (${Me.Ability[${SpellType[312]}].IsReady} && !${Me.Maintained[${SpellType[312]}](exists)})
 		{
 			call _CastSpellRange 312 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -1162,19 +1165,15 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Tempest
-	if (${Me.Ability[${SpellType[70]}].IsReady} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 20)
+	if (${Me.Ability[${SpellType[70]}].IsReady} && && !${Me.Maintained[${SpellType[70]}](exists)} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 20)
 	{
-		call CheckActorForEffect ${KillTarget} 511 315
-		if ${Return.Equal[FALSE]}
+		call _CastSpellRange 70 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
 		{
-			call _CastSpellRange 70 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${FuryDebugMode}
-					Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Tempest (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}					
-		}
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after casting Tempest (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}					
 	}
 	call CheckCuresAndHeals
 	if ${Return.Equal[CombatComplete]}
@@ -1339,112 +1338,92 @@ function CheckDebuffs()
 
 	if (${Actor[${KillTarget}].IsEpic} && ${Me.Power} > 55 && ${Actor[${KillTarget}].Health} >= 10)
 	{
-		if (${Me.Ability[${SpellType[51]}].IsReady})
+		if (${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)})
 		{
-			call CheckActorForEffect ${KillTarget} 369 315
-			if ${Return.Equal[FALSE]}
+			if (${Me.Power} > 45 || !${PrimaryHealer})
 			{
-				if (${Me.Power} > 45 || !${PrimaryHealer})
+				call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-DeathSwarm"
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+				call CastSpellRange start=51 TargetID=${KillTarget} IgnoreMaintained=1
+				if ${Return.Equal[CombatComplete]}
 				{
-					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-DeathSwarm"
-					if ${Return.Equal[FALSE]}
-						return CombatComplete
-					call CastSpellRange start=51 TargetID=${KillTarget} IgnoreMaintained=1
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Death Swarm (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}
-					Continue:Set[FALSE]		
+					if ${FuryDebugMode}
+						Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Death Swarm (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
 				}
+				Continue:Set[FALSE]		
 			}
 		}
-		if (${Continue} && ${Me.Ability[${SpellType[50]}].IsReady} && ${Actor[${KillTarget}].Health} >= 10)
+		if (${Continue} && ${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)} && ${Actor[${KillTarget}].Health} >= 10)
 		{
-			call CheckActorForEffect ${KillTarget} 241 315
-			if ${Return.Equal[FALSE]}
+			if (${Me.Power} > 45 || !${PrimaryHealer})
 			{
-				if (${Me.Power} > 45 || !${PrimaryHealer})
+				call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-Intimidation"
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+				call CastSpellRange start=50 TargetID=${KillTarget} IgnoreMaintained=1
+				if ${Return.Equal[CombatComplete]}
 				{
-					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-Intimidation"
-					if ${Return.Equal[FALSE]}
-						return CombatComplete
-					call CastSpellRange start=50 TargetID=${KillTarget} IgnoreMaintained=1
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Intimidation (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}	
-					Continue:Set[FALSE]		
-				}
-			}			
+					if ${FuryDebugMode}
+						Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Intimidation (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}	
+				Continue:Set[FALSE]		
+			}		
 		}
-		if (${Continue} && ${Me.Ability[${SpellType[52]}].IsReady} && ${Actor[${KillTarget}].Health} >= 10)
+		if (${Continue} && ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)} && ${Actor[${KillTarget}].Health} >= 10)
 		{
-			call CheckActorForEffect ${KillTarget} 369 312
-			if ${Return.Equal[FALSE]}
+			if (${Me.Power} > 45 || !${PrimaryHealer})
 			{
-				if (${Me.Power} > 45 || !${PrimaryHealer})
+				call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-MaddeningSwarm"
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+				call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
+				if ${Return.Equal[CombatComplete]}
 				{
-					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-MaddeningSwarm"
-					if ${Return.Equal[FALSE]}
-						return CombatComplete
-					call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Maddening Swarm (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}
-					Continue:Set[FALSE]					
+					if ${FuryDebugMode}
+						Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Maddening Swarm (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
 				}
-			}				
+				Continue:Set[FALSE]					
+			}			
 		}
 	}
 	elseif (${Actor[${KillTarget}].IsHeroic} && ${Me.Power} > 40 && ${Actor[${KillTarget}].Health} >= 20)
 	{
 		;; Fast-casting encounter debuff that should be used always
-		if (${Me.Ability[${SpellType[52]}].IsReady})
+		if (${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)})
 		{
-			call CheckActorForEffect ${KillTarget} 369 312
-			if ${Return.Equal[FALSE]}
+			if (${Me.Power} > 45 || !${PrimaryHealer})
 			{
-				if (${Me.Power} > 45 || !${PrimaryHealer})
-				{
-					call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-MaddeningSwarm"
-					if ${Return.Equal[FALSE]}
-						return CombatComplete
-					call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Maddening Swarm (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}
-					Continue:Set[FALSE]				
-				}
-			}				
-		}
-		if (${Continue} && ${Me.Ability[${SpellType[51]}].IsReady} && ${Actor[${KillTarget}].Health} >= 20)
-		{
-			call CheckActorForEffect ${KillTarget} 369 315
-			if ${Return.Equal[FALSE]}
-			{
-				if (${Me.Power} > 45 || !${PrimaryHealer})
+				call VerifyTarget ${KillTarget} "Fury-CheckDebuffs-MaddeningSwarm"
+				if ${Return.Equal[FALSE]}
+					return CombatComplete
+				call CastSpellRange start=52 TargetID=${KillTarget} IgnoreMaintained=1
+				if ${Return.Equal[CombatComplete]}
 				{
 					if ${FuryDebugMode}
-						Debug:Echo["\atFury:CheckDebuffs()\ax -- Casting Defense debuff (Death Swarm) on Heroic mob"] 
-					call _CastSpellRange 51 0 0 0 ${KillTarget}
-					if ${Return.Equal[CombatComplete]}
-					{
-						if ${FuryDebugMode}
-							Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Death Swarm (Target no longer valid: CombatComplete)"]
-						return CombatComplete						
-					}
-					Continue:Set[FALSE]		
+						Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Maddening Swarm (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
 				}
+				Continue:Set[FALSE]				
+			}			
+		}
+		if (${Continue} && ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)} && ${Actor[${KillTarget}].Health} >= 20)
+		{
+			if (${Me.Power} > 45 || !${PrimaryHealer})
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atFury:CheckDebuffs()\ax -- Casting Defense debuff (Death Swarm) on Heroic mob"] 
+				call _CastSpellRange 51 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${FuryDebugMode}
+						Debug:Echo["\atFury:CheckDebuffs()\ax -- Exiting after casting Death Swarm (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
+				Continue:Set[FALSE]		
 			}
 		}				
 	}
@@ -1633,7 +1612,6 @@ function CheckHeals()
 	variable int lowest = 0
 	variable int raidlowest = 1
 	variable int PetToHeal = 0
-	variable bool MainTankInGroup = FALSE
 	variable bool MainTankExists = TRUE
 	variable bool lowestset = FALSE
 	variable int cGroupMemberID = 0
@@ -1711,19 +1689,19 @@ function CheckHeals()
 	    {
 			Debug:Echo["EQ2Bot-CheckHeals():: MainTank Health low (${Actor[${MainTankID}].Health})"]
 		    if ${Me.ID}==${MainTankID}
-			    call HealMe
+			    call HealMe ${MaxHealthModified}
 		    else
-			    call HealMT ${MainTankID} ${MainTankInGroup}
+			    call HealMT
 	    }
 
 	    ;Check My health after MT
       	if ${Me.ID}!=${MainTankID} && ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 35]}
-        	call HealMe
+        	call HealMe ${MaxHealthModified}
 	}
   	else
   	{
       	if ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 15]}
-			call HealMe
+			call HealMe ${MaxHealthModified}
   	}
 
   	if ${Me.GroupCount} > 1
@@ -1772,9 +1750,6 @@ function CheckHeals()
 					;Debug:Echo["CheckHeals():  lowest: ${lowest} (lowestset: ${lowestset})"]
 				}
 			}
-
-			if ${Me.Group[${temphl}].ID}==${MainTankID}
-				MainTankInGroup:Set[1]
 
 			;if (${cGroupMemberHealth} < ${Math.Calc[${MaxHealthModified} - 20]})
 			;	Debug:Echo["TEST: cGroupMemberIsDead = ${cGroupMemberIsDead} || cGroupMemberHealth = ${cGroupMemberHealth} || Math.Calc[MaxHealthModified - 20] = ${Math.Calc[${MaxHealthModified} - 20]} || cGroupMemberDistance<=Me.Ability[SpellType[15]].ToAbilityInfo.Range = ${cGroupMemberDistance}<=${Me.Ability[${SpellType[15]}].ToAbilityInfo.Range}"]
@@ -1911,8 +1886,7 @@ function CheckHeals()
 			;; Death Swarm
 			if (${Me.Ability[${SpellType[51]}].IsReady} && ${Actor[${KillTarget}].Health} > 35)
 			{
-				call CheckActorForEffect ${KillTarget} 369 315
-				if ${Return.Equal[FALSE]}
+				if (!${Me.Maintained[${SpellType[51]}](exists)})
 				{
 					if ${FuryDebugMode}
 						Debug:Echo["CheckHeals() -- Routine Finished -- Casting Death Swarm on ${Actor[${KillTarget}].Name}..."]
@@ -1947,16 +1921,16 @@ function CheckHeals()
 	;;;;;;;;;;;;;;;;;;;;;;;
 }
 
-function HealMe()
+function HealMe(int maxHealthModified)
 {
 	; Check to see if Healer needs cured of the curse and cure it first.
 	if ${Me.Cursed} && ${CureCurseSelfMode}
 		call CastSpellRange 211 0 0 0 ${Me.ID} 0 0 0 0 1 0
 
-	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 30]} && ${Me.InCombatMode}
+	if ${Me.Inventory[Crystallized Spirit](exists)} && ${Me.Health} < ${Math.Calc[${maxHealthModified} - 30]} && ${Me.InCombatMode}
 		Me.Inventory[Crystallized Spirit]:Use
 
-	if ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 60]}
+	if ${Me.Health} < ${Math.Calc[${maxHealthModified} - 50]}
 	{
 		if ${haveaggro}
 			call EmergencyHeal ${Me.ID}
@@ -1969,13 +1943,13 @@ function HealMe()
 		}
 	}
 
-	if ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 45]}
+	if ${Me.Health} < ${Math.Calc[${maxHealthModified} - 40]}
 	{
 		if ${Me.Ability[${SpellType[1]}].IsReady}
 			call CastSpellRange 1 0 0 0 ${Me.ID}
 	}
 
-	if ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 20]}
+	if ${Me.Health} < ${Math.Calc[${maxHealthModified} - 15]}
 	{
 		if !${EpicMode} || (${haveaggro} && ${Me.InCombatMode})
 		{
@@ -1990,10 +1964,14 @@ function HealMe()
 	}
 }
 
-;function HealMT(int MainTankID, int MTInMyGroup)
-function HealMT(int NotUsed, int MTInMyGroup)
+function HealMT()
 {
-	Debug:Echo["HealMT():: START... (MT Health at ${Actor[${MainTankID}].Health})"]
+	variable bool MTInMyGroup = FALSE
+
+	if (${Me.Group[id,${MainTankID}](exists)})
+		MTInMyGroup:Set[TRUE]
+
+	Debug:Echo["HealMT():: START... (MT Health at ${Actor[${MainTankID}].Health}) [MTInMyGroup: ${MTInMyGroup}]"]
 
 	if (!${Actor[${MainTankID}].Name(exists)})
 	{
@@ -2015,7 +1993,7 @@ function HealMT(int NotUsed, int MTInMyGroup)
 	if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 55]}
 	{
 		Debug:Echo["HealMT():: Calling Emergency Heal! (MT Health at ${Actor[${MainTankID}].Health})"]
-		call EmergencyHeal ${MainTankID} ${MTInMyGroup}
+		call EmergencyHeal ${MainTankID}
 	}
 
 	;Frey Check
@@ -2076,24 +2054,135 @@ function GroupHeal()
 function EmergencyHeal(uint healtarget)
 {
 	Debug:Echo["EmergencyHeal():: START ... (healing ${Actor[${healtarget}].Name})"]
-	;death prevention
+
+	;death prevention (Feral Tenacity)
 	if ${Me.Ability[${SpellType[316]}].IsReady} && (${Me.ID}==${healtarget} || ${Me.Group[${Actor[${healtarget}].Name}].InZone})
 	{
 		Debug:Echo["EmergencyHeal():: Casting ${SpellType[316]}..."]
 		call CastSpellRange 316 0 0 0 ${healtarget}
 	}
 
-	;emergency heals
+	; Sylvan Touch
 	if ${Me.Ability[${SpellType[8]}].IsReady}
 	{
 		Debug:Echo["EmergencyHeal():: Casting ${SpellType[8]}..."]
 		call CastSpellRange 8 0 0 0 ${healtarget}
 	}
+	; Feral Pulse
 	elseif ${Me.Ability[${SpellType[16]}].IsReady}
 	{
 		Debug:Echo["EmergencyHeal():: Casting ${SpellType[16]}..."]
 		call CastSpellRange 16 0 0 0 ${healtarget}
 	}
+}
+
+function SpamHealTank()
+{
+	variable bool MTInMyGroup = FALSE
+	variable int WaitCounter = 0
+
+	if (${Me.Group[id,${MainTankID}](exists)})
+		MTInMyGroup:Set[TRUE]
+
+	Debug:Echo["SpamHealTank():: START... (MT Health at ${Actor[${MainTankID}].Health}) [MTInMyGroup: ${MTInMyGroup}]"]
+
+	if (!${Actor[${MainTankID}].Name(exists)})
+	{
+		Debug:Echo["SpamHealTank():: MainTank doesn't exist!"]
+		return
+	}
+		
+	if (${Actor[${MainTankID}].IsDead})
+	{
+		Debug:Echo["SpamHealTank():: MainTank is Dead!"]
+		return
+	}
+
+	;; Distance check, but only if we're only in a group and not in a raid
+	if (${Actor[${MainTankID}].Distance} >= 20 && ${Me.Raid} == 0)
+	{
+		Debug:Echo["SpamHealTank():: \arMainTank is too far away! [${Actor[${MainTankID}].Distnace}]\ax"]
+		eq2execute /tell ${Actor[${MainTankID}].Name} "You're too far away to heal!   Please move closer"
+		do
+		{
+			wait 5
+			WaitCounter:Inc[5]
+			if (${WaitCounter} > 50)
+				return
+		}
+		while (${Actor[${MainTankID}].Distnace} >= 20)
+		eq2execute /tell ${Actor[${MainTankID}].Name} "Thanks!"
+	}
+	
+	; Make sure we don't die....
+	call HealMe 100 
+
+	;MAINTANK EMERGENCY HEAL
+	if ${Actor[${MainTankID}].Health} < 50
+	{
+		Debug:Echo["SpamHealTank():: Calling Emergency Heal! (MT Health at ${Actor[${MainTankID}].Health})"]
+		call EmergencyHeal ${MainTankID}
+	}
+
+	;Back Into The Frey
+	if ${Actor[${MainTankID}].Health} < 80 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[2]}].ToAbilityInfo.Range}
+	{
+		Debug:Echo["SpamHealTank():: Casting ${SpellType[2]}... (MT Health at ${Actor[${MainTankID}].Health})"]
+		if ${Me.Ability[${SpellType[2]}].IsReady}
+			call CastSpellRange 2 0 0 0 ${MainTankID}
+	}
+	;Nature's Elixir
+	if ${Actor[${MainTankID}].Health} < 85 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[1]}].ToAbilityInfo.Range}
+	{
+		Debug:Echo["SpamHealTank():: Casting ${SpellType[1]}... (MT Health at ${Actor[${MainTankID}].Health})"]
+		if ${Me.Ability[${SpellType[1]}].IsReady}
+			call CastSpellRange 1 0 0 0 ${MainTankID}
+	}
+	;Nature's Salve
+	if ${Actor[${MainTankID}].Health} < 95 && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[4]}].ToAbilityInfo.Range}
+	{
+		Debug:Echo["SpamHealTank():: Casting ${SpellType[4]}... (MT Health at ${Actor[${MainTankID}].Health})"]
+		if ${Me.Ability[${SpellType[4]}].IsReady}
+			call CastSpellRange 4 0 0 0 ${MainTankID}
+	}
+
+	;; Porcupine
+	if (!${Actor[${KillTarget}].IsSolo} && ${Me.Ability[${SpellType[360]}].IsReady} && ${Me.Power} > 40 && (${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].Health} >= 50))
+	{
+		call VerifyTarget ${KillTarget} "Fury-SpamHealTank-Porcupine"
+		if ${Return.Equal[FALSE]}
+			return
+		call CastSpellRange start=360 TargetID=0 IgnoreMaintained=1
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${FuryDebugMode}
+				Debug:Echo["\atFury:SpamHealTank()\ax - Exiting after Porcupine (Target no longer valid: CombatComplete)"]
+			return						
+		}
+	}
+	elseif (${Me.Power} < 40 && ${Me.Maintained[${SpellType[360]}](exists)})
+	{
+		if ${FuryDebugMode}
+			Debug:Echo["\atFury:SpamHealTank()\ax - Cancelling Porcupine due to low power"]
+		Me.Maintained[${SpellType[360]}]:Cancel
+	}
+
+	;;;;;
+	;; Keep up regens
+	; Regrowth
+	if ${Me.Ability[${SpellType[7]}].IsReady} && ${Me.Maintained[${SpellType[7]}].Target.ID} != ${MainTankID} && ${Actor[${MainTankID}].Distance}<=${Me.Ability[${SpellType[7]}].ToAbilityInfo.Range}
+	{
+		Debug:Echo["SpamHealTank():: Casting ${SpellType[7]}... (MT Health at ${Actor[${MainTankID}].Health})"]
+		call CastSpellRange 7 0 0 0 ${MainTankID}
+	}
+	; Autumn's Kiss
+	elseif ${Me.Ability[${SpellType[15]}].IsReady} && !${Me.Maintained[${SpellType[15]}](exists)} && ${MTInMyGroup}
+	{
+		Debug:Echo["SpamHealTank():: Casting ${SpellType[15]}... (MT Health at ${Actor[${MainTankID}].Health})"]
+		call CastSpellRange 15
+	}
+
+	Debug:Echo["SpamHealTank():: END..."]
 }
 
 function CureGroupMember(int gMember)
@@ -2138,7 +2227,7 @@ function CureMe()
 		call CastSpellRange 210 0 0 0 ${Me.ID}
 
 		if ${Me.Health} < ${Math.Calc[${MaxHealthModified} - 70]} && ${EpicMode}
-			call HealMe
+			call HealMe ${MaxHealthModified}
 	}
 
 }
@@ -2321,7 +2410,7 @@ function CheckCures(int InCombat=1)
 		if ${Actor[${MainTankID}].Health} < ${Math.Calc[${MaxHealthModified} - 50]}
 		{
 			if ${MainTankID}==${Me.ID}
-				call HealMe
+				call HealMe ${MaxHealthModified}
 			else
 				call HealMT
 		}
@@ -2526,7 +2615,7 @@ function CheckEmergencyHeals()
 	if (${Me.Health} <= ${Math.Calc[${MaxHealthModified} - 50]})
 	{
 		Debug:Echo["CheckEmergencyHeals():: My health at ${Me.Health}.  Calling HealMe()"]
-		call HealMe
+		call HealMe ${MaxHealthModified}
 	}
 }
 
