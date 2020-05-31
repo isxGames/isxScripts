@@ -133,144 +133,39 @@ function Buff_Init()
 	PreAction[4]:Set[BuffPact]
 	PreSpellRange[4,1]:Set[20]
 
-	PreAction[5]:Set[Tank_Buff]
+	PreAction[5]:Set[Tank_Buff1]
 	PreSpellRange[5,1]:Set[40]
-	PreSpellRange[5,2]:Set[41]
 
-	PreAction[6]:Set[Melee_Buff]
-	PreSpellRange[6,1]:Set[31]
+	PreAction[6]:Set[Tank_Buff2]
+	PreSpellRange[6,1]:Set[41]
 
-	PreAction[7]:Set[SeeInvis]
-	PreSpellRange[7,1]:Set[30]
+	PreAction[7]:Set[Melee_Buff]
+	PreSpellRange[7,1]:Set[31]
 
-	PreAction[8]:Set[AA_Ward_Sages]
-	PreSpellRange[8,1]:Set[386]
+	PreAction[8]:Set[SeeInvis]
+	PreSpellRange[8,1]:Set[30]
 
-	PreAction[9]:Set[AA_Pet]
-	PreSpellRange[9,1]:Set[382]
-	PreSpellRange[9,2]:Set[383]
-	PreSpellRange[9,3]:Set[384]
+	PreAction[9]:Set[AA_Ward_Sages]
+	PreSpellRange[9,1]:Set[386]
 
-	PreAction[10]:Set[DeityPet]
+	PreAction[10]:Set[AA_Pet1]
+	PreSpellRange[10,1]:Set[382]
 
-	PreAction[11]:Set[Propagation]
-	PreSpellRange[11,1]:Set[391]
+	PreAction[11]:Set[AA_Pe2]
+	PreSpellRange[11,1]:Set[383]
+
+	PreAction[12]:Set[AA_Pet3]
+	PreSpellRange[12,1]:Set[384]
+
+	PreAction[13]:Set[DeityPet]
+
+	PreAction[14]:Set[Propagation]
+	PreSpellRange[14,1]:Set[391]
 
 }
 
 function Combat_Init()
 {
-	Action[1]:Set[AoE_Debuff1]
-	SpellRange[1,1]:Set[57]
-
-	Action[2]:Set[Special_Pet]
-	MobHealth[2,1]:Set[60]
-	MobHealth[2,2]:Set[100]
-	SpellRange[2,1]:Set[324]
-
-	Action[3]:Set[Void]
-	SpellRange[3,1]:Set[50]
-
-	Action[5]:Set[Combat_Buff]
-	MobHealth[5,1]:Set[50]
-	MobHealth[5,2]:Set[100]
-	SpellRange[5,1]:Set[330]
-
-	Action[6]:Set[DoT1]
-	SpellRange[6,1]:Set[70]
-
-	Action[7]:Set[AoE_DoT]
-	MobHealth[7,1]:Set[30]
-	MobHealth[7,2]:Set[100]
-	SpellRange[7,1]:Set[94]
-
-	;AOE ONLY
-	Action[8]:Set[AoE_Nuke1]
-	SpellRange[8,1]:Set[91]
-
-	;AOE ONLY
-	Action[9]:Set[AoE_PB]
-	SpellRange[9,1]:Set[95]
-
-	;AOE ONLY
-	Action[10]:Set[Nullify]
-	SpellRange[10,1]:Set[181]
-
-	;AOE ONLY
-	Action[11]:Set[Caress]
-	SpellRange[11,1]:Set[180]
-
-	;AOE ONLY
-	Action[12]:Set[AoE_PB2]
-	SpellRange[12,1]:Set[96]
-
-	;AOE ONLY
-	Action[13]:Set[AoE_PB]
-	SpellRange[13,1]:Set[95]
-
-	;AOE ONLY
-	Action[14]:Set[AoE_Concussive]
-	SpellRange[14,1]:Set[328]
-
-	;AOE ONLY
-	Action[15]:Set[Void]
-	SpellRange[15,1]:Set[50]
-
-	;AOE ONLY and more than 2
-	Action[16]:Set[AoE_Nuke2]
-	SpellRange[16,3]:Set[92]
-
-	;AOE ONLY
-	Action[17]:Set[AoE_PB]
-	SpellRange[17,1]:Set[95]
-
-	Action[18]:Set[Master_Strike]
-
-	Action[19]:Set[Nuke1]
-	SpellRange[19,1]:Set[61]
-
-	Action[20]:Set[DoT2]
-	SpellRange[20,1]:Set[71]
-
-	Action[21]:Set[DoT3]
-	SpellRange[21,1]:Set[72]
-
-	Action[22]:Set[Nuke2]
-	SpellRange[22,1]:Set[62]
-
-	Action[23]:Set[Nuke3]
-	SpellRange[23,1]:Set[64]
-
-	Action[24]:Set[Nuke4]
-	SpellRange[24,1]:Set[63]
-
-	Action[25]:Set[Nuke2]
-	SpellRange[25,1]:Set[62]
-
-	Action[26]:Set[Nuke3]
-	SpellRange[26,1]:Set[64]
-
-	Action[27]:Set[Nuke4]
-	SpellRange[27,1]:Set[63]
-
-	Action[28]:Set[Nuke2]
-	SpellRange[28,1]:Set[62]
-
-	Action[29]:Set[Nuke3]
-	SpellRange[29,1]:Set[64]
-
-	Action[30]:Set[Nuke4]
-	SpellRange[30,1]:Set[63]
-
-	Action[31]:Set[Nuke2]
-	SpellRange[31,1]:Set[62]
-
-	Action[32]:Set[Nuke3]
-	SpellRange[32,1]:Set[64]
-
-	Action[33]:Set[Nuke4]
-	SpellRange[33,1]:Set[63]
-
 }
 
 function PostCombat_Init()
@@ -319,7 +214,8 @@ function Buff_Routine(int xAction)
 				Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}]:Cancel
 			}
 			break
-		case Tank_Buff
+		case Tank_Buff1
+		case Tank_Buff2
 			BuffTarget:Set[${UIElement[cbBuffTankGroupMember@Class@EQ2Bot Tabs@EQ2 Bot].SelectedItem.Text}]
 			if (${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
@@ -452,7 +348,9 @@ function Buff_Routine(int xAction)
 			}
 			break
 
-		case AA_Pet
+		case AA_Pet1
+		case AA_Pet2
+		case AA_Pet3
 			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)})
 			{
 				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
@@ -487,14 +385,27 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	;; Check to make sure the target is valid FIRST and then use the ability this function was called for before anything else
 	if (${TargetID} > 0 && ${TargetID} != ${Me.ID} && !${Actor[${TargetID}].Type.Equal[PC]})
 	{
-		call VerifyTarget ${TargetID} "Warlock-_CastSpellRange-${SpellType[${start}]}"
+		if ${WarlockDebugMode}
+			Debug:Echo["\atWarlock:_CastSpellRange(${SpellType[${start}]})\ax Verifying Target - ${TargetID} '${Actor[${TargetID}].Name}''"]
+		call VerifyTarget ${TargetID} "Warlock-_CastSpellRange-${SpellType[${start}]} (1)"
 		if ${Return.Equal[FALSE]}
 			return CombatComplete
+	}
+	else
+	{
+		if (${Me.InCombat} && ${KillTarget} > 0)
+		{
+			if ${WarlockDebugMode}
+				Debug:Echo["\atWarlock:_CastSpellRange(${SpellType[${start}]})\ax Verifying KillTarget - ${KillTarget} '${Actor[${KillTarget}].Name}''"]
+			call VerifyTarget ${KillTarget} "Warlock-_CastSpellRange-${SpellType[${start}]} (2)"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+		}
 	}
 
 	;; Cast the spell we wanted to cast originally before doing anything else
 	if ${WarlockDebugMode}
-		Debug:Echo["\atWarlock:_CastSpellRange()\ax -- Casting ${SpellType[${start}]}..."]
+		Debug:Echo["\atWarlock:_CastSpellRange(${SpellType[${start}]})\ax Casting ${SpellType[${start}]}..."]
 	call CastSpellRange ${start} ${finish} ${xvar1} ${xvar2} ${TargetID} ${notall} ${refreshtimer} ${castwhilemoving} ${IgnoreMaintained} ${CastSpellNOW} ${IgnoreIsReady}
 	iReturn:Set[${Int[${Return}]}]
 
@@ -536,10 +447,12 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 
 function Combat_Routine(int xAction)
 {
-	declare dotused int local 0
-	declare debuffused int local 0
-	declare pricast int local 0
-
+	variable int TargetDifficulty 
+	variable bool TargetIsEpic = FALSE
+	variable int EncounterSize
+	variable int MobCount
+	variable int WaitCounter = 0
+	
 	if ${WarlockDebugMode}
 		Debug:Echo["Combat_Routine(${xAction}) called"]
 
@@ -556,6 +469,14 @@ function Combat_Routine(int xAction)
 			Debug:Echo["Combat_Routine() -- Exiting (In PostDeathRoutine or CheckingBuffsOnce) [2]"]
 		return
 	}
+
+	if (${Actor[${KillTarget}].IsEpic} > 0)
+		TargetIsEpic:Set[TRUE]
+	TargetDifficulty:Set[${Actor[${KillTarget}].Difficulty}]
+	if (${TargetIsEpic} && ${TargetDifficulty} < 3)
+		TargetDifficulty:Set[3]
+	EncounterSize:Set[${Actor[${KillTarget}].EncounterSize}]
+	MobCount:Set[${Mob.Count}]
 
 	if (!${RetainAutoFollowInCombat} && ${Me.WhoFollowing(exists)})
 	{
@@ -575,163 +496,105 @@ function Combat_Routine(int xAction)
 	if ${CastCures}
 		call CheckHeals
 
-	call UseCrystallizedSpirit 60
+	;; Dark Siphoning, etc.
+	call RefreshPower
+	if (${Return.Equal[CombatComplete]})
+		return CombatComplete
 
-	;---- Debuffs if they are selected ----
-	if ${DebuffMode}
+	;;;;;;;;;;;;;;;;;;;
+	;; This Combat_Routine now works as a "prioritized list" of abilities rather than a sequence of abilities.
+	;; The function will "elseif" until it comes across an ability that is ready and for which the conditions
+	;; are appropriate.
+	;;;;;;;;;;;;;;;;;;;
+
+	;; Gift of Bertoxxulous
+	if (${Me.Ability[${SpellType[330]}].IsReady})
 	{
-		if ${Me.Ability[${SpellType[57]}].IsReady} && !${Me.Maintained[${SpellType[57]}](exists)}
+		if (${TargetIsEpic} || ${Actor[${KillTarget}].Health} >= 30)
 		{
-			call _CastSpellRange 57 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			} 			
-			debuffused:Inc
-			pricast:Inc
-		}
-		if !${debuffused} && ${Me.Ability[${SpellType[51]}].IsReady} && !${Me.Maintained[${SpellType[51]}](exists)}
-		{
-			call _CastSpellRange 51 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			} 			
-			debuffused:Inc
-			pricast:Inc
-		}
-
-		if !${debuffused} && ${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)}
-		{
-			call _CastSpellRange 52 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			} 			
-			debuffused:Inc
-			pricast:Inc
-		}
-		if ${Me.Ability[${SpellType[389]}].IsReady} && !${Me.Maintained[${SpellType[389]}](exists)}
-		{
-			call _CastSpellRange 389 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			} 			
-			pricast:Inc
-		}
-	}
-
-	;---- Short Term Buffs ----
-	if ${Me.Ability[${SpellType[330]}].IsReady}
-	{
-		call _CastSpellRange 330 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		} 		
-		pricast:Inc
-	}
-
-	;---- Heroic or better Short Term Buffs
-	if ${Actor[${KillTarget}].Difficulty}>=3
-	{
-		;--- "Focused Casting" AA
-		if ${FocusMode} && ${Me.Ability[${SpellType[387]}].IsReady}
-		{
-			call _CastSpellRange 387
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}			
-		}
-		;--- Netherealm
-		if ${Me.Ability[${SpellType[55]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[55]}](exists)}
-		{
-			call _CastSpellRange 55 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			} 	
-			pricast:Inc
-		}
-	}
-
-	if ${pricast}>=3
-		return
-
-	;---- DPS Utility Spells ----
-	;-------- Aura of Void
-	if ${Me.Ability[${SpellType[50]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[50]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 50 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		} 
-		pricast:Inc
-	}
-	;-------- Nullify
-	if ${Me.Ability[${SpellType[181]}].IsReady} && ${pricast}<3 && !${Me.Maintained[${SpellType[181]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 181 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		} 		
-		pricast:Inc
-	}
-
-	if ${pricast}>=3
-		return
-
-	;---- PBAoE's
-	if ${PBAoEMode} && ${Mob.Count}>1
-	{
-		;-------- Upheaval
-		if ${PBAoEMode} && ${pricast}<3 && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-		{
-			call _CastSpellRange 96 0 0 0 ${KillTarget}
+			call _CastSpellRange 330 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${WarlockDebugMode}
 					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			pricast:Inc
+			else
+				return
 		}
-		;-------- Acid Storm
-		if ${PBAoEMode} && ${pricast}<3 && ${Mob.Count}>1 && ${Me.Ability[${SpellType[97]}].IsReady} && !${Me.Maintained[${SpellType[97]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}
+	;---- Netherealm
+	elseif (${Me.Ability[${SpellType[55]}].IsReady} && !${Me.Maintained[${SpellType[55]}](exists)})
+	{
+		if (${TargetDifficulty} >= 3 || ${Me.Group} <= 1)
 		{
-			call _CastSpellRange 97 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
+			if (${TargetIsEpic} || ${Actor[${KillTarget}].Health} >= 40)
 			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
+				call _CastSpellRange 55
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${WarlockDebugMode}
+						Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
 			}
-			pricast:Inc
 		}
-		;-------- Cataclysm
-		if ${PBAoEMode} && ${pricast}<3 && ${Mob.Count}>1 && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}
+	;; Curse of Darkness 
+	if (${Me.Ability[${SpellType[52]}].IsReady} && !${Me.Maintained[${SpellType[52]}](exists)})
+	{
+		if (${TargetIsEpic} || ${Actor[${KillTarget}].Health} >= 45)
+		{
+			if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1)
+			{
+				call _CastSpellRange 52 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${WarlockDebugMode}
+						Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
+				else
+					return
+			}
+		}
+	}
+	;; Vacuum Field
+	if (${DebuffMode} && ${Me.Ability[${SpellType[57]}].IsReady} && !${Me.Maintained[${SpellType[57]}](exists)})
+	{
+		if (${TargetIsEpic} || ${Actor[${KillTarget}].Health} >= 45)
+		{
+			if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1)
+			{
+				call _CastSpellRange 57 0 0 0 ${KillTarget}
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${WarlockDebugMode}
+						Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+					return CombatComplete						
+				}
+				else
+					return
+			}
+		}
+	}
+	;--- "Focused Casting" AA
+	if ${FocusMode} && ${TargetDifficulty} >= 3 && ${Me.Ability[${SpellType[387]}].IsReady}
+	{
+		call _CastSpellRange 387
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${WarlockDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+		else
+			return
+	}
+	;-------- Cataclysm
+	if (${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)})
+	{
+		if (${TargetIsEpic} || ${MobCount} > 1)
 		{
 			call _CastSpellRange 95 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -740,54 +603,123 @@ function Combat_Routine(int xAction)
 					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			pricast:Inc
-		}
-		;-------- Static Discharge
-		if ${PBAoEMode} && ${pricast}<3 && ${Mob.Count}>1 && ${Me.Ability[${SpellType[397]}].IsReady} && !${Me.Maintained[${SpellType[397]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-		{
-			call _CastSpellRange 397 0 0 0 ${KillTarget}
-			if ${Return.Equal[CombatComplete]}
-			{
-				if ${WarlockDebugMode}
-					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-				return CombatComplete						
-			}
-			pricast:Inc
+			else
+				return
 		}
 	}
-
-	if ${pricast}>=3
-		return
-
-	;---- Single Target Dots If enabled
-	if ${DoTMode}
+	;-------- Apocalypse
+	if (${Me.Ability[${SpellType[94]}].IsReady} && !${Me.Maintained[${SpellType[94]}](exists)})
 	{
-		;-------- Netherbeast
-		if ${pricast}<3 && ${Me.Ability[${SpellType[324]}].IsReady} && !${Me.Maintained[${SpellType[324]}](exists)} && ${Mob.CheckActor[${KillTarget}]} && ${PetMode}
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1)
 		{
-			call _CastSpellRange 324 0 0 0 ${KillTarget}
+			;; Use Catalyst and Freehand Sorcery before Apocalypse.   Both have the same recast timer, so should only need to check if Catalyst is ready.
+			if (${Me.Ability[${SpellType[398]}].IsReady})
+			{
+				if ${Me.CastingSpell}
+				{
+					do
+					{
+						eq2execute /cancel_spellcast
+						wait 3
+					}
+					while ${Me.CastingSpell}
+				}
+				wait 2
+				eq2execute /useability ${SpellType[398]}
+				wait 3
+				eq2execute /useability ${SpellType[385]}
+				wait 3
+				if (${Me.Ability[${SpellType[398]}].IsReady} || ${Me.Ability[${SpellType[385]}].IsReady})
+				{
+					if ${Me.CastingSpell}
+					{
+						do
+						{
+							eq2execute /cancel_spellcast
+							wait 3
+						}
+						while ${Me.CastingSpell}
+					}
+					wait 2
+					eq2execute /useability ${SpellType[398]}
+					wait 3
+					eq2execute /useability ${SpellType[385]}
+					wait 3
+				}
+			}
+			call _CastSpellRange 94 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${WarlockDebugMode}
 					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			pricast:Inc
+			else
+				return
 		}
-		;-------- Blood Infestation
-		if ${pricast}<3 && ${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}
+	;-------- Absolution
+	if (${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1)
 		{
-			call _CastSpellRange 70 0 0 0 ${KillTarget}
+			call _CastSpellRange 91 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
 			{
 				if ${WarlockDebugMode}
 					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			pricast:Inc
+			else
+				return
 		}
-		;-------- Acid
-		if ${pricast}<3 && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
+	}
+	;-------- Rift
+	if (${PBAoEMode} && ${MobCount} > 1 && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)})
+	{
+		call _CastSpellRange 96 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${WarlockDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+		else
+			return
+	}
+	;-------- Dark Nebula
+	if (${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1)
+		{
+			call _CastSpellRange 92 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
+		}
+	}
+	;-------- Aura of Void
+	if (${Me.Ability[${SpellType[50]}].IsReady} && !${Me.Maintained[${SpellType[50]}](exists)} && ${TargetDifficulty} >= 3)
+	{
+		call _CastSpellRange 50 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${WarlockDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		} 
+		else
+			return
+	}
+	;-------- Acid
+	if (${DotMode} && ${Me.Ability[${SpellType[72]}].IsReady} && !${Me.Maintained[${SpellType[72]}](exists)})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1 || ${Actor[${KillTarget}].Health} > 20)
 		{
 			call _CastSpellRange 72 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -796,153 +728,131 @@ function Combat_Routine(int xAction)
 					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
 				return CombatComplete						
 			}
-			pricast:Inc
+			else
+				return
+		}
+	}
+	;-------- Dark Pyre
+	if (${DotMode} && ${Me.Ability[${SpellType[71]}].IsReady} && !${Me.Maintained[${SpellType[71]}](exists)})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1 || ${Actor[${KillTarget}].Health} > 20) 
+		{
+			call _CastSpellRange 71 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
+		}
+	}
+	;-------- Distortion (single target dmg)
+	if (${Me.Ability[${SpellType[61]}].IsReady})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1 || ${Actor[${KillTarget}].Health} > 5)
+		{
+			call _CastSpellRange 61 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
+		}
+	}
+	;-------- Netherlord
+	if (${DotMode} && ${Me.Ability[${SpellType[324]}].IsReady} && !${Me.Maintained[${SpellType[324]}](exists)})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1 || ${Actor[${KillTarget}].Health} > 20)
+		{
+			call _CastSpellRange 324 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
+		}
+	}
+	;-------- Encase (single target dmg)
+	if (${Me.Ability[${SpellType[62]}].IsReady})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1 || ${Actor[${KillTarget}].Health} > 5)
+		{
+			call _CastSpellRange 62 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
+		}
+	}
+	;-------- Absolution (encounter dmg)
+	if (${Me.Ability[${SpellType[91]}].IsReady})
+	{
+		if (${TargetDifficulty} >= 3 || ${EncounterSize} > 1 || ${Actor[${KillTarget}].Health} > 50)
+		{
+			call _CastSpellRange 91 0 0 0 ${KillTarget}
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${WarlockDebugMode}
+					Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
+		}
+	}
+	;-------- Master's Strike
+	if (${Me.Ability[id,1410230263].IsReady})
+	{
+		if (${TargetDifficulty} >= 3 || ${Actor[${KillTarget}].Health} >= 20)
+		{
+			call VerifyTarget ${KillTarget} "Warlock-Combat_Routine-MastersStrike"
+			if ${Return.Equal[FALSE]}
+				return CombatComplete
+			call CastSpellRange AbilityID=1410230263 TargetID=${KillTarget} IgnoreMaintained=1
+			if ${Return.Equal[CombatComplete]}
+			{
+				if ${FuryDebugMode}
+					Debug:Echo["\atWarlock:Combat_Routine()\ax - Exiting after casting Master's Strike (Target no longer valid: CombatComplete)"]
+				return CombatComplete						
+			}
+			else
+				return
 		}
 	}
 
-	if ${pricast}>=3
-		return
+	;;;;;;;;;;;;;
+	;; Spells/Abilities not currently used in rotation:
+	;; 1. Curse of Void          --  DebuffMode -> ${SpellType[51]}  (check Maintained)
+	;; 2. Volatility             --  DebuffMode -> ${SpellType[389]} (check Maintained)        **** AA ABILITY (not chosen [yet]) ****
+	;;
+	;; 3. Nullify                --  DPS Utility Spell -> ${SpellType[181]}
+	;;
+	;; 4. Acid Storm             --  PBAoEMode -> ${SpellType[97]}                             **** STARTS AT LEVEL 80 ****
+	;; 5. Static Discharge       --  PBAoEMode -> ${SpellType[397]}                            **** AA ABILITY (not chosen [yet]) ****
+	;;
+	;; 6. Dark Infestation       --  DoTMode -> ${SpellType[70]}
+	;;
+	;; 7. Concussive Blast       --  (single target dmg) -> ${SpellType[393]}                  **** AA ABILITY (not chosen [yet]) ****
+	;; 8. Plaguebringer          --  (single target dmg) -> ${SpellType[401]}                  **** AA ABILITY (not chosen [yet]) ****
+	;; 9. Flames of Velious      --  (single target dmg) -> ${SpellType[64]}
+	;; 10. Arcane Bewilderment   --  (single target dmg and threat dump) -> ${SpellType[403]}  **** AA ABILITY (not chosen [yet]) ****
+	;; 11. Thunderclap           --  (single target dmg) -> ${SpellType[402]}                  **** AA ABILITY (not chosen [yet]) ****
+	;; 12. Dissolve              --  (single target dmg) -> ${SpellType[63]}
+	;;;;;;;;;;;;;
 
-	;---- Standard Spell order
-	;-------- Armegeddon
-	if ${pricast}<3 && ${Me.Ability[${SpellType[94]}].IsReady} && !${Me.Maintained[${SpellType[94]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 94 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Absolution
-	if ${pricast}<3 && ${Me.Ability[${SpellType[91]}].IsReady} && !${Me.Maintained[${SpellType[91]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 91 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Concussive
-	if ${pricast}<3 && ${Me.Ability[${SpellType[393]}].IsReady} && !${Me.Maintained[${SpellType[393]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 393 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Radiation
-	if ${pricast}<3 && ${Me.Ability[${SpellType[92]}].IsReady} && !${Me.Maintained[${SpellType[92]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 92 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Plaguebringer
-	if ${pricast}<3 && ${Me.Ability[${SpellType[401]}].IsReady} && !${Me.Maintained[${SpellType[401]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 401 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Flames of Velious
-	if ${pricast}<3 && ${Me.Ability[${SpellType[64]}].IsReady} && !${Me.Maintained[${SpellType[64]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 64 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Distortion
-	if ${pricast}<3 && ${Me.Ability[${SpellType[61]}].IsReady} && !${Me.Maintained[${SpellType[61]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 61 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Bewilderment
-	if ${pricast}<3 && ${Me.Ability[${SpellType[403]}].IsReady} && !${Me.Maintained[${SpellType[403]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 403 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Encase
-	if ${pricast}<3 && ${Me.Ability[${SpellType[62]}].IsReady} && !${Me.Maintained[${SpellType[62]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 62 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Thunderclap
-	if ${pricast}<3 && ${Me.Ability[${SpellType[402]}].IsReady} && !${Me.Maintained[${SpellType[402]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 402 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-	;-------- Dissolve
-	if ${pricast}<3 && ${Me.Ability[${SpellType[63]}].IsReady} && !${Me.Maintained[${SpellType[63]}](exists)} && ${Mob.CheckActor[${KillTarget}]}
-	{
-		call _CastSpellRange 63 0 0 0 ${KillTarget}
-		if ${Return.Equal[CombatComplete]}
-		{
-			if ${WarlockDebugMode}
-				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
-			return CombatComplete						
-		}
-		pricast:Inc
-	}
-
-	if ${pricast}>=3
-		return
-
-	call RefreshPower
-
-	return CombatComplete
+	return
 }
 
 function Post_Combat_Routine(int xAction)
@@ -1056,20 +966,28 @@ function Cancel_Root()
 
 function RefreshPower()
 {
+	variable int CurrentPowerPercent = ${Me.Power}
+
 	if ${ShardMode}
 		call Shard
 
-	if ${Me.InCombat} && ${Me.Power}<60
-		call CastSpellRange 56 0 0 0 ${KillTarget}
-
-	if ${Me.InCombat} && ${Me.Power}<5
+	if (${CurrentPowerPercent} < 15 && ${Me.Ability[${SpellType[309]}].IsReady})
+	{
 		call CastSpellRange 309
+	}
 
-	;This should be cast on ally?
-	;if ${Me.InCombat} && ${Me.Power}<15
-	;{
-	;	call CastSpellRange 333
-	;}
+	if (${CurrentPowerPercent} < 60 && ${Me.Ability[${SpellType[56]}].IsReady})
+	{
+		call _CastSpellRange 56 0 0 0 ${KillTarget}
+		if ${Return.Equal[CombatComplete]}
+		{
+			if ${WarlockDebugMode}
+				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+			return CombatComplete						
+		}
+	}
+
+	return
 }
 
 function CheckHeals()
