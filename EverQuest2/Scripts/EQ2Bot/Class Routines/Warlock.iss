@@ -525,7 +525,7 @@ function Combat_Routine(int xAction)
 		}
 	}
 	;---- Netherealm
-	elseif (${Me.Ability[${SpellType[55]}].IsReady} && !${Me.Maintained[${SpellType[55]}](exists)})
+	if (${Me.Ability[${SpellType[55]}].IsReady} && !${Me.Maintained[${SpellType[55]}](exists)})
 	{
 		if (${TargetDifficulty} >= 3 || ${Me.Group} <= 1)
 		{
@@ -538,6 +538,8 @@ function Combat_Routine(int xAction)
 						Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
 					return CombatComplete						
 				}
+				else
+					return
 			}
 		}
 	}
