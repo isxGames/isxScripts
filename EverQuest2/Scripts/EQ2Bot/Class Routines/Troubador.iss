@@ -421,35 +421,35 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	if (${DoNoCombat})
 		return ${iReturn}
 		
-	if ${DoCallCheckPosition}
-	{
-		TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-		if ${TroubDebugMode}
-			Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
-
-		if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
-		{
-			if ${MainTank}
-				call CheckPosition 1 0
-			else
-			{
-				if (${TankToTargetDistance} <= 7.5)
-				{
-					if ${Actor[${KillTarget}].IsEpic}
-						call CheckPosition 1 1
-					else
-						call CheckPosition 1 0
-				}
-			}
-		}
-		elseif (${Actor[${MainTankID}].Name(exists)} && ${Actor[${MainTankID}].Distance} > 20)
-		{
-			if ${TroubDebugMode}
-				Debug:Echo["_CastSpellRange():: Out of Range - Moving to within 20m of tank"]
-			call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 20 1 1
-		}
-		DoCallCheckPosition:Set[FALSE]
-	}
+	;if ${DoCallCheckPosition}
+	;{
+	;	TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+	;	if ${TroubDebugMode}
+	;		Debug:Echo["_CastSpellRange()::TankToTargetDistance: ${TankToTargetDistance}"]
+;
+	;	if ${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement}
+	;	{
+	;		if ${MainTank}
+	;			call CheckPosition 1 0
+	;		else
+	;		{
+	;			if (${TankToTargetDistance} <= 7.5)
+	;			{
+	;				if ${Actor[${KillTarget}].IsEpic}
+	;					call CheckPosition 1 1
+	;				else
+	;					call CheckPosition 1 0
+	;			}
+	;		}
+	;	}
+	;	elseif (${Actor[${MainTankID}].Name(exists)} && ${Actor[${MainTankID}].Distance} > 20)
+	;	{
+	;		if ${TroubDebugMode}
+	;			Debug:Echo["_CastSpellRange():: Out of Range - Moving to within 20m of tank"]
+	;		call FastMove ${Actor[${MainTankID}].X} ${Actor[${MainTankID}].Z} 20 1 1
+	;	}
+	;	DoCallCheckPosition:Set[FALSE]
+	;}
 
 	return ${iReturn}
 }
