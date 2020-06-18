@@ -309,13 +309,9 @@ variable bool NoAtExit
 ;===========================================================
 variable int PathType
 
-
-
-#if ${ISXEQ2(exists)} && ${ISXEQ2.IsReady}
-	#include ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}.iss
-	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config/${Me.Name}.iss
-	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}_StrRes.iss
-#endif
+#include ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}.iss
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config/${Me.Name}.iss
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}_StrRes.iss
 
 /* do we really need this? I don't find any reference to the mobcheck object in this script. */
 /* (note) This was included from moveto.iss, and this include replaces that include. */
