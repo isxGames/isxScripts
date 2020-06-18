@@ -1685,7 +1685,7 @@ objectdef HeroicOp
 							{
 								This:CastHorn
 							}
-							elseif
+							else
 							{
 								This:CastBoot
 							}
@@ -1728,7 +1728,7 @@ objectdef HeroicOp
 							{
 								This:CastChalice
 							}
-							elseif
+							else
 							{
 								This:CastHammer
 							}
