@@ -28,6 +28,9 @@
 #endif
 
 
+;; in terms of single target priority it should be something like aura of pain > apoc > dark pyre > acid > dark siphoning > distortion > encase > abso > cataclysm
+
+
 function Class_Declaration()
 {
 	;;;; When Updating Version, be sure to also set the corresponding version variable at the top of EQ2Bot.iss ;;;;
@@ -72,8 +75,8 @@ function Class_Declaration()
 	PetForm:Set[${CharacterSet.FindSet[${Me.SubClass}].FindSetting[PetForm,]}]
 
 	;; Set these to TRUE, as desired, for testing
-	Debug:Enable
-	WarlockDebugMode:Set[TRUE]
+	;Debug:Enable
+	;WarlockDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -155,7 +158,7 @@ function Buff_Init()
 	PreAction[10]:Set[AA_Pet1]
 	PreSpellRange[10,1]:Set[382]
 
-	PreAction[11]:Set[AA_Pe2]
+	PreAction[11]:Set[AA_Pet2]
 	PreSpellRange[11,1]:Set[383]
 
 	PreAction[12]:Set[AA_Pet3]
@@ -189,17 +192,19 @@ function Buff_Routine(int xAction)
 	call CheckHeals
 	call RefreshPower
 
+	;echo "\at<Warlock-Buff_Routine>\ao ${xAction}"
+
 	switch ${PreAction[${xAction}]}
 	{
 		case Self_Buff1
 		case Self_Buff2
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+			if ((!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		case BuffBoon
 			if ${BuffBoon}
 			{
-				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				if ((!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
@@ -210,7 +215,7 @@ function Buff_Routine(int xAction)
 		case BuffPact
 			if ${BuffPact}
 			{
-				if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+				if ((!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}) && ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
 					call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
 			else
@@ -346,7 +351,7 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case AA_Ward_Sages
-			if ${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady}
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && (!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}))
 			{
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			}
@@ -368,7 +373,7 @@ function Buff_Routine(int xAction)
 			call SummonDeityPet
 			break
 		case Propagation
-			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady})
+			if (${Me.Ability[${SpellType[${PreSpellRange[${xAction},1]}]}].IsReady} && (!${Me.Maintained[${SpellType[${PreSpellRange[${xAction},1]}]}](exists)}))
 				call CastSpellRange ${PreSpellRange[${xAction},1]}
 			break
 		Default
@@ -453,6 +458,7 @@ function Combat_Routine(int xAction)
 {
 	variable int TargetDifficulty 
 	variable bool TargetIsEpic = FALSE
+	variable bool TargetIsNamed = FALSE
 	variable int EncounterSize
 	variable int WaitCounter = 0
 	
@@ -475,6 +481,8 @@ function Combat_Routine(int xAction)
 
 	if (${Actor[${KillTarget}].IsEpic} > 0)
 		TargetIsEpic:Set[TRUE]
+	if (${Actor[${KillTarget}].IsNamed})
+		TargetIsNamed:Set[TRUE]
 	TargetDifficulty:Set[${Actor[${KillTarget}].Difficulty}]
 	if (${TargetIsEpic} && ${TargetDifficulty} < 3)
 		TargetDifficulty:Set[3]
@@ -562,6 +570,27 @@ function Combat_Routine(int xAction)
 			}
 		}
 	}
+
+	;;;;
+	;; TODO:   Add option on UI for toggling the use of this ability on/off.  The Range is just SO big that it's dangerous in difficult dungeons.
+	;-------- Concussive Blast (AA) (AoE)
+	;if (${PBAoEMode} && ${Me.Ability[${SpellType[393]}].IsReady})
+	;{
+	;	if (${TargetIsEpic} || ${TargetIsNamed} || ${Mob.Count[12]} > 1)
+	;	{
+	;		call _CastSpellRange 393 0 0 0 ${KillTarget}
+	;		if ${Return.Equal[CombatComplete]}
+	;		{
+	;			if ${WarlockDebugMode}
+	;				Debug:Echo["Combat_Routine() - Exiting (Target no longer valid: CombatComplete)"]
+	;			return CombatComplete						
+	;		}
+	;		else
+	;			return
+	;	}
+	;}
+
+
 	;; Vacuum Field
 	if (${DebuffMode} && ${Me.Ability[${SpellType[57]}].IsReady} && !${Me.Maintained[${SpellType[57]}](exists)})
 	{
@@ -597,7 +626,7 @@ function Combat_Routine(int xAction)
 	;-------- Cataclysm
 	if (${PBAoEMode} && ${Me.Ability[${SpellType[95]}].IsReady} && !${Me.Maintained[${SpellType[95]}](exists)})
 	{
-		if (${TargetIsEpic} || ${Mob.Count[12]} > 1)
+		if (${EncounterSize} > 1 || ${Mob.Count[12]} > 1)
 		{
 			call _CastSpellRange 95 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -680,7 +709,7 @@ function Combat_Routine(int xAction)
 	;-------- Rift
 	if (${PBAoEMode} && ${Me.Ability[${SpellType[96]}].IsReady} && !${Me.Maintained[${SpellType[96]}](exists)})
 	{
-		if (${Mob.Count[15]} > 1)
+		if (${TargetIsEpic} || ${TargetIsNamed} || ${Mob.Count[15]} > 1)
 		{
 			call _CastSpellRange 96 0 0 0 ${KillTarget}
 			if ${Return.Equal[CombatComplete]}
@@ -850,12 +879,11 @@ function Combat_Routine(int xAction)
 	;;
 	;; 6. Dark Infestation       --  DoTMode -> ${SpellType[70]}
 	;;
-	;; 7. Concussive Blast       --  (single target dmg) -> ${SpellType[393]}                  **** AA ABILITY (not chosen [yet]) ****
-	;; 8. Plaguebringer          --  (single target dmg) -> ${SpellType[401]}                  **** AA ABILITY (not chosen [yet]) ****
-	;; 9. Flames of Velious      --  (single target dmg) -> ${SpellType[64]}
-	;; 10. Arcane Bewilderment   --  (single target dmg and threat dump) -> ${SpellType[403]}  **** AA ABILITY (not chosen [yet]) ****
-	;; 11. Thunderclap           --  (single target dmg) -> ${SpellType[402]}                  **** AA ABILITY (not chosen [yet]) ****
-	;; 12. Dissolve              --  (single target dmg) -> ${SpellType[63]}
+	;; 7. Plaguebringer          --  (single target dmg) -> ${SpellType[401]}                  **** AA ABILITY (not chosen [yet]) ****
+	;; 8. Flames of Velious      --  (single target dmg) -> ${SpellType[64]}
+	;; 9. Arcane Bewilderment   --  (single target dmg and threat dump) -> ${SpellType[403]}  **** AA ABILITY (not chosen [yet]) ****
+	;; 10. Thunderclap           --  (single target dmg) -> ${SpellType[402]}                  **** AA ABILITY (not chosen [yet]) ****
+	;; 11. Dissolve              --  (single target dmg) -> ${SpellType[63]}
 	;;;;;;;;;;;;;
 
 	return

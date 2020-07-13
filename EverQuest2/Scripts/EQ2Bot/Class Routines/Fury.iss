@@ -108,8 +108,8 @@ function Class_Declaration()
 		MaxHealthModified:Set[80]
 		
 	;; Set these to TRUE, as desired, for testing
-	Debug:Enable
-	FuryDebugMode:Set[TRUE]
+	;Debug:Enable
+	;FuryDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -238,24 +238,21 @@ function Buff_Init()
 	PreAction[10]:Set[BuffSavagery]
 	PreSpellRange[10,1]:Set[38]
 
-	PreAction[11]:Set[AA_Rebirth]
-	PreSpellRange[11,1]:Set[390]
+	PreAction[11]:Set[AA_Infusion]
+	PreSpellRange[11,1]:Set[391]
 
-	PreAction[12]:Set[AA_Infusion]
-	PreSpellRange[12,1]:Set[391]
+	PreAction[12]:Set[AA_Shapeshift]
+	PreSpellRange[12,1]:Set[396]
+	PreSpellRange[12,2]:Set[397]
+	PreSpellRange[12,3]:Set[398]
 
-	PreAction[13]:Set[AA_Shapeshift]
-	PreSpellRange[13,1]:Set[396]
-	PreSpellRange[13,2]:Set[397]
-	PreSpellRange[13,3]:Set[398]
+	PreAction[13]:Set[BuffPactOfNature]
+	PreSpellRange[13,1]:Set[399]
 
-	PreAction[14]:Set[BuffPactOfNature]
-	PreSpellRange[14,1]:Set[399]
-
-	PreAction[15]:Set[BuffMythical]
+	PreAction[14]:Set[BuffMythical]
 	
-	PreAction[16]:Set[BuffCastingExpertise]
-	PreSpellRange[16,1]:Set[384]
+	PreAction[15]:Set[BuffCastingExpertise]
+	PreSpellRange[15,1]:Set[384]
 }
 
 function Combat_Init()
@@ -337,7 +334,6 @@ function Buff_Routine(int xAction)
 			}
 			break
 		case Self_Buff
-		case AA_Rebirth
 			if (${Me.Ability["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)})
 			{
 				if !${Me.Maintained["${SpellType[${PreSpellRange[${xAction},1]}]}"](exists)}
@@ -591,6 +587,18 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 	else
 		MTHealthThreshold:Set[40]
 
+	;; Rebirth
+	if (${Me.IsDead} && ${Me.Ability[${SpellType[390]}].IsReady})
+	{
+		call CastSpellRange 390 0 0 0 ${Me.ID}
+		do
+		{
+			waitframe
+		}
+		while ${Me.IsDead}
+
+		call HealMe ${MaxHealthModified}
+	}
 	;call CheckEmergencyHeals
 
 	if (${TargetID} != ${Me.ID} && !${Actor[${TargetID}].Type.Equal[PC]})
@@ -1145,6 +1153,8 @@ function Combat_Routine(int xAction)
 		return CombatComplete						
 	}
 
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 	;; Thunderbolt
 	if (${Me.Ability[${SpellType[60]}].IsReady} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 15)
 	{
@@ -1165,7 +1175,7 @@ function Combat_Routine(int xAction)
 	}
 
 	;; Tempest
-	if (${Me.Ability[${SpellType[70]}].IsReady} && && !${Me.Maintained[${SpellType[70]}](exists)} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 20)
+	if (${Me.Ability[${SpellType[70]}].IsReady} && !${Me.Maintained[${SpellType[70]}](exists)} && ${Me.Power} > 15 && ${Actor[${KillTarget}].Health} >= 20)
 	{
 		call _CastSpellRange 70 0 0 0 ${KillTarget}
 		if ${Return.Equal[CombatComplete]}
@@ -1204,6 +1214,8 @@ function Combat_Routine(int xAction)
 			Debug:Echo["\atFury:Combat_Routine()\ax - Exiting after CheckCuresAndHeals (Target no longer valid: CombatComplete)"]
 		return CombatComplete						
 	}
+
+	;;;;;;;;;;;;;;;;;;;;;;;;
 
 	;; Vortex
 	if (${VortexMode} && ${Me.Ability[${SpellType[395]}].IsReady} && ${Me.Power} > 15)
@@ -1566,8 +1578,24 @@ function CheckCuresAndHeals()
 	;; The syntax to use would be:
 	;;		Script[EQ2Bot].VariableScope.CastTortoiseShellCaller:Set[WHO_CALLED_NAME]    (if you want the script to send the player a /tell)
 	;;		Script[EQ2Bot].VariableScope.CastTortoiseShell:Set[TRUE]
-	if (${CastTortoiseShell})
-		call TortoiseShell
+
+	;; Rebirth
+	if (${Me.IsDead} && ${Me.Ability[${SpellType[390]}].IsReady})
+	{
+		call CastSpellRange 390 0 0 0 ${Me.ID}
+		do
+		{
+			waitframe
+		}
+		while ${Me.IsDead}
+
+		call HealMe ${MaxHealthModified}
+	}
+	else
+	{
+		if (${CastTortoiseShell})
+			call TortoiseShell
+	}
 
 	if ${CureMode}
 		call CheckCures
