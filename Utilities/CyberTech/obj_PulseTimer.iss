@@ -1,6 +1,5 @@
 /*
 	obj_PulseTimer by CyberTech
-	SVN Location:  $HeadURL$
 
 		Provides timers with optional randomization.
 		Generally used in on-frame pulses to delay 1 or more activities.
@@ -45,10 +44,6 @@
 
 objectdef obj_PulseTimer
 {
-	variable string SVN_REVISION = "$Rev$"
-	variable string SVN_PATH = "$HeadURL$"
-	variable string SVN_AUTHOR = "$Author$"
-
 	variable int Version
 	variable string LogPrefix
 	variable int ExpireTime
@@ -131,10 +126,6 @@ objectdef obj_PulseTimer
 
 objectdef obj_TimedCallBack inherits obj_PulseTimer
 {
-	variable string SVN_REVISION = "$Rev$"
-	variable string SVN_PATH = "$HeadURL$"
-	variable string SVN_AUTHOR = "$Author$"
-
 	variable int Version
 	variable string LogPrefix
 
