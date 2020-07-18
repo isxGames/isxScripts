@@ -309,13 +309,9 @@ variable bool NoAtExit
 ;===========================================================
 variable int PathType
 
-
-
-#if ${ISXEQ2(exists)} && ${ISXEQ2.IsReady}
-	#include ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}.iss
-	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config/${Me.Name}.iss
-	#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}_StrRes.iss
-#endif
+#include ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}.iss
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Character Config/${Me.Name}.iss
+#includeoptional ${LavishScript.HomeDirectory}/Scripts/${Script.Filename}/Class Routines/${Me.SubClass}_StrRes.iss
 
 /* do we really need this? I don't find any reference to the mobcheck object in this script. */
 /* (note) This was included from moveto.iss, and this include replaces that include. */
@@ -339,7 +335,6 @@ function main(string Args)
 	variable int tempvar2
 	variable string tempnme
 	variable bool MobDetected
-	declare LastWindow string script
 	variable uint AggroMob
 	variable bool CheckIfDead = FALSE
 	variable bool DoCheckManaStone = FALSE
@@ -626,13 +621,24 @@ function main(string Args)
 			;;;;;;;;;;;;;;
 			;;; Pre-Combat Routines Loop (ie, Buff Routine, etc.)
 			;;;;;;;;;;;;;;
-			if (${AutoFollowMode} && !${Me.WhoFollowing.Equal[${AutoFollowee}]})
+			if (${AutoFollowMode})
 			{
-				ExecuteAtom AutoFollowTank
-				wait 5
+				if (${Actor[pc,${AutoFollowee}].OnTransport} || ${Me.OnTransport})
+				{
+					if (${Me.WhoFollowingID} > 0)
+						EQ2Execute /stopfollow
+				}
+				else
+				{
+					if (!${Me.WhoFollowing.Equal[${AutoFollowee}]} || ${Me.WhoFollowingID} <= 0)
+					{
+						ExecuteAtom AutoFollowTank
+						wait 5
+					}
+				}
+				ExecuteAtom CheckStuck
 			}
-			ExecuteAtom CheckStuck
-
+			
 			;;;;;;
 			;; Make sure that MainAssistID and/or MainTankID are still valid (IDs sometimes change on zoning...)
 			if !${Actor[${MainTankID}].Name(exists)}
@@ -692,9 +698,14 @@ function main(string Args)
 	
 					if (!${MainTank})
 					{
-						if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
-							KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
-	
+						if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]})
+						{
+							if (${Actor[${MainAssistID}].Target.InCombatMode})
+								KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
+							elseif (${Actor[${MainAssistID}].Target.IsSwimming} && ${Actor[${MainAssistID}].Target.Health} < 95)
+								KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]	
+						}
+
 						; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 						if ${KillTarget}
 						{
@@ -869,12 +880,23 @@ function main(string Args)
 			;;; Pre-Combat Routines  (NO Buff Loop)
 			;;;;;;;;;;;;;;
 
-			if (${AutoFollowMode} && !${Me.WhoFollowing.Equal[${AutoFollowee}]})
+			if (${AutoFollowMode})
 			{
-				ExecuteAtom AutoFollowTank
-				wait 5
+				if (${Actor[pc,${AutoFollowee}].OnTransport} || ${Me.OnTransport})
+				{
+					if (${Me.WhoFollowingID} > 0)
+						EQ2Execute /stopfollow
+				}
+				else
+				{
+					if (!${Me.WhoFollowing.Equal[${AutoFollowee}]} || ${Me.WhoFollowingID} <= 0)
+					{
+						ExecuteAtom AutoFollowTank
+						wait 5
+					}
+				}
+				ExecuteAtom CheckStuck
 			}
-			ExecuteAtom CheckStuck
 
 			;;;;;;
 			;; Make sure that MainAssistID and/or MainTankID are still valid (ie, IDs sometimes change on zoning...)
@@ -915,8 +937,13 @@ function main(string Args)
 			{
 				if !${MainTank}
 				{
-					if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
-						KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
+					if (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]})
+					{
+						if (${Actor[${MainAssistID}].Target.InCombatMode})
+							KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]
+						elseif (${Actor[${MainAssistID}].Target.IsSwimming} && ${Actor[${MainAssistID}].Target.Health} < 95)
+							KillTarget:Set[${Actor[${MainAssistID}].Target.ID}]	
+					}
 	
 					; Add additional check to see if Mob is in Camp OR MainTank is within designated range
 					if ${KillTarget}
@@ -1114,10 +1141,18 @@ function main(string Args)
 						}
 						else
 						{
-							if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.InCombatMode} && ${Target.Distance}<8
+							if ${Mob.Target[${Target.ID}]} && !${Target.IsDead} && ${Target.Distance}<8
 							{
-								;Debug:Echo["Calling Combat(2) within AutoPull Loop: Test-${Time.Timestamp}"]
-								call Combat
+								if ${Target.InCombatMode}	
+								{
+									;Debug:Echo["Calling Combat(2a) within AutoPull Loop: Test-${Time.Timestamp}"]
+									call Combat
+								}
+								elseif (${Target.IsSwimming} && ${Target.Health} < 95)
+								{
+									;Debug:Echo["Calling Combat(2b) within AutoPull Loop: Test-${Time.Timestamp}"]
+									call Combat
+								}
 							}
 							else
 							{
@@ -1223,10 +1258,22 @@ function main(string Args)
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
-				if (${AutoFollowMode} && !${Me.WhoFollowing.Equal[${AutoFollowee}]})
+				if (${AutoFollowMode})
 				{
-					ExecuteAtom AutoFollowTank
-					wait 5
+					if (${Actor[pc,${AutoFollowee}].OnTransport} || ${Me.OnTransport})
+					{
+						if (${Me.WhoFollowingID} > 0)
+							EQ2Execute /stopfollow
+					}
+					else
+					{
+						if (!${Me.WhoFollowing.Equal[${AutoFollowee}]} || ${Me.WhoFollowingID} <= 0)
+						{
+							ExecuteAtom AutoFollowTank
+							wait 5
+						}
+					}
+					ExecuteAtom CheckStuck
 				}
 				;;
 				;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1463,7 +1510,52 @@ function CastSpellRange(... Args)
 		return -1
 	}
 
-	;;if casting on killtarget, lets make sure it is still valid and find new one if needed
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Drusella Sathir
+	if (${Zone.RoomID.Equal[822072897]})
+	{
+		;echo "\ao<EQ2Bot>\ax In \atEmpress' Chamber\ax (Charasis, Maiden's Chamber)"
+		if (${Actor[${KillTarget}].Name.Equal[Drusella Sathir]} && !${Actor[${KillTarget}].IsDead})
+		{
+			;echo "\ao<EQ2Bot>\ax - Fighting \arDrusella Sathir\ax..."
+			if (!${Script[Drusella](exists)})
+			{
+				;; Start a special script that will run until she dies.  This script ensures that the character
+				;; immediately stops casting and stops attacking the second she begins casting her 
+				;; special ability.   It will automatically end once Drusella dies.
+				run "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Utils/Drusella"
+			}
+
+			;; Drusella's Necromantic Aura
+			if (${Actor[${KillTarget}].AbilityCastingID.Equal[1580204470]})
+			{
+				do
+				{
+					wait 2
+					;echo "\ao<EQ2Bot>\ax ---- Waiting for Drusella's Necromantic Aura to end [${WaitCounter:Inc[2]}]..."
+				}
+				while (${Actor[${KillTarget}].AbilityCastingID.Equal[1580204470]})
+				wait 20
+			}
+			;;;;
+			;; Drusella's Necromantic Aura has MainIconID of 259 and BackDropIconID of 33085
+			;; Lich has a MainIconID of 240 and BackDropIconID of 33085
+			;; **She always has one of these two abilities as Effect[1]**
+			if (${Actor[${KillTarget}].Effect[1].MainIconID.Equal[259]})
+			{
+				do
+				{
+					wait 2
+					;echo "\ao<EQ2Bot>\ax ---- Waiting for Drusella's Necromantic Aura to end [${WaitCounter:Inc[2]}]..."
+				}
+				while (${Actor[${KillTarget}].Effect[1].MainIconID.Equal[259]})
+			}
+		}
+	}
+	;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	;; if casting on killtarget, lets make sure it is still valid and find new one if needed
 	;;
 	;; * Illusionist Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for illusionists 
 	;; * Shadowknight Class File has been updated to check VerifyTarget() before all CastSpell calls -- so, this is not needed for shadowknights 
@@ -2112,6 +2204,8 @@ function Combat(bool PVP=0)
 	variable int tempvar
 	variable bool ContinueCombat
 	variable float TankToTargetDistance
+	variable uint ActorID
+	variable uint WaitCounter = 0
 
 	movinghome:Set[FALSE]
 	avoidhate:Set[FALSE]
@@ -2321,14 +2415,24 @@ function Combat(bool PVP=0)
 								else
 								{
 									TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
-									if (${TankToTargetDistance} <= 6.4)
+									if (${TankToTargetDistance} <= 8)
 									{
-										;echo "\aoCombat()-DEBUG::\ax TankToTargetDistance: ${TankToTargetDistance}"
-										;;;; TODO
-										;; Previously, this call was "call CheckPosition 1 1 ${KillTarget} 0 0", which would move the player BEHIND the target.
-										;; Classes which NEED to be behind the target should call it within the class file at the beginning of the fight.  For
-										;; 'generic' placement, it should use 0, which means "anywhere" (rather than "behind")
-										call CheckPosition 1 0 ${KillTarget} 0 0 "Combat(Non-MT)"
+										;; Combat movement is handled in the class files for Illusionist and Troubadour (TODO:  Add to all class files instead of having it done globally here.)
+										switch (${Me.SubClass})
+										{
+											case illusionist
+											case troubadour
+												break
+											default
+											{
+												;echo "\aoCombat()-DEBUG::\ax TankToTargetDistance: ${TankToTargetDistance}"
+												;;;; TODO
+												;; Previously, this call was "call CheckPosition 1 1 ${KillTarget} 0 0", which would move the player BEHIND the target.
+												;; Classes which NEED to be behind the target should call it within the class file at the beginning of the fight.  For
+												;; 'generic' placement, it should use 0, which means "anywhere" (rather than "behind")
+												call CheckPosition 1 0 ${KillTarget} 0 0 "Combat(Non-MT)"
+											}
+										}
 									}
 								}
 							}
@@ -2361,14 +2465,25 @@ function Combat(bool PVP=0)
 						}
 					}
 
-					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
+					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]})
 					{
-						variable uint ActorID
-						ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
-						if ${Mob.ValidActor[${ActorID}]}
+						if (${Actor[${MainAssistID}].Target.InCombatMode})
 						{
-							KillTarget:Set[${ActorID}]
-							target ${KillTarget}
+							ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
+							if ${Mob.ValidActor[${ActorID}]}
+							{
+								KillTarget:Set[${ActorID}]
+								target ${KillTarget}
+							}
+						}
+						elseif (${Actor[${MainAssistID}].Target.IsSwimming} && ${Actor[${MainAssistID}].Target.Health} < 95)
+						{
+							ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
+							if ${Mob.ValidActor[${ActorID}]}
+							{
+								KillTarget:Set[${ActorID}]
+								target ${KillTarget}
+							}
 						}
 					}
 					call ProcessTriggers
@@ -2448,13 +2563,25 @@ function Combat(bool PVP=0)
 						break
 					}
 
-					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]}) && ${Actor[${MainAssistID}].Target.InCombatMode}
+					if ${AutoSwitch} && !${MainTank} && (${Actor[${KillTarget}].Health}>30 || ${Me.Raid}) && (${Actor[${MainAssistID}].Target.Type.Equal[NPC]} || ${Actor[${MainAssistID}].Target.Type.Equal[NamedNPC]})
 					{
-						ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
-						if ${Mob.ValidActor[${ActorID}]}
+						if (${Actor[${MainAssistID}].Target.InCombatMode})
 						{
-							KillTarget:Set[${ActorID}]
-							target ${KillTarget}
+							ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
+							if ${Mob.ValidActor[${ActorID}]}
+							{
+								KillTarget:Set[${ActorID}]
+								target ${KillTarget}
+							}
+						}
+						elseif (${Actor[${MainAssistID}].Target.IsSwimming} && ${Actor[${MainAssistID}].Target.Health} < 95)
+						{
+							ActorID:Set[${Actor[${MainAssistID}].Target.ID}]
+							if ${Mob.ValidActor[${ActorID}]}
+							{
+								KillTarget:Set[${ActorID}]
+								target ${KillTarget}
+							}
 						}
 					}
 					call ProcessTriggers
@@ -2747,6 +2874,15 @@ function CheckPosition(int rangetype, int quadrant, uint TID=${KillTarget}, uint
 	variable bool DebugThisFunction = FALSE
 	if (${DebugThisFunction} && !${DebugEnabled})
 		Debug:Enable
+
+	if (${Script[Drusella](exists)} && ${Script[Drusella].Variable[Waiting]})
+	{
+		do
+		{
+			waitframe
+		}
+		while ${Script[Drusella].Variable[Waiting]}
+	}
 
 	Debug:Echo["\aoCheckPosition(${rangetype},${quadrant},${TID},${AbilityID},${castwhilemoving},\ax\ag${Caller}\ax\ao)\ax [TankToKillTargetDistance: ${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}].Precision[2]}]"]
 
@@ -3186,6 +3322,14 @@ function StrafeToLeft(uint TID, float destangle)
 			Debug:Echo["StrafeToLeft() :: In combat, but current KillTarget does not exist and/or is dead."]
 			return
 		}
+		if (${Script[Drusella](exists)} && ${Script[Drusella].Variable[Waiting]})
+		{
+			do
+			{
+				waitframe
+			}
+			while ${Script[Drusella].Variable[Waiting]}
+		}
 	}
 
 	startdistance:Set[${Actor[${TID}].Distance}]
@@ -3300,6 +3444,14 @@ function StrafeToRight(uint TID, float destangle)
 		{
 			Debug:Echo["StrafeToRight() :: In combat, but current KillTarget does not exist and/or is dead."]
 			return
+		}
+		if (${Script[Drusella](exists)} && ${Script[Drusella].Variable[Waiting]})
+		{
+			do
+			{
+				waitframe
+			}
+			while ${Script[Drusella].Variable[Waiting]}
 		}
 	}
 
@@ -4040,6 +4192,15 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 		return "NOAUTOMOVEMENT"
 	}
 
+	if (${Script[Drusella](exists)} && ${Script[Drusella].Variable[Waiting]})
+	{
+		do
+		{
+			waitframe
+		}
+		while ${Script[Drusella].Variable[Waiting]}
+	}
+
 	if ${ScanRange} > 40
 		MoveToRange:Set[${ScanRange}]
 	else
@@ -4081,11 +4242,6 @@ function FastMove(float X, float Z, int range, bool IgnoreNoAutoMovement, bool I
 		;Debug:Echo["In FastMove() -- Math.Distance[${Me.X},${Me.Z},${X},${Z}] > MoveToRange == ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]} > ${MoveToRange}"]
 		IsMoving:Set[FALSE]
 		return "INVALIDLOC2"
-	}
-	elseif ${Math.Distance[${Me.X},${Me.Z},${X},${Z}]}>${MoveToRange} && ${PathType}!=4
-	{
-		IsMoving:Set[FALSE]
-		return "INVALIDLOC3"
 	}
 
 	face ${X} ${Z}
@@ -4308,6 +4464,15 @@ function MovetoMaster()
 	if ${NoAutoMovement}
 		return
 
+	if (${Script[Drusella](exists)} && ${Script[Drusella].Variable[Waiting]})
+	{
+		do
+		{
+			waitframe
+		}
+		while ${Script[Drusella].Variable[Waiting]}
+	}
+
 
 	if ${EQ2Nav.FindPath[${EQ2Nav.FindClosestRegion[${Actor[${MainAssistID}].X},${Actor[${MainAssistID}].Z},${Actor[${MainAssistID}].Y}].FQN}]}
 	{
@@ -4481,43 +4646,37 @@ function IamDead(string Line)
 
 function LoreItem(string Line)
 {
-	if ${ID.Equal[${LastWindow}]}
+	switch ${LootWindow.Type}
 	{
-		switch ${LootWindow.Type}
-		{
-			case Free For All
-			case Lottery
-				LootWindow:DeclineLotto
-				return
-			case Need Before Greed
-				LootWindow:DeclineNBG
-				return
-			case Unknown
-			Default
-				echo "EQ2Bot(LoreItem):: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
-				return
-		}
+		case Free For All
+		case Lottery
+			LootWindow:DeclineLotto
+			return
+		case Need Before Greed
+			LootWindow:DeclineNBG
+			return
+		case Unknown
+		Default
+			echo "EQ2Bot(LoreItem):: Unknown LootWindow Type found: ${LootWindow.Type}"
+			return
 	}
 }
 
 function LootWindowBusy(string Line)
 {
-	if ${ID.Equal[${LastWindow}]}
+	switch ${LootWindow.Type}
 	{
-		switch ${LootWindow.Type}
-		{
-			case Free For All
-			case Lottery
-				LootWindow:DeclineLotto
-				return
-			case Need Before Greed
-				LootWindow:DeclineNBG
-				return
-			case Unknown
-			Default
-				echo "EQ2Bot(LootWindowBusy):: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
-				return
-		}
+		case Free For All
+		case Lottery
+			LootWindow:DeclineLotto
+			return
+		case Need Before Greed
+			LootWindow:DeclineNBG
+			return
+		case Unknown
+		Default
+			echo "EQ2Bot(LootWindowBusy):: Unknown LootWindow Type found: ${LootWindow.Type}"
+			return
 	}
 }
 
@@ -4554,21 +4713,41 @@ function CheckMTAggro()
 	{
 		do
 		{
-			if ${Mob.ValidActor[${ActorIterator.Value.ID}]} && ${ActorIterator.Value.InCombatMode}
+			if ${Mob.ValidActor[${ActorIterator.Value.ID}]}
 			{
-				if ${Math.Calc[${ActorIterator.Value.Health}+1]}<${Actor[${newtarget}].Health} && ${Actor[${newtarget}].Name(exists)}
-					newtarget:Set[${ActorIterator.Value.ID}]
-
-				if ${ActorIterator.Value.Target.ID}!=${Me.ID}
+				if (${ActorIterator.Value.InCombatMode})
 				{
-					if !${Mob.AggroGroup[${ActorIterator.Value.ID}]}
-						continue
+					if ${Math.Calc[${ActorIterator.Value.Health}+1]}<${Actor[${newtarget}].Health} && ${Actor[${newtarget}].Name(exists)}
+						newtarget:Set[${ActorIterator.Value.ID}]
 
-					call Lost_Aggro ${ActorIterator.Value.ID}
-					if ${UseCustomRoutines}
-						call Custom__Lost_Aggro ${ActorIterator.Value.ID}
-					lostaggro:Set[TRUE]
-					return
+					if ${ActorIterator.Value.Target.ID}!=${Me.ID}
+					{
+						if !${Mob.AggroGroup[${ActorIterator.Value.ID}]}
+							continue
+
+						call Lost_Aggro ${ActorIterator.Value.ID}
+						if ${UseCustomRoutines}
+							call Custom__Lost_Aggro ${ActorIterator.Value.ID}
+						lostaggro:Set[TRUE]
+						return
+					}
+				}
+				elseif (${ActorIterator.Value.IsSwimming} && ${ActorIterator.Value.Health} < 95)
+				{
+					if ${Math.Calc[${ActorIterator.Value.Health}+1]}<${Actor[${newtarget}].Health} && ${Actor[${newtarget}].Name(exists)}
+						newtarget:Set[${ActorIterator.Value.ID}]
+
+					if ${ActorIterator.Value.Target.ID}!=${Me.ID}
+					{
+						if !${Mob.AggroGroup[${ActorIterator.Value.ID}]}
+							continue
+
+						call Lost_Aggro ${ActorIterator.Value.ID}
+						if ${UseCustomRoutines}
+							call Custom__Lost_Aggro ${ActorIterator.Value.ID}
+						lostaggro:Set[TRUE]
+						return
+					}
 				}
 			}
 		}
@@ -4635,7 +4814,7 @@ atom(script) EQ2_onIncomingText(string Text)
 	; START -------------------------------------
 	; -------------------------------------------
 
-	if (${Text.Find[YOU hit ]} > 0 || ${Text.Find[YOU critically hit ]} > 0 || ${Text.Find[YOU double attack]} > 0 || ${Text.Find[YOU critically double attack]} > 0)
+	if (${Text.Find[YOU hit]} > 0 || ${Text.Find[YOU critically hit]} > 0 || ${Text.Find[YOU double attack]} > 0 || ${Text.Find[YOU critically double attack]} > 0)
 	{
 		;echo AutoAttackReady: FALSE
 		AutoAttackReady:Set[FALSE]
@@ -4697,12 +4876,25 @@ atom(script) EQ2_onIncomingChatText(int ChatType, string Message, string Speaker
 	return
 }
 
-atom(script) EQ2_onLootWindowAppeared(string ID)
+atom(script) EQ2_onLootWindowAppeared(uint ID)
 {
+	;; Set to "FALSE" to turn off debugging for this function
+	variable bool DebugThisFunction = FALSE
+	variable bool OriginalDebugSetting = ${DebugEnabled}
+	if (${DebugThisFunction} && !${DebugEnabled})
+		Debug:Enable
+
 	if ${PauseBot} || !${StartBot}
 		return
 
-	Debug:Echo["EQ2_onLootWindowAppeared(${ID}) -- (LastWindow: ${LastWindow})"]
+	; If ${ID} doesn't return a valid loot window, then set to zero.   ISXEQ2 will return the last lootwindow when the argument is zero.
+	if (!${LootWindow[${ID}](exists)})
+	{
+		ID:Set[0]
+		Debug:Echo["EQ2_onLootWindowAppeared()"]
+	}
+	else
+		Debug:Echo["EQ2_onLootWindowAppeared(${ID})"]
 	Debug:Echo["LootWindow.Type: ${LootWindow[${ID}].Type}"]
 	Debug:Echo["LootWindow.Item[1]: ${LootWindow[${ID}].Item[1]}"]
 
@@ -4717,32 +4909,13 @@ atom(script) EQ2_onLootWindowAppeared(string ID)
 		case Void Shard
 		case Mark of Manaar
 			run "${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Utils/LootAll" ${ID} ${Math.Rand[30]:Inc[1]}
+			if (${DebugThisFunction} && !${OriginalDebugSetting})
+				Debug:Disable
 			return
 		
 		default
 			break
 	}
-
-	if (${ID.Equal[${LastWindow}]} && !${LootMethod.Equal[Idle]})
-	{
-		Debug:Echo["Already processed this LootWindow.  Declining..."]
-		switch ${LootWindow[${ID}].Type}
-		{
-			case Free For All
-			case Lottery
-				LootWindow[${ID}]:DeclineLotto
-				return
-			case Need Before Greed
-				LootWindow[${ID}]:DeclineNBG
-				return
-			case Unknown
-			Default
-				echo "EQ2Bot:: Unknown LootWindow Type found: ${LootWindow[${ID}].Type}"
-				return
-		}
-	}
-	
-	LastWindow:Set[${ID}]
 
 	if (${LootMethod.Equal[Accept]})
 	{
@@ -4788,11 +4961,15 @@ atom(script) EQ2_onLootWindowAppeared(string ID)
 		deccnt:Inc[${LootWindow[${ID}].NumItems}]
 	}
 	elseif (${LootMethod.Equal[Idle]})
+	{
+		if (${DebugThisFunction} && !${OriginalDebugSetting})
+			Debug:Disable			
 		return
+	}
 
 	switch ${LootWindow[${ID}].Type}
 	{
-		case Lottery
+		case Lotto
 			if ${LootThisAlways}
 				LootWindow[${ID}]:RequestAll
 			elseif ${deccnt}
@@ -4814,7 +4991,10 @@ atom(script) EQ2_onLootWindowAppeared(string ID)
 			if ${deccnt}
 				LootWindow[${ID}]:DeclineNBG
 			else
+			{
+				echo "\aoTEST\ax"	
 				LootWindow[${ID}]:SelectGreed
+			}
 			break
 		case Unknown
 		Default
@@ -4822,6 +5002,8 @@ atom(script) EQ2_onLootWindowAppeared(string ID)
 			break
 	}
 
+	if (${DebugThisFunction} && !${OriginalDebugSetting})
+		Debug:Disable
 	return
 }
 
@@ -4911,30 +5093,11 @@ function BotAutoMeleeOff()
 	}
 }
 
-function BotCastTarget(string line, string Spell, string castTarget)
-{
-	variable string tempTarget
-
-		if (${PauseBot} || !${StartBot})
-				return
-
-	if ${castTarget.Equal[me]}
-		tempTarget:Set[${MainAssist}]
-	else
-		tempTarget:Set[${castTarget}]
-
-	target ${tempTarget}
-	wait 2
-	call CastSpell "${Spell}"
-}
-
 function SetNewKillTarget()
 {
-		CurrentAction:Set[Setting KillTarget to your current target in 3 seconds...]
-		wait 10
 		CurrentAction:Set[Setting KillTarget to your current target in 2 seconds...]
 		wait 10
-		CurrentAction:Set[Setting KillTarget to your current target in 1 seconds...]
+		CurrentAction:Set[Setting KillTarget to your current target in 1 second...]
 		wait 10
 
 		if ${Target(exists)} && ${Target.Type.Find[NPC]}
@@ -5058,7 +5221,7 @@ function VerifyTarget(uint ID, string Caller)
 	variable string bReturn = "TRUE"
 	variable bool DebugEnabled = ${Debug.Enabled}
 	;; Set to "FALSE" to turn off debugging for this function
-	variable bool DebugThisFunction = TRUE
+	variable bool DebugThisFunction = FALSE
 	if (${DebugThisFunction} && !${DebugEnabled})
 		Debug:Enable
 
@@ -5122,10 +5285,22 @@ function VerifyTarget(uint ID, string Caller)
 		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is farther than 35 meters away \[Called from '${Caller}'\]"]
 		bReturn:Set["FALSE"]
 	}
-	elseif (!${MainAssist.Equal[${Me.Name}]} && !${Actor[${TargetID}].InCombatMode})
+	elseif (!${MainAssist.Equal[${Me.Name}]})
 	{
-		Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not in combat mode and I am not the main assist \[Called from '${Caller}'\]"]
-		bReturn:Set["FALSE"]
+		if (${Actor[${TargetID}].IsSwimming} && ${Actor[${TargetID}].Health} < 95)
+		{
+			Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is swimming and has less than 95% health; returning TRUE \[Called from '${Caller}'\]"]	
+			if (!${DebugEnabled} && ${DebugThisFunction})
+				Debug:Disable				
+			VerifyTargetTimer:Set[${Time.SecondsSinceMidnight}]
+			VerifyTargetLastResult:Set["TRUE"]
+			return "TRUE"
+		}
+		elseif (!${Actor[${TargetID}].InCombatMode})
+		{
+			Debug:Echo["\at\[EQ2Bot-VerifyTarget(${TargetID})\]\ax TargetID is not in combat mode and I am not the main assist \[Called from '${Caller}'\]"]
+			bReturn:Set["FALSE"]
+		}
 	}
 	elseif (!${Actor[${TargetID}].Type.Equal[NPC]} && !${Actor[${TargetID}].Type.Equal[NamedNPC]})
 	{
@@ -5641,8 +5816,13 @@ objectdef ActorCheck
 		if ${Actor[MyPet].Name(exists)} && ${Actor[${actorid}].Target.ID}==${Actor[MyPet].ID}
 			return TRUE
 
-		if ${Actor[${actorid}].Target.ID}==${Me.ID} && ${Actor[${actorid}].InCombatMode}
-			return TRUE
+		if (${Actor[${actorid}].Target.ID}==${Me.ID})
+		{
+			if (${Actor[${actorid}].InCombatMode})
+				return TRUE
+			elseif (${Actor[${actorid}].IsSwimming} && ${Actor[${actorid}].Health} < 95)
+				return TRUE
+		}
 
 		return FALSE
 	}
@@ -5653,6 +5833,7 @@ objectdef ActorCheck
 		variable index:actor Actors
 		variable iterator ActorIterator
 		variable uint ActorID
+		variable uint mobcount = 0
 
 		if (${DistanceToCheck} <= 0)
 			DistanceToCheck:Set[15]
@@ -5660,20 +5841,33 @@ objectdef ActorCheck
 		EQ2:QueryActors[Actors, (Type =- "NPC" || Type =- "NamedNPC") && Distance <= ${DistanceToCheck}]
 		Actors:GetIterator[ActorIterator]
 
+		;echo "\at<Mob.Count>\ax ${Actors.Used} NPCs within ${DistanceToCheck}m..."
+
 		if ${ActorIterator:First(exists)}
 		{
 			do
 			{
 				ActorID:Set[${ActorIterator.Value.ID}]
+				;echo "\at<Mob.Count>\ax - Checking ${ActorID}-${ActorIterator.Value.Name} (Distance: ${ActorIterator.Value.Distance}"
 
-				if (${This.ValidActor[${ActorID}]} && ${ActorIterator.Value.InCombatMode})
+				if (${This.ValidActor[${ActorID}]})
 				{
-					mobcount:Inc
+					if (${ActorIterator.Value.InCombatMode})
+					{
+						mobcount:Inc
+						;echo "\at<Mob.Count>\ax -- Actor InCombatMode; mobcount now ${mobcount}"
+					}
+					elseif (${ActorIterator.Value.IsSwimming} && ${ActorIterator.Value.Health} < 95 && ${ActorIterator.Target(exists)})
+					{
+						mobcount:Inc
+						;echo "\at<Mob.Count>\ax -- Actor swimming, has a target, and Health < 95%; mobcount now ${mobcount}"
+					}
 				}
 			}
 			while ${ActorIterator:Next(exists)}
 		}
 
+		;echo "\at<Mob.Count>\ax Returning \ay${mobcount}\ax"
 		return ${mobcount}
 	}
 
@@ -5712,20 +5906,39 @@ objectdef ActorCheck
 			{
 				ActorID:Set[${ActorIterator.Value.ID}]
 
-				if (${This.CheckActor[${ActorID}]} && ${ActorIterator.Value.InCombatMode} && !${ActorIterator.Value.IsDead})
+				if (${This.CheckActor[${ActorID}]} && !${ActorIterator.Value.IsDead})
 				{
-					if (${ActorIterator.Value.Target.ID} == ${Me.ID})
+					if (${ActorIterator.Value.InCombatMode})
 					{
-						DetectTimer:Set[${Time.SecondsSinceMidnight}]
-						DetectLastResult:Set[TRUE]
-						return TRUE
-					}
+						if (${ActorIterator.Value.Target.ID} == ${Me.ID})
+						{
+							DetectTimer:Set[${Time.SecondsSinceMidnight}]
+							DetectLastResult:Set[TRUE]
+							return TRUE
+						}
 
-					if ${This.AggroGroup[${ActorID}]}
+						if ${This.AggroGroup[${ActorID}]}
+						{
+							DetectTimer:Set[${Time.SecondsSinceMidnight}]
+							DetectLastResult:Set[TRUE]
+							return TRUE
+						}
+					}
+					elseif (${ActorIterator.Value.IsSwimming} && ${ActorIterator.Value.Health} < 95)
 					{
-						DetectTimer:Set[${Time.SecondsSinceMidnight}]
-						DetectLastResult:Set[TRUE]
-						return TRUE
+						if (${ActorIterator.Value.Target.ID} == ${Me.ID})
+						{
+							DetectTimer:Set[${Time.SecondsSinceMidnight}]
+							DetectLastResult:Set[TRUE]
+							return TRUE
+						}
+
+						if ${This.AggroGroup[${ActorID}]}
+						{
+							DetectTimer:Set[${Time.SecondsSinceMidnight}]
+							DetectLastResult:Set[TRUE]
+							return TRUE
+						}
 					}
 				}
 			}
@@ -5743,8 +5956,11 @@ objectdef ActorCheck
 	{
 		if !${Actor[${targetid}].InCombatMode}
 		{
-			Debug:Echo["EQ2Bot-Target(): Return False - Target Not InCombatMode"]
-			return FALSE
+			if (!${Actor[${targetid}].IsSwimming})
+			{
+				Debug:Echo["EQ2Bot-Target(): Return False - Target Not InCombatMode"]
+				return FALSE
+			}
 		}
 		
 		if ${This.AggroGroup[${targetid}]} || ${Actor[${targetid}].Target.ID}==${Me.ID}
@@ -5771,9 +5987,12 @@ objectdef ActorCheck
 
 				if (${ActorIterator.Value.Target.ID} == ${Me.ID} || ${This.AggroGroup[${ActorID}]})
 				{
-					if (${ActorIterator.Value.InCombatMode} && !${ActorIterator.Value.IsDead} && ${This.CheckActor[${ActorID}]})
+					if (!${ActorIterator.Value.IsDead} && ${This.CheckActor[${ActorID}]})
 					{
-						return ${ActorID}
+						if (${ActorIterator.Value.InCombatMode})
+							return ${ActorID}
+						elseif (${ActorIterator.Value.IsSwimming} && ${ActorIterator.Value.Health} < 95)
+							return ${ActorID}
 					}
 				}
 			}
@@ -5836,17 +6055,26 @@ objectdef ActorCheck
 				ActorID:Set[${ActorIterator.Value.ID}]
 				;echo "\at[EQ2Bot-CheckMYAggro()]\ax Checking ${ActorIterator.Value.Name} for aggression..."
 
-				if ${This.ValidActor[${ActorID}]} && ${ActorIterator.Value.Target.ID}==${Me.ID} && ${ActorIterator.Value.InCombatMode}
+				if ${This.ValidActor[${ActorID}]} && ${ActorIterator.Value.Target.ID}==${Me.ID}
 				{
-					echo "\at[EQ2Bot-CheckMYAggro()]\ax I HAVE AGGRO [${ActorID} - ${ActorIterator.Value.Name}]..."
-					haveaggro:Set[TRUE]
-					aggroid:Set[${ActorID}]
-					return
+					if (${ActorIterator.Value.InCombatMode})
+					{
+						echo "\at[EQ2Bot-CheckMYAggro()]\ax I HAVE AGGRO [${ActorID} - ${ActorIterator.Value.Name}]..."
+						haveaggro:Set[TRUE]
+						aggroid:Set[${ActorID}]
+						return
+					}
+					elseif (${ActorIterator.Value.IsSwimming} && ${ActorIterator.Value.Health} < 95)
+					{
+						echo "\at[EQ2Bot-CheckMYAggro()]\ax I HAVE AGGRO [${ActorID} - ${ActorIterator.Value.Name}]..."
+						haveaggro:Set[TRUE]
+						aggroid:Set[${ActorID}]
+						return
+					}
 				}
 			}
 			while ${ActorIterator:Next(exists)}
 		}
-
 		return
 	}
 }
@@ -6131,7 +6359,6 @@ objectdef EQ2BotObj
 		AddTrigger CantSeeTarget "@*@Can't see target@*@"
 
 		; Bot Triggers
-		AddTrigger BotCastTarget "cast @Spell@ on @castTarget@"
 		AddTrigger BotFollow "follow @followTarget@"
 		AddTrigger BotStop "EQ2Bot stop"
 		AddTrigger BotAbort "EQ2Bot end"
@@ -7189,7 +7416,7 @@ atom(script) EQ2_onChoiceWindowAppeared()
 			run "${PATH_THREADS}/ChoiceWindow.iss" 5 DoChoice1
 		if ${KillTarget} && ${Actor[${KillTarget}].Name(exists)}
 		{
-			if !${Actor[${KillTarget}].InCombatMode}
+			if (!${Actor[${KillTarget}].InCombatMode} && !${Actor[${KillTarget}].IsSwimming})
 				KillTarget:Set[0]
 		}
 		InitialBuffsDone:Set[0]

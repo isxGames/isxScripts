@@ -483,20 +483,23 @@ atom AutoFollowTank()
 		if (${Time.Timestamp} > ${Math.Calc64[${AutoFollowLastSetTime}+5]})
 		{
 			;Debug:Echo["DEBUG-AutoFollowTank(): Following...."]
-			if !${Me.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}].Name(exists)} && !${Actor[pc,${AutoFollowee}].OnGriffon} && (!${CombatFollow} || !${AutoFollowingMA})
+			if (!${Me.WhoFollowing.Equal[${AutoFollowee}]} && ${Actor[pc,${AutoFollowee}].Distance} < 45 && ${Actor[pc,${AutoFollowee}].Name(exists)} && !${Actor[pc,${AutoFollowee}].OnTransport} && !${Me.OnTransport} )
 			{
-				if !${Me.WhoFollowing.Equal[${AutoFollowee}]}
+				if (!${CombatFollow} || !${AutoFollowingMA})
 				{
-					;squelch face ${AutoFollowee}
-					eq2execute /follow ${AutoFollowee}
-					AutoFollowLastSetTime:Set[${Time.Timestamp}]
-					AutoFollowingMA:Set[TRUE]
-					AutoFollowMode:Set[TRUE]
-				}
-				else
-				{
-					AutoFollowingMA:Set[FALSE]
-					;Debug:Echo["DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."]
+					if !${Me.WhoFollowing.Equal[${AutoFollowee}]}
+					{
+						;squelch face ${AutoFollowee}
+						eq2execute /follow ${AutoFollowee}
+						AutoFollowLastSetTime:Set[${Time.Timestamp}]
+						AutoFollowingMA:Set[TRUE]
+						AutoFollowMode:Set[TRUE]
+					}
+					else
+					{
+						AutoFollowingMA:Set[FALSE]
+						;Debug:Echo["DEBUG-AutoFollowTank(): Either I am already following ${AutoFollowee}..."]
+					}
 				}
 			}
 			else
@@ -504,7 +507,7 @@ atom AutoFollowTank()
 			    AutoFollowingMA:Set[FALSE]
 			    ;Debug:Echo["DEBUG-AutoFollowTank(): Hmmm... ${AutoFollowee} does not seem to be in range at all..."]
 			}
-   	}
+   		}
 	}
 }
 
@@ -1685,7 +1688,7 @@ objectdef HeroicOp
 							{
 								This:CastHorn
 							}
-							elseif
+							else
 							{
 								This:CastBoot
 							}
@@ -1728,7 +1731,7 @@ objectdef HeroicOp
 							{
 								This:CastChalice
 							}
-							elseif
+							else
 							{
 								This:CastHammer
 							}

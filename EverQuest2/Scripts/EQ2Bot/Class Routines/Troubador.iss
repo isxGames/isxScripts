@@ -85,8 +85,8 @@ function Class_Declaration()
 	BuffJesterCap:GetIterator[BuffJesterCapIterator]
 
 	;; Set these to TRUE, as desired, for testing
-	Debug:Enable
-	TroubDebugMode:Set[TRUE]
+	;Debug:Enable
+	;TroubDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -459,7 +459,7 @@ function Combat_Routine(int xAction)
 	declare tempvar int local
 	declare DebuffCnt int  0
 	declare range int 0
-
+	declare TankToTargetDistance float local
 	declare spellsused int local
 	declare spellthreshold int local
 
@@ -541,6 +541,45 @@ function Combat_Routine(int xAction)
 	}
 
 	call CheckHeals
+
+	if (${AutoMelee} && !${NoAutoMovementInCombat} && !${NoAutoMovement})
+	{
+		if ${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]}
+		{
+			TankToTargetDistance:Set[${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]}]
+			if ${TroubDebugMode}
+				Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]
+
+			if ${MainTank}
+				call CheckPosition 1 0 ${KillTarget} 0 0 "Troubadour-Combat_Routine()"
+			else
+			{
+				if (${TankToTargetDistance} <= 10)
+				{
+					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
+						call CheckPosition 1 1 ${KillTarget} 0 0 "Troubadour-Combat_Routine()"
+					else
+						call CheckPosition 1 0 ${KillTarget} 0 0 "Troubadour-Combat_Routine()"
+				}
+			}
+		}
+	}
+
+
+	;if !${NoAutoMovementInCombat} || !${NoAutoMovement}
+	;{
+		;; TODO:  Use profiling to see if this might slow things down.   It shouldn't, but if it does, could change Position.GetMeleeMaxRange
+		;;        to a constant value like 8
+	;	if (${Actor[${KillTarget}].Distance} > ${Position.GetMeleeMaxRange[${KillTarget}]})
+	;	{
+	;		if (${Math.Distance[${Actor[${MainTankID}].Loc},${Actor[${KillTarget}].Loc}]} <= 10)
+	;		{
+	;			;; Note:  "call CheckPosition 1 1 ${KillTarget} 0 0" would put the Troubadour BEHIND the target.  The version below
+	;			;;        simply moves the Troubadour within melee range of the target at any angle.
+	;			call CheckPosition 1 0 ${KillTarget} 0 0 "Troubadour-Combat_Routine()"
+	;		}
+	;	}
+	;}
 
   	;Rhythym Blade
 	if ${spellsused}<=${spellthreshold} && ${Me.Ability[${SpellType[397]}].IsReady} && !${Me.Maintained[${SpellType[397]}](exists)}

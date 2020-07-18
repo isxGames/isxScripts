@@ -1153,7 +1153,7 @@ function CheckGroupOrRaidAggro()
 	variable iterator ActorIterator
 	variable uint MobTargetID 
 	variable bool DebugEnabled = ${Debug.Enabled}
-	variable bool DebugThisFunction = TRUE
+	variable bool DebugThisFunction = FALSE
 	if (${DebugThisFunction} && !${DebugEnabled})
 		Debug:Enable
 

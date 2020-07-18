@@ -3,7 +3,7 @@
 function main(... Args)		
 {
 	; Uncomment to enable debugging
-	Debug:Enable
+	;Debug:Enable
 	
 	Debug:Echo["ChoiceWindow.Begin"]
 	

@@ -126,8 +126,8 @@ function Class_Declaration()
 	}
 		
 	;; Set this to TRUE, as desired, for testing
-	Debug:Enable
-	IllyDebugMode:Set[TRUE]
+	;Debug:Enable
+	;IllyDebugMode:Set[TRUE]
 }
 
 function Pulse()
@@ -849,6 +849,18 @@ function CheckCastBeam()
 		spellsused:Inc
 	}
 
+	;; Cast Counterblade if it is ready
+	if (${Me.Ability[${SpellType[399]}].IsReady} && ${Actor[${KillTarget}].Distance} < 10)
+	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		LastSpellCast:Set[399]
+		call CastSpellRange 399 0 0 0 ${KillTarget} 0 0 0 1
+		spellsused:Inc
+		return ${spellsused}
+	}
+
 	;; Cast Beam if it is ready
 	if (${Me.Ability[${SpellType[60]}].IsReady})
 	{
@@ -1477,15 +1489,15 @@ function Combat_Routine(int xAction)
 				Debug:Echo["Combat_Routine():: TankToTargetDistance: ${TankToTargetDistance}"]
 
 			if ${MainTank}
-				call CheckPosition 1 0
+				call CheckPosition 1 0 ${KillTarget} 0 0 "Illusionist-Combat_Routine()"
 			else
 			{
 				if (${TankToTargetDistance} <= 7.5)
 				{
 					if ${Actor[${KillTarget}].IsEpic} || ${Actor[${KillTarget}].IsNamed}
-						call CheckPosition 1 1
+						call CheckPosition 1 1 ${KillTarget} 0 0 "Illusionist-Combat_Routine()"
 					else
-						call CheckPosition 1 0
+						call CheckPosition 1 0 ${KillTarget} 0 0 "Illusionist-Combat_Routine()"
 				}
 			}
 		}
@@ -1520,41 +1532,38 @@ function Combat_Routine(int xAction)
 
 	if (${UseDoppleganger} && !${MainTank} && ${Me.Group} > 1)
 	{
-		if (!${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
+		if (${Me.Ability[Doppelganger].IsReady} && !${Actor[${KillTarget}].IsSolo} && ${Actor[${KillTarget}].Health} > 50)
 		{
-			if ${Me.Ability[Doppleganger].IsReady}
+			switch ${Actor[${KillTarget}].ConColor}
 			{
-				switch ${Actor[${KillTarget}].ConColor}
-				{
-					case Red
-					case Orange
-					case Yellow
-						if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
+				case Red
+				case Orange
+				case Yellow
+					if (${Actor[${KillTarget}].EncounterSize} > 2 || ${Actor[${KillTarget}].Difficulty} >= 2)
+					{
+						;echo "EQ2Bot-DEBUG: Casting 'Doppelganger' on ${MainTankPC}"
+						eq2execute /useabilityonplayer ${MainTankPC} "Doppelganger"
+						wait 1
+						do
 						{
-							;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
-							eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
-							wait 1
-							do
-							{
-								waitframe
-							}
-							while ${Me.CastingSpell}
+							waitframe
 						}
-						break
-					default
-						if (${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed})
+						while ${Me.CastingSpell}
+					}
+					break
+				default
+					if (${FightingEpicMob} || ${Actor[${KillTarget}].IsNamed})
+					{
+						;echo "EQ2Bot-DEBUG: Casting 'Doppelganger' on ${MainTankPC}"
+						eq2execute /useabilityonplayer ${MainTankPC} "Doppelganger"
+						wait 1
+						do
 						{
-							;echo "EQ2Bot-DEBUG: Casting 'Doppleganger' on ${MainTankPC}"
-							eq2execute /useabilityonplayer ${MainTankPC} "Doppleganger"
-							wait 1
-							do
-							{
-								waitframe
-							}
-							while ${Me.CastingSpell}
+							waitframe
 						}
-						break
-				}
+						while ${Me.CastingSpell}
+					}
+					break
 			}
 		}
 	}
@@ -2063,7 +2072,19 @@ function Combat_Routine(int xAction)
 			break
 			
 		default
-			if (${Me.Ability[${SpellType[60]}].IsReady})
+			;; Counterblade (AA hard hitting melee attack)   OR   Ultraviolet Beam
+			if (${Me.Ability[${SpellType[399]}].IsReady} && ${Actor[${KillTarget}].Distance} < 10)
+			{
+				call _CastSpellRange 399 0 0 0 ${KillTarget} 0 0 0 1
+				if ${Return.Equal[CombatComplete]}
+				{
+					if ${IllyDebugMode}
+						Debug:Echo["Combat_Routine() -- Exiting (Target no longer valid: CombatComplete) [58]"]
+					return CombatComplete				
+				}
+				spellsused:Inc
+			}
+			elseif (${Me.Ability[${SpellType[60]}].IsReady})
 			{
 				call _CastSpellRange 60 0 0 0 ${KillTarget} 0 0 0 1
 				if ${Return.Equal[CombatComplete]}
@@ -2074,6 +2095,7 @@ function Combat_Routine(int xAction)
 				}
 				spellsused:Inc
 			}
+
 			if ${spellsused} < 1 && !${MezzMode}
 			{
 				call CastSomething			
@@ -3313,9 +3335,23 @@ function DoInitialSpellLineup(bool FightingEpicMob, bool FightingHeroicMob)
 			Debug:Echo["DoInitialSpellLineup() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}
-		
-	;; Ultraviolet Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+
+	;; Counterblade (AA hard hitting melee attack)    OR   Ultraviolet Beam
+	if (${Me.Ability[${SpellType[399]}].IsReady} && ${Actor[${KillTarget}].Distance} < 10)
+	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 399 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}		
+		spellsused:Inc
+	}
+	elseif (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
@@ -3624,9 +3660,23 @@ function CheckStuns()
 			Debug:Echo["CheckStuns() -- Exiting (KillTarget has changed)"]
 		return ${spellsused}
 	}
-	
-	;; Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+
+	;; Counterblade (AA hard hitting melee attack)   OR    Ultraviolet Beam
+	if (${Me.Ability[${SpellType[399]}].IsReady} && ${Actor[${KillTarget}].Distance} < 10)
+	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 399 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}		
+		spellsused:Inc
+	}
+	elseif (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
@@ -3669,8 +3719,22 @@ function CheckStuns()
 		return ${spellsused}
 	}
 	
-	;; Beam
-	if (${Me.Ability[${SpellType[60]}].IsReady})
+	;; Counterblade (AA hard hitting melee attack)   OR   Ultraviolet Beam
+	if (${Me.Ability[${SpellType[399]}].IsReady} && ${Actor[${KillTarget}].Distance} < 10)
+	{
+		call VerifyTarget ${KillTarget}
+		if ${Return.Equal[FALSE]}
+			return CombatComplete
+		call CastSpellRange 399 0 0 0 ${KillTarget} 0 0 0 1
+		if (${Return.Equal[-1]})
+		{
+			if ${IllyDebugMode}
+				Debug:Echo["DoInitialSpellLineup() -- Exiting (CastSpellRange returned -1, KillTarget changed or not valid)"]
+			return ${spellsused}
+		}		
+		spellsused:Inc
+	}
+	elseif (${Me.Ability[${SpellType[60]}].IsReady})
 	{
 		call VerifyTarget ${KillTarget}
 		if ${Return.Equal[FALSE]}
