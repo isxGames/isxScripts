@@ -1,6 +1,5 @@
 /*
 	obj_LSQuery by CyberTech
-	SVN Location:  $HeadURL$
 
 		Provides a class to cache commonly used Lavishscript Queries without needing to delete and
 		recreate the query every time it is needed.
