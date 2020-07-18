@@ -1,6 +1,5 @@
 /*
 	LSTypeIterator by CyberTech
-	SVN Location:  $HeadURL$
 
 		This object is designed to allow for rapid testing of the members of a datatype, without needing to have
 		advance knowledge or hardcoding of the members and methods of the datatype.
@@ -80,10 +79,6 @@
 
 objectdef obj_LSTypeIterator
 {
-	variable string SVN_REVISION = "$Rev$"
-	variable string SVN_PATH = "$HeadURL$"
-	variable string SVN_AUTHOR = "$Author$"
-
 	variable file TypeListTempFile = "${Script.CurrentDirectory}/lstypes.${Script.Filename}.txt"
 	variable string TypeName
 	variable set TypeMembers
@@ -187,9 +182,17 @@ objectdef obj_LSTypeIterator
 					temp:Set[${temp.Replace[\n, ""]}]
 					while ${temp.NotEqual["Methods of type ${This.TypeName}"]}
 					{
+						if ${temp.Find["*"](exists)} || ${temp.Find["----"](exists)}
+						{
+							temp:Set[${This.TypeListTempFile.Read}]
+							temp:Set[${temp.Replace[\r, ""]}]
+							temp:Set[${temp.Replace[\n, ""]}]
+							continue
+						}
 						Position:Set[1]
 						while ${temp.Token[${Position}, " "](exists)} && ${temp.Token[${Position}, " "].NotEqual["NULL"]}
 						{
+
 							if ${temp.Token[${Position}, " "].Length} > 1
 							{
 								TypeMembers:Add[${temp.Token[${Position}, " "]}]
