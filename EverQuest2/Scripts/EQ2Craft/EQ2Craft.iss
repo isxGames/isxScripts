@@ -312,11 +312,11 @@ function ValidateRegions()
 
 function SetLocalization()
 {
-	;; Note:  Be sure to search through the script for instances of ${sLocalization} for specific edits that will be required 
+	;; Note:  Be sure to search through the script for instances of ${sLocalization} for specific edits that will be required
 	;;        that cannot be included in this function.
 	;;
 	;;        Also, if anything is not translated, it means that the translation was not provided and therefore will default to English.
-	
+
 	switch ${EQ2.ServerName}
 	{
 		case Storms
@@ -333,13 +333,13 @@ function SetLocalization()
 			Broker_GuildTag:Set["N�gociant"]
 			Broker_GuildTag2:Set["N�gociant de la salle de la guilde"]
 			Wholesaler:Set["Wholesaler"]
-			
+
 			WritInitialConvo:Set["Je voudrais "]
-			
+
 			WorkOrderClipboard:Set["Porte-bloc de commandes"]
 			WorkOrdersDesk:Set["Work Orders Desk"]
 			Desk:Set["bureau"]
-			
+
 			StoveAndKeg:Set["Cuisini�re et baril"]
 			SewingTableAndMannequin:Set["Table de couture avec un mannequin"]
 			WoodworkingTable:Set["Table de travail du bois"]
@@ -348,10 +348,10 @@ function SetLocalization()
 			Forge:Set["Forge"]
 			EngravedDesk:Set["Bureau poin�onn�"]
 			break
-		
+
 		default
 			sLocalization:Set["English"]
-			
+
 			RushOrder_GuildTag:Set["Rush Orders"]
 			RushOrder_GuildTag2:Set["Tradeskill Rush Order Agent"]
 			WorkOrder_GuildTag:Set["Work Orders"]
@@ -361,11 +361,11 @@ function SetLocalization()
 			Wholesaler:Set["Wholesaler"]
 
 			WritInitialConvo:Set["I would like"]
-			
+
 			WorkOrderClipboard:Set["Work Order Clipboard"]
 			WorkOrdersDesk:Set["Work Orders Desk"]
 			Desk:Set["desk"]
-			
+
 			StoveAndKeg:Set["Stove & Keg"]
 			SewingTableAndMannequin:Set["Sewing Table & Mannequin"]
 			WoodworkingTable:Set["Woodworking Table"]
@@ -424,7 +424,7 @@ function main(... recipeFavourite)
 
 	ChatEcho "---------------------------"
 	ChatEcho "EQ2Craft:: Initializing..."
-		
+
 	ISXEQ2:ClearAbilitiesCache
 
 	if (!${Me.Recipe[1](exists)})
@@ -501,7 +501,7 @@ function main(... recipeFavourite)
 	Nav.BackupTime:Set[3]
 	Nav.StrafeTime:Set[3]
 	;;;;;;;;;;;;
-	
+
 	;;;;;;;;;;;;
 	;; Set Localization
 	call SetLocalization
@@ -554,7 +554,7 @@ function main(... recipeFavourite)
 		UIElement[Craft Selection]:Minimize
 		UIElement[CraftLite@Titlebar@Craft Selection]:SetText[Craft Full]
 	}
-	
+
 	if ${HideUI}
 		UIElement[Craft Selection]:Hide
 
@@ -834,7 +834,7 @@ function main(... recipeFavourite)
 								{
 									waitframe
 									;; It is OK to use waitframe here because the "IsRecipeInfoAvailable" will simple return
-									;; FALSE while the details acquisition thread is still running.   In other words, it 
+									;; FALSE while the details acquisition thread is still running.   In other words, it
 									;; will not spam the server.
 								}
 								while (!${Me.Recipe[${MainRecipe}].IsRecipeInfoAvailable} && ${Timer:Inc} < 1500)
@@ -1040,7 +1040,7 @@ function main(... recipeFavourite)
 
 			;EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
 			;wait 10
-			
+
 			WritTrigger:Set[FALSE]
 			GotWrit:Set[FALSE]
 			UpdateRecipeCount:Set[FALSE]
@@ -1580,8 +1580,8 @@ function MovetoDevice(string devicename, int devicenum)
 	variable string ToTargetName
 	variable iterator Iterator
 	variable bool InGuildHall = FALSE
-	
-	;; Localized Device Name 
+
+	;; Localized Device Name
 	variable string ldevicename
 
 	if (${Zone.ShortName.Find[guildhall]} > 0)
@@ -1640,7 +1640,7 @@ function MovetoDevice(string devicename, int devicenum)
 			ldevicename:Set[${devicename}]
 			break
 	}
-	
+
 	if ${lastdevice.Equal[${devicename}]}
 		return
 
@@ -1658,7 +1658,7 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				ErrorEcho "EQ2Craft:: Unable to target Rush Order Agent (in TS Instance) -- ending script."
 				Script:End
-			}			
+			}
 			lastdevice:Set[Rushorder]
 			return
 		}
@@ -1674,7 +1674,7 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				ErrorEcho "EQ2Craft:: Unable to target Rush Order Agent (in Guildhall) -- ending script."
 				Script:End
-			}				
+			}
 			lastdevice:Set[Rushorder]
 			return
 		}
@@ -1693,7 +1693,7 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				ErrorEcho "EQ2Craft:: Unable to target Work Order Agent (in Guildhall) -- ending script."
 				Script:End
-			}					
+			}
 			lastdevice:Set[Workorder]
 			return
 		}
@@ -1709,10 +1709,10 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				ErrorEcho "EQ2Craft:: Unable to target Work Order Agent (in Guildhall) -- ending script."
 				Script:End
-			}					
+			}
 			lastdevice:Set[Workorder]
 			return
-		}	
+		}
 	}
 	elseif ${devicename.Equal[Broker]}
 	{
@@ -1728,7 +1728,7 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				ErrorEcho "EQ2Craft:: Unable to target Broker (in TS Instance) -- ending script."
 				Script:End
-			}					
+			}
 			lastdevice:Set[Broker]
 			if (${Target.Distance} > 7)
 			{
@@ -1756,7 +1756,7 @@ function MovetoDevice(string devicename, int devicenum)
 			{
 				ErrorEcho "EQ2Craft:: Unable to target Broker (in Guildhall) -- ending script."
 				Script:End
-			}				
+			}
 			lastdevice:Set[Broker]
 			if (${Target.Distance} > 7)
 			{
@@ -1795,7 +1795,7 @@ function MovetoDevice(string devicename, int devicenum)
 				wait 2
 			}
 			return
-		}		
+		}
 	}
 	elseif ${devicename.Equal[Wholesaler]}
 	{
@@ -1814,7 +1814,7 @@ function MovetoDevice(string devicename, int devicenum)
 		{
 			do
 			{
-				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]} &&  && !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Loc}]}
+				if ${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Name(exists)} && ${Actor[xzrange,10,yrange,2,guild,${Iterator.Key}].Type.Equal[NoKill NPC]} &&  !${Me.CheckCollision[${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].Loc}]}
 				{
 					Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"]:DoTarget
 					wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,"${Iterator.Key}"].ID}"
@@ -1854,25 +1854,25 @@ function MovetoDevice(string devicename, int devicenum)
 				if ${ldevicename.Equal["Table de couture avec un mannequin"]}
 					ElaborateTable:Set["Table de couture �labor� avec un mannequin"]
 				elseif ${ldevicename.Equal["Bureau poin�onn�"]}
-					ElaborateTable:Set["Bureau poin�onn� �labor�"] 
+					ElaborateTable:Set["Bureau poin�onn� �labor�"]
 				elseif ${ldevicename.Equal["Cuisini�re et baril"]}
-					ElaborateTable:Set["Cuisini�re et baril �labor�s"] 					
+					ElaborateTable:Set["Cuisini�re et baril �labor�s"]
 				elseif ${ldevicename.Equal["Etabli"]}
-					ElaborateTable:Set["Etabli �labor�"] 							
+					ElaborateTable:Set["Etabli �labor�"]
 				else
 					ElaborateTable:Set["${ldevicename} �labor�e"]
 			}
 			else
 				ElaborateTable:Set["Elaborate ${ldevicename}"]
-				
+
 			;; NEW ;;
 			if (${ldevicename.Equal["Work Bench"]} || ${devicename.Equal["Work Bench"]})
 				GuildCraftingStation:Set["Guild Crafting Station: Workbench"]
 			elseif (${ldevicename.Equal["Sewing Table & Mannequin"]} || ${devicename.Equal["Sewing Table & Mannequin"]})
-				GuildCraftingStation:Set["Guild Crafting Station: Loom"]				
+				GuildCraftingStation:Set["Guild Crafting Station: Loom"]
 			else
 				GuildCraftingStation:Set["Guild Crafting Station: ${ldevicename}"]
-				
+
 			if (!${Actor[ExactName,${ElaborateTable},xzrange,${DistToTable},yrange,2].CheckCollision})
 			{
 				Actor[ExactName,${ElaborateTable}]:DoTarget
@@ -1896,7 +1896,7 @@ function MovetoDevice(string devicename, int devicenum)
 				wait 10
 				lastdevice:Set[${ldevicename}]
 				return
-			}	
+			}
 			elseif (!${Actor[ExactName,${ldevicename},xzrange,${DistToTable},yrange,2].CheckCollision})
 			{	/* New achievement tables, no elaborate prefix, Q4 quality. */
 				Actor[ExactName,${ldevicename}]:DoTarget
@@ -1995,7 +1995,7 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					ErrorEcho "EQ2Craft:: Unable to target Rush Order Agent (in TS Instance) after moving -- ending script."
 					Script:End
-				}			
+				}
 				lastdevice:Set[Rushorder]
 			}
 			;; Guildhalls   (For English Servers, ${RushOrder_GuildTag2} == "Tradeskill Rush Order Agent")
@@ -2010,7 +2010,7 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					ErrorEcho "EQ2Craft:: Unable to target Rush Order Agent (in Guildhall) after moving -- ending script."
 					Script:End
-				}				
+				}
 				lastdevice:Set[Rushorder]
 			}
 			break
@@ -2027,7 +2027,7 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					ErrorEcho "EQ2Craft:: Unable to target Work Order Agent (in Guildhall) -- ending script."
 					Script:End
-				}					
+				}
 				lastdevice:Set[Workorder]
 			}
 			;; Guildhalls   (For English Servers, ${WorkOrder_GuildTag2} == "Tradeskill Writ Agent")
@@ -2042,9 +2042,9 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					ErrorEcho "EQ2Craft:: Unable to target Work Order Agent (in Guildhall) -- ending script."
 					Script:End
-				}					
+				}
 				lastdevice:Set[Workorder]
-			}	
+			}
 			break
 		case Broker
 			;; TS Instances  (For English Servers, ${Broker_GuildTag} == "Broker")
@@ -2059,7 +2059,7 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					ErrorEcho "EQ2Craft:: Unable to target Broker (in TS Instance) -- ending script."
 					Script:End
-				}					
+				}
 				lastdevice:Set[Broker]
 				if (${Target.Distance} > 7)
 				{
@@ -2086,7 +2086,7 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					ErrorEcho "EQ2Craft:: Unable to target Broker (in Guildhall) -- ending script."
 					Script:End
-				}				
+				}
 				lastdevice:Set[Broker]
 				if (${Target.Distance} > 7)
 				{
@@ -2109,7 +2109,7 @@ function MovetoDevice(string devicename, int devicenum)
 				wait 10 "${Target.ID}==${Actor[xzrange,10,yrange,2,guild,Raml'iut].ID}"
 				face
 				wait 2
-			}			
+			}
 			break
 		case Wholesaler
 			; coming down those stairs blows...
@@ -2182,25 +2182,25 @@ function MovetoDevice(string devicename, int devicenum)
 					if ${ldevicename.Equal["Table de couture avec un mannequin"]}
 						ElaborateTable:Set["Table de couture �labor� avec un mannequin"]
 					elseif ${ldevicename.Equal["Bureau poin�onn�"]}
-						ElaborateTable:Set["Bureau poin�onn� �labor�"] 
+						ElaborateTable:Set["Bureau poin�onn� �labor�"]
 					elseif ${ldevicename.Equal["Cuisini�re et baril"]}
-						ElaborateTable:Set["Cuisini�re et baril �labor�s"] 					
+						ElaborateTable:Set["Cuisini�re et baril �labor�s"]
 					elseif ${ldevicename.Equal["Etabli"]}
-						ElaborateTable:Set["Etabli �labor�"] 							
+						ElaborateTable:Set["Etabli �labor�"]
 					else
 						ElaborateTable:Set["${devicename} �labor�e"]
 				}
 				else
 					ElaborateTable:Set["Elaborate ${devicename}"]
-					
+
 				;; NEW ;;
 				if (${ldevicename.Equal["Work Bench"]} || ${devicename.Equal["Work Bench"]})
 					GuildCraftingStation:Set["Guild Crafting Station: Workbench"]
 				elseif (${ldevicename.Equal["Sewing Table & Mannequin"]} || ${devicename.Equal["Sewing Table & Mannequin"]})
-					GuildCraftingStation:Set["Guild Crafting Station: Loom"]				
+					GuildCraftingStation:Set["Guild Crafting Station: Loom"]
 				else
 					GuildCraftingStation:Set["Guild Crafting Station: ${ldevicename}"]
-									
+
 				Actor[ExactName,${ElaborateTable}]:DoTarget
 				wait 10 "${Target.ID}==${Actor[ExactName,${ElaborateTable}].ID}"
 
@@ -2217,7 +2217,7 @@ function MovetoDevice(string devicename, int devicenum)
 					{
 						Actor[ExactName,${GuildCraftingStation}]:DoTarget
 						wait 10 "${Target.ID}==${Actor[ExactName,${GuildCraftingStation}].ID}"
-					}	
+					}
 				}
 			}
 			else
@@ -2228,7 +2228,7 @@ function MovetoDevice(string devicename, int devicenum)
 				{
 					Actor[ExactName,${ldevicename}]:DoTarget
 					wait 10 "${Target.ID}==${Actor[ExactName,${ldevicename}].ID}"
-				}	
+				}
 			}
 			face
 			wait 2
