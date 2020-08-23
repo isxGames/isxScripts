@@ -574,11 +574,11 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
 	
-	switch ${PostAction[${xAction}]}
-	{
-		default
+	;switch ${PostAction[${xAction}]}
+	;{
+	;	default
 			return PostCombatRoutineComplete
-	}
+	;}
 }
 
 function Have_Aggro()
@@ -593,14 +593,13 @@ function Lost_Aggro(int mobid)
 		call CastSpellRange 270 0 1 0 ${Actor[${KillTarget}].ID}
 
 	if ${Me.Ability[${SpellType[172]}].IsReady}
-    call CastSpellRange 172 0 0 0 ${mobid}
+    	call CastSpellRange 172 0 0 0 ${mobid}
 	elseif ${Me.Ability[${SpellType[398]}].IsReady}
-    call CastSpellRange 398 0 0 0 ${mobid}
+    	call CastSpellRange 398 0 0 0 ${mobid}
 	elseif ${Me.Ability[${SpellType[161]}].IsReady}
-    call CastSpellRange 161 0 0 0 ${mobid}
+    	call CastSpellRange 161 0 0 0 ${mobid}
 	elseif ${Me.Ability[${SpellType[171]}].IsReady}
-    call CastSpellRange 171 0 0 0 ${mobid}
-
+    	call CastSpellRange 171 0 0 0 ${mobid}
 }
 
 function MA_Lost_Aggro()
@@ -679,7 +678,7 @@ function CheckHeals()
 			call CastSpellRange 393 0 0 0 ${Me.Group[${lowest}].ID}
 		elseif ${Me.Ability[${SpellType[5]}].IsReady} && ${Me.Group[${lowest}].Health}>-99
 			call CastSpellRange 5 0 0 0 ${Me.Group[${lowest}].ID}
-		elseif && ${Me.Group[${lowest}].Health}>-99
+		elseif ${Me.Group[${lowest}].Health}>-99
 			call CastSpellRange 9 0 0 0 ${Me.Group[${lowest}].ID}
 
 	}
@@ -697,7 +696,7 @@ function MeHeals()
 			call CastSpellRange 393 0 0 0 ${Me.ID}
 		elseif ${Me.Ability[${SpellType[5]}].IsReady}
 			call CastSpellRange 5 0 0 0 ${Me.ID}
-		elseif
+		elseif ${Me.Ability[${SpellType[6]}].IsReady}
 			call CastSpellRange 6 0 0 0 ${Me.ID}
 		else
 			call CastSpellRange 9 0 0 0 ${Me.ID}
