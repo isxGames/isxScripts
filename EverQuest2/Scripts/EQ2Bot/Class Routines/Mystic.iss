@@ -566,7 +566,9 @@ function Combat_Routine(int xAction)
 
 function Post_Combat_Routine(int xAction)
 {
+	variable int grpcnt = ${Me.GroupCount}
 	declare tempgrp int 1
+
 	;Turn off Oberon so we can move
 	if ${Me.Maintained[${SpellType[317]}](exists)}
 		Me.Maintained[${SpellType[317]}]:Cancel
@@ -579,14 +581,12 @@ function Post_Combat_Routine(int xAction)
 	switch ${PostAction[${xAction}]}
 	{
 		case Resurrection
-			grpcnt:Set[${Me.GroupCount}]
-			tempgrp:Set[1]
 			do
 			{
 				if ${Me.Group[${tempgrp}].Health}==-99
 					call CastSpellRange ${PreSpellRange[${xAction},1]} ${PreSpellRange[${xAction},2]} 1 0 ${Me.Group[${tempgrp}].ID} 1
 			}
-			while ${tempgrp:Inc} <= ${Me.GroupCount}
+			while ${tempgrp:Inc} <= ${grpcnt}
 			break
 		case LoadDefaultEquipment
 			break

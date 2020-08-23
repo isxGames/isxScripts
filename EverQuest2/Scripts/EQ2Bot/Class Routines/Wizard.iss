@@ -616,9 +616,8 @@ function RefreshPower()
 
 function CheckHeals()
 {
-
+	variable int grpcnt = ${Me.GroupCount}
 	declare temphl int local 1
-	grpcnt:Set[${Me.GroupCount}]
 
 	; Cure Arcane Me
 	if ${Me.Arcane}>0

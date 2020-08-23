@@ -646,6 +646,7 @@ function Combat_Routine(int xAction)
 function Post_Combat_Routine(int xAction)
 {
     declare tempgrp int 1
+	variable int grpcnt = ${Me.GroupCount}
 
 	;Turn off Focused so we can move
 	if ${Me.Maintained[${SpellType[9]}](exists)}
@@ -659,8 +660,6 @@ function Post_Combat_Routine(int xAction)
 	switch ${PostAction[${xAction}]}
 	{
 		case Resurrection
-			grpcnt:Set[${Me.GroupCount}]
-			tempgrp:Set[1]
 			do
 			{
 				if ${Me.Group[${tempgrp}].IsDead}

@@ -633,6 +633,8 @@ function RefreshPower()
 
 function CheckHeals()
 {
+	variable int grpcnt = ${Me.GroupCount}
+	variable int tempgrp = 1
 	declare temphl int local
 	declare grpheal int local 0
 	declare lowest int local 0
@@ -641,9 +643,8 @@ function CheckHeals()
 	declare tmpafflictions int local 0
 	declare PetToHeal int local 0
 	declare MTinMyGroup bool local FALSE
-	declare tempraid int local 0
+	declare tempraid int local 1
 
-	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
 	temphl:Set[1]
@@ -795,8 +796,6 @@ function CheckHeals()
 	}
 
 	;Res Fallen Groupmembers only if in range
-	grpcnt:Set[${Me.GroupCount}]
-	tempgrp:Set[1]
 	do
 	{
 		if ${Me.Group[${tempgrp}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Auto_Res} && ${Me.Group[${tempgrp}].Distance}<25
@@ -810,7 +809,6 @@ function CheckHeals()
 	{
 		;Res Fallen RAID members only if in range
 		grpcnt:Set[${Me.RaidCount}]
-		tempraid:Set[1]
 		do
 		{
 			if  ${Actor[pc,exactname,${RaidMember[${tempraid}].Name}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Actor[pc,exactname,${RaidMember[${tempraid}].Name}].Distance}<25

@@ -748,10 +748,14 @@ function CheckCures()
 
 function CheckRez()
 {
+	variable int tempgrp = 1
+	variable int grpcnt = ${Me.GroupCount}
+	variable int tempraid = 1
+
 	;Res Fallen Groupmembers only if in range
 	do
 	{
-		if ${Me.Group[${tempgrp}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady})
+		if (${Me.Group[${tempgrp}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady})
 		{
 			call CastSpellRange 300 0 1 0 ${Me.Group[${tempgrp}].ID}
 			;short wait for accept
@@ -759,12 +763,13 @@ function CheckRez()
 		}
 	}
 	while ${tempgrp:Inc}<${grpcnt}
-	if ${Me.InRaid} && (${Me.Ability[${SpellType[300]}].IsReady}
+
+	if (${Me.InRaid} && ${Me.Ability[${SpellType[300]}].IsReady})
 	{
 		;Res Fallen RAID members only if in range
 		do
 		{
-			if ${Me.Raid[${tempraid}].IsDead} && (${Me.Ability[${SpellType[300]}].IsReady}) && ${Me.Raid[${tempraid}].Distance}<25
+			if ${Me.Raid[${tempraid}].IsDead} && ${Me.Ability[${SpellType[300]}].IsReady} && ${Me.Raid[${tempraid}].Distance}<25
 			{
 				call CastSpellRange 300 0 1 0 ${Me.Raid[${tempraid}].ID}
 				;short wait for accept
