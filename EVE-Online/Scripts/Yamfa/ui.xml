@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <ISUI>
+ 	<Window name='yamfa'>
+ 		<X>0</X>
+ 		<Y>0</Y>
+ 		<Width>100</Width>
+ 		<Height>254</Height>
+		<TitleBar>
+			<Width>100%</Width>
+			<Height>100%</Height>
+			<Children>
+				
+				<button	Name='Close'>
+					<X>80</X>
+					<Y>0</Y>
+					<Width>20</Width>
+					<Height>16</Height>
+					<OnLeftClick>relay all endscript yamfa</OnLeftClick>
+					<OnRightClick>relay all endscript yamfa</OnRightClick>
+					<Text>X</Text>
+				</button>
+				
+				<button	Name='Defense'>
+					<X>2</X>
+					<Y>22</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},TRUE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},FALSE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Defense</Text>
+				</button>
+				
+				<button	Name='Shooting'>
+					<X>2</X>
+					<Y>44</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},TRUE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},FALSE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Shooting</Text>
+				</button>
+				
+				<button	Name='Autolock'>
+					<X>2</X>
+					<Y>66</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},TRUE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},FALSE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Autolock</Text>
+				</button>
+				
+				<button	Name='Drones'>
+					<X>2</X>
+					<Y>88</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},TRUE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Config.Override:Set[${This.Name},FALSE]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Drones</Text>
+				</button>
+				
+				<button	Name='Gate'>
+					<X>2</X>
+					<Y>122</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all Script[yamfa].VariableScope.Commands:Set[Gate,Gate,Approach]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Commands:Set[Gate,Gate,Activate]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Gate</Text>
+				</button>
+				
+				<button	Name='Salvager'>
+					<X>2</X>
+					<Y>144</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					relay all Script[yamfa].VariableScope.Commands:Set[Salvager,Salvager,Autopilot]
+					</OnLeftClick>
+					<OnRightClick>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					relay all Script[yamfa].VariableScope.Commands:Set[Salvager,Salvager,Salvager]
+					</OnRightClick>
+					<Text>Salvager</Text>
+				</button>
+				
+				<button	Name='Stop'>
+					<X>2</X>
+					<Y>166</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all EVE:Execute[CmdStopShip]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all EVE:ClearAllWaypoints
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Stop</Text>
+				</button>
+				
+				<button	Name='Retreat'>
+					<X>2</X>
+					<Y>188</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					relay all Script[yamfa].VariableScope.Commands:Set[Retreat,Retreat,Retreat]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Commands:Set[Retreat,Retreat,Dock]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>Retreat</Text>
+				</button>
+				
+				<textentry name='SetDest'>
+					<X>2</X>
+					<Y>210</Y>
+					<Width>96</Width>
+					<Height>20</Height>
+					<OnKeyDown>
+						if ${Key.Equal["enter"]}
+						{
+							if ${EVE.Bookmark[${This.Text.Escape}](exists)}
+								Relay all "EVE.Bookmark[${This.Text.Escape}]:SetDestination"
+							else
+								Relay all "Universe[${This.Text.Escape}]:SetDestination"
+							This:SetText[""]
+						}
+					</OnKeyDown>
+				</textentry>
+				
+				<button	Name='Debug'>
+					<X>2</X>
+					<Y>232</Y>
+					<Width>20</Width>
+					<Height>16</Height>
+					<OnRender>
+					if ${Script[yamfa].VariableScope.Config.Override.DebugOn}
+						This:SetAlpha[1]
+					else
+						This:SetAlpha[0]
+					</OnRender>
+					<OnLeftClick>
+					Script[yamfa].VariableScope.Config.Override:Set[DebugOn,FALSE]
+					</OnLeftClick>
+					<OnRightClick>
+					Script[yamfa].VariableScope.Config.Override:Set[DebugOn,TRUE]
+					</OnRightClick>
+					<Text>d</Text>
+				</button>
+				
+				<button	Name='Spew'>
+					<X>23</X>
+					<Y>232</Y>
+					<Width>20</Width>
+					<Height>16</Height>
+					<OnRender>
+					if ${Script[yamfa].VariableScope.Config.Override.SpewOn}
+						This:SetAlpha[1]
+					else
+						This:SetAlpha[0]
+					</OnRender>
+					<OnLeftClick>
+					Script[yamfa].VariableScope.Config.Override:Set[SpewOn,FALSE]
+					</OnLeftClick>
+					<OnRightClick>
+					Script[yamfa].VariableScope.Config.Override:Set[SpewOn,TRUE]
+					</OnRightClick>
+					<Text>s</Text>
+				</button>
+				
+				<button	Name='MasterSwap'>
+					<X>56</X>
+					<Y>232</Y>
+					<Width>40</Width>
+					<Height>20</Height>
+					<OnRender>
+					if !${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}](exists)}
+						Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					This:SetAlpha[${Script[yamfa].VariableScope.UI.Alpha.Element[${This.Name}]}]
+					</OnRender>
+					<OnMouseEnter>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 1]
+					</OnMouseEnter>
+					<OnMouseExit>
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, .8]
+					</OnMouseExit>
+					<OnLeftClick>
+					Script[yamfa].VariableScope.Config:Update[Role,Master]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnLeftClick>
+					<OnRightClick>
+					relay all Script[yamfa].VariableScope.Config:UpdateMaster["${Me.Name}",${Session}]
+					Script[yamfa].VariableScope.UI.Alpha:Set[${This.Name}, 0]
+					</OnRightClick>
+					<Text>M!</Text>
+				</button>
+				
+			</Children>
+		</TitleBar>
+	</Window>
+ </ISUI>
