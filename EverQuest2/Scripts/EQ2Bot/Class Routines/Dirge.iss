@@ -846,7 +846,7 @@ function CheckHeals()
 	declare temphl int local 1
 	declare tempgrp int local 1
 	declare tempraid int local 1
-	grpcnt:Set[${Me.GroupCount}]
+	variable int grpcnt = ${Me.GroupCount}
 
 	call UseCrystallizedSpirit 60
 	call CommonHeals 40
@@ -893,15 +893,14 @@ function CheckHeals()
 
 function DoMagneticNote()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	variable index:actor Actors
 	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
 	tempvar:Set[1]
-
-	grpcnt:Set[${Me.GroupCount}]
-
+	
 	if !${Me.Ability[${SpellType[383]}].IsReady}
 		return
 

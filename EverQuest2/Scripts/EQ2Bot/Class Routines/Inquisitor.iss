@@ -1137,12 +1137,11 @@ function CastVerdict()
 
 function Mezmerise_Targets()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	variable index:actor Actors
 	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
-
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
 	Actors:GetIterator[ActorIterator]

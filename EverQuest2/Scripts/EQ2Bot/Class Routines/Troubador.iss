@@ -456,7 +456,6 @@ function _CastSpellRange(int start, int finish, int xvar1, int xvar2, uint Targe
 
 function Combat_Routine(int xAction)
 {
-	declare tempvar int local
 	declare DebuffCnt int  0
 	declare range int 0
 	declare TankToTargetDistance float local
@@ -1043,12 +1042,10 @@ function ActionChecks()
 
 function Mezmerise_Targets()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	variable index:actor Actors
 	variable iterator ActorIterator
-	declare tempvar int local
 	declare aggrogrp bool local FALSE
-
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
 	Actors:GetIterator[ActorIterator]
@@ -1104,19 +1101,15 @@ function Mezmerise_Targets()
 
 function DoCharm()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	variable index:actor Actors
 	variable iterator ActorIterator
-	declare tempvar int local
 	declare aggrogrp bool local FALSE
-
-	tempvar:Set[1]
 
 	if ${Me.Maintained[${SpellType[351]}](exists)}
 	{
 		return
 	}
-
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
 	Actors:GetIterator[ActorIterator]

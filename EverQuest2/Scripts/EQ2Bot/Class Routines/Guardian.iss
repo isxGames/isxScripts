@@ -511,12 +511,12 @@ function Cancel_Root()
 
 function CheckHeals()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	declare temphl int local
 	declare grpheal int local 0
 	declare lowest int local 0
 	declare MTinMyGroup bool local FALSE
 
-	grpcnt:Set[${Me.GroupCount}]
 	hurt:Set[FALSE]
 
 	temphl:Set[1]

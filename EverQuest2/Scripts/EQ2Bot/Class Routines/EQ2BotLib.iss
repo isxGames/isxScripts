@@ -986,8 +986,8 @@ function CommonHeals(int Health)
 	;Use a defiler crystalized spirit if we have 2 or more group members under ${Health}
 	declare temphl int local
 	declare grpheal int local 0
+	variable int grpcnt = ${Me.GroupCount}
 
-	grpcnt:Set[${Me.Group}]
 	temphl:Set[0]
 
 	if ${Me.Inventory[Crystallized Spirit].IsReady} && ${Me.InCombatMode}

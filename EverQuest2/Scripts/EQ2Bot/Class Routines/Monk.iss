@@ -455,9 +455,8 @@ function Cancel_Root()
 
 function CheckHeals()
 {
-	declare grpcnt int local
+	variable int grpcnt = ${Me.GroupCount}
 	declare temphl int local 1
-	grpcnt:Set[${Me.GroupCount}]
 
 	;Feign Death if I am solo and low on health
 	if ${Me.Health}<15 && ${Me.GroupCount}==1

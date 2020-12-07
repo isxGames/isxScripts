@@ -772,6 +772,8 @@ function RefreshPower()
 
 function CheckHeals()
 {
+	declare temphl int local 1
+	variable int grpcnt = ${Me.GroupCount}
 
 	call CommonHeals 70
 
@@ -781,9 +783,6 @@ function CheckHeals()
 		eq2execute em ManaWard on ${Actor[${MainTankPC}].Name}
 	}
 	
-	declare temphl int local 1
-	grpcnt:Set[${Me.GroupCount}]
-
 	; Cure Arcane Me
 	if ${Me.Arcane}>0
 	{
@@ -810,6 +809,7 @@ function CheckHeals()
 
 function Mezmerise_Targets()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 	variable index:actor Actors
@@ -818,8 +818,6 @@ function Mezmerise_Targets()
 	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 25]
 	Actors:GetIterator[ActorIterator]
 
-	grpcnt:Set[${Me.GroupCount}]
-	
 	if ${ActorIterator:First(exists)}
 	{
 		do
@@ -902,6 +900,7 @@ function Mezmerise_Targets()
 
 function DoCharm()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	variable index:actor Actors
 	variable iterator ActorIterator
 	declare tempvar int local
@@ -911,8 +910,6 @@ function DoCharm()
 
 	if ${Me.Maintained[${SpellType[351]}](exists)} || ${Me.UsedConc}>2
 		return
-
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 15]
 	Actors:GetIterator[ActorIterator]
@@ -994,14 +991,13 @@ function DoDMind()
 
 function DoAmnesia()
 {
+	variable int grpcnt = ${Me.GroupCount}
 	variable index:actor Actors
 	variable iterator ActorIterator
 	declare tempvar int local
 	declare aggrogrp bool local FALSE
 
 	tempvar:Set[1]
-
-	grpcnt:Set[${Me.GroupCount}]
 
 	EQ2:QueryActors[Actors, Type =- "NPC" && Distance <= 35]
 	Actors:GetIterator[ActorIterator]
