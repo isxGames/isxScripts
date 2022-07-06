@@ -4260,7 +4260,7 @@ objectdef EQ2Craft
 	method ProcessRecipe(string RecipeName, int pQuality, int totQuantity)
 	{
 		variable uint recipeid
-		variable string primarycomponent
+		variable string primaryComponent
 		variable int produce
 		variable int tempval
 		variable int tempqlt
@@ -4298,7 +4298,7 @@ objectdef EQ2Craft
 			return
 		recipeid:Set[${Me.Recipe[${RecipeName}].ID}]
 
-		primarycomponent:Set[${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.Name}]
+		primaryComponent:Set[${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.Name}]
 		; Lets see if its a Imbued Type recipe and assign it as processtype=1
 		; Default processtype=2
 
@@ -4307,7 +4307,7 @@ objectdef EQ2Craft
 			; Need to verify its a Imbued recipe by looking at the prefix.
 			; BULLSHIT. If the left of the recipe says "Imbued" or "Blessed" and the primary component
 			; isn't a raw, it's a fucking imbue.
-			if !${Harvests.FindSetting[${primarycomponent}](exists)}
+			if !${Harvests.FindSetting[${primaryComponent}](exists)}
 				processtype:Set[1]
 			else
 				processtype:Set[2]
@@ -4319,7 +4319,7 @@ objectdef EQ2Craft
 		}
 
 		; Verify that recipe data has been loaded before processing recipe.
-		if ${primarycomponent.Equal[NULL]} || ${Me.Recipe[${RecipeName}].ToRecipeInfo.BuildComponent1.Name.Equal[NULL]}
+		if ${primaryComponent.Equal[NULL]} || ${Me.Recipe[${RecipeName}].ToRecipeInfo.BuildComponent1.Name.Equal[NULL]}
 		{
 			if !${MainRecipe.Equal[${RecipeName}]}
 			{
@@ -4386,10 +4386,10 @@ objectdef EQ2Craft
 		}
 
 		; Process Primary Component
-		ComponentQuantites:Set[${primarycomponent},${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}]
+		ComponentQuantites:Set[${primaryComponent},${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}]
 		if ${processtype}==2
 		{
-			tmpres:Set[${Harvests.FindSetting[${primarycomponent}]}]
+			tmpres:Set[${Harvests.FindSetting[${primaryComponent}]}]
 			if ${tmpres.Length} && ${tmpres.NotEqual[NULL]}
 			{
 				This:AddResource[${tmpres},${Math.Calc[${rescomquantity}/${produce}]}]
@@ -4397,24 +4397,24 @@ objectdef EQ2Craft
 			}
 			elseif ${Me.Recipe[${RecipeName}].Knowledge.Equal[Adorning]}
 			{
-				This:AddResource[${primarycomponent},${Math.Calc[${rescomquantity}/${produce}]}]
-				ComponentQuantites:Set[${primarycomponent},${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}]
+				This:AddResource[${primaryComponent},${Math.Calc[${rescomquantity}/${produce}]}]
+				ComponentQuantites:Set[${primaryComponent},${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}]
 			}
 			else
 			{
-				if ${primarycomponent.Length} && ${primarycomponent.NotEqual[NULL]}
+				if ${primaryComponent.Length} && ${primaryComponent.NotEqual[NULL]}
 				{
-					if !${WarnedResources[${primarycomponent}]}
+					if !${WarnedResources[${primaryComponent}]}
 					{
-						WarnedResources:Set[${primarycomponent},TRUE]
-						MessageBox -ok "WARNING! Unable to find \n\n${primarycomponent} \n\nin Resources.xml\n"
+						WarnedResources:Set[${primaryComponent},TRUE]
+						MessageBox -ok "WARNING! Unable to find \n\n${primaryComponent} \n\nin Resources.xml\n"
 					}
 				}
 			}
 		}
 		else
 		{
-			This:ProcessRecipe[${primarycomponent},${pQuality},${totQuantity}]
+			This:ProcessRecipe[${primaryComponent},${pQuality},${totQuantity}]
 		}
 
 		; Process the Build Components
@@ -5469,7 +5469,7 @@ function UpdateComponentQuantities()
 {
 	variable string RecipeName
 	variable int i = 1
-	variable string primarycomponent
+	variable string primaryComponent
 	variable string tmpres
 	variable string tmpbld
 	variable int tempval
@@ -5573,7 +5573,7 @@ function UpdateComponentQuantities()
 		; Process Primary Component
 		if (!${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent(exists)})
 		{
-			Debug:Echo["EQ2Craft:: UpdateComponentQuantities() - '${RecipeName} primarycomponent was not available"]
+			Debug:Echo["EQ2Craft:: UpdateComponentQuantities() - '${RecipeName} primaryComponent was not available"]
 			return FALSE
 			;Counter:Set[0]
 			;do
@@ -5585,17 +5585,17 @@ function UpdateComponentQuantities()
 			;}
 			;while !${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent(exists)}
 		}
-		primarycomponent:Set[${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.Name}]
-		UpdateComponent "${primarycomponent}" ${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}
+		primaryComponent:Set[${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.Name}]
+		UpdateComponent "${primaryComponent}" ${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}
 
-		tmpres:Set[${Harvests.FindSetting[${primarycomponent}]}]
+		tmpres:Set[${Harvests.FindSetting[${primaryComponent}]}]
 		if ${tmpres.Length} && ${tmpres.NotEqual[NULL]}
 		{
 			UpdateComponent "${tmpres}" ${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}
 		}
 		elseif ${Me.Recipe[${RecipeName}].Knowledge.Equal[Adorning]}
 		{
-			UpdateComponent "${primarycomponent}" ${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}
+			UpdateComponent "${primaryComponent}" ${Me.Recipe[${RecipeName}].ToRecipeInfo.PrimaryComponent.QuantityOnHand}
 		}
 	}
 	while ${i:Inc} <= ${RecipesInQueue.Used}
