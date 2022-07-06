@@ -6721,7 +6721,7 @@ objectdef EQ2BotObj
 	}
 }
 
-function CheckAbilities(string class)
+function CheckAbilities(string Class)
 {
 	variable int keycount
 	variable int templvl=1
@@ -6730,7 +6730,7 @@ function CheckAbilities(string class)
 	variable string spellname
 	variable int MissingAbilitiesCount
 	variable iterator SpellIterator
-	SpellSet.FindSet[${class}]:GetSettingIterator[SpellIterator]
+	SpellSet.FindSet[${Class}]:GetSettingIterator[SpellIterator]
 
 	if ${SpellIterator:First(exists)}
 	{
