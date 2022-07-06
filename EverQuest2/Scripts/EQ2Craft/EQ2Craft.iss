@@ -425,6 +425,7 @@ function main(... recipeFavourite)
 	ChatEcho "---------------------------"
 	ChatEcho "EQ2Craft:: Initializing..."
 
+	ISXEQ2:SetCustomVariable[SRO,0]
 	ISXEQ2:ClearAbilitiesCache
 
 	if (!${Me.Recipe[1](exists)})
@@ -992,7 +993,7 @@ function main(... recipeFavourite)
 			if ${RewardWindow(exists)}
 			{
 				wait 5
-				RewardWindow:Receive
+				RewardWindow:AcceptReward
 			}
 			Craft:ClearAllRecipes[0]
 
@@ -1032,7 +1033,7 @@ function main(... recipeFavourite)
 			wait 15
 			if (${RewardWindow(exists)})
 			{
-			   RewardWindow:Receive
+			   RewardWindow:AcceptReward
 			   wait 15
 			}
 
@@ -1136,6 +1137,19 @@ objectdef __QueuedRecipe
 
 }
 
+function AcceptQuest()
+{
+	if (${RewardWindow.Child[text,Title].GetProperty[localtext].Find["New Quest"]})
+	{
+		if (${EQ2UIPage[PopUp,RewardPack].Child[button,RewardPack.ButtonComposite.Accept](exists)})
+			EQ2UIPage[PopUp,RewardPack].Child[button,RewardPack.ButtonComposite.Accept]:LeftClick
+		else
+			EQ2UIPage[PopUp,RewardPack].Child[button,RewardPack.Accept]:LeftClick
+	}
+	else
+		echo "\arERROR\ax - RewardWindow expected to have title of 'New Quest!' but was actually '${RewardWindow.Child[text,Title].GetProperty[localtext]}'"
+}
+
 function GetWrit()
 {
 	variable int tcount
@@ -1192,33 +1206,14 @@ function GetWrit()
 	if ${Tier} <= 0
 		Tier:Set[1]
 
-;	variable int BestBD
-;	variable string BestLevel
-;	variable string ButtonLevel
-;	variable int BD
-;	variable string ButtonText
-;	;Determine which range of writs we have available
-;	for ( tcount:Set[1] ; ${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tcount}].GetProperty[LocalText].Left[12].Equal[I would like]} ; tcount:Inc )
-;	{
-;		; I would like to create a difficult tier 4 blah blah
-;		; I would like a 70th rank blah blah
-;		ButtonText:Set[${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tcount}].GetProperty[LocalText]}]
-;		BestLevel:Set[${ButtonText.Token[5," "].Left[-2]}]
-;		if ${ButtonLevel} > ${BestLevel}
-;		{
-;			BestTier:Set[${BestLevel}]
-;			BestLevel:Set[${BD}]
-;		}
-;	}
-
 	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${Tier}]:LeftClick
 	wait 10
 	if ${RewardWindow(exists)}
-		RewardWindow:Accept
+		call AcceptQuest
 	else
 		wait 40
 	if ${RewardWindow(exists)}
-		RewardWindow:Accept
+		call AcceptQuest
 	else
 	{
 		ErrorEcho "EQ2Craft:: There was a problem obtaining a writ quest -- ending script."
@@ -1285,7 +1280,7 @@ function Craft(int64 xrecipe, int repeats, int qresult, int var1, int var2)
 	if ${RewardWindow(exists)}
 	{
 		wait 5
-		RewardWindow:Receive
+		RewardWindow:AcceptReward
 	}
 
 	if ${MakeRare}
@@ -1536,7 +1531,7 @@ function Craft(int64 xrecipe, int repeats, int qresult, int var1, int var2)
 					wait 40
 					Me.Inventory[${ItemsCreated.Get[${ItemsCreated.Used}]}]:Transmute
 					wait 200 ${RewardWindow(exists)}
-					RewardWindow:Receive
+					RewardWindow:AcceptReward
 				}
 
 				ItemsCreated:Remove[${ItemsCreated.Used}]
