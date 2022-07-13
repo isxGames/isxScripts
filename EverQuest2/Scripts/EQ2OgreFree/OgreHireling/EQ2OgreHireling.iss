@@ -79,14 +79,14 @@ function main(int TempNum=12, bool LoopScript=TRUE)
 			if ${Communication.Find[collect]}
 			{
 				echo ${Time}: Collecting Hunter hireling
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			}
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending Hunter hireling out
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tierNum}]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${tierNum}]:LeftClick
 				wait 25
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${selNum}]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${selNum}]:LeftClick
 				HunterDone:Set[TRUE]
 			}
 			elseif ${Communication.Find[Harvesting]}
@@ -111,14 +111,14 @@ function main(int TempNum=12, bool LoopScript=TRUE)
 			if ${Communication.Find[collect]}
 			{
 				echo ${Time}: Collecting Miner hireling
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			}
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending miner hireling out
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tierNum}]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${tierNum}]:LeftClick
 				wait 25
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${selNum}]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${selNum}]:LeftClick
 				MinerDone:Set[TRUE]
 			}
 			elseif ${Communication.Find[Harvesting]}
@@ -143,14 +143,14 @@ function main(int TempNum=12, bool LoopScript=TRUE)
 			if ${Communication.Find[collect]}
 			{
 				echo ${Time}: Collecting Gatherer hireling
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			}
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending gatherer hireling out
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${tierNum}]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${tierNum}]:LeftClick
 				wait 25
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${selNum}]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${selNum}]:LeftClick
 				GathererDone:Set[TRUE]
 			}
 			elseif ${Communication.Find[Harvesting]}

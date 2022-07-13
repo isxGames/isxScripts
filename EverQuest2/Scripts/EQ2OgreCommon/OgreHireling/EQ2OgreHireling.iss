@@ -96,22 +96,22 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 			if ${Communication.Find[collect]}
 			{
 				echo ${Time}: Collecting Hunter hireling
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			}
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending Hunter hireling out
 				if ${HunterTier} <= 6
 				{
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 					wait 5
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${HunterTier}]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${HunterTier}]:LeftClick
 				}
 				else
 				{
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,2]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[2]:LeftClick
 					wait 5
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${Math.Calc64[${HunterTier}-6]}]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${Math.Calc64[${HunterTier}-6]}]:LeftClick
 				}
 				HunterDone:Set[TRUE]
 			}
@@ -134,22 +134,22 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 			if ${Communication.Find[collect]}
 			{
 				echo ${Time}: Collecting Miner hireling
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			}
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending miner hireling out
 				if ${MinerTier} <= 6
 				{
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 					wait 5
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${MinerTier}]:LeftClick				
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${MinerTier}]:LeftClick				
 				}
 				else
 				{
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,2]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[2]:LeftClick
 					wait 5
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${Math.Calc64[${MinerTier}-6]}]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${Math.Calc64[${MinerTier}-6]}]:LeftClick
 				}
 				MinerDone:Set[TRUE]
 			}
@@ -172,22 +172,22 @@ function main(int TempNum=12, bool LoopScript=TRUE, ... Args)
 			if ${Communication.Find[collect]}
 			{
 				echo ${Time}: Collecting Gatherer hireling
-				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+				EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			}
 			elseif ${Communication.Find[GoHarvest]}
 			{
 				echo ${Time}: Sending gatherer hireling out
 				if ${GathererTier} <= 6
 				{
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 					wait 5
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${GathererTier}]:LeftClick				
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${GathererTier}]:LeftClick				
 				}
 				else
 				{
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,2]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[2]:LeftClick
 					wait 5
-					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${Math.Calc64[${GathererTier}-6]}]:LeftClick
+					EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${Math.Calc64[${GathererTier}-6]}]:LeftClick
 				}	
 				GathererDone:Set[TRUE]
 			}

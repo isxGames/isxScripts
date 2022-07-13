@@ -1039,7 +1039,7 @@ function main(... recipeFavourite)
 
 			call CheckLevelGained
 
-			;EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+			;EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 			;wait 10
 
 			WritTrigger:Set[FALSE]
@@ -1192,9 +1192,9 @@ function GetWrit()
 	;EQ2Execute /apply_verb ${Target.ID} hail
 	Target:DoubleClick
 	wait 15
-	if !${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1].GetProperty[LocalText].Left[12].Equal[${WritInitialConvo}]}
+	if !${EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1].GetProperty[LocalText].Left[12].Equal[${WritInitialConvo}]}
 	{
-		EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+		EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 		wait 6
 		;EQ2Execute /apply_verb ${Target.ID} hail
 		Target:DoubleClick
@@ -1206,7 +1206,7 @@ function GetWrit()
 	if ${Tier} <= 0
 		Tier:Set[1]
 
-	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,${Tier}]:LeftClick
+	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[${Tier}]:LeftClick
 	wait 10
 	if ${RewardWindow(exists)}
 		call AcceptQuest
@@ -1221,9 +1221,9 @@ function GetWrit()
 	}
 
 	wait 15
-	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 	wait 15
-	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[button,1]:LeftClick
+	EQ2UIPage[ProxyActor,Conversation].Child[composite,replies].Child[1]:LeftClick
 	wait 6
 
 	; Move to Invoice Desk
