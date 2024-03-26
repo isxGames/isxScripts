@@ -550,13 +550,13 @@ function main(string Args)
 
 		;;;;;;;;;;;;;;
 		;; If DoNoCombat is TRUE, then the bot should avoid calling Combat() or any related functions.
-		if (${BG_NoCombat} && ${EQ2.OnBattleground})	
-			DoNoCombat:Set[TRUE]
-		else
-			DoNoCombat:Set[FALSE]
+		;; NOTE:  Battleground code has been removed from EQ2 and ISXEQ2; but, leaving this block of code here as reference.
+		;if (${BG_NoCombat} && ${EQ2.OnBattleground})	
+		;	DoNoCombat:Set[TRUE]
+		;else
+		;	DoNoCombat:Set[FALSE]
 		;;
 		;;;;;;;;;;;;;;
-		
 		;Debug:Echo["main() -- DoNoCombat: ${DoNoCombat} (${EQ2.OnBattleground} - ${BG_NoCombat})"]
 		
 		;; Check if dead no more than once per second

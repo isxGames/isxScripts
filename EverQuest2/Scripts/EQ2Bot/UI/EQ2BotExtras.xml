@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ISUI>
+  <!--
   <Commandcheckbox Name='BG_NoCombatRoutines'>
     <X>5%</X>
     <Y>10</Y>
@@ -22,7 +23,8 @@
       }
     </OnLeftClick>
     <Data>${LavishSettings[EQ2Bot].FindSet[Character].FindSet[EQ2BotExtras].FindSetting[BG_NoCombat]}</Data>
-  </Commandcheckbox>                
+  </Commandcheckbox>
+  -->         
 	<Commandcheckbox Name='CombatFollow'>
 		<X>5%</X>
 		<Y>50</Y>
