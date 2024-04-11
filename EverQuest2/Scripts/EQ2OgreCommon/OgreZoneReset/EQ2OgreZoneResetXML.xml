@@ -212,7 +212,7 @@
 					<Text>Clear</Text>
 					<Alignment>Center</Alignment>
 					<OnLeftClick>
-            ui -reload -skin ${ISXOgre.SkinName} "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreZonereset/eq2ogrezoneresetxml.xml"
+            ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreZonereset/eq2ogrezoneresetxml.xml"
           </OnLeftClick>
 				</CommandButton>
 

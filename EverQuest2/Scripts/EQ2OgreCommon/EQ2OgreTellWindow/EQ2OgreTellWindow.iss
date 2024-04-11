@@ -75,7 +75,7 @@ function TellBroadcastReceived(string Message)
 	{
 		if !${UIElement[eq2ogretellwindowxml](exists)}
 		{
-			ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreTellWindow/TellWindow.xml"
+			ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreTellWindow/TellWindow.xml"
 			wait 100 ${UIElement[eq2ogretellwindowxml](exists)}
 		}
 		if !${UIElement[eq2ogretellwindowxml](exists)}

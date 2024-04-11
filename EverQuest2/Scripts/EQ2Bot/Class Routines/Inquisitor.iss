@@ -15,7 +15,7 @@ function Class_Declaration()
 
 	;UIElement[EQ2Bot Tabs@EQ2 Bot]:AddTab[Buffs]
 	;UIElement[EQ2Bot Tabs@EQ2 Bot].Tab[Buffs]:Move[4]
-	;ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin eq2 "${PATH_UI}/${Me.SubClass}_Buffs.xml"
+	;ui -load -parent "Buffs@EQ2Bot Tabs@EQ2 Bot" -skin EQ2-Green "${PATH_UI}/${Me.SubClass}_Buffs.xml"
 
 	declare OffenseMode bool script
 	declare DebuffMode bool script

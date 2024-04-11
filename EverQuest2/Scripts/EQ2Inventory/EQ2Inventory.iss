@@ -70,8 +70,8 @@ function main()
 
 	Event[EQ2_onIncomingText]:AttachAtom[GetText]
 
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+	ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2Inventory/UI/EQ2InventoryUI.xml"
 	wait 5
 
 	while 1

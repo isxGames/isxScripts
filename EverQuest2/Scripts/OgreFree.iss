@@ -24,23 +24,23 @@ function main()
 	echo OgreFree does not use the arguments that Ogre does. Scripts are run via the GUI. -IDBurner
 
 	;Skin here so we don't have to make sure everything is skinned in scripts..
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
 	;Open the portal UI - I have moved everything to needing the portal
-	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/OgrePortalXML.xml"
+	ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/OgrePortalXML.xml"
 
 	;Add Transmute Plugin to the Portal
 	UIElement[OgreFree Tabs@OgrePortalXML]:AddTab[Transmute]
 	UIElement[OgreFree Tabs@OgrePortalXML].Tab[2]:Move[2]
-	ui -load -parent "Transmute@OgreFree Tabs@OgrePortalXML" -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/EQ2OgreTransmuteXML.xml"
+	ui -load -parent "Transmute@OgreFree Tabs@OgrePortalXML" -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/EQ2OgreTransmuteXML.xml"
 
 	;Add Depot Plugin to the Portal
 	UIElement[OgreFree Tabs@OgrePortalXML]:AddTab[Depot]
 	UIElement[OgreFree Tabs@OgrePortalXML].Tab[3]:Move[3]
-	ui -load -parent "Depot@OgreFree Tabs@OgrePortalXML" -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreDepot/OgreDepotXML.xml"
+	ui -load -parent "Depot@OgreFree Tabs@OgrePortalXML" -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreDepot/OgreDepotXML.xml"
 
 	;Add Extras Plugin to the Portal
 	UIElement[OgreFree Tabs@OgrePortalXML]:AddTab[Options]
 	UIElement[OgreFree Tabs@OgrePortalXML].Tab[4]:Move[4]
-	ui -load -parent "Options@OgreFree Tabs@OgrePortalXML" -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/ExtraOptions.xml"
+	ui -load -parent "Options@OgreFree Tabs@OgrePortalXML" -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/ExtraOptions.xml"
 
 }

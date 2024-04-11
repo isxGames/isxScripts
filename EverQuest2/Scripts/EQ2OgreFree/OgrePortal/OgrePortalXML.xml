@@ -175,7 +175,7 @@
 				<Alignment>Center</Alignment>
 				<OnLeftClick>
 					runscript ogrefree
-					<!-- ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/OgrePortalXML.xml" -->
+					<!-- ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgrePortal/OgrePortalXML.xml" -->
 				</OnLeftClick>
 			</Button>
 			<!-- Green <Color>FF00FF00</Color> -->

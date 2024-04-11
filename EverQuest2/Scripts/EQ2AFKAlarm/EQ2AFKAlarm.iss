@@ -115,8 +115,8 @@ function main(string argv)
 
 	call CheckForConfigFolders
 
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
-	ui -reload -skin eq2 "${Script.CurrentDirectory}/Interface/EQ2AFKAlarmUI.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+	ui -reload -skin EQ2-Green "${Script.CurrentDirectory}/Interface/EQ2AFKAlarmUI.xml"
 
 	call config_load
 	LavishSettings:AddSet[AFKTriggers]

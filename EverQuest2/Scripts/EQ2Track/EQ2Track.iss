@@ -322,8 +322,8 @@ function main(... Args)
 	
 	;;;;;;;;;;;;;;;;
 	;;; IMPORTANT:   these two lines MUST be executed BEFORE loadings settings from XML
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-	ui -reload -skin eq2 "${Script.CurrentDirectory}/UI/EQ2Track.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+	ui -reload -skin EQ2-Green "${Script.CurrentDirectory}/UI/EQ2Track.xml"
 	;;;;;;;;;;;;;;;;
 	
 	LavishSettings:AddSet[EQ2Track]

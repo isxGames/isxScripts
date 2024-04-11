@@ -261,7 +261,7 @@
 						<Size>20</Size>
 					</Font>
 					<OnLeftClick>
-						ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreTransmute/eq2OgreTransmuteXML.xml"
+						ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreTransmute/eq2OgreTransmuteXML.xml"
 					</OnLeftClick>
 				</CommandButton>
 				<CommandButton Name="StartTransmute" template='Button'>

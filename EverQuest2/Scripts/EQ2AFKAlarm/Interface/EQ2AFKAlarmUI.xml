@@ -40,7 +40,7 @@
 				<Width>130</Width>
 				<Height>20</Height>
 				<Text>Configuration</Text>
-				<Command>execute ${If[${UIElement[EQ2AFKAlarm Config](exists)},"ui -unload \"&filepath;/EQ2AFKAlarm_ConfigUI.xml\"","ui -load -skin eq2 \"&filepath;/EQ2AFKAlarm_ConfigUI.xml\""]}</Command>
+				<Command>execute ${If[${UIElement[EQ2AFKAlarm Config](exists)},"ui -unload \"&filepath;/EQ2AFKAlarm_ConfigUI.xml\"","ui -load -skin EQ2-Green \"&filepath;/EQ2AFKAlarm_ConfigUI.xml\""]}</Command>
 			</commandbutton>
 
 			<Text name='RunningTime'>

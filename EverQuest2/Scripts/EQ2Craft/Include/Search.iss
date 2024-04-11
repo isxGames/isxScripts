@@ -24,8 +24,8 @@ objectdef _CraftSearch
 
 	method InitSearchWindow()
 	{
-		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2Craft/UI/CraftSearch.xml"
+		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+		ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2Craft/UI/CraftSearch.xml"
 		This.listID:Set[${UIElement[Craft Selection].FindUsableChild[Recipe List,combobox].ID}]
 		This.resetButtonID:Set[${UIElement[Craft Selection].FindUsableChild[Refresh List,button].ID}]
 		This.searchStringID:Set[${UIElement[CraftSearch].FindUsableChild[Search String,textentry].ID}]

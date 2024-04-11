@@ -525,7 +525,7 @@
 		<Text>Switch to Stats Window</Text>
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
-				ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestStatsXML.xml"
+				ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreHarvest/EQ2OgreHarvestStatsXML.xml"
 				;If this wasn't injected into a custom UI, hide this window
 				if ${UIElement[EQ2OgreHarvestShell](exists)}
 					UIElement[EQ2OgreHarvestShell]:Hide

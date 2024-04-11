@@ -462,7 +462,7 @@
 				<Text>Clear</Text>
 				<Alignment>Center</Alignment>
 				<OnLeftClick>
-					ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
+					ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
 				</OnLeftClick>
 			</Button>
 			<!-- Green <Color>FF00FF00</Color> -->

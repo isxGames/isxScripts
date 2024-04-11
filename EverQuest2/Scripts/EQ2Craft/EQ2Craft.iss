@@ -3229,8 +3229,8 @@ objectdef EQ2Craft
 		Durability[2,3]:Set[${Configuration.FindSetting[Durability Threshold for Rare Quality 3?,30]}]
 		Durability[2,4]:Set[${Configuration.FindSetting[Durability Threshold for Rare Quality 4?,0]}]
 
-		ui -reload "${LavishScript.HomeDirectory}/Interface/Skins/EQ2/EQ2.xml"
-		ui -reload -skin EQ2 "${UIPath}CraftGUI.xml"
+		ui -reload "${LavishScript.HomeDirectory}/Interface/Skins/EQ2-Green/EQ2-Green.xml"
+		ui -reload -skin EQ2-Green "${UIPath}CraftGUI.xml"
 
 		;fix our height if it bugged out from craft lite
 		if ${UIElement[Craft Selection].Height}<=20 && !${CraftLite}
@@ -3415,14 +3415,14 @@ objectdef EQ2Craft
 
 	method CheckGUIFiles()
 	{
-		variable filepath FP1="${LavishScript.HomeDirectory}/Interface/Skins/EQ2/"
+		variable filepath FP1="${LavishScript.HomeDirectory}/Interface/Skins/EQ2-Green/"
 		variable filepath FP2="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/UI/"
 		variable filepath FP3="${LavishScript.HomeDirectory}/Scripts/EQ2Craft/Recipe Data/"
 
-		if !${FP1.FileExists[EQ2.xml]}
+		if !${FP1.FileExists[EQ2-Green.xml]}
 		{
-			ErrorEcho The EQ2 Skin file could not be found in ${FP1}
-			ErrorEcho Please check the directory for "EQ2.xml"
+			ErrorEcho The EQ2-Green Skin file could not be found in ${FP1}
+			ErrorEcho Please check the directory for "EQ2-Green.xml"
 			Script:End
 		}
 
@@ -5372,7 +5372,7 @@ atom EQ2_onChoiceWindowAppeared()
 
 function ErrorExit(string Error)
 {
-	messagebox -skin eq2 "${Error}"
+	messagebox -skin EQ2-Green "${Error}"
 	Script:End
 }
 

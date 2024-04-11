@@ -13,8 +13,8 @@ variable collection:string equiplast
 
 function main()
 {
-	ui -reload "${LavishScript.HomeDirectory}/Interface/Skins/EQ2/EQ2.xml"
-	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/UI/gearUIstart.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/Skins/EQ2-Green/EQ2-Green.xml"
+	ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/UI/gearUIstart.xml"
 	bodypart[1]:Set[Head]
 	bodypart[2]:Set[Cloak]
 	bodypart[3]:Set[Chest]
@@ -181,7 +181,7 @@ function listdestroy()
 function startup()
 {
 	gearset:Set[${UIElement[gearlist@gearstart].SelectedItem.Text}]
-	ui -reload -skin eq2 "${LavishScript.CurrentDirectory}/Scripts/UI/gearUI.xml"
+	ui -reload -skin EQ2-Green "${LavishScript.CurrentDirectory}/Scripts/UI/gearUI.xml"
 	call populate
 }
 

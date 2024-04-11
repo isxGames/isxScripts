@@ -2725,8 +2725,8 @@ objectdef BrokerBot
 		call echolog "<start> : LoadUI"
 		; Load the UI Parts
 		;
-		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/EQ2.xml"
-		ui -reload -skin eq2 "${MyPricesUIPath}mypricesUI.xml"
+		ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+		ui -reload -skin EQ2-Green "${MyPricesUIPath}mypricesUI.xml"
 		call echolog "<end> : LoadUI"
 		return
 	}

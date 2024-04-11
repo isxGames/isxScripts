@@ -83,7 +83,7 @@
 		if !${Script[bjxpbotinventory](exists)}
 			runscript "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/bjxpbotinventory"
 		
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
+		ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjxpbot/ui/bjxpbotsettingsXML.xml"
 		</OnLoad>
 		<OnUnLoad>
 		echo ${Time}: Unloading BJ XP Bot

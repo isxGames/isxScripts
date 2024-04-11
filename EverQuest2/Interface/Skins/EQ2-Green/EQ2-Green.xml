@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ISUI>
+  <!-- 
+   The Skin tag defines the actual "skin" that can be used to skin any interface.
+   Templates alone do not constitute a skin, and for best compatibility, skin templates should 
+   not be specifically referred to by an interface.
+   -->
+  <Skin Name="EQ2-Green" Template="Default Skin">
+    <!-- 
+     Every template in the Default Skin template is listed below. You do not need to change every
+     template, just the ones you want. You do not need to change any of the SkinTemplate tags
+     except to change the SkinPrefix (use find/replace to change the entire file)
+     -->
+	<SkinTemplate Base='Default Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='Default Fixed Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='button.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='button.TextureHover' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='button.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='button.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='button' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.UpTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.UpTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.DownTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.DownTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.SliderTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.SliderHandleTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.upbutton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.downbutton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar.Slider' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scrollbar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.UpTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.UpTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.DownTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.DownTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.SliderTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.SliderHandleTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.upbutton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.downbutton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar.Slider' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalscrollbar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.TextureHover' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.TextureChecked' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.TextureCheckedHover' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.TextureCheckedPressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='checkbox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandbutton.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandbutton.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandbutton.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandbutton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.TextureHover' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.TextureChecked' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.TextureCheckedHover' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.TextureCheckedPressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandcheckbox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='console.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='console.ScrollBar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='console' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='frame.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='frame' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='gauge.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='gaugefiller.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='gaugefiller' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='gauge' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalgauge' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='hud' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='hudelement.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='hudelement' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='listbox.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='listbox.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='listbox.ScrollBar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='listbox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='combobox.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='combobox.ButtonTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='combobox.ListBoxTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='combobox.ListBox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='combobox.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='combobox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='map' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='mapblip.font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='mapblip' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='slider.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='slider.HandleTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='slider' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalslider.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalslider.HandleTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalslider' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.LeftTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.LeftPressedTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.LeftHoverTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.RightTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.RightPressedTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.RightHoverTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.FrameTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.TabTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.TabSelectedTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.LeftButton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol.RightButton' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tabcontrol' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='text.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='text' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='textentry.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='textentry' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='commandentry' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tooltip.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='tooltip' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='variablegauge.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='variablegaugefiller.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='variablegauge' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalvariablegauge' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='variableslider.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='variableslider.HandleTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='variableslider' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='verticalvariableslider' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Title.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Title' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Minimize.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Minimize.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Minimize' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Maximize.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Maximize.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Maximize' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Close.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Close.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar.Close' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.TitleBar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window.Client' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='window' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Title.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Title' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Minimize.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Minimize.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Minimize' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Maximize.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Maximize.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Maximize' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Close.Texture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Close.TexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar.Close' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.TitleBar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow.Client' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='horizontalwindow' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.OKTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.OKTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.YesTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.YesTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.NoTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.NoTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.CancelTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.CancelTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='messagebox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scriptinputbox.OKTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scriptinputbox.OKTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scriptinputbox.CancelTexture' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scriptinputbox.CancelTexturePressed' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scriptinputbox.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='scriptinputbox' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='textedit.VerticalScrollBar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='textedit.HorizontalScrollBar' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='contextmenu.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='contextmenu' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='textedit.Font' SkinPrefix='EQ2-GreenSkin.' />
+    <SkinTemplate Base='textedit' SkinPrefix='EQ2-GreenSkin.' />
+  </Skin>
+  <Template name='EQ2-GreenSkin.Default Font' Template='Default Font'>
+	<Name>Lucida Sans Unicode Bold</Name>
+	<Color>FFF9F099</Color>
+	<Size>14</Size>
+  </Template>
+  <Template name='EQ2-GreenSkin.Default Fixed Font' Template='Default Fixed Font'>
+	<Color>FFF9F099</Color>
+  </Template>
+  <Template name='EQ2-GreenSkin.Button.Texture' Filename='&filepath;/commonelements.dds'>
+	<Left>113</Left>
+	<Right>203</Right>
+	<Top>7</Top>
+	<Bottom>32</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.Button.TextureHover' Filename='&filepath;/commonelements.dds'>
+	<Left>113</Left>
+	<Right>203</Right>
+	<Top>79</Top>
+	<Bottom>104</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.button.TexturePressed' Filename='&filepath;/commonelements.dds'>
+	<Left>113</Left>
+	<Right>203</Right>
+	<Top>115</Top>
+	<Bottom>140</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.button.Font' Template='EQ2-GreenSkin.Default Font'>
+	<Color>FFF9F099</Color>
+  </Template>
+  <Template name='EQ2-GreenSkin.button' Template='button' />
+  <Template name='EQ2-GreenSkin.scrollbar.UpTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>430</Left>
+	<Right>446</Right>
+	<Top>5</Top>
+	<Bottom>23</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.UpTexturePressed' Filename='&filepath;/commonelements.dds'>
+	<Left>482</Left>
+	<Right>498</Right>
+	<Top>5</Top>
+	<Bottom>23</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.DownTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>430</Left>
+	<Right>446</Right>
+	<Top>5</Top>
+	<Bottom>23</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.DownTexturePressed' Filename='&filepath;/commonelements.dds'>
+	<Left>482</Left>
+	<Right>498</Right>
+	<Top>5</Top>
+	<Bottom>23</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.SliderTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>432</Left>
+	<Right>444</Right>
+	<Top>26</Top>
+	<Bottom>107</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.SliderHandleTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>431</Left>
+	<Right>445</Right>
+	<Top>135</Top>
+	<Bottom>192</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.upbutton' Template='scrollbar.upbutton'>
+	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.downbutton' Template='scrollbar.downbutton'>
+	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar.Slider' Template='scrollbar.Slider'>
+	<Border>1</Border>
+	<X>12</X>
+	<Width>r24</Width>
+	<Height>12</Height>
+  </Template>
+  <Template name='EQ2-GreenSkin.scrollbar' Template='scrollbar'>
+	<Border>1</Border>
+	<Height>12</Height>
+  </Template>
+  <Template name='EQ2-GreenSkin.verticalscrollbar.UpTexture' Template='scrollbar.UpTexture' />
+  <Template name='EQ2-GreenSkin.verticalscrollbar.UpTexturePressed' Template='scrollbar.UpTexturePressed' />
+  <Template name='EQ2-GreenSkin.verticalscrollbar.DownTexture' Template='scrollbar.DownTexture' />
+  <Template name='EQ2-GreenSkin.verticalscrollbar.DownTexturePressed' Template='scrollbar.DownTexturePressed' />
+  <Template name='EQ2-GreenSkin.verticalscrollbar.SliderTexture' Template='scrollbar.SliderTexture' />
+  <Template name='EQ2-GreenSkin.verticalscrollbar.SliderHandleTexture' Template='scrollbar.SliderHandleTexture' />
+  <Template name='EQ2-GreenSkin.verticalscrollbar.upbutton' Template='verticalscrollbar.upbutton'>
+	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
+	<Texture Template='scrollbar.UpTexture'>
+	  <Orientation>0</Orientation>
+	</Texture>
+	<TexturePressed Template='scrollbar.UpTexturePressed'>
+	  <Orientation>0</Orientation>
+	</TexturePressed>
+	<TextureHover Template='scrollbar.UpTextureHover'>
+	  <Orientation>0</Orientation>
+	</TextureHover>
+  </Template>
+  <Template name='EQ2-GreenSkin.verticalscrollbar.downbutton' Template='verticalscrollbar.downbutton'>
+	<Border>1</Border>
+	<Height>12</Height>
+	<Width>12</Width>
+	<Y>r10</Y>
+	<Texture Template='scrollbar.DownTexture'>
+	  <Orientation>2</Orientation>
+	</Texture>
+	<TexturePressed Template='scrollbar.DownTexturePressed'>
+	  <Orientation>2</Orientation>
+	</TexturePressed>
+	<TextureHover Template='scrollbar.DownTextureHover'>
+	  <Orientation>2</Orientation>
+	</TextureHover>
+  </Template>
+  <Template name='EQ2-GreenSkin.verticalscrollbar.Slider' Template='verticalscrollbar.Slider'>
+	<Border>1</Border>
+	<Y>12</Y>
+	<Height>r24</Height>
+	<Width>12</Width>
+	<Texture Template='scrollbar.SliderTexture'>
+	  <Orientation>3</Orientation>
+	</Texture>
+  </Template>
+	<Template name='EQ2-GreenSkin.verticalscrollbar' Template='verticalscrollbar'>
+	  <X>r12</X>
+	  <Width>12</Width>
+	</Template>
+  <Template name='EQ2-GreenSkin.checkbox.Texture' Filename='&filepath;/commonelements.dds'>
+	<Left>243</Left>
+	<Right>259</Right>
+	<Top>320</Top>
+	<Bottom>335</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.checkbox.TextureHover' Filename='&filepath;/commonelements.dds'>
+	<Left>243</Left>
+	<Right>259</Right>
+	<Top>320</Top>
+	<Bottom>335</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.checkbox.TexturePressed' Filename='&filepath;/commonelements.dds'>
+	<Left>243</Left>
+	<Right>259</Right>
+	<Top>346</Top>
+	<Bottom>361</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.checkbox.TextureChecked' Filename='&filepath;/commonelements.dds'>
+	<Left>243</Left>
+	<Right>259</Right>
+	<Top>268</Top>
+	<Bottom>283</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.checkbox.TextureCheckedHover' Filename='&filepath;/commonelements.dds'>
+	<Left>243</Left>
+	<Right>259</Right>
+	<Top>268</Top>
+	<Bottom>283</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.checkbox.TextureCheckedPressed' Filename='&filepath;/commonelements.dds'>
+	<Left>243</Left>
+	<Right>259</Right>
+	<Top>295</Top>
+	<Bottom>309</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.checkbox.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.checkbox' Template='checkbox' />
+  <Template name='EQ2-GreenSkin.commandbutton.Texture' Template='button.Texture' />
+  <Template name='EQ2-GreenSkin.commandbutton.TexturePressed' Template='button.TexturePressed' />
+  <Template name='EQ2-GreenSkin.commandbutton.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.commandbutton' Template='button' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.Texture' Template='checkbox.Texture' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.TextureHover' Template='checkbox.TextureHover' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.TexturePressed' Template='checkbox.TexturePressed' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.TextureChecked' Template='checkbox.TextureChecked' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.TextureCheckedHover' Template='checkbox.TextureCheckedHover' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.TextureCheckedPressed' Template='checkbox.TextureCheckedPressed' />
+  <Template name='EQ2-GreenSkin.commandcheckbox.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.commandcheckbox' Template='checkbox' />
+  <Template name='EQ2-GreenSkin.console.Font' Template='EQ2-GreenSkin.Default Fixed Font' />
+  <Template name='EQ2-GreenSkin.console.ScrollBar' Template='console.ScrollBar' />
+  <Template name='EQ2-GreenSkin.console' Template='console'>
+	<SelectionColor>FF0000FF</SelectionColor>
+	<BackgroundColor>FF000000</BackgroundColor>
+	<BorderColor>FFF9F099</BorderColor>
+  </Template>
+  <Template name='EQ2-GreenSkin.frame.Texture' Template='frame.Texture' />
+  <Template name='EQ2-GreenSkin.frame' Template='frame'>
+	<BorderColor>00000000</BorderColor>
+  </Template>
+  <Template name='EQ2-GreenSkin.gauge.Texture' Filename='&filepath;/OgreGauge.png'>
+	<Left>0</Left>
+	<Right>200</Right>
+	<Top>2</Top>
+	<Bottom>14</Bottom>
+	<Border>2</Border>
+	<ColorMask>FF7B5500</ColorMask>
+  </Template>
+  <Template name='EQ2-GreenSkin.gaugefiller.Texture' Filename='&filepath;/OgreGauge.png'>
+	<Left>3</Left>
+	<Right>196</Right>
+	<Top>16</Top>
+	<Bottom>28</Bottom>
+	<Border>4</Border>
+	<ColorMask>FFE9CB00</ColorMask>
+  </Template>
+  <Template name='EQ2-GreenSkin.gaugefiller' Template='gaugefiller'>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.gauge' Template='gauge' />
+  <Template name='EQ2-GreenSkin.verticalgauge' Template='verticalgauge' />
+  <Template name='EQ2-GreenSkin.hud' Template='hud' />
+  <Template name='EQ2-GreenSkin.hudelement.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.hudelement' Template='hudelement' />
+  <Template name='EQ2-GreenSkin.listbox.Texture' Filename='&filepath;/commonelements.dds'>
+	<Left>113</Left>
+	<Right>208</Right>
+	<Top>414</Top>
+	<Bottom>503</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.listbox.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.listbox.ScrollBar' Template='EQ2-GreenSkin.verticalscrollbar' />
+  <Template name='EQ2-GreenSkin.listbox' Template='listbox' />
+  <Template name='EQ2-GreenSkin.combobox.Texture' Filename='&filepath;/commonelements.dds'>
+	<Left>308</Left>
+	<Right>393</Right>
+	<Top>241</Top>
+	<Bottom>266</Bottom>
+	<Border>4</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.combobox.ButtonTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>393</Left>
+	<Right>417</Right>
+	<Top>241</Top>
+	<Bottom>266</Bottom>
+	<Border>4</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.combobox.ListBoxTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>113</Left>
+	<Right>208</Right>
+	<Top>414</Top>
+	<Bottom>503</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.combobox.ListBox' Template='combobox.ListBox'>
+	<Texture Template='combobox.ListBoxTexture' />
+	<Border>4</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.combobox.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.combobox' Template='combobox'>
+	<Texture Template='combobox.Texture' />
+	<Border>4</Border>
+	<ButtonWidth>16</ButtonWidth>
+	<ListBox Texture='EQ2-GreenSkin.combobox.ListBox'>
+
+	</ListBox>
+  </Template>
+  <Template name='EQ2-GreenSkin.map' Template='map' />
+  <Template name='EQ2-GreenSkin.mapblip.font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.mapblip' Template='mapblip' />
+  <Template name='EQ2-GreenSkin.slider.Texture' Filename='&filepath;/commonelements.dds'>
+	<Left>102</Left>
+	<Right>179</Right>
+	<Top>150</Top>
+	<Bottom>170</Bottom>
+	<Border>5</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.slider.HandleTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>195</Left>
+	<Right>202</Right>
+	<Top>150</Top>
+	<Bottom>169</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.slider' Template='slider'>
+  </Template>
+  <Template name='EQ2-GreenSkin.verticalslider.Texture' Template='verticalslider.Texture' />
+  <Template name='EQ2-GreenSkin.verticalslider.HandleTexture' Template='verticalslider.HandleTexture' />
+  <Template name='EQ2-GreenSkin.verticalslider' Template='verticalslider' />
+  <Template name='EQ2-GreenSkin.tabcontrol.LeftTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>263</Left>
+	<Right>282</Right>
+	<Top>194</Top>
+	<Bottom>214</Bottom>
+	<Border>3</Border>
+	<Orientation>2</Orientation>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.LeftPressedTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>263</Left>
+	<Right>282</Right>
+	<Top>194</Top>
+	<Bottom>214</Bottom>
+	<Border>3</Border>
+	<Orientation>2</Orientation>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.LeftHoverTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>263</Left>
+	<Right>282</Right>
+	<Top>194</Top>
+	<Bottom>214</Bottom>
+	<Border>3</Border>
+	<Orientation>2</Orientation>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.RightTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>263</Left>
+	<Right>282</Right>
+	<Top>194</Top>
+	<Bottom>214</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.RightPressedTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>263</Left>
+	<Right>282</Right>
+	<Top>194</Top>
+	<Bottom>214</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.RightHoverTexture' Filename='&filepath;/commonelements.dds'>
+	<Left>263</Left>
+	<Right>282</Right>
+	<Top>194</Top>
+	<Bottom>214</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.LeftButton' Template='tabcontrol.LeftButton' />
+  <Template name='EQ2-GreenSkin.tabcontrol.RightButton' Template='tabcontrol.RightButton' />
+  <Template name='EQ2-GreenSkin.tabcontrol.FrameTexture' Filename='&filepath;/windowelements.dds'>
+	<Left>16</Left>
+	<Right>463</Right>
+	<Top>955</Top>
+	<Bottom>1002</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.TabTexture' Filename='&filepath;/windowelements.dds'>
+	<Left>110</Left>
+	<Right>202</Right>
+	<Top>913</Top>
+	<Bottom>941</Bottom>
+	<Border>0</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.TabSelectedTexture' Filename='&filepath;/windowelements.dds'>
+	<Left>7</Left>
+	<Right>100</Right>
+	<Top>913</Top>
+	<Bottom>941</Bottom>
+	<Border>1</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol.Font' Template='EQ2-GreenSkin.Default Font'>
+	<Color>FFE0D88A</Color>
+  </Template>
+  <Template name='EQ2-GreenSkin.tabcontrol' Template='tabcontrol'>
+	<SelectedTextColor>FFF9F099</SelectedTextColor>
+	<TabHeight>20</TabHeight>
+	<FrameBorder>3</FrameBorder>
+	<FrameTexture Template='EQ2-GreenSkin.Tabcontrol.FrameTexture' />
+	<FrameBackgroundColor>00000000</FrameBackgroundColor>
+	<FrameBorderColor>00000000</FrameBorderColor>
+  </Template>
+  <Template name='EQ2-GreenSkin.text.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.text' Template='text' />
+  <Template name='EQ2-GreenSkin.textentry.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.textentry' Template='textentry'>
+	<SelectionColor>FF0000FF</SelectionColor>
+	<BackgroundColor>FF000000</BackgroundColor>
+	<BorderColor>FFF9F099</BorderColor>
+	<CaretInnerColor>FFFFFFFF</CaretInnerColor>
+	<CaretOuterColor>FFFFFFFF</CaretOuterColor>
+  </Template>
+  <Template name='EQ2-GreenSkin.commandentry' Template='EQ2-GreenSkin.textentry'>
+	<CommandHistory>50</CommandHistory>
+  </Template>
+  <Template name='EQ2-GreenSkin.tooltip.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.tooltip' Template='tooltip' />
+  <Template name='EQ2-GreenSkin.variablegauge.Texture' Template='variablegauge.Texture' />
+  <Template name='EQ2-GreenSkin.variablegaugefiller.Texture' Template='variablegaugefiller.Texture' />
+  <Template name='EQ2-GreenSkin.variablegauge' Template='variablegauge' />
+  <Template name='EQ2-GreenSkin.verticalvariablegauge' Template='verticalvariablegauge' />
+  <Template name='EQ2-GreenSkin.variableslider.Texture' Template='variableslider.Texture' />
+  <Template name='EQ2-GreenSkin.variableslider.HandleTexture' Template='variableslider.HandleTexture' />
+  <Template name='EQ2-GreenSkin.variableslider' Template='variableslider' />
+  <Template name='EQ2-GreenSkin.verticalvariableslider' Template='verticalvariableslider' />
+  <Template name='EQ2-GreenSkin.window.Texture' Filename='&filepath;/windowelements.dds' ColorKey='FF000000'>
+	<Left>17</Left>
+	<Right>414</Right>
+	<Top>526</Top>
+	<Bottom>898</Bottom>
+	<Border>6</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Texture' Filename='&filepath;/windowelements.dds' ColorKey='FF000000'>
+	<Left>17</Left>
+	<Right>463</Right>
+	<Top>5</Top>
+	<Bottom>29</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Title.Font' Template='EQ2-GreenSkin.Default Font'>
+	<Size>16</Size>
+	<Color>FFF9F099</Color>
+	<Bold />
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Title' Template='window.TitleBar.Title' />
+  <Template name='EQ2-GreenSkin.window.TitleBar.Minimize.Texture' Filename="&filepath;/windowelements.dds">
+	<Left>483</Left>
+	<Right>496</Right>
+	<Top>178</Top>
+	<Bottom>191</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Minimize.TexturePressed' Filename="&filepath;/windowelements.dds">
+	<Left>483</Left>
+	<Right>496</Right>
+	<Top>197</Top>
+	<Bottom>212</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Minimize' Template='window.TitleBar.Minimize'>
+	<X>r22</X>
+	<Y>5</Y>
+	<Width>9</Width>
+	<Height>9</Height>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Maximize.Texture' Filename="&filepath;/windowelements.dds">
+	<Left>483</Left>
+	<Right>496</Right>
+	<Top>178</Top>
+	<Bottom>192</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Maximize.TexturePressed' Filename="&filepath;/windowelements.dds">
+	<Left>483</Left>
+	<Right>496</Right>
+	<Top>197</Top>
+	<Bottom>212</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Maximize' Template='window.TitleBar.Maximize'>
+	<X>r22</X>
+	<Y>5</Y>
+	<Width>9</Width>
+	<Height>9</Height>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Close.Texture' Filename="&filepath;/windowelements.dds">
+	<Left>483</Left>
+	<Right>496</Right>
+	<Top>6</Top>
+	<Bottom>19</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Close.TexturePressed' Filename="&filepath;/windowelements.dds">
+	<Left>483</Left>
+	<Right>496</Right>
+	<Top>26</Top>
+	<Bottom>40</Bottom>
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar.Close' Template='window.TitleBar.Close'>
+	<X>r12</X>
+	<Y>5</Y>
+	<Width>9</Width>
+	<Height>9</Height>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.TitleBar' Template='window.TitleBar'>
+	<Border>3</Border>
+	<X>2</X>
+	<Width>r5</Width>
+	<Texture Template='EQ2-GreenSkin.window.TitleBar.Texture' />
+	<BackgroundColor>00000000</BackgroundColor>
+  </Template>
+  <Template name='EQ2-GreenSkin.window.Client' Template='window.Client'>
+	<Texture Template='EQ2-GreenSkin.window.Texture' />
+	<Border>3</Border>
+  </Template>
+  <Template name='EQ2-GreenSkin.window' Template='window'>
+	<Border>0</Border>
+	<BackgroundColor>00000000</BackgroundColor>
+  </Template>
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Title.Font' Template='EQ2-GreenSkin.window.TitleBar.Title.Font' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Title' Template='horizontalwindow.TitleBar.Title' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Minimize.Texture' Template='horizontalwindow.TitleBar.Minimize.Texture' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Minimize.TexturePressed' Template='horizontalwindow.TitleBar.Minimize.TexturePressed' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Minimize' Template='horizontalwindow.TitleBar.Minimize' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Maximize.Texture' Template='horizontalwindow.TitleBar.Maximize.Texture' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Maximize.TexturePressed' Template='horizontalwindow.TitleBar.Maximize.TexturePressed' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Maximize' Template='horizontalwindow.TitleBar.Maximize' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Close.Texture' Template='horizontalwindow.TitleBar.Close.Texture' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Close.TexturePressed' Template='horizontalwindow.TitleBar.Close.TexturePressed' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar.Close' Template='horizontalwindow.TitleBar.Close' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.TitleBar' Template='horizontalwindow.TitleBar' />
+  <Template name='EQ2-GreenSkin.horizontalwindow.Client' Template='horizontalwindow.Client' />
+  <Template name='EQ2-GreenSkin.horizontalwindow' Template='horizontalwindow' />
+  <Template name='EQ2-GreenSkin.messagebox.OKTexture' Template='EQ2-GreenSkin.button.Texture' />
+  <Template name='EQ2-GreenSkin.messagebox.OKTexturePressed' Template='EQ2-GreenSkin.button.TexturePressed' />
+  <Template name='EQ2-GreenSkin.messagebox.YesTexture' Template='EQ2-GreenSkin.button.Texture' />
+  <Template name='EQ2-GreenSkin.messagebox.YesTexturePressed' Template='EQ2-GreenSkin.button.TexturePressed' />
+  <Template name='EQ2-GreenSkin.messagebox.NoTexture' Template='EQ2-GreenSkin.button.Texture' />
+  <Template name='EQ2-GreenSkin.messagebox.NoTexturePressed' Template='EQ2-GreenSkin.button.TexturePressed' />
+  <Template name='EQ2-GreenSkin.messagebox.CancelTexture' Template='EQ2-GreenSkin.button.Texture' />
+  <Template name='EQ2-GreenSkin.messagebox.CancelTexturePressed' Template='EQ2-GreenSkin.button.TexturePressed' />
+  <Template name='EQ2-GreenSkin.messagebox.Font' Template='EQ2-GreenSkin.Default Font' />
+  <template name='EQ2-GreenSkin.messagebox' Template='EQ2-GreenSkin.window'>
+	<Font Template='EQ2-GreenSkin.messagebox.Font' />
+	<CloseButton>0</CloseButton>
+	<MinimizeButton>0</MinimizeButton>
+	<OKColor>FFFFFFFF</OKColor>
+	<CancelColor>FFFFFFFF</CancelColor>
+	<YesColor>FFFFFFFF</YesColor>
+	<NoColor>FFFFFFFF</NoColor>
+	<OKTexture Template='EQ2-GreenSkin.messagebox.OKTexture' />
+	<OKTexturePressed Template='EQ2-GreenSkin.messagebox.OKTexturePressed' />
+	<OKTextureHover Template='EQ2-GreenSkin.messagebox.OKTextureHover' />
+	<CancelTexture Template='EQ2-GreenSkin.messagebox.CancelTexture' />
+	<CancelTexturePressed Template='EQ2-GreenSkin.messagebox.CancelTexturePressed' />
+	<CancelTextureHover Template='EQ2-GreenSkin.messagebox.CancelTextureHover' />
+	<YesTexture Template='EQ2-GreenSkin.messagebox.YesTexture' />
+	<YesTexturePressed Template='EQ2-GreenSkin.messagebox.YesTexturePressed' />
+	<YesTextureHover Template='EQ2-GreenSkin.messagebox.YesTextureHover' />
+	<NoTexture Template='EQ2-GreenSkin.messagebox.NoTexture' />
+	<NoTexturePressed Template='EQ2-GreenSkin.messagebox.NoTexturePressed' />
+	<NoTextureHover Template='EQ2-GreenSkin.messagebox.NoTextureHover' />
+  </template>
+  <Template name='EQ2-GreenSkin.scriptinputbox.OKTexture' Template='EQ2-GreenSkin.messagebox.OKTexture' />
+  <Template name='EQ2-GreenSkin.scriptinputbox.OKTexturePressed' Template='EQ2-GreenSkin.messagebox.OKTexturePressed' />
+  <Template name='EQ2-GreenSkin.scriptinputbox.CancelTexture' Template='EQ2-GreenSkin.messagebox.CancelTexture' />
+  <Template name='EQ2-GreenSkin.scriptinputbox.CancelTexturePressed' Template='EQ2-GreenSkin.messagebox.CancelTexturePressed' />
+  <Template name='EQ2-GreenSkin.scriptinputbox.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.scriptinputbox' Template='EQ2-GreenSkin.messagebox' />
+  <Template name='EQ2-GreenSkin.textedit.VerticalScrollBar' Template='EQ2-GreenSkin.verticalscrollbar' />
+  <Template name='EQ2-GreenSkin.textedit.HorizontalScrollBar' Template='EQ2-GreenSkin.scrollbar' />
+  <Template name='EQ2-GreenSkin.contextmenu.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.contextmenu' Template='contextmenu' />
+  <Template name='EQ2-GreenSkin.textedit.Font' Template='EQ2-GreenSkin.Default Font' />
+  <Template name='EQ2-GreenSkin.textedit' Template='textedit'>
+	<SelectionColor>FF0000FF</SelectionColor>
+	<BackgroundColor>FF000000</BackgroundColor>
+	<BorderColor>FFF9F099</BorderColor>
+	<CaretInnerColor>FFFFFFFF</CaretInnerColor>
+	<CaretOuterColor>FFFFFFFF</CaretOuterColor>
+  </Template>
+</ISUI>

@@ -14,6 +14,6 @@ function main(int InjectionPoint,int MoveTabTo=2)
 {
 	UIElement[${InjectionPoint}]:AddTab[OHarvest]
 	;echo "${UIElement[${InjectionPoint}].Tab[OHarvest].FullName}"
-	ui -reload -parent "${UIElement[${InjectionPoint}].Tab[OHarvest].FullName}" -skin eq2 "${EQ2OgreHarvestInjectableXML}"
+	ui -reload -parent "${UIElement[${InjectionPoint}].Tab[OHarvest].FullName}" -skin EQ2-Green "${EQ2OgreHarvestInjectableXML}"
 	UIElement[${InjectionPoint}].Tab[OHarvest]:Move[${MoveTabTo}]
 }

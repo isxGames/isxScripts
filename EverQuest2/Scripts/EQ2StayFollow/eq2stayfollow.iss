@@ -23,8 +23,8 @@ variable bool start
 ; Start of the main script
 function main()
 {
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
-	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2StayFollow/UI/EQ2StayFollow.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
+	ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2StayFollow/UI/EQ2StayFollow.xml"
 	start:Set[FALSE]
 	
 	do

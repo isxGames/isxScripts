@@ -19,7 +19,7 @@ function main(string LoginModifer, string c_status)
 	}
 
 	;Skin here so we don't have to make sure everything is skinned in scripts..
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
 
 	if ${LoginModifer.Equal[?]} || ${LoginModifer.Equal[help]}
 	{

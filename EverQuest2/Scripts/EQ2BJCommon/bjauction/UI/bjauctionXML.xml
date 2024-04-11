@@ -32,8 +32,8 @@
 		item1Linkvar:Set["None"]
 		Item2Linkvar:Set[None]
 		Item1BidTextEntryVar:Set[ ]
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionsettingsXML.xml"
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionpreviewXML.xml"
+		ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionsettingsXML.xml"
+		ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2bjcommon/bjauction/ui/bjauctionpreviewXML.xml"
 		</OnLoad>
 		<OnUnLoad>
 		echo ${Time}: Unloading BJ Auction Bot

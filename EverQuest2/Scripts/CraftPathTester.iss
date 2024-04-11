@@ -39,8 +39,8 @@ function main()
 	Nav.STRAFELEFT:Set[${Configuration.FindSetting[StrafeRight Key,"e"]}]
 	Nav.STRAFERIGHT:Set[${Configuration.FindSetting[StrafeLeft Key,"q"]}]
 
-	ui -reload interface/skins/eq2/eq2.xml
-    ui -reload -skin eq2 scripts/EQ2Craft/UI/CraftPath.xml
+	ui -reload interface/skins/EQ2-Green/EQ2-Green.xml
+    ui -reload -skin EQ2-Green scripts/EQ2Craft/UI/CraftPath.xml
     
     do
     {

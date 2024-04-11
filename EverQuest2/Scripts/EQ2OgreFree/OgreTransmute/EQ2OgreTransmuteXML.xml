@@ -244,7 +244,7 @@
 		<Text>Reset</Text>
 		<Alignment>Center</Alignment>
 		<OnLeftClick>
-			ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/eq2OgreTransmuteXML.xml"
+			ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/EQ2OgreFree/OgreTransmute/eq2OgreTransmuteXML.xml"
 		</OnLeftClick>
 	</CommandButton>
 

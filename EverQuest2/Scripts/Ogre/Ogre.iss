@@ -19,7 +19,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	}
 
 	;Skin here so we don't have to make sure everything is skinned in scripts..
-	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/eq2/eq2.xml"
+	ui -reload "${LavishScript.HomeDirectory}/Interface/skins/EQ2-Green/EQ2-Green.xml"
 
 	if ${LoginModifer.Equal[?]} || ${LoginModifer.Equal[help]}
 	{
@@ -47,7 +47,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	}
 	elseif ${LoginModifer.Equal[OP]}
 	{
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
+		ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
 		return
 	}
 	elseif ${LoginModifer.Equal[OSA]} || ${LoginModifer.Equal[OnScreen]}
@@ -72,7 +72,7 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 	}
 	elseif ${LoginModifer.Equal[Reset]} || ${LoginModifer.Equal[Zone]}
 	{
-		ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreZoneReset/EQ2OgreZoneResetXML.xml"
+		ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgreZoneReset/EQ2OgreZoneResetXML.xml"
 		;runscript eq2Ogrecommon/ogretransmute/eq2ogretransmuteshell
 		return
 	}
@@ -172,6 +172,6 @@ function main(string LoginModifer, string CharToLogin, string Arg3)
 		return
 	}
 	
-	ui -reload -skin eq2 "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
+	ui -reload -skin EQ2-Green "${LavishScript.HomeDirectory}/Scripts/eq2ogrecommon/OgrePortal/OgrePortalXML.xml"
 	return
 }

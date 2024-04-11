@@ -23,7 +23,7 @@ function InjectPatherTab(string InjectionPoint, string ConfigPath)
 	PatherFilepath:Set[${ConfigPath}]
 	PatherParent:Set[${InjectionPoint}]
 	UIElement[${InjectionPoint}]:AddTab[Pather]
-	ui -reload -parent "pather@${InjectionPoint}" -skin eq2 "${PatherGUI}"
+	ui -reload -parent "pather@${InjectionPoint}" -skin EQ2-Green "${PatherGUI}"
 }
 
 ; you don't really need to call this, as dangling children are destroyed when their parents are
