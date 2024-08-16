@@ -661,7 +661,7 @@ function main(... recipeFavourite)
 										call CastReaction 2 2
 									}
 
-									if ${tempdur}<${Durability[2,1]} && ${Me.Power}/${Me.MaxPower}*100>${Durability[2,3]}
+									if ${tempdur}<${Durability[2,1]} && ${Me.Power}>${Durability[2,3]}
 									{
 										call CastReaction 2 3
 									}
@@ -678,7 +678,7 @@ function main(... recipeFavourite)
 										call CastReaction 2 1
 									}
 
-									if ${tempdur}<${Durability[2,1]} && ${Me.Power}/${Me.MaxPower}*100>${Durability[2,3]}
+									if ${tempdur}<${Durability[2,1]} && ${Me.Power}>${Durability[2,3]}
 									{
 										call CastReaction 2 3
 									}
@@ -1303,12 +1303,12 @@ function Craft(int64 xrecipe, int repeats, int qresult, int var1, int var2)
 
 	if ${WaitforPower}
 	{
-		if ${Me.Power}/${Me.MaxPower}*100<${PowerRegen}
+		if ${Me.Power}<${PowerRegen}
 		{
 			ChatEcho Waiting for Power to Regenerate to ${PowerRegen}%
 		}
 
-		while ${Me.Power}/${Me.MaxPower}*100<${PowerRegen}
+		while ${Me.Power}<${PowerRegen}
 		{
 			waitframe
 		}
@@ -1335,12 +1335,12 @@ function Craft(int64 xrecipe, int repeats, int qresult, int var1, int var2)
 		; Check Power
 		if ${WaitforPower} && !${firstpass}
 		{
-			if ${Me.Power}/${Me.MaxPower}*100<${PowerRegen}
+			if ${Me.Power}<${PowerRegen}
 			{
 				ChatEcho Waiting for Power to Regenerate to ${PowerRegen}%
 			}
 
-			while ${Me.Power}/${Me.MaxPower}*100<${PowerRegen}
+			while ${Me.Power}<${PowerRegen}
 			{
 				waitframe
 			}
@@ -1430,7 +1430,7 @@ function Craft(int64 xrecipe, int repeats, int qresult, int var1, int var2)
 							call CastReaction 2 2
 						}
 
-						if ${tempdur}<${Durability[${tempvar2},1]} && ${Me.Power}/${Me.MaxPower}*100>${Durability[${tempvar2},3]}
+						if ${tempdur}<${Durability[${tempvar2},1]} && ${Me.Power}>${Durability[${tempvar2},3]}
 						{
 							call CastReaction 2 3
 						}
@@ -1447,7 +1447,7 @@ function Craft(int64 xrecipe, int repeats, int qresult, int var1, int var2)
 							call CastReaction 2 1
 						}
 
-						if ${tempdur}<${Durability[${tempvar2},1]} && ${Me.Power}/${Me.MaxPower}*100>${Durability[${tempvar2},3]}
+						if ${tempdur}<${Durability[${tempvar2},1]} && ${Me.Power}>${Durability[${tempvar2},3]}
 						{
 							call CastReaction 2 3
 						}
@@ -2318,7 +2318,7 @@ function ProcessSecondaryArts()
 	variable int temppower
 
 	tempdur:Set[${CurrentDurability}/${TotalDurability}*100]
-	temppower:Set[${Me.Power}/${Me.MaxPower}*100]
+	temppower:Set[${Me.Power}]
 
 	; Determine which Power Buff to cast
 	if ${tempdur}>90 && ${CurrentQuality}==3 && ${temppower}>40
@@ -2383,11 +2383,11 @@ function ProgressCombo()
 	}
 	while ${tempkey:Inc}<=2
 
-	if ${tempdur}<${Durability[${tempvar},1]} && ${Me.Power}/${Me.MaxPower}*100>${Durability[${tempvar},3]}
+	if ${tempdur}<${Durability[${tempvar},1]} && ${Me.Power}>${Durability[${tempvar},3]}
 	{
 		call CastReaction 2 3
 	}
-	elseif ${Me.Power}/${Me.MaxPower}*100>${Durability[${tempvar},3]}
+	elseif ${Me.Power}>${Durability[${tempvar},3]}
 	{
 		call CastReaction 1 3
 	}
@@ -2411,7 +2411,7 @@ function DurabilityCombo()
 	}
 	while ${tempkey:Inc}<=2
 
-	if ${tempdur}<${Durability[${tempvar},2]} && ${Me.Power}/${Me.MaxPower}*100>${Durability[${tempvar},3]}
+	if ${tempdur}<${Durability[${tempvar},2]} && ${Me.Power}>${Durability[${tempvar},3]}
 	{
 		call CastReaction 2 3
 	}
@@ -2440,7 +2440,7 @@ function BalanceCombo()
 		call CastReaction 1 2
 	}
 
-	if ${Me.Power}/${Me.MaxPower}*100>${Durability[${tempvar},3]}
+	if ${Me.Power}>${Durability[${tempvar},3]}
 	{
 		call CastReaction ${Math.Rand[2]:Inc} 3
 	}
