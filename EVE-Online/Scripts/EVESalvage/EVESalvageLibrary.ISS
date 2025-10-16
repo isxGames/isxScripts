@@ -1,25 +1,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; IMPORTANT NOTE:  This file is not a standalone script.  It simply includes 
+;; IMPORTANT NOTE:  This file is not a standalone script. It simply includes 
 ;;                  functions that can be used with multiple (salvage related)
-;;                  scripts.   See EVESalvage.iss for an example of how this
+;;                  scripts. See EVESalvage.iss for an example of how this
 ;;                  file is (and its contents are) included and used.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Definitions
-#define CATEGORYID_STATION 								3
-#define GROUPID_CORPORATE_HANGAR_ARRAY 		471
-#define GROUPID_CARGO_CONTAINER 					12
-#define GROUPID_WRECK 										186
-#define GROUPID_SECURE_CARGO_CONTAINER		340
-#define GROUPID_TRACTOR_BEAM 							650
-#define GROUPID_SALVAGER 									112
+#define CATEGORYID_STATION								3
+#define GROUPID_CORPORATE_HANGAR_ARRAY					471
+#define GROUPID_CARGO_CONTAINER							12
+#define GROUPID_WRECK									186
+#define GROUPID_SECURE_CARGO_CONTAINER					340
+#define GROUPID_TRACTOR_BEAM							650
+#define GROUPID_SALVAGER								112
 #define GROUPID_SALVAGEDITEM							754
-#define GROUPID_INDUSTRIALCOMMANDSHIP			941
-#define GROUPID_SENSORBOOSTER 						212
-#define DOCKING_RANGE 										200
-#define LOOT_RANGE 												2490
-#define CORP_HANGAR_LOOT_RANGE 						3000
+#define GROUPID_INDUSTRIALCOMMANDSHIP					941
+#define GROUPID_SENSORBOOSTER							212
+#define DOCKING_RANGE									200
+#define LOOT_RANGE										2490
+#define CORP_HANGAR_LOOT_RANGE							3000
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
