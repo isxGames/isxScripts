@@ -122,31 +122,45 @@ function ScaleElement(jsonvalueref elem, float scaleFactor)
     ; Scale width - but use smaller factor for buttons to prevent overlap
     if ${elem.Has[width]}
     {
-        widthFactor:Set[${scaleFactor}]
+        variable string widthValue
+        widthValue:Set["${elem.Get[width]}"]
 
-        ; For buttons and textblocks, use larger width to fit scaled text
-        if ${elem.Has[type]}
+        ; Skip percentage values (like "100%")
+        if !${widthValue.Find[%](exists)}
         {
-            elemType:Set["${elem.Get[type]}"]
-            if ${elemType.Equal[button]}
-            {
-                ; Buttons use 85% to fit text while leaving spacing between columns
-                widthFactor:Set[${scaleFactor} * 0.85]
-            }
-            elseif ${elemType.Equal[textblock]}
-            {
-                ; Textblocks use full scale factor (they're just labels)
-                widthFactor:Set[${scaleFactor}]
-            }
-        }
+            widthFactor:Set[${scaleFactor}]
 
-        newVal:Set[${elem.Get[width]} * ${widthFactor}]
-        elem:SetInteger[width,${newVal.Int}]
+            ; For buttons and textblocks, use larger width to fit scaled text
+            if ${elem.Has[type]}
+            {
+                elemType:Set["${elem.Get[type]}"]
+                if ${elemType.Equal[button]}
+                {
+                    ; Buttons use 85% to fit text while leaving spacing between columns
+                    widthFactor:Set[${scaleFactor} * 0.85]
+                }
+                elseif ${elemType.Equal[textblock]}
+                {
+                    ; Textblocks use full scale factor (they're just labels)
+                    widthFactor:Set[${scaleFactor}]
+                }
+            }
+
+            newVal:Set[${elem.Get[width]} * ${widthFactor}]
+            elem:SetInteger[width,${newVal.Int}]
+        }
     }
     if ${elem.Has[height]}
     {
-        newVal:Set[${elem.Get[height]} * ${scaleFactor}]
-        elem:SetInteger[height,${newVal.Int}]
+        variable string heightValue
+        heightValue:Set["${elem.Get[height]}"]
+
+        ; Skip percentage values (like "100%")
+        if !${heightValue.Find[%](exists)}
+        {
+            newVal:Set[${elem.Get[height]} * ${scaleFactor}]
+            elem:SetInteger[height,${newVal.Int}]
+        }
     }
 
     ; Check if this is a window type element (to preserve window position)
