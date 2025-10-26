@@ -61,7 +61,7 @@ function main()
 		LGUI2:LoadPackageFile["${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander_Scaled.json"]
 	}
 	else
-		LGUI2:LoadPackageFile["EQ2Bot/UI/EQ2BotCommander.json"]
+		LGUI2:LoadPackageFile["${LavishScript.HomeDirectory}/Scripts/EQ2Bot/UI/EQ2BotCommander.json"]
 	;;;;
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -97,6 +97,18 @@ function LoadSettings()
 	UplinkPort1:Set[${Config.FindSetting[UplinkPort1,10101]}]
 	UplinkPort2:Set[${Config.FindSetting[UplinkPort2,10101]}]
 	UplinkPort3:Set[${Config.FindSetting[UplinkPort3,10101]}]
+
+	; Load window position (if previously saved)
+	variable int WindowX
+	variable int WindowY
+	WindowX:Set[${Config.FindSetting[WindowX,-1]}]
+	WindowY:Set[${Config.FindSetting[WindowY,-1]}]
+
+	; Apply saved window position (only if valid values were saved)
+	if ${WindowX} >= 0 && ${WindowY} >= 0
+	{
+		LGUI2.Element[EQ2BotCommander.Window]:SetLocation[${WindowX}, ${WindowY}]
+	}
 
 	if ${UplinkCheck1}
 	{
@@ -551,6 +563,10 @@ function SaveSettings()
 		Config.FindSetting[UplinkPort1]:Set[${UplinkPort1}]
 		Config.FindSetting[UplinkPort2]:Set[${UplinkPort2}]
 		Config.FindSetting[UplinkPort3]:Set[${UplinkPort3}]
+
+		; Save current window position
+		Config.FindSetting[WindowX]:Set[${LGUI2.Element[EQ2BotCommander.Window].X}]
+		Config.FindSetting[WindowY]:Set[${LGUI2.Element[EQ2BotCommander.Window].Y}]
 
 		LavishSettings[EQ2BotCommander]:Export["${LavishScript.HomeDirectory}/Scripts/EQ2Bot/Character Config/EQ2BotCommanderSettings.xml"]
 return
