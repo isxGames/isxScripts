@@ -1,0 +1,61 @@
+{
+  "$schema":"http://www.lavishsoft.com/schema/lgui2Package.json",
+  "elements":[
+    {
+      "type":"window",
+      "name":"EQ2AFKAlarm.MessageBox",
+      "x":800,
+      "y":500,
+      "width":1200,
+      "height":600,
+      "titleBar":{
+        "type":"dockpanel",
+        "children":[
+          {
+            "type":"textblock",
+            "name":"MessageBox.Title",
+            "text":"Message",
+            "verticalAlignment":"center",
+            "margin":[30, 0, 0, 0],
+            "font":{"face":"Segoe UI", "height":54, "bold":true},
+            "color":"#FFFFFF",
+            "_dock":"left"
+          }
+        ]
+      },
+      "content":{
+        "type":"stackpanel",
+        "orientation":"vertical",
+        "children":[
+          {
+            "type":"textblock",
+            "name":"MessageBox.Text",
+            "text":"Message text goes here",
+            "margin":60,
+            "wrapText":true,
+            "font":{"face":"Segoe UI", "height":42}
+          },
+          {
+            "type":"panel",
+            "height":30
+          },
+          {
+            "type":"button",
+            "name":"MessageBox.OKButton",
+            "content":"OK",
+            "width":300,
+            "height":120,
+            "horizontalAlignment":"center",
+            "font":{"height":48},
+            "eventHandlers":{
+              "onPress":{
+                "type":"code",
+                "code":"Script[EQ2AFKAlarm]:QueueCommand[call CloseMessageBox]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

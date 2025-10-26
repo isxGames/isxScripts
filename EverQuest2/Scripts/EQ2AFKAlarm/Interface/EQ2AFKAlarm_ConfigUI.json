@@ -1,0 +1,522 @@
+{
+  "$schema":"http://www.lavishsoft.com/schema/lgui2Package.json",
+  "elements":[
+    {
+      "type":"window",
+      "name":"EQ2AFKAlarm Config.Window",
+      "x":1459,
+      "y":911,
+      "width":676,
+      "height":565,
+      "visibility":"hidden",
+      "eventHandlers":{
+        "onCloseButtonClick":{
+          "type":"code",
+          "code":"Script[EQ2AFKAlarm]:QueueCommand[call CloseConfigWindow]"
+        },
+        "onLoad":{
+          "type":"code",
+          "code":"Script[EQ2AFKAlarm]:QueueCommand[call ApplyConfigWindowPosition]"
+        }
+      },
+      "titleBar":{
+        "type":"dockpanel",
+        "children":[
+          {
+            "type":"button",
+            "borderThickness":2,
+            "content":"🗙",
+            "font":{
+              "face":"Segoe UI",
+              "height":40
+            },
+            "padding":12,
+            "_dock":"right",
+            "eventHandlers":{
+              "onMouseButtonMove":{
+                "type":"forward",
+                "elementType":"window",
+                "event":"onCloseButtonClick"
+              }
+            }
+          },
+          {
+            "type":"button",
+            "borderThickness":2,
+            "content":"🗕",
+            "font":{
+              "face":"Segoe UI",
+              "height":40
+            },
+            "padding":12,
+            "margin":[
+              0,
+              0,
+              8,
+              0
+            ],
+            "_dock":"right",
+            "eventHandlers":{
+              "onMouseButtonMove":{
+                "type":"forward",
+                "elementType":"window",
+                "event":"onShadeButtonClick"
+              }
+            }
+          },
+          {
+            "type":"textblock",
+            "text":"EQ2AFKAlarm Config",
+            "verticalAlignment":"center",
+            "margin":[
+              10,
+              0,
+              0,
+              0
+            ],
+            "font":{
+              "face":"Segoe UI",
+              "height":36,
+              "bold":true
+            },
+            "color":"#00FFFF",
+            "_dock":"left"
+          }
+        ],
+        "eventHandlers":{
+          "onMouseMove":{
+            "type":"forward",
+            "elementType":"window",
+            "event":"onHeaderMouseMove"
+          },
+          "lostMouseFocus":{
+            "type":"forward",
+            "elementType":"window",
+            "event":"onHeaderLostMouseFocus"
+          },
+          "onMouseButtonMove":{
+            "type":"forward",
+            "elementType":"window",
+            "event":"onHeaderMouseButtonMove"
+          }
+        }
+      },
+      "content":{
+        "type":"tabcontrol",
+        "name":"EQ2AFKAlarm.TabControl",
+        "x":0,
+        "y":0,
+        "width":"100%",
+        "height":"100%",
+        "tabs":[
+          {
+            "type":"tab",
+            "header":"Channels",
+            "content":{
+              "type":"panel",
+              "children":[
+                {
+                  "type":"checkbox",
+                  "name":"Channels.SaysToggle",
+                  "x":30,
+                  "y":30,
+                  "width":300,
+                  "height":60,
+                  "content":" -> Says",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TriggerSays]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerSaysChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerSaysUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.SaysTTS",
+                  "x":330,
+                  "y":30,
+                  "width":300,
+                  "height":60,
+                  "content":" TTS?",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TTSSays]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSSaysChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSSaysUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.TellsToggle",
+                  "x":30,
+                  "y":90,
+                  "width":300,
+                  "height":60,
+                  "content":" -> Tells",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TriggerTells]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerTellsChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerTellsUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.TellsTTS",
+                  "x":330,
+                  "y":90,
+                  "width":300,
+                  "height":60,
+                  "content":" TTS?",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TTSTells]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSTellsChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSTellsUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.GroupToggle",
+                  "x":30,
+                  "y":150,
+                  "width":300,
+                  "height":60,
+                  "content":" -> Group",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TriggerGroup]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerGroupChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerGroupUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.GroupTTS",
+                  "x":330,
+                  "y":150,
+                  "width":300,
+                  "height":60,
+                  "content":" TTS?",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TTSGroup]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSGroupChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSGroupUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.RaidToggle",
+                  "x":30,
+                  "y":210,
+                  "width":300,
+                  "height":60,
+                  "content":" -> Raid",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TriggerRaid]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerRaidChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerRaidUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.RaidTTS",
+                  "x":330,
+                  "y":210,
+                  "width":300,
+                  "height":60,
+                  "content":" TTS?",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TTSRaid]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSRaidChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSRaidUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.GuildToggle",
+                  "x":30,
+                  "y":270,
+                  "width":300,
+                  "height":60,
+                  "content":" -> Guild",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TriggerGuild]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerGuildChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerGuildUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.GuildTTS",
+                  "x":330,
+                  "y":270,
+                  "width":300,
+                  "height":60,
+                  "content":" TTS?",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TTSGuild]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSGuildChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSGuildUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.OfficerToggle",
+                  "x":30,
+                  "y":330,
+                  "width":300,
+                  "height":60,
+                  "content":" -> Officer",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TriggerOfficer]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerOfficerChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTriggerOfficerUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Channels.OfficerTTS",
+                  "x":330,
+                  "y":330,
+                  "width":300,
+                  "height":60,
+                  "content":" TTS?",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[TTSOfficer]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSOfficerChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnTTSOfficerUnchecked]"
+                    }
+                  }
+                }
+              ]
+            },
+            "font":{
+              "height":54
+            }
+          },
+          {
+            "type":"tab",
+            "header":"Options",
+            "content":{
+              "type":"panel",
+              "children":[
+                {
+                  "type":"checkbox",
+                  "name":"Options.ShowConsole",
+                  "x":30,
+                  "y":30,
+                  "width":420,
+                  "height":60,
+                  "content":" -> Display Console",
+                  "checked":"${Script[EQ2AFKAlarm].Variable[DisplayConsole]}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnDisplayConsoleChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnDisplayConsoleUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"checkbox",
+                  "name":"Options.LogToFile",
+                  "x":30,
+                  "y":90,
+                  "width":360,
+                  "height":60,
+                  "content":" -> Log To File",
+                  "checked":"${Script[EQ2AFKAlarm].VariableScope.Log.Enabled}",
+                  "eventHandlers":{
+                    "onChecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnLogToFileChecked]"
+                    },
+                    "onUnchecked":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call OnLogToFileUnchecked]"
+                    }
+                  }
+                },
+                {
+                  "type":"button",
+                  "name":"Options.TestSound",
+                  "x":30,
+                  "y":360,
+                  "width":306,
+                  "height":60,
+                  "content":"Test Sound",
+                  "eventHandlers":{
+                    "onPress":{
+                      "type":"code",
+                      "code":"Script[EQ2AFKAlarm]:QueueCommand[call DebugSound]"
+                    }
+                  },
+                  "font":{
+                    "height":36
+                  }
+                }
+              ]
+            },
+            "font":{
+              "height":54
+            }
+          },
+          {
+            "type":"tab",
+            "header":"About",
+            "content":{
+              "type":"panel",
+              "children":[
+                {
+                  "type":"textblock",
+                  "name":"About.Title",
+                  "x":0,
+                  "y":30,
+                  "width":900,
+                  "height":45,
+                  "horizontalAlignment":"left",
+                  "text":"EQ2AFKAlarm v${Script[EQ2AFKAlarm].Variable[EQ2AFKAlarm_version]}",
+                  "font":{
+                    "height":36
+                  }
+                },
+                {
+                  "type":"textblock",
+                  "name":"About.By",
+                  "x":0,
+                  "y":75,
+                  "width":900,
+                  "height":45,
+                  "horizontalAlignment":"left",
+                  "text":"EQ2 Port by SuperNoob",
+                  "font":{
+                    "height":36
+                  }
+                },
+                {
+                  "type":"textblock",
+                  "name":"About.Maintained",
+                  "x":0,
+                  "y":135,
+                  "width":900,
+                  "height":45,
+                  "horizontalAlignment":"left",
+                  "text":"Currently maintained by Valerian",
+                  "font":{
+                    "height":36
+                  }
+                },
+                {
+                  "type":"textblock",
+                  "name":"About.Thanks",
+                  "x":0,
+                  "y":210,
+                  "width":900,
+                  "height":45,
+                  "horizontalAlignment":"left",
+                  "text":"Thanks to...BobTest,Jackalo,Tenshi",
+                  "font":{
+                    "height":36
+                  }
+                },
+                {
+                  "type":"textblock",
+                  "name":"About.ThanksText",
+                  "x":30,
+                  "y":285,
+                  "width":840,
+                  "height":150,
+                  "horizontalAlignment":"left",
+                  "wrapText":true,
+                  "text":"Cr4zyb4rd and Pygar for helping me out all the time.",
+                  "font":{
+                    "height":36
+                  }
+                }
+              ]
+            },
+            "font":{
+              "height":54
+            }
+          }
+        ],
+        "font":{
+          "height":36
+        }
+      },
+      "font":{
+        "height":36
+      }
+    }
+  ]
+}
