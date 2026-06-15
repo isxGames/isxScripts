@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Pantheon/**'
+  workflow_dispatch:
 
 jobs:
   notify:
@@ -15,20 +16,34 @@ jobs:
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
           ACTOR: ${{ github.actor }}
-          MSG: ${{ github.event.head_commit.message }}
-          URL: ${{ github.event.head_commit.url }}
-          SHA: ${{ github.sha }}
         run: |
+          event="$GITHUB_EVENT_PATH"
+
+          # one linked line per commit (first line of each message), capped at 10
+          desc=$(jq -r '
+            if ((.commits // []) | length) > 0 then
+              ((.commits[:10] | map("[`" + .id[0:7] + "`](" + .url + ") " + (.message | split("\n")[0]) + " - " + .author.name) | join("\n"))
+               + (if ((.commits | length) > 10) then "\n...and " + ((.commits | length) - 10 | tostring) + " more" else "" end))
+            else "Manual test run" end' "$event")
+
+          count=$(jq -r '(.commits // []) | length' "$event")
+          compare=$(jq -r '.compare // empty' "$event")
+          if [ -z "$compare" ]; then compare="https://github.com/${REPO}"; fi
+
+          if [ "$count" -eq 0 ]; then commits="manual run"
+          elif [ "$count" -eq 1 ]; then commits="1 commit"
+          else commits="${count} commits"; fi
+
           payload=$(jq -n \
             --arg title "🛡️ Pantheon scripts updated" \
-            --arg desc "$MSG" \
-            --arg url "$URL" \
+            --arg url "$compare" \
+            --arg desc "$desc" \
             --arg actor "$ACTOR" \
             --arg avatar "https://github.com/${ACTOR}.png" \
             --arg ahref "https://github.com/${ACTOR}" \
             --arg repo "$REPO" \
             --arg branch "$BRANCH" \
-            --arg sha "${SHA:0:7}" \
+            --arg commits "$commits" \
             --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             '{embeds: [{
               author: {name: $actor, url: $ahref, icon_url: $avatar},
@@ -38,9 +53,9 @@ jobs:
               color: 10181046,
               timestamp: $ts,
               fields: [
-                {name: "Repo",   value: $repo,   inline: true},
-                {name: "Branch", value: $branch, inline: true},
-                {name: "Commit", value: $sha,    inline: true}
+                {name: "Repo",    value: $repo,    inline: true},
+                {name: "Branch",  value: $branch,  inline: true},
+                {name: "Commits", value: $commits, inline: true}
               ],
               footer: {text: "isxScripts · GitHub"}
             }]}')
